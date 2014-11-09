@@ -3,14 +3,15 @@
     "description": "Worker service for creating Lasting Power of Attorney PDF documents",
     "minimum-stability": "stable",
     "license": "MIT",
-    "authors": [
+    "repositories": [
         {
-            "name": "Neil Smith",
-            "email": "team@digital.justice.gov.uk"
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "ministryofjustice/opg-lpa-datamodels": "dev-Prototype"
     },
     "autoload": {
         "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/"}

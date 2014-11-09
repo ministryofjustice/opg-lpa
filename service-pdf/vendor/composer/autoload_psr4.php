@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Opg\\' => array($baseDir . '/src/Opg'),
+    'Opg\\Lpa\\Pdf\\' => array($baseDir . '/src/Opg/Lpa/Pdf'),
+    'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
 );
