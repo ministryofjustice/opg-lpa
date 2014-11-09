@@ -1,0 +1,19 @@
+{
+    "name": "ministryofjustice/opg-lpa-pdf",
+    "description": "Worker service for creating Lasting Power of Attorney PDF documents",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Neil Smith",
+            "email": "team@digital.justice.gov.uk"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/"}
+    },
+    "include-path": ["config/"]
+}
