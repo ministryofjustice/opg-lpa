@@ -3,11 +3,18 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Exception;
+
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\Generator;
 
 class Worker {
 
+    /**
+     * @param string $docId Unique ID representing this job/document.
+     * @param string $type The type of PDF to generate.
+     * @param strong $lpa JSON document representing the LPA document.
+     */
     public function run( $docId, $type, $lpa ){
 
         echo "${docId}: Generating PDF\n";
@@ -16,6 +23,9 @@ class Worker {
 
             // Get the service config.
             $config = new Config(include('config/local.php'));
+
+            // Instantiate an LPA document from the JSON
+            $lpa = new Lpa( $lpa );
 
             // Create and config the $response object.
             $response = new Response( $config, $docId );
@@ -26,19 +36,18 @@ class Worker {
             // Run the process.
             $result = $generator->generate();
 
-            $result = true;
-
-            // Check and deal with the result.
+            // Check the result...
             if ($result === true) {
+
                 // All is good.
                 echo "${docId}: PDF successfully generated\n";
-                return;
+
+            } else {
+
+                // Else there was an error.
+                echo "${docId}: PDF generation failed: $result\n";
+
             }
-
-            //------------------------
-            // There was ane error
-
-            echo "${docId}: PDF generation failed: $result\n";
 
         } catch (Exception $e){
 
