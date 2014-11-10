@@ -11,7 +11,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ministryofjustice/opg-lpa-datamodels": "dev-Prototype"
+        "ministryofjustice/opg-lpa-datamodels": "dev-Prototype",
+        "chrisboulton/php-resque": "dev-master",
+        "mikehaertl/php-pdftk": "0.2.1"
     },
     "autoload": {
         "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/"}

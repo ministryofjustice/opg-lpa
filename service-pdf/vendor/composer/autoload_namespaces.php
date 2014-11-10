@@ -6,5 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Resque' => array($vendorDir . '/chrisboulton/php-resque/lib'),
     'Respect\\Validation' => array($vendorDir . '/respect/validation/library'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
 );
