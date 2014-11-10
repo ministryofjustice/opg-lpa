@@ -18,7 +18,7 @@ class Response implements ResponseInterface  {
      *
      * @param $pathToFile
      */
-    public function send( SplFileInfo $pathToFile ){
+    public function save( SplFileInfo $pathToFile ){
 
 
 

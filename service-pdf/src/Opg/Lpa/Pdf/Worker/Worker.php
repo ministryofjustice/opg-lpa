@@ -25,13 +25,13 @@ class Worker {
             $config = new Config(include('config/local.php'));
 
             // Instantiate an LPA document from the JSON
-            $lpa = new Lpa( $lpa );
+            $lpaObj = new Lpa( $lpa );
 
             // Create and config the $response object.
             $response = new Response( $config, $docId );
 
             // Create an instance of the PDF generator service.
-            $generator = new Generator($config, $type, $lpa, $response);
+            $generator = new Generator( $config, $type, $lpaObj, $response );
 
             // Run the process.
             $result = $generator->generate();
