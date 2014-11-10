@@ -32,7 +32,7 @@ class Generator implements GeneratorInterface {
      */
     public function generate(){
 
-        if( $this->lpa->validate()->hasError() ){
+        if( $this->lpa->validate()->hasErrors() ){
             // The LPA is invalid, return an error.
         }
 

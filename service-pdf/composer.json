@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ministryofjustice/opg-lpa-datamodels": "dev-Prototype",
+        "ministryofjustice/opg-lpa-datamodels": "dev-develop",
         "chrisboulton/php-resque": "dev-master",
         "mikehaertl/php-pdftk": "0.2.1"
     },
