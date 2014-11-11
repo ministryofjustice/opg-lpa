@@ -3,4 +3,5 @@
 
 /.idea/
 
+vendor/.git
 /vendor/ministryofjustice/opg-lpa-datamodels/vendor/
