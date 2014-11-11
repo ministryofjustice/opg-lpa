@@ -1007,17 +1007,17 @@
     },
     {
         "name": "phpunit/phpunit",
-        "version": "4.3.4",
-        "version_normalized": "4.3.4.0",
+        "version": "4.3.5",
+        "version_normalized": "4.3.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/phpunit.git",
-            "reference": "23e4e0310f037aae873cc81b8658dbbb82878f71"
+            "reference": "2dab9d593997db4abcf58d0daf798eb4e9cecfe1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/23e4e0310f037aae873cc81b8658dbbb82878f71",
-            "reference": "23e4e0310f037aae873cc81b8658dbbb82878f71",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2dab9d593997db4abcf58d0daf798eb4e9cecfe1",
+            "reference": "2dab9d593997db4abcf58d0daf798eb4e9cecfe1",
             "shasum": ""
         },
         "require": {
@@ -1042,7 +1042,7 @@
         "suggest": {
             "phpunit/php-invoker": "~1.1"
         },
-        "time": "2014-10-22 11:43:12",
+        "time": "2014-11-11 10:11:09",
         "bin": [
             "phpunit"
         ],
@@ -1088,12 +1088,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "dca7f734a2d74ca9a15252d812d1d9d5584bba45"
+            "reference": "6356d34f249442a5986940960e261d5b227b6700"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/dca7f734a2d74ca9a15252d812d1d9d5584bba45",
-            "reference": "dca7f734a2d74ca9a15252d812d1d9d5584bba45",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6356d34f249442a5986940960e261d5b227b6700",
+            "reference": "6356d34f249442a5986940960e261d5b227b6700",
             "shasum": ""
         },
         "require": {
@@ -1103,7 +1103,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2014-11-10 16:56:39",
+        "time": "2014-11-11 16:53:45",
         "type": "library",
         "installation-source": "source",
         "autoload": {
