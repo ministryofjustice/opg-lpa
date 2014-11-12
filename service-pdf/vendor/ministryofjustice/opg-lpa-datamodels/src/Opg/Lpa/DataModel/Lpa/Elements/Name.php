@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\DataModel\Lpa\Document\Elements;
+namespace Opg\Lpa\DataModel\Lpa\Elements;
 
 use Opg\Lpa\DataModel\Lpa\AbstractData;
 

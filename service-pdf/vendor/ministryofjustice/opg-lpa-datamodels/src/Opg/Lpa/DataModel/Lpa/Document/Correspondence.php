@@ -2,7 +2,7 @@
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
 use Opg\Lpa\DataModel\Lpa\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Document\Elements;
+use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;

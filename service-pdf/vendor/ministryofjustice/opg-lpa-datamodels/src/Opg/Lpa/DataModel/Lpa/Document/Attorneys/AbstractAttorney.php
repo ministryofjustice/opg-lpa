@@ -1,7 +1,7 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
-use Opg\Lpa\DataModel\Lpa\Document\Elements;
+use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\Lpa\AbstractData;
 
 use Respect\Validation\Rules;

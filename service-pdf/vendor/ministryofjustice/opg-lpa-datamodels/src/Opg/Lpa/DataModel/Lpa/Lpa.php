@@ -2,6 +2,7 @@
 namespace Opg\Lpa\DataModel\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator; // Extended instance of Respect\Validation\Validator
@@ -64,7 +65,7 @@ class Lpa extends AbstractData implements CompleteInterface {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->user = 'ad353da6b73ceee2201cee2f9936c509';
-        $this->payment = null;
+        $this->payment = new Payment();
         $this->whoAreYouAnswered = false;
         $this->locked = false;
         $this->seed = null;
