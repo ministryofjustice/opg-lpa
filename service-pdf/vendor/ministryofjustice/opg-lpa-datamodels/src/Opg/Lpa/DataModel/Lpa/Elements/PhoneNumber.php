@@ -10,12 +10,7 @@ class PhoneNumber extends AbstractData {
 
     protected $number;
 
-    public function __construct(){
-        parent::__construct();
-
-        # TEMPORARY TEST DATA ------------
-
-        $this->number = '020 1234 5678';
+    public function __construct( $data = null ){
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -25,6 +20,10 @@ class PhoneNumber extends AbstractData {
                 new Rules\Phone,
             ]);
         };
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

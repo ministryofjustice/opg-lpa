@@ -17,18 +17,23 @@ class Payment extends AbstractData {
     protected $amount;
     protected $reference;
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        $this->method = self::PAYMENT_TYPE_CARD;
-        $this->phone = new Elements\PhoneNumber();
-        $this->amount = (float)100;
-        $this->reference = 'abc123';
+        //-----------------------------------------------------
+        // Type mappers
+
+        $this->typeMap['phone'] = function($v){
+            return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
+        };
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        //---
+
+        parent::__construct( $data );
 
     } // function
+
 
 } // class

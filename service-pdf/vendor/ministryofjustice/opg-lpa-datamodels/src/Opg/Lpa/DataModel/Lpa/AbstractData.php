@@ -1,7 +1,7 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
-use InvalidArgumentException;
+use InvalidArgumentException, JsonSerializable;
 
 use Respect\Validation\Validatable;
 use Respect\Validation\Exceptions;
@@ -10,11 +10,32 @@ use Opg\Lpa\DataModel\Validator\ValidatorException;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 
 
-abstract class AbstractData implements AccessorInterface, ValidatableInterface {
+abstract class AbstractData implements AccessorInterface, ValidatableInterface, JsonSerializable {
 
     protected $validators = array();
 
-    public function __construct(){}
+    protected $typeMap = array();
+
+    public function __construct( $data = null ){
+
+        // If it's a string, assume it's JSON...
+        if( is_string( $data ) ){
+            $data = json_decode( $data, true );
+        }
+
+        // If it's (now) an array...
+        if( is_array($data) ){
+
+            // Foreach each passed property...
+            foreach( $data as $k => $v ){
+
+                $this->set( $k, $v, false );
+
+            } // foreach
+
+        } // if
+
+    } // function
 
     //--------------------------------------
     // Getter
@@ -45,6 +66,16 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface {
         if( !property_exists( $this, $property ) ){
             throw new InvalidArgumentException("$property is not a valid property");
         }
+
+        //---
+
+        // Check if this $property should by type mapped...
+
+        if( $this->typeMap[$property] ){
+            $value = $this->typeMap[$property]( $value );
+        }
+
+        //---
 
         $originalValue = $this->{$property};
 
@@ -159,6 +190,35 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface {
         return $errors;
 
     } // function
+
+    //-------------------
+
+    public function toArray(){
+
+        $values =  get_object_vars( $this );
+
+        unset( $values['typeMap'] );
+        unset( $values['validators'] );
+
+        array_walk_recursive( $values, function( &$item, $key ){
+            if( $item instanceof AccessorInterface ){
+                $item = $item->toArray();
+            } elseif ( $item instanceof \DateTime ) {
+                $item = $item->format( \DateTime::ISO8601 );
+            }
+        });
+
+        return $values;
+
+    } // function
+
+    public function jsonSerialize(){
+        return $this->toArray();
+    } // function
+
+    public function toJson(){
+        return json_encode( $this, JSON_PRETTY_PRINT );
+    }
 
     //-------------------
 

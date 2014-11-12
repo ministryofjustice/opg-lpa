@@ -11,14 +11,14 @@ class TrustCorporation extends AbstractAttorney {
     protected $name;
     protected $number;
 
-    public function __construct(){
-        parent::__construct();
-
-        $this->name = 'Corp Name Limited';
-        $this->number = '1234'; // int, but can start with zeros thus a string.
+    public function __construct( $data ){
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

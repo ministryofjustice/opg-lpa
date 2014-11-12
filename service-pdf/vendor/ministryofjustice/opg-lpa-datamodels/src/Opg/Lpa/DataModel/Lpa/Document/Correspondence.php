@@ -9,9 +9,9 @@ use Opg\Lpa\DataModel\Validator\Validator;
 
 class Correspondence extends AbstractData {
 
-    const WHO_DONOR = 'xxx';
-    const WHO_ATTORNEY = 'xxx';
-    const WHO_OTHER = 'xxx';
+    const WHO_DONOR = 'donor';
+    const WHO_ATTORNEY = 'attorney';
+    const WHO_OTHER = 'other';
 
     protected $who;
     protected $name;
@@ -20,19 +20,34 @@ class Correspondence extends AbstractData {
     protected $email;
     protected $phone;
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        $this->who = 'other';
-        $this->name = new Elements\Name();
-        $this->company = 'My Company Limited';
-        $this->address = new Elements\Address();
-        $this->email = new Elements\EmailAddress();
-        $this->phone = new Elements\PhoneNumber();
+        //-----------------------------------------------------
+        // Type mappers
+
+        $this->typeMap['name'] = function($v){
+            return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+        };
+
+        $this->typeMap['address'] = function($v){
+            return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+        };
+
+        $this->typeMap['email'] = function($v){
+            return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+        };
+
+        $this->typeMap['phone'] = function($v){
+            return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
+        };
+
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

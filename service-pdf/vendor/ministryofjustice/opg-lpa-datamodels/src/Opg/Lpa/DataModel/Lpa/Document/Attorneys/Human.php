@@ -11,14 +11,25 @@ class Human extends AbstractAttorney {
     protected $name;
     protected $dob;
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data ){
 
-        $this->name = new Elements\Name();
-        $this->dob = new Elements\Dob();
+        //-----------------------------------------------------
+        // Type mappers
+
+        $this->typeMap['name'] = function($v){
+            return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+        };
+
+        $this->typeMap['dob'] = function($v){
+            return ($v instanceof Elements\Dob) ? $v : new Elements\Dob( $v );
+        };
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

@@ -1,6 +1,8 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
+use DateTime;
+
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
@@ -25,7 +27,7 @@ class Lpa extends AbstractData implements CompleteInterface {
     protected $updatedAt;
 
     /**
-     * @var string LPS's owner User identifier.
+     * @var string LPA's owner User identifier.
      */
     protected $user;
 
@@ -56,20 +58,22 @@ class Lpa extends AbstractData implements CompleteInterface {
 
     //------------------------------------------------
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        # TEMPORARY TEST DATA ------------
+        //-----------------------------------------------------
+        // Type mappers
 
-        $this->id = 1234;
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-        $this->user = 'ad353da6b73ceee2201cee2f9936c509';
-        $this->payment = new Payment();
-        $this->whoAreYouAnswered = false;
-        $this->locked = false;
-        $this->seed = null;
-        $this->document = new Document();
+        $this->typeMap['updatedAt'] = $this->typeMap['createdAt'] = function($v){
+            return ($v instanceof DateTime) ? $v : new DateTime( $v );
+        };
+
+        $this->typeMap['payment'] = function($v){
+            return ($v instanceof Payment) ? $v : new Payment( $v );
+        };
+
+        $this->typeMap['document'] = function($v){
+            return ($v instanceof Document) ? $v : new Document( $v );
+        };
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -140,6 +144,9 @@ class Lpa extends AbstractData implements CompleteInterface {
             ]));
         };
 
+        //---
+
+        parent::__construct( $data );
 
     } // function
 
@@ -172,9 +179,9 @@ class Lpa extends AbstractData implements CompleteInterface {
 
     public function set( $property, $value, $validate = true ){
 
-        if(  $property == 'id' ){
-            // Ensures the value is an int by removing letters and spaces.
-            $value = (int)preg_replace("/[^0-9]/", '', $value);
+        switch( $property ){
+            case 'id':
+                $value = (int)preg_replace("/[^0-9]/", '', $value); break;
         }
 
         return parent::set( $property, $value, $validate );

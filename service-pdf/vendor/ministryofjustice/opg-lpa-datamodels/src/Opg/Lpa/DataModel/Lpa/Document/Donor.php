@@ -15,14 +15,26 @@ class Donor extends AbstractData {
     protected $dob;
     protected $email;
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        $this->name = new Elements\Name();
-        $this->otherNames = 'Fred';
-        $this->address = new Elements\Address();
-        $this->dob = new Elements\Dob();
-        $this->email = new Elements\EmailAddress();
+        //-----------------------------------------------------
+        // Type mappers
+
+        $this->typeMap['name'] = function($v){
+            return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+        };
+
+        $this->typeMap['address'] = function($v){
+            return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+        };
+
+        $this->typeMap['dob'] = function($v){
+            return ($v instanceof Elements\Dob) ? $v : new Elements\Dob( $v );
+        };
+
+        $this->typeMap['email'] = function($v){
+            return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+        };
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -37,6 +49,10 @@ class Donor extends AbstractData {
                 new Rules\NullValue,
             ]));
         };
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

@@ -12,14 +12,25 @@ abstract class AbstractAttorney extends AbstractData {
     protected $address;
     protected $email;
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data ){
 
-        $this->address = new Elements\Address();
-        $this->email = new Elements\EmailAddress();
+        //-----------------------------------------------------
+        // Type mappers
+
+        $this->typeMap['address'] = function($v){
+            return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+        };
+
+        $this->typeMap['email'] = function($v){
+            return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+        };
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

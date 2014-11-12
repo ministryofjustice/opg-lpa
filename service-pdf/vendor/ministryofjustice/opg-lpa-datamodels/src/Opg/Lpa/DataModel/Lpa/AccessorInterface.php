@@ -31,4 +31,18 @@ interface AccessorInterface {
      */
     public function set( $property, $value, $validate = true );
 
+    /**
+     * Returns an array representation of $this instance.
+     *
+     * @return array
+     */
+    public function toArray();
+
+    /**
+     * Returns an JSON representation of $this instance.
+     *
+     * @return string
+     */
+    public function toJson();
+
 } // interface

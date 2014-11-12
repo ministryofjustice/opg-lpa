@@ -10,12 +10,14 @@ class Dob extends AbstractData {
 
     protected $date;
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        # TEMPORARY TEST DATA ------------
+        //-----------------------------------------------------
+        // Type mappers
 
-        $this->date = new \DateTime( '1980-12-17' );
+        $this->typeMap['date'] = function($v){
+            return ($v instanceof \DateTime) ? $v : new \DateTime( $v );
+        };
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -28,6 +30,10 @@ class Dob extends AbstractData {
                 }),
             ]);
         };
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

@@ -1,6 +1,8 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
+use stdClass;
+
 use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
@@ -42,9 +44,9 @@ class Document extends AbstractData {
     /**
      * How the decisions are made. One of the constants under Document::LPA_DECISION_*
      *
-     * @var string
+     * @var stdClass
      */
-    protected $howAreDecisionsMade; // same for both types.
+    protected $decisions;
 
     /**
      * The entity who should receive correspondence about the LPA.
@@ -68,6 +70,13 @@ class Document extends AbstractData {
     protected $preference;
 
     /**
+     * The Certificate Provider.
+     *
+     * @var CertificateProvider
+     */
+    protected $certificateProvider;
+
+    /**
      * All of the primary Attorneys.
      *
      * @var array containing instances of Attorney.
@@ -82,13 +91,6 @@ class Document extends AbstractData {
     protected $replacementAttorneys = array();
 
     /**
-     * All of the Certificate Providers.
-     *
-     * @var array containing instances of CertificateProvider.
-     */
-    protected $certificateProviders = array();
-
-    /**
      * All of the people to notify.
      *
      * @var array containing instances of NotifiedPerson.
@@ -97,32 +99,48 @@ class Document extends AbstractData {
 
     //-----------------------------
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        # TEMPORARY TEST DATA ------------
+        // Init this property. Maybe create a Decisions class?
+        $this->decisions = (object)[ 'how'=>null, 'when'=>null, 'can-sustain-life'=>null ];
 
-        $this->type = self::LPA_TYPE_HW;
+        //-----------------------------------------------------
+        // Type mappers
 
-        $this->donor = new Donor();
+        $this->typeMap['donor'] = function($v){
+            return ($v instanceof Donor) ? $v : new Donor( $v );
+        };
 
-        $this->whoIsRegistering = 'donor';
+        $this->typeMap['decisions'] = function($v){
+            return ($v instanceof stdClass) ? $v : (object)$v;
+        };
 
-        $this->howAreDecisionsMade = self::LPA_DECISION_SINGLE_ATTORNEY;
+        $this->typeMap['correspondent'] = function($v){
+            return ($v instanceof Correspondence) ? $v : new Correspondence( $v );
+        };
 
-        $this->correspondent = new Correspondence();
+        $this->typeMap['certificateProvider'] = function($v){
+            return ($v instanceof CertificateProvider) ? $v : new CertificateProvider( $v );
+        };
 
-        $this->instruction = 'Here are some instructions';
+        $this->typeMap['primaryAttorneys'] = $this->typeMap['replacementAttorneys'] = function($v){
+            return array_map( function($v){
+                if( $v instanceof Attorneys\AbstractAttorney ){
+                    return $v;
+                } elseif( isset( $v['number'] ) ){
+                    return new Attorneys\TrustCorporation( $v );
+                } else {
+                    return new Attorneys\Human( $v );
+                }
+            }, $v );
+        };
 
-        $this->preference = 'Here are some preferences';
+        $this->typeMap['peopleToNotify'] = function($v){
+            return array_map( function($v){
+                return ($v instanceof NotifiedPerson) ? $v : new NotifiedPerson( $v );
+            }, $v );
+        };
 
-        $this->primaryAttorneys[] = new Attorneys\Human();
-
-        $this->replacementAttorneys[] = new Attorneys\TrustCorporation();
-
-        $this->certificateProviders = new CertificateProvider();
-
-        $this->peopleToNotify[] = new NotifiedPerson();
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -133,6 +151,9 @@ class Document extends AbstractData {
             ]);
         };
 
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

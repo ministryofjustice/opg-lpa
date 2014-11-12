@@ -13,15 +13,26 @@ class CertificateProvider extends AbstractData {
     protected $address;
 
 
-    public function __construct(){
-        parent::__construct();
+    public function __construct( $data = null ){
 
-        $this->name = new Elements\Name();
-        $this->address = new Elements\Address();
+        //-----------------------------------------------------
+        // Type mappers
+
+        $this->typeMap['name'] = function($v){
+            return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+        };
+
+        $this->typeMap['address'] = function($v){
+            return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+        };
+
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

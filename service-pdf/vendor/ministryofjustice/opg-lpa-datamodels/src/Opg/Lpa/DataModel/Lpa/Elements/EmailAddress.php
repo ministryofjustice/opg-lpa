@@ -8,23 +8,22 @@ use Opg\Lpa\DataModel\Validator\Validator;
 
 class EmailAddress extends AbstractData {
 
-    protected $email;
+    protected $address;
 
-    public function __construct(){
-        parent::__construct();
-
-        # TEMPORARY TEST DATA ------------
-
-        $this->email = 'test@digital.justice.gov.uk';
+    public function __construct( $data = null ){
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
-        $this->validators['email'] = function(){
+        $this->validators['address'] = function(){
             return (new Validator)->addRules([
                 new Rules\Email,
             ]);
         };
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

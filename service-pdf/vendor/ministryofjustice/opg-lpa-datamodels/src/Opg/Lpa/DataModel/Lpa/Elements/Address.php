@@ -13,15 +13,7 @@ class Address extends AbstractData {
     protected $address3;
     protected $postcode;
 
-    public function __construct(){
-        parent::__construct();
-
-        # TEMPORARY TEST DATA ------------
-
-        $this->address1 = 'Line 1';
-        $this->address2 = 'Line 2';
-        $this->address3 = 'A new line';
-        $this->postcode = 'SW1H 9AJ';
+    public function __construct( $data = null ){
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -63,6 +55,10 @@ class Address extends AbstractData {
                 new Rules\NullValue,
             ]));
         };
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 

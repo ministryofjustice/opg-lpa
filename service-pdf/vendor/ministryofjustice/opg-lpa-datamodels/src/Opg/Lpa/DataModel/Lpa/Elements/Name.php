@@ -12,14 +12,7 @@ class Name extends AbstractData {
     protected $first;
     protected $last;
 
-    public function __construct(){
-        parent::__construct();
-
-        # TEMPORARY TEST DATA ------------
-
-        $this->title = 'Mr';
-        $this->first = 'Bob';
-        $this->last = 'Sanders';
+    public function __construct( $data = null ){
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
@@ -47,6 +40,10 @@ class Name extends AbstractData {
                 new Rules\Length( 1, 50, false ),
             ]);
         };
+
+        //---
+
+        parent::__construct( $data );
 
     } // function
 
