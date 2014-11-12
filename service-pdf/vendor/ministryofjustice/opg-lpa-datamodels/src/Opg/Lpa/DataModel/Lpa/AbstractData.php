@@ -105,7 +105,9 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface {
         // For each property we're going to validate...
         foreach( $properties as $name ) {
 
-            $value = $this->get( $name );
+            // false prevents the value being formatted.
+            $value = $this->get( $name, false );
+
             $validator = $this->getValidator( $name );
 
             try {
