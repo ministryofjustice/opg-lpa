@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $baseDir . '/config',
+    $baseDir . '/assets',
     $vendorDir . '/phpunit/php-text-template',
     $vendorDir . '/phpunit/php-timer',
     $vendorDir . '/phpunit/php-file-iterator',
