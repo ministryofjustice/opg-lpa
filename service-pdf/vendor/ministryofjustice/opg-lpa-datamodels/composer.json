@@ -1,0 +1,16 @@
+{
+    "name": "ministryofjustice/opg-lpa-datamodels",
+    "description": "PHP data models that represent a Lasting Power of Attorney",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0",
+        "respect/validation": "0.6.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {"Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"}
+    }
+}
