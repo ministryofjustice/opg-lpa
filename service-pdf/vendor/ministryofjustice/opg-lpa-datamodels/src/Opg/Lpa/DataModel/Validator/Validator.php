@@ -71,6 +71,17 @@ class Validator extends RespectValidator {
 
         //-------
 
+        Exceptions\InException::$defaultTemplates = array(
+            Exceptions\InException::MODE_DEFAULT => array(
+                Exceptions\InException::STANDARD => 'not-in/{{haystack}}',
+            ),
+            Exceptions\InException::MODE_NEGATIVE => array(
+                Exceptions\InException::STANDARD => 'is-in/{{haystack}}',
+            )
+        );
+
+        //-------
+
         Exceptions\InstanceException::$defaultTemplates = array(
             Exceptions\InstanceException::MODE_DEFAULT => array(
                 Exceptions\InstanceException::STANDARD => 'not-instance-type/{{instanceName}}',
@@ -103,6 +114,19 @@ class Validator extends RespectValidator {
                 Exceptions\LengthException::BOTH => 'is-in-range/{{minValue}}-{{maxValue}}',
                 Exceptions\LengthException::LOWER => 'is-in-range/{{minValue}}-{{maxValue}}',
                 Exceptions\LengthException::GREATER => 'is-in-range/{{minValue}}-{{maxValue}}',
+            )
+        );
+
+        //-------
+
+        Exceptions\MaxException::$defaultTemplates = array(
+            Exceptions\MaxException::MODE_DEFAULT => array(
+                Exceptions\MaxException::STANDARD => 'not-less-than/{{maxValue}}',
+                Exceptions\MaxException::INCLUSIVE => 'not-less-equal-than/{{maxValue}}',
+            ),
+            Exceptions\MaxException::MODE_NEGATIVE => array(
+                Exceptions\MaxException::STANDARD => 'is-less-than/{{maxValue}}',
+                Exceptions\MaxException::INCLUSIVE => 'is-less-equal-than/{{maxValue}}',
             )
         );
 

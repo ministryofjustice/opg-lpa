@@ -45,6 +45,50 @@ class Correspondence extends AbstractData {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        $this->validators['who'] = function(){
+            return (new Validator)->addRules([
+                new Rules\String,
+                new Rules\In( [ self::WHO_DONOR, self::WHO_ATTORNEY, self::WHO_OTHER ], true ),
+            ]);
+        };
+
+        $this->validators['name'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Name' ),
+            ]);
+        };
+
+        $this->validators['company'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\NotEmpty,
+                    new Rules\Length( 1, 75, true ),
+                ]),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['address'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Address' ),
+            ]);
+        };
+
+        $this->validators['email'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['phone'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ),
+                new Rules\NullValue,
+            ]));
+        };
+
         //---
 
         parent::__construct( $data );

@@ -28,6 +28,7 @@ class Dob extends AbstractData {
                 new Rules\Call(function($input){
                     return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
                 }),
+                new Rules\Max( new \DateTime('today'), true ),
             ]);
         };
 

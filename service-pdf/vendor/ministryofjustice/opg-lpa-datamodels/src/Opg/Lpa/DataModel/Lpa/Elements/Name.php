@@ -12,6 +12,16 @@ class Name extends AbstractData {
     protected $first;
     protected $last;
 
+    public function extractForPdf(){
+
+        return [
+            'title' => $this->title,
+            'first-names' => $this->first,
+            'last-name' => $this->last,
+        ];
+
+    }
+
     public function __construct( $data = null ){
 
         //-----------------------------------------------------
