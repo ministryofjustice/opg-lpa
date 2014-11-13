@@ -16,6 +16,22 @@ class TrustCorporation extends AbstractAttorney {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        $this->validators['name'] = function(){
+            return (new Validator)->addRules([
+                new Rules\String,
+                new Rules\NotEmpty,
+                new Rules\Length( 1, 75, true ),
+            ]);
+        };
+
+        $this->validators['number'] = function(){
+            return (new Validator)->addRules([
+                new Rules\String,
+                new Rules\NotEmpty,
+                new Rules\Length( 1, 75, true ),
+            ]);
+        };
+
         //---
 
         parent::__construct( $data );

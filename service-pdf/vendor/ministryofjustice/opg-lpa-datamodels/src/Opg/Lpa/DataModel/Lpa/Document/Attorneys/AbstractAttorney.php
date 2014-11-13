@@ -28,6 +28,19 @@ abstract class AbstractAttorney extends AbstractData {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        $this->validators['address'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Address' ),
+            ]);
+        };
+
+        $this->validators['email'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ),
+                new Rules\NullValue,
+            ]));
+        };
+
         //---
 
         parent::__construct( $data );

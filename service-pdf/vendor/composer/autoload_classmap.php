@@ -25,6 +25,7 @@ return array(
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Attorneys\\TrustCorporation' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Attorneys/TrustCorporation.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\CertificateProvider' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/CertificateProvider.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Correspondence' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Correspondence.php',
+    'Opg\\Lpa\\DataModel\\Lpa\\Document\\Decisions' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Decisions.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Document' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Document.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Donor' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Donor.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\NotifiedPerson' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/NotifiedPerson.php',

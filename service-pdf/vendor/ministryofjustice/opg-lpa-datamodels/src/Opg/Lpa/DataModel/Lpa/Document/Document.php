@@ -14,10 +14,7 @@ class Document extends AbstractData {
     const LPA_TYPE_PF = 'property-and-financial';
     const LPA_TYPE_HW = 'health-and-welfare';
 
-    const LPA_DECISION_MIXED = 'mixed';
-    const LPA_DECISION_JOINTLY = 'jointly';
-    const LPA_DECISION_SINGLE_ATTORNEY = 'single-attorney';
-    const LPA_DECISION_JOINTLY_AND_SEVERALLY = 'jointly-attorney-severally';
+
 
     //---
 
@@ -102,7 +99,8 @@ class Document extends AbstractData {
     public function __construct( $data = null ){
 
         // Init this property. Maybe create a Decisions class?
-        $this->decisions = (object)[ 'how'=>null, 'when'=>null, 'can-sustain-life'=>null ];
+        //$this->decisions = (object)[ 'how'=>null, 'when'=>null, 'can-sustain-life'=>null ];
+
 
         //-----------------------------------------------------
         // Type mappers
@@ -112,7 +110,7 @@ class Document extends AbstractData {
         };
 
         $this->typeMap['decisions'] = function($v){
-            return ($v instanceof stdClass) ? $v : (object)$v;
+            return ($v instanceof Decisions) ? $v : new Decisions( $v );
         };
 
         $this->typeMap['correspondent'] = function($v){
@@ -145,9 +143,90 @@ class Document extends AbstractData {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
-        $this->validators['donor'] = function(){
+        $this->validators['type'] = function(){
             return (new Validator)->addRules([
+                new Rules\String,
+                new Rules\In( [ self::LPA_TYPE_PF, self::LPA_TYPE_HW ], true ),
+            ]);
+        };
+
+        $this->validators['donor'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
                 new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Donor' ),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['whoIsRegistering'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\Equals('donor', true)
+                ]),
+                new Rules\Arr,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['decisions'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Decisions' ),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['correspondent'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Correspondence' ),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['instruction'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\String,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['preference'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\String,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['certificateProvider'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\CertificateProvider' ),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['primaryAttorneys'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Arr,
+                new Rules\Each(
+                    new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' )
+                ),
+            ]);
+        };
+
+        $this->validators['replacementAttorneys'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Arr,
+                new Rules\Each(
+                    new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' )
+                ),
+            ]);
+        };
+
+        $this->validators['peopleToNotify'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Arr,
+                new Rules\Each(
+                    new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson' )
+                ),
             ]);
         };
 

@@ -39,6 +39,12 @@ class Donor extends AbstractData {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        $this->validators['name'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Name' ),
+            ]);
+        };
+
         $this->validators['otherNames'] = function(){
             return (new Validator)->addRule((new Rules\OneOf)->addRules([
                 (new Rules\AllOf)->addRules([
@@ -46,6 +52,26 @@ class Donor extends AbstractData {
                     new Rules\NotEmpty,
                     new Rules\Length( 1, 50, true ),
                 ]),
+                new Rules\NullValue,
+            ]));
+        };
+
+
+        $this->validators['address'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Address' ),
+            ]);
+        };
+
+        $this->validators['dob'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Dob' ),
+            ]);
+        };
+
+        $this->validators['email'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ),
                 new Rules\NullValue,
             ]));
         };

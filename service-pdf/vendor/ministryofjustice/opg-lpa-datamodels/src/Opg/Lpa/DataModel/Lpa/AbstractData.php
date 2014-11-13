@@ -1,7 +1,7 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
-use InvalidArgumentException, JsonSerializable;
+use DateTime, InvalidArgumentException, JsonSerializable;
 
 use Respect\Validation\Validatable;
 use Respect\Validation\Exceptions;
@@ -149,7 +149,33 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
                 $errors[$name] = array();
 
-                $errors[$name]['value'] = ( is_object($value) ) ? (string)$value : $value;
+
+
+                if( is_object($value) ) {
+
+                    $errors[$name]['value'] = get_class($this);
+
+                    if (method_exists($value, '__toString')) {
+
+                        $errors[$name]['value'] = $errors[$name]['value'] . ' / ' . (string)$value;
+
+                    } elseif ($value instanceof DateTime) {
+
+                        $errors[$name]['value'] = $errors[$name]['value'] . ' / ' . $value->format(DateTime::ISO8601);
+
+                    }
+
+                } elseif( is_array($value) ){
+
+                    $errors[$name]['value'] = implode(', ', array_map(function($v){
+                        return get_class($v);
+                    }, $value) );
+
+                } else {
+                    $errors[$name]['value'] = $value;
+                }
+
+
                 $errors[$name]['messages'] = array();
 
                 foreach( $e->getIterator() as $exception ){

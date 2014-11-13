@@ -28,6 +28,18 @@ class NotifiedPerson extends AbstractData {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
+        $this->validators['name'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Name' ),
+            ]);
+        };
+
+        $this->validators['address'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Address' ),
+            ]);
+        };
+
         //---
 
         parent::__construct( $data );
