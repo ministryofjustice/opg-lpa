@@ -1,0 +1,15 @@
+<phpunit
+    bootstrap="./Bootstrap.php"
+    colors="true"
+    strict="false"
+    syntaxCheck="false"
+    verbose="false">
+    <testsuite name="OpgLpaPdf">
+        <directory>./Opg</directory>
+    </testsuite>
+
+    <php>
+        <server name="SERVER_NAME" value="phpunit"/>
+        <server name="APPLICATION_ENV" value="development"/>
+    </php>
+</phpunit>
