@@ -9,6 +9,7 @@ return array(
     'CredisException' => $vendorDir . '/colinmollenhour/credis/Client.php',
     'Credis_Client' => $vendorDir . '/colinmollenhour/credis/Client.php',
     'Credis_Cluster' => $vendorDir . '/colinmollenhour/credis/Cluster.php',
+    'Credis_Sentinel' => $vendorDir . '/colinmollenhour/credis/Sentinel.php',
     'Doctrine\\Instantiator\\Exception\\ExceptionInterface' => $vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator/Exception/ExceptionInterface.php',
     'Doctrine\\Instantiator\\Exception\\InvalidArgumentException' => $vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator/Exception/InvalidArgumentException.php',
     'Doctrine\\Instantiator\\Exception\\UnexpectedValueException' => $vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator/Exception/UnexpectedValueException.php',

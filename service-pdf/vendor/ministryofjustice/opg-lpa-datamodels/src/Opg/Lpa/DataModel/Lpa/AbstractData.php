@@ -9,13 +9,41 @@ use Respect\Validation\Exceptions;
 use Opg\Lpa\DataModel\Validator\ValidatorException;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 
-
+/**
+ * This class is extended by all entities that make up an LPA, including the LPA object itself.
+ * It manages all key interactions with the data - setting, getting, validating, exporting - in a consistent
+ * and "propagatable" way.
+ *
+ * Calls to validate() and toArray() - and all methods that use toArray() - propagate down to all values
+ * in $this instance that also extend AbstractData.
+ *
+ * e.g. Lpa -> Document -> Donor -> Name
+ *
+ * Class AbstractData
+ * @package Opg\Lpa\DataModel\Lpa
+ */
 abstract class AbstractData implements AccessorInterface, ValidatableInterface, JsonSerializable {
 
+    /**
+     * @var array Array of Validators (or a function reference that return a Validator)
+     */
     protected $validators = array();
 
+    /**
+     * @var array Array of mappers
+     */
     protected $typeMap = array();
 
+    /**
+     * Builds and populates $this chunk of the LPA.
+     *
+     * If $data is:
+     *  - null: Nothing is populated.
+     *  - string: We attempt to JSON decode the string and populate the object.
+     *  - string: We populate the object from the array.
+     *
+     * @param null|string|array $data
+     */
     public function __construct( $data = null ){
 
         // If it's a string, assume it's JSON...
@@ -40,6 +68,10 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
     //--------------------------------------
     // Getter
 
+    /**
+     * @param string $property
+     * @return mixed
+     */
     public function __get( $property ){
         return $this->get( $property );
     }
@@ -240,10 +272,29 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
     public function jsonSerialize(){
         return $this->toArray();
-    } // function
+    }
 
     public function toJson(){
         return json_encode( $this, JSON_PRETTY_PRINT );
+    }
+
+    public function flatten(){
+        return $this->flattenArray( $this->toArray() );
+    }
+
+    //-------------------
+
+    private function flattenArray($array, $prefix = '') {
+        $result = array();
+        foreach($array as $key=>$value) {
+            if(is_array($value)) {
+                $result = $result + $this->flattenArray($value, $prefix . $key . '-');
+            }
+            else {
+                $result[$prefix.$key] = $value;
+            }
+        }
+        return $result;
     }
 
     //-------------------

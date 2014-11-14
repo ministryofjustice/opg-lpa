@@ -268,6 +268,11 @@ class Credis_Client {
     protected $renamedCommands;
 
     /**
+     * @var int
+     */
+    protected $requests = 0;
+
+    /**
      * Creates a Redisent connection to the Redis server on host {@link $host} and port {@link $port}.
      * $host may also be a path to a unix socket or a string in the form of tcp://[hostname]:[port] or unix://[path]
      *
@@ -275,14 +280,19 @@ class Credis_Client {
      * @param integer $port The port number of the Redis server
      * @param float $timeout  Timeout period in seconds
      * @param string $persistent  Flag to establish persistent connection
+     * @param int $db The selected datbase of the Redis server
+     * @param string $password The authentication password of the Redis server
      */
-    public function __construct($host = '127.0.0.1', $port = 6379, $timeout = null, $persistent = '')
+    public function __construct($host = '127.0.0.1', $port = 6379, $timeout = null, $persistent = '', $db = 0, $password = null)
     {
         $this->host = (string) $host;
         $this->port = (int) $port;
         $this->timeout = $timeout;
         $this->persistent = (string) $persistent;
         $this->standalone = ! extension_loaded('redis');
+        $this->authPassword = $password;
+        $this->selectedDb = (int)$db;
+        $this->convertHost();
     }
 
     public function __destruct()
@@ -291,7 +301,38 @@ class Credis_Client {
             $this->close();
         }
     }
+    /**
+     * Return the host of the Redis instance
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+    /**
+     * Return the port of the Redis instance
+     * @return int
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
 
+    /**
+     * Return the selected database
+     * @return int
+     */
+    public function getSelectedDb()
+    {
+        return $this->selectedDb;
+    }
+    /**
+     * @return string
+     */
+    public function getPersistence()
+    {
+        return $this->persistent;
+    }
     /**
      * @throws CredisException
      * @return Credis_Client
@@ -324,24 +365,16 @@ class Credis_Client {
         $this->closeOnDestruct = $flag;
         return $this;
     }
-
-    /**
-     * @throws CredisException
-     * @return Credis_Client
-     */
-    public function connect()
+    protected function convertHost()
     {
-        if ($this->connected) {
-            return $this;
-        }
         if (preg_match('#^(tcp|unix)://(.*)$#', $this->host, $matches)) {
             if($matches[1] == 'tcp') {
-                if ( ! preg_match('#^(.*)(?::(\d+))?(?:/(.*))?$#', $matches[2], $matches)) {
-                    throw new CredisException('Invalid host format; expected tcp://host[:port][/persistent]');
+                if ( ! preg_match('#^([^:]+)(:([0-9]+))?(/(.+))?$#', $matches[2], $matches)) {
+                    throw new CredisException('Invalid host format; expected tcp://host[:port][/persistence_identifier]');
                 }
                 $this->host = $matches[1];
-                $this->port = (int) (isset($matches[2]) ? $matches[2] : 6379);
-                $this->persistent = isset($matches[3]) ? $matches[3] : '';
+                $this->port = (int) (isset($matches[3]) ? $matches[3] : 6379);
+                $this->persistent = isset($matches[5]) ? $matches[5] : '';
             } else {
                 $this->host = $matches[2];
                 $this->port = NULL;
@@ -352,6 +385,16 @@ class Credis_Client {
         }
         if ($this->port !== NULL && substr($this->host,0,1) == '/') {
             $this->port = NULL;
+        }
+    }
+    /**
+     * @throws CredisException
+     * @return Credis_Client
+     */
+    public function connect()
+    {
+        if ($this->connected) {
+            return $this;
         }
         if ($this->standalone) {
             $flags = STREAM_CLIENT_CONNECT;
@@ -395,9 +438,21 @@ class Credis_Client {
             $this->setReadTimeout($this->readTimeout);
         }
 
+        if($this->authPassword !== null) {
+            $this->auth($this->authPassword);
+        }
+        if($this->selectedDb !== 0) {
+            $this->select($this->selectedDb);
+        }
         return $this;
     }
-
+    /**
+     * @return bool
+     */
+    public function isConnected()
+    {
+        return $this->connected;
+    }
     /**
      * Set the read timeout for the connection. Use 0 to disable timeouts entirely (or use a very long timeout
      * if not supported).
@@ -517,8 +572,8 @@ class Credis_Client {
      */
     public function auth($password)
     {
+        $response = $this->__call('auth', array($password));
         $this->authPassword = $password;
-        $response = $this->__call('auth', array($this->authPassword));
         return $response;
     }
 
@@ -528,8 +583,8 @@ class Credis_Client {
      */
     public function select($index)
     {
+        $response = $this->__call('select', array($index));
         $this->selectedDb = (int) $index;
-        $response = $this->__call('select', array($this->selectedDb));
         return $response;
     }
 
@@ -840,7 +895,19 @@ class Credis_Client {
                     return $this;
                 }
 
-                $response = call_user_func_array(array($this->redis, $name), $args);
+                // Send request, retry one time when using persistent connections on the first request only
+                $this->requests++;
+                try {
+                    $response = call_user_func_array(array($this->redis, $name), $args);
+                } catch (RedisException $e) {
+                    if ($this->persistent && $this->requests == 1 && $e->getMessage() == 'read error on connection') {
+                        $this->connected = FALSE;
+                        $this->connect();
+                        $response = call_user_func_array(array($this->redis, $name), $args);
+                    } else {
+                        throw $e;
+                    }
+                }
             }
             // Wrap exceptions
             catch(RedisException $e) {
@@ -882,6 +949,13 @@ class Credis_Client {
                     if ($error && substr($error,0,8) == 'NOSCRIPT') {
                         $response = NULL;
                     } else if ($error) {
+                        throw new CredisException($error);
+                    }
+                    break;
+                default:
+                    $error = $this->redis->getLastError();
+                    $this->redis->clearLastError();
+                    if ($error) {
                         throw new CredisException($error);
                     }
                     break;
