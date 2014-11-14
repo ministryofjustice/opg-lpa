@@ -1,0 +1,152 @@
+{
+    "id": 1234,
+    "createdAt": "2014-11-12T13:24:39+0000",
+    "updatedAt": "2014-11-13T13:24:39+0000",
+    "user": "ad353da6b73ceee2201cee2f9936c509",
+    "payment": {
+        "method": "card",
+        "phone": {
+            "number": "020 1234 5678"
+        },
+        "amount": 100,
+        "reference": "abc123"
+    },
+    "whoAreYouAnswered": false,
+    "locked": false,
+    "seed": null,
+    "document": {
+        "type": "health-and-welfare",
+        "donor": {
+            "name": {
+                "title": "Mr",
+                "first": "Bob",
+                "last": "Sanders"
+            },
+            "otherNames": "Fred",
+            "address": {
+                "address1": "Line 1",
+                "address2": "Line 2",
+                "address3": "A new line",
+                "postcode": "SW1H 9AJ"
+            },
+            "dob": {
+                "date": "2010-12-17T00:00:00+0000"
+            },
+            "email": {
+                "address": "test@digital.justice.gov.uk"
+            }
+        },
+        "whoIsRegistering": "donor",
+        "decisions": {
+            "how": "jointly-attorney-severally",
+            "when": "no-capacity",
+            "canSustainLife": true
+        },
+        "correspondent": {
+            "who": "other",
+            "name": {
+                "title": "Mr",
+                "first": "Bob",
+                "last": "Sanders"
+            },
+            "company": "My Company Limited",
+            "address": {
+                "address1": "Line 1",
+                "address2": "Line 2",
+                "address3": "A new line",
+                "postcode": "SW1H 9AJ"
+            },
+            "email": {
+                "address": "test@digital.justice.gov.uk"
+            },
+            "phone": {
+                "number": "020 1234 5678"
+            }
+        },
+        "instruction": "Here are some instructions",
+        "preference": "Here are some preferences",
+        "certificateProvider": {
+            "name": {
+                "title": "Mr",
+                "first": "Bob",
+                "last": "Sanders"
+            },
+            "address": {
+                "address1": "Line 1",
+                "address2": "Line 2",
+                "address3": "A new line",
+                "postcode": "SW1H 9AJ"
+            }
+        },
+        "primaryAttorneys": [
+            {
+                "name": {
+                    "title": "Mr",
+                    "first": "Bob",
+                    "last": "Sanders"
+                },
+                "dob": {
+                    "date": "1980-12-17T00:00:00+0000"
+                },
+                "address": {
+                    "address1": "Line 1",
+                    "address2": "Line 2",
+                    "address3": "A new line",
+                    "postcode": "SW1H 9AJ"
+                },
+                "email": {
+                    "address": "test@digital.justice.gov.uk"
+                }
+            },
+            {
+                "name": {
+                    "title": "Miss",
+                    "first": "Brenda",
+                    "last": "Smith"
+                },
+                "dob": {
+                    "date": "1980-12-17T00:00:00+0000"
+                },
+                "address": {
+                    "address1": "Line 1",
+                    "address2": "Line 2",
+                    "address3": "A new line",
+                    "postcode": "SW1H 9AJ"
+                },
+                "email": {
+                    "address": "test@digital.justice.gov.uk"
+                }
+            }
+        ],
+        "replacementAttorneys": [
+            {
+                "name": "Corp Name Limited",
+                "number": "1234",
+                "address": {
+                    "address1": "Line 1",
+                    "address2": "Line 2",
+                    "address3": "A new line",
+                    "postcode": "SW1H 9AJ"
+                },
+                "email": {
+                    "address": "test@digital.justice.gov.uk"
+                }
+            }
+        ],
+        "peopleToNotify": [
+            {
+                "name": {
+                    "title": "Mr",
+                    "first": "Bob",
+                    "last": "Sanders"
+                },
+                "address": {
+                    "address1": "Line 1",
+                    "address2": "Line 2",
+                    "address3": "A new line",
+                    "postcode": "SW1H 9AJ"
+                }
+            }
+        ]
+    }
+}

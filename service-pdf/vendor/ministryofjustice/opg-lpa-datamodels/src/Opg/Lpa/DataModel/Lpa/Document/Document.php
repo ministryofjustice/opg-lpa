@@ -14,8 +14,6 @@ class Document extends AbstractData {
     const LPA_TYPE_PF = 'property-and-financial';
     const LPA_TYPE_HW = 'health-and-welfare';
 
-
-
     //---
 
     /**
@@ -97,10 +95,6 @@ class Document extends AbstractData {
     //-----------------------------
 
     public function __construct( $data = null ){
-
-        // Init this property. Maybe create a Decisions class?
-        //$this->decisions = (object)[ 'how'=>null, 'when'=>null, 'can-sustain-life'=>null ];
-
 
         //-----------------------------------------------------
         // Type mappers

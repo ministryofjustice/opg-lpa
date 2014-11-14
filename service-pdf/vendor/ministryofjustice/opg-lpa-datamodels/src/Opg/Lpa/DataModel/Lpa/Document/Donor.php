@@ -7,13 +7,40 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents the Donor associated with the LPA.
+ *
+ * Class Donor
+ * @package Opg\Lpa\DataModel\Lpa\Document
+ */
 class Donor extends AbstractData {
 
+    /**
+     * @var Elements\Name Their name.
+     */
     protected $name;
+
+    /**
+     * @var string Any other/past names they've may be known as.
+     */
     protected $otherNames;
+
+    /**
+     * @var Elements\Address Their postal address.
+     */
     protected $address;
+
+    /**
+     * @var Elements\Dob Their date of birth.
+     */
     protected $dob;
+
+    /**
+     * @var Elements\EmailAddress Their email address.
+     */
     protected $email;
+
+
 
     public function __construct( $data = null ){
 

@@ -32,6 +32,16 @@ interface AccessorInterface {
     public function set( $property, $value, $validate = true );
 
     /**
+     * Sets a property's value, after validating it.
+     *
+     * @param string $property The property name to set.
+     * @return AbstractData Returns $this to allow chaining.
+     * @throws \InvalidArgumentException If the property name is invalid.
+     * @throws \Opg\Lpa\DataModel\Validator\ValidatorException If the property value does not validate.
+     */
+    public function __set( $property, $value );
+
+    /**
      * Returns an array representation of $this instance.
      *
      * @return array
@@ -44,5 +54,19 @@ interface AccessorInterface {
      * @return string
      */
     public function toJson();
+
+    /**
+     * Returns a flat (not multidimensional) array representing $this.
+     *
+     * This is done by generating array keys based on the object hierarchy.
+     *
+     * For example:
+     *  Lpa -> Document -> Donor -> Name -> Title
+     *  will map to
+     *  [lpa-document-donor-name-title]
+     *
+     * @return array
+     */
+    public function flatten();
 
 } // interface

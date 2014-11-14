@@ -9,6 +9,12 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator; // Extended instance of Respect\Validation\Validator
 
+/**
+ * Represents a full LPA document, plus associated metadata.
+ *
+ * Class Lpa
+ * @package Opg\Lpa\DataModel\Lpa
+ */
 class Lpa extends AbstractData implements CompleteInterface {
 
     /**

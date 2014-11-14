@@ -7,9 +7,22 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a person representing a Certificate Provider.
+ *
+ * Class CertificateProvider
+ * @package Opg\Lpa\DataModel\Lpa\Document
+ */
 class CertificateProvider extends AbstractData {
 
+    /**
+     * @var Elements\Name Their name.
+     */
     protected $name;
+
+    /**
+     * @var Elements\Address Their postal address.
+     */
     protected $address;
 
 

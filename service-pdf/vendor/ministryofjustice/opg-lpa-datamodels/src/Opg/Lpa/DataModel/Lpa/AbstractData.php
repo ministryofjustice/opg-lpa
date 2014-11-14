@@ -69,13 +69,23 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
     // Getter
 
     /**
+     * Returns the value for the passed property.
+     *
      * @param string $property
      * @return mixed
+     * @throws InvalidArgumentException If the property does not exist.
      */
     public function __get( $property ){
         return $this->get( $property );
     }
 
+    /**
+     * Returns the value for the passed property.
+     *
+     * @param string $property
+     * @return mixed
+     * @throws InvalidArgumentException If the property does not exist.
+     */
     public function get( $property ){
 
         if( !property_exists( $this, $property ) ){
@@ -89,10 +99,27 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
     //--------------------------------------
     // Setter
 
+    /**
+     * Sets a property's value, after validating it.
+     *
+     * @param string $property The property name to set.
+     * @return AbstractData Returns $this to allow chaining.
+     * @throws InvalidArgumentException If the property name is invalid.
+     * @throws ValidatorException If the property value does not validate.
+     */
     public function __set( $property, $value ){
         return $this->set( $property, $value, true );
     }
 
+    /**
+     * Sets a property's value.
+     *
+     * @param string $property The property name to set.
+     * @param bool $validate Should the value be validated before being set.
+     * @return AbstractData Returns $this to allow chaining.
+     * @throws InvalidArgumentException If the property name is invalid.
+     * @throws ValidatorException If the property value does not validate.
+     */
     public function set( $property, $value, $validate = true ){
 
         if( !property_exists( $this, $property ) ){
@@ -103,12 +130,13 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
         // Check if this $property should by type mapped...
 
-        if( $this->typeMap[$property] ){
+        if( isset($this->typeMap[$property]) ){
             $value = $this->typeMap[$property]( $value );
         }
 
         //---
 
+        // Stored so we can restore it should the new value not validate.
         $originalValue = $this->{$property};
 
         $this->{$property} = $value;
@@ -132,9 +160,12 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
     // Validation
 
     /**
-     * $property == null: All defined validators are applied.
-     * $property == string: The passed property name is validated.
-     * $property == array: All passed property names are applied.
+     * Validates one or more values.
+     *
+     * If:
+     *  $propertiesToCheck == null: All defined validators are applied.
+     *  $propertiesToCheck == string: The passed property name is validated.
+     *  $propertiesToCheck == array: All passed property names are applied.
      *
      * @param null $property
      * @return ValidatorResponse
@@ -142,12 +173,12 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      */
     public function validate( $propertiesToCheck = null ){
 
-        $errors = new ValidatorResponse();
+        $response = new ValidatorResponse();
 
         //---
 
         // If a property was passed, create an array containing only it.
-        // Otherwise include all $properties for which there is a validator.
+        // Otherwise include all properties for which there is a validator.
         if( isset($propertiesToCheck) && is_array($propertiesToCheck) ){
 
             $properties = $propertiesToCheck;
@@ -163,80 +194,96 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         }
 
         //--------------------------------------------
-        // Run validators defined in $this class.
+        // Run validators for each property.
 
         // For each property we're going to validate...
         foreach( $properties as $name ) {
 
-            // false prevents the value being formatted.
+            // false here prevents the value being formatted.
             $value = $this->get( $name, false );
 
+            // Retrieve the relevant validator instance.
             $validator = $this->getValidator( $name );
 
             try {
 
+                // Validate the value. Exceptions\AbstractNestedException is thrown on failure.
                 $validator->assert( $value );
 
             } catch( Exceptions\AbstractNestedException $e) {
 
-                $errors[$name] = array();
+                // If we're there the value failed one or more validation rules.
 
+                $response[$name] = array();
 
+                //----------------------------------------
+                // Store the value in the response.
+                // Changes depending on the value type.
 
                 if( is_object($value) ) {
 
-                    $errors[$name]['value'] = get_class($this);
+                    $response[$name]['value'] = get_class($this);
 
                     if (method_exists($value, '__toString')) {
 
-                        $errors[$name]['value'] = $errors[$name]['value'] . ' / ' . (string)$value;
+                        $response[$name]['value'] = $response[$name]['value'] . ' / ' . (string)$value;
 
                     } elseif ($value instanceof DateTime) {
 
-                        $errors[$name]['value'] = $errors[$name]['value'] . ' / ' . $value->format(DateTime::ISO8601);
+                        $response[$name]['value'] = $response[$name]['value'] . ' / ' . $value->format(DateTime::ISO8601);
 
                     }
 
                 } elseif( is_array($value) ){
 
-                    $errors[$name]['value'] = implode(', ', array_map(function($v){
+                    $response[$name]['value'] = implode(', ', array_map(function($v){
                         return get_class($v);
                     }, $value) );
 
                 } else {
-                    $errors[$name]['value'] = $value;
+                    $response[$name]['value'] = $value;
                 }
 
+                //-------
 
-                $errors[$name]['messages'] = array();
+                $response[$name]['messages'] = array();
 
+                // Add each message. There should be one message per rule the value failed.
                 foreach( $e->getIterator() as $exception ){
-                    $errors[$name]['messages'][] = $exception->getMainMessage();
+                    $response[$name]['messages'][] = $exception->getMainMessage();
                 }
 
             } // catch
 
         } // foreach
 
-        //--------------------------------------------
-        // Run validators defined in property classes
+        //---------------------------------------------------------------
+        // Propagate the validation request down to property values that
+        // implement ValidatableInterface.
 
+        // Gets a list of all properties this class has...
         $reflectedProperties = (new \ReflectionClass( $this ))->getProperties();
 
         foreach( $reflectedProperties as $property ){
 
             $name = $property->getName();
 
-            if( is_null($propertiesToCheck) || in_array( $name, $properties ) )
+            // If this property is currently being validated...
+            if( is_null($propertiesToCheck) || in_array( $name, $properties ) ) {
 
-            if( $this->{$name} instanceof ValidatableInterface ){
+                // And it implements ValidatableInterface...
+                if ($this->{$name} instanceof ValidatableInterface) {
 
-                // Call validate on this property...
-                $response = $this->{$name}->validate();
+                    // Call validate on this property...
+                    $result = $this->{$name}->validate();
 
-                if( $response->hasErrors() ){
-                    if( !isset($errors[$name]) ){ $errors[$name] = array(); }
-                    $errors[$name]['errors'] = $response;
+                    if ($result->hasErrors()) {
+                        if (!isset($response[$name])) {
+                            $response[$name] = array();
+                        }
+                        $response[$name]['errors'] = $result;
+                    } // if
+
                 } // if
 
             } // if
@@ -245,19 +292,26 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
         //---
 
-        return $errors;
+        return $response;
 
     } // function
 
     //-------------------
 
+    /**
+     * Returns $this as an array, propagating to all properties that implement AccessorInterface.
+     *
+     * @return array
+     */
     public function toArray(){
 
-        $values =  get_object_vars( $this );
+        $values = get_object_vars( $this );
 
+        // We shouldn't include these...
         unset( $values['typeMap'] );
         unset( $values['validators'] );
 
+        // Recursively convert all items to an array...
         array_walk_recursive( $values, function( &$item, $key ){
             if( $item instanceof AccessorInterface ){
                 $item = $item->toArray();
@@ -270,21 +324,48 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
     } // function
 
+    /**
+     * Return the array to use whenever json_encode() is called on this instance.
+     *
+     * @return array
+     */
     public function jsonSerialize(){
         return $this->toArray();
     }
 
+    /**
+     * Returns $this as JSON, propagating to all properties that implement AccessorInterface.
+     *
+     * @return string
+     */
     public function toJson(){
         return json_encode( $this, JSON_PRETTY_PRINT );
     }
 
+    /**
+     * Returns a flat (not multidimensional) array representing $this.
+     *
+     * This is done by generating array keys based on the object hierarchy.
+     *
+     * For example:
+     *  Lpa -> Document -> Donor -> Name -> Title
+     *  will map to
+     *  [lpa-document-donor-name-title]
+     *
+     * @return array
+     */
     public function flatten(){
         return $this->flattenArray( $this->toArray() );
     }
 
     //-------------------
 
-    private function flattenArray($array, $prefix = '') {
+    /**
+     * Method for recursively walking over our array, flattening it.
+     * To trigger it, call $this->flatten()
+     *
+     */
+    private function flattenArray($array, $prefix = 'lpa-') {
         $result = array();
         foreach($array as $key=>$value) {
             if(is_array($value)) {
@@ -302,9 +383,9 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
     /**
      * Lazy loads the validator for the passed property name.
      *
-     * @param $property
-     * @return mixed
-     * @throws InvalidArgumentException
+     * @param string $property The property name.
+     * @return \Respect\Validation\Validator Instance of a validator.
+     * @throws InvalidArgumentException If there is no validator for the requested property.
      */
     protected function getValidator( $property ){
 

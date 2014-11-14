@@ -19,6 +19,9 @@ class Validator extends RespectValidator {
 
     }
 
+    /**
+     * Configures all validator errors messages.
+     */
     protected static function initMessages(){
 
         Exceptions\AllOfException::$defaultTemplates = array(

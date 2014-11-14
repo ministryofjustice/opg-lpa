@@ -7,6 +7,12 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents decisions that can/will be made relating to the LPA.
+ *
+ * Class Decisions
+ * @package Opg\Lpa\DataModel\Lpa\Document
+ */
 class Decisions extends AbstractData {
 
     const LPA_DECISION_HOW_MIXED = 'mixed';
@@ -17,8 +23,19 @@ class Decisions extends AbstractData {
     const LPA_DECISION_WHEN_NOW = 'now';
     const LPA_DECISION_WHEN_NO_CAPACITY = 'no-capacity';
 
+    /**
+     * @var string Represents how decisions will be made.
+     */
     protected $how;
+
+    /**
+     * @var string Represents when decisions can be made.
+     */
     protected $when;
+
+    /**
+     * @var bool Represents whether this LPA allows Attorneys to make life sustaining decisions. True = yes; false = no.
+     */
     protected $canSustainLife;
 
     public function __construct( $data = null ){

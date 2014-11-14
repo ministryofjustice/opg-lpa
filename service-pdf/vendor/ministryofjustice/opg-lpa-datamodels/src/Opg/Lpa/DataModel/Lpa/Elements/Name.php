@@ -6,10 +6,27 @@ use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a person's name.
+ *
+ * Class Name
+ * @package Opg\Lpa\DataModel\Lpa\Elements
+ */
 class Name extends AbstractData {
 
+    /**
+     * @var string A person's title. E.g. Mr, Miss, Mrs, etc.
+     */
     protected $title;
+
+    /**
+     * @var string A person's first name (or names).
+     */
     protected $first;
+
+    /**
+     * @var string A person's last name.
+     */
     protected $last;
 
     public function extractForPdf(){

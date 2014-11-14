@@ -6,11 +6,32 @@ use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a postal address.
+ *
+ * Class Address
+ * @package Opg\Lpa\DataModel\Lpa\Elements
+ */
 class Address extends AbstractData {
 
+    /**
+     * @var string First line of the address.
+     */
     protected $address1;
+
+    /**
+     * @var string Second line of the address.
+     */
     protected $address2;
+
+    /**
+     * @var string Third line of the address.
+     */
     protected $address3;
+
+    /**
+     * @var string A UK postcode.
+     */
     protected $postcode;
 
     public function __construct( $data = null ){

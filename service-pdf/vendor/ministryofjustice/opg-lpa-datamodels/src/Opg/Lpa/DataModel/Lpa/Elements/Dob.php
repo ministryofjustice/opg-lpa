@@ -6,8 +6,17 @@ use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a date of birth.
+ *
+ * Class Dob
+ * @package Opg\Lpa\DataModel\Lpa\Elements
+ */
 class Dob extends AbstractData {
 
+    /**
+     * @var \DateTime A date of birth. The time component of the DateTime object should be ignored.
+     */
     protected $date;
 
     public function __construct( $data = null ){

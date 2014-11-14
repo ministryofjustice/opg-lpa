@@ -7,18 +7,49 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents the person with whom Correspondence relating to the LPA should be sent.
+ *
+ * Class Correspondence
+ * @package Opg\Lpa\DataModel\Lpa\Document
+ */
 class Correspondence extends AbstractData {
 
     const WHO_DONOR = 'donor';
     const WHO_ATTORNEY = 'attorney';
     const WHO_OTHER = 'other';
 
+    /**
+     * @var string The person's role within this LPA.
+     */
     protected $who;
+
+    /**
+     * @var Elements\Name Their name.
+     */
     protected $name;
+
+    /**
+     * @var string Their company name.
+     */
     protected $company;
+
+    /**
+     * @var Elements\Address Their postal address.
+     */
     protected $address;
+
+    /**
+     * @var Elements\EmailAddress Their email address.
+     */
     protected $email;
+
+    /**
+     * @var Elements\PhoneNumber Their phone number.
+     */
     protected $phone;
+
+
 
     public function __construct( $data = null ){
 

@@ -7,14 +7,35 @@ use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
+/**
+ * Represents payment information associated with an LPA.
+ *
+ * Class Payment
+ * @package Opg\Lpa\DataModel\Lpa\Payment
+ */
 class Payment extends AbstractData {
 
     const PAYMENT_TYPE_CARD = 'card';
     const PAYMENT_TYPE_CHEQUE = 'cheque';
 
+    /**
+     * @var string The payment method used (or that will be used).
+     */
     protected $method;
+
+    /**
+     * @var string The phone number that should be used regarding payment.
+     */
     protected $phone;
+
+    /**
+     * @var int|float The amount that has or should be charged.
+     */
     protected $amount;
+
+    /**
+     * @var string A payment reference number.
+     */
     protected $reference;
 
     public function __construct( $data = null ){
@@ -61,6 +82,5 @@ class Payment extends AbstractData {
         parent::__construct( $data );
 
     } // function
-
 
 } // class

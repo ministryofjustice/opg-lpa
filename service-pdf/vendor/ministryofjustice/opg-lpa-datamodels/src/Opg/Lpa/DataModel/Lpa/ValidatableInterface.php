@@ -15,7 +15,7 @@ interface ValidatableInterface {
      * the validation request should be propagated.
      *
      * @param string|Array|null $property
-     * @return \Opg\Lpa\DataModel\Validator\Errors
+     * @return \Opg\Lpa\DataModel\Validator\ValidatorResponse
      */
     public function validate($property);
 

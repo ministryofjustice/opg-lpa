@@ -6,10 +6,25 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a Human Attorney.
+ *
+ * Class Human
+ * @package Opg\Lpa\DataModel\Lpa\Document\Attorney
+ */
 class Human extends AbstractAttorney {
 
+    /**
+     * @var Elements\Name Their name.
+     */
     protected $name;
+
+    /**
+     * @var Elements\Dob Their date of birth.
+     */
     protected $dob;
+
+
 
     public function __construct( $data ){
 

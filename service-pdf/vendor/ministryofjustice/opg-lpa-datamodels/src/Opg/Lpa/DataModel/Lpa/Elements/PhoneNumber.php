@@ -6,8 +6,17 @@ use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a phone number.
+ *
+ * Class PhoneNumber
+ * @package Opg\Lpa\DataModel\Lpa\Elements
+ */
 class PhoneNumber extends AbstractData {
 
+    /**
+     * @var string A phone number.
+     */
     protected $number;
 
     public function __construct( $data = null ){

@@ -7,10 +7,24 @@ use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Base Represents of an Attorney. This can be extended with one of two types, either Human or TrustCorporation.
+ *
+ * Class AbstractAttorney
+ * @package Opg\Lpa\DataModel\Lpa\Document\Attorneys
+ */
 abstract class AbstractAttorney extends AbstractData {
 
+    /**
+     * @var Elements\Address Their postal address.
+     */
     protected $address;
+
+    /**
+     * @var Elements\EmailAddress Their email address.
+     */
     protected $email;
+
 
     public function __construct( $data ){
 

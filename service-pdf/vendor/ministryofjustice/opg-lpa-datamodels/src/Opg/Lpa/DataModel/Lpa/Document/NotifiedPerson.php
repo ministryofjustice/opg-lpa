@@ -7,10 +7,24 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+/**
+ * Represents a person to be notified.
+ *
+ * Class NotifiedPerson
+ * @package Opg\Lpa\DataModel\Lpa\Document
+ */
 class NotifiedPerson extends AbstractData {
 
+    /**
+     * @var Elements\Name Their name.
+     */
     protected $name;
+
+    /**
+     * @var Elements\Address Their postal address.
+     */
     protected $address;
+
 
     public function __construct( $data = null ){
 
