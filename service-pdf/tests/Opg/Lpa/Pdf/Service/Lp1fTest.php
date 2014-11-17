@@ -35,9 +35,9 @@ class Lp1fTest extends \PHPUnit_Framework_TestCase
         $this->assertObjectHasAttribute('flattenLpa', $this->lp1f);
         
         $this->assertTrue($this->lp1f->generate() instanceof Lp1f);
-        $this->assertTrue($this->lp1f->getPdf() instanceof Pdf);
+        $this->assertTrue($this->lp1f->getPdfObject() instanceof Pdf);
         
-        $pdfFormFieldsData = $this->lp1f->getPdf()->getDataFields();
+        $pdfFormFieldsData = $this->lp1f->getPdfObject()->getDataFields();
         
     }
     

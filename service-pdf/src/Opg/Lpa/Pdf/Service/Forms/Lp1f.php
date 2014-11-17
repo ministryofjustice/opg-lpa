@@ -22,9 +22,4 @@ class Lp1f extends FormAbstract
     {
         
     }
-    
-    public function getPdf()
-    {
-        return $this->pdf;
-    }
 } // class
