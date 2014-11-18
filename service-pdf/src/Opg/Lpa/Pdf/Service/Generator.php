@@ -11,8 +11,10 @@ use Opg\Lpa\Pdf\Service\Forms\Lp3;
 
 class Generator implements GeneratorInterface {
 
-    const TYPE_FORM_XXX = 'xxx';
-
+    const TYPE_FORM_LPH1 = 'LPH1';
+    const TYPE_FORM_LPF1 = 'LPF1';
+    const TYPE_FORM_LP3 = 'LP3';
+    
     protected $config;
     protected $type;
     protected $lpa;
