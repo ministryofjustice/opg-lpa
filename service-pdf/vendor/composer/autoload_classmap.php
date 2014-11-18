@@ -35,6 +35,7 @@ return array(
     'Opg\\Lpa\\DataModel\\Lpa\\Elements\\EmailAddress' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Elements/EmailAddress.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Elements\\Name' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Elements/Name.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Elements\\PhoneNumber' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Elements/PhoneNumber.php',
+    'Opg\\Lpa\\DataModel\\Lpa\\Formatter' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Formatter.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Lpa' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Lpa.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Payment\\Payment' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Payment/Payment.php',
     'Opg\\Lpa\\DataModel\\Lpa\\ValidatableInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/ValidatableInterface.php',

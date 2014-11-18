@@ -168,29 +168,5 @@ class Lpa extends AbstractData implements CompleteInterface {
         return true;
 
     } // function
-
-    //--------------------------------------------------------------------
-    // Property formatters
-
-    public function get( $property, $format = true ){
-        $value = parent::get( $property );
-
-        if( $format && $property == 'id' ){
-            // Formats the id as an A, followed by 11 digits, split into 3 blocks of 4 characters.
-            $value = chunk_split( 'A'.sprintf("%011d", $value), 4, ' ');
-        }
-
-        return $value;
-    }
-
-    public function set( $property, $value, $validate = true ){
-
-        switch( $property ){
-            case 'id':
-                $value = (int)preg_replace("/[^0-9]/", '', $value); break;
-        }
-
-        return parent::set( $property, $value, $validate );
-    }
-
+    
 } // class

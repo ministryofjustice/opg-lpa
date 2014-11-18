@@ -1089,12 +1089,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "3308183c1a6c31ae2735c19da8e7604070b79ce2"
+            "reference": "99df4adedfae4ae15c5be5bbc429ba2d1a754f5e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/3308183c1a6c31ae2735c19da8e7604070b79ce2",
-            "reference": "3308183c1a6c31ae2735c19da8e7604070b79ce2",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/99df4adedfae4ae15c5be5bbc429ba2d1a754f5e",
+            "reference": "99df4adedfae4ae15c5be5bbc429ba2d1a754f5e",
             "shasum": ""
         },
         "require": {
@@ -1104,7 +1104,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2014-11-18 11:59:20",
+        "time": "2014-11-18 16:28:22",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
