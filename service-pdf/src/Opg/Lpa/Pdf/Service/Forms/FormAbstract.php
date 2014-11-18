@@ -41,9 +41,6 @@ abstract class FormAbstract
     {
         $this->lpa = $lpa;
         $this->flattenLpa = $lpa->flatten();
-        
-        // generate a file path with lpa id and timestamp;
-        $this->generatedpPdfFilePath = 'output.pdf';
     }
 
     /**
