@@ -57,7 +57,10 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
             // Foreach each passed property...
             foreach( $data as $k => $v ){
 
-                $this->set( $k, $v, false );
+                // Only include known properties during the import...
+                if( property_exists( $this, $k ) ){
+                    $this->set( $k, $v, false );
+                }
 
             } // foreach
 

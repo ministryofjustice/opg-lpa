@@ -1,6 +1,8 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa\Payment;
 
+use DateTime;
+
 use Opg\Lpa\DataModel\Lpa\AbstractData;
 
 use Respect\Validation\Rules;
@@ -38,6 +40,12 @@ class Payment extends AbstractData {
      */
     protected $reference;
 
+    /**
+     * @var DateTime Date the payment was made.
+     */
+    protected $date;
+
+
     public function __construct( $data = null ){
 
         //-----------------------------------------------------
@@ -45,6 +53,10 @@ class Payment extends AbstractData {
 
         $this->typeMap['phone'] = function($v){
             return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
+        };
+
+        $this->typeMap['date'] = function($v){
+            return ($v instanceof DateTime) ? $v : new DateTime( $v );
         };
 
         //-----------------------------------------------------
@@ -73,6 +85,18 @@ class Payment extends AbstractData {
         $this->validators['reference'] = function(){
             return (new Validator)->addRule((new Rules\OneOf)->addRules([
                 new Rules\String,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['date'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\Instance( 'DateTime' ),
+                    new Rules\Call(function($input){
+                        return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
+                    }),
+                ]),
                 new Rules\NullValue,
             ]));
         };

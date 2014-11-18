@@ -40,14 +40,28 @@ class Correspondence extends AbstractData {
     protected $address;
 
     /**
+     * If this is set, we can contact them by email.
+     *
      * @var Elements\EmailAddress Their email address.
      */
     protected $email;
 
     /**
+     * If this is set, we can contact them by phone.
+     *
      * @var Elements\PhoneNumber Their phone number.
      */
     protected $phone;
+
+    /**
+     * @var bool Should we contact them by post.
+     */
+    protected $contactByPost;
+
+    /**
+     * @var bool Should we contact them in Welsh.
+     */
+    protected $contactInWelsh;
 
 
 
@@ -117,6 +131,18 @@ class Correspondence extends AbstractData {
             return (new Validator)->addRule((new Rules\OneOf)->addRules([
                 new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ),
                 new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['contactByPost'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Bool,
+            ]));
+        };
+
+        $this->validators['contactInWelsh'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Bool,
             ]));
         };
 
