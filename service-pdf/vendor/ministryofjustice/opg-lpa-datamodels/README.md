@@ -6,7 +6,7 @@ The lasting power of attorney (LPA) data models are a set of PHP classes that we
 Installation with Composer
 --------------------
 
-Add teh following into your composer.json, then call `php composer.phar install`. 
+Add the following into your composer.json, then call `php composer.phar install`. 
 
 ```json
 {

@@ -11,13 +11,19 @@ use InvalidArgumentException;
  */
 class ValidatorException extends InvalidArgumentException {
 
-    protected $validatorResponse;
+    protected $validatorResponse = null;
 
     public function setValidatorResponse( ValidatorResponseInterface $response ){
 
         $this->validatorResponse = $response;
 
         return $this;
+
+    } // function
+
+    public function getValidatorResponse(){
+
+        return $this->validatorResponse;
 
     } // function
 

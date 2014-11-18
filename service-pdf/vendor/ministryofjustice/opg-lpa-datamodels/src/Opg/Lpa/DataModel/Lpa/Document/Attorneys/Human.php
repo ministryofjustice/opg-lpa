@@ -60,4 +60,10 @@ class Human extends AbstractAttorney {
 
     } // function
 
+    public function toArray(){
+
+        return array_merge( parent::toArray(), [ 'type'=>'human' ] );
+
+    }
+
 } // class

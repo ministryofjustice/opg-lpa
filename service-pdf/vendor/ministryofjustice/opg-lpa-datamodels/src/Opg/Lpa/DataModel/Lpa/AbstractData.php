@@ -141,7 +141,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
         $this->{$property} = $value;
 
-        if( $validate ) {
+        if( $validate && isset($this->validators[$property]) ) {
 
             $response = $this->validate($property);
 
@@ -350,7 +350,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * For example:
      *  Lpa -> Document -> Donor -> Name -> Title
      *  will map to
-     *  [lpa-document-donor-name-title]
+     *  array[lpa-document-donor-name-title]
      *
      * @return array
      */

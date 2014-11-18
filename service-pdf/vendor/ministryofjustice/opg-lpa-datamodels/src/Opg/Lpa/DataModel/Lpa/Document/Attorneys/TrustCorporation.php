@@ -52,4 +52,10 @@ class TrustCorporation extends AbstractAttorney {
 
     } // function
 
+    public function toArray(){
+
+        return array_merge( parent::toArray(), [ 'type'=>'trust' ] );
+
+    }
+
 }
