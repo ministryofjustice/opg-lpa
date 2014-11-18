@@ -23,5 +23,5 @@
     "autoload": {
         "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/"}
     },
-    "include-path": ["config/", "assets/"]
+    "include-path": ["config/"]
 }
