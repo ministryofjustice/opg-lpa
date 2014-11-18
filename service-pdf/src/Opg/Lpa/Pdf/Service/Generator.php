@@ -4,6 +4,10 @@ namespace Opg\Lpa\Pdf\Service;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Service\Forms\Lp1f;
+use Opg\Lpa\Pdf\Service\Forms\Lp1h;
+use Opg\Lpa\Pdf\Service\Forms\Lp3;
+
 
 class Generator implements GeneratorInterface {
 
@@ -43,7 +47,24 @@ class Generator implements GeneratorInterface {
         //---
 
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
-
+        switch($this->type) {
+            case self::TYPE_FORM_LPF1:
+                $pdf = new Lp1f($this->lpa);
+                break;
+            case self::TYPE_FORM_LPH1:
+                $pdf = new Lp1h($this->lpa);
+                break;
+            case self::TYPE_FORM_LP3:
+                $pdf = new Lp3($this->lpa);
+                break;
+            default:
+                throw new \UnexpectedValueException('Invalid form type: '.$this->type);
+                return;
+        }
+        
+        $filePath = $pdf->generate()
+                        ->getPdfFilePath();
+        
         //---
 
         # PASS THE GENERATED FILE TO $this->response->save( new SplFileInfo( $filePath ) );
