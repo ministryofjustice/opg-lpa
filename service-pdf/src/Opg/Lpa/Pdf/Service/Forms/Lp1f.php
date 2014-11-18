@@ -2,11 +2,9 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Formatter;
-use Opg\Lpa\Pdf\Service\Forms\FormAbstract;
 use mikehaertl\pdftk\pdf as Pdf;
 
-class Lp1f extends FormAbstract
+class Lp1f extends Lp1
 {
 
     public function __construct(Lpa $lpa)
@@ -21,7 +19,11 @@ class Lp1f extends FormAbstract
     
     protected function mapData()
     {
-        $this->flattenLpa['lpa-id'] = Formatter::id($this->lpa->id);
+        parent::mapData();
+        
+        $this->flattenLpa['attorney-1-is-trust-corporation'] = 'Off';
+        
+        
         return $this->flattenLpa;
     }
     
