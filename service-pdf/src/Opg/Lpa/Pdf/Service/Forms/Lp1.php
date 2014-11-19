@@ -1,10 +1,9 @@
 <?php
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\Pdf\Service\Forms\FormAbstract;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 
-abstract class Lp1 extends FormAbstract
+abstract class Lp1 extends AbstractForm
 {
     protected function mapData()
     {

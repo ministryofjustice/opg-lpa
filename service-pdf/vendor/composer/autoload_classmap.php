@@ -44,7 +44,7 @@ return array(
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorResponse' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorResponse.php',
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorResponseInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorResponseInterface.php',
     'Opg\\Lpa\\Pdf\\Config\\Config' => $baseDir . '/src/Opg/Lpa/Pdf/Config/Config.php',
-    'Opg\\Lpa\\Pdf\\Service\\Forms\\FormAbstract' => $baseDir . '/src/Opg/Lpa/Pdf/Service/Forms/FormAbstract.php',
+    'Opg\\Lpa\\Pdf\\Service\\Forms\\AbstractForm' => $baseDir . '/src/Opg/Lpa/Pdf/Service/Forms/AbstractForm.php',
     'Opg\\Lpa\\Pdf\\Service\\Forms\\Lp1' => $baseDir . '/src/Opg/Lpa/Pdf/Service/Forms/Lp1.php',
     'Opg\\Lpa\\Pdf\\Service\\Forms\\Lp1f' => $baseDir . '/src/Opg/Lpa/Pdf/Service/Forms/Lp1f.php',
     'Opg\\Lpa\\Pdf\\Service\\Forms\\Lp1h' => $baseDir . '/src/Opg/Lpa/Pdf/Service/Forms/Lp1h.php',

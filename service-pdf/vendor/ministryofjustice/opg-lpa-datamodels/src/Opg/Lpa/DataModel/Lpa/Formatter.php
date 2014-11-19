@@ -3,6 +3,12 @@ namespace Opg\Lpa\DataModel\Lpa;
 
 use InvalidArgumentException;
 
+/**
+ * Static classes used for formatting values, ready for the end user.
+ *
+ * Class Formatter
+ * @package Opg\Lpa\DataModel\Lpa
+ */
 class Formatter {
 
     /**
@@ -16,7 +22,7 @@ class Formatter {
     public static function id( $value ){
 
         if( !is_int($value) ){
-            throw new InvalidArgumentException('The passed value bust be an integer.');
+            throw new InvalidArgumentException('The passed value must be an integer.');
         }
 
         return trim( chunk_split( 'A'.sprintf("%011d", $value), 4, ' ') );

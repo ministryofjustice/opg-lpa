@@ -168,5 +168,5 @@ class Lpa extends AbstractData implements CompleteInterface {
         return true;
 
     } // function
-    
+
 } // class

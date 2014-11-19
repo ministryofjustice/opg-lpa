@@ -18,7 +18,9 @@ class ResqueWorker extends Worker {
             throw new \Exception('Missing field: type');
         }
 
-        $this->run( $this->args['docId'], $this->args['type'], $this->args['lpa'] );
+        echo "Running job\n";
+
+        //$this->run( $this->args['docId'], $this->args['type'], $this->args['lpa'] );
 
     } // function
 

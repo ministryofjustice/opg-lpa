@@ -3,7 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-abstract class FormAbstract
+abstract class AbstractForm
 {
 
     /**

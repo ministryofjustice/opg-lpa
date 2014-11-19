@@ -2,10 +2,9 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Service\Forms\FormAbstract;
 use mikehaertl\pdftk\pdf as Pdf;
 
-class Lp3 extends FormAbstract
+class Lp3 extends AbstractForm
 {
 
     public function __construct(Lpa $lpa)

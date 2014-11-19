@@ -54,15 +54,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         // If it's (now) an array...
         if( is_array($data) ){
 
-            // Foreach each passed property...
-            foreach( $data as $k => $v ){
-
-                // Only include known properties during the import...
-                if( property_exists( $this, $k ) ){
-                    $this->set( $k, $v, false );
-                }
-
-            } // foreach
+            $this->populate( $data );
 
         } // if
 
@@ -379,6 +371,27 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
             }
         }
         return $result;
+    }
+
+    //-------------------
+    // Hydrator methods
+
+    public function populate( Array $data ){
+
+        // Foreach each passed property...
+        foreach( $data as $k => $v ){
+
+            // Only include known properties during the import...
+            if( property_exists( $this, $k ) ){
+                $this->set( $k, $v, false );
+            }
+
+        } // foreach
+
+    } // function
+
+    public function getArrayCopy(){
+        return $this->toArray();
     }
 
     //-------------------
