@@ -50,8 +50,68 @@ return array(
                     ),
                 ),
             ),
+
+            'api-v1' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/v1/user/:userId',
+                    'constraints' => [
+                        'userId' => '[a-f][a-f0-9_-]*',
+                    ],
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller\Version1',
+                    ],
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+
+                    'level-1' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/applications[/:lpaId]',
+                            'constraints' => [
+                                'lpaId'     => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller'    => 'Rest',
+                            ],
+                        ],
+                    ], // applications
+
+                    'level-2' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/applications/:lpaId/:controller[/:id]',
+                            'constraints' => [
+                                'id'     => '[0-9]+',
+                                'controller' => '[a-z][a-z0-9_-]*',
+                            ],
+                            'defaults' => [
+                                'controller'    => 'Applications',
+                                'action'        => 'test',
+                            ],
+                        ],
+                    ], // applications
+
+                ], // child_routes
+
+            ], // api-v1
+
+        ), //routes
+
+    ), // router
+
+
+    'controllers' => array(
+        'invokables' => array(
+            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Version1\Applications' => 'Application\Controller\Version1\ApplicationsController',
+            'Application\Controller\Version1\Test' => 'Application\Controller\Version1\TestController',
+            'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
         ),
     ),
+
+
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -71,11 +131,7 @@ return array(
             ),
         ),
     ),
-    'controllers' => array(
-        'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController'
-        ),
-    ),
+
     'view_manager' => array(
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
@@ -91,6 +147,9 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+        'strategies' => array(
+            'ViewJsonStrategy',
+        ),
     ),
     // Placeholder for console routes
     'console' => array(
@@ -99,4 +158,6 @@ return array(
             ),
         ),
     ),
+
+
 );
