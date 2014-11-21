@@ -1,0 +1,29 @@
+{
+    "name": "ministryofjustice/opg-lpa-api",
+    "description": "API service for creating Lasting Power of Attorney PDF documents",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-common"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "ext-redis": ">=2.2.4",
+        "ext-mongo": ">=1.4.5",
+        "zendframework/zendframework": ">=2.3.2,<3.0.0",
+        "chrisboulton/php-resque": "dev-master",
+        "willdurand/hateoas": "2.3.0",
+        "ministryofjustice/opg-lpa-datamodels": "dev-develop",
+        "ministryofjustice/opg-lpa-common": "dev-develop"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*"
+    }
+}
