@@ -5,7 +5,8 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 abstract class AbstractForm
 {
-
+    const CHECK_BOX_ON = 'On';
+    
     /**
      *
      * @var LPA model object
