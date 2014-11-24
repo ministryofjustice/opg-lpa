@@ -41,7 +41,7 @@ class Document extends AbstractData {
      *
      * @var stdClass
      */
-    protected $decisions;
+    protected $primaryAttorneyDecisions;
 
     /**
      * The entity who should receive correspondence about the LPA.

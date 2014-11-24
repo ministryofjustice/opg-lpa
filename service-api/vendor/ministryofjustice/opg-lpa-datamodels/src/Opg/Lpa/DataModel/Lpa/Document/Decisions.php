@@ -38,6 +38,12 @@ class Decisions extends AbstractData {
      */
     protected $canSustainLife;
 
+    /**
+     * @var string Additional free text details relating to this decision.
+     */
+    protected $details;
+
+
     public function __construct( $data = null ){
 
         //-----------------------------------------------------
