@@ -43,11 +43,6 @@ abstract class AbstractForm
      */
     abstract protected function mapData();
     
-    /**
-     * insert additional pages depend on form field data length and/or number of actors in the LPA.
-     */
-    abstract protected function attachAdditionalPages();
-
     public function __construct(Lpa $lpa)
     {
         $this->lpa = $lpa;

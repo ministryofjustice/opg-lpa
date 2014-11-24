@@ -10,15 +10,10 @@ class Lp1h extends AbstractForm
     public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
-        $this->pdf = new Pdf("assets/v2/LP1H.pdf");
+        $this->pdf = new Pdf(array('A' => "assets/v2/LP1H.pdf"));
     }
     
     protected function mapData()
-    {
-        
-    }
-    
-    protected function attachAdditionalPages()
     {
         
     }
