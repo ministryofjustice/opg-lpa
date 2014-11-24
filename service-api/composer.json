@@ -20,6 +20,7 @@
         "zendframework/zendframework": ">=2.3.2,<3.0.0",
         "chrisboulton/php-resque": "dev-master",
         "willdurand/hateoas": "2.3.0",
+        "zfcampus/zf-api-problem": "1.0.1",
         "ministryofjustice/opg-lpa-datamodels": "dev-develop",
         "ministryofjustice/opg-lpa-common": "dev-develop"
     },

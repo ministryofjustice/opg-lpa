@@ -3,8 +3,11 @@ namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Zend\View\Model\JsonModel;
 
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
+
+use Application\Library\View\Model\JsonModel;
 use Application\Controller\Version1\RestController;
 
 class Module
