@@ -1,29 +1,22 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\JsonModel;
 
+use Application\Controller\Version1\RestController;
+
 class Module
 {
     public function onBootstrap(MvcEvent $e){
-
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         $sharedEvents = $eventManager->getSharedManager();
 
         /**
-         * If a controller returns an array, put it into a JsonModel.
+         * If a controller returns an array, by default put it into a JsonModel.
          * Needs to run before -80.
          */
         $sharedEvents->attach( 'Zend\Stdlib\DispatchableInterface', MvcEvent::EVENT_DISPATCH, function(MvcEvent $e){
@@ -38,13 +31,42 @@ class Module
 
     } // function
 
-    public function getConfig()
-    {
+    public function getControllerConfig(){
+
+        return [
+            'initializers' => [
+                'InitRestController' => function($controller, $sm) {
+                    if ($controller instanceof RestController) {
+
+                        $locator = $sm->getServiceLocator();
+
+                        // Get the resource name (form the URL)...
+                        $resource = $locator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
+
+                        // Check if the resource exists...
+                        if( !$locator->has("resource-{$resource}") ){
+                            // Error
+                            die("Doesn't exist");
+                        }
+
+                        // Get the resource...
+                        $resource = $locator->get("resource-{$resource}");
+
+                        // Inject it into the Controller...
+                        $controller->setResource( $resource );
+
+                    }
+                }, // InitRestController
+            ], // initializers
+        ];
+
+    } // function
+
+    public function getConfig(){
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig()
-    {
+    public function getAutoloaderConfig(){
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
@@ -52,5 +74,6 @@ class Module
                 ),
             ),
         );
-    }
-}
+    } // function
+
+} // class
