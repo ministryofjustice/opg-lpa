@@ -1,10 +1,10 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
-use stdClass;
 
 use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
@@ -37,11 +37,18 @@ class Document extends AbstractData {
     protected $whoIsRegistering;
 
     /**
-     * How the decisions are made. One of the constants under Document::LPA_DECISION_*
+     * How the decisions are made with primary attorney.
      *
-     * @var stdClass
+     * @var Decisions\PrimaryAttorneyDecisions
      */
-    protected $decisions;
+    protected $primaryAttorneyDecisions;
+
+    /**
+     * How the decisions are made with replacement attorney.
+     *
+     * @var Decisions\ReplacementAttorneyDecisions
+     */
+    protected $replacementAttorneyDecisions;
 
     /**
      * The entity who should receive correspondence about the LPA.
@@ -103,8 +110,12 @@ class Document extends AbstractData {
             return ($v instanceof Donor) ? $v : new Donor( $v );
         };
 
-        $this->typeMap['decisions'] = function($v){
-            return ($v instanceof Decisions) ? $v : new Decisions( $v );
+        $this->typeMap['primaryAttorneyDecisions'] = function($v){
+            return ($v instanceof Decisions\PrimaryAttorneyDecisions) ? $v : new Decisions\PrimaryAttorneyDecisions( $v );
+        };
+
+        $this->typeMap['replacementAttorneyDecisions'] = function($v){
+            return ($v instanceof Decisions\ReplacementAttorneyDecisions) ? $v : new Decisions\ReplacementAttorneyDecisions( $v );
         };
 
         $this->typeMap['correspondent'] = function($v){
@@ -162,9 +173,16 @@ class Document extends AbstractData {
             ]));
         };
 
-        $this->validators['decisions'] = function(){
+        $this->validators['primaryAttorneyDecisions'] = function(){
             return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Decisions' ),
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions' ),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['replacementAttorneyDecisions'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions' ),
                 new Rules\NullValue,
             ]));
         };

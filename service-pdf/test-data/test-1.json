@@ -40,10 +40,16 @@
         },
         "whoIsRegistering": [0,1],
         "primaryAttorneyDecisions": {
-            "how": "jointly-attorney-severally",
+            "how": "depends",
             "when": "no-capacity",
             "canSustainLife": true,
-            "details": "Extra details."
+            "howDetails": "Extra details."
+        },
+        "replacementAttorneyDecisions": {
+            "how": "depends",
+            "when": "depends",
+            "howDetails": "How extra details.",
+            "whenDetails": "When extra details."
         },
         "correspondent": {
             "who": "other",

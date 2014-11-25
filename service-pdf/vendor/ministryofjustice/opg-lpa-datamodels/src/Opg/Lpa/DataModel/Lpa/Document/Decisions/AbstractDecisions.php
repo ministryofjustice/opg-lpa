@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\DataModel\Lpa\Document;
+namespace Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Opg\Lpa\DataModel\Lpa\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
@@ -7,15 +7,9 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
-/**
- * Represents decisions that can/will be made relating to the LPA.
- *
- * Class Decisions
- * @package Opg\Lpa\DataModel\Lpa\Document
- */
-class Decisions extends AbstractData {
+abstract class AbstractDecisions extends AbstractData {
 
-    const LPA_DECISION_HOW_MIXED = 'mixed';
+    const LPA_DECISION_HOW_DEPENDS = 'depends';
     const LPA_DECISION_HOW_JOINTLY = 'jointly';
     const LPA_DECISION_HOW_SINGLE_ATTORNEY = 'single-attorney';
     const LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY = 'jointly-attorney-severally';
@@ -29,14 +23,17 @@ class Decisions extends AbstractData {
     protected $how;
 
     /**
+     * Validators for 'when' should be in concrete classes.
+     *
      * @var string Represents when decisions can be made.
      */
     protected $when;
 
     /**
-     * @var bool Represents whether this LPA allows Attorneys to make life sustaining decisions. True = yes; false = no.
+     * @var string Additional free text details relating to this decision.
      */
-    protected $canSustainLife;
+    protected $howDetails;
+
 
     public function __construct( $data = null ){
 
@@ -47,7 +44,7 @@ class Decisions extends AbstractData {
             return (new Validator)->addRules([
                 new Rules\String,
                 new Rules\In([
-                    self::LPA_DECISION_HOW_MIXED,
+                    self::LPA_DECISION_HOW_DEPENDS,
                     self::LPA_DECISION_HOW_JOINTLY,
                     self::LPA_DECISION_HOW_SINGLE_ATTORNEY,
                     self::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
@@ -55,16 +52,12 @@ class Decisions extends AbstractData {
             ]);
         };
 
-        $this->validators['when'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( [ self::LPA_DECISION_WHEN_NOW, self::LPA_DECISION_WHEN_NO_CAPACITY ], true ),
-            ]);
-        };
-
-        $this->validators['canSustainLife'] = function(){
+        $this->validators['howDetails'] = function(){
             return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\Length( 1, (1000*1024), true ),
+                ]),
                 new Rules\NullValue,
             ]));
         };
@@ -75,4 +68,4 @@ class Decisions extends AbstractData {
 
     } // function
 
-} // class
+} // abstract class
