@@ -311,7 +311,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
             if( $item instanceof AccessorInterface ){
                 $item = $item->toArray();
             } elseif ( $item instanceof \DateTime ) {
-                $item = $item->format( \DateTime::ISO8601 );
+                $item = $item->format( 'Y-m-d\TH:i:s.uO' ); // ISO8601 including milliseconds
             }
         });
 

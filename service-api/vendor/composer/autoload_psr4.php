@@ -10,5 +10,4 @@ return array(
     'ZFTest\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/test'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Opg\\Lpa\\Common\\' => array($vendorDir . '/ministryofjustice/opg-lpa-common/src/Opg/Lpa/Common'),
-    'Crell\\ApiProblem\\' => array($vendorDir . '/crell/api-problem/src'),
 );

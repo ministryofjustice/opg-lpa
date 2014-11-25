@@ -12,6 +12,13 @@ use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
+//---------------
+
+use Hateoas\HateoasBuilder;
+use Hateoas\Configuration\Annotation as Hateoas;
+
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
 class RestController extends AbstractRestfulController {
 
     private $resource;
@@ -105,6 +112,19 @@ class RestController extends AbstractRestfulController {
      * @return mixed
      */
     public function getList(){
+
+
+        $hateoas = HateoasBuilder::create()->build();
+
+        $test = new \Application\Model\Resources\Application();
+
+        $json = $hateoas->serialize($test, 'json');
+
+        var_dump( $json ); exit();
+
+        die('here');
+
+        //--------------------
 
         if( !is_callable( [ $this->getResource(), 'fetchAll' ] ) ){
             return new ApiProblem(405, 'The GET method has not been defined');

@@ -21,6 +21,14 @@ if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
 }
 
+// If we have Doctrine Annotations, add Hateoas RelationProvider to the autoloader.
+if(class_exists('Doctrine\Common\Annotations\AnnotationRegistry') && class_exists('Hateoas\Configuration\Annotation\RelationProvider')){
+    \Doctrine\Common\Annotations\AnnotationRegistry::registerFile(
+        // This returns the file path of the RelationProvider class...
+        (new ReflectionClass('Hateoas\Configuration\Annotation\RelationProvider'))->getFileName()
+    );
+}
+
 if (class_exists('Zend\Loader\AutoloaderFactory')) {
     return;
 }
