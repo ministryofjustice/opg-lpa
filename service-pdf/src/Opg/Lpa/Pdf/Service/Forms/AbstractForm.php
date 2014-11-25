@@ -66,14 +66,22 @@ abstract class AbstractForm
 
     public function __destruct()
     {
+        if((count($this->intermediatePdfFilePaths) == 1) && isset($this->intermediatePdfFilePaths['LP1'])) {
+            return;
+        }
+        
         // remove all generated intermediate pdf files
         foreach($this->intermediatePdfFilePaths as $type => $paths) {
             if(is_string($paths)) {
-                unlink($paths);
+                if(\file_exists($paths)) {
+                    unlink($paths);
+                }
             }
             else {
                 foreach($paths as $path) {
-                    unlink($path);
+                    if(\file_exists($path)) {
+                        unlink($path);
+                    }
                 }
             }
         }
