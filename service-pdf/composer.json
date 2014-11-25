@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ext-redis": "*",
         "ext-proctitle": "*",
+        "ext-redis": ">=2.2.4",
         "ministryofjustice/opg-lpa-datamodels": "dev-develop",
         "chrisboulton/php-resque": "dev-master",
         "mikehaertl/php-pdftk": "0.2.1"

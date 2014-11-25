@@ -1,7 +1,7 @@
 {
     "id": 1234,
     "createdAt": "2014-11-12T13:24:39+0000",
-    "updatedAt": "2014-11-13T13:24:39+0000",
+    "updatedAt": "2014-11-12T13:24:39+0000",
     "user": "ad353da6b73ceee2201cee2f9936c509",
     "payment": {
         "method": "card",
@@ -9,7 +9,8 @@
             "number": "020 1234 5678"
         },
         "amount": 100,
-        "reference": "abc123"
+        "reference": "abc123",
+        "date": "2014-11-12T13:24:39+0000"
     },
     "whoAreYouAnswered": false,
     "locked": false,
@@ -34,13 +35,15 @@
             },
             "email": {
                 "address": "test@digital.justice.gov.uk"
-            }
+            },
+            "canSign": true
         },
-        "whoIsRegistering": "donor",
-        "decisions": {
+        "whoIsRegistering": [0,1],
+        "primaryAttorneyDecisions": {
             "how": "jointly-attorney-severally",
             "when": "no-capacity",
-            "canSustainLife": true
+            "canSustainLife": true,
+            "details": "Extra details."
         },
         "correspondent": {
             "who": "other",
@@ -61,7 +64,9 @@
             },
             "phone": {
                 "number": "020 1234 5678"
-            }
+            },
+            "contactByPost": true,
+            "contactInWelsh": true
         },
         "instruction": "Here are some instructions",
         "preference": "Here are some preferences",
@@ -96,7 +101,8 @@
                 },
                 "email": {
                     "address": "test@digital.justice.gov.uk"
-                }
+                },
+                "type": "human"
             },
             {
                 "name": {
@@ -115,7 +121,8 @@
                 },
                 "email": {
                     "address": "test@digital.justice.gov.uk"
-                }
+                },
+                "type": "human"
             }
         ],
         "replacementAttorneys": [
@@ -130,7 +137,8 @@
                 },
                 "email": {
                     "address": "test@digital.justice.gov.uk"
-                }
+                },
+                "type": "trust"
             }
         ],
         "peopleToNotify": [
