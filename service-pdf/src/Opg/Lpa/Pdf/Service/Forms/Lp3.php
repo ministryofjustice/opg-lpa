@@ -17,9 +17,4 @@ class Lp3 extends AbstractForm
     {
         
     }
-    
-    protected function attachAdditionalPages()
-    {
-        
-    }
 }
