@@ -19,7 +19,7 @@ class Lp1f extends Lp1
                  '-LP1F-' . time() . '.pdf';
         
         $this->pdf = new Pdf(array(
-                'A' => PDF_TEMPLATE_PATH."LP1F.pdf"
+                'A' => PDF_TEMPLATE_PATH."/LP1F.pdf"
         ));
     }
 
