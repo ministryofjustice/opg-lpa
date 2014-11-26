@@ -9,7 +9,13 @@ use Opg\Lpa\Pdf\Service\ResponseInterface;
 
 class Response implements ResponseInterface  {
 
+    private $docId;
+    private $config;
+
     public function __construct( Config $config, $docId ) {
+
+        $this->docId = $docId;
+        $this->config = $config;
 
     }
 
@@ -20,7 +26,7 @@ class Response implements ResponseInterface  {
      */
     public function save( SplFileInfo $pathToFile ){
 
-
+        echo "{$this->docId}: Response received: ".$pathToFile->getRealPath()."\n";
 
     } // function
 
