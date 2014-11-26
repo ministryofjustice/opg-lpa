@@ -85,5 +85,9 @@ abstract class AbstractForm
                 }
             }
         }
+        
+        if(\file_exists($this->generatedPdfFilePath)) {
+            unlink($this->generatedPdfFilePath);
+        }
     }
 } // class
