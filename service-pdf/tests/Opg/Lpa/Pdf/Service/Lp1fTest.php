@@ -1,10 +1,10 @@
 <?php
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Formatter;
 use mikehaertl\pdftk\pdf as Pdf;
 use Opg\Lpa\Pdf\Service\Forms\Lp1f;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Lp1fTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,11 +28,15 @@ class Lp1fTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         
+        $rootPath = __DIR__ . '/../../../../..';
+        
         $this->lpa = new Lpa(
                 file_get_contents(
-                        __DIR__ . '/../../../../../test-data/test-1.json'));
+                        $rootPath.'/test-data/test-1.json'));
         
-        $this->lp1f = new Lp1f($this->lpa);
+        $config = new Config(include($rootPath.'/config/local.php'));
+        
+        $this->lp1f = new Lp1f($this->lpa, $config);
     }
 
     public function testPopulate ()
@@ -61,7 +65,7 @@ class Lp1fTest extends \PHPUnit_Framework_TestCase
                 'lpa-document-donor-address-postcode',
         ));
         
-        $this->assertEquals(Formatter::id($this->lpa->id), $pdfFormFields['lpa-id']);
+//         $this->assertEquals(Formatter::id($this->lpa->id), $pdfFormFields['lpa-id']);
         
         $this->assertEquals($this->lpa->document->donor->name->title, $pdfFormFields['lpa-document-donor-name-title']);
         $this->assertEquals($this->lpa->document->donor->name->first, $pdfFormFields['lpa-document-donor-name-first']);

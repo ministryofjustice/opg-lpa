@@ -45,19 +45,19 @@ class Generator implements GeneratorInterface {
         if( $this->lpa->isComplete() !== true ){
             // The LPA is not complete, return an error.
         }
-
+        
         //---
 
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
         switch($this->type) {
             case self::TYPE_FORM_LP1F:
-                $pdf = new Lp1f($this->lpa);
+                $pdf = new Lp1f($this->lpa, $this->config);
                 break;
             case self::TYPE_FORM_LP1H:
-                $pdf = new Lp1h($this->lpa);
+                $pdf = new Lp1h($this->lpa, $this->config);
                 break;
             case self::TYPE_FORM_LP3:
-                $pdf = new Lp3($this->lpa);
+                $pdf = new Lp3($this->lpa, $this->config);
                 break;
             default:
                 throw new \UnexpectedValueException('Invalid form type: '.$this->type);

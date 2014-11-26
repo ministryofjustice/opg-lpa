@@ -38,6 +38,11 @@ abstract class AbstractForm
     protected $intermediatePdfFilePaths = array();
     
     /**
+     * @var string
+     */
+    protected $basePdfTemplatePath;
+    
+    /**
      * Map model generated data to pdf form fields; add additional mapping 
      * for the forms on extra pages.
      */
@@ -66,21 +71,19 @@ abstract class AbstractForm
 
     public function __destruct()
     {
-        if((count($this->intermediatePdfFilePaths) == 1) && isset($this->intermediatePdfFilePaths['LP1'])) {
-            return;
-        }
-        
-        // remove all generated intermediate pdf files
-        foreach($this->intermediatePdfFilePaths as $type => $paths) {
-            if(is_string($paths)) {
-                if(\file_exists($paths)) {
-                    unlink($paths);
+        if(count($this->intermediatePdfFilePaths) > 1) {
+            // remove all generated intermediate pdf files
+            foreach($this->intermediatePdfFilePaths as $type => $paths) {
+                if(is_string($paths)) {
+                    if(\file_exists($paths)) {
+                        unlink($paths);
+                    }
                 }
-            }
-            else {
-                foreach($paths as $path) {
-                    if(\file_exists($path)) {
-                        unlink($path);
+                else {
+                    foreach($paths as $path) {
+                        if(\file_exists($path)) {
+                            unlink($path);
+                        }
                     }
                 }
             }
