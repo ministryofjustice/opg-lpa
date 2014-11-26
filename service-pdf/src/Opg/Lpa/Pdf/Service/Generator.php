@@ -11,8 +11,8 @@ use Opg\Lpa\Pdf\Service\Forms\Lp3;
 
 class Generator implements GeneratorInterface {
 
-    const TYPE_FORM_LPH1 = 'LPH1';
-    const TYPE_FORM_LPF1 = 'LPF1';
+    const TYPE_FORM_LP1H = 'LP1H';
+    const TYPE_FORM_LP1F = 'LP1F';
     const TYPE_FORM_LP3 = 'LP3';
     
     protected $config;
@@ -50,10 +50,10 @@ class Generator implements GeneratorInterface {
 
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
         switch($this->type) {
-            case self::TYPE_FORM_LPF1:
+            case self::TYPE_FORM_LP1F:
                 $pdf = new Lp1f($this->lpa);
                 break;
-            case self::TYPE_FORM_LPH1:
+            case self::TYPE_FORM_LP1H:
                 $pdf = new Lp1h($this->lpa);
                 break;
             case self::TYPE_FORM_LP3:
@@ -70,6 +70,8 @@ class Generator implements GeneratorInterface {
         //---
 
         # PASS THE GENERATED FILE TO $this->response->save( new SplFileInfo( $filePath ) );
+        
+        $this->response->save( new \SplFileInfo( $filePath ) );
 
         //---
 

@@ -15,11 +15,11 @@ class Lp1f extends Lp1
         parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = 'pdf-' . Formatter::id($this->lpa->id) .
+        $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
                  '-LP1F-' . time() . '.pdf';
         
         $this->pdf = new Pdf(array(
-                'A' => '../assets/v2/LP1F.pdf'
+                'A' => PDF_TEMPLATE_PATH."LP1F.pdf"
         ));
     }
 

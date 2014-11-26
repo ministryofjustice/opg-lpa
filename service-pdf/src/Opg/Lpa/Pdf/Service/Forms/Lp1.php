@@ -8,8 +8,14 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use mikehaertl\pdftk\pdf as Pdf;
 
+define("PDF_TEMPLATE_PATH",  __DIR__."/../../../../../../assets/v2");
+
 abstract class Lp1 extends AbstractForm
 {
+    const BOX_ROW_LENGTH=84;
+    const BOX_COLUMN_LENGTH=8;
+    
+    
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
      *
@@ -22,7 +28,6 @@ abstract class Lp1 extends AbstractForm
         if($this->hasAdditionalPages()) {
             
             $this->generateAdditionalPagePdfs();
-            print_r($this->intermediatePdfFilePaths);
             $this->mergePdfs();
         }
         
@@ -37,9 +42,8 @@ abstract class Lp1 extends AbstractForm
     {
         $this->intermediatePdfFilePaths['LP1'] = '/tmp/pdf-LP1-'.$this->lpa->id.'-'.microtime().'.pdf';
         
-        $flattenLpaData = $this->mapData();
-        
-        $this->pdf->fillForm($flattenLpaData)
+        $this->mapData();
+        $this->pdf->fillForm($this->flattenLpa)
             ->needAppearances()
             ->saveAs($this->intermediatePdfFilePaths['LP1']);
         
@@ -160,7 +164,7 @@ abstract class Lp1 extends AbstractForm
             $tmpSavePath = '/tmp/pdf-CS1-'.$this->lpa->id.'-'.microtime().'.pdf';
             $this->intermediatePdfFilePaths['CS1'][] = $tmpSavePath;
             
-            $cs1 = new Pdf('../assets/v2/LPC_Continuation_Sheet_1.pdf');
+            $cs1 = new Pdf(PDF_TEMPLATE_PATH."/LPC_Continuation_Sheet_1.pdf");
             
             for($j=0; $j<2; $j++) {
                 
@@ -212,7 +216,7 @@ abstract class Lp1 extends AbstractForm
         
         // @todo calculate no. of pages to be added based on the length of $content and number of new line chars in it.
         
-        $cs2 = new Pdf('../assets/v2/LPC_Continuation_Sheet_2.pdf');
+        $cs2 = new Pdf(PDF_TEMPLATE_PATH."/LPC_Continuation_Sheet_2.pdf");
         
         $cs2->fillForm(array(
                 $type => self::CHECK_BOX_ON,
@@ -232,7 +236,7 @@ abstract class Lp1 extends AbstractForm
         $tmpSavePath = '/tmp/pdf-CS3-'.$this->lpa->id.'-'.microtime().'.pdf';
         $this->intermediatePdfFilePaths['CS3'] = $tmpSavePath;
     
-        $cs2 = new Pdf('../assets/v2/LPC_Continuation_Sheet_3.pdf');
+        $cs2 = new Pdf(PDF_TEMPLATE_PATH."/LPC_Continuation_Sheet_3.pdf");
     
         $cs2->fillForm(array(
                 'donor-full-name' => $this->fullName($this->lpa->document->donor)
@@ -259,7 +263,7 @@ abstract class Lp1 extends AbstractForm
             $tmpSavePath = '/tmp/pdf-AdditionalAttorneySignature-'.$this->lpa->id.'-'.microtime().'.pdf';
             $this->intermediatePdfFilePaths['AdditionalAttorneySignature'][] = $tmpSavePath;
             
-            $attorneySignaturePage = new Pdf('../assets/v2/AdditionalAttorneySignature.pdf');
+            $attorneySignaturePage = new Pdf(PDF_TEMPLATE_PATH."/AdditionalAttorneySignature.pdf");
             $attorneySignaturePage->fillForm(array(
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
@@ -281,7 +285,7 @@ abstract class Lp1 extends AbstractForm
             $tmpSavePath = '/tmp/pdf-AdditionalApplicant-'.$this->lpa->id.'-'.microtime().'.pdf';
             $this->intermediatePdfFilePaths['AdditionalApplicant'][] = $tmpSavePath;
             
-            $additionalApplicant = new Pdf('../assets/v2/AdditionalApplicant.pdf');
+            $additionalApplicant = new Pdf(PDF_TEMPLATE_PATH."/AdditionalApplicant.pdf");
             
             for($j=0; $j<4; $j++) {
                 
@@ -355,7 +359,7 @@ abstract class Lp1 extends AbstractForm
                     $insertAt = 20;
                     $pdf->cat($lastInsertion, $insertAt, $intPdfHandle++);
                     for($i=0; $i<$totalAdditionalPages; $i++) {
-                        $pdf->addFile('../assets/v2/AdditionalApplicantSignature.pdf', $intPdfHandle);
+                        $pdf->addFile(PDF_TEMPLATE_PATH."/AdditionalApplicantSignature.pdf", $intPdfHandle);
                         $pdf->cat(1, null, $intPdfHandle++);
                     }
                     
@@ -583,7 +587,7 @@ abstract class Lp1 extends AbstractForm
     /**
      * Check if the text content can fit into the text box in PDF form.
      * 
-     * @todo to be implemented
+     * @todo replace new line chars with spaces and calculate content length
      * @return boolean
      */
     private function canFitIntoTextBox()
