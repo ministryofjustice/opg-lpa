@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\Resources;
 
-use Crell\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblem;
 
 class Applications implements ResourceInterface {
 

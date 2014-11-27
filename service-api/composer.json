@@ -17,7 +17,6 @@
         "php": ">=5.4.0",
         "ext-redis": ">=2.2.4",
         "ext-mongo": ">=1.4.5",
-        "doctrine/annotations": "~1.0",
         "zendframework/zendframework": ">=2.3.2,<3.0.0",
         "chrisboulton/php-resque": "dev-master#c335bc3",
         "nocarrier/hal": "0.9.10",

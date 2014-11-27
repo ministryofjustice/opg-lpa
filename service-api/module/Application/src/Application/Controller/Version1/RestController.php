@@ -3,21 +3,17 @@ namespace Application\Controller\Version1;
 
 use RuntimeException;
 
+use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractRestfulController;
 
 use Application\Model\Resources\ResourceInterface;
 
-use Zend\Mvc\MvcEvent;
-
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
-//---------------
+use Application\Library\Hal\Hal;
+use Application\Library\Hal\HalResponse;
 
-use Hateoas\HateoasBuilder;
-use Hateoas\Configuration\Annotation as Hateoas;
-
-use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class RestController extends AbstractRestfulController {
 
@@ -49,11 +45,14 @@ class RestController extends AbstractRestfulController {
     public function onDispatch(MvcEvent $e) {
         $return = parent::onDispatch($e);
 
+        if ($return instanceof Hal) {
+            return new HalResponse($return, 'json');
+        }
+
         if ($return instanceof ApiProblem) {
             return new ApiProblemResponse($return);
         }
 
-        //$e->setResult($return);
         return $return;
 
     } // function
@@ -112,19 +111,6 @@ class RestController extends AbstractRestfulController {
      * @return mixed
      */
     public function getList(){
-
-
-        $hateoas = HateoasBuilder::create()->build();
-
-        $test = new \Application\Model\Resources\Application();
-
-        $json = $hateoas->serialize($test, 'json');
-
-        var_dump( $json ); exit();
-
-        die('here');
-
-        //--------------------
 
         if( !is_callable( [ $this->getResource(), 'fetchAll' ] ) ){
             return new ApiProblem(405, 'The GET method has not been defined');
