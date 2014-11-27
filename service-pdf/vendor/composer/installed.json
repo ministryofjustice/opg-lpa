@@ -73,7 +73,7 @@
         },
         "time": "2014-11-25 11:01:09",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
@@ -202,7 +202,7 @@
             "bin/resque"
         ],
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-0": {
                 "Resque": "lib"
@@ -479,7 +479,7 @@
                 "dev-master": "2.0.x-dev"
             }
         },
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-0": {
                 "ZendPdf\\": "library/"
