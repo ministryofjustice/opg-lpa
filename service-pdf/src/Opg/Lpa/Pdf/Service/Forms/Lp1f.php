@@ -21,9 +21,7 @@ class Lp1f extends Lp1
         $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
                  '-LP1F-' . time() . '.pdf';
         
-        $this->pdf = new Pdf(array(
-                'A' => $this->basePdfTemplatePath.'/LP1F.pdf'
-        ));
+        $this->pdf = new Pdf($this->basePdfTemplatePath.'/LP1F.pdf');
     }
 
     protected function hasAdditionalPages ()
