@@ -125,6 +125,7 @@ return [
             'resource-certificate-providers'    => 'stdClass',
             'resource-notified-people'          => 'stdClass',
             'resource-pdfs'                     => 'stdClass',
+            'AuthenticationService'             => 'Zend\Authentication\AuthenticationService',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',

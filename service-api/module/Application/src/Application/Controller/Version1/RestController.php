@@ -14,9 +14,12 @@ use ZF\ApiProblem\ApiProblemResponse;
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
 
+use Application\Library\Authentication\Identity\AbstractIdentity as Identity;
+
 
 class RestController extends AbstractRestfulController {
 
+    private $identity;
     private $resource;
 
     public function __construct(){
@@ -25,6 +28,22 @@ class RestController extends AbstractRestfulController {
     } // function
 
     //----------------------------------------------------
+
+    public function setIdentity( Identity $identity ){
+        $this->identity = $identity;
+    } // function
+
+    public function getIdentity(){
+
+        if( !isset($this->identity) || !($this->identity instanceof Identity) ){
+            throw new RuntimeException('An identity has not been set');
+        }
+
+        return $this->identity;
+
+    } // function
+
+    //---
 
     public function setResource( ResourceInterface $resource ){
         $this->resource = $resource;
@@ -91,7 +110,7 @@ class RestController extends AbstractRestfulController {
      */
     public function deleteList()
     {
-        return new ApiProblem(405, 'The DELETE method has not been defined');
+        return new ApiProblem(405, 'The DELETE method has not been defined on this collection');
     }
 
     /**
@@ -113,12 +132,14 @@ class RestController extends AbstractRestfulController {
     public function getList(){
 
         if( !is_callable( [ $this->getResource(), 'fetchAll' ] ) ){
-            return new ApiProblem(405, 'The GET method has not been defined');
+            return new ApiProblem(405, 'The GET method has not been defined on this collection');
         }
 
         $response = $this->getResource()->fetchAll();
 
         # TODO - Check the response.
+
+        # TODO - Map to Hal.
 
         return $response;
 
@@ -179,7 +200,7 @@ class RestController extends AbstractRestfulController {
      */
     public function replaceList($data)
     {
-        return new ApiProblem(405, 'The PUT method has not been defined');
+        return new ApiProblem(405, 'The PUT method has not been defined on this collection');
     }
 
     /**
@@ -193,7 +214,7 @@ class RestController extends AbstractRestfulController {
      */
     public function patchList($data)
     {
-        return new ApiProblem(405, 'The PATCH method has not been defined');
+        return new ApiProblem(405, 'The PATCH method has not been defined on this collection');
     }
 
     /**

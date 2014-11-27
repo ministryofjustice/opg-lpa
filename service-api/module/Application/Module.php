@@ -10,6 +10,13 @@ use ZF\ApiProblem\ApiProblemResponse;
 use Application\Library\View\Model\JsonModel;
 use Application\Controller\Version1\RestController;
 
+use Application\Library\Authentication\Adapter;
+use Application\Library\Authentication\Identity;
+
+use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\Storage\NonPersistent;
+
+
 class Module
 {
     public function onBootstrap(MvcEvent $e){
@@ -17,6 +24,44 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         $sharedEvents = $eventManager->getSharedManager();
+
+
+        // TODO - Move this into a proper listener
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function(MvcEvent $e){
+
+            $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
+
+            // NonPersistent persists only for the life of the request...
+            $auth->setStorage( new NonPersistent() );
+
+            /*
+             * Do some authentication. Initially this will will just be via the token passed from front-2.
+             * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
+             *      X-AuthOne
+             *
+             * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
+             */
+            $token = $e->getRequest()->getHeader('X-AuthOne');
+
+            if (!$token) {
+
+                // No token; set Guest....
+                $auth->getStorage()->write( new Identity\Guest() );
+
+            } else {
+
+                $token = trim($token->getFieldValue());
+
+                $authAdapter = new Adapter\LpaAuthOne( $token );
+
+                $result = $auth->authenticate($authAdapter);
+
+                # TODO - This!!!
+                $auth->getStorage()->write( new Identity\User() );
+
+            }
+
+        }, 500); // attach
 
         /**
          * If a controller returns an array, by default put it into a JsonModel.
@@ -30,7 +75,7 @@ class Module
                 $e->setResult( new JsonModel($response) );
             }
 
-        }, -20);
+        }, -20); // attach
 
     } // function
 
@@ -42,6 +87,9 @@ class Module
                     if ($controller instanceof RestController) {
 
                         $locator = $sm->getServiceLocator();
+
+                        //--------------------------------------------------
+                        // Inject the resource
 
                         // Get the resource name (form the URL)...
                         $resource = $locator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
@@ -57,6 +105,15 @@ class Module
 
                         // Inject it into the Controller...
                         $controller->setResource( $resource );
+
+                        //--------------------------------------------------
+                        // Inject the user's identity
+
+                        $auth = $locator->get('AuthenticationService');
+
+                        $identity = $auth->getIdentity();
+
+                        $controller->setIdentity( $identity );
 
                     }
                 }, // InitRestController

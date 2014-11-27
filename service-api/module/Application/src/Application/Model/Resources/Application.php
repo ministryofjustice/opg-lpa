@@ -1,8 +1,6 @@
 <?php
 namespace Application\Model\Resources;
 
-use Hateoas\Configuration\Metadata\ClassMetadataInterface;
-use Hateoas\Configuration as Hateoas;
 
 /**
  * Class Application
@@ -19,19 +17,5 @@ class Application {
     public function getId() {
         return $this->id;
     }
-
-    public function addRelations($object, ClassMetadataInterface $classMetadata){
-
-        // You need to return the relations
-        // Adding the relations to the $classMetadata won't work
-        return array(
-            new Hateoas\Relation(
-                'self',
-                "expr('/api/users/' ~ object.getId())"
-            )
-        );
-
-    } // function
-
 
 } // class
