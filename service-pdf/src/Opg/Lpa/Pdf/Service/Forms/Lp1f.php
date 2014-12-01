@@ -93,7 +93,7 @@ class Lp1f extends Lp1
         $tmpSavePath = '/tmp/pdf-CS4-' . $this->lpa->id . '-' . microtime() . '.pdf';
         $this->intermediatePdfFilePaths['CS4'] = $tmpSavePath;
         
-        $cs2 = new Pdf('../assets/v2/LPC_Continuation_Sheet_4.pdf');
+        $cs2 = new Pdf($this->basePdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
         
         $cs2->fillForm(
                 array(
