@@ -6,7 +6,7 @@ use RuntimeException;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractRestfulController;
 
-use Application\Model\Resources\ResourceInterface;
+use Application\Model\Rest\ResourceInterface;
 
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -14,14 +14,15 @@ use ZF\ApiProblem\ApiProblemResponse;
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
 
-use Application\Library\Authentication\Identity\AbstractIdentity as Identity;
+use Application\Library\Authentication\Identity\IdentityInterface as Identity;
 
 use ZfcRbac\Service\AuthorizationServiceAwareInterface;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
-class RestController extends AbstractRestfulController implements AuthorizationServiceAwareInterface {
+//class RestController extends AbstractRestfulController implements AuthorizationServiceAwareInterface {
+class RestController extends AbstractRestfulController {
 
-    use AuthorizationServiceAwareTrait;
+    //use AuthorizationServiceAwareTrait;
 
     private $identity;
     private $resource;
@@ -33,6 +34,7 @@ class RestController extends AbstractRestfulController implements AuthorizationS
 
     //----------------------------------------------------
 
+    /*
     public function setIdentity( Identity $identity ){
         $this->identity = $identity;
     } // function
@@ -46,6 +48,7 @@ class RestController extends AbstractRestfulController implements AuthorizationS
         return $this->identity;
 
     } // function
+    */
 
     //---
 
@@ -125,7 +128,6 @@ class RestController extends AbstractRestfulController implements AuthorizationS
      */
     public function get($id)
     {
-        var_dump( $this->authorizationService->isGranted('delete') ); exit();
         return new ApiProblem(405, 'The GET method has not been defined');
     }
 

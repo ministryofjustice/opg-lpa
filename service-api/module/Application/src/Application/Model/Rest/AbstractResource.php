@@ -1,14 +1,11 @@
 <?php
-namespace Application\Model\Resources;
+namespace Application\Model\Rest;
 
-use ZF\ApiProblem\ApiProblem;
+use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
-class Applications implements ResourceInterface {
+abstract class AbstractResource implements ResourceInterface {
 
-    public function __construct()
-    {
-
-    }
+    use AuthorizationServiceAwareTrait;
 
     /**
      * Create a resource
@@ -16,10 +13,7 @@ class Applications implements ResourceInterface {
      * @param  mixed $data
      * @return ApiProblem|mixed
      */
-    public function create($data)
-    {
-
-    }
+    #public function create($data){}
 
     /**
      * Delete a resource
@@ -27,10 +21,7 @@ class Applications implements ResourceInterface {
      * @param  mixed $id
      * @return ApiProblem|mixed
      */
-    public function delete($id)
-    {
-
-    }
+    #public function delete($id){}
 
     /**
      * Delete a collection, or members of a collection
@@ -38,10 +29,7 @@ class Applications implements ResourceInterface {
      * @param  mixed $data
      * @return ApiProblem|mixed
      */
-    public function deleteList($data)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for collections');
-    }
+    #public function deleteList($data){}
 
     /**
      * Fetch a resource
@@ -49,10 +37,7 @@ class Applications implements ResourceInterface {
      * @param  mixed $id
      * @return ApiProblem|mixed
      */
-    public function fetch($id)
-    {
-
-    }
+    #public function fetch($id){}
 
     /**
      * Fetch all or a subset of resources
@@ -60,10 +45,7 @@ class Applications implements ResourceInterface {
      * @param  array $params
      * @return ApiProblem|mixed
      */
-    public function fetchAll($params = array())
-    {
-
-    }
+    #public function fetchAll($params = array()){}
 
     /**
      * Patch (partial in-place update) a resource
@@ -72,10 +54,7 @@ class Applications implements ResourceInterface {
      * @param  mixed $data
      * @return ApiProblem|mixed
      */
-    public function patch($id, $data)
-    {
-
-    }
+    #public function patch($id, $data){}
 
     /**
      * Replace a collection or members of a collection
@@ -83,10 +62,7 @@ class Applications implements ResourceInterface {
      * @param  mixed $data
      * @return ApiProblem|mixed
      */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for collections');
-    }
+    #public function replaceList($data){}
 
     /**
      * Update a resource
@@ -95,10 +71,6 @@ class Applications implements ResourceInterface {
      * @param  mixed $data
      * @return ApiProblem|mixed
      */
-    public function update($id, $data)
-    {
+    #public function update($id, $data){}
 
-    }
-
-
-} // class
+} // abstract class

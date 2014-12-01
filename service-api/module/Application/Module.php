@@ -12,6 +12,7 @@ use Application\Controller\Version1\RestController;
 
 use Application\Library\Authentication\Adapter;
 use Application\Library\Authentication\Identity;
+use Application\Library\Authentication\Identity\IdentityAwareInterface;
 
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
@@ -118,6 +119,7 @@ class Module {
                         //--------------------------------------------------
                         // Inject the user's identity
 
+                        /*
                         $auth = $locator->get('AuthenticationService');
 
                         $identity = $auth->getIdentity();
@@ -127,6 +129,7 @@ class Module {
                         $authService = $locator->get('ZfcRbac\Service\AuthorizationService');
 
                         $controller->setAuthorizationService( $authService );
+                        */
 
                     }
                 }, // InitRestController

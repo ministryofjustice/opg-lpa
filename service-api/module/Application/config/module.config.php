@@ -104,9 +104,11 @@ return [
                 'user' => [
                     // An authenticated request.
                     'children' => ['guest'],
+                    'permissions' => ['create-lpa']
                 ],
                 'guest' => [
                     // An unauthenticated request.
+                    'permissions' => ['stats']
                 ],
             ],
         ],
@@ -125,8 +127,8 @@ return [
 
     'service_manager' => [
         'invokables' => [
-            'resource-applications'             => 'Application\Model\Resources\Applications',
-            'resource-status'                   => 'stdClass',
+            'resource-applications'             => 'Application\Model\Rest\Applications\Resource',
+            'resource-status'                   => 'Application\Model\Rest\Status\Resource',
             'resource-type'                     => 'stdClass',
             'resource-instruction'              => 'stdClass',
             'resource-preference'               => 'stdClass',
