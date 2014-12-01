@@ -79,6 +79,7 @@ abstract class Lp1 extends AbstractForm
 	        ->needAppearances()
             ->flatten()
             ->saveAs($this->intermediatePdfFilePaths['LP1']);
+//         print_r($this->pdf);
         
         // draw strokes
         $pdf = PdfDocument::load($this->intermediatePdfFilePaths['LP1']);
@@ -258,6 +259,7 @@ abstract class Lp1 extends AbstractForm
                 ->needAppearances()
                 ->flatten()
                 ->saveAs($tmpSavePath);
+//             print_r($cs1);
             
         } // loop each CS page
         
@@ -298,6 +300,7 @@ abstract class Lp1 extends AbstractForm
         ))->needAppearances()
             ->flatten()
             ->saveAs($tmpSavePath);
+//         print_r($cs2);
         
     } //  function addContinuationSheet2($type, $content)
     
@@ -316,6 +319,7 @@ abstract class Lp1 extends AbstractForm
         ))->needAppearances()
             ->flatten()
             ->saveAs($tmpSavePath);
+//         print_r($cs3);
         
     } //  function addContinuationSheet3()
     
@@ -345,6 +349,7 @@ abstract class Lp1 extends AbstractForm
             ))->needAppearances()
                 ->flatten()
                 ->saveAs($tmpSavePath);
+//             print_r($attorneySignaturePage);
         }
     } // function addAdditionalAttorneySignaturePages()
     
@@ -382,7 +387,56 @@ abstract class Lp1 extends AbstractForm
                 ->needAppearances()
                 ->flatten()
                 ->saveAs($tmpSavePath);
+//             print_r($additionalApplicant);
         }
+        
+        $pdf = PdfDocument::load($tmpSavePath);
+        $page = $pdf->pages[0]->setLineWidth(self::STROKE_LINE_WIDTH);
+        switch($totalAdditionalApplicant % 4) 
+        {
+            case 1:
+                $page->drawLine(
+                    $this->strokeParams['applicant-1']['bx'],
+                    $this->strokeParams['applicant-1']['by'],
+                    $this->strokeParams['applicant-1']['tx'],
+                    $this->strokeParams['applicant-1']['ty']
+                )->drawLine(
+                    $this->strokeParams['applicant-2']['bx'],
+                    $this->strokeParams['applicant-2']['by'],
+                    $this->strokeParams['applicant-2']['tx'],
+                    $this->strokeParams['applicant-2']['ty']
+                )->drawLine(
+                    $this->strokeParams['applicant-3']['bx'],
+                    $this->strokeParams['applicant-3']['by'],
+                    $this->strokeParams['applicant-3']['tx'],
+                    $this->strokeParams['applicant-3']['ty']
+                );
+                break;
+            case 2:
+                $page->drawLine(
+                    $this->strokeParams['applicant-2']['bx'],
+                    $this->strokeParams['applicant-2']['by'],
+                    $this->strokeParams['applicant-2']['tx'],
+                    $this->strokeParams['applicant-2']['ty']
+                )->drawLine(
+                    $this->strokeParams['applicant-3']['bx'],
+                    $this->strokeParams['applicant-3']['by'],
+                    $this->strokeParams['applicant-3']['tx'],
+                    $this->strokeParams['applicant-3']['ty']
+                );
+                break;
+            case 3:
+                $page->drawLine(
+                    $this->strokeParams['applicant-3']['bx'],
+                    $this->strokeParams['applicant-3']['by'],
+                    $this->strokeParams['applicant-3']['tx'],
+                    $this->strokeParams['applicant-3']['ty']
+                );
+                break;
+        }
+        
+        $pdf->save($tmpSavePath);
+        
         
     } // function addAdditionalApplicantPages()
     
@@ -496,6 +550,7 @@ abstract class Lp1 extends AbstractForm
         }
         
         $pdf->saveAs($this->generatedPdfFilePath);
+//         print_r($pdf);
         
     } // function combinePdfs()
     
@@ -622,17 +677,20 @@ abstract class Lp1 extends AbstractForm
          * Populate primary and replacement attorneys signature pages (Section 11)
          */
         $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
-        $i=0;
+        $attorneyIndex=0;
         foreach($allAttorneys as $attorney) {
             
             if($attorney instanceof TrustCorporation) continue;
             
-            $this->flattenLpa['signature-attorney-'.$i.'-name-title'] = $attorney->name->title;
-            $this->flattenLpa['signature-attorney-'.$i.'-name-first'] = $attorney->name->first;
-            $this->flattenLpa['signature-attorney-'.$i.'-name-last'] = $attorney->name->last;
-            $i++;
+            $this->flattenLpa['signature-attorney-'.$attorneyIndex.'-name-title'] = $attorney->name->title;
+            $this->flattenLpa['signature-attorney-'.$attorneyIndex.'-name-first'] = $attorney->name->first;
+            $this->flattenLpa['signature-attorney-'.$attorneyIndex.'-name-last'] = $attorney->name->last;
+            $attorneyIndex++;
         }
-        switch(count($allAttorneys)) {
+        
+        $numberOfHumanAttorneys = $attorneyIndex;
+        
+        switch($numberOfHumanAttorneys) {
             case 3:
                 $this->drawingTargets[14] = array('attorney-signature');
                 break;
