@@ -22,7 +22,8 @@
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.1",
         "ministryofjustice/opg-lpa-datamodels": "dev-develop",
-        "ministryofjustice/opg-lpa-common": "dev-develop"
+        "ministryofjustice/opg-lpa-common": "dev-develop",
+        "zf-commons/zfc-rbac": "~2.4"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.*"

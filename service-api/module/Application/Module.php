@@ -17,22 +17,25 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 
 
-class Module
-{
+class Module {
+
     public function onBootstrap(MvcEvent $e){
+
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         $sharedEvents = $eventManager->getSharedManager();
 
+        /*
+         * ------------------------------------------------------------------
+         * Perform authentication
+         *
+         */
 
         // TODO - Move this into a proper listener
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function(MvcEvent $e){
 
             $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
-
-            // NonPersistent persists only for the life of the request...
-            $auth->setStorage( new NonPersistent() );
 
             /*
              * Do some authentication. Initially this will will just be via the token passed from front-2.
@@ -81,6 +84,12 @@ class Module
 
     public function getControllerConfig(){
 
+        /*
+         * ------------------------------------------------------------------
+         * Setup the REST Controller
+         *
+         */
+
         return [
             'initializers' => [
                 'InitRestController' => function($controller, $sm) {
@@ -115,11 +124,26 @@ class Module
 
                         $controller->setIdentity( $identity );
 
+                        $authService = $locator->get('ZfcRbac\Service\AuthorizationService');
+
+                        $controller->setAuthorizationService( $authService );
+
                     }
                 }, // InitRestController
             ], // initializers
         ];
 
+    } // function
+
+    public function getServiceConfig() {
+        return [
+            'factories' => [
+                'Zend\Authentication\AuthenticationService' => function($sm) {
+                    // NonPersistent persists only for the life of the request...
+                    return new AuthenticationService( new NonPersistent() );
+                }
+            ],
+        ];
     } // function
 
     public function getConfig(){

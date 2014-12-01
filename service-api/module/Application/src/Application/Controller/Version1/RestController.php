@@ -16,8 +16,12 @@ use Application\Library\Hal\HalResponse;
 
 use Application\Library\Authentication\Identity\AbstractIdentity as Identity;
 
+use ZfcRbac\Service\AuthorizationServiceAwareInterface;
+use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
-class RestController extends AbstractRestfulController {
+class RestController extends AbstractRestfulController implements AuthorizationServiceAwareInterface {
+
+    use AuthorizationServiceAwareTrait;
 
     private $identity;
     private $resource;
@@ -121,6 +125,7 @@ class RestController extends AbstractRestfulController {
      */
     public function get($id)
     {
+        var_dump( $this->authorizationService->isGranted('delete') ); exit();
         return new ApiProblem(405, 'The GET method has not been defined');
     }
 

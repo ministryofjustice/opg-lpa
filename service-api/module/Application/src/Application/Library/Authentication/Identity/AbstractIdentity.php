@@ -1,6 +1,9 @@
 <?php
 namespace Application\Library\Authentication\Identity;
 
-abstract class AbstractIdentity {
+use ZfcRbac\Identity\IdentityInterface;
+
+abstract class AbstractIdentity implements IdentityInterface {
+
 
 } // abstract class

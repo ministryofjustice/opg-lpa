@@ -94,6 +94,23 @@ return [
 
     ], // router
 
+    'zfc_rbac' => [
+        'role_provider' => [
+            'ZfcRbac\Role\InMemoryRoleProvider' => [
+                'admin' => [
+                    // An authenticated request with admin rights.
+                    'children' => ['user'],
+                ],
+                'user' => [
+                    // An authenticated request.
+                    'children' => ['guest'],
+                ],
+                'guest' => [
+                    // An unauthenticated request.
+                ],
+            ],
+        ],
+    ], // zfc_rbac
 
     'controllers' => [
         'invokables' => [
@@ -125,7 +142,6 @@ return [
             'resource-certificate-providers'    => 'stdClass',
             'resource-notified-people'          => 'stdClass',
             'resource-pdfs'                     => 'stdClass',
-            'AuthenticationService'             => 'Zend\Authentication\AuthenticationService',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -133,6 +149,7 @@ return [
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',
+            'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
         ],
     ], // service_manager
 

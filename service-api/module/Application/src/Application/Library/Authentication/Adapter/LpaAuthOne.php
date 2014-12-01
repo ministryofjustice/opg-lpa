@@ -1,9 +1,13 @@
 <?php
 namespace Application\Library\Authentication\Adapter;
 
+use Exception;
+
 use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\Exception\ExceptionInterface;
+
+use Application\Library\Authentication\Identity;
 
 /**
  * Authentication adapter for Version 1 of the LPA auth service.
@@ -33,9 +37,24 @@ class LpaAuthOne implements AdapterInterface {
      */
     public function authenticate(){
 
+        // The default result...
+        $result = new Result( Result::FAILURE, null );
 
-        // Don't leave this lying around...
+        try {
+
+            // Do authentication....
+
+
+            //-----------------------
+
+            $result = new Result( Result::SUCCESS, new Identity\User() );
+
+        } catch (Exception $e){}
+
         unset($this->token);
-    }
+
+        return $result;
+
+    } // function
 
 } // class
