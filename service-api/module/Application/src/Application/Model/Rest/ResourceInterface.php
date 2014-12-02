@@ -5,4 +5,7 @@ use ZfcRbac\Service\AuthorizationServiceAwareInterface;
 
 interface ResourceInterface extends AuthorizationServiceAwareInterface {
 
+    public function getRouteUser();
+    public function setRouteUser( $user );
+
 } // interface

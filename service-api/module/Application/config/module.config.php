@@ -95,6 +95,9 @@ return [
     ], // router
 
     'zfc_rbac' => [
+        'assertion_map' => [
+            'isAuthorizedToManageUser' => 'Application\Library\Authorization\Assertions\IsAuthorizedToManageUser',
+        ],
         'role_provider' => [
             'ZfcRbac\Role\InMemoryRoleProvider' => [
                 'admin' => [
@@ -104,7 +107,7 @@ return [
                 'user' => [
                     // An authenticated request.
                     'children' => ['guest'],
-                    'permissions' => ['create-lpa']
+                    'permissions' => ['create-lpa','isAuthorizedToManageUser']
                 ],
                 'guest' => [
                     // An unauthenticated request.
@@ -126,6 +129,9 @@ return [
 
 
     'service_manager' => [
+        'initializers' => [
+            'ZfcRbac\Initializer\AuthorizationServiceInitializer',
+        ],
         'invokables' => [
             'resource-applications'             => 'Application\Model\Rest\Applications\Resource',
             'resource-status'                   => 'Application\Model\Rest\Status\Resource',

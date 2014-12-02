@@ -4,18 +4,20 @@ namespace Application;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
-
 use Application\Library\View\Model\JsonModel;
 use Application\Controller\Version1\RestController;
 
 use Application\Library\Authentication\Adapter;
 use Application\Library\Authentication\Identity;
-use Application\Library\Authentication\Identity\IdentityAwareInterface;
 
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
+
+use Application\Model\Rest\ResourceInterface;
+
+use PhlyMongo\MongoCollectionFactory;
+use PhlyMongo\MongoConnectionFactory;
+use PhlyMongo\MongoDbFactory;
 
 
 class Module {
@@ -116,21 +118,6 @@ class Module {
                         // Inject it into the Controller...
                         $controller->setResource( $resource );
 
-                        //--------------------------------------------------
-                        // Inject the user's identity
-
-                        /*
-                        $auth = $locator->get('AuthenticationService');
-
-                        $identity = $auth->getIdentity();
-
-                        $controller->setIdentity( $identity );
-
-                        $authService = $locator->get('ZfcRbac\Service\AuthorizationService');
-
-                        $controller->setAuthorizationService( $authService );
-                        */
-
                     }
                 }, // InitRestController
             ], // initializers
@@ -140,11 +127,44 @@ class Module {
 
     public function getServiceConfig() {
         return [
+            'initializers' => [
+                'InjectRouteIdentity' => function($object, $sm) {
+                    if ($object instanceof ResourceInterface) {
+
+                        $userId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
+
+                        $object->setRouteUser( $userId );
+
+                    }
+                },
+            ],
             'factories' => [
+
                 'Zend\Authentication\AuthenticationService' => function($sm) {
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService( new NonPersistent() );
-                }
+                },
+
+                'Mongo-Default' => function ($services) {
+                    $config = $services->get('config')['db']['mongo']['default'];
+                    $factory = new MongoConnectionFactory(
+                        'mongodb://'.implode(',', $config['hosts']), // Split the array out into comma separated values.
+                        $config['options']
+                    );
+
+                    return $factory->createService($services);
+                },
+                'MongoDB-Default' => function ($services) {
+                    $config = $services->get('config')['db']['mongo']['default']['options'];
+
+                    $factory = new MongoDbFactory( $config['db'], 'Mongo-Default' );
+
+                    return $factory->createService($services);
+                },
+                'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
+                'MongoDB-Default-stats-usage' => new MongoCollectionFactory('stats-usage', 'MongoDB-Default'),
+                'MongoDB-Default-stats-who' => new MongoCollectionFactory('stats-who', 'MongoDB-Default'),
+
             ],
         ];
     } // function

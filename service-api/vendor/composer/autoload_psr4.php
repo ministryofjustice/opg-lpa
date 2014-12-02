@@ -8,6 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZF\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/src'),
     'ZFTest\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/test'),
+    'PhlyMongo\\' => array($vendorDir . '/phly/phly-mongo/src'),
+    'PhlyMongoTest\\' => array($vendorDir . '/phly/phly-mongo/test'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Opg\\Lpa\\Common\\' => array($vendorDir . '/ministryofjustice/opg-lpa-common/src/Opg/Lpa/Common'),
 );

@@ -21,6 +21,7 @@
         "chrisboulton/php-resque": "dev-master#c335bc3",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.1",
+        "phly/phly-mongo": "1.0.0",
         "ministryofjustice/opg-lpa-datamodels": "dev-develop",
         "ministryofjustice/opg-lpa-common": "dev-develop",
         "zf-commons/zfc-rbac": "~2.4"

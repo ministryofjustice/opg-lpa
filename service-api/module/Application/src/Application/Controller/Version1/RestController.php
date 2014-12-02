@@ -19,12 +19,8 @@ use Application\Library\Authentication\Identity\IdentityInterface as Identity;
 use ZfcRbac\Service\AuthorizationServiceAwareInterface;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
-//class RestController extends AbstractRestfulController implements AuthorizationServiceAwareInterface {
 class RestController extends AbstractRestfulController {
 
-    //use AuthorizationServiceAwareTrait;
-
-    private $identity;
     private $resource;
 
     public function __construct(){
@@ -91,9 +87,16 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $data
      * @return mixed
      */
-    public function create($data)
-    {
-        return new ApiProblem(405, 'The POST method has not been defined');
+    public function create($data){
+
+        if( !is_callable( [ $this->getResource(), 'create' ] ) ){
+            return new ApiProblem(405, 'The POST method has not been defined on this entity');
+        }
+
+        $result = $this->getResource()->create( $data );
+
+        die('controller');
+
     }
 
     /**

@@ -1,11 +1,37 @@
 <?php
 namespace Application\Model\Rest;
 
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
-abstract class AbstractResource implements ResourceInterface {
+abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwareInterface {
 
+    use ServiceLocatorAwareTrait;
+
+    /**
+     * Identity and authorization for the authenticated user. This could be Identity\Guest.
+     */
     use AuthorizationServiceAwareTrait;
+
+    //------------------------------------------
+
+    protected $routeUser = null;
+
+    //------------------------------------------
+
+    public function setRouteUser( $user ){
+        $this->routeUser = $user;
+    }
+
+    public function getRouteUser(){
+       return $this->routeUser;
+    }
+
+    public function getCollection( $collection ){
+        return $this->getServiceLocator()->get( "MongoDB-Default-{$collection}" );
+    }
 
     /**
      * Create a resource

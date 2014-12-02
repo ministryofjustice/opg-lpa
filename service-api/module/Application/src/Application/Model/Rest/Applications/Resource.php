@@ -13,6 +13,8 @@ use ZfcRbac\Exception\UnauthorizedException;
  */
 class Resource extends AbstractResource {
 
+    //--------------------------------------------------------------------
+
     /**
      * Create a new LAP.
      *
@@ -23,10 +25,14 @@ class Resource extends AbstractResource {
     public function create($data){
 
         if (!$this->getAuthorizationService()->isGranted('create-lpa')) {
-            throw new UnauthorizedException('You are not allowed !');
+            throw new UnauthorizedException('Cannot create.');
         }
 
-        die('creating!');
+        if ( !$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $this->getRouteUser()) ) {
+            throw new UnauthorizedException('You cannot create LPAs for other users');
+        }
+
+        //------------------------
 
     } // class
 
