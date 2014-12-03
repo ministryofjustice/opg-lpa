@@ -1,7 +1,7 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
-use DateTime, InvalidArgumentException, JsonSerializable;
+use DateTime, InvalidArgumentException, JsonSerializable, MongoDate;
 
 use Respect\Validation\Validatable;
 use Respect\Validation\Exceptions;
@@ -298,7 +298,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      *
      * @return array
      */
-    public function toArray(){
+    public function toArray( $dateFormat = 'string' ){
 
         $values = get_object_vars( $this );
 
@@ -306,18 +306,44 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         unset( $values['typeMap'] );
         unset( $values['validators'] );
 
-        // Recursively convert all items to an array...
-        array_walk_recursive( $values, function( &$item, $key ){
-            if( $item instanceof AccessorInterface ){
-                $item = $item->toArray();
-            } elseif ( $item instanceof \DateTime ) {
-                $item = $item->format( 'Y-m-d\TH:i:s.uO' ); // ISO8601 including milliseconds
+        foreach( $values as $k=>$v ){
+
+            if ( $v instanceof DateTime ) {
+
+                switch($dateFormat){
+                    case 'string':
+                        $values[$k] = $v->format( 'Y-m-d\TH:i:s.uO' ); // ISO8601 including microseconds
+                        break;
+                    case 'mongo':
+                        //Convert to MongoDate, including microseconds...
+                        $values[$k] = new MongoDate( $v->getTimestamp(), (int)$v->format('u') );
+                        break;
+                    default:
+                } // switch
+
+            } // if
+
+            // Recursively build this array...
+            if( $v instanceof AccessorInterface ) {
+                $values[$k] = $v->toArray( $dateFormat );
             }
-        });
+
+        } // foreach
 
         return $values;
 
     } // function
+
+    /**
+     * Returns $this as an array suitable for inserting into MongoDB.
+     *
+     * @return array
+     */
+    public function toMongoArray(){
+        return $this->toArray( 'mongo' );
+
+        //MongoDate
+    }
 
     /**
      * Return the array to use whenever json_encode() is called on this instance.
@@ -325,7 +351,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @return array
      */
     public function jsonSerialize(){
-        return $this->toArray();
+        return $this->toArray( 'string' );
     }
 
     /**
@@ -350,7 +376,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @return array
      */
     public function flatten(){
-        return $this->flattenArray( $this->toArray() );
+        return $this->flattenArray( $this->toArray( 'string' ) );
     }
 
     //-------------------

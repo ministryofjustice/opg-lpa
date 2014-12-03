@@ -7,6 +7,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractRestfulController;
 
 use Application\Model\Rest\ResourceInterface;
+use Application\Model\Rest\EntityInterface;
 
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -95,8 +96,17 @@ class RestController extends AbstractRestfulController {
 
         $result = $this->getResource()->create( $data );
 
-        die('controller');
+        $hal = $result->hal();
 
+
+
+        $hal->setUri( $this->generateRoute( $this->getResource(), $result ) );
+
+        $response = new HalResponse( $hal, 'json' );
+        $response->setStatusCode(201);
+        $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
+
+        return $response;
     }
 
     /**
@@ -248,5 +258,21 @@ class RestController extends AbstractRestfulController {
     {
         return new ApiProblem(404, 'Page not found');
     }
+
+    //-----------------------------------------
+
+    // TODO - Check type of entity...
+    protected function generateRoute( ResourceInterface $resource, EntityInterface $entity ){
+
+        $routeName = 'api-v1/level-' . (($resource->getName()=='applications') ? '1' : '2');
+
+        return $this->url()->fromRoute($routeName, [
+            'userId'=>$resource->getRouteUser(),
+            'lpaId'=>$entity->lpaId(),
+            'resource' => $resource->getName(),
+            'resourceId' => $entity->resourceId()
+        ]);
+
+    } // function
 
 } // class

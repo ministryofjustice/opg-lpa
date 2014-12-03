@@ -60,9 +60,9 @@ return [
                     'level-1' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/applications[/:id]',
+                            'route'    => '/applications[/:lpaId]',
                             'constraints' => [
-                                'id'     => '[0-9]+',
+                                'lpaId'     => '[0-9]+',
                             ],
                             'defaults' => [
                                 'controller'    => 'Rest',
