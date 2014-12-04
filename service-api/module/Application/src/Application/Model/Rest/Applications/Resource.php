@@ -29,7 +29,7 @@ class Resource extends AbstractResource {
      *
      * @param  mixed $data
      * @return Entity|ApiProblem
-     * @ throw UnauthorizedException If the current user is not authorized.
+     * @throw UnauthorizedException If the current user is not authorized.
      */
     public function create($data){
 
@@ -89,8 +89,7 @@ class Resource extends AbstractResource {
 
         }
 
-        # TODO - Bring this back in!
-        #$result = $collection->insert( $lpa->toMongoArray() );
+        $collection->insert( $lpa->toMongoArray() );
 
         $entity = new Entity( $lpa );
 
@@ -98,7 +97,13 @@ class Resource extends AbstractResource {
 
     } // function
 
-
+    /**
+     * Fetch a resource
+     *
+     * @param  mixed $id
+     * @return Entity|ApiProblem
+     * @throw UnauthorizedException If the current user is not authorized.
+     */
     public function fetch($id){
 
         $this->checkAccess();
@@ -121,5 +126,49 @@ class Resource extends AbstractResource {
         return $entity;
 
     } // function
+
+    /**
+     * Fetch all or a subset of resources
+     *
+     * @param  array $params
+     * @return ApiProblem|Collection
+     */
+    public function fetchAll($params = array()){
+
+        $cursor = $this->getCollection('lpa')->find( array_merge( $params, [ 'user'=>$this->getRouteUser() ] ) );
+
+        //var_dump( iterator_to_array($cursor) ); exit();
+
+    } // function
+
+    /**
+     * Delete a resource
+     *
+     * @param  mixed $id
+     * @return ApiProblem|bool
+     * @throw UnauthorizedException If the current user is not authorized.
+     */
+    public function delete($id){
+
+        $this->checkAccess();
+
+        //------------------------
+
+        $collection = $this->getCollection('lpa');
+
+        $result = $collection->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser() ], [ '_id'=>true ] );
+
+        if( is_null($result) ){
+            return new ApiProblem( 404, 'Document not found' );
+        }
+
+        //---
+
+        $collection->remove( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser() ], [ 'justOne'=>true ] );
+
+        return true;
+
+    } // function
+
 
 } // class

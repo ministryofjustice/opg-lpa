@@ -9,6 +9,8 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Application\Model\Rest\ResourceInterface;
 use Application\Model\Rest\EntityInterface;
 
+use Application\Library\Http\Response\NoContent as NoContentResponse;
+
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
@@ -108,9 +110,29 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $id
      * @return mixed
      */
-    public function delete($id)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined');
+    public function delete($id){
+
+        if( !is_callable( [ $this->getResource(), 'delete' ] ) ){
+            return new ApiProblem(405, 'The DELETE method has not been defined');
+        }
+
+        $result = $this->getResource()->delete( $id );
+
+        //---
+
+        if( $result instanceof ApiProblem ){
+
+            return $result;
+
+        } elseif( $result === true ) {
+
+            return new NoContentResponse();
+
+        }
+
+        // If we get here...
+        return new ApiProblem(500, 'Unable to process request');
+
     }
 
     /**
@@ -175,10 +197,6 @@ class RestController extends AbstractRestfulController {
         }
 
         $response = $this->getResource()->fetchAll();
-
-        # TODO - Check the response.
-
-        # TODO - Map to Hal.
 
         return $response;
 
