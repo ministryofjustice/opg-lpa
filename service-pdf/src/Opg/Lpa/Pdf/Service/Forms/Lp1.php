@@ -11,8 +11,9 @@ use ZendPdf\PdfDocument;
 
 abstract class Lp1 extends AbstractForm
 {
-    const BOX_ROW_LENGTH = 84;
-    const BOX_COLUMN_LENGTH = 8;
+    const BOX_CHARS_PER_ROW = 84;
+    const BOX_NO_OF_ROWS = 8;
+    const BOX_NO_OF_ROWS_CS2 = 17;
     
     const STROKE_LINE_WIDTH = 10;
     
@@ -165,18 +166,45 @@ abstract class Lp1 extends AbstractForm
             $this->addContinuationSheet2('cs-2-is-decisions', $content);
         }
         
-        if($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
-            // @todo - investigate what need to include into the $content
-            $content = $this->lpa->document->replacementAttorneyDecisions->howDetails;
+        if(($noOfReplacementAttorneys > 1) && 
+            ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
+            
+            $how = "";
+            $when = "";
+            switch($this->lpa->document->replacementAttorneyDecisions->how) {
+                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
+                    $how = "Replacement attorneys make decisions jointly and severally";
+                    break;
+                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
+                    $how = "Replacement attorneys make decisions depend on below";
+            }
+            
+            switch($this->lpa->document->replacementAttorneyDecisions->when) {
+                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
+                    $when = "Replacement attorneys step in when the first attorney is unable to act";
+                    break;
+                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
+                    $when = "Replacement attorneys step in when the last attorney is unable to act";
+                    break;
+                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
+                    $when = "Replacement attorneys step in depend on below";
+                    break;
+            }
+            
+            $content = (!empty($how)? $how."\n":"") .
+                       (!empty($when)? $when."\n":"") .
+                       $this->lpa->document->replacementAttorneyDecisions->howDetails . "\n" . 
+                       $this->lpa->document->replacementAttorneyDecisions->whenDetails;
+            
             $this->addContinuationSheet2('cs-2-is-how-replacement-attorneys-step-in', $content);
         }
         
         if(!$this->canFitIntoTextBox($this->lpa->document->preference)) {
-            $this->addContinuationSheet2('cs-2-is-preferences', $this->lpa->document->decisions->details);
+            $this->addContinuationSheet2('cs-2-is-preferences', $this->lpa->document->preference);
         }
         
         if(!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
-            $this->addContinuationSheet2('cs-2-is-instructions', $this->lpa->document->instruction->details);
+            $this->addContinuationSheet2('cs-2-is-instructions', $this->lpa->document->instruction);
         }
         
         // CS3
@@ -290,18 +318,35 @@ abstract class Lp1 extends AbstractForm
         $this->intermediatePdfFilePaths['CS2'][] = $tmpSavePath;
         
         // @todo calculate no. of pages to be added based on the length of $content and number of new line chars in it.
+        $formatedContentLength = strlen($this->flattenBoxContent($content));
+        if(($type == 'cs-2-is-decisions') || ($type == 'cs-2-is-how-replacement-attorneys-step-in')) {
+            $page0Length = self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2;
+            
+            $totalAdditionalPages = ceil($formatedContentLength/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2));
+        }
+        else {
+            $page0Length = 0;
+            
+            // minus the one page on the base form
+            $totalAdditionalPages = ceil($formatedContentLength/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS)) - 1;
+        }
         
-        $cs2 = new Pdf($this->basePdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
-        
-        $cs2->fillForm(array(
-                $type => self::CHECK_BOX_ON,
-                'cs-2-content' => $content,
-                'donor-full-name' => $this->fullName($this->lpa->document->donor)
-        ))->needAppearances()
-            ->flatten()
-            ->saveAs($tmpSavePath);
-//         print_r($cs2);
-        
+        for($i=1; $i<=$totalAdditionalPages; $i++) {
+            print_r(array(
+                    $type => self::CHECK_BOX_ON,
+                    'cs-2-content' => $this->getContentForBox($i, $content, true),
+                    'donor-full-name' => $this->fullName($this->lpa->document->donor)));
+            $cs2 = new Pdf($this->basePdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
+            
+            $cs2->fillForm(array(
+                    $type => self::CHECK_BOX_ON,
+                    'cs-2-content' => $this->getContentForBox($i, $content, true),
+                    'donor-full-name' => $this->fullName($this->lpa->document->donor)
+            ))->needAppearances()
+                ->flatten()
+                ->saveAs($tmpSavePath);
+//             print_r($cs2);
+        }
     } //  function addContinuationSheet2($type, $content)
     
     /**
@@ -657,20 +702,20 @@ abstract class Lp1 extends AbstractForm
         }
         
         /**
-         *  @todo: calculate characters in Preference and Instructions boxes and split to CS2. (Section 7)
+         *  Preference and Instructions. (Section 7)
          */
         if(empty($this->flattenLpa['lpa-document-preference'])) {
             $this->drawingTargets[7] = array('preference');
         }
         else {
-            
+            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], false);
         }
         
         if(empty($this->flattenLpa['lpa-document-instruction'])) {
             $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference', 'instruction'):array('instruction');
         }
         else {
-            
+            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], false);
         }
         
         /**
@@ -789,7 +834,7 @@ abstract class Lp1 extends AbstractForm
         
         
         // @todo: Fee reduction, repeat application
-        
+        //if($this->lpa->document->) $this->flattenLpa['apply-for-fee-reduction'] = self::CHECK_BOX_ON;
         
         
         // Online payment details
@@ -802,15 +847,64 @@ abstract class Lp1 extends AbstractForm
         
     } // function mapData()
     
+    private function flattenBoxContent($content)
+    {
+        // strip space & new lines chars at both ends.
+        $content = trim($content);
+        
+        $paragraphs = explode("\n", $content);
+        foreach($paragraphs as &$paragraph) {
+            $paragraph = trim($paragraph);
+            if(strlen($paragraph == 0)) {
+                $paragraph = str_repeat(" ", self::BOX_CHARS_PER_ROW);
+            }
+            else {
+                // calculate how many space chars to be appended to replace the new line in this paragraph.
+                $noOfSpaces = self::BOX_CHARS_PER_ROW - strlen($paragraph) % self::BOX_CHARS_PER_ROW;
+                if($noOfSpaces > 0) {
+                    $paragraph .= str_repeat(" ", $noOfSpaces);
+                }
+            }
+        }
+        
+        return implode("", $paragraphs);
+    } // function flattenBoxContent($content)
+    
     /**
-     * Check if the text content can fit into the text box in PDF form.
+     * Get content for a box.
+     * @param int $pageNo - start from 1 for continuation sheets. 0 for Preferences and instructions in Section 7 box.
+     * @param string $content - user input content for preference/instruction/decisions/step-in
+     * @param bool $isContinuationSheet.
+     * @return string|NULL
+     */
+    private function getContentForBox($pageNo, $content, $isContinuationSheet)
+    {
+        $flattenContent = $this->flattenBoxContent($content);
+        
+        // return content for preference or instruction in section 7.
+        if(!$isContinuationSheet) {
+            return substr($flattenContent, 0, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS);
+        }
+        
+        $chunks = str_split(substr($flattenContent, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS), self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2);
+        if(isset($chunks[$pageNo-1])) {
+            return $chunks[$pageNo-1];
+        }
+        else {
+            return null;
+        }
+    } // function getContentForBox($pageNo, $content, $isContinuationSheet)
+    
+    /**
+     * Check if the text content can fit into the text box in the Section 7 page in the base PDF form.
      * 
      * @todo replace new line chars with spaces and calculate content length
      * @return boolean
      */
-    private function canFitIntoTextBox()
+    private function canFitIntoTextBox($content)
     {
-        return true;
+        $flattenContent = $this->flattenBoxContent($content);
+        return strlen($flattenContent) <= self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS;
     } // function canFitIntoTextBox()
     
 } // class Lp1
