@@ -5,6 +5,10 @@ interface EntityInterface {
 
     public function lpaId();
     public function resourceId();
-    public function hal();
+
+    /**
+     * @return \Application\Library\Hal\Hal
+     */
+    public function getHal();
 
 } // interface

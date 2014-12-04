@@ -1,7 +1,7 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
-use DateTime, InvalidArgumentException, JsonSerializable, MongoDate;
+use DateTime, InvalidArgumentException, JsonSerializable;
 
 use Respect\Validation\Validatable;
 use Respect\Validation\Exceptions;
@@ -119,6 +119,16 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
         if( !property_exists( $this, $property ) ){
             throw new InvalidArgumentException("$property is not a valid property");
+        }
+
+        //---
+
+        /**
+         * MongoDates should be converted to Datatime.
+         * Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
+         */
+        if( class_exists('\MongoDate') && $value instanceof \MongoDate ){
+            $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".{$value->usec}+0000" );
         }
 
         //---
@@ -316,7 +326,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
                         break;
                     case 'mongo':
                         //Convert to MongoDate, including microseconds...
-                        $values[$k] = new MongoDate( $v->getTimestamp(), (int)$v->format('u') );
+                        $values[$k] = new \MongoDate( $v->getTimestamp(), (int)$v->format('u') );
                         break;
                     default:
                 } // switch
@@ -327,6 +337,16 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
             if( $v instanceof AccessorInterface ) {
                 $values[$k] = $v->toArray( $dateFormat );
             }
+
+            // If the value is an array, check if it contains instances of AccessorInterface...
+            if( is_array($v) ){
+                // If so, map them...
+                foreach( $v as $a=>$b ){
+                    if( $b instanceof AccessorInterface ) {
+                        $values[$k][$a] = $b->toArray( $dateFormat );
+                    }
+                }
+            } // if
 
         } // foreach
 
@@ -408,7 +428,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         foreach( $data as $k => $v ){
 
             // Only include known properties during the import...
-            if( property_exists( $this, $k ) ){
+            if( property_exists( $this, $k ) && !is_null($v) ){
                 $this->set( $k, $v, false );
             }
 

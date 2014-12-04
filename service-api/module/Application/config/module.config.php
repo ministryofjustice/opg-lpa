@@ -107,7 +107,7 @@ return [
                 'user' => [
                     // An authenticated request.
                     'children' => ['guest'],
-                    'permissions' => ['create-lpa','isAuthorizedToManageUser']
+                    'permissions' => [ 'authenticated', 'isAuthorizedToManageUser' ]
                 ],
                 'guest' => [
                     // An unauthenticated request.

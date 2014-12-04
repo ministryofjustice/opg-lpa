@@ -22,10 +22,11 @@ class Entity implements EntityInterface {
         return null;
     }
 
-    public function hal(){
+    public function getHal(){
 
         $hal = new Hal();
 
+        // Add teh id to the document...
         $data = [ 'id' => $this->lpaId() ] +  $this->lap->document->toArray();
 
         //The data comes from the Document (not the root of the object)...

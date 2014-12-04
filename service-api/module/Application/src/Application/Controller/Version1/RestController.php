@@ -15,42 +15,17 @@ use ZF\ApiProblem\ApiProblemResponse;
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
 
-use Application\Library\Authentication\Identity\IdentityInterface as Identity;
-
-use ZfcRbac\Service\AuthorizationServiceAwareInterface;
-use ZfcRbac\Service\AuthorizationServiceAwareTrait;
+use ZfcRbac\Exception\UnauthorizedException;
 
 class RestController extends AbstractRestfulController {
 
     private $resource;
 
-    public function __construct(){
-
-
-    } // function
-
-    //----------------------------------------------------
-
-    /*
-    public function setIdentity( Identity $identity ){
-        $this->identity = $identity;
-    } // function
-
-    public function getIdentity(){
-
-        if( !isset($this->identity) || !($this->identity instanceof Identity) ){
-            throw new RuntimeException('An identity has not been set');
-        }
-
-        return $this->identity;
-
-    } // function
-    */
-
     //---
 
     public function setResource( ResourceInterface $resource ){
         $this->resource = $resource;
+        $this->identifierName = $resource->getIdentifier();
     } // function
 
     public function getResource(){
@@ -66,7 +41,13 @@ class RestController extends AbstractRestfulController {
     //----------------------------------------------------
 
     public function onDispatch(MvcEvent $e) {
+
+        /*
+         * TODO - catch UnauthorizedException
+         */
         $return = parent::onDispatch($e);
+
+        //---
 
         if ($return instanceof Hal) {
             return new HalResponse($return, 'json');
@@ -96,17 +77,29 @@ class RestController extends AbstractRestfulController {
 
         $result = $this->getResource()->create( $data );
 
-        $hal = $result->hal();
+        //---
 
+        if( $result instanceof ApiProblem ){
 
+            return $result;
 
-        $hal->setUri( $this->generateRoute( $this->getResource(), $result ) );
+        } elseif( $result instanceof EntityInterface ) {
 
-        $response = new HalResponse( $hal, 'json' );
-        $response->setStatusCode(201);
-        $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
+            $hal = $result->getHal();
 
-        return $response;
+            $hal->setUri( $this->generateRoute( $result ) );
+
+            $response = new HalResponse( $hal, 'json' );
+            $response->setStatusCode(201);
+            $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
+
+            return $response;
+
+        }
+
+        // If we get here...
+        return new ApiProblem(500, 'Unable to process request');
+
     }
 
     /**
@@ -139,9 +132,35 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $id
      * @return mixed
      */
-    public function get($id)
-    {
-        return new ApiProblem(405, 'The GET method has not been defined');
+    public function get($id){
+
+        if( !is_callable( [ $this->getResource(), 'fetch' ] ) ){
+            return new ApiProblem(405, 'The GET method has not been defined');
+        }
+
+        $result = $this->getResource()->fetch( $id );
+
+        //---
+
+        if( $result instanceof ApiProblem ){
+
+            return $result;
+
+        } elseif( $result instanceof EntityInterface ) {
+
+            $hal = $result->getHal();
+
+            $hal->setUri( $this->generateRoute( $result ) );
+
+            $response = new HalResponse( $hal, 'json' );
+
+            return $response;
+
+        }
+
+        // If we get here...
+        return new ApiProblem(500, 'Unable to process request');
+
     }
 
     /**
@@ -262,7 +281,9 @@ class RestController extends AbstractRestfulController {
     //-----------------------------------------
 
     // TODO - Check type of entity...
-    protected function generateRoute( ResourceInterface $resource, EntityInterface $entity ){
+    protected function generateRoute( EntityInterface $entity ){
+
+        $resource = $this->getResource();
 
         $routeName = 'api-v1/level-' . (($resource->getName()=='applications') ? '1' : '2');
 

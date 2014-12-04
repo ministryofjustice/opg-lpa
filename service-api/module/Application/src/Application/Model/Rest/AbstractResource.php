@@ -4,6 +4,7 @@ namespace Application\Model\Rest;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
+use ZfcRbac\Exception\UnauthorizedException;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
 abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwareInterface {
@@ -31,6 +32,20 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
     public function getCollection( $collection ){
         return $this->getServiceLocator()->get( "MongoDB-Default-{$collection}" );
+    }
+
+    //--------------------------
+
+    public function checkAccess(){
+
+        if (!$this->getAuthorizationService()->isGranted('authenticated')) {
+            throw new UnauthorizedException('You need to be authenticated to access this resource');
+        }
+
+        if ( !$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $this->getRouteUser()) ) {
+            throw new UnauthorizedException('You do not have permission to access this resource');
+        }
+
     }
 
     /**
