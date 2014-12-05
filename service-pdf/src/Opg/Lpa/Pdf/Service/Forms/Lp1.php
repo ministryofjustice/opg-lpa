@@ -12,7 +12,7 @@ use ZendPdf\PdfDocument;
 abstract class Lp1 extends AbstractForm
 {
     const BOX_CHARS_PER_ROW = 84;
-    const BOX_NO_OF_ROWS = 8;
+    const BOX_NO_OF_ROWS = 11;
     const BOX_NO_OF_ROWS_CS2 = 17;
     
     const STROKE_LINE_WIDTH = 10;
@@ -314,28 +314,24 @@ abstract class Lp1 extends AbstractForm
      */
     protected function addContinuationSheet2($type, $content)
     {
-        $tmpSavePath = '/tmp/pdf-CS2-'.$this->lpa->id.'-'.microtime().'.pdf';
-        $this->intermediatePdfFilePaths['CS2'][] = $tmpSavePath;
-        
         // @todo calculate no. of pages to be added based on the length of $content and number of new line chars in it.
         $formatedContentLength = strlen($this->flattenBoxContent($content));
         if(($type == 'cs-2-is-decisions') || ($type == 'cs-2-is-how-replacement-attorneys-step-in')) {
-            $page0Length = self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2;
+            $page0Length = 0;
             
             $totalAdditionalPages = ceil($formatedContentLength/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2));
         }
         else {
-            $page0Length = 0;
+            $page0Length = self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS;
             
             // minus the one page on the base form
-            $totalAdditionalPages = ceil($formatedContentLength/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS)) - 1;
+            $totalAdditionalPages = ceil(($formatedContentLength-$page0Length)/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2));
         }
         
         for($i=1; $i<=$totalAdditionalPages; $i++) {
-            print_r(array(
-                    $type => self::CHECK_BOX_ON,
-                    'cs-2-content' => $this->getContentForBox($i, $content, true),
-                    'donor-full-name' => $this->fullName($this->lpa->document->donor)));
+            $tmpSavePath = '/tmp/pdf-CS2-'.$this->lpa->id.'-'.microtime().'.pdf';
+            $this->intermediatePdfFilePaths['CS2'][] = $tmpSavePath;
+            
             $cs2 = new Pdf($this->basePdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
             
             $cs2->fillForm(array(
@@ -883,12 +879,12 @@ abstract class Lp1 extends AbstractForm
         
         // return content for preference or instruction in section 7.
         if(!$isContinuationSheet) {
-            return substr($flattenContent, 0, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS);
+            return "\n".substr($flattenContent, 0, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS);
         }
         
-        $chunks = str_split(substr($flattenContent, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS), self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2);
+        $chunks = str_split(substr($flattenContent, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS), self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2+1);
         if(isset($chunks[$pageNo-1])) {
-            return $chunks[$pageNo-1];
+            return "\n".$chunks[$pageNo-1];
         }
         else {
             return null;
