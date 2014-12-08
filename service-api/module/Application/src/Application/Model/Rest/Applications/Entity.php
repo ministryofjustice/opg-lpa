@@ -22,11 +22,11 @@ class Entity implements EntityInterface {
         return null;
     }
 
-    public function getHal(){
+    public function getHal( callable $routeCallback ){
 
-        $hal = new Hal();
+        $hal = new Hal( call_user_func($routeCallback, $this) );
 
-        // Add teh id to the document...
+        // Add the id to the document...
         $data = [ 'id' => $this->lpaId() ] +  $this->lap->document->toArray();
 
         //The data comes from the Document (not the root of the object)...

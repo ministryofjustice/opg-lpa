@@ -8,6 +8,7 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 
 use Application\Model\Rest\ResourceInterface;
 use Application\Model\Rest\EntityInterface;
+use Application\Model\Rest\RouteProviderInterface;
 
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 
@@ -30,6 +31,9 @@ class RestController extends AbstractRestfulController {
         $this->identifierName = $resource->getIdentifier();
     } // function
 
+    /**
+     * @return ResourceInterface The Resource current being used.
+     */
     public function getResource(){
 
         if( !isset($this->resource) || !($this->resource instanceof ResourceInterface) ){
@@ -87,9 +91,9 @@ class RestController extends AbstractRestfulController {
 
         } elseif( $result instanceof EntityInterface ) {
 
-            $hal = $result->getHal();
+            $hal = $result->getHal( [ $this, 'generateRoute' ] );
 
-            $hal->setUri( $this->generateRoute( $result ) );
+            //$hal->setUri( $this->generateRoute( $result ) );
 
             $response = new HalResponse( $hal, 'json' );
             $response->setStatusCode(201);
@@ -170,9 +174,9 @@ class RestController extends AbstractRestfulController {
 
         } elseif( $result instanceof EntityInterface ) {
 
-            $hal = $result->getHal();
+            $hal = $result->getHal( [ $this, 'generateRoute' ] );
 
-            $hal->setUri( $this->generateRoute( $result ) );
+            //$hal->setUri( $this->generateRoute( $result ) );
 
             $response = new HalResponse( $hal, 'json' );
 
@@ -196,11 +200,71 @@ class RestController extends AbstractRestfulController {
             return new ApiProblem(405, 'The GET method has not been defined on this collection');
         }
 
-        $response = $this->getResource()->fetchAll();
+        //---
+
+        $query = $this->params()->fromQuery();
+
+        if( isset($query['page']) && is_numeric($query['page']) ){
+            $page = (int)$query['page'];
+        } else {
+            $page = 1;
+        }
+
+        unset($query['page']);
+
+        //---
+
+        $response = $this->getResource()->fetchAll( $query );
+
+        $response->setCurrentPageNumber($page);
+
+        //---
+
+        $hal = $response->getHalItemsByPage( 1, [ $this, 'generateRoute' ] );
+
+        //-------------------------------
+        // Setup links...
+
+        // 'first'...
+        $hal->addLink( 'first', $this->generateRoute( $response, $query ) );
+
+        // 'self'...
+        if( $response->getCurrentPageNumber() == 1 ){
+            $hal->addLink( 'self', $this->generateRoute( $response, $query ) );
+        } else {
+            $hal->addLink( 'self', $this->generateRoute( $response, [ 'page'=>$response->getCurrentPageNumber() ] + $query ) );
+        }
+
+        // 'prev'...
+        if ($response->getCurrentPageNumber() - 1 > 0) {
+
+            if ($response->getCurrentPageNumber() - 1 == 1) {
+                $hal->addLink( 'prev', $this->generateRoute( $response, $query ) );
+            } else {
+                $hal->addLink( 'prev', $this->generateRoute( $response, [ 'page'=>($response->getCurrentPageNumber() - 1) ] + $query ) );
+            }
+
+        }
+
+        // 'next'...
+        if ($response->getCurrentPageNumber() + 1 <= $response->count()) {
+            $hal->addLink( 'next', $this->generateRoute( $response, [ 'page'=>($response->getCurrentPageNumber() + 1) ] + $query ) );
+        }
+
+        // 'last'...
+        if( $response->count() <= 1 ){
+            $hal->addLink( 'last', $this->generateRoute( $response, $query ) );
+        } else {
+            $hal->addLink( 'last', $this->generateRoute( $response, [ 'page'=>$response->count() ] + $query ) );
+        }
+
+        //-------------------------------
+
+        $response = new HalResponse( $hal, 'json' );
 
         return $response;
 
-    }
+    } // function
 
     /**
      * Retrieve HEAD metadata for the resource
@@ -298,19 +362,18 @@ class RestController extends AbstractRestfulController {
 
     //-----------------------------------------
 
-    // TODO - Check type of entity...
-    protected function generateRoute( EntityInterface $entity ){
+    public function generateRoute( RouteProviderInterface $provider, $params = array() ){
 
         $resource = $this->getResource();
 
         $routeName = 'api-v1/level-' . (($resource->getName()=='applications') ? '1' : '2');
 
         return $this->url()->fromRoute($routeName, [
-            'userId'=>$resource->getRouteUser(),
-            'lpaId'=>$entity->lpaId(),
-            'resource' => $resource->getName(),
-            'resourceId' => $entity->resourceId()
-        ]);
+                'userId'=>$resource->getRouteUser(),
+                'lpaId'=>$provider->lpaId(),
+                'resource' => $resource->getName(),
+                'resourceId' => $provider->resourceId()
+            ],[ 'query' => $params ]);
 
     } // function
 

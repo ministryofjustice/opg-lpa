@@ -1,14 +1,11 @@
 <?php
 namespace Application\Model\Rest;
 
-interface EntityInterface {
-
-    public function lpaId();
-    public function resourceId();
+interface EntityInterface extends RouteProviderInterface {
 
     /**
      * @return \Application\Library\Hal\Hal
      */
-    public function getHal();
+    public function getHal( callable $routeCallback );
 
 } // interface

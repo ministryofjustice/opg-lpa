@@ -5,6 +5,9 @@ use RuntimeException;
 
 use Application\Model\Rest\AbstractResource;
 
+use Zend\Paginator\Adapter\Null as PaginatorNull;
+use Zend\Paginator\Adapter\Callback as PaginatorCallback;
+
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document;
 
@@ -97,6 +100,7 @@ class Resource extends AbstractResource {
 
     } // function
 
+
     /**
      * Fetch a resource
      *
@@ -127,19 +131,68 @@ class Resource extends AbstractResource {
 
     } // function
 
+
     /**
      * Fetch all or a subset of resources
      *
      * @param  array $params
-     * @return ApiProblem|Collection
+     * @return Collection
+     * @throw UnauthorizedException If the current user is not authorized.
      */
     public function fetchAll($params = array()){
 
-        $cursor = $this->getCollection('lpa')->find( array_merge( $params, [ 'user'=>$this->getRouteUser() ] ) );
+        $this->checkAccess();
 
-        //var_dump( iterator_to_array($cursor) ); exit();
+        //------------------------
+
+        $query = [ 'user'=>$this->getRouteUser() ];
+
+        // Merge in any filter requirements...
+        if( isset($params['filter']) && is_array($params['filter']) ){
+            $query = array_merge( $params, $query );
+        }
+
+        // Get the collection...
+        $cursor = $this->getCollection('lpa')->find( $query );
+
+        $count = $cursor->count();
+
+        // If there are no records, just return an empty paginator...
+        if( $count == 0 ){
+            return new Collection( new PaginatorNull );
+        }
+
+        //---
+
+        // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
+        $collection = new Collection(new PaginatorCallback(
+            function($offset, $itemCountPerPage) use ($cursor){
+                // getItems callback
+
+                $cursor->sort( [ 'createdAt' => -1 ] );
+                $cursor->skip( $offset );
+                $cursor->limit( $itemCountPerPage );
+
+                // Convert the results to instances of the LPA object..
+                $items = array_map( function($lpa){
+                    $lpa = [ 'id' => $lpa['_id'] ] + $lpa;
+                    return new Lpa( $lpa );
+                }, iterator_to_array( $cursor ) );
+
+                return $items;
+            },
+            function() use ($count){
+                // count callback
+                return $count;
+            }
+        ));
+
+        //---
+
+        return $collection;
 
     } // function
+
 
     /**
      * Delete a resource
