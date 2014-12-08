@@ -15,8 +15,6 @@ abstract class Lp1 extends AbstractForm
     const BOX_NO_OF_ROWS = 11;
     const BOX_NO_OF_ROWS_CS2 = 17;
     
-    const STROKE_LINE_WIDTH = 10;
-    
     /**
      * bx - bottom x 
      * by - bottom y
@@ -46,8 +44,6 @@ abstract class Lp1 extends AbstractForm
         'cs1'             => array('bx'=>313,'by'=>262,'tx'=>558,'ty'=>645)
     );
     
-    protected $drawingTargets = array();
-    
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
      *
@@ -57,11 +53,8 @@ abstract class Lp1 extends AbstractForm
     {
         $this->generateDefaultPdf();
         
-        if($this->hasAdditionalPages()) {
-            
-            $this->generateAdditionalPagePdfs();
-            $this->mergePdfs();
-        }
+        $this->generateAdditionalPagePdfs();
+        $this->mergePdfs();
         
         return $this;
         
@@ -72,10 +65,11 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateDefaultPdf()
     {
-        $this->intermediatePdfFilePaths['LP1'] = '/tmp/pdf-LP1-'.$this->lpa->id.'-'.microtime().'.pdf';
+        $this->intermediatePdfFilePaths['LP1'] = '/tmp/pdf-LP1-'.$this->lpa->id.'-'.microtime(true).'.pdf';
         
         // populate forms
-        $this->mapData();
+        $this->modelPdfFieldDataMapping();
+        
         $this->pdf->fillForm($this->flattenLpa)
 	        ->needAppearances()
             ->flatten()
@@ -166,6 +160,7 @@ abstract class Lp1 extends AbstractForm
             $this->addContinuationSheet2('cs-2-is-decisions', $content);
         }
         
+        // CS2
         if(($noOfReplacementAttorneys > 1) && 
             ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             
@@ -251,7 +246,7 @@ abstract class Lp1 extends AbstractForm
         $totalMappedAdditionalPeople = 0;
         for($i=0; $i<$noOfAdditionalPages; $i++) {
             
-            $tmpSavePath = '/tmp/pdf-CS1-'.$this->lpa->id.'-'.microtime().'.pdf';
+            $tmpSavePath = '/tmp/pdf-CS1-'.$this->lpa->id.'-'.microtime(true).'.pdf';
             $this->intermediatePdfFilePaths['CS1'][] = $tmpSavePath;
             
             $cs1 = new Pdf($this->basePdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
@@ -281,7 +276,7 @@ abstract class Lp1 extends AbstractForm
                 
             } // loop for 2 persons per page
             
-            $formData['donor-full-name'] = $this->fullName($this->lpa->document->donor);
+            $formData['donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
             
             $cs1->fillForm($formData)
                 ->needAppearances()
@@ -328,8 +323,9 @@ abstract class Lp1 extends AbstractForm
             $totalAdditionalPages = ceil(($formatedContentLength-$page0Length)/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2));
         }
         
+        $this->intermediatePdfFilePaths['CS2'] = array();
         for($i=1; $i<=$totalAdditionalPages; $i++) {
-            $tmpSavePath = '/tmp/pdf-CS2-'.$this->lpa->id.'-'.microtime().'.pdf';
+            $tmpSavePath = '/tmp/pdf-CS2-'.$this->lpa->id.'-'.microtime(true).'.pdf';
             $this->intermediatePdfFilePaths['CS2'][] = $tmpSavePath;
             
             $cs2 = new Pdf($this->basePdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
@@ -337,7 +333,7 @@ abstract class Lp1 extends AbstractForm
             $cs2->fillForm(array(
                     $type => self::CHECK_BOX_ON,
                     'cs-2-content' => $this->getContentForBox($i, $content, true),
-                    'donor-full-name' => $this->fullName($this->lpa->document->donor)
+                    'donor-full-name' => $this->fullName($this->lpa->document->donor->name)
             ))->needAppearances()
                 ->flatten()
                 ->saveAs($tmpSavePath);
@@ -350,13 +346,13 @@ abstract class Lp1 extends AbstractForm
      */
     protected function addContinuationSheet3()
     {
-        $tmpSavePath = '/tmp/pdf-CS3-'.$this->lpa->id.'-'.microtime().'.pdf';
+        $tmpSavePath = '/tmp/pdf-CS3-'.$this->lpa->id.'-'.microtime(true).'.pdf';
         $this->intermediatePdfFilePaths['CS3'] = $tmpSavePath;
     
         $cs3 = new Pdf($this->basePdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
     
         $cs3->fillForm(array(
-                'donor-full-name' => $this->fullName($this->lpa->document->donor)
+                'donor-full-name' => $this->fullName($this->lpa->document->donor->name)
         ))->needAppearances()
             ->flatten()
             ->saveAs($tmpSavePath);
@@ -366,12 +362,13 @@ abstract class Lp1 extends AbstractForm
     
     
     /**
-     * Duplicate Section 11 page for primary and replacement attorneys to sign
+     * Duplicate Section 11 page for additional primary and replacement attorneys to sign
      */
     protected function addAdditionalAttorneySignaturePages()
     {
         $i=0;
         $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
+        $this->intermediatePdfFilePaths['AdditionalAttorneySignature'] = array();
         foreach($allAttorneys as $attorney) {
             
             if($attorney instanceof TrustCorporation) continue;
@@ -379,10 +376,10 @@ abstract class Lp1 extends AbstractForm
             $i++;
             if($i <= 4) continue;
             
-            $tmpSavePath = '/tmp/pdf-AdditionalAttorneySignature-'.$this->lpa->id.'-'.microtime().'.pdf';
+            $tmpSavePath = '/tmp/pdf-AdditionalAttorneySignature-'.$this->lpa->id.'-'.microtime(true).'.pdf';
             $this->intermediatePdfFilePaths['AdditionalAttorneySignature'][] = $tmpSavePath;
             
-            $attorneySignaturePage = new Pdf($this->basePdfTemplatePath."/AdditionalAttorneySignature.pdf");
+            $attorneySignaturePage = new Pdf($this->basePdfTemplatePath."/LP1_AdditionalAttorneySignature.pdf");
             $attorneySignaturePage->fillForm(array(
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
@@ -394,6 +391,9 @@ abstract class Lp1 extends AbstractForm
         }
     } // function addAdditionalAttorneySignaturePages()
     
+    /**
+     * Duplicate Section 12 page for additional applicants 
+     */
     protected function addAdditionalApplicantPages()
     {
         $totalApplicant = count($this->lpa->document->whoIsRegistering);
@@ -401,11 +401,12 @@ abstract class Lp1 extends AbstractForm
         $totalAdditionalPages = ceil($totalAdditionalApplicant/4);
         
         $totalMappedAdditionalApplicants = 0;
+        $this->intermediatePdfFilePaths['AdditionalApplicant'] = array();
         for($i=0; $i<$totalAdditionalPages; $i++) {
-            $tmpSavePath = '/tmp/pdf-AdditionalApplicant-'.$this->lpa->id.'-'.microtime().'.pdf';
+            $tmpSavePath = '/tmp/pdf-AdditionalApplicant-'.$this->lpa->id.'-'.microtime(true).'.pdf';
             $this->intermediatePdfFilePaths['AdditionalApplicant'][] = $tmpSavePath;
             
-            $additionalApplicant = new Pdf($this->basePdfTemplatePath."/AdditionalApplicant.pdf");
+            $additionalApplicant = new Pdf($this->basePdfTemplatePath."/LP1_AdditionalApplicant.pdf");
             $formData = array();
             for($j=0; $j<4; $j++) {
                 $attorneyId = $this->lpa->document->whoIsRegistering[$i*4+$j+4];
@@ -481,9 +482,12 @@ abstract class Lp1 extends AbstractForm
         
     } // function addAdditionalApplicantPages()
     
+    /**
+     * Merge generated intermediate pdf files
+     */
     protected function mergePdfs()
     {
-        if((count($this->intermediatePdfFilePaths) == 1) && isset($this->intermediatePdfFilePaths['LP1'])) {
+        if($this->countIntermediateFiles() == 1) {
             $this->generatedPdfFilePath = $this->intermediatePdfFilePaths['LP1'];
             return;
         }
@@ -531,7 +535,7 @@ abstract class Lp1 extends AbstractForm
                     $insertAt = 20;
                     $pdf->cat(++$lastInsertion, $insertAt, 'A');
                     for($i=0; $i<$totalAdditionalPages; $i++) {
-                        $pdf->addFile($this->basePdfTemplatePath."/AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                        $pdf->addFile($this->basePdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
                         $pdf->cat(1, null, $intPdfHandle);
                     }
                     
@@ -595,7 +599,7 @@ abstract class Lp1 extends AbstractForm
         
     } // function combinePdfs()
     
-    protected function mapData()
+    protected function modelPdfFieldDataMapping()
     {
         $this->flattenLpa['lpa-id'] = Formatter::id($this->lpa->id);
         
@@ -841,7 +845,7 @@ abstract class Lp1 extends AbstractForm
             $this->flattenLpa['lpa-payment-date-year'] = $this->lpa->payment->date->format('Y');
         }
         
-    } // function mapData()
+    } // function modelPdfFieldDataMapping()
     
     private function flattenBoxContent($content)
     {

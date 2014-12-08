@@ -11,9 +11,7 @@ class Lp1h extends Lp1
 
     public function __construct (Lpa $lpa, Config $config)
     {
-        parent::__construct($lpa);
-        
-        $this->basePdfTemplatePath = $config['service']['assets']['path'].'/v2';
+        parent::__construct($lpa, $config);
         
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
@@ -22,9 +20,9 @@ class Lp1h extends Lp1
         $this->pdf = new Pdf($this->basePdfTemplatePath.'/LP1H.pdf');
     }
     
-    public function mapData()
+    public function modelPdfFieldDataMapping()
     {
-        parent::mapData();
+        parent::modelPdfFieldDataMapping();
         if($this->flattenLpa['lpa-document-primaryAttorneyDecisions-canSustainLife'] === true) {
             $this->strokePages[5] = array('life-sustain-B');
         }

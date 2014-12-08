@@ -15,8 +15,6 @@ class Lp1f extends Lp1
     {
         parent::__construct($lpa);
         
-        $this->basePdfTemplatePath = $config['service']['assets']['path'].'/v2';
-        
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
                  '-LP1F-' . time() . '.pdf';
@@ -42,9 +40,9 @@ class Lp1f extends Lp1
         }
     }
 
-    protected function mapData ()
+    protected function modelPdfFieldDataMapping ()
     {
-        parent::mapData();
+        parent::modelPdfFieldDataMapping();
         
         if ($this->lpa->document->primaryAttorneys[0] instanceof TrustCorporation) {
             $this->flattenLpa['attorney-0-is-trust-corporation'] = 'On';

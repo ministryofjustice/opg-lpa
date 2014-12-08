@@ -2,10 +2,14 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\Pdf\Config\Config;
 
 abstract class AbstractForm
 {
     const CHECK_BOX_ON = 'On';
+    
+    const STROKE_LINE_WIDTH = 10;
     
     /**
      *
@@ -42,18 +46,21 @@ abstract class AbstractForm
      */
     protected $basePdfTemplatePath;
     
-    /**
-     * Map model generated data to pdf form fields; add additional mapping 
-     * for the forms on extra pages.
-     */
-    abstract protected function mapData();
+    protected $drawingTargets = array();
     
-    public function __construct(Lpa $lpa)
+    abstract protected function generate();
+    
+    public function __construct(Lpa $lpa, Config $config)
     {
         $this->lpa = $lpa;
         $this->flattenLpa = $lpa->flatten();
+        $this->basePdfTemplatePath = $config['service']['assets']['path'].'/v2';
     }
-
+    
+    /**
+     * Get generated PDF file path
+     * @return string
+     */
     public function getPdfFilePath()
     {
         return $this->generatedPdfFilePath;
@@ -64,26 +71,51 @@ abstract class AbstractForm
         return $this->pdf;
     }
     
-    protected function fullName($person)
+    /**
+     * helper function - get fullname for a person
+     * @param Opg\Lpa\DataModel\Lpa\Elements\Name $personName
+     * @return string
+     */
+    protected function fullName(Name $personName)
     {
-        return $person->name->title . ' '. $person->name->first . ' '. $person->name->last; 
+        return $personName->title . ' '. $personName->first . ' '. $personName->last; 
     }
-
+    
+    /**
+     * Count no of generated intermediate files
+     * @return number
+     */
+    protected function countIntermediateFiles()
+    {
+        $count = 0;
+        foreach($this->intermediatePdfFilePaths as $type=>$paths) {
+            if(is_array($paths)) {
+                $count += count($paths);
+            }
+            else {
+                $count++;
+            }
+        }
+        
+        return $count;
+    }
+    
+    /**
+     * clean up intermediate files.
+     */
     public function __destruct()
     {
-        if(count($this->intermediatePdfFilePaths) > 1) {
-            // remove all generated intermediate pdf files
-            foreach($this->intermediatePdfFilePaths as $type => $paths) {
-                if(is_string($paths)) {
-                    if(\file_exists($paths)) {
-                        unlink($paths);
-                    }
+        // remove all generated intermediate pdf files
+        foreach($this->intermediatePdfFilePaths as $type => $paths) {
+            if(is_string($paths)) {
+                if(\file_exists($paths)) {
+                    unlink($paths);
                 }
-                else {
-                    foreach($paths as $path) {
-                        if(\file_exists($path)) {
-                            unlink($path);
-                        }
+            }
+            else {
+                foreach($paths as $path) {
+                    if(\file_exists($path)) {
+                        unlink($path);
                     }
                 }
             }
