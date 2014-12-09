@@ -52,9 +52,11 @@ return [
                     ],
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller\Version1',
+                        'controller'    => 'Rest',
+                        'resource'      => 'users'
                     ],
                 ],
-                'may_terminate' => false,
+                'may_terminate' => true,
                 'child_routes' => [
 
                     'level-1' => [
@@ -133,9 +135,10 @@ return [
             'ZfcRbac\Initializer\AuthorizationServiceInitializer',
         ],
         'invokables' => [
+            'resource-users'                    => 'Application\Model\Rest\Users\Resource',
             'resource-applications'             => 'Application\Model\Rest\Applications\Resource',
             'resource-status'                   => 'Application\Model\Rest\Status\Resource',
-            'resource-type'                     => 'stdClass',
+            'resource-type'                     => 'Application\Model\Rest\Type\Resource',
             'resource-instruction'              => 'stdClass',
             'resource-preference'               => 'stdClass',
             'resource-how-decisions-are-made'   => 'stdClass',

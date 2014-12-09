@@ -4,6 +4,7 @@ namespace Application\Model\Rest\Applications;
 use RuntimeException;
 
 use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\UserConsumerInterface;
 
 use Zend\Paginator\Adapter\Null as PaginatorNull;
 use Zend\Paginator\Adapter\Callback as PaginatorCallback;
@@ -22,7 +23,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
  * Class Resource
  * @package Application\Model\Rest\Applications
  */
-class Resource extends AbstractResource {
+class Resource extends AbstractResource implements UserConsumerInterface {
 
     public function getName(){ return 'applications'; }
     public function getIdentifier(){ return 'lpaId'; }
@@ -74,7 +75,7 @@ class Resource extends AbstractResource {
             'id'                => $id,
             'createdAt'         => new DateTime(),
             'updatedAt'         => new DateTime(),
-            'user'              => $this->getRouteUser(),
+            'user'              => $this->getRouteUser()->userId(),
             'locked'            => false,
             'whoAreYouAnswered' => false,
             'document'          => $document,
@@ -115,7 +116,7 @@ class Resource extends AbstractResource {
         //------------------------
 
         // Note: user has to match.
-        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser() ] );
+        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ] );
 
         if( is_null($result) ){
             return new ApiProblem( 404, 'Document not found' );
@@ -145,7 +146,7 @@ class Resource extends AbstractResource {
 
         //------------------------
 
-        $query = [ 'user'=>$this->getRouteUser() ];
+        $query = [ 'user'=>$this->getRouteUser()->userId() ];
 
         // Merge in any filter requirements...
         if( isset($params['filter']) && is_array($params['filter']) ){
@@ -209,7 +210,7 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('lpa');
 
-        $result = $collection->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser() ], [ '_id'=>true ] );
+        $result = $collection->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ], [ '_id'=>true ] );
 
         if( is_null($result) ){
             return new ApiProblem( 404, 'Document not found' );
@@ -217,7 +218,7 @@ class Resource extends AbstractResource {
 
         //---
 
-        $collection->remove( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser() ], [ 'justOne'=>true ] );
+        $collection->remove( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ], [ 'justOne'=>true ] );
 
         return true;
 

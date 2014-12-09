@@ -93,8 +93,6 @@ class RestController extends AbstractRestfulController {
 
             $hal = $result->getHal( [ $this, 'generateRoute' ] );
 
-            //$hal->setUri( $this->generateRoute( $result ) );
-
             $response = new HalResponse( $hal, 'json' );
             $response->setStatusCode(201);
             $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
@@ -175,8 +173,6 @@ class RestController extends AbstractRestfulController {
         } elseif( $result instanceof EntityInterface ) {
 
             $hal = $result->getHal( [ $this, 'generateRoute' ] );
-
-            //$hal->setUri( $this->generateRoute( $result ) );
 
             $response = new HalResponse( $hal, 'json' );
 
@@ -366,10 +362,19 @@ class RestController extends AbstractRestfulController {
 
         $resource = $this->getResource();
 
-        $routeName = 'api-v1/level-' . (($resource->getName()=='applications') ? '1' : '2');
+        switch( $resource->getName() ){
+            case 'users':
+                $routeName = 'api-v1';
+                break;
+            case 'applications':
+                $routeName = 'api-v1/level-1';
+                break;
+            default:
+                $routeName = 'api-v1/level-2';
+        }
 
         return $this->url()->fromRoute($routeName, [
-                'userId'=>$resource->getRouteUser(),
+                'userId'=>$resource->getRouteUser()->userId(),
                 'lpaId'=>$provider->lpaId(),
                 'resource' => $resource->getName(),
                 'resourceId' => $provider->resourceId()

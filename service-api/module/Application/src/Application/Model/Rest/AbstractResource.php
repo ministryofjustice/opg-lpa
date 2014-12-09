@@ -1,6 +1,9 @@
 <?php
 namespace Application\Model\Rest;
 
+use Application\Model\Rest\Users\Entity as RouteUser;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -18,35 +21,60 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
     //------------------------------------------
 
+    protected $lpa = null;
+
     protected $routeUser = null;
 
     //------------------------------------------
 
-    public function setRouteUser( $user ){
+    public function setRouteUser( RouteUser $user ){
         $this->routeUser = $user;
     }
 
+    /**
+     * @return RouteUser
+     */
     public function getRouteUser(){
        return $this->routeUser;
     }
 
+    //--------------------------
+
+    public function setLpa( Lpa $lpa ){
+        $this->lpa = $lpa;
+    }
+
+    public function getLpa(){
+        return $this->lpa;
+    }
+
+    //--------------------------
+
+    /**
+     * @param $collection string Name of the requested collection.
+     * @return \MongoCollection
+     */
     public function getCollection( $collection ){
         return $this->getServiceLocator()->get( "MongoDB-Default-{$collection}" );
     }
 
     //--------------------------
 
-    public function checkAccess(){
+    public function checkAccess( $userId = null ){
+
+        if( is_null($userId) && $this->getRouteUser() != null ){
+            $userId = $this->getRouteUser()->userId();
+        }
 
         if (!$this->getAuthorizationService()->isGranted('authenticated')) {
             throw new UnauthorizedException('You need to be authenticated to access this resource');
         }
 
-        if ( !$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $this->getRouteUser()) ) {
+        if ( !$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId) ) {
             throw new UnauthorizedException('You do not have permission to access this resource');
         }
 
-    }
+    } // function
 
     /**
      * Create a resource

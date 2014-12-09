@@ -58,6 +58,11 @@ class Lpa extends AbstractData implements CompleteInterface {
     protected $seed;
 
     /**
+     * @var int If this is a repeat LPA application, the relevant case number.
+     */
+    protected $repeatCaseNumber;
+
+    /**
      * @var Document All the details making up the LPA document.
      */
     protected $document;
@@ -137,6 +142,13 @@ class Lpa extends AbstractData implements CompleteInterface {
         };
 
         $this->validators['seed'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Int,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['repeatCaseNumber'] = function(){
             return (new Validator)->addRule((new Rules\OneOf)->addRules([
                 new Rules\Int,
                 new Rules\NullValue,

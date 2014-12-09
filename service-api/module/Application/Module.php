@@ -1,6 +1,8 @@
 <?php
 namespace Application;
 
+use RuntimeException;
+
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -13,7 +15,8 @@ use Application\Library\Authentication\Identity;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 
-use Application\Model\Rest\ResourceInterface;
+use Application\Model\Rest\UserConsumerInterface;
+use Application\Model\Rest\LpaConsumerInterface;
 
 use PhlyMongo\MongoCollectionFactory;
 use PhlyMongo\MongoConnectionFactory;
@@ -109,6 +112,7 @@ class Module {
                         // Check if the resource exists...
                         if( !$locator->has("resource-{$resource}") ){
                             // Error
+                            // TODO
                             die("Doesn't exist");
                         }
 
@@ -128,15 +132,41 @@ class Module {
     public function getServiceConfig() {
         return [
             'initializers' => [
-                'InjectRouteIdentity' => function($object, $sm) {
-                    if ($object instanceof ResourceInterface) {
+                'InjectResourceEntities' => function($object, $sm) {
+
+                    if ($object instanceof UserConsumerInterface) {
 
                         $userId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
 
-                        $object->setRouteUser( $userId );
+                        if( !isset($userId) ){
+                            throw new RuntimeException('No user ID in URL.');
+                        }
 
-                    }
-                },
+                        $resource = $sm->get("resource-users");
+
+                        $user = $resource->fetch( $userId );
+
+                        $object->setRouteUser( $user );
+
+                    } // UserConsumerInterface
+
+                    if( $object instanceof LpaConsumerInterface ){
+
+                        $lpaId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
+
+                        if( !isset($lpaId) ){
+                            throw new RuntimeException('No LPA ID in URL.');
+                        }
+
+                        $resource = $sm->get("resource-applications");
+
+                        $lpa = $resource->fetch( $lpaId );
+
+                        $object->setLpa( $lpa->getLpa() );
+
+                    } // LpaConsumerInterface
+
+                }, // InjectResourceEntities
             ],
             'factories' => [
 

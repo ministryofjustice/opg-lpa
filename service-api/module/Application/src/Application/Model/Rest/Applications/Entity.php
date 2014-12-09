@@ -22,6 +22,10 @@ class Entity implements EntityInterface {
         return null;
     }
 
+    public function getLpa(){
+        return $this->lap;
+    }
+
     public function getHal( callable $routeCallback ){
 
         $hal = new Hal( call_user_func($routeCallback, $this) );
