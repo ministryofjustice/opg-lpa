@@ -123,6 +123,16 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
         //---
 
+        /**
+         * MongoDates should be converted to Datatime.
+         * Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
+         */
+        if( class_exists('\MongoDate') && $value instanceof \MongoDate ){
+            $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".{$value->usec}+0000" );
+        }
+
+        //---
+
         // Check if this $property should by type mapped...
 
         if( isset($this->typeMap[$property]) ){
@@ -298,7 +308,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      *
      * @return array
      */
-    public function toArray(){
+    public function toArray( $dateFormat = 'string' ){
 
         $values = get_object_vars( $this );
 
@@ -306,18 +316,54 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         unset( $values['typeMap'] );
         unset( $values['validators'] );
 
-        // Recursively convert all items to an array...
-        array_walk_recursive( $values, function( &$item, $key ){
-            if( $item instanceof AccessorInterface ){
-                $item = $item->toArray();
-            } elseif ( $item instanceof \DateTime ) {
-                $item = $item->format( 'Y-m-d\TH:i:s.uO' ); // ISO8601 including milliseconds
+        foreach( $values as $k=>$v ){
+
+            if ( $v instanceof DateTime ) {
+
+                switch($dateFormat){
+                    case 'string':
+                        $values[$k] = $v->format( 'Y-m-d\TH:i:s.uO' ); // ISO8601 including microseconds
+                        break;
+                    case 'mongo':
+                        //Convert to MongoDate, including microseconds...
+                        $values[$k] = new \MongoDate( $v->getTimestamp(), (int)$v->format('u') );
+                        break;
+                    default:
+                } // switch
+
+            } // if
+
+            // Recursively build this array...
+            if( $v instanceof AccessorInterface ) {
+                $values[$k] = $v->toArray( $dateFormat );
             }
-        });
+
+            // If the value is an array, check if it contains instances of AccessorInterface...
+            if( is_array($v) ){
+                // If so, map them...
+                foreach( $v as $a=>$b ){
+                    if( $b instanceof AccessorInterface ) {
+                        $values[$k][$a] = $b->toArray( $dateFormat );
+                    }
+                }
+            } // if
+
+        } // foreach
 
         return $values;
 
     } // function
+
+    /**
+     * Returns $this as an array suitable for inserting into MongoDB.
+     *
+     * @return array
+     */
+    public function toMongoArray(){
+        return $this->toArray( 'mongo' );
+
+        //MongoDate
+    }
 
     /**
      * Return the array to use whenever json_encode() is called on this instance.
@@ -325,7 +371,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @return array
      */
     public function jsonSerialize(){
-        return $this->toArray();
+        return $this->toArray( 'string' );
     }
 
     /**
@@ -350,7 +396,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @return array
      */
     public function flatten(){
-        return $this->flattenArray( $this->toArray() );
+        return $this->flattenArray( $this->toArray( 'string' ) );
     }
 
     //-------------------
@@ -382,7 +428,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         foreach( $data as $k => $v ){
 
             // Only include known properties during the import...
-            if( property_exists( $this, $k ) ){
+            if( property_exists( $this, $k ) && !is_null($v) ){
                 $this->set( $k, $v, false );
             }
 

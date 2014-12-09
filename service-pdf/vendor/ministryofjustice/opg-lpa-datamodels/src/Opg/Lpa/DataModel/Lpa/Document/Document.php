@@ -149,10 +149,13 @@ class Document extends AbstractData {
         // Validators (wrapped in Closures for lazy loading)
 
         $this->validators['type'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( [ self::LPA_TYPE_PF, self::LPA_TYPE_HW ], true ),
-            ]);
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\In( [ self::LPA_TYPE_PF, self::LPA_TYPE_HW ], true ),
+                ]),
+                new Rules\NullValue,
+            ]));
         };
 
         $this->validators['donor'] = function(){

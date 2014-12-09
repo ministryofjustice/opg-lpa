@@ -45,6 +45,26 @@ class Payment extends AbstractData {
      */
     protected $date;
 
+    /**
+     * @var bool Does the donor receive any qualifying benefits.
+     */
+    protected $reducedFeeReceivesBenefits;
+
+    /**
+     * @var bool Has the donor received a personal injury payout.
+     */
+    protected $reducedFeeAwardedDamages;
+
+    /**
+     * @var bool Does the donor have what is considered a low income.
+     */
+    protected $reducedFeeLowIncome;
+
+    /**
+     * @var bool Does the donor receive Universal Credit.
+     */
+    protected $reducedFeeUniversalCredit;
+
 
     public function __construct( $data = null ){
 
@@ -97,6 +117,34 @@ class Payment extends AbstractData {
                         return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
                     }),
                 ]),
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['reducedFeeReceivesBenefits'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Bool,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['reducedFeeAwardedDamages'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Bool,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['reducedFeeLowIncome'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Bool,
+                new Rules\NullValue,
+            ]));
+        };
+
+        $this->validators['reducedFeeUniversalCredit'] = function(){
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                new Rules\Bool,
                 new Rules\NullValue,
             ]));
         };

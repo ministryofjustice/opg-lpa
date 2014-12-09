@@ -13,7 +13,7 @@ class Worker {
     /**
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
-     * @param strong $lpa JSON document representing the LPA document.
+     * @param string $lpa JSON document representing the LPA document.
      */
     public function run( $docId, $type, $lpa ){
 
