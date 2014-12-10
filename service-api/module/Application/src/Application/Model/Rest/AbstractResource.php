@@ -1,6 +1,10 @@
 <?php
 namespace Application\Model\Rest;
 
+use RuntimeException;
+
+use Application\Library\DateTime;
+
 use Application\Model\Rest\Users\Entity as RouteUser;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
@@ -11,6 +15,11 @@ use ZfcRbac\Exception\UnauthorizedException;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
 abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwareInterface {
+
+    const TYPE_SINGULAR = 'singular';
+    const TYPE_COLLECTION = 'collections';
+
+    //------------------------------------------
 
     use ServiceLocatorAwareTrait;
 
@@ -35,6 +44,9 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
      * @return RouteUser
      */
     public function getRouteUser(){
+        if( !( $this->routeUser instanceof RouteUser ) ){
+            throw new RuntimeException('Route User not set');
+        }
        return $this->routeUser;
     }
 
@@ -44,7 +56,13 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         $this->lpa = $lpa;
     }
 
+    /**
+     * @return Lpa
+     */
     public function getLpa(){
+        if( !( $this->lpa instanceof Lpa ) ){
+            throw new RuntimeException('LPA not set');
+        }
         return $this->lpa;
     }
 
@@ -75,6 +93,45 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         }
 
     } // function
+
+    //------------------------------------------
+
+    /**
+     * Helper method for saving an updated LPA.
+     *
+     * @param Lpa $lpa
+     */
+    protected function updateLpa( Lpa $lpa ){
+
+        // Should already have been checked, but no harm checking again.
+        $this->checkAccess();
+
+        //-----------------------------------------
+
+        $collection = $this->getCollection('lpa');
+
+        $lastUpdated = new \MongoDate( $lpa->updatedAt->getTimestamp(), (int)$lpa->updatedAt->format('u') );
+
+        // Record the time we updated the document.
+        $lpa->updatedAt = new DateTime();
+
+        // updatedAt is included in the query so that data isn't overwritten
+        // if the Document has changed since this process loaded it.
+        $result = $collection->update(
+            [ '_id'=>$lpa->id, 'updatedAt'=>$lastUpdated ],
+            $lpa->toMongoArray(),
+            [ 'upsert'=>false, 'multiple'=>false ]
+        );
+
+        // Ensure that one (and only one) document was updated.
+        // If not, something when wrong.
+        if( $result['nModified'] !== 1 ){
+            throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
+        }
+
+    } // function
+
+    //------------------------------------------
 
     /**
      * Create a resource

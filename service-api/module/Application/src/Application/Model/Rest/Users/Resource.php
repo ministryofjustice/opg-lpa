@@ -10,6 +10,10 @@ class Resource extends AbstractResource {
     public function getIdentifier(){ return 'userId'; }
     public function getName(){ return 'users'; }
 
+    public function getType(){
+        return self::TYPE_COLLECTION;
+    }
+
     /**
      * Fetch a resource
      *

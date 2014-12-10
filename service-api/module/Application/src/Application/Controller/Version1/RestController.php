@@ -3,6 +3,7 @@ namespace Application\Controller\Version1;
 
 use RuntimeException;
 
+use Zend\Mvc\Exception;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractRestfulController;
 
@@ -46,12 +47,15 @@ class RestController extends AbstractRestfulController {
 
     //----------------------------------------------------
 
-    public function onDispatch(MvcEvent $e) {
+    public function onDispatch(MvcEvent $event) {
 
-        /*
-         * TODO - catch UnauthorizedException
-         */
-        $return = parent::onDispatch($e);
+        try {
+
+            $return = parent::onDispatch($event);
+
+        } catch( UnauthorizedException $e ){
+            # TODO
+        }
 
         //---
 
@@ -64,6 +68,32 @@ class RestController extends AbstractRestfulController {
         }
 
         return $return;
+
+    } // function
+
+    /**
+     * Retrieve the identifier, if any
+     *
+     * Attempts to see if an identifier was passed in either the URI or the
+     * query string, returning it if found. Otherwise, returns a boolean false.
+     *
+     * This override ensures a value of TRUE id always
+     * returned if the resource is a singular.
+     *
+     * @param  \Zend\Mvc\Router\RouteMatch $routeMatch
+     * @param  \Zend\Stdlib\RequestInterface $request
+     * @return false|mixed
+     */
+    protected function getIdentifier($routeMatch, $request){
+
+        $resource = $this->getResource();
+
+        // If the resource is a singular,
+        if( $resource->getType() == $resource::TYPE_SINGULAR ){
+            return true;
+        }
+
+        return parent::getIdentifier( $routeMatch, $request );
 
     } // function
 
@@ -118,7 +148,7 @@ class RestController extends AbstractRestfulController {
             return new ApiProblem(405, 'The DELETE method has not been defined');
         }
 
-        $result = $this->getResource()->delete( $id );
+        $result = @$this->getResource()->delete( $id );
 
         //---
 
@@ -341,9 +371,33 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $data
      * @return mixed
      */
-    public function update($id, $data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined');
+    public function update($id, $data){
+
+        if( !is_callable( [ $this->getResource(), 'update' ] ) ){
+            return new ApiProblem(405, 'The PUT method has not been defined');
+        }
+
+        $result = @$this->getResource()->update( $data );
+
+        //---
+
+        if( $result instanceof ApiProblem ){
+
+            return $result;
+
+        } elseif( $result instanceof EntityInterface ) {
+
+            $hal = $result->getHal( [ $this, 'generateRoute' ] );
+
+            $response = new HalResponse( $hal, 'json' );
+
+            return $response;
+
+        }
+
+        // If we get here...
+        return new ApiProblem(500, 'Unable to process request');
+
     }
 
     /**
@@ -362,6 +416,7 @@ class RestController extends AbstractRestfulController {
 
         $resource = $this->getResource();
 
+        /*
         switch( $resource->getName() ){
             case 'users':
                 $routeName = 'api-v1';
@@ -371,6 +426,15 @@ class RestController extends AbstractRestfulController {
                 break;
             default:
                 $routeName = 'api-v1/level-2';
+        }
+        */
+
+        if( $provider instanceof \Application\Model\Rest\Users\Entity ) {
+            $routeName = 'api-v1';
+        } elseif( $provider instanceof \Application\Model\Rest\Applications\Entity ){
+            $routeName = 'api-v1/level-1';
+        } else {
+            $routeName = 'api-v1/level-2';
         }
 
         return $this->url()->fromRoute($routeName, [

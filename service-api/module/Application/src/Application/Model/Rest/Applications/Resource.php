@@ -28,6 +28,10 @@ class Resource extends AbstractResource implements UserConsumerInterface {
     public function getName(){ return 'applications'; }
     public function getIdentifier(){ return 'lpaId'; }
 
+    public function getType(){
+        return self::TYPE_COLLECTION;
+    }
+
     /**
      * Create a new LAP.
      *
@@ -218,7 +222,9 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         //---
 
-        $collection->remove( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ], [ 'justOne'=>true ] );
+        $result['updatedAt'] = new \MongoDate();
+
+        $collection->save( $result );
 
         return true;
 
