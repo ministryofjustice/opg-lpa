@@ -5,7 +5,6 @@ namespace Opg\Lpa\Pdf\Worker;
 use Exception;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\Generator;
 
 class Worker {
@@ -21,17 +20,14 @@ class Worker {
 
         try {
 
-            // Get the service config.
-            $config = new Config(include('config/local.php'));
-
             // Instantiate an LPA document from the JSON
             $lpaObj = new Lpa( $lpa );
 
             // Create and config the $response object.
-            $response = new Response( $config, $docId );
+            $response = new Response( $docId );
 
             // Create an instance of the PDF generator service.
-            $generator = new Generator( $config, $type, $lpaObj, $response );
+            $generator = new Generator( $type, $lpaObj, $response );
 
             // Run the process.
             $result = $generator->generate();
@@ -52,7 +48,8 @@ class Worker {
         } catch (Exception $e){
 
             echo "${docId}: PDF generation failed with exception: ", $e->getMessage(),"\n";
-
+            
+            echo $e->getTraceAsString().PHP_EOL;
         }
 
     } // function

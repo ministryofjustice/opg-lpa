@@ -5,11 +5,28 @@ use ArrayAccess;
 use Countable;
 
 class Config implements Countable, ArrayAccess {
+    
+    static $instance = null;
 
-    private $container = array();
+    private $container = null;
 
-    public function __construct( array $data = array() ) {
-        $this->container = $data;
+    private function __construct(  ) {
+        if($this->container === null) {
+            $this->container = include('config/local.php');
+        }
+    }
+    
+    static public function getInstance( array $data = null )
+    {
+        if($data !== null) {
+            $this->container = $data;
+        }
+        
+        if(self::$instance === null) {
+            self::$instance = new self();
+        }
+        
+        return self::$instance;
     }
 
     public function offsetSet($offset, $value) {

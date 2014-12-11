@@ -12,10 +12,12 @@ class Response implements ResponseInterface  {
     private $docId;
     private $config;
 
-    public function __construct( Config $config, $docId ) {
+    public function __construct( $docId ) {
 
         $this->docId = $docId;
-        $this->config = $config;
+        
+        // load config/local.php by default 
+        $this->config = Config::getInstance( );
 
     }
 
