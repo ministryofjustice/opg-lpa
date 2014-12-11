@@ -143,7 +143,7 @@ return [
             'resource-preference'               => 'Application\Model\Rest\Preference\Resource',
             'resource-how-decisions-are-made'   => 'Application\Model\Rest\xxx\Resource',
             'resource-donor'                    => 'Application\Model\Rest\Donor\Resource',
-            'resource-correspondent'            => 'Application\Model\Rest\xxx\Resource',
+            'resource-correspondent'            => 'Application\Model\Rest\Correspondent\Resource',
             'resource-payment'                  => 'Application\Model\Rest\xxx\Resource',
             'resource-who-is-registering'       => 'Application\Model\Rest\xxx\Resource',
             'resource-who-are-you'              => 'Application\Model\Rest\xxx\Resource',

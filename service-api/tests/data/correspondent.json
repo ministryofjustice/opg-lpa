@@ -1,0 +1,25 @@
+{
+    "correspondent": {
+        "who": "other",
+        "name": {
+            "title": "Mr",
+            "first": "Bob",
+            "last": "Sanders"
+        },
+        "company": "My Company Limited",
+        "address": {
+            "address1": "Line 1",
+            "address2": "Line 2",
+            "address3": "A new line",
+            "postcode": "SW1H 9AJ"
+        },
+        "email": {
+            "address": "test@digital.justice.gov.uk"
+        },
+        "phone": {
+            "number": "020 1234 5678"
+        },
+        "contactByPost": true,
+        "contactInWelsh": true
+    }
+}
