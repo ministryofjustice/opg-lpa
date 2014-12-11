@@ -1,7 +1,9 @@
 <?php
-namespace Application\Model\Rest\Type;
+namespace Application\Model\Rest\Donor;
 
 use RuntimeException;
+
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 use Application\Model\Rest\AbstractResource;
 
@@ -14,7 +16,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     public function getIdentifier(){ return 'lpaId'; }
-    public function getName(){ return 'type'; }
+    public function getName(){ return 'donor'; }
 
     public function getType(){
         return self::TYPE_SINGULAR;
@@ -35,7 +37,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-        return new Entity( $lpa->document->type, $lpa );
+        return new Entity( $lpa->document->donor, $lpa );
 
     }
 
@@ -56,11 +58,11 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $document = $lpa->document;
 
-        $document->type = (isset($data['type'])) ? $data['type'] : null;
+        $document->donor = (isset($data['donor'])) ? new Donor($data['donor']) : null;
 
         //---
 
-        $validation = $document->validate();
+        $validation = $document->donor->validate();
 
         if( $validation->hasErrors() ){
             return new ValidationApiProblem( $validation );
@@ -80,7 +82,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $this->updateLpa( $lpa );
 
-        return new Entity( $lpa->document->type, $lpa );
+        return new Entity( $lpa->document->donor, $lpa );
 
     } // function
 
@@ -101,7 +103,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $document = $lpa->document;
 
-        $document->type = null;
+        $document->donor = null;
 
         //---
 

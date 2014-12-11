@@ -142,7 +142,7 @@ return [
             'resource-instruction'              => 'stdClass',
             'resource-preference'               => 'stdClass',
             'resource-how-decisions-are-made'   => 'stdClass',
-            'resource-donor'                    => 'stdClass',
+            'resource-donor'                    => 'Application\Model\Rest\Donor\Resource',
             'resource-correspondent'            => 'stdClass',
             'resource-payment'                  => 'stdClass',
             'resource-who-is-registering'       => 'stdClass',

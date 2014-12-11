@@ -222,6 +222,11 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         //---
 
+        /*
+         * We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
+         * So we basically just strip the document down to '_id' and 'updatedAt'.
+         */
+
         $result['updatedAt'] = new \MongoDate();
 
         $collection->save( $result );

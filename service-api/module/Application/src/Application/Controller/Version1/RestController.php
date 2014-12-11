@@ -416,22 +416,11 @@ class RestController extends AbstractRestfulController {
 
         $resource = $this->getResource();
 
-        /*
-        switch( $resource->getName() ){
-            case 'users':
-                $routeName = 'api-v1';
-                break;
-            case 'applications':
-                $routeName = 'api-v1/level-1';
-                break;
-            default:
-                $routeName = 'api-v1/level-2';
-        }
-        */
-
         if( $provider instanceof \Application\Model\Rest\Users\Entity ) {
             $routeName = 'api-v1';
         } elseif( $provider instanceof \Application\Model\Rest\Applications\Entity ){
+            $routeName = 'api-v1/level-1';
+        } elseif( $provider instanceof \Application\Model\Rest\Applications\Collection ){
             $routeName = 'api-v1/level-1';
         } else {
             $routeName = 'api-v1/level-2';
