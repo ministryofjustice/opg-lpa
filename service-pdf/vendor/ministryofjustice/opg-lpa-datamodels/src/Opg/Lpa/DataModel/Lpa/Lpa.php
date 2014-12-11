@@ -58,7 +58,7 @@ class Lpa extends AbstractData implements CompleteInterface {
     protected $seed;
 
     /**
-     * @var int If this is a repeat LPA application, the relevant case number.
+     * @var int|null If this is a repeat LPA application, the relevant case number.
      */
     protected $repeatCaseNumber;
 

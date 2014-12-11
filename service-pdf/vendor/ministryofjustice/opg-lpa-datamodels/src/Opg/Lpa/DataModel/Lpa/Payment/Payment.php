@@ -51,7 +51,7 @@ class Payment extends AbstractData {
     protected $reducedFeeReceivesBenefits;
 
     /**
-     * @var bool Has the donor received a personal injury payout.
+     * @var bool Has the donor received a personal injury payout, less then the required threshold.
      */
     protected $reducedFeeAwardedDamages;
 

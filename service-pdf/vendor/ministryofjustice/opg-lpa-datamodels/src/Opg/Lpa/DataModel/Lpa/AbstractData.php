@@ -103,7 +103,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @throws ValidatorException If the property value does not validate.
      */
     public function __set( $property, $value ){
-        return $this->set( $property, $value, true );
+        return $this->set( $property, $value, false );
     }
 
     /**
