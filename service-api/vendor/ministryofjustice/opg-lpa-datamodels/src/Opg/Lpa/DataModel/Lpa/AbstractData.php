@@ -128,7 +128,8 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
          * Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
          */
         if( class_exists('\MongoDate') && $value instanceof \MongoDate ){
-            $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".{$value->usec}+0000" );
+            // sprintf %06d ensures a full 6 digit value is returns, even if there are prefixing zeros.
+            $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".".sprintf("%06d", $value->usec)."+0000" );
         }
 
         //---

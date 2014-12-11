@@ -80,7 +80,7 @@ return [
                             'constraints' => [
                                 'lpaId'      => '[0-9]+',
                                 'resourceId' => '[0-9]+',
-                                'resource'   => '[a-z][a-z]*',
+                                'resource'   => '[a-z][a-z-]*',
                             ],
                             'defaults' => [
                                 'controller'    => 'Rest',
@@ -147,10 +147,10 @@ return [
             'resource-payment'                  => 'Application\Model\Rest\Payment\Resource',
             'resource-who-is-registering'       => 'Application\Model\Rest\xxx\Resource',
             'resource-who-are-you'              => 'Application\Model\Rest\xxx\Resource',
+            'resource-certificate-provider'     => 'Application\Model\Rest\CertificateProvider\Resource',
             'resource-lock'                     => 'Application\Model\Rest\xxx\Resource',
             'resource-seed'                     => 'Application\Model\Rest\xxx\Resource',
             'resource-attorneys'                => 'Application\Model\Rest\xxx\Resource',
-            'resource-certificate-providers'    => 'Application\Model\Rest\xxx\Resource',
             'resource-notified-people'          => 'Application\Model\Rest\xxx\Resource',
             'resource-pdfs'                     => 'Application\Model\Rest\Pdf\Resource',
         ],
