@@ -18,12 +18,6 @@ abstract class AbstractForm
     protected $lpa;
 
     /**
-     *
-     * @var PDFTK pdf object
-     */
-    protected $pdf;
-    
-    /**
      * 
      * @var array
      */
@@ -39,7 +33,7 @@ abstract class AbstractForm
      * Intermediate pdf files - needed for LP1F/H
      * @var array
      */
-    protected $intermediatePdfFilePaths = array();
+    protected $intermediateFilePaths = array();
     
     /**
      * @var string
@@ -50,10 +44,11 @@ abstract class AbstractForm
     
     abstract protected function generate();
     
-    public function __construct(Lpa $lpa, Config $config)
+    public function __construct(Lpa $lpa)
     {
         $this->lpa = $lpa;
         $this->flattenLpa = $lpa->flatten();
+        $config = Config::getInstance();
         $this->basePdfTemplatePath = $config['service']['assets']['path'].'/v2';
     }
     
@@ -88,7 +83,7 @@ abstract class AbstractForm
     protected function countIntermediateFiles()
     {
         $count = 0;
-        foreach($this->intermediatePdfFilePaths as $type=>$paths) {
+        foreach($this->intermediateFilePaths as $type=>$paths) {
             if(is_array($paths)) {
                 $count += count($paths);
             }
@@ -101,18 +96,76 @@ abstract class AbstractForm
     }
     
     /**
+     * 
+     * @param string $fileType
+     * @return string
+     */
+    protected function getTmpFilePath($fileType)
+    {
+        $filePath = '/tmp/pdf-'.$fileType.'-'.$this->lpa->id.'-'.microtime(true).'.pdf';
+        return $filePath;
+    }
+    
+    /**
+     * Register a temp file in self::$intermediateFilePaths
+     * @param string $fileType
+     * @param string $path
+     */
+    public function registerTempFile($fileType)
+    {
+        $path = $this->getTmpFilePath($fileType);
+        if(!isset($this->intermediateFilePaths[$fileType])) {
+            $this->intermediateFilePaths[$fileType] = array($path);
+        }
+        else {
+            $this->intermediateFilePaths[$fileType][] = $path;
+        }
+        
+        return $path;
+    }
+    
+    /**
+     * Draw cross lines
+     * @param string $filePath
+     * @param array $params[pageNo=>strokeParamName]
+     */
+    protected function stroke($filePath, $params)
+    {
+        // draw strokes
+        $pdf = PdfProcessor::load($filePath);
+        foreach($params as $pageNo => $blockNames) {
+            $page = $pdf->pages[$pageNo]->setLineWidth(self::STROKE_LINE_WIDTH);
+            foreach($blockNames as $blockName) {
+                $page->drawLine(
+                        $this->strokeParams[$blockName]['bx'],
+                        $this->strokeParams[$blockName]['by'],
+                        $this->strokeParams[$blockName]['tx'],
+                        $this->strokeParams[$blockName]['ty']
+                );
+            }
+        } // foreach
+    
+        $pdf->save($filePath);
+    
+    } // function stroke()
+    
+    /**
      * clean up intermediate files.
      */
     public function __destruct()
     {
+        if(\file_exists($this->generatedPdfFilePath)) {
+            unlink($this->generatedPdfFilePath);
+        }
+        
         // remove all generated intermediate pdf files
-        foreach($this->intermediatePdfFilePaths as $type => $paths) {
+        foreach($this->intermediateFilePaths as $type => $paths) {
             if(is_string($paths)) {
                 if(\file_exists($paths)) {
                     unlink($paths);
                 }
             }
-            else {
+            elseif(is_array($paths)) {
                 foreach($paths as $path) {
                     if(\file_exists($path)) {
                         unlink($path);
@@ -121,8 +174,5 @@ abstract class AbstractForm
             }
         }
         
-        if(\file_exists($this->generatedPdfFilePath)) {
-            unlink($this->generatedPdfFilePath);
-        }
     }
 } // class

@@ -6,20 +6,19 @@ use Opg\Lpa\DataModel\Lpa\Formatter;
 use mikehaertl\pdftk\pdf as Pdf;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
-use Opg\Lpa\Pdf\Config\Config;
 
 class Lp1f extends Lp1
 {
 
-    public function __construct (Lpa $lpa, Config $config)
+    public function __construct (Lpa $lpa)
     {
         parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LP1F-' . time() . '.pdf';
+                 '-LP1F-' . microtime(true) . '.pdf';
         
-        $this->pdf = new Pdf($this->basePdfTemplatePath.'/LP1F.pdf');
+        $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1F.pdf');
     }
 
     protected function hasAdditionalPages ()
@@ -40,9 +39,9 @@ class Lp1f extends Lp1
         }
     }
 
-    protected function modelPdfFieldDataMapping ()
+    protected function dataMappingForStandardForm ()
     {
-        parent::modelPdfFieldDataMapping();
+        parent::dataMappingForStandardForm();
         
         if ($this->lpa->document->primaryAttorneys[0] instanceof TrustCorporation) {
             $this->flattenLpa['attorney-0-is-trust-corporation'] = 'On';
@@ -68,9 +67,9 @@ class Lp1f extends Lp1
         return $this->flattenLpa;
     }
 
-    protected function generateAdditionalPagePdfs ()
+    protected function generateAdditionalPages ()
     {
-        parent::generateAdditionalPagePdfs();
+        parent::generateAdditionalPages();
         
         // CS4
         if ($this->lpa->document->primaryAttorneys[0] instanceof TrustCorporation) {
@@ -89,7 +88,7 @@ class Lp1f extends Lp1
     protected function addContinuationSheet4 ($trustCorpRegNumber)
     {
         $tmpSavePath = '/tmp/pdf-CS4-' . $this->lpa->id . '-' . microtime() . '.pdf';
-        $this->intermediatePdfFilePaths['CS4'] = $tmpSavePath;
+        $this->intermediateFilePaths['CS4'] = $tmpSavePath;
         
         $cs2 = new Pdf($this->basePdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
         

@@ -2,9 +2,6 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use mikehaertl\pdftk\pdf as Pdf;
-use Opg\Lpa\Pdf\Config\Config;
-use ZendPdf\PdfDocument;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
@@ -15,19 +12,21 @@ class Lp3 extends AbstractForm
     private $basePdfTemplate;
     private $additionalAttorneyPdfTemplate;
     
+    const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
+    
     protected $strokeParams = array(
-        'primaryAttorney-1'     => array('bx'=>312,'by'=>458,'tx'=>552,'ty'=>602),
-        'primaryAttorney-2'     => array('bx'=>43,'by'=>242,'tx'=>283,'ty'=>386),
-        'primaryAttorney-3'     => array('bx'=>312,'by'=>242,'tx'=>552,'ty'=>386),
+        'primaryAttorney-1' => array('bx'=>312, 'by'=>458, 'tx'=>552, 'ty'=>602),
+        'primaryAttorney-2' => array('bx'=>43,  'by'=>242, 'tx'=>283, 'ty'=>386),
+        'primaryAttorney-3' => array('bx'=>312, 'by'=>242, 'tx'=>552, 'ty'=>386),
     );
     
-    public function __construct(Lpa $lpa, Config $config)
+    public function __construct(Lpa $lpa)
     {
-        parent::__construct($lpa, $config);
+        parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LP3-' . time() . '.pdf';
+                 '-LP3-' . microtime(true) . '.pdf';
         
         $this->basePdfTemplate = $this->basePdfTemplatePath."/LP3.pdf";
         $this->additionalAttorneyPdfTemplate = $this->basePdfTemplatePath."/LP3_AdditionalAttorney.pdf";
@@ -35,7 +34,7 @@ class Lp3 extends AbstractForm
     
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
-     *
+     * 
      * @return Form object
      */
     public function generate()
@@ -44,160 +43,104 @@ class Lp3 extends AbstractForm
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify == 0) return;
         
-        $this->intermediatePdfFilePaths['LP3'] = array();
-        
+        // generate standard notification letters for each people to be notified.
         for($i=0; $i<$noOfPeopleToNotify; $i++) {
-            $this->generateDefaultPdf($this->lpa->document->peopleToNotify[$i]);
+            $this->generateStandardForm($this->lpa->document->peopleToNotify[$i]);
         }
         
-        $this->generateAdditionalPagePdfs();
+        // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
+        $this->generateAdditionalPages();
         
+        // merge intermediate files.
         $this->mergePdfs();
+        
         return $this;
         
     } // function generate()
     
-    protected function generateDefaultPdf($peopleToNotify)
+    /**
+     * Fill LP3 form with values in the data model object.
+     * 
+     * @param NotifiedPerson $peopleToNotify
+     */
+    protected function generateStandardForm(NotifiedPerson $peopleToNotify)
     {
-        $pdf = new Pdf($this->basePdfTemplate);
+        $pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplate);
         
-        $tmpSavePath = '/tmp/pdf-LP3-'.$this->lpa->id.'-'.microtime(true).'.pdf';
-        $this->intermediatePdfFilePaths['LP3'][] = $tmpSavePath;
+        $filePath = $this->registerTempFile('LP3');
         
         // populate forms
-        $this->modelPdfFieldDataMapping($peopleToNotify);
-        $pdf->fillForm($this->flattenLpa)
+        $mappings = $this->dataMappingForStandardForm($peopleToNotify);
+        
+        $pdf->fillForm($mappings)
 	        ->needAppearances()
             ->flatten()
-            ->saveAs($tmpSavePath);
+            ->saveAs($filePath);
         
-        $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
-        if($noOfAttorneys < 4) {
-            // draw strokes
-            $pdf = PdfDocument::load($tmpSavePath);
-            
-            $page = $pdf->pages[2]->setLineWidth(self::STROKE_LINE_WIDTH);
-            $page->drawLine(
-                $this->strokeParams['primaryAttorney-3']['bx'],
-                $this->strokeParams['primaryAttorney-3']['by'],
-                $this->strokeParams['primaryAttorney-3']['tx'],
-                $this->strokeParams['primaryAttorney-3']['ty']
-            );
-            
-            if($noOfAttorneys < 3) {
-                $page->drawLine(
-                    $this->strokeParams['primaryAttorney-2']['bx'],
-                    $this->strokeParams['primaryAttorney-2']['by'],
-                    $this->strokeParams['primaryAttorney-2']['tx'],
-                    $this->strokeParams['primaryAttorney-2']['ty']
-                );
+        $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
+        if($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            $strokeParams = array(2=>array());
+            for($i=self::MAX_ATTORNEYS_ON_STANDARD_FORM - $numOfAttorneys; $i>=1; $i--) {
+                // draw on page 2.
+                $strokeParams[2][] = 'primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
             }
-            
-            if($noOfAttorneys < 2) {
-                $page->drawLine(
-                $this->strokeParams['primaryAttorney-1']['bx'],
-                $this->strokeParams['primaryAttorney-1']['by'],
-                $this->strokeParams['primaryAttorney-1']['tx'],
-                $this->strokeParams['primaryAttorney-1']['ty']
-                );
-            }
-            
-            $pdf->save($tmpSavePath);
+            $this->stroke($filePath, $strokeParams);
         }
-    }
+    } // function generateStandardForm(NotifiedPerson $peopleToNotify)
     
-    protected function generateAdditionalPagePdfs()
+    /**
+     * If there are more than 4 primary attorneys, duplicate page 3 - About the attorneys, to fit all attorneys in to the form.
+     */
+    protected function generateAdditionalPages()
     {
         $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
-        if($noOfAttorneys > 4) {
-            $additionalAttorneys = $noOfAttorneys-4;
-            $additionalPages = ceil($additionalAttorneys/4);
-            $this->intermediatePdfFilePaths['AdditionalAttorneys'] = array();
-            $mappedAttorneys = 0;
-            for($i=0; $i<$additionalPages; $i++) {
-                $tmpSavePath = '/tmp/pdf-LP3-'.$this->lpa->id.'-'.microtime(true).'.pdf';
-                $this->intermediatePdfFilePaths['AdditionalAttorneys'][] = $tmpSavePath;
-                
-                $mappings = array();
-                
-                if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-                    $mappings['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
-                }
-                elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
-                    $mappings['attorneys-act-jointly'] = self::CHECK_BOX_ON;
-                }
-                elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                    $mappings['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
-                }
-                
-                for($j=0; $j<4; $j++) {
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->name->title;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->name->first;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->name->last;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address1'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->address->address1;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address2'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->address->address2;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address3'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->address->address3;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-address-postcode'] = $this->lpa->document->primaryAttorneys[4+$i*4+$j]->address->postcode;
-                    
-                    if(++$mappedAttorneys >= $additionalAttorneys) break;
-                }
-                
-                $additionalAttorneyPage = new Pdf($this->additionalAttorneyPdfTemplate);
-                $additionalAttorneyPage
-                    ->fillForm($mappings)
-                    ->needAppearances()
-                    ->flatten()
-                    ->saveAs($tmpSavePath);
-                
-                if($j <= 3) {
-                    // draw strokes
-                    $pdf = PdfDocument::load($tmpSavePath);
-                
-                    $page = $pdf->pages[0]->setLineWidth(self::STROKE_LINE_WIDTH);
-                    $page->drawLine(
-                    $this->strokeParams['primaryAttorney-3']['bx'],
-                    $this->strokeParams['primaryAttorney-3']['by'],
-                    $this->strokeParams['primaryAttorney-3']['tx'],
-                    $this->strokeParams['primaryAttorney-3']['ty']
-                    );
-                
-                    if($j <= 2) {
-                        $page->drawLine(
-                        $this->strokeParams['primaryAttorney-2']['bx'],
-                        $this->strokeParams['primaryAttorney-2']['by'],
-                        $this->strokeParams['primaryAttorney-2']['tx'],
-                        $this->strokeParams['primaryAttorney-2']['ty']
-                        );
-                    }
-                
-                    if($j <= 1) {
-                        $page->drawLine(
-                        $this->strokeParams['primaryAttorney-1']['bx'],
-                        $this->strokeParams['primaryAttorney-1']['by'],
-                        $this->strokeParams['primaryAttorney-1']['tx'],
-                        $this->strokeParams['primaryAttorney-1']['ty']
-                        );
-                    }
-                
-                    $pdf->save($tmpSavePath);
-                }
-            }
+        if($noOfAttorneys <= self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            return;
         }
-    }
+        
+        $additionalAttorneys = $noOfAttorneys - self::MAX_ATTORNEYS_ON_STANDARD_FORM;
+        $additionalPages = ceil($additionalAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM);
+        for($i=0; $i<$additionalPages; $i++) {
+            $tmpFilePath = $this->registerTempFile('AdditionalAttorneys');
+            
+            $mappings = $this->dataMappingForAdditionalPage($i);
+            
+            $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->additionalAttorneyPdfTemplate);
+            $additionalAttorneyPage
+                ->fillForm($mappings)
+                ->needAppearances()
+                ->flatten()
+                ->saveAs($tmpFilePath);
+            
+            if($additionalAttorneys % self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+                $strokeParams = array(array());
+                for($i=self::MAX_ATTORNEYS_ON_STANDARD_FORM-$additionalAttorneys%self::MAX_ATTORNEYS_ON_STANDARD_FORM; $i>=1; $i--) {
+                    // draw on page 0.
+                    $strokeParams[0][] = 'primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM-$i);
+                }
+                
+                $this->stroke($tmpFilePath, $strokeParams);
+            }
+            
+        } //endfor
+    } // function generateAdditionalPages()
     
+    /**
+     * Merge intermediate pdf files into one file.
+     */
     protected function mergePdfs()
     {
-        $pdf = new Pdf();
+        $pdf = PdfProcessor::getPdftkInstance();
         
         $intPdfHandle = 'A';
-        foreach($this->intermediatePdfFilePaths['LP3'] as $lp3Path) {
+        foreach($this->intermediateFilePaths['LP3'] as $lp3Path) {
             $pdf->addFile($lp3Path, $intPdfHandle);
             
-            if(isset($this->intermediatePdfFilePaths['AdditionalAttorneys'])) {
+            if(isset($this->intermediateFilePaths['AdditionalAttorneys'])) {
                 $baseHandle = $intPdfHandle++;
                 $pdf->cat(1, 3, $baseHandle);
             
-                foreach($this->intermediatePdfFilePaths['AdditionalAttorneys'] as $additionalPage) {
+                foreach($this->intermediateFilePaths['AdditionalAttorneys'] as $additionalPage) {
                     $pdf->addFile($additionalPage, $intPdfHandle);
                     $pdf->cat(1, null, $intPdfHandle++);
                 }
@@ -207,12 +150,17 @@ class Lp3 extends AbstractForm
             else {
                 $intPdfHandle++;
             }
-        }
+        } // endfor
         
         $pdf->saveAs($this->generatedPdfFilePath);
-    }
+    } // function mergePdfs()
     
-    private function modelPdfFieldDataMapping(NotifiedPerson $peopleToNotify)
+    /**
+     * Data mapping
+     * @param NotifiedPerson $peopleToNotify
+     * @return array
+     */
+    protected function dataMappingForStandardForm(NotifiedPerson $peopleToNotify)
     {
         $this->flattenLpa['lpa-document-peopleToNotify-name-title']         = $peopleToNotify->name->title;
         $this->flattenLpa['lpa-document-peopleToNotify-name-first']         = $peopleToNotify->name->first;
@@ -248,5 +196,41 @@ class Lp3 extends AbstractForm
         elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
             $this->flattenLpa['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
         }
-    } // function modelPdfFieldDataMapping()
+        
+        return $this->flattenLpa;
+    } // function dataMappingForStandardForm()
+    
+    protected function dataMappingForAdditionalPage($additionalPageIndex)
+    {
+        $mappings = array();
+        
+        if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
+            $mappings['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
+        }
+        elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
+            $mappings['attorneys-act-jointly'] = self::CHECK_BOX_ON;
+        }
+        elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+            $mappings['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
+        }
+        
+        $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEYS_ON_STANDARD_FORM;
+        $mappedAttorneys = 0;
+        for($j=0; $j < self::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
+            if($mappedAttorneys >= $additionalAttorneys) break;
+        
+            $attorneyIndex = self::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $additionalPageIndex ) + $j;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->title;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->first;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->last;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address1;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address2;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address3;
+            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->postcode;
+        
+            $mappedAttorneys++;
+        }
+        
+        return $mappings;
+    } // function dataMappingForAdditionalPage()
 }
