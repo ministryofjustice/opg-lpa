@@ -1,0 +1,15 @@
+{
+    "payment": {
+        "method": "card",
+        "phone": {
+            "number": "020 1234 5678"
+        },
+        "amount": 100,
+        "reference": "abc123",
+        "date": "2014-11-12T13:24:39+0000",
+        "reducedFeeReceivesBenefits": true,
+        "reducedFeeAwardedDamages": true,
+        "reducedFeeLowIncome": true,
+        "reducedFeeUniversalCredit": true
+    }
+}

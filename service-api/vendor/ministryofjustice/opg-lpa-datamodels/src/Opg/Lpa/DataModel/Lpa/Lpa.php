@@ -79,11 +79,11 @@ class Lpa extends AbstractData implements CompleteInterface {
         };
 
         $this->typeMap['payment'] = function($v){
-            return ($v instanceof Payment) ? $v : new Payment( $v );
+            return ($v instanceof Payment || is_null($v)) ? $v : new Payment( $v );
         };
 
         $this->typeMap['document'] = function($v){
-            return ($v instanceof Document) ? $v : new Document( $v );
+            return ($v instanceof Document || is_null($v)) ? $v : new Document( $v );
         };
 
         //-----------------------------------------------------
