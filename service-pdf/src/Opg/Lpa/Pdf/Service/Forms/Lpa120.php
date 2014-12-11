@@ -33,7 +33,7 @@ class Lpa120 extends AbstractForm
         
         // populate forms
         $mappings = $this->dataMappingForStandardForm();
-        print_r($mappings);
+        
         $pdf->fillForm($mappings)
 	        ->needAppearances()
             ->flatten()
