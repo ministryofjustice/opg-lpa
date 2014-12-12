@@ -183,227 +183,14 @@ abstract class Lp1 extends AbstractForm
             $this->mergerIntermediateFilePaths($generatedCs3);
         }
         
-        // if number of attorneys (including replacements) is greater than 4, duplicate 
-        // Section 11 - Attorneys Signatures as many as needed to be able to fit all attorneys in the form.
-        if(count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys) > 4) {
-            $this->addAdditionalAttorneySignaturePages();
-        }
-        
         // if number of applicant is greater than 4, duplicate Section 12 - Applicants 
         // as many as needed to be able to fit all applicants in.
         if(is_array($this->lpa->document->whoIsRegistering) && (count($this->lpa->document->whoIsRegistering)>4)) {
-            $this->addAdditionalApplicantPages();
+            $generatedAdditionalApplicantPages = (new Lp1AdditionalApplicantPage($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedAdditionalApplicantPages);
         }
         
     } // function generateAdditionalPagePdfs()
-    
-    /**
-     * Duplicate Section 11 page for additional primary and replacement attorneys to sign
-     */
-    protected function addAdditionalAttorneySignaturePages()
-    {
-        $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
-        
-        $skipped=0;
-        foreach($allAttorneys as $attorney) {
-            
-            // skip trust corp
-            if($attorney instanceof TrustCorporation) continue;
-            
-            // skip first 4 human attorneys
-            $skipped++;
-            if($skipped <= self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) continue;
-            
-            $filePath = $this->registerTempFile('AdditionalAttorneySignature');
-            
-            $attorneySignaturePage = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP1_AdditionalAttorneySignature.pdf");
-            $attorneySignaturePage->fillForm(array(
-                    'signature-attorney-name-title' => $attorney->name->title,
-                    'signature-attorney-name-first' => $attorney->name->first,
-                    'signature-attorney-name-last'  => $attorney->name->last
-            ))->needAppearances()
-                ->flatten()
-                ->saveAs($filePath);
-//             print_r($attorneySignaturePage);
-            
-        } //endforeach
-    } // function addAdditionalAttorneySignaturePages()
-    
-    /**
-     * Duplicate Section 12 page for additional applicants 
-     */
-    protected function addAdditionalApplicantPages()
-    {
-        $totalApplicant = count($this->lpa->document->whoIsRegistering);
-        $totalAdditionalApplicant = $totalApplicant - self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;
-        $totalAdditionalPages = ceil($totalAdditionalApplicant/self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM);
-        
-        $totalMappedAdditionalApplicants = 0;
-        for($i=0; $i<$totalAdditionalPages; $i++) {
-            
-            $filePath = $this->registerTempFile('AdditionalApplicant');
-            
-            $additionalApplicant = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP1_AdditionalApplicant.pdf");
-            $formData = array();
-            for($j=0; $j<self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
-                $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
-                
-                $formData['applicant-'.$j.'-name-title']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->title;
-                $formData['applicant-'.$j.'-name-first']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->first;
-                $formData['applicant-'.$j.'-name-last']      = $this->lpa->document->primaryAttorneys[$attorneyId]->name->last;
-                $formData['applicant-'.$j.'-dob-date-day']   = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('d');
-                $formData['applicant-'.$j.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('m');
-                $formData['applicant-'.$j.'-dob-date-year']  = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('Y');
-                
-                if(++$totalMappedAdditionalApplicants >= $totalAdditionalApplicant) {
-                    break;
-                }
-            } // endfor
-            
-            $formData['attorney-is-applicant'] = self::CHECK_BOX_ON;
-            
-            $additionalApplicant->fillForm($formData)
-                ->needAppearances()
-                ->flatten()
-                ->saveAs($filePath);
-//             print_r($additionalApplicant);
-        
-        } // endfor
-        
-        // draw strokes if there's any blank slot
-        if($totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
-            $strokeParams = array(array());
-            for($i=self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i>=1; $i--) {
-                $strokeParams[0][] = 'additional-applicant-'.(self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i);
-            }
-            $this->stroke($filePath, $strokeParams);
-        }
-        
-    } // function addAdditionalApplicantPages()
-    
-    /**
-     * Merge generated intermediate pdf files
-     */
-    protected function mergePdfs()
-    {
-        if($this->countIntermediateFiles() == 1) {
-            $this->generatedPdfFilePath = $this->intermediateFilePaths['LP1'][0];
-            return;
-        }
-        
-        $pdf = PdfProcessor::getPdftkInstance();
-        $intPdfHandle = 'A';
-        if(isset($this->intermediateFilePaths['LP1'])) {
-            $lastInsertion = 0;
-            $pdf->addFile($this->intermediateFilePaths['LP1'], $intPdfHandle);
-        }
-        else {
-            throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
-        }
-        
-        // Section 11 - additional attorneys signature
-        if(isset($this->intermediateFilePaths['AdditionalAttorneySignature'])) {
-            $insertAt = 15;
-            $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            
-            foreach($this->intermediateFilePaths['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
-                $pdf->addFile($additionalAttorneySignature, ++$intPdfHandle);
-                $pdf->cat(1, null, $intPdfHandle);
-            }
-            
-            $lastInsertion = $insertAt;
-        }
-        
-        // Section 12 additional applicants
-        if(isset($this->intermediateFilePaths['AdditionalApplicant'])) {
-            $insertAt = 17;
-            $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            
-            foreach($this->intermediateFilePaths['AdditionalApplicant'] as $additionalApplicant) {
-                $pdf->addFile($additionalApplicant, ++$intPdfHandle);
-                $pdf->cat(1, null, $intPdfHandle);
-            }
-        
-            $lastInsertion = $insertAt;
-        }
-        
-        // Section 15 - additional applicants signature
-        if(($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
-                is_array($this->lpa->document->whoIsRegistering) &&
-                (count($this->lpa->document->whoIsRegistering) > 4)) {
-                    $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - 4;
-                    $totalAdditionalPages = ceil($totalAdditionalApplicants/4);
-                    $insertAt = 20;
-                    $pdf->cat(++$lastInsertion, $insertAt, 'A');
-                    
-                    for($i=0; $i<$totalAdditionalPages; $i++) {
-                        $pdf->addFile($this->basePdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
-                        $pdf->cat(1, null, $intPdfHandle);
-                    }
-                    
-                    $lastInsertion = $insertAt;
-        }
-        
-        // Continuation Sheet 1
-        if(isset($this->intermediateFilePaths['CS1'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
-            foreach ($this->intermediateFilePaths['CS1'] as $cs1) {
-                $pdf->addFile($cs1, ++$intPdfHandle);
-                $pdf->cat(1, null, $intPdfHandle);
-            }
-            
-            $lastInsertion = $insertAt;
-        }
-        
-        // Continuation Sheet 2
-        if(isset($this->intermediateFilePaths['CS2'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
-            foreach ($this->intermediateFilePaths['CS2'] as $cs2) {
-                $pdf->addFile($cs2, ++$intPdfHandle);
-                $pdf->cat(1, null, $intPdfHandle);
-            }
-            
-            $lastInsertion = $insertAt;
-        }
-        
-        // Continuation Sheet 3
-        if(isset($this->intermediateFilePaths['CS3'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
-            $pdf->addFile($this->intermediateFilePaths['CS3'], ++$intPdfHandle);
-            $pdf->cat(1, null, $intPdfHandle);
-            
-            $lastInsertion = $insertAt;
-        }
-        
-        // Continuation Sheet 4
-        if(isset($this->intermediateFilePaths['CS4'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
-            $pdf->addFile($this->intermediateFilePaths['CS4'], ++$intPdfHandle);
-            $pdf->cat(1, null, $intPdfHandle);
-            
-            $lastInsertion = $insertAt;
-        }
-        
-        if($lastInsertion < 20) {
-            $pdf->cat($lastInsertion, 20, 'A');
-        }
-        
-        $pdf->saveAs($this->generatedPdfFilePath);
-//         print_r($pdf);
-        
-    } // function combinePdfs()
     
     protected function dataMappingForStandardForm()
     {
@@ -638,4 +425,128 @@ abstract class Lp1 extends AbstractForm
         return $this->flattenLpa;
         
     } // function modelPdfFieldDataMapping()
+    
+    /**
+     * Merge generated intermediate pdf files
+     */
+    protected function mergePdfs()
+    {
+        if($this->countIntermediateFiles() == 1) {
+            $this->generatedPdfFilePath = $this->intermediateFilePaths['LP1'][0];
+            return;
+        }
+        
+        $pdf = PdfProcessor::getPdftkInstance();
+        $intPdfHandle = 'A';
+        if(isset($this->intermediateFilePaths['LP1'])) {
+            $lastInsertion = 0;
+            $pdf->addFile($this->intermediateFilePaths['LP1'], $intPdfHandle);
+        }
+        else {
+            throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
+        }
+        
+        // Section 11 - additional attorneys signature
+        if(isset($this->intermediateFilePaths['AdditionalAttorneySignature'])) {
+            $insertAt = 15;
+            $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            
+            foreach($this->intermediateFilePaths['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
+                $pdf->addFile($additionalAttorneySignature, ++$intPdfHandle);
+                $pdf->cat(1, null, $intPdfHandle);
+            }
+            
+            $lastInsertion = $insertAt;
+        }
+        
+        // Section 12 additional applicants
+        if(isset($this->intermediateFilePaths['AdditionalApplicant'])) {
+            $insertAt = 17;
+            $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            
+            foreach($this->intermediateFilePaths['AdditionalApplicant'] as $additionalApplicant) {
+                $pdf->addFile($additionalApplicant, ++$intPdfHandle);
+                $pdf->cat(1, null, $intPdfHandle);
+            }
+        
+            $lastInsertion = $insertAt;
+        }
+        
+        // Section 15 - additional applicants signature
+        if(($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
+                is_array($this->lpa->document->whoIsRegistering) &&
+                (count($this->lpa->document->whoIsRegistering) > 4)) {
+                    $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - 4;
+                    $totalAdditionalPages = ceil($totalAdditionalApplicants/4);
+                    $insertAt = 20;
+                    $pdf->cat(++$lastInsertion, $insertAt, 'A');
+                    
+                    for($i=0; $i<$totalAdditionalPages; $i++) {
+                        $pdf->addFile($this->basePdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                        $pdf->cat(1, null, $intPdfHandle);
+                    }
+                    
+                    $lastInsertion = $insertAt;
+        }
+        
+        // Continuation Sheet 1
+        if(isset($this->intermediateFilePaths['CS1'])) {
+            $insertAt = 20;
+            if($lastInsertion != $insertAt) {
+                $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            }
+            foreach ($this->intermediateFilePaths['CS1'] as $cs1) {
+                $pdf->addFile($cs1, ++$intPdfHandle);
+                $pdf->cat(1, null, $intPdfHandle);
+            }
+            
+            $lastInsertion = $insertAt;
+        }
+        
+        // Continuation Sheet 2
+        if(isset($this->intermediateFilePaths['CS2'])) {
+            $insertAt = 20;
+            if($lastInsertion != $insertAt) {
+                $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            }
+            foreach ($this->intermediateFilePaths['CS2'] as $cs2) {
+                $pdf->addFile($cs2, ++$intPdfHandle);
+                $pdf->cat(1, null, $intPdfHandle);
+            }
+            
+            $lastInsertion = $insertAt;
+        }
+        
+        // Continuation Sheet 3
+        if(isset($this->intermediateFilePaths['CS3'])) {
+            $insertAt = 20;
+            if($lastInsertion != $insertAt) {
+                $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            }
+            $pdf->addFile($this->intermediateFilePaths['CS3'], ++$intPdfHandle);
+            $pdf->cat(1, null, $intPdfHandle);
+            
+            $lastInsertion = $insertAt;
+        }
+        
+        // Continuation Sheet 4
+        if(isset($this->intermediateFilePaths['CS4'])) {
+            $insertAt = 20;
+            if($lastInsertion != $insertAt) {
+                $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            }
+            $pdf->addFile($this->intermediateFilePaths['CS4'], ++$intPdfHandle);
+            $pdf->cat(1, null, $intPdfHandle);
+            
+            $lastInsertion = $insertAt;
+        }
+        
+        if($lastInsertion < 20) {
+            $pdf->cat($lastInsertion, 20, 'A');
+        }
+        
+        $pdf->saveAs($this->generatedPdfFilePath);
+//         print_r($pdf);
+        
+    } // function mergePdfs()
 } // class Lp1

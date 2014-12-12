@@ -86,6 +86,21 @@ class Lp1f extends Lp1
             $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference-pf', 'instruction-pf'):array('instruction-pf');
         }
         
+        // if number of attorneys (including replacements) is greater than 4, duplicate 
+        // Section 11 - Attorneys Signatures as many as needed to be able to fit all attorneys in the form.
+        $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
+        if($this->hasTrustCorporation()) {
+            $totalHumanAttorneys = $totalAttorneys - 1;
+        }
+        else {
+            $totalHumanAttorneys = $totalAttorneys;
+        }
+        
+        if( $totalHumanAttorneys > 4 ) {
+            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
+        }
+        
         return $this->flattenLpa;
     }
 

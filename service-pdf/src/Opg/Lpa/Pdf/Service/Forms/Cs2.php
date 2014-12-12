@@ -61,7 +61,7 @@ class Cs2 extends AbstractForm
         }
         
         return $this->intermediateFilePaths;
-    } // function addContinuationSheet()
+    } // function generate()
     
     public function __destruct()
     {

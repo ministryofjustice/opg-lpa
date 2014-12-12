@@ -25,7 +25,7 @@ class Cs3 extends AbstractForm
 //         print_r($cs3);
         
         return $this->intermediateFilePaths;
-    } // function addContinuationSheet()
+    } // function generate()
     
     public function __destruct()
     {

@@ -27,7 +27,7 @@ class Cs4 extends AbstractForm
                 ->saveAs($filePath);
         
         return $this->intermediateFilePaths;
-    } // function addContinuationSheet()
+    } // function generate()
     
     public function __destruct()
     {
