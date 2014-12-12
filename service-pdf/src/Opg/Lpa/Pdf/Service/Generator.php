@@ -8,26 +8,26 @@ use Opg\Lpa\Pdf\Service\Forms\Lp1f;
 use Opg\Lpa\Pdf\Service\Forms\Lp1h;
 use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 
 class Generator implements GeneratorInterface {
 
-    const TYPE_FORM_LP1H    = 'LP1H';
-    const TYPE_FORM_LP1F    = 'LP1F';
+    const TYPE_FORM_LP1    = 'LP1';
     const TYPE_FORM_LP3     = 'LP3';
     const TYPE_FORM_LPA120  = 'LPA120';
     
     protected $config;
-    protected $type;
+    protected $formType;
     protected $lpa;
     protected $response;
 
-    public function __construct( $type, Lpa $lpa, ResponseInterface $response ){
+    public function __construct( $formType, Lpa $lpa, ResponseInterface $response ){
 
         # CHECK $TYPE IS VALID. THROW AN EXCEPTION IF NOT.
 
         $this->config = Config::getInstance( );
-        $this->type = $type;
+        $this->formType = $formType;
         $this->lpa = $lpa;
         $this->response = $response;
     }
@@ -51,12 +51,16 @@ class Generator implements GeneratorInterface {
         //---
         
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
-        switch($this->type) {
-            case self::TYPE_FORM_LP1F:
-                $pdf = new Lp1f($this->lpa);
-                break;
-            case self::TYPE_FORM_LP1H:
-                $pdf = new Lp1h($this->lpa);
+        switch($this->formType) {
+            case self::TYPE_FORM_LP1:
+                switch($this->lpa->document->type) {
+                    case Document::LPA_TYPE_PF:
+                        $pdf = new Lp1f($this->lpa);
+                        break;
+                    case Document::LPA_TYPE_HW:
+                        $pdf = new Lp1h($this->lpa);
+                        break;
+                }
                 break;
             case self::TYPE_FORM_LP3:
                 $pdf = new Lp3($this->lpa);
@@ -65,7 +69,7 @@ class Generator implements GeneratorInterface {
                 $pdf = new Lpa120($this->lpa);
                 break;
             default:
-                throw new \UnexpectedValueException('Invalid form type: '.$this->type);
+                throw new \UnexpectedValueException('Invalid form type: '.$this->formType);
                 return;
         }
         
