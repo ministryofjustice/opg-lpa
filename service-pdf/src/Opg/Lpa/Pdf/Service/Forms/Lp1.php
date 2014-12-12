@@ -45,8 +45,10 @@ abstract class Lp1 extends AbstractForm
         'people-to-notify-1'     => array('bx'=>312, 'by'=>335, 'tx'=>552, 'ty'=>501),
         'people-to-notify-2'     => array('bx'=>44,  'by'=>127, 'tx'=>283, 'ty'=>294),
         'people-to-notify-3'     => array('bx'=>312, 'by'=>127, 'tx'=>552, 'ty'=>294),
-        'preference'             => array('bx'=>41,  'by'=>439, 'tx'=>554, 'ty'=>529),
-        'instruction'            => array('bx'=>41,  'by'=>157, 'tx'=>554, 'ty'=>248),
+        'preference-pf'          => array('bx'=>41,  'by'=>419, 'tx'=>554, 'ty'=>529),
+        'instruction-pf'         => array('bx'=>41,  'by'=>118, 'tx'=>554, 'ty'=>227),
+        'preference-hw'          => array('bx'=>41,  'by'=>439, 'tx'=>554, 'ty'=>529),
+        'instruction-hw'         => array('bx'=>41,  'by'=>157, 'tx'=>554, 'ty'=>248),
         'attorney-signature'     => array('bx'=>42,  'by'=>144, 'tx'=>553, 'ty'=>317),
         'applicant-0'            => array('bx'=>42,  'by'=>315, 'tx'=>283, 'ty'=>412),
         'applicant-1'            => array('bx'=>308, 'by'=>315, 'tx'=>549, 'ty'=>412),
@@ -489,17 +491,11 @@ abstract class Lp1 extends AbstractForm
         /**
          *  Preference and Instructions. (Section 7)
          */
-        if(empty($this->flattenLpa['lpa-document-preference'])) {
-            $this->drawingTargets[7] = array('preference');
-        }
-        else {
+        if(!empty($this->flattenLpa['lpa-document-preference'])) {
             $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
         }
         
-        if(empty($this->flattenLpa['lpa-document-instruction'])) {
-            $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference', 'instruction'):array('instruction');
-        }
-        else {
+        if(!empty($this->flattenLpa['lpa-document-instruction'])) {
             $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
         }
         

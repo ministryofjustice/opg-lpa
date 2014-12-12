@@ -75,6 +75,17 @@ class Lp1f extends Lp1
             $this->flattenLpa['attorneys-may-make-decisions-when-donor-lost-mental-capacity'] = 'On';
         }
         
+        /**
+         *  Preference and Instructions. (Section 7)
+         */
+        if(empty($this->flattenLpa['lpa-document-preference'])) {
+            $this->drawingTargets[7] = array('preference-pf');
+        }
+        
+        if(empty($this->flattenLpa['lpa-document-instruction'])) {
+            $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference-pf', 'instruction-pf'):array('instruction-pf');
+        }
+        
         return $this->flattenLpa;
     }
 

@@ -47,6 +47,17 @@ class Lp1h extends Lp1
         else {
             $this->drawingTargets[5] = array('life-sustain-A');
         }
+
+        /**
+         *  Preference and Instructions. (Section 7)
+         */
+        if(empty($this->flattenLpa['lpa-document-preference'])) {
+            $this->drawingTargets[7] = array('preference-hw');
+        }
+        
+        if(empty($this->flattenLpa['lpa-document-instruction'])) {
+            $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference-hw', 'instruction-hw'):array('instruction-hw');
+        }
         
         return $this->flattenLpa;
     }
