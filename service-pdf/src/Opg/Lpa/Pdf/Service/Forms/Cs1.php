@@ -44,7 +44,7 @@ class Cs1 extends AbstractForm
         /**
          * Number of same roles filled on standard form.
          */ 
-        $baseIndexForThisRole = LP1::$CS1_SETTINGS['max-slots-on-standard-form'][$this->roleType];
+        $baseIndexForThisRole = self::$SETTINGS['max-slots-on-standard-form'][$this->roleType];
         
         /**
          * Number of persons can be put on to CS1
@@ -83,7 +83,7 @@ class Cs1 extends AbstractForm
                     $formData['cs1-'.$j.'-dob-date-month'] = $this->lpa->document->{$this->roleType}[$roleIndex]->dob->date->format('m');
                     $formData['cs1-'.$j.'-dob-date-year']  = $this->lpa->document->{$this->roleType}[$roleIndex]->dob->date->format('Y');
                 }
-                if(isset($this->lpa->document->{$this->roleType}[$roleIndex]->email->address)) {
+                if(isset($this->lpa->document->{$this->roleType}[$roleIndex]->email)) {
                     $formData['cs1-'.$j.'-email-address']  = $this->flattenLpa['lpa-document-'.$this->roleType.'-'.$roleIndex.'-email-address'];
                 }
                 
