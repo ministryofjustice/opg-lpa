@@ -11,7 +11,6 @@ abstract class Lp1 extends AbstractForm
 {
     const BOX_CHARS_PER_ROW = 84;
     const BOX_NO_OF_ROWS = 11;
-    const BOX_NO_OF_ROWS_CS2 = 17;
     
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
     const MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM = 2;
@@ -26,15 +25,6 @@ abstract class Lp1 extends AbstractForm
      * @var PDFTK pdf object
      */
     protected $pdf;
-    
-    static $CS1_SETTINGS = array(
-        'max-slots-on-standard-form' => array(
-            'primaryAttorneys'       => self::MAX_ATTORNEYS_ON_STANDARD_FORM,
-            'replacementAttorneys'   => self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM,
-            'peopleToNotify'        => self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM
-        ),
-        'max-slots-on-cs1-form' => 2
-    );
     
     /**
      * bx - bottom x 
@@ -64,8 +54,7 @@ abstract class Lp1 extends AbstractForm
         'applicant-3'            => array('bx'=>308, 'by'=>147, 'tx'=>549, 'ty'=>245),
         'additional-applicant-1' => array('bx'=>308, 'by'=>303, 'tx'=>549, 'ty'=>401),
         'additional-applicant-2' => array('bx'=>42,  'by'=>139, 'tx'=>283, 'ty'=>237),
-        'additional-applicant-3' => array('bx'=>308, 'by'=>139, 'tx'=>549, 'ty'=>237),
-        'cs1'                    => array('bx'=>313, 'by'=>262, 'tx'=>558, 'ty'=>645)
+        'additional-applicant-3' => array('bx'=>308, 'by'=>139, 'tx'=>549, 'ty'=>237)
     );
     
     /**
@@ -118,22 +107,25 @@ abstract class Lp1 extends AbstractForm
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfPrimaryAttorneys > 4) {
             $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorneys'))->generate();
-            $this->intermediateFilePaths = array_merge($this->intermediateFilePaths, $generatedCs1);
+            $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
         if($noOfReplacementAttorneys > 2) {
-            $this->addContinuationSheet1('replacementAttorneys');
+            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorneys'))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify > 4) {
-            $this->addContinuationSheet1('peopleToNotify');
+            $generatedCs1 = (new Cs1($this->lpa, 'peopleToNotify'))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
         // generate a CS2 page if attorneys act depend on a special decision.
         if($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $this->addContinuationSheet2('cs-2-is-decisions', $this->lpa->document->primaryAttorneyDecisions->howDetails);
+            $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_ATTORNEY_DECISIONS, $this->lpa->document->primaryAttorneyDecisions->howDetails))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
         }
         
         // generate a CS2 page if replacement attorneys decision differ to standard arrangement.
@@ -167,22 +159,26 @@ abstract class Lp1 extends AbstractForm
                        $this->lpa->document->replacementAttorneyDecisions->howDetails . "\n" . 
                        $this->lpa->document->replacementAttorneyDecisions->whenDetails;
             
-            $this->addContinuationSheet2('cs-2-is-how-replacement-attorneys-step-in', $content);
-        } // endif
+            $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
+            } // endif
         
         // generate a CS2 page if preference exceed available space on standard form.
         if(!$this->canFitIntoTextBox($this->lpa->document->preference)) {
-            $this->addContinuationSheet2('cs-2-is-preferences', $this->lpa->document->preference);
+            $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_PREFERENCES, $this->lpa->document->preference))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
         }
         
         // generate a CS2 page if instruction exceed available space on standard form.
         if(!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
-            $this->addContinuationSheet2('cs-2-is-instructions', $this->lpa->document->instruction);
+            $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_INSTRUCTIONS, $this->lpa->document->instruction))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
         }
         
         // generate CS3 page if donor cannot sign on LPA
         if(false === $this->lpa->document->donor->canSign) {
-            $this->addContinuationSheet3();
+            $generatedCs3 = (new Cs3($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs3);
         }
         
         // if number of attorneys (including replacements) is greater than 4, duplicate 
@@ -198,58 +194,6 @@ abstract class Lp1 extends AbstractForm
         }
         
     } // function generateAdditionalPagePdfs()
-    
-    /**
-     * 
-     * @param string $type - cs-2-is-decisions || cs-2-is-how-replacement-attorneys-step-in || cs-2-is-preferences || cs-2-is-instructions
-     * @param string $content
-     */
-    protected function addContinuationSheet2($type, $content)
-    {
-        $formatedContentLength = strlen($this->flattenTextContent($content));
-        if(($type == 'cs-2-is-decisions') || ($type == 'cs-2-is-how-replacement-attorneys-step-in')) {
-            $contentLengthOnStandardForm = 0;
-            $totalAdditionalPages = ceil($formatedContentLength/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2));
-        }
-        else {
-            $contentLengthOnStandardForm = self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS;
-            $totalAdditionalPages = ceil(($formatedContentLength-$contentLengthOnStandardForm)/(self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2));
-        }
-        
-        for($i=1; $i<=$totalAdditionalPages; $i++) {
-            $filePath = $this->registerTempFile('CS2');
-            
-            $cs2 = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
-            
-            $cs2->fillForm(array(
-                    $type               => self::CHECK_BOX_ON,
-                    'cs-2-content'      => $this->getContentForBox($i, $content, true),
-                    'donor-full-name'   => $this->fullName($this->lpa->document->donor->name)
-            ))->needAppearances()
-                ->flatten()
-                ->saveAs($filePath);
-//             print_r($cs2);
-        }
-    } //  function addContinuationSheet2($type, $content)
-    
-    /**
-     * Fill the donor's full name only.
-     */
-    protected function addContinuationSheet3()
-    {
-        $filePath = $this->registerTempFile('CS3');
-    
-        $cs3 = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
-    
-        $cs3->fillForm(array(
-                'donor-full-name' => $this->fullName($this->lpa->document->donor->name)
-        ))->needAppearances()
-            ->flatten()
-            ->saveAs($filePath);
-//         print_r($cs3);
-        
-    } //  function addContinuationSheet3()
-    
     
     /**
      * Duplicate Section 11 page for additional primary and replacement attorneys to sign
@@ -472,7 +416,6 @@ abstract class Lp1 extends AbstractForm
          */
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfPrimaryAttorneys == 1) {
-            $this->flattenLpa['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
             $this->drawingTargets[1] = array('primaryAttorney-1');
             $this->drawingTargets[2] = array('primaryAttorney-2', 'primaryAttorney-3');
         }
@@ -486,15 +429,6 @@ abstract class Lp1 extends AbstractForm
             elseif($noOfPrimaryAttorneys == 3) {
                 $this->drawingTargets[2] = array('primaryAttorney-3');
             }
-        }
-        
-        // populate attorney dob
-        for($i=0; $i<$noOfPrimaryAttorneys; $i++) {
-            if($this->lpa->document->primaryAttorneys[$i] instanceof TrustCorporation) continue;
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-day'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('d');
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('m');
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-year'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('Y');
-            if($i==3) break;
         }
         
         /**
@@ -515,19 +449,14 @@ abstract class Lp1 extends AbstractForm
                     break;
             }
         }
+        else {
+            $this->flattenLpa['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
+        }
         
         /**
          * replacement attorneys section (section 4)
          */
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        for($i=0; $i<$noOfReplacementAttorneys; +$i++) {
-            if($this->lpa->document->replacementAttorneys[$i] instanceof TrustCorporation) continue;
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-day'] = $this->lpa->document->replacementAttorneys[$i]->dob->date->format('d');
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-month'] = $this->lpa->document->replacementAttorneys[$i]->dob->date->format('m');
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-year'] = $this->lpa->document->replacementAttorneys[$i]->dob->date->format('Y');
-            if($i==1) break;
-        }
-        
         if($noOfReplacementAttorneys > 2) {
             $this->flattenLpa['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
         }
@@ -547,23 +476,13 @@ abstract class Lp1 extends AbstractForm
          * People to notify (Section 6)
          */
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
-        if($noOfPeopleToNotify > 4) {
+        if($noOfPeopleToNotify > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
             $this->flattenLpa['has-more-than-5-notified-people'] = self::CHECK_BOX_ON;
         }
-        else {
-            switch($noOfPeopleToNotify) {
-                case 3:
-                    $this->drawingTargets[6] = array('people-to-notify-3');
-                    break;
-                case 2:
-                    $this->drawingTargets[6] = array('people-to-notify-3','people-to-notify-2');
-                    break;
-                case 1:
-                    $this->drawingTargets[6] = array('people-to-notify-3','people-to-notify-2','people-to-notify-1');
-                    break;
-                case 0:
-                    $this->drawingTargets[6] = array('people-to-notify-3','people-to-notify-2','people-to-notify-1','people-to-notify-0');
-                    break;
+        elseif($noOfPeopleToNotify < self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+            $this->drawingTargets[6] = array();
+            for($i=self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $noOfPeopleToNotify; $i>0; $i--) {
+                $this->drawingTargets[6][] = 'people-to-notify-'. (self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $i);
             }
         }
         
@@ -574,14 +493,14 @@ abstract class Lp1 extends AbstractForm
             $this->drawingTargets[7] = array('preference');
         }
         else {
-            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], false);
+            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
         }
         
         if(empty($this->flattenLpa['lpa-document-instruction'])) {
             $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference', 'instruction'):array('instruction');
         }
         else {
-            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], false);
+            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
         }
         
         /**
@@ -628,12 +547,12 @@ abstract class Lp1 extends AbstractForm
             $this->flattenLpa['attorney-is-applicant'] = self::CHECK_BOX_ON;
             foreach($this->lpa->document->whoIsRegistering as $index=>$attorneyId) {
                 if($this->lpa->document->primaryAttorneys[$attorneyId] instanceof TrustCorporation) {
-                    $this->flattenLpa['applicant-'.$index.'-name-last']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name'];
+                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name'];
                 }
                 else {
                     $this->flattenLpa['applicant-'.$index.'-name-title']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-title'];
                     $this->flattenLpa['applicant-'.$index.'-name-first']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-first'];
-                    $this->flattenLpa['applicant-'.$index.'-name-last']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-last'];
+                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-last'];
                     $this->flattenLpa['applicant-'.$index.'-dob-date-day']   = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('d');
                     $this->flattenLpa['applicant-'.$index.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('m');
                     $this->flattenLpa['applicant-'.$index.'-dob-date-year']  = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('Y');
@@ -723,70 +642,4 @@ abstract class Lp1 extends AbstractForm
         return $this->flattenLpa;
         
     } // function modelPdfFieldDataMapping()
-    
-    /**
-     * Convert all new lines with spaces to fill out to the end of each line
-     * 
-     * @param string $content
-     * @return string
-     */
-    private function flattenTextContent($content)
-    {
-        // strip space & new lines chars at both ends.
-        $content = trim($content);
-        
-        $paragraphs = explode("\n", $content);
-        foreach($paragraphs as &$paragraph) {
-            $paragraph = trim($paragraph);
-            if(strlen($paragraph == 0)) {
-                $paragraph = str_repeat(" ", self::BOX_CHARS_PER_ROW);
-            }
-            else {
-                // calculate how many space chars to be appended to replace the new line in this paragraph.
-                $noOfSpaces = self::BOX_CHARS_PER_ROW - strlen($paragraph) % self::BOX_CHARS_PER_ROW;
-                if($noOfSpaces > 0) {
-                    $paragraph .= str_repeat(" ", $noOfSpaces);
-                }
-            }
-        }
-        
-        return implode("", $paragraphs);
-    } // function flattenBoxContent($content)
-    
-    /**
-     * Get content for a multiline text box.
-     * @param int $pageNo - start from 1 for continuation sheets. 0 for Preferences and instructions in Section 7 box.
-     * @param string $content - user input content for preference/instruction/decisions/step-in
-     * @param bool $isContinuationSheet.
-     * @return string|NULL
-     */
-    private function getContentForBox($pageNo, $content, $isContinuationSheet)
-    {
-        $flattenContent = $this->flattenTextContent($content);
-        
-        // return content for preference or instruction in section 7.
-        if(!$isContinuationSheet) {
-            return "\n".substr($flattenContent, 0, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS);
-        }
-        
-        $chunks = str_split(substr($flattenContent, self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS), self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS_CS2+1);
-        if(isset($chunks[$pageNo-1])) {
-            return "\n".$chunks[$pageNo-1];
-        }
-        else {
-            return null;
-        }
-    } // function getContentForBox($pageNo, $content, $isContinuationSheet)
-    
-    /**
-     * Check if the text content can fit into the text box in the Section 7 page in the base PDF form.
-     * 
-     * @return boolean
-     */
-    private function canFitIntoTextBox($content)
-    {
-        $flattenContent = $this->flattenTextContent($content);
-        return strlen($flattenContent) <= self::BOX_CHARS_PER_ROW*self::BOX_NO_OF_ROWS;
-    } // function canFitIntoTextBox()
-    
 } // class Lp1

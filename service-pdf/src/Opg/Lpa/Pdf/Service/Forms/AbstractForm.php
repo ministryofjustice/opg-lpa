@@ -11,6 +11,11 @@ abstract class AbstractForm
     
     const STROKE_LINE_WIDTH = 10;
     
+    const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'cs-2-is-decisions';
+    const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'cs-2-is-how-replacement-attorneys-step-in';
+    const CONTENT_TYPE_PREFERENCES                  = 'cs-2-is-preferences';
+    const CONTENT_TYPE_INSTRUCTIONS                 = 'cs-2-is-instructions';
+    
     /**
      *
      * @var LPA model object
@@ -148,6 +153,104 @@ abstract class AbstractForm
         $pdf->save($filePath);
     
     } // function stroke()
+    
+    /**
+     * Convert all new lines with spaces to fill out to the end of each line
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function flattenTextContent($content)
+    {
+        // strip space & new lines chars at both ends.
+        $content = trim($content);
+    
+        $paragraphs = explode("\n", $content);
+        foreach($paragraphs as &$paragraph) {
+            $paragraph = trim($paragraph);
+            if(strlen($paragraph) == 0) {
+                $paragraph = str_repeat(" ", Lp1::BOX_CHARS_PER_ROW);
+            }
+            else {
+                // calculate how many space chars to be appended to replace the new line in this paragraph.
+                $noOfSpaces = Lp1::BOX_CHARS_PER_ROW - strlen($paragraph) % Lp1::BOX_CHARS_PER_ROW;
+                if($noOfSpaces > 0) {
+                    $paragraph .= str_repeat(" ", $noOfSpaces);
+                }
+            }
+        }
+    
+        return implode("", $paragraphs);
+    } // function flattenBoxContent($content)
+    
+    protected function mergerIntermediateFilePaths($paths)
+    {
+        foreach($paths as $type=>$path) {
+            if(isset($this->intermediateFilePaths[$type])) {
+                $this->intermediateFilePaths[$type] = array_merge($this->intermediateFilePaths[$type], $path);
+            }
+            else {
+                $this->intermediateFilePaths[$type] = $path;
+            }
+        }
+    }
+    
+    /**
+     * Get content for a multiline text box.
+     * 
+     * @param int $pageNo
+     * @param string $content - user input content for preference/instruction/decisions/step-in
+     * @param enum $contentType - CONTENT_TYPE_ATTORNEY_DECISIONS | CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN | CONTENT_TYPE_PREFERENCES | CONTENT_TYPE_INSTRUCTIONS
+     * @return string|NULL
+     */
+    protected function getContentForBox($pageNo, $content, $contentType)
+    {
+        $flattenContent = $this->flattenTextContent($content);
+    
+        // return content for preference or instruction in section 7.
+        if(($contentType==self::CONTENT_TYPE_INSTRUCTIONS) || ($contentType==self::CONTENT_TYPE_PREFERENCES)) {
+            if($pageNo == 0) {
+                return "\n".substr($flattenContent, 0, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS);
+            }
+            else {
+                $chunks = str_split(substr($flattenContent, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS), Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2+1);
+                if(isset($chunks[$pageNo-1])) {
+                    return "\n".$chunks[$pageNo-1];
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        else {
+            $chunks = str_split($flattenContent, Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2+1);
+            if(isset($chunks[$pageNo])) {
+                return "\n".$chunks[$pageNo];
+            }
+            else {
+                return null;
+            }
+        }
+    
+        $chunks = str_split(substr($flattenContent, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS), Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2+1);
+        if(isset($chunks[$pageNo-1])) {
+            return "\n".$chunks[$pageNo-1];
+        }
+        else {
+            return null;
+        }
+    } // function getContentForBox()
+    
+    /**
+     * Check if the text content can fit into the text box in the Section 7 page in the base PDF form.
+     *
+     * @return boolean
+     */
+    protected function canFitIntoTextBox($content)
+    {
+        $flattenContent = $this->flattenTextContent($content);
+        return strlen($flattenContent) <= Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS;
+    } // function canFitIntoTextBox()
     
     /**
      * clean up intermediate files.
