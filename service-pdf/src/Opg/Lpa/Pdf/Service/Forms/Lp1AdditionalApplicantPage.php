@@ -18,8 +18,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
     public function generate()
     {
         $totalApplicant = count($this->lpa->document->whoIsRegistering);
-        $totalAdditionalApplicant = $totalApplicant - self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;
-        $totalAdditionalPages = ceil($totalAdditionalApplicant/self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM);
+        $totalAdditionalApplicant = $totalApplicant - Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;
+        $totalAdditionalPages = ceil($totalAdditionalApplicant/Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM);
         
         $totalMappedAdditionalApplicants = 0;
         for($i=0; $i<$totalAdditionalPages; $i++) {
@@ -28,8 +28,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             
             $additionalApplicant = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP1_AdditionalApplicant.pdf");
             $formData = array();
-            for($j=0; $j<self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
-                $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
+            for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
+                $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
                 
                 $formData['applicant-'.$j.'-name-title']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->title;
                 $formData['applicant-'.$j.'-name-first']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->first;
@@ -54,10 +54,10 @@ class Lp1AdditionalApplicantPage extends AbstractForm
         } // endfor
         
         // draw strokes if there's any blank slot
-        if($totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
+        if($totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
             $strokeParams = array(array());
-            for($i=self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i>=1; $i--) {
-                $strokeParams[0][] = 'additional-applicant-'.(self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i);
+            for($i=Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i>=1; $i--) {
+                $strokeParams[0][] = 'additional-applicant-'.(Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i);
             }
             $this->stroke($filePath, $strokeParams);
         }
@@ -69,4 +69,4 @@ class Lp1AdditionalApplicantPage extends AbstractForm
     {
         
     }
-} // class AdditionalApplicantPage
+} // class Lp1AdditionalApplicantPage

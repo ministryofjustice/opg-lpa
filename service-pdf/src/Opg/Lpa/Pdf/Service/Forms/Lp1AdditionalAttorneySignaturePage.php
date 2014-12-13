@@ -28,7 +28,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             
             // skip first 4 human attorneys
             $skipped++;
-            if($skipped <= self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) continue;
+            if($skipped <= Lp1::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) continue;
             
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
             
@@ -51,4 +51,4 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
     {
         
     }
-} // class AdditionalAttorneySignaturePage
+} // class Lp1AdditionalAttorneySignaturePage

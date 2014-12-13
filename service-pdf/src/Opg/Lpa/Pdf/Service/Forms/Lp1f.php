@@ -20,12 +20,12 @@ class Lp1f extends Lp1
         $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1F.pdf');
     }
 
-    protected function dataMappingForStandardForm ()
+    protected function dataMapping()
     {
         // make trust corp the first item in primaryAttorneys or replacementAttorneys
         $this->sortAttorneys();
         
-        parent::dataMappingForStandardForm();
+        parent::dataMapping();
         
         // populate attorney dob
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
@@ -102,7 +102,7 @@ class Lp1f extends Lp1
         }
         
         return $this->flattenLpa;
-    }
+    } // function dataMapping();
 
     protected function generateAdditionalPages ()
     {

@@ -18,9 +18,9 @@ class Lp1h extends Lp1
         $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1H.pdf');
     }
     
-    public function dataMappingForStandardForm()
+    public function dataMapping()
     {
-        parent::dataMappingForStandardForm();
+        parent::dataMapping();
         
         // Section 2
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
@@ -68,5 +68,5 @@ class Lp1h extends Lp1
         }
         
         return $this->flattenLpa;
-    }
+    } // function dataMapping()
 } // class

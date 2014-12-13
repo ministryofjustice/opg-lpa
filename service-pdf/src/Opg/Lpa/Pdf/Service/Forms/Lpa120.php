@@ -32,7 +32,7 @@ class Lpa120 extends AbstractForm
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
         
         // populate forms
-        $mappings = $this->dataMappingForStandardForm();
+        $mappings = $this->dataMapping();
         
         $pdf->fillForm($mappings)
 	        ->needAppearances()
@@ -48,7 +48,7 @@ class Lpa120 extends AbstractForm
      * 
      * @return array
      */
-    protected function dataMappingForStandardForm()
+    protected function dataMapping()
     {
         $mappings = array(
                 'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
@@ -80,5 +80,5 @@ class Lpa120 extends AbstractForm
         );
         
         return $mappings;
-    } // function dataMappingForStandardForm()
-}
+    } // function dataMapping()
+}  // class Lpa120

@@ -27,39 +27,6 @@ abstract class Lp1 extends AbstractForm
     protected $pdf;
     
     /**
-     * bx - bottom x 
-     * by - bottom y
-     * tx - top x
-     * ty - top y
-     * @var array - stroke corrrdinates
-     */
-    protected $strokeParams = array(
-        'primaryAttorney-1'      => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>545),
-        'primaryAttorney-2'      => array('bx'=>45,  'by'=>359, 'tx'=>283, 'ty'=>662),
-        'primaryAttorney-3'      => array('bx'=>313, 'by'=>359, 'tx'=>550, 'ty'=>662),
-        'replacementAttorney-0'  => array('bx'=>45,  'by'=>315, 'tx'=>283, 'ty'=>536),
-        'replacementAttorney-1'  => array('bx'=>313, 'by'=>315, 'tx'=>550, 'ty'=>536),
-        'life-sustain-A'         => array('bx'=>44,  'by'=>275, 'tx'=>283, 'ty'=>485),
-        'life-sustain-B'         => array('bx'=>307, 'by'=>275, 'tx'=>550, 'ty'=>485),
-        'people-to-notify-0'     => array('bx'=>44,  'by'=>335, 'tx'=>283, 'ty'=>501),
-        'people-to-notify-1'     => array('bx'=>312, 'by'=>335, 'tx'=>552, 'ty'=>501),
-        'people-to-notify-2'     => array('bx'=>44,  'by'=>127, 'tx'=>283, 'ty'=>294),
-        'people-to-notify-3'     => array('bx'=>312, 'by'=>127, 'tx'=>552, 'ty'=>294),
-        'preference-pf'          => array('bx'=>41,  'by'=>419, 'tx'=>554, 'ty'=>529),
-        'instruction-pf'         => array('bx'=>41,  'by'=>118, 'tx'=>554, 'ty'=>227),
-        'preference-hw'          => array('bx'=>41,  'by'=>439, 'tx'=>554, 'ty'=>529),
-        'instruction-hw'         => array('bx'=>41,  'by'=>157, 'tx'=>554, 'ty'=>248),
-        'attorney-signature'     => array('bx'=>42,  'by'=>144, 'tx'=>553, 'ty'=>317),
-        'applicant-0'            => array('bx'=>42,  'by'=>315, 'tx'=>283, 'ty'=>412),
-        'applicant-1'            => array('bx'=>308, 'by'=>315, 'tx'=>549, 'ty'=>412),
-        'applicant-2'            => array('bx'=>42,  'by'=>147, 'tx'=>283, 'ty'=>245),
-        'applicant-3'            => array('bx'=>308, 'by'=>147, 'tx'=>549, 'ty'=>245),
-        'additional-applicant-1' => array('bx'=>308, 'by'=>303, 'tx'=>549, 'ty'=>401),
-        'additional-applicant-2' => array('bx'=>42,  'by'=>139, 'tx'=>283, 'ty'=>237),
-        'additional-applicant-3' => array('bx'=>308, 'by'=>139, 'tx'=>549, 'ty'=>237)
-    );
-    
-    /**
      * Populate LPA data into PDF forms, generate pdf file.
      *
      * @return Form object
@@ -84,7 +51,7 @@ abstract class Lp1 extends AbstractForm
         $filePath = $this->registerTempFile('LP1');
         
         // data mapping
-        $mappings = $this->dataMappingForStandardForm();
+        $mappings = $this->dataMapping();
         
         // populate form data and generate pdf
         $this->pdf->fillForm($mappings)
@@ -192,7 +159,7 @@ abstract class Lp1 extends AbstractForm
         
     } // function generateAdditionalPagePdfs()
     
-    protected function dataMappingForStandardForm()
+    protected function dataMapping()
     {
         $this->flattenLpa['lpa-id'] = Formatter::id($this->lpa->id);
         
@@ -424,7 +391,7 @@ abstract class Lp1 extends AbstractForm
         
         return $this->flattenLpa;
         
-    } // function modelPdfFieldDataMapping()
+    } // function dataMapping()
     
     /**
      * Merge generated intermediate pdf files

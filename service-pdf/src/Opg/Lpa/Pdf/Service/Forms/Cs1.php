@@ -16,17 +16,6 @@ class Cs1 extends AbstractForm
         'max-slots-on-cs1-form' => 2
     );
     
-    /**
-     * bx - bottom x 
-     * by - bottom y
-     * tx - top x
-     * ty - top y
-     * @var array - stroke corrrdinates
-     */
-    protected $strokeParams = array(
-        'cs1' => array('bx'=>313, 'by'=>262, 'tx'=>558, 'ty'=>645)
-    );
-    
     public function __construct(Lpa $lpa, $roleType)
     {
         parent::__construct($lpa);
