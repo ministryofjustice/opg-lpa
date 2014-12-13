@@ -13,7 +13,7 @@ class Lp1h extends Lp1
         
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LP1F-' . microtime(true) . '.pdf';
+                 '-LP1H-' . microtime(true) . '.pdf';
         
         $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1H.pdf');
     }
