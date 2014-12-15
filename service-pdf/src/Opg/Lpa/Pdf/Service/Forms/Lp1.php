@@ -247,10 +247,16 @@ abstract class Lp1 extends AbstractForm
          */
         if(!empty($this->flattenLpa['lpa-document-preference'])) {
             $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
+            if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-preference'])) {
+                $this->flattenLpa['has-more-preferences'] = self::CHECK_BOX_ON;
+            }
         }
         
         if(!empty($this->flattenLpa['lpa-document-instruction'])) {
             $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
+            if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-instruction'])) {
+                $this->flattenLpa['has-more-instructions'] = self::CHECK_BOX_ON;
+            }
         }
         
         /**
