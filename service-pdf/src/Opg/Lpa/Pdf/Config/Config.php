@@ -10,20 +10,16 @@ class Config implements Countable, ArrayAccess {
 
     private $container = null;
 
-    private function __construct(  ) {
+    private function __construct( ) {
         if($this->container === null) {
             $this->container = include('config/local.php');
         }
     }
     
-    static public function getInstance( array $data = null )
+    static public function getInstance( )
     {
-        if($data !== null) {
-            $this->container = $data;
-        }
-        
         if(self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self( );
         }
         
         return self::$instance;
