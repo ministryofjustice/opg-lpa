@@ -289,10 +289,7 @@ abstract class AbstractForm
         return strlen($flattenContent) <= Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS;
     } // function canFitIntoTextBox()
     
-    /**
-     * clean up intermediate files.
-     */
-    public function __destruct()
+    public function cleanup()
     {
         if(\file_exists($this->generatedPdfFilePath)) {
             unlink($this->generatedPdfFilePath);
@@ -314,5 +311,13 @@ abstract class AbstractForm
             }
         }
         
+    }
+    
+    /**
+     * clean up intermediate files.
+     */
+    public function __destruct()
+    {
+        $this->cleanup();
     }
 } // class
