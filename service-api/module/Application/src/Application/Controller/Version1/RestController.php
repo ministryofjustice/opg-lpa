@@ -377,7 +377,7 @@ class RestController extends AbstractRestfulController {
             return new ApiProblem(405, 'The PUT method has not been defined');
         }
 
-        $result = @$this->getResource()->update( $data );
+        $result = @$this->getResource()->update( $data, $id );
 
         //---
 

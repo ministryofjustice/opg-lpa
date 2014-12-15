@@ -113,7 +113,7 @@ class Module {
                         if( !$locator->has("resource-{$resource}") ){
                             // Error
                             // TODO
-                            die("Doesn't exist");
+                            throw new RuntimeException('Unknown resource type');
                         }
 
                         // Get the resource...

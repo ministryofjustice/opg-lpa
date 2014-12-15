@@ -16,7 +16,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     public function getIdentifier(){ return 'lpaId'; }
-    public function getName(){ return 'donor'; }
+    public function getName(){ return 'replacement-attorney-decisions'; }
 
     public function getType(){
         return self::TYPE_SINGULAR;

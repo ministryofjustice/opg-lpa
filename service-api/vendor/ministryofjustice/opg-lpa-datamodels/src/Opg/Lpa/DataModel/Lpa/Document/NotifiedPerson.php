@@ -16,6 +16,11 @@ use Opg\Lpa\DataModel\Validator\Validator;
 class NotifiedPerson extends AbstractData {
 
     /**
+     * @var int The person's internal ID.
+     */
+    protected $id;
+
+    /**
      * @var Elements\Name Their name.
      */
     protected $name;
@@ -41,6 +46,12 @@ class NotifiedPerson extends AbstractData {
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
+
+        $this->validators['id'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Int,
+            ]);
+        };
 
         $this->validators['name'] = function(){
             return (new Validator)->addRules([

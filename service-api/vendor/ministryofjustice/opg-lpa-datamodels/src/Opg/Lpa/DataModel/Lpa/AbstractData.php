@@ -70,7 +70,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @return mixed
      * @throws InvalidArgumentException If the property does not exist.
      */
-    public function __get( $property ){
+    public function &__get( $property ){
         return $this->get( $property );
     }
 
@@ -81,7 +81,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * @return mixed
      * @throws InvalidArgumentException If the property does not exist.
      */
-    public function get( $property ){
+    public function &get( $property ){
 
         if( !property_exists( $this, $property ) ){
             throw new InvalidArgumentException("$property is not a valid property");

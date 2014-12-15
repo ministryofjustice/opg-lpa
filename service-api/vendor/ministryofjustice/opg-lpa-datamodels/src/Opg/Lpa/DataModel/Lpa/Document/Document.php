@@ -143,8 +143,7 @@ class Document extends AbstractData {
                 return ($v instanceof NotifiedPerson) ? $v : new NotifiedPerson( $v );
             }, $v );
         };
-
-
+        
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
