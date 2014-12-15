@@ -2,6 +2,8 @@
 
 namespace Opg\Lpa\Pdf\Service;
 
+use RuntimeException;
+
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\Forms\Lp1f;
@@ -41,11 +43,13 @@ class Generator implements GeneratorInterface {
     public function generate(){
 
         if( $this->lpa->validate()->hasErrors() ){
-            // The LPA is invalid, return an error.
+            // The LPA is invalid.
+            throw new RuntimeException('LPA failed validation');
         }
 
         if( $this->lpa->isComplete() !== true ){
-            // The LPA is not complete, return an error.
+            // The LPA is not complete.
+            throw new RuntimeException('LPA is not complete');
         }
         
         //---

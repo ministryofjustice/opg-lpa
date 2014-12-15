@@ -24,7 +24,8 @@ class Worker {
             $lpaObj = new Lpa( $lpa );
 
             // Create and config the $response object.
-            $response = new Response( $docId );
+            #$response = new Response( $docId );
+            $response = new TestResponse( $docId );
 
             // Create an instance of the PDF generator service.
             $generator = new Generator( $type, $lpaObj, $response );
@@ -48,8 +49,7 @@ class Worker {
         } catch (Exception $e){
 
             echo "${docId}: PDF generation failed with exception: ", $e->getMessage(),"\n";
-            
-            echo $e->getTraceAsString().PHP_EOL;
+
         }
 
     } // function

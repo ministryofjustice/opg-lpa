@@ -4,3 +4,5 @@
 /.idea/
 
 /vendor/ministryofjustice/opg-lpa-datamodels/vendor/
+
+/test-data/output/
