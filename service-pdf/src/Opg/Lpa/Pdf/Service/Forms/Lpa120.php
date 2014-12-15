@@ -35,7 +35,6 @@ class Lpa120 extends AbstractForm
         $mappings = $this->dataMapping();
         
         $pdf->fillForm($mappings)
-	        ->needAppearances()
             ->flatten()
             ->saveAs($this->generatedPdfFilePath);
         
