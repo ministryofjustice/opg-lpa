@@ -11,5 +11,13 @@ return array(
         ),
 
     ),
+    'worker' => array(
 
+        'testResponse'=>array(
+
+            'path' => __DIR__.'/../test-data/output/',
+
+        ),
+
+    ),
 );
