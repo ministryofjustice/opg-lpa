@@ -85,6 +85,7 @@ class Generator implements GeneratorInterface {
         //---
 
         # DELETE THE LOCAL TEMP FILE
+        unset($pdf);
         
         //--- temp files deleted at the end of $pdf's life cycle - in it's destructor.
 
