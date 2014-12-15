@@ -59,6 +59,13 @@ class Lp1h extends Lp1
             $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference-hw', 'instruction-hw'):array('instruction-hw');
         }
         
+        return $this->flattenLpa;
+    } // function dataMapping()
+    
+    public function generateAdditionalPages()
+    {
+        parent::generateAdditionalPages();
+        
         // if number of attorneys (including replacements) is greater than 4, duplicate 
         // Section 11 - Attorneys Signatures as many as needed to be able to fit all attorneys in the form.
         $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
@@ -66,7 +73,5 @@ class Lp1h extends Lp1
             $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
         }
-        
-        return $this->flattenLpa;
-    } // function dataMapping()
+    } // function generateAdditionalPages()
 } // class
