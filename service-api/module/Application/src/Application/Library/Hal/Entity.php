@@ -1,6 +1,8 @@
 <?php
 namespace Application\Library\Hal;
 
+use RuntimeException;
+
 use Application\Model\Rest\EntityInterface;
 
 /**
@@ -13,14 +15,29 @@ class Entity extends Hal {
 
     protected $entity;
 
+    private $linksSet = false;
+
     public function __construct( EntityInterface $entity ){
         $this->setEntity( $entity );
     }
 
     public function setEntity( EntityInterface $entity ){
+        $this->linksSet = false;
         $this->entity = $entity;
         $this->setData( $entity->toArray() );
     }
+
+    //---
+
+    public function getLinks(){
+
+        if( !$this->linksSet ){ throw new RuntimeException( 'Cannot return links until they have been set.' ); }
+
+        return parent::getLinks();
+
+    }
+
+    //---
 
     /**
      * Apply the links using the passed route generator.
@@ -46,8 +63,10 @@ class Entity extends Hal {
 
         }
 
-    } // function
+        //---
 
-    //------------------------------
+        $this->linksSet = true;
+
+    } // function
 
 } // class

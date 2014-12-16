@@ -164,13 +164,13 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         // If there are no records, just return an empty paginator...
         if( $count == 0 ){
-            return new Collection( new PaginatorNull );
+            return new Collection( new PaginatorNull, $this->getRouteUser()->userId() );
         }
 
         //---
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
-        $collection = new Collection(new PaginatorCallback(
+        $callback = new PaginatorCallback(
             function($offset, $itemCountPerPage) use ($cursor){
                 // getItems callback
 
@@ -190,7 +190,9 @@ class Resource extends AbstractResource implements UserConsumerInterface {
                 // count callback
                 return $count;
             }
-        ));
+        );
+
+        $collection = new Collection( $callback, $this->getRouteUser()->userId() );
 
         //---
 

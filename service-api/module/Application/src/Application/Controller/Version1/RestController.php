@@ -19,6 +19,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
 use Application\Library\Hal\Entity as HalEntity;
+use Application\Library\Hal\Collection as HalCollection;
 
 use ZfcRbac\Exception\UnauthorizedException;
 
@@ -122,7 +123,9 @@ class RestController extends AbstractRestfulController {
 
         } elseif( $result instanceof EntityInterface ) {
 
-            $hal = $result->getHal( [ $this, 'generateRoute' ] );
+            $hal = new HalEntity( $result );
+
+            $hal->setLinks( [ $this, 'generateRoute' ] );
 
             $response = new HalResponse( $hal, 'json' );
             $response->setStatusCode(201);
@@ -247,55 +250,17 @@ class RestController extends AbstractRestfulController {
 
         //---
 
-        $response = $this->getResource()->fetchAll( $query );
+        $collections = $this->getResource()->fetchAll( $query );
 
-        $response->setCurrentPageNumber($page);
+        $collections->setCurrentPageNumber($page);
 
         //---
 
-        $hal = $response->getHalItemsByPage( 1, [ $this, 'generateRoute' ] );
+        $hal = new HalCollection( $collections );
 
-        //-------------------------------
-        // Setup links...
+        $hal->setLinks( [ $this, 'generateRoute' ] );
 
-        // 'first'...
-        $hal->addLink( 'first', $this->generateRoute( $response, $query ) );
-
-        // 'self'...
-        if( $response->getCurrentPageNumber() == 1 ){
-            $hal->addLink( 'self', $this->generateRoute( $response, $query ) );
-        } else {
-            $hal->addLink( 'self', $this->generateRoute( $response, [ 'page'=>$response->getCurrentPageNumber() ] + $query ) );
-        }
-
-        // 'prev'...
-        if ($response->getCurrentPageNumber() - 1 > 0) {
-
-            if ($response->getCurrentPageNumber() - 1 == 1) {
-                $hal->addLink( 'prev', $this->generateRoute( $response, $query ) );
-            } else {
-                $hal->addLink( 'prev', $this->generateRoute( $response, [ 'page'=>($response->getCurrentPageNumber() - 1) ] + $query ) );
-            }
-
-        }
-
-        // 'next'...
-        if ($response->getCurrentPageNumber() + 1 <= $response->count()) {
-            $hal->addLink( 'next', $this->generateRoute( $response, [ 'page'=>($response->getCurrentPageNumber() + 1) ] + $query ) );
-        }
-
-        // 'last'...
-        if( $response->count() <= 1 ){
-            $hal->addLink( 'last', $this->generateRoute( $response, $query ) );
-        } else {
-            $hal->addLink( 'last', $this->generateRoute( $response, [ 'page'=>$response->count() ] + $query ) );
-        }
-
-        //-------------------------------
-
-        $response = new HalResponse( $hal, 'json' );
-
-        return $response;
+        return new HalResponse( $hal, 'json' );
 
     } // function
 
@@ -425,21 +390,15 @@ class RestController extends AbstractRestfulController {
 
     //-----------------------------------------
 
+    //public function generateRoute( $routeName, RouteProviderInterface $provider, $params = array() ){
     public function generateRoute( $routeName, RouteProviderInterface $provider, $params = array() ){
 
-        $resource = $this->getResource();
+        $original = $this->params()->fromQuery();
+        unset($original['page']);
 
-        /*
-        if( $provider instanceof \Application\Model\Rest\Users\Entity ) {
-            $routeName = 'api-v1';
-        } elseif( $provider instanceof \Application\Model\Rest\Applications\Entity ){
-            $routeName = 'api-v1/level-1';
-        } elseif( $provider instanceof \Application\Model\Rest\Applications\Collection ){
-            $routeName = 'api-v1/level-1';
-        } else {
-            $routeName = 'api-v1/level-2';
-        }
-        */
+        $params = array_merge( $original, $params );
+
+        $resource = $this->getResource();
 
         return $this->url()->fromRoute($routeName, [
                 'userId'=>$resource->getRouteUser()->userId(),

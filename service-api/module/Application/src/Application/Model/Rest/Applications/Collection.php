@@ -9,12 +9,20 @@ use Application\Library\Hal\Hal;
 
 class Collection extends Paginator implements CollectionInterface {
 
-    public function __construct($adapter){
+    protected $userId;
+
+    public function __construct( $adapter, $userId ){
         parent::__construct( $adapter );
+
+        $this->userId = $userId;
 
         // The number of records per page.
         // Hard code this for now.
         $this->setItemCountPerPage(250);
+    }
+
+    public function userId(){
+        return $this->userId;
     }
 
     public function lpaId(){
@@ -25,31 +33,21 @@ class Collection extends Paginator implements CollectionInterface {
         return null;
     }
 
-    /**
-     * Returns a page from the Paginator as a Hal object.
-     *
-     * @param $pageNumber
-     * @param callable $routeCallback
-     * @return Hal
-     */
-    public function getHalItemsByPage( $pageNumber, callable $routeCallback ){
+    public function toArray(){
 
-        // Return a list of LPA objects for this page...
-        $items = $this->getItemsByPage( $pageNumber );
+        $items = iterator_to_array($this->getItemsByPage( $this->getCurrentPageNumber() ));
 
-        $hal = new Hal();
+        // Map the embedded items to Entities...
+        $items = array_map( function($i){
+            return new Entity( $i );
+        }, $items );
 
-        $hal->setData( [ 'count'=>$items->count(), 'total'=>$this->getTotalItemCount(), 'pages'=>$this->count() ] );
-
-        //---
-
-        foreach( $items as $item ){
-            $entity = new Entity( $item );
-            $entityHal = $entity->getHal( $routeCallback );
-            $hal->addResource( 'applications', $entityHal );
-        }
-
-        return $hal;
+        return [
+            'count' => count($items),
+            'total' => $this->getTotalItemCount(),
+            'pages' => $this->count(),
+            'items' => $items,
+        ];
 
     } // function
 
