@@ -18,6 +18,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
+use Application\Library\Hal\Entity as HalEntity;
 
 use ZfcRbac\Exception\UnauthorizedException;
 
@@ -202,7 +203,13 @@ class RestController extends AbstractRestfulController {
 
         } elseif( $result instanceof EntityInterface ) {
 
-            $hal = $result->getHal( [ $this, 'generateRoute' ] );
+            if( count($result->toArray()) == 0 ){
+                return new NoContentResponse();
+            }
+
+            $hal = new HalEntity( $result );
+
+            $hal->setLinks( [ $this, 'generateRoute' ] );
 
             $response = new HalResponse( $hal, 'json' );
 
@@ -387,7 +394,13 @@ class RestController extends AbstractRestfulController {
 
         } elseif( $result instanceof EntityInterface ) {
 
-            $hal = $result->getHal( [ $this, 'generateRoute' ] );
+            if( count($result->toArray()) == 0 ){
+                return new NoContentResponse();
+            }
+
+            $hal = new HalEntity( $result );
+
+            $hal->setLinks( [ $this, 'generateRoute' ] );
 
             $response = new HalResponse( $hal, 'json' );
 
@@ -412,10 +425,11 @@ class RestController extends AbstractRestfulController {
 
     //-----------------------------------------
 
-    public function generateRoute( RouteProviderInterface $provider, $params = array() ){
+    public function generateRoute( $routeName, RouteProviderInterface $provider, $params = array() ){
 
         $resource = $this->getResource();
 
+        /*
         if( $provider instanceof \Application\Model\Rest\Users\Entity ) {
             $routeName = 'api-v1';
         } elseif( $provider instanceof \Application\Model\Rest\Applications\Entity ){
@@ -425,6 +439,7 @@ class RestController extends AbstractRestfulController {
         } else {
             $routeName = 'api-v1/level-2';
         }
+        */
 
         return $this->url()->fromRoute($routeName, [
                 'userId'=>$resource->getRouteUser()->userId(),

@@ -4,8 +4,8 @@ namespace Application\Model\Rest;
 interface EntityInterface extends RouteProviderInterface {
 
     /**
-     * @return \Application\Library\Hal\Hal
+     * @return array The Entity's data as an array.
      */
-    public function getHal( callable $routeCallback );
+    public function toArray();
 
 } // interface

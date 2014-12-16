@@ -8,45 +8,42 @@ use Application\Model\Rest\Applications\Entity as ApplicationEntity;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\AccessorInterface as LpaAccessorInterface;
 
 use Application\Library\Hal\Hal;
 
 class Entity implements EntityInterface {
 
-    protected $lap;
+    protected $lpa;
     protected $provider;
 
     public function __construct( CertificateProvider $provider = null, Lpa $lpa ){
 
-        $this->lap = $lpa;
+        $this->lpa = $lpa;
         $this->provider = $provider;
 
     }
 
+    public function userId(){
+        return $this->lpa->user;
+    }
+
     public function lpaId(){
-        return $this->lap->id;
+        return $this->lpa->id;
     }
 
     public function resourceId(){
         return null;
     }
 
-    public function getHal( callable $routeCallback ){
+    public function toArray(){
 
-        $hal = new Hal( call_user_func($routeCallback, $this) );
-
-        if( $this->provider instanceof CertificateProvider ){
-            $hal->setData( [ 'certificateProvider' => $this->provider->toArray() ] );
+        if( $this->provider instanceof LpaAccessorInterface ){
+            return $this->provider->toArray();
         } else {
-            $hal->setData( [ 'certificateProvider' => null ] );
+            return array();
         }
 
-        # TODO - do I want to include these for all entities?
-        $hal->addLink( 'user', call_user_func($routeCallback, new UsersEntity( ['id'=>$this->lap->user] ) ) );
-        $hal->addLink( 'application', call_user_func($routeCallback, new ApplicationEntity($this->lap) ) );
-
-        return $hal;
-
-    } // function
+    }
 
 } // class

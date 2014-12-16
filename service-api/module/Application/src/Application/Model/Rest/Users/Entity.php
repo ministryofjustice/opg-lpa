@@ -33,16 +33,9 @@ class Entity implements EntityInterface {
         return null;
     }
 
-    public function getHal( callable $routeCallback ){
-
-        $hal = new Hal( call_user_func($routeCallback, $this) );
-
-        //The data comes from the Document (not the root of the object)...
-        $hal->setData( $this->user );
-
-        return $hal;
-
-    } // function
+    public function toArray(){
+        return $this->user;
+    }
 
 } // class
 

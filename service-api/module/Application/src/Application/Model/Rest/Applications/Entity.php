@@ -8,14 +8,18 @@ use Application\Library\Hal\Hal;
 
 class Entity implements EntityInterface {
 
-    protected $lap;
+    protected $lpa;
 
     public function __construct( Lpa $lpa ){
-        $this->lap = $lpa;
+        $this->lpa = $lpa;
     } // function
 
+    public function userId(){
+        return $this->lpa->user;
+    }
+
     public function lpaId(){
-        return $this->lap->id;
+        return $this->lpa->id;
     }
 
     public function resourceId(){
@@ -23,21 +27,11 @@ class Entity implements EntityInterface {
     }
 
     public function getLpa(){
-        return $this->lap;
+        return $this->lpa;
     }
 
-    public function getHal( callable $routeCallback ){
-
-        $hal = new Hal( call_user_func($routeCallback, $this) );
-
-        // Add the id to the document...
-        $data = [ 'id' => $this->lpaId() ] +  $this->lap->document->toArray();
-
-        //The data comes from the Document (not the root of the object)...
-        $hal->setData( $data );
-
-        return $hal;
-
+    public function toArray(){
+        return [ 'id' => $this->lpaId() ] +  $this->lpa->document->toArray();
     }
 
 } // class

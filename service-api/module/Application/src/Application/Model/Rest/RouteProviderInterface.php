@@ -10,6 +10,11 @@ namespace Application\Model\Rest;
 interface RouteProviderInterface {
 
     /**
+     * @return int The ID of the current user in the route.
+     */
+    public function userId();
+
+    /**
      * @return int The ID of the current LPA to use in the route.
      */
     public function lpaId();
