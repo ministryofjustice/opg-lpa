@@ -45,11 +45,14 @@ class Name extends AbstractData {
         // Validators (wrapped in Closures for lazy loading)
 
         $this->validators['title'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 20, true ),
-            ]);
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\NotEmpty,
+                    new Rules\Length( 1, 6, true ),
+                ]),
+                new Rules\NullValue,
+            ]));
         };
 
         $this->validators['first'] = function(){
