@@ -107,28 +107,28 @@ class Document extends AbstractData {
         // Type mappers
 
         $this->typeMap['donor'] = function($v){
-            return ($v instanceof Donor) ? $v : new Donor( $v );
+            return ($v instanceof Donor || is_null($v)) ? $v : new Donor( $v );
         };
 
         $this->typeMap['primaryAttorneyDecisions'] = function($v){
-            return ($v instanceof Decisions\PrimaryAttorneyDecisions) ? $v : new Decisions\PrimaryAttorneyDecisions( $v );
+            return ($v instanceof Decisions\PrimaryAttorneyDecisions || is_null($v)) ? $v : new Decisions\PrimaryAttorneyDecisions( $v );
         };
 
         $this->typeMap['replacementAttorneyDecisions'] = function($v){
-            return ($v instanceof Decisions\ReplacementAttorneyDecisions) ? $v : new Decisions\ReplacementAttorneyDecisions( $v );
+            return ($v instanceof Decisions\ReplacementAttorneyDecisions || is_null($v)) ? $v : new Decisions\ReplacementAttorneyDecisions( $v );
         };
 
         $this->typeMap['correspondent'] = function($v){
-            return ($v instanceof Correspondence) ? $v : new Correspondence( $v );
+            return ($v instanceof Correspondence || is_null($v)) ? $v : new Correspondence( $v );
         };
 
         $this->typeMap['certificateProvider'] = function($v){
-            return ($v instanceof CertificateProvider) ? $v : new CertificateProvider( $v );
+            return ($v instanceof CertificateProvider || is_null($v)) ? $v : new CertificateProvider( $v );
         };
 
         $this->typeMap['primaryAttorneys'] = $this->typeMap['replacementAttorneys'] = function($v){
             return array_map( function($v){
-                if( $v instanceof Attorneys\AbstractAttorney ){
+                if( $v instanceof Attorneys\AbstractAttorney){
                     return $v;
                 } elseif( isset( $v['number'] ) ){
                     return new Attorneys\TrustCorporation( $v );
@@ -143,8 +143,7 @@ class Document extends AbstractData {
                 return ($v instanceof NotifiedPerson) ? $v : new NotifiedPerson( $v );
             }, $v );
         };
-
-
+        
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 

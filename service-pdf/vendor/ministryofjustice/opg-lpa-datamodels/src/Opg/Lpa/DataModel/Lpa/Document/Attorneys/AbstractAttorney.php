@@ -16,6 +16,11 @@ use Opg\Lpa\DataModel\Validator\Validator;
 abstract class AbstractAttorney extends AbstractData {
 
     /**
+     * @var int The attorney's internal ID.
+     */
+    protected $id;
+
+    /**
      * @var Elements\Address Their postal address.
      */
     protected $address;
@@ -41,6 +46,12 @@ abstract class AbstractAttorney extends AbstractData {
 
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
+
+        $this->validators['id'] = function(){
+            return (new Validator)->addRules([
+                new Rules\Int,
+            ]);
+        };
 
         $this->validators['address'] = function(){
             return (new Validator)->addRules([
