@@ -29,8 +29,10 @@ class TestResponse implements ResponseInterface  {
     public function save( SplFileInfo $pathToFile ){
 
         echo "{$this->docId}: Response received: ".$pathToFile->getRealPath()."\n";
-
-        mkdir( $this->config['worker']['testResponse']['path'], 0777, true );
+        
+        if( !\file_exists($this->config['worker']['testResponse']['path']) ) {
+            mkdir( $this->config['worker']['testResponse']['path'], 0777, true );
+        }
 
         $path = realpath($this->config['worker']['testResponse']['path'])."/{$this->docId}.pdf";
 
