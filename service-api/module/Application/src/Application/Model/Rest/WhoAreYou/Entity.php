@@ -1,21 +1,19 @@
 <?php
-namespace Application\Model\Rest\Donor;
+namespace Application\Model\Rest\WhoAreYou;
 
 use Application\Model\Rest\EntityInterface;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\AccessorInterface as LpaAccessorInterface;
 
 class Entity implements EntityInterface {
 
     protected $lpa;
-    protected $donor;
+    protected $answered;
 
-    public function __construct( Donor $donor = null, Lpa $lpa ){
+    public function __construct( $answered, Lpa $lpa ){
 
         $this->lpa = $lpa;
-        $this->donor = $donor;
+        $this->answered = $answered;
 
     }
 
@@ -32,11 +30,14 @@ class Entity implements EntityInterface {
     }
 
     public function toArray(){
-        if( $this->donor instanceof LpaAccessorInterface ){
-            return $this->donor->toArray();
+
+        if( is_bool($this->answered) ){
+            return [ 'whoAreYouAnswered' => $this->answered ];
         } else {
             return array();
         }
+
     }
 
 } // class
+

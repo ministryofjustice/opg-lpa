@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Rest\AttorneysPrimary;
+namespace Application\Model\Rest\AttorneysReplacement;
 
 use RuntimeException;
 
@@ -19,7 +19,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     public function getIdentifier(){ return 'resourceId'; }
-    public function getName(){ return 'primary-attorneys'; }
+    public function getName(){ return 'replacement-attorneys'; }
 
     public function getType(){
         return self::TYPE_COLLECTION;
@@ -61,7 +61,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         if( is_null($attorney->id) ){
 
             $ids = array( 0 );
-            foreach( $lpa->document->primaryAttorneys as $a ){ $ids[] = $a->id; }
+            foreach( $lpa->document->replacementAttorneys as $a ){ $ids[] = $a->id; }
             $attorney->id = (int)max( $ids ) + 1;
 
         } // if
@@ -69,7 +69,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         //---
 
 
-        $lpa->document->primaryAttorneys[] = $attorney;
+        $lpa->document->replacementAttorneys[] = $attorney;
 
         $this->updateLpa( $lpa );
 
@@ -92,7 +92,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-        foreach( $lpa->document->primaryAttorneys as $attorney ){
+        foreach( $lpa->document->replacementAttorneys as $attorney ){
             if( $attorney->id == (int)$id ){
                 return new Entity( $attorney, $lpa );
             }
@@ -117,7 +117,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-        $count = count($lpa->document->primaryAttorneys);
+        $count = count($lpa->document->replacementAttorneys);
 
         // If there are no records, just return an empty paginator...
         if( $count == 0 ){
@@ -126,7 +126,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $collection = new Collection( new PaginatorArrayAdapter( $lpa->document->primaryAttorneys ), $lpa );
+        $collection = new Collection( new PaginatorArrayAdapter( $lpa->document->replacementAttorneys ), $lpa );
 
         // Always return all attorneys on one page.
         $collection->setItemCountPerPage($count);
@@ -154,7 +154,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
         $document = $lpa->document;
 
-        foreach( $document->primaryAttorneys as $key=>$attorney ) {
+        foreach( $document->replacementAttorneys as $key=>$attorney ) {
 
             if ($attorney->id == (int)$id) {
 
@@ -172,7 +172,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
                 $attorney->id = (int)$id;
 
-                $document->primaryAttorneys[$key] = $attorney;
+                $document->replacementAttorneys[$key] = $attorney;
 
                 $this->updateLpa( $lpa );
 
@@ -202,12 +202,12 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
         $document = $lpa->document;
 
-        foreach( $document->primaryAttorneys as $key=>$attorney ){
+        foreach( $document->replacementAttorneys as $key=>$attorney ){
 
             if( $attorney->id == (int)$id ){
 
                 // Remove the entry...
-                unset( $document->primaryAttorneys[$key] );
+                unset( $document->replacementAttorneys[$key] );
 
                 //---
 

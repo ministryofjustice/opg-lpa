@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Rest\AttorneysPrimary;
+namespace Application\Model\Rest\NotifiedPeople;
 
 use Application\Model\Rest\CollectionInterface;
 

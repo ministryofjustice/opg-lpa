@@ -1,21 +1,21 @@
 <?php
-namespace Application\Model\Rest\AttorneysPrimary;
+namespace Application\Model\Rest\NotifiedPeople;
 
 use Application\Model\Rest\EntityInterface;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\AccessorInterface as LpaAccessorInterface;
 
 class Entity implements EntityInterface {
 
     protected $lap;
-    protected $attorney;
+    protected $person;
 
-    public function __construct( AbstractAttorney $attorney = null, Lpa $lpa ){
+    public function __construct( NotifiedPerson $person = null, Lpa $lpa ){
 
         $this->lap = $lpa;
-        $this->attorney = $attorney;
+        $this->person = $person;
 
     }
 
@@ -28,12 +28,12 @@ class Entity implements EntityInterface {
     }
 
     public function resourceId(){
-        return $this->attorney->id;
+        return $this->person->id;
     }
 
     public function toArray(){
-        if( $this->attorney instanceof LpaAccessorInterface ){
-            return $this->attorney->toArray();
+        if( $this->person instanceof LpaAccessorInterface ){
+            return $this->person->toArray();
         } else {
             return array();
         }

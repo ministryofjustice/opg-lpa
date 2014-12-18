@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Rest\AttorneysPrimary;
+namespace Application\Model\Rest\AttorneysReplacement;
 
 use Application\Model\Rest\CollectionInterface;
 

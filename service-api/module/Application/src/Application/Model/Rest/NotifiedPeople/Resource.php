@@ -1,9 +1,9 @@
 <?php
-namespace Application\Model\Rest\AttorneysPrimary;
+namespace Application\Model\Rest\NotifiedPeople;
 
 use RuntimeException;
 
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 
 use Application\Model\Rest\AbstractResource;
 
@@ -19,7 +19,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     public function getIdentifier(){ return 'resourceId'; }
-    public function getName(){ return 'primary-attorneys'; }
+    public function getName(){ return 'notified-people'; }
 
     public function getType(){
         return self::TYPE_COLLECTION;
@@ -42,38 +42,28 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        switch($data['type']){
-            case 'trust':
-                $attorney = new Attorneys\TrustCorporation( $data );
-                break;
-            case 'human':
-                $attorney = new Attorneys\Human( $data );
-                break;
-            default:
-                // TODO - return a ValidationApiProblem?
-                throw new RuntimeException('Invalid type passed');
-        }
+        $person = new NotifiedPerson( $data );
 
         /**
          * If the client has not passed an id, set it to max(current ids) + 1.
          * The array is seeded with 0, meaning if this is the first attorney the id will be 1.
          */
-        if( is_null($attorney->id) ){
+        if( is_null($person->id) ){
 
             $ids = array( 0 );
-            foreach( $lpa->document->primaryAttorneys as $a ){ $ids[] = $a->id; }
-            $attorney->id = (int)max( $ids ) + 1;
+            foreach( $lpa->document->peopleToNotify as $a ){ $ids[] = $a->id; }
+            $person->id = (int)max( $ids ) + 1;
 
         } // if
 
         //---
 
 
-        $lpa->document->primaryAttorneys[] = $attorney;
+        $lpa->document->peopleToNotify[] = $person;
 
         $this->updateLpa( $lpa );
 
-        return new Entity( $attorney, $lpa );
+        return new Entity( $person, $lpa );
 
     }
 
@@ -92,9 +82,9 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-        foreach( $lpa->document->primaryAttorneys as $attorney ){
-            if( $attorney->id == (int)$id ){
-                return new Entity( $attorney, $lpa );
+        foreach( $lpa->document->peopleToNotify as $person ){
+            if( $person->id == (int)$id ){
+                return new Entity( $person, $lpa );
             }
         }
 
@@ -117,7 +107,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-        $count = count($lpa->document->primaryAttorneys);
+        $count = count($lpa->document->peopleToNotify);
 
         // If there are no records, just return an empty paginator...
         if( $count == 0 ){
@@ -126,7 +116,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $collection = new Collection( new PaginatorArrayAdapter( $lpa->document->primaryAttorneys ), $lpa );
+        $collection = new Collection( new PaginatorArrayAdapter( $lpa->document->peopleToNotify ), $lpa );
 
         // Always return all attorneys on one page.
         $collection->setItemCountPerPage($count);
@@ -154,29 +144,19 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
         $document = $lpa->document;
 
-        foreach( $document->primaryAttorneys as $key=>$attorney ) {
+        foreach( $document->peopleToNotify as $key=>$person ) {
 
-            if ($attorney->id == (int)$id) {
+            if ($person->id == (int)$id) {
 
-                switch($data['type']){
-                    case 'trust':
-                        $attorney = new Attorneys\TrustCorporation( $data );
-                        break;
-                    case 'human':
-                        $attorney = new Attorneys\Human( $data );
-                        break;
-                    default:
-                        // TODO - return a ValidationApiProblem?
-                        throw new RuntimeException('Invalid type passed');
-                }
+                $person = new NotifiedPerson( $data );
 
-                $attorney->id = (int)$id;
+                $person->id = (int)$id;
 
-                $document->primaryAttorneys[$key] = $attorney;
+                $document->peopleToNotify[$key] = $person;
 
                 $this->updateLpa( $lpa );
 
-                return new Entity( $attorney, $lpa );
+                return new Entity( $person, $lpa );
 
             } // if
 
@@ -202,12 +182,12 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
         $document = $lpa->document;
 
-        foreach( $document->primaryAttorneys as $key=>$attorney ){
+        foreach( $document->peopleToNotify as $key=>$person ){
 
-            if( $attorney->id == (int)$id ){
+            if( $person->id == (int)$id ){
 
                 // Remove the entry...
-                unset( $document->primaryAttorneys[$key] );
+                unset( $document->peopleToNotify[$key] );
 
                 //---
 
