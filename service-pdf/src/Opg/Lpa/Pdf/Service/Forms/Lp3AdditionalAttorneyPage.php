@@ -23,10 +23,38 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
         
         $additionalAttorneys = $noOfAttorneys - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
         $additionalPages = ceil($additionalAttorneys/Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM);
+        $mappedAttorneys = 0;
         for($i=0; $i<$additionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalAttorneys');
             
-            $mappings = $this->dataMapping($i);
+            $mappings = array();
+            if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
+                $mappings['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
+            }
+            elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
+                $mappings['attorneys-act-jointly'] = self::CHECK_BOX_ON;
+            }
+            elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                $mappings['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
+            }
+            
+            $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
+            for($j=0; $j < Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
+                if($mappedAttorneys >= $additionalAttorneys) break;
+            
+                $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $i ) + $j;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->title;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->first;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->last;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address1;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address2;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address3;
+                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->postcode;
+            
+                if(++$mappedAttorneys >= $additionalAttorneys) {
+                    break;
+                }
+            }
             
             $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage
@@ -49,40 +77,6 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
         return $this->intermediateFilePaths;
         
     } // function generate()
-    
-    protected function dataMapping($pageIndex)
-    {
-        $mappings = array();
-    
-        if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-            $mappings['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
-        }
-        elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
-            $mappings['attorneys-act-jointly'] = self::CHECK_BOX_ON;
-        }
-        elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $mappings['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
-        }
-    
-        $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
-        $mappedAttorneys = 0;
-        for($j=0; $j < Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
-            if($mappedAttorneys >= $additionalAttorneys) break;
-    
-            $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $pageIndex ) + $j;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->title;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->first;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->last;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address1;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address2;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address3;
-            $mappings['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->postcode;
-    
-            $mappedAttorneys++;
-        }
-    
-        return $mappings;
-    } // function dataMapping()
     
     public function __destruct()
     {

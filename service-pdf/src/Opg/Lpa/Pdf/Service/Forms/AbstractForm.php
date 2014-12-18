@@ -222,6 +222,8 @@ abstract class AbstractForm
     
     protected function mergerIntermediateFilePaths($paths)
     {
+        if(empty($paths)) return;
+        
         foreach($paths as $type=>$path) {
             if(isset($this->intermediateFilePaths[$type])) {
                 $this->intermediateFilePaths[$type] = array_merge($this->intermediateFilePaths[$type], $path);

@@ -77,8 +77,12 @@ class Generator implements GeneratorInterface {
                 return;
         }
         
-        $filePath = $pdf->generate()
-                        ->getPdfFilePath();
+        if($pdf->generate()) {
+            $filePath = $pdf->getPdfFilePath();
+        }
+        else {
+            return false;
+        }
         
         //---
 

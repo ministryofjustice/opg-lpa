@@ -35,10 +35,13 @@ class TestResponse implements ResponseInterface  {
         }
 
         $path = realpath($this->config['worker']['testResponse']['path'])."/{$this->docId}.pdf";
+        
+        if(\file_exists($pathToFile->getPathname())) {
 
-        copy( $pathToFile->getPathname(), $path );
-
-        echo "{$this->docId}: File saved to {$path}\n";
+            copy( $pathToFile->getPathname(), $path );
+    
+            echo "{$this->docId}: File saved to {$path}\n";
+        }
 
     } // function
 
