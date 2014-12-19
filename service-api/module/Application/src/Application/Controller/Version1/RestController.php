@@ -57,6 +57,8 @@ class RestController extends AbstractRestfulController {
 
         } catch( UnauthorizedException $e ){
             # TODO
+            var_dump( $e->getMessage() ); exit();
+            die('UnauthorizedException');
         }
 
         //---

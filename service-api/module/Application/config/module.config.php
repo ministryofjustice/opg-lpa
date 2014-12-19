@@ -46,9 +46,9 @@ return [
             'api-v1' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/v1/user/:userId',
+                    'route'    => '/v1/users/:userId',
                     'constraints' => [
-                        'userId' => '[a-f][a-f0-9_-]*',
+                        'userId' => '[a-f0-9][a-f0-9_-]*',
                     ],
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller\Version1',
