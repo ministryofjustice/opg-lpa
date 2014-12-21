@@ -3,9 +3,11 @@ namespace Application\Library\Authentication\Adapter;
 
 use Exception;
 
+use \GuzzleHttp\Client as GuzzleClient;
+
 use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\Authentication\Adapter\Exception\ExceptionInterface;
+use Zend\Authentication\Adapter\Exception\ExceptionInterface as AdapterExceptionInterface;
 
 use Application\Library\Authentication\Identity;
 
@@ -21,8 +23,6 @@ class LpaAuthOne implements AdapterInterface {
 
     /**
      * Sets username and password for authentication
-     *
-     * @return void
      */
     public function __construct( $token ){
         $this->token = $token;
@@ -42,15 +42,30 @@ class LpaAuthOne implements AdapterInterface {
 
         try {
 
-            // Do authentication....
+            $client = new GuzzleClient();
 
+            $response = $client->get('http://auth.local/tokeninfo', [ 'query' => [
+                'access_token' => $this->token
+            ] ] );
 
-            //-----------------------
+            if( $response->getStatusCode() == 200 ){
 
-            $result = new Result( Result::SUCCESS, new Identity\User() );
+                $data = $response->json();
 
-        } catch (Exception $e){}
+                if( isset( $data['user_id'] ) ){
+                    $result = new Result( Result::SUCCESS, new Identity\User( $data['user_id'] ) );
+                }
 
+            } // if
+
+        } catch (AdapterExceptionInterface $e){
+            // The exception is specific to authentication, so throw it.
+            throw $e;
+        } catch (Exception $e){
+            // Do nothing, allow Result::FAILURE to be returned.
+        }
+
+        // Don't leave the token lying around...
         unset($this->token);
 
         return $result;

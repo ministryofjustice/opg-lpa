@@ -22,15 +22,17 @@ class PrimaryAttorneyDecisions extends AbstractDecisions {
         //-----------------------------------------------------
         // Validators (wrapped in Closures for lazy loading)
 
-
         $this->validators['when'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( [
-                    self::LPA_DECISION_WHEN_NOW,
-                    self::LPA_DECISION_WHEN_NO_CAPACITY
-                ], true ),
-            ]);
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\In( [
+                        self::LPA_DECISION_WHEN_NOW,
+                        self::LPA_DECISION_WHEN_NO_CAPACITY
+                    ], true ),
+                ]),
+                new Rules\NullValue,
+            ]));
         };
 
         $this->validators['canSustainLife'] = function(){

@@ -8,8 +8,12 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZF\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/src'),
     'ZFTest\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/test'),
+    'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'PhlyMongo\\' => array($vendorDir . '/phly/phly-mongo/src'),
     'PhlyMongoTest\\' => array($vendorDir . '/phly/phly-mongo/test'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Opg\\Lpa\\Common\\' => array($vendorDir . '/ministryofjustice/opg-lpa-common/src/Opg/Lpa/Common'),
+    'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
+    'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
+    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
 );

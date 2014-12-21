@@ -31,6 +31,8 @@ class Name extends AbstractData {
 
     public function extractForPdf(){
 
+        throw new \Exception( 'This method ('.__METHOD__.') has been deprecated.' );
+
         return [
             'title' => $this->title,
             'first-names' => $this->first,
@@ -45,11 +47,14 @@ class Name extends AbstractData {
         // Validators (wrapped in Closures for lazy loading)
 
         $this->validators['title'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 20, true ),
-            ]);
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\NotEmpty,
+                    new Rules\Length( 1, 5, true ),
+                ]),
+                new Rules\NullValue,
+            ]));
         };
 
         $this->validators['first'] = function(){

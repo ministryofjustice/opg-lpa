@@ -12,6 +12,7 @@ use Application\Controller\Version1\RestController;
 use Application\Library\Authentication\Adapter;
 use Application\Library\Authentication\Identity;
 
+use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 
@@ -63,10 +64,12 @@ class Module {
 
                 $authAdapter = new Adapter\LpaAuthOne( $token );
 
+                // If successful, the identity will be persisted for the request.
                 $result = $auth->authenticate($authAdapter);
 
-                # TODO - This!!!
-                $auth->getStorage()->write( new Identity\User() );
+                if( AuthenticationResult::SUCCESS !== $result->getCode() ){
+                    die('Bad authentication...');
+                }
 
             }
 

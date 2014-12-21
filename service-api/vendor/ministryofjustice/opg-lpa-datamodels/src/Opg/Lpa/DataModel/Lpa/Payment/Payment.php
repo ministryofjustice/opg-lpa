@@ -97,9 +97,10 @@ class Payment extends AbstractData {
         };
 
         $this->validators['amount'] = function(){
-            return (new Validator)->addRules([
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
                 new Rules\Float,
-            ]);
+                new Rules\NullValue,
+            ]));
         };
 
         $this->validators['reference'] = function(){

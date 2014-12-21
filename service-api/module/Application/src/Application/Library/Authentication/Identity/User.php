@@ -11,9 +11,14 @@ class User extends AbstractIdentity {
      */
     protected $roles = [ 'user' ];
 
-    protected $id = '699aaf1a14ff64239de1e0d03c2d66d4';
+    //protected $id = '699aaf1a14ff64239de1e0d03c2d66d4';
+    protected $id;
 
     //------
+
+    public function __construct( $userId ){
+        $this->id = $userId;
+    }
 
     public function id(){
         return $this->id;
