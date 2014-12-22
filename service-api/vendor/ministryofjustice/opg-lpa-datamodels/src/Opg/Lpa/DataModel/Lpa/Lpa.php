@@ -3,6 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa;
 
 use DateTime;
 
+use Opg\Lpa\DataModel\AbstractData;
+
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 

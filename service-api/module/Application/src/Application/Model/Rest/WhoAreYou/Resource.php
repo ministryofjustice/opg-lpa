@@ -64,6 +64,8 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
+        $collection = $this->getCollection('stats-who');
+
         die('Add the restults into the stats collection.');
 
         //---

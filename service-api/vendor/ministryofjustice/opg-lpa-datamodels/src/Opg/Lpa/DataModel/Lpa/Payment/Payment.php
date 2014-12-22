@@ -3,7 +3,7 @@ namespace Opg\Lpa\DataModel\Lpa\Payment;
 
 use DateTime;
 
-use Opg\Lpa\DataModel\Lpa\AbstractData;
+use Opg\Lpa\DataModel\AbstractData;
 
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
