@@ -11,6 +11,8 @@ use Application\Model\Rest\ResourceInterface;
 use Application\Model\Rest\EntityInterface;
 use Application\Model\Rest\RouteProviderInterface;
 
+use Application\Model\Rest\Lock\LockedException;
+
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 
 use ZF\ApiProblem\ApiProblem;
@@ -57,8 +59,10 @@ class RestController extends AbstractRestfulController {
 
         } catch( UnauthorizedException $e ){
             # TODO
-            var_dump( $e->getMessage() ); exit();
+            //var_dump( $e->getMessage() ); exit();
             die('UnauthorizedException');
+        } catch ( LockedException $e ){
+            $return = new ApiProblem( 403, 'LPA has been locked' );
         }
 
         //---

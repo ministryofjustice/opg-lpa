@@ -149,7 +149,7 @@ return [
             'resource-who-is-registering'               => 'Application\Model\Rest\xxx\Resource',
             'resource-who-are-you'                      => 'Application\Model\Rest\WhoAreYou\Resource',
             'resource-certificate-provider'             => 'Application\Model\Rest\CertificateProvider\Resource',
-            'resource-lock'                             => 'Application\Model\Rest\xxx\Resource',
+            'resource-lock'                             => 'Application\Model\Rest\Lock\Resource',
             'resource-seed'                             => 'Application\Model\Rest\xxx\Resource',
             'resource-primary-attorneys'                => 'Application\Model\Rest\AttorneysPrimary\Resource',
             'resource-replacement-attorneys'            => 'Application\Model\Rest\AttorneysReplacement\Resource',

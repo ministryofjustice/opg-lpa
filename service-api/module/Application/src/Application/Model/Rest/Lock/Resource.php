@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Rest\WhoAreYou;
+namespace Application\Model\Rest\Lock;
 
 use RuntimeException;
 
@@ -16,7 +16,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     public function getIdentifier(){ return 'lpaId'; }
-        public function getName(){ return 'who-are-you'; }
+        public function getName(){ return 'lock'; }
 
     public function getType(){
         return self::TYPE_SINGULAR;
@@ -37,14 +37,14 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
 
         // Return false if the value is not set.
-        $result = ( is_null($lpa->whoAreYouAnswered) )? false: $lpa->whoAreYouAnswered;
+        $result = ( is_null($lpa->locked) )? false: $lpa->locked;
 
         return new Entity( $result, $lpa );
 
     }
 
     /**
-     * Adds a Who Are You answer.
+     * Locks a LPA.
      *
      * @param  mixed $data
      * @return Entity|ApiProblem
@@ -58,23 +58,13 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-        if( $lpa->whoAreYouAnswered === true ){
-            return new ApiProblem( 403, 'Question already answered' );
+        if( $lpa->locked === true ){
+            return new ApiProblem( 403, 'LPA already locked' );
         }
 
         //---
 
-        $answer = new WhoAreYou($data);
-
-        $validation = $answer->validate();
-
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
-        }
-
-        //---
-
-        $lpa->whoAreYouAnswered = true;
+        $lpa->locked = true;
 
         //---
 
@@ -90,20 +80,11 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        // We update the LPA first as there's a chance a RuntimeException will be thrown
-        // if there's an 'updatedAt' mismatch.
-
         $this->updateLpa( $lpa );
 
         //---
 
-        $collection = $this->getCollection('stats-who');
-
-        $collection->insert( $answer->toMongoArray() );
-
-        //---
-
-        return new Entity( $lpa->whoAreYouAnswered, $lpa );
+        return new Entity( $lpa->locked, $lpa );
 
     } // function
 

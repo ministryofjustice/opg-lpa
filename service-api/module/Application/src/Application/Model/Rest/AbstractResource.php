@@ -5,6 +5,8 @@ use RuntimeException;
 
 use Application\Library\DateTime;
 
+use Application\Model\Rest\Lock\LockedException;
+
 use Application\Model\Rest\Users\Entity as RouteUser;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
@@ -110,6 +112,17 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         $collection = $this->getCollection('lpa');
 
+        //-----------------------------------------
+        // Check LPA in database isn't locked...
+
+        $locked = (bool)$collection->find( [ '_id'=>$lpa->id, 'locked'=>true ], [ '_id'=>true ] )->limit(1)->count( true );
+
+        if( $locked === true ){
+            throw new LockedException('LPA has already been locked.');
+        }
+
+        //-----------------------------------------
+
         $lastUpdated = new \MongoDate( $lpa->updatedAt->getTimestamp(), (int)$lpa->updatedAt->format('u') );
 
         // Record the time we updated the document.
@@ -130,73 +143,5 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         }
 
     } // function
-
-    //------------------------------------------
-
-    /**
-     * Create a resource
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    #public function create($data){}
-
-    /**
-     * Delete a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    #public function delete($id){}
-
-    /**
-     * Delete a collection, or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    #public function deleteList($data){}
-
-    /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    #public function fetch($id){}
-
-    /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return ApiProblem|mixed
-     */
-    #public function fetchAll($params = array()){}
-
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    #public function patch($id, $data){}
-
-    /**
-     * Replace a collection or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    #public function replaceList($data){}
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    #public function update($id, $data){}
 
 } // abstract class
