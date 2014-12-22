@@ -8,7 +8,7 @@ use Application\Model\Rest\Applications\Entity as ApplicationEntity;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\AccessorInterface as LpaAccessorInterface;
+use Opg\Lpa\DataModel\AccessorInterface as LpaAccessorInterface;
 
 use Application\Library\Hal\Hal;
 

@@ -5,7 +5,7 @@ use Application\Model\Rest\EntityInterface;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\AccessorInterface as LpaAccessorInterface;
+use Opg\Lpa\DataModel\AccessorInterface as LpaAccessorInterface;
 
 class Entity implements EntityInterface {
 
