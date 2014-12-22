@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class Lp3 extends AbstractForm
 {
@@ -66,7 +67,6 @@ class Lp3 extends AbstractForm
         $mappings = $this->dataMapping($peopleToNotify);
         
         $pdf->fillForm($mappings)
-	        ->needAppearances()
             ->flatten()
             ->saveAs($filePath);
         
@@ -123,6 +123,13 @@ class Lp3 extends AbstractForm
             $this->flattenLpa['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
         }
         
+        for($i=0; $i<count($this->lpa->document->primaryAttorneys); $i++) {
+            $attorney = $this->lpa->document->primaryAttorneys[$i];
+            if($attorney instanceof TrustCorporation) {
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $this->lpa->document->primaryAttorneys[$i]->name;
+            }
+        }
+        
         return $this->flattenLpa;
     } // function dataMapping()
 
@@ -131,6 +138,11 @@ class Lp3 extends AbstractForm
      */
     protected function mergePdfs()
     {
+        if($this->countIntermediateFiles() == 1) {
+            $this->generatedPdfFilePath = $this->intermediateFilePaths['LP3'][0];
+            return;
+        }
+        
         $pdf = PdfProcessor::getPdftkInstance();
     
         $intPdfHandle = 'A';

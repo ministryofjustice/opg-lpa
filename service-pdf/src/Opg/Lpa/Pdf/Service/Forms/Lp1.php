@@ -20,6 +20,8 @@ abstract class Lp1 extends AbstractForm
     
     const MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM = 4;
     
+    const MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM = 4;
+    
     /**
      *
      * @var PDFTK pdf object
@@ -55,10 +57,8 @@ abstract class Lp1 extends AbstractForm
         
         // populate form data and generate pdf
         $this->pdf->fillForm($mappings)
-	        ->needAppearances()
             ->flatten()
             ->saveAs($filePath);
-//         print_r($this->pdf);
         
         // draw strokes if there's any blank slot
         if(!empty($this->drawingTargets)) {
@@ -75,13 +75,13 @@ abstract class Lp1 extends AbstractForm
         // CS1 is generated when number of attorneys or people to notify are larger than what is available on standard form. 
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfPrimaryAttorneys > 4) {
-            $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorneys'))->generate();
+            $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorney'))->generate();
             $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
         if($noOfReplacementAttorneys > 2) {
-            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorneys'))->generate();
+            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorney'))->generate();
             $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
@@ -334,9 +334,20 @@ abstract class Lp1 extends AbstractForm
         switch($this->flattenLpa['lpa-document-correspondent-who']) {
             case Correspondence::WHO_DONOR:
                 $this->flattenLpa['donor-is-correspondent'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-correspondent-name-title'] = null;
+                $this->flattenLpa['lpa-document-correspondent-name-first'] = null;
+                $this->flattenLpa['lpa-document-correspondent-name-last'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
                 break;
             case Correspondence::WHO_ATTORNEY:
                 $this->flattenLpa['attorney-is-correspondent'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
+                $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
                 break;
             case Correspondence::WHO_OTHER:
                 $this->flattenLpa['other-is-correspondent'] = self::CHECK_BOX_ON;
@@ -447,19 +458,26 @@ abstract class Lp1 extends AbstractForm
         
         // Section 15 - additional applicants signature
         if(($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
-                is_array($this->lpa->document->whoIsRegistering) &&
-                (count($this->lpa->document->whoIsRegistering) > 4)) {
-                    $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - 4;
-                    $totalAdditionalPages = ceil($totalAdditionalApplicants/4);
-                    $insertAt = 20;
-                    $pdf->cat(++$lastInsertion, $insertAt, 'A');
-                    
-                    for($i=0; $i<$totalAdditionalPages; $i++) {
-                        $pdf->addFile($this->basePdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
-                        $pdf->cat(1, null, $intPdfHandle);
-                    }
-                    
-                    $lastInsertion = $insertAt;
+                (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
+            $totalAdditionalApplicants = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+            $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+        }
+        elseif(is_array($this->lpa->document->whoIsRegistering) &&
+                (count($this->lpa->document->whoIsRegistering) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
+            $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+            $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+        }
+        
+        if(isset($totalAdditionalPages) && ($totalAdditionalPages > 0)) {
+            $insertAt = 20;
+            $pdf->cat(++$lastInsertion, $insertAt, 'A');
+            
+            for($i=0; $i<$totalAdditionalPages; $i++) {
+                $pdf->addFile($this->basePdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                $pdf->cat(1, null, $intPdfHandle);
+            }
+            
+            $lastInsertion = $insertAt;
         }
         
         // Continuation Sheet 1
@@ -519,7 +537,6 @@ abstract class Lp1 extends AbstractForm
         }
         
         $pdf->saveAs($this->generatedPdfFilePath);
-//         print_r($pdf);
         
     } // function mergePdfs()
 } // class Lp1

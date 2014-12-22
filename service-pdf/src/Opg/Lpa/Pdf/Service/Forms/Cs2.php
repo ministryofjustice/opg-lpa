@@ -54,10 +54,9 @@ class Cs2 extends AbstractForm
                     $this->contentType  => self::CHECK_BOX_ON,
                     'cs-2-content'      => $this->getContentForBox($pageNo, $this->content, $this->contentType),
                     'donor-full-name'   => $this->fullName($this->lpa->document->donor->name)
-            ))->needAppearances()
-                ->flatten()
-                ->saveAs($filePath);
-//             print_r($cs2);
+            ))
+            ->flatten()
+            ->saveAs($filePath);
         }
         
         return $this->intermediateFilePaths;

@@ -37,10 +37,9 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
                     'signature-attorney-name-last'  => $attorney->name->last
-            ))->needAppearances()
-                ->flatten()
-                ->saveAs($filePath);
-//             print_r($attorneySignaturePage);
+            ))
+            ->flatten()
+            ->saveAs($filePath);
             
         } //endforeach
         

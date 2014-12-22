@@ -19,10 +19,9 @@ class Cs3 extends AbstractForm
     
         $cs3->fillForm(array(
                 'donor-full-name' => $this->fullName($this->lpa->document->donor->name)
-        ))->needAppearances()
-            ->flatten()
-            ->saveAs($filePath);
-//         print_r($cs3);
+        ))
+        ->flatten()
+        ->saveAs($filePath);
         
         return $this->intermediateFilePaths;
     } // function generate()

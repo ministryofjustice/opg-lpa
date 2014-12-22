@@ -20,11 +20,10 @@ class Cs4 extends AbstractForm
         $cs2 = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
         
         $cs2->fillForm(
-                array(
-                        'cs-4-trust-corporation-company-registration-number' => $this->companyNumber
-                ))
-                ->needAppearances()
-                ->saveAs($filePath);
+            array(
+                    'cs-4-trust-corporation-company-registration-number' => $this->companyNumber
+            ))
+        ->saveAs($filePath);
         
         return $this->intermediateFilePaths;
     } // function generate()

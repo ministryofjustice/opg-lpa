@@ -32,8 +32,8 @@ class Lp1f extends Lp1
         $idx = 0;
         for($i=0; $i<$noOfPrimaryAttorneys; $i++) {
             if($this->lpa->document->primaryAttorneys[$i] instanceof TrustCorporation) {
-                $this->flattenLpa['attorney-0-is-trust-corporation'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-document-primaryAttorneys-0-name-last'] = $this->flattenLpa['lpa-document-primaryAttorneys-0-name'];
+                $this->flattenLpa['attorney-'.$i.'-is-trust-corporation'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name'];
                 continue;
             }
             

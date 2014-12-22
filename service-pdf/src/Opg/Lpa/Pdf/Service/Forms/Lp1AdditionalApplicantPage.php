@@ -46,10 +46,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             $formData['attorney-is-applicant'] = self::CHECK_BOX_ON;
             
             $additionalApplicant->fillForm($formData)
-                ->needAppearances()
                 ->flatten()
                 ->saveAs($filePath);
-//             print_r($additionalApplicant);
         
         } // endfor
         

@@ -23,8 +23,8 @@ class Lp1h extends Lp1
         parent::dataMapping();
         
         // Section 2
-        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        for($i=0; $i<$noOfReplacementAttorneys; $i++) {
+        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
+        for($i=0; $i<$noOfPrimaryAttorneys; $i++) {
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-day'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('d');
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('m');
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-year'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('Y');

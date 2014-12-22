@@ -24,6 +24,7 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
         $additionalAttorneys = $noOfAttorneys - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
         $additionalPages = ceil($additionalAttorneys/Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM);
         $mappedAttorneys = 0;
+        
         for($i=0; $i<$additionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalAttorneys');
             
@@ -41,16 +42,21 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
             $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
             for($j=0; $j < Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
                 if($mappedAttorneys >= $additionalAttorneys) break;
-            
+                
                 $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $i ) + $j;
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->title;
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->first;
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->last;
+                if(is_string($this->lpa->document->primaryAttorneys[$attorneyIndex]->name)) {
+                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name;
+                }
+                else {
+                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->title;
+                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->first;
+                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->last;
+                }
                 $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address1;
                 $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address2;
                 $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address3;
                 $mappings['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->postcode;
-            
+                
                 if(++$mappedAttorneys >= $additionalAttorneys) {
                     break;
                 }
@@ -59,20 +65,19 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
             $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage
                 ->fillForm($mappings)
-                ->needAppearances()
                 ->flatten()
                 ->saveAs($filePath);
             
-            if($additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-                $strokeParams = array(array());
-                for($i=Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$additionalAttorneys%Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $i>=1; $i--) {
-                    // draw on page 0.
-                    $strokeParams[0][] = 'lp3-primaryAttorney-' . (Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$i);
-                }
-                $this->stroke($filePath, $strokeParams);
-            }
-            
         } //endfor
+
+        if($additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            $strokeParams = array(array());
+            for($k=Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$additionalAttorneys%Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $k>=1; $k--) {
+                // draw on page 0.
+                $strokeParams[0][] = 'lp3-primaryAttorney-' . (Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$k);
+            }
+            $this->stroke($filePath, $strokeParams);
+        }
         
         return $this->intermediateFilePaths;
         
