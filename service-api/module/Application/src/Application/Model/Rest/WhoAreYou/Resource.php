@@ -3,6 +3,8 @@ namespace Application\Model\Rest\WhoAreYou;
 
 use RuntimeException;
 
+use Opg\Lpa\DataModel\WHoAreYou\WhoAreYou;
+
 use Application\Model\Rest\AbstractResource;
 
 use Application\Model\Rest\LpaConsumerInterface;
@@ -14,7 +16,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     public function getIdentifier(){ return 'lpaId'; }
-    public function getName(){ return 'who-are-you'; }
+        public function getName(){ return 'who-are-you'; }
 
     public function getType(){
         return self::TYPE_SINGULAR;
@@ -23,7 +25,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
     /**
      * Fetch a resource
      *
-     * @param  mixed $id
      * @return Entity|ApiProblem
      * @throw UnauthorizedException If the current user is not authorized.
      */
@@ -58,21 +59,35 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
 
         if( $lpa->whoAreYouAnswered === true ){
-
-            die('NO - you cannot set this value again!');
+            return new ApiProblem( 403, 'Question already answered' );
         }
+
+        //---
+
+        $answer = new WhoAreYou($data);
+
+        $validation = $answer->validate();
+
+        if( $validation->hasErrors() ){
+            return new ValidationApiProblem( $validation );
+        }
+
+        //---
+
+        // We update the LPA first as there's a chance a RuntimeException will be thrown
+        // if there's an 'updatedAt' mismatch.
+
+        $lpa->whoAreYouAnswered = true;
+
+        $this->updateLpa( $lpa );
 
         //---
 
         $collection = $this->getCollection('stats-who');
 
-        die('Add the restults into the stats collection.');
+        $collection->insert( $answer->toMongoArray() );
 
         //---
-
-        $lpa->whoAreYouAnswered = true;
-
-        $this->updateLpa( $lpa );
 
         return new Entity( $lpa->whoAreYouAnswered, $lpa );
 

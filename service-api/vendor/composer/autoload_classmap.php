@@ -164,6 +164,7 @@ return array(
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorException' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorException.php',
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorResponse' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorResponse.php',
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorResponseInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorResponseInterface.php',
+    'Opg\\Lpa\\DataModel\\WHoAreYou\\WhoAreYou' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/WhoAreYou/WhoAreYou.php',
     'PHPUnit_Exception' => $vendorDir . '/phpunit/phpunit/src/Exception.php',
     'PHPUnit_Extensions_GroupTestSuite' => $vendorDir . '/phpunit/phpunit/src/Extensions/GroupTestSuite.php',
     'PHPUnit_Extensions_PhptTestCase' => $vendorDir . '/phpunit/phpunit/src/Extensions/PhptTestCase.php',
