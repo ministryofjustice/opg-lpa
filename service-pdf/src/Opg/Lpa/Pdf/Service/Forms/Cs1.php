@@ -2,7 +2,6 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Respect\Validation\Rules\Email;
 use Opg\Lpa\DataModel\Lpa\Elements\Dob;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 
@@ -83,13 +82,13 @@ class Cs1 extends AbstractForm
                 $formData['cs1-'.$j.'-address-address3'] = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-address-address3'];
                 $formData['cs1-'.$j.'-address-postode']  = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-address-postcode'];
                 
-                if($this->lpa->document->{$roleGroup}[$roleIndex]->dob instanceof Dob) {
+                if(property_exists($this->lpa->document->{$roleGroup}[$roleIndex], 'dob') && property_exists($this->lpa->document->{$roleGroup}[$roleIndex]->dob, 'date')) {
                     $formData['cs1-'.$j.'-dob-date-day']   = $this->lpa->document->{$roleGroup}[$roleIndex]->dob->date->format('d');
                     $formData['cs1-'.$j.'-dob-date-month'] = $this->lpa->document->{$roleGroup}[$roleIndex]->dob->date->format('m');
                     $formData['cs1-'.$j.'-dob-date-year']  = $this->lpa->document->{$roleGroup}[$roleIndex]->dob->date->format('Y');
                 }
                 
-                if($this->lpa->document->{$roleGroup}[$roleIndex]->email instanceof EmailAddress) {
+                if(property_exists($this->lpa->document->{$roleGroup}[$roleIndex], 'email') &&  ($this->lpa->document->{$roleGroup}[$roleIndex]->email instanceof EmailAddress)) {
                     $formData['cs1-'.$j.'-email-address']  = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-email-address'];
                 }
                 

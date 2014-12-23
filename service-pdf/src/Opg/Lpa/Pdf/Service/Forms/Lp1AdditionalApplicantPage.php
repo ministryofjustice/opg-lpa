@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
 {
@@ -31,12 +32,17 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
                 $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
                 
-                $formData['applicant-'.$j.'-name-title']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->title;
-                $formData['applicant-'.$j.'-name-first']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->first;
-                $formData['applicant-'.$j.'-name-last']      = $this->lpa->document->primaryAttorneys[$attorneyId]->name->last;
-                $formData['applicant-'.$j.'-dob-date-day']   = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('d');
-                $formData['applicant-'.$j.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('m');
-                $formData['applicant-'.$j.'-dob-date-year']  = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('Y');
+                if($this->lpa->document->primaryAttorneys[$attorneyId] instanceof TrustCorporation) {
+                    $formData['applicant-'.$j.'-name-last']      = $this->lpa->document->primaryAttorneys[$attorneyId]->name;
+                }
+                else {
+                    $formData['applicant-'.$j.'-name-title']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->title;
+                    $formData['applicant-'.$j.'-name-first']     = $this->lpa->document->primaryAttorneys[$attorneyId]->name->first;
+                    $formData['applicant-'.$j.'-name-last']      = $this->lpa->document->primaryAttorneys[$attorneyId]->name->last;
+                    $formData['applicant-'.$j.'-dob-date-day']   = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('d');
+                    $formData['applicant-'.$j.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('m');
+                    $formData['applicant-'.$j.'-dob-date-year']  = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('Y');
+                }
                 
                 if(++$totalMappedAdditionalApplicants >= $totalAdditionalApplicant) {
                     break;
