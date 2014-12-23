@@ -69,9 +69,9 @@ class Lp1f extends Lp1
                 $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-title']     = null;
                 $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-first']     = null;
                 $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-last']      = $replacementAttorneys[$i]->name;
-                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-day']   = $replacementAttorneys[$i]->dob->date->format('d');
-                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-month'] = $replacementAttorneys[$i]->dob->date->format('m');
-                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-year']  = $replacementAttorneys[$i]->dob->date->format('Y');
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-day']   = null;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-month'] = null;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-year']  = null;
             }
             else {
                 $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-title']     = $replacementAttorneys[$i]->name->title;
