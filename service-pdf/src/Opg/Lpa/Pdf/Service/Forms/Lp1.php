@@ -72,22 +72,10 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
-        // CS1 is generated when number of attorneys or people to notify are larger than what is available on standard form. 
-        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
-        if($noOfPrimaryAttorneys > 4) {
-            $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorney'))->generate();
-            $this->mergerIntermediateFilePaths($generatedCs1);
-        }
-        
-        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        if($noOfReplacementAttorneys > 2) {
-            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorney'))->generate();
-            $this->mergerIntermediateFilePaths($generatedCs1);
-        }
-        
+        // CS1 is generated when number of people to notify are larger than what is available on standard form. 
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify > 4) {
-            $generatedCs1 = (new Cs1($this->lpa, 'peopleToNotify'))->generate();
+            $generatedCs1 = (new Cs1($this->lpa, 'peopleToNotify', $this->lpa->document->peopleToNotify))->generate();
             $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
@@ -98,7 +86,7 @@ abstract class Lp1 extends AbstractForm
         }
         
         // generate a CS2 page if replacement attorneys decision differ to standard arrangement.
-        if(($noOfReplacementAttorneys > 1) && 
+        if((count($this->lpa->document->replacementAttorneys) > 1) && 
             ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             
             $how = "";

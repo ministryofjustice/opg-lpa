@@ -22,24 +22,24 @@ class Lp1f extends Lp1
 
     protected function dataMapping()
     {
-        // make trust corp the first item in primaryAttorneys or replacementAttorneys
-        $this->sortAttorneys();
-        
         parent::dataMapping();
         
         // populate attorney dob
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
+        
+        // make trust corp the first item in primaryAttorneys or replacementAttorneys
+        $primaryAttorneys = $this->getSortedAttorneys('primaryAttorneys');
         $idx = 0;
         for($i=0; $i<$noOfPrimaryAttorneys; $i++) {
-            if($this->lpa->document->primaryAttorneys[$i] instanceof TrustCorporation) {
-                $this->flattenLpa['attorney-'.$i.'-is-trust-corporation'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name'];
+            if($primaryAttorneys[$i] instanceof TrustCorporation) {
+                $this->flattenLpa['attorney-0-is-trust-corporation'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-primaryAttorneys-0-name-last'] = $primaryAttorneys[$i]->name;
                 continue;
             }
             
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-day'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('d');
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('m');
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-year'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('Y');
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-day'] = $primaryAttorneys[$i]->dob->date->format('d');
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-month'] = $primaryAttorneys[$i]->dob->date->format('m');
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-year'] = $primaryAttorneys[$i]->dob->date->format('Y');
             
             $idx++;
             
@@ -47,17 +47,18 @@ class Lp1f extends Lp1
         }
         
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+        $replacementAttorneys = $this->getSortedAttorneys('replacementAttorneys');
         $idx = 0;
         for($i=0; $i<$noOfReplacementAttorneys; +$i++) {
             if($this->lpa->document->replacementAttorneys[$i] instanceof TrustCorporation) {
-                $this->flattenLpa['replacement-attorney-0-is-trust-corporation'] = 'On';
-                $this->flattenLpa['lpa-document-replacementAttorneys-0-name-last'] = $this->flattenLpa['lpa-document-replacementAttorneys-0-name'];
+                $this->flattenLpa['replacement-attorney-0-is-trust-corporation'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-replacementAttorneys-0-name-last'] = $replacementAttorneys[$i]->name;
                 continue;
             }
             
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-day'] = $this->lpa->document->replacementAttorneys[$i]->dob->date->format('d');
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-month'] = $this->lpa->document->replacementAttorneys[$i]->dob->date->format('m');
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-year'] = $this->lpa->document->replacementAttorneys[$i]->dob->date->format('Y');
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-day'] = $replacementAttorneys[$i]->dob->date->format('d');
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-month'] = $replacementAttorneys[$i]->dob->date->format('m');
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-year'] = $replacementAttorneys[$i]->dob->date->format('Y');
             
             $idx++;
             
@@ -108,6 +109,19 @@ class Lp1f extends Lp1
     {
         parent::generateAdditionalPages();
         
+        // CS1 is generated when number of attorneys that are larger than what is available on standard form. 
+        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
+        if($noOfPrimaryAttorneys > 4) {
+            $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorney', $this->getSortedAttorneys('primaryAttorneys')))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
+        }
+        
+        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+        if($noOfReplacementAttorneys > 2) {
+            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorney', $this->getSortedAttorneys('replacementAttorneys')))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
+        }
+                
         // CS4
         if ($this->hasTrustCorporation()) {
             $generatedCs4 = (new Cs4($this->lpa, $this->getTrustCorporation()->number))->generate();
@@ -178,31 +192,34 @@ class Lp1f extends Lp1
     
     /**
      * if there is a trust corp, make it the first item in the attorneys array.
+     * 
+     * @param string $attorneyGroup - 'primaryAttorneys'|'replacementAttorneys'
+     * @return array of primaryAttorneys or replacementAttorneys
      */
-    protected function sortAttorneys()
+    protected function getSortedAttorneys($attorneyGroup)
     {
-        if($this->hasTrustCorporation($this->lpa->document->primaryAttorneys)) {
-            $trust = 'primaryAttorneys';
-            $attorneys = $this->lpa->document->primaryAttorneys;
-        }
-        elseif($this->hasTrustCorporation($this->lpa->document->replacementAttorneys)) {
-            $trust = 'replacementAttorneys';
-            $attorneys = $this->lpa->document->replacementAttorneys;
-        }
-        else {
-            return;
+        if(empty($this->lpa->document->$attorneyGroup)) {
+            return $this->lpa->document->$attorneyGroup;
         }
         
-        if(isset($attorneys)) {
-            foreach($attorneys as $idx=>$attorney) {
-                if($attorney instanceof TrustCorporation) {
-                    $trustCorp = $attorney;
-                    break;
-                }
-            }
-            unset($attorneys[$idx]);
-            array_unshift($attorneys, $trustCorp);
-            $this->lpa->document->$trust = $attorneys;
+        if($this->hasTrustCorporation($this->lpa->document->$attorneyGroup)) {
+            $attorneys = $this->lpa->document->$attorneyGroup;
         }
+        else {
+            return $this->lpa->document->$attorneyGroup;
+        }
+        
+        $sortedAttorneys = [];
+        foreach($attorneys as $idx=>$attorney) {
+            if($attorney instanceof TrustCorporation) {
+                $trustCorp = $attorney;
+            }
+            else {
+                $sortedAttorneys[] = $attorney;
+            }
+        }
+        
+        array_unshift($sortedAttorneys, $trustCorp);
+        return $sortedAttorneys;
     }
 } // class

@@ -2,12 +2,10 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Elements\Dob;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 
 class Cs1 extends AbstractForm
 {
-    private $roleType;
+    private $roleType, $roleGroup;
     
     static $SETTINGS = array(
         'max-slots-on-standard-form' => array(
@@ -23,10 +21,11 @@ class Cs1 extends AbstractForm
         )
     );
     
-    public function __construct(Lpa $lpa, $roleType)
+    public function __construct(Lpa $lpa, $roleType, $roleGroup)
     {
         parent::__construct($lpa);
         $this->roleType = $roleType;
+        $this->roleGroup = $roleGroup;
     }
     
     /**
@@ -39,7 +38,7 @@ class Cs1 extends AbstractForm
     {
         /**
          * Number of same roles filled on standard form.
-         */ 
+         */
         $baseIndexForThisRole = self::$SETTINGS['max-slots-on-standard-form'][$this->roleType];
         
         /**
@@ -53,9 +52,8 @@ class Cs1 extends AbstractForm
         
         $noOfAdditionalPages = ceil($totalAdditionalPersonsOfSameRole/2);
         
-        $roleGroup = self::$SETTINGS['roleGroup'][$this->roleType];
-        
         $totalMappedAdditionalPeople = 0;
+        
         for($i=0; $i<$noOfAdditionalPages; $i++) {
             
             $filePath = $this->registerTempFile('CS1');
@@ -68,28 +66,28 @@ class Cs1 extends AbstractForm
                 $roleIndex = $i*$maxNumPersonOnCS1 + $j + $baseIndexForThisRole;
                 
                 $formData['cs1-'.$j.'-is-'.$this->roleType] = self::CHECK_BOX_ON;
-                if(array_key_exists('lpa-document-'.$roleGroup.'-'.$roleIndex.'-name-first', $this->flattenLpa)) {
-                    $formData['cs1-'.$j.'-name-title']       = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-name-title'];
-                    $formData['cs1-'.$j.'-name-first']       = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-name-first'];
-                    $formData['cs1-'.$j.'-name-last']        = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-name-last'];
+                if(is_object($this->roleGroup[$roleIndex]->name)) {
+                    $formData['cs1-'.$j.'-name-title']       = $this->roleGroup[$roleIndex]->name->title;
+                    $formData['cs1-'.$j.'-name-first']       = $this->roleGroup[$roleIndex]->name->first;
+                    $formData['cs1-'.$j.'-name-last']        = $this->roleGroup[$roleIndex]->name->last;
                 }
                 else {
-                    $formData['cs1-'.$j.'-name-last']        = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-name'];
+                    $formData['cs1-'.$j.'-name-last']        = $this->roleGroup[$roleIndex]->name;
                 }
                 
-                $formData['cs1-'.$j.'-address-address1'] = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-address-address1'];
-                $formData['cs1-'.$j.'-address-address2'] = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-address-address2'];
-                $formData['cs1-'.$j.'-address-address3'] = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-address-address3'];
-                $formData['cs1-'.$j.'-address-postode']  = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-address-postcode'];
+                $formData['cs1-'.$j.'-address-address1'] = $this->roleGroup[$roleIndex]->address->address1;
+                $formData['cs1-'.$j.'-address-address2'] = $this->roleGroup[$roleIndex]->address->address2;
+                $formData['cs1-'.$j.'-address-address3'] = $this->roleGroup[$roleIndex]->address->address3;
+                $formData['cs1-'.$j.'-address-postode']  = $this->roleGroup[$roleIndex]->address->postcode;
                 
-                if(property_exists($this->lpa->document->{$roleGroup}[$roleIndex], 'dob') && property_exists($this->lpa->document->{$roleGroup}[$roleIndex]->dob, 'date')) {
-                    $formData['cs1-'.$j.'-dob-date-day']   = $this->lpa->document->{$roleGroup}[$roleIndex]->dob->date->format('d');
-                    $formData['cs1-'.$j.'-dob-date-month'] = $this->lpa->document->{$roleGroup}[$roleIndex]->dob->date->format('m');
-                    $formData['cs1-'.$j.'-dob-date-year']  = $this->lpa->document->{$roleGroup}[$roleIndex]->dob->date->format('Y');
+                if(property_exists($this->roleGroup[$roleIndex], 'dob') && is_object($this->roleGroup[$roleIndex]->dob) && property_exists($this->roleGroup[$roleIndex]->dob, 'date')) {
+                    $formData['cs1-'.$j.'-dob-date-day']   = $this->roleGroup[$roleIndex]->dob->date->format('d');
+                    $formData['cs1-'.$j.'-dob-date-month'] = $this->roleGroup[$roleIndex]->dob->date->format('m');
+                    $formData['cs1-'.$j.'-dob-date-year']  = $this->roleGroup[$roleIndex]->dob->date->format('Y');
                 }
                 
-                if(property_exists($this->lpa->document->{$roleGroup}[$roleIndex], 'email') &&  ($this->lpa->document->{$roleGroup}[$roleIndex]->email instanceof EmailAddress)) {
-                    $formData['cs1-'.$j.'-email-address']  = $this->flattenLpa['lpa-document-'.$roleGroup.'-'.$roleIndex.'-email-address'];
+                if(property_exists($this->roleGroup[$roleIndex], 'email') && is_object($this->roleGroup[$roleIndex]->email) && property_exists($this->roleGroup[$roleIndex]->email, 'address')) {
+                    $formData['cs1-'.$j.'-email-address']  = $this->roleGroup[$roleIndex]->email->address;
                 }
                 
                 if(++$totalMappedAdditionalPeople >= $totalAdditionalPersonsOfSameRole) {

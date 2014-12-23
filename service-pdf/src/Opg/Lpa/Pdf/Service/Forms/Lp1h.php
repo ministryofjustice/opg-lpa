@@ -66,6 +66,19 @@ class Lp1h extends Lp1
     {
         parent::generateAdditionalPages();
         
+        // CS1 is generated when number of attorneys that are larger than what is available on standard form.
+        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
+        if($noOfPrimaryAttorneys > 4) {
+            $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorney', $this->lpa->document->primaryAttorneys))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
+        }
+        
+        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+        if($noOfReplacementAttorneys > 2) {
+            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorney', $this->lpa->document->replacementAttorneys))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
+        }
+        
         // if number of attorneys (including replacements) is greater than 4, duplicate 
         // Section 11 - Attorneys Signatures as many as needed to be able to fit all attorneys in the form.
         $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
