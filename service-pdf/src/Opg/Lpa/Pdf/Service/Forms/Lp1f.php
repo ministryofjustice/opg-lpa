@@ -182,19 +182,27 @@ class Lp1f extends Lp1
     protected function sortAttorneys()
     {
         if($this->hasTrustCorporation($this->lpa->document->primaryAttorneys)) {
+            $trust = 'primaryAttorneys';
             $attorneys = $this->lpa->document->primaryAttorneys;
         }
         elseif($this->hasTrustCorporation($this->lpa->document->replacementAttorneys)) {
+            $trust = 'replacementAttorneys';
             $attorneys = $this->lpa->document->replacementAttorneys;
+        }
+        else {
+            return;
         }
         
         if(isset($attorneys)) {
             foreach($attorneys as $idx=>$attorney) {
-                $trustCorp = $attorney;
-                break;
+                if($attorney instanceof TrustCorporation) {
+                    $trustCorp = $attorney;
+                    break;
+                }
             }
             unset($attorneys[$idx]);
             array_unshift($attorneys, $trustCorp);
+            $this->lpa->document->$trust = $attorneys;
         }
     }
 } // class
