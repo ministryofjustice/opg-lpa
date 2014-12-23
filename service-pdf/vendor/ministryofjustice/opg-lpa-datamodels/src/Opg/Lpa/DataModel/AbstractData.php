@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\DataModel\Lpa;
+namespace Opg\Lpa\DataModel;
 
 use DateTime, InvalidArgumentException, JsonSerializable;
 

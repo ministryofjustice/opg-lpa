@@ -2,7 +2,7 @@
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
 
-use Opg\Lpa\DataModel\Lpa\AbstractData;
+use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 

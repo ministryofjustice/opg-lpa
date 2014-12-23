@@ -3,7 +3,7 @@ namespace Opg\Lpa\DataModel\Lpa\Payment;
 
 use DateTime;
 
-use Opg\Lpa\DataModel\Lpa\AbstractData;
+use Opg\Lpa\DataModel\AbstractData;
 
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
@@ -83,10 +83,13 @@ class Payment extends AbstractData {
         // Validators (wrapped in Closures for lazy loading)
 
         $this->validators['method'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( [ self::PAYMENT_TYPE_CARD, self::PAYMENT_TYPE_CHEQUE ], true ),
-            ]);
+            return (new Validator)->addRule((new Rules\OneOf)->addRules([
+                (new Rules\AllOf)->addRules([
+                    new Rules\String,
+                    new Rules\In( [ self::PAYMENT_TYPE_CARD, self::PAYMENT_TYPE_CHEQUE ], true ),
+                ]),
+                new Rules\NullValue,
+            ]));
         };
 
         $this->validators['reference'] = function(){

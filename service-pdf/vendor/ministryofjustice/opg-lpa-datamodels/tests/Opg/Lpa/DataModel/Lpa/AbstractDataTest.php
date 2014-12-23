@@ -2,7 +2,7 @@
 
 use Respect\Validation\Rules;
 
-use Opg\Lpa\DataModel\Lpa\AbstractData;
+use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Validator\Validator;
 
 //---------------------------------------------------------------------
@@ -110,18 +110,6 @@ class AbstractDataTest extends PHPUnit_Framework_TestCase {
 
     //----------------------------
     // Basic Validation tests
-
-    /**
-     * Test we get an exception when trying to set a value that fails the validator.
-     *
-     * @expectedException Opg\Lpa\DataModel\Validator\ValidatorException
-     */
-    public function testExceptionForSettingInvalidProperty(){
-
-        // dummyValue expects an Int.
-        $this->dataWithValidator->dummyValue = true;
-
-    } // function
 
     public function testSettingValidPropertyThenValidating(){
 
