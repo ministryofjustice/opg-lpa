@@ -179,33 +179,14 @@ class JsonGenerator extends Randomizer
         $lpa['user'] = $this->rString(32, self::HEX_NUMBER);
         $lpa['repeatCaseNumber'] = $this->random(array(null, null, null, $this->rInt('random', array('min'=>10000000, 'max'=>99999999))));
         $lpa['payment'] = array (
-                "method" => $this->random(array("card","cheque")), 
                 "reducedFeeReceivesBenefits" => $this->random(array(true, false)),
                 "reducedFeeAwardedDamages" => $this->random(array(true, false)),
                 "reducedFeeLowIncome" => $this->random(array(true, false)),
                 "reducedFeeUniversalCredit" => $this->random(array(true, false))
         );
         
-        if($lpa['payment']['method'] == 'card') {
-            if($lpa['payment']['reducedFeeReceivesBenefits']) {
-                if($lpa['payment']['reducedFeeAwardedDamages']) {
-                    if($lpa['payment']['reducedFeeUniversalCredit']) {
-                        $lpa['payment']['amount'] = null;
-                    }
-                    else {
-                        if($lpa['payment']['reducedFeeLowIncome']) {
-                            $lpa['payment']['amount'] = 55;
-                        }
-                        else {
-                            $lpa['payment']['amount'] = 110;
-                        }
-                    }
-                }
-                else {
-                    $lpa['payment']['amount'] = 0;
-                }
-            }
-            else {
+        if($lpa['payment']['reducedFeeReceivesBenefits']) {
+            if($lpa['payment']['reducedFeeAwardedDamages']) {
                 if($lpa['payment']['reducedFeeUniversalCredit']) {
                     $lpa['payment']['amount'] = null;
                 }
@@ -218,19 +199,38 @@ class JsonGenerator extends Randomizer
                     }
                 }
             }
-            
-            if($lpa['repeatCaseNumber'] && $lpa['repeatCaseNumber'] && $lpa['payment']['amount']) {
-                $lpa['payment']['amount'] = $lpa['payment']['amount']/2;
+            else {
+                $lpa['payment']['amount'] = 0;
             }
-            
-            if($lpa['payment']['amount'] > 0) {
+        }
+        else {
+            if($lpa['payment']['reducedFeeUniversalCredit']) {
+                $lpa['payment']['amount'] = null;
+            }
+            else {
+                if($lpa['payment']['reducedFeeLowIncome']) {
+                    $lpa['payment']['amount'] = 55;
+                }
+                else {
+                    $lpa['payment']['amount'] = 110;
+                }
+            }
+        }
+        
+        if($lpa['repeatCaseNumber'] && $lpa['repeatCaseNumber'] && $lpa['payment']['amount']) {
+            $lpa['payment']['amount'] = $lpa['payment']['amount']/2;
+        }
+        
+        if($lpa['payment']['amount'] > 0) {
+            $lpa['payment']['method'] = $this->random(array('card', 'cheque'));
+            if($lpa['payment']['method'] == 'card') {
                 $lpa['payment']["phone"] = array("number" => $this->rPhone());
                 $lpa['payment']['reference'] = $this->rString('32', self::ALPHA_NUMBER);
                 $lpa['payment']['date'] = date('c', $updated);
             }
-            else {
-                $lpa['payment']['method'] = null;
-            }
+        }
+        else {
+            $lpa['payment']['method'] = null;
         }
         
         $lpa['whoAreYouAnswered'] = true;
@@ -720,9 +720,7 @@ class JsonGenerator extends Randomizer
         }
         
         static::$coverage['paymentMethod'][$this->lpa['payment']['method']][] = $this->getFileName();
-        if($this->lpa['payment']['method'] == 'card') {
-            static::$coverage['paymentAmount'][$this->lpa['payment']['amount']][] = $this->getFileName();
-        }
+        static::$coverage['paymentAmount'][$this->lpa['payment']['amount']][] = $this->getFileName();
         
         static::$coverage['isRepeatCase'][$this->lpa['repeatCaseNumber']?'yes':'no'][] = $this->getFileName();
         
