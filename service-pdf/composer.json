@@ -14,7 +14,7 @@
         "ext-proctitle": "*",
         "ext-redis": ">=2.2.4",
         "ministryofjustice/opg-lpa-datamodels": "dev-develop",
-        "chrisboulton/php-resque": "dev-master",
+        "chrisboulton/php-resque": "dev-master#c335bc3",
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "2.0.*@dev"
     },
