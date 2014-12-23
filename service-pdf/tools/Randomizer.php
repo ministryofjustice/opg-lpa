@@ -212,7 +212,13 @@ class Randomizer
     {
         $str = $this->lorem();
         
-        $str = substr($str, rand(0, strlen($str)-$count), $count);
+        $paragraphs = explode("\r\n\r\n", $str);
+        do {
+            $startPara = rand(0, count($paragraphs));
+            $start = strpos($str, $paragraphs[$startPara]);
+        }while($start + $count > strlen($str));
+        
+        $str = substr($str, $start, $count);
         
         return ltrim($str, ",.!? \n");
     }
