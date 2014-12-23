@@ -612,7 +612,7 @@ class JsonGenerator extends Randomizer
         if($this->lpa['payment']['method'] == 'card') {
             $name .= 'cd';
         }
-        else {
+        elseif($this->lpa['payment']['method'] == 'cheque') {
             $name .= 'ch';
         }
         
