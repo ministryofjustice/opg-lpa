@@ -20,7 +20,7 @@ class ResqueWorker extends Worker {
 
         echo "Running job\n";
 
-        //$this->run( $this->args['docId'], $this->args['type'], $this->args['lpa'] );
+        $this->run( $this->args['docId'], $this->args['type'], $this->args['lpa'] );
 
     } // function
 

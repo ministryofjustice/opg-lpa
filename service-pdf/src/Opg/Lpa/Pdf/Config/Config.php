@@ -12,7 +12,7 @@ class Config implements Countable, ArrayAccess {
 
     private function __construct( ) {
         if($this->container === null) {
-            $this->container = include('config/local.php');
+            $this->container = include('local.php');
         }
     }
     
