@@ -214,7 +214,7 @@ class Randomizer
         
         $paragraphs = explode("\r\n\r\n", $str);
         do {
-            $startPara = rand(0, count($paragraphs));
+            $startPara = rand(0, count($paragraphs)-1);
             $start = strpos($str, $paragraphs[$startPara]);
         }while($start + $count > strlen($str));
         
