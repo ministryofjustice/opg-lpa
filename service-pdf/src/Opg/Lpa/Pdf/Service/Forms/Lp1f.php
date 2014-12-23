@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
+use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 
 class Lp1f extends Lp1
 {
@@ -29,40 +30,69 @@ class Lp1f extends Lp1
         
         // make trust corp the first item in primaryAttorneys or replacementAttorneys
         $primaryAttorneys = $this->getSortedAttorneys('primaryAttorneys');
-        $idx = 0;
         for($i=0; $i<$noOfPrimaryAttorneys; $i++) {
             if($primaryAttorneys[$i] instanceof TrustCorporation) {
-                $this->flattenLpa['attorney-0-is-trust-corporation'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-document-primaryAttorneys-0-name-last'] = $primaryAttorneys[$i]->name;
-                continue;
+                $this->flattenLpa['attorney-'.$i.'-is-trust-corporation'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-title'] = null;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-first'] = null;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-last']  = $primaryAttorneys[$i]->name;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob->date->day']   = null;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob->date->month'] = null;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob->date->year']  = null;
+            }
+            else {
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-title'] = $primaryAttorneys[$i]->name->title;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $primaryAttorneys[$i]->name->first;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-name-last']  = $primaryAttorneys[$i]->name->last;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-day']    = $primaryAttorneys[$i]->dob->date->format('d');
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-month']  = $primaryAttorneys[$i]->dob->date->format('m');
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-year']   = $primaryAttorneys[$i]->dob->date->format('Y');
             }
             
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-day'] = $primaryAttorneys[$i]->dob->date->format('d');
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-month'] = $primaryAttorneys[$i]->dob->date->format('m');
-            $this->flattenLpa['lpa-document-primaryAttorneys-'.$idx.'-dob-date-year'] = $primaryAttorneys[$i]->dob->date->format('Y');
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-address-address1'] = $primaryAttorneys[$i]->address->address1;
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-address-address2'] = $primaryAttorneys[$i]->address->address2;
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-address-address3'] = $primaryAttorneys[$i]->address->address3;
+            $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $primaryAttorneys[$i]->address->postcode;
             
-            $idx++;
+            print_r($primaryAttorneys[$i]->email);
+            if($primaryAttorneys[$i]->email instanceof EmailAddress) {
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-email-address'] = $primaryAttorneys[$i]->email->address;
+            }
             
-            if($idx==3) break;
+            if($i==3) break;
         }
         
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
         $replacementAttorneys = $this->getSortedAttorneys('replacementAttorneys');
-        $idx = 0;
-        for($i=0; $i<$noOfReplacementAttorneys; +$i++) {
+        for($i=0; $i<$noOfReplacementAttorneys; $i++) {
             if($this->lpa->document->replacementAttorneys[$i] instanceof TrustCorporation) {
-                $this->flattenLpa['replacement-attorney-0-is-trust-corporation'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-document-replacementAttorneys-0-name-last'] = $replacementAttorneys[$i]->name;
-                continue;
+                $this->flattenLpa['replacement-attorney-'.$i.'-is-trust-corporation']        = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-title']     = null;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-first']     = null;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-last']      = $replacementAttorneys[$i]->name;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-day']   = $replacementAttorneys[$i]->dob->date->format('d');
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-month'] = $replacementAttorneys[$i]->dob->date->format('m');
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-year']  = $replacementAttorneys[$i]->dob->date->format('Y');
+            }
+            else {
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-title']     = $replacementAttorneys[$i]->name->title;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-first']     = $replacementAttorneys[$i]->name->first;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-last']      = $replacementAttorneys[$i]->name->last;
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-day']   = $replacementAttorneys[$i]->dob->date->format('d');
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-month'] = $replacementAttorneys[$i]->dob->date->format('m');
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-dob-date-year']  = $replacementAttorneys[$i]->dob->date->format('Y');
             }
             
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-day'] = $replacementAttorneys[$i]->dob->date->format('d');
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-month'] = $replacementAttorneys[$i]->dob->date->format('m');
-            $this->flattenLpa['lpa-document-replacementAttorneys-'.$idx.'-dob-date-year'] = $replacementAttorneys[$i]->dob->date->format('Y');
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-address-address1'] = $replacementAttorneys[$i]->address->address1;
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-address-address2'] = $replacementAttorneys[$i]->address->address2;
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-address-address3'] = $replacementAttorneys[$i]->address->address3;
+            $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-address-postcode'] = $replacementAttorneys[$i]->address->postcode;
             
-            $idx++;
+            if($replacementAttorneys[$i]->email instanceof EmailAddress) {
+                $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-email-address']    = $replacementAttorneys[$i]->email->address;
+            }
             
-            if($idx==1) break;
+            if($i==1) break;
         }
         
         /**
@@ -198,7 +228,7 @@ class Lp1f extends Lp1
      */
     protected function getSortedAttorneys($attorneyGroup)
     {
-        if(empty($this->lpa->document->$attorneyGroup)) {
+        if(count($this->lpa->document->$attorneyGroup) < 2) {
             return $this->lpa->document->$attorneyGroup;
         }
         
