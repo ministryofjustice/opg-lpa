@@ -1,8 +1,6 @@
 /composer.lock
 /composer.phar
-
 /.idea/
-
 /vendor/ministryofjustice/opg-lpa-datamodels/vendor/
-
 /test-data/output/
+.DS_Store
