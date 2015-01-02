@@ -25,7 +25,29 @@ return array(
 
             ],
 
-        ],
+        ], // mongo
+
+        'redis' => [
+
+            'default' => [
+
+                'host' => 'redisback.local',
+                'port' => 6379,
+
+            ],
+
+        ], // redis
+
+        'resque' => [
+
+            'default' => [
+
+                'host' => 'redisback.local',
+                'port' => 6379,
+
+            ],
+
+        ], // resque
 
     ],
 

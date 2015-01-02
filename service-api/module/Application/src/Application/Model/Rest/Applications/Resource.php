@@ -45,7 +45,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         //------------------------
 
-        $document = new Document\Document(  );
+        $document = new Document\Document( $data );
 
         $validation = $document->validate();
 

@@ -13,6 +13,8 @@ use Application\Model\Rest\RouteProviderInterface;
 
 use Application\Model\Rest\Lock\LockedException;
 
+use Zend\Http\Response as HttpResponse;
+
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 
 use ZF\ApiProblem\ApiProblem;
@@ -223,6 +225,10 @@ class RestController extends AbstractRestfulController {
             $response = new HalResponse( $hal, 'json' );
 
             return $response;
+
+        } elseif( $result instanceof HttpResponse ){
+
+            return $result;
 
         }
 

@@ -150,6 +150,8 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
                 $person = new NotifiedPerson( $data );
 
+                # TODO - validate!!!
+
                 $person->id = (int)$id;
 
                 $document->peopleToNotify[$key] = $person;

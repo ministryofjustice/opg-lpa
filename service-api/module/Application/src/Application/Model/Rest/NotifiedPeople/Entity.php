@@ -20,7 +20,7 @@ class Entity implements EntityInterface {
     }
 
     public function userId(){
-        return $this->userId;
+        return $this->lap->userId;
     }
 
     public function lpaId(){

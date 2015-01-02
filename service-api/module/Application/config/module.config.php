@@ -48,7 +48,7 @@ return [
                 'options' => [
                     'route'    => '/v1/users/:userId',
                     'constraints' => [
-                        'userId' => '[a-f0-9][a-f0-9_-]*',
+                        'userId' => '[a-f0-9]+',
                     ],
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller\Version1',
@@ -79,8 +79,8 @@ return [
                             'route'    => '/applications/:lpaId/:resource[/:resourceId]',
                             'constraints' => [
                                 'lpaId'      => '[0-9]+',
-                                'resourceId' => '[0-9]+',
                                 'resource'   => '[a-z][a-z-]*',
+                                'resourceId' => '[a-z0-9][a-z0-9.]*',
                             ],
                             'defaults' => [
                                 'controller'    => 'Rest',
@@ -154,7 +154,7 @@ return [
             'resource-primary-attorneys'                => 'Application\Model\Rest\AttorneysPrimary\Resource',
             'resource-replacement-attorneys'            => 'Application\Model\Rest\AttorneysReplacement\Resource',
             'resource-notified-people'                  => 'Application\Model\Rest\NotifiedPeople\Resource',
-            'resource-pdfs'                             => 'Application\Model\Rest\xxx\Resource',
+            'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
