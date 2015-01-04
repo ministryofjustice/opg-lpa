@@ -64,7 +64,7 @@ class Lp1f extends Lp1
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
         $replacementAttorneys = $this->getSortedAttorneys('replacementAttorneys');
         for($i=0; $i<$noOfReplacementAttorneys; $i++) {
-            if($this->lpa->document->replacementAttorneys[$i] instanceof TrustCorporation) {
+            if($replacementAttorneys[$i] instanceof TrustCorporation) {
                 $this->flattenLpa['replacement-attorney-'.$i.'-is-trust-corporation']        = self::CHECK_BOX_ON;
                 $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-title']     = null;
                 $this->flattenLpa['lpa-document-replacementAttorneys-'.$i.'-name-first']     = null;
