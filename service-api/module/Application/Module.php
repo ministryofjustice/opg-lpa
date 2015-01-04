@@ -68,6 +68,7 @@ class Module {
                 $result = $auth->authenticate($authAdapter);
 
                 if( AuthenticationResult::SUCCESS !== $result->getCode() ){
+                    # TODO - this!
                     die('Bad authentication...');
                 }
 
@@ -195,6 +196,7 @@ class Module {
                     return $factory->createService($services);
                 },
                 'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
+                'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
                 'MongoDB-Default-stats-usage' => new MongoCollectionFactory('stats-usage', 'MongoDB-Default'),
                 'MongoDB-Default-stats-who' => new MongoCollectionFactory('stats-who', 'MongoDB-Default'),
 
