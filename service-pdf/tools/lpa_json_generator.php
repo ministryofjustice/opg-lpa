@@ -781,6 +781,10 @@ for($i=0; $i<200; $i++) {
     }
     
     $filepath = $generator->getFileName();
+
+    if( !is_dir(__DIR__.'/../test-data/json') ){
+        mkdir( __DIR__.'/../test-data/json', 0777, true );
+    }
     
     file_put_contents(__DIR__.'/../test-data/json/'.$filepath, $lpaJson);
     
