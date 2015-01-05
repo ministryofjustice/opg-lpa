@@ -18,7 +18,7 @@ class Lp1h extends Lp1
         $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1H.pdf');
     }
     
-    public function dataMapping()
+    protected function dataMapping()
     {
         parent::dataMapping();
         
@@ -62,7 +62,7 @@ class Lp1h extends Lp1
         return $this->flattenLpa;
     } // function dataMapping()
     
-    public function generateAdditionalPages()
+    protected function generateAdditionalPages()
     {
         parent::generateAdditionalPages();
         

@@ -193,7 +193,7 @@ class Lp1f extends Lp1
      * @param string $attorneys
      * @return \Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation|NULL
      */
-    public function getTrustCorporation($attorneys=null)
+    protected function getTrustCorporation($attorneys=null)
     {
         if(null == $attorneys) {
             foreach($this->lpa->document->primaryAttorneys as $attorney) {
