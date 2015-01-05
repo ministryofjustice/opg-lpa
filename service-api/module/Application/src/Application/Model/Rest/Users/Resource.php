@@ -33,23 +33,17 @@ class Resource extends AbstractResource {
 
         $user = $this->getCollection( 'user' )->findOne( [ '_id' => $id ] );
 
-        $user = [ 'id' => $user['_id'] ] + $user;
+        // Ensure user is an array. The above may return null.
+        if( !is_array($user) ){ $user = array(); }
+
+        $user = [ 'id' => $id ] + $user;
 
         $user = new User( $user );
 
-        var_dump( $user ); exit();
-
         //------------------------
 
-        /**
-         * We should already have the details from the authentication.
-         * Whilst using Auth-1, we should just use this.
-         */
+        $user = new Entity( $user );
 
-        // TODO - this data should be fleshed out with the rest of their details.
-        $user = new Entity( [ 'id' => $id ] );
-
-        //---
 
         // Set the user in the AbstractResource so it can be used for route generation.
         $this->setRouteUser( $user );
@@ -149,7 +143,16 @@ class Resource extends AbstractResource {
 
         } // if
 
-        die('saved');
+        //------------------------
+
+        $user = new Entity( $user );
+
+        // Set the user in the AbstractResource so it can be used for route generation.
+        $this->setRouteUser( $user );
+
+        //---
+
+        return $user;
 
     } // function
 
