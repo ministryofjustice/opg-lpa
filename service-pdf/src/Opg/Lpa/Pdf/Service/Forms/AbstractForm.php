@@ -9,7 +9,7 @@ abstract class AbstractForm
 {
     const CHECK_BOX_ON = 'On';
     
-    const STROKE_LINE_WIDTH = 10;
+    const CROSS_LINE_WIDTH = 10;
     
     const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'cs-2-is-decisions';
     const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'cs-2-is-how-replacement-attorneys-step-in';
@@ -52,9 +52,9 @@ abstract class AbstractForm
      * by - bottom y
      * tx - top x
      * ty - top y
-     * @var array - stroke corrrdinates
+     * @var array - cross lines corrrdinates
      */
-    protected $strokeParams = array(
+    protected $crossLineParams = array(
         'primaryAttorney-1'      => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>545),
         'primaryAttorney-2'      => array('bx'=>45,  'by'=>359, 'tx'=>283, 'ty'=>662),
         'primaryAttorney-3'      => array('bx'=>313, 'by'=>359, 'tx'=>550, 'ty'=>662),
@@ -169,27 +169,27 @@ abstract class AbstractForm
     /**
      * Draw cross lines
      * @param string $filePath
-     * @param array $params[pageNo=>strokeParamName]
+     * @param array $params[pageNo=>crossLineParamName]
      */
-    protected function stroke($filePath, $params)
+    protected function drawCrossLines($filePath, $params)
     {
-        // draw strokes
+        // draw cross lines
         $pdf = PdfProcessor::load($filePath);
         foreach($params as $pageNo => $blockNames) {
-            $page = $pdf->pages[$pageNo]->setLineWidth(self::STROKE_LINE_WIDTH);
+            $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
             foreach($blockNames as $blockName) {
                 $page->drawLine(
-                        $this->strokeParams[$blockName]['bx'],
-                        $this->strokeParams[$blockName]['by'],
-                        $this->strokeParams[$blockName]['tx'],
-                        $this->strokeParams[$blockName]['ty']
+                        $this->crossLineParams[$blockName]['bx'],
+                        $this->crossLineParams[$blockName]['by'],
+                        $this->crossLineParams[$blockName]['tx'],
+                        $this->crossLineParams[$blockName]['ty']
                 );
             }
         } // foreach
     
         $pdf->save($filePath);
     
-    } // function stroke()
+    } // function drawCrossLines()
     
     /**
      * Convert all new lines with spaces to fill out to the end of each line

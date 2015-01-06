@@ -72,12 +72,12 @@ class Lp3 extends AbstractForm
         
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $strokeParams = array(2=>array());
+            $crossLineParams = array(2=>array());
             for($i=self::MAX_ATTORNEYS_ON_STANDARD_FORM - $numOfAttorneys; $i>=1; $i--) {
                 // draw on page 2.
-                $strokeParams[2][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
+                $crossLineParams[2][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
             }
-            $this->stroke($filePath, $strokeParams);
+            $this->drawCrossLines($filePath, $crossLineParams);
         }
     } // function generateStandardForm()
     

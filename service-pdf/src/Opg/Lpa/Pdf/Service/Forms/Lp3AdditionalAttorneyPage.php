@@ -71,12 +71,12 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
         } //endfor
 
         if($additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $strokeParams = array(array());
+            $crossLineParams = array(array());
             for($k=Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$additionalAttorneys%Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $k>=1; $k--) {
                 // draw on page 0.
-                $strokeParams[0][] = 'lp3-primaryAttorney-' . (Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$k);
+                $crossLineParams[0][] = 'lp3-primaryAttorney-' . (Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM-$k);
             }
-            $this->stroke($filePath, $strokeParams);
+            $this->drawCrossLines($filePath, $crossLineParams);
         }
         
         return $this->intermediateFilePaths;

@@ -60,9 +60,9 @@ abstract class Lp1 extends AbstractForm
             ->flatten()
             ->saveAs($filePath);
         
-        // draw strokes if there's any blank slot
+        // draw cross lines if there's any blank slot
         if(!empty($this->drawingTargets)) {
-            $this->stroke($filePath, $this->drawingTargets);
+            $this->drawCrossLines($filePath, $this->drawingTargets);
         }
         
     } // function generateDefaultPdf()

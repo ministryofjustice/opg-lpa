@@ -105,9 +105,9 @@ class Cs1 extends AbstractForm
         } // loop each CS page
         
         
-        // draw strokes if there's any blank slot in the last CS1 pdf
+        // draw cross lines if there's any blank slot in the last CS1 pdf
         if($totalAdditionalPersonsOfSameRole % self::$SETTINGS['max-slots-on-cs1-form']) {
-            $this->stroke($filePath, array(array('cs1')));
+            $this->drawCrossLines($filePath, array(array('cs1')));
         }
         
         return $this->intermediateFilePaths;
