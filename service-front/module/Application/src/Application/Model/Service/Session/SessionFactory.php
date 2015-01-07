@@ -33,7 +33,18 @@ class SessionFactory implements FactoryInterface {
 
         $config = $config['session'];
 
-        //---
+        //----------------------------------------
+        // Apply any native PHP level settings
+
+        if( isset($config['native_settings']) && is_array($config['native_settings']) ){
+
+            foreach( $config['native_settings'] as $k => $v ){
+                ini_set( 'session.'.$k, $v );
+            }
+
+        }
+
+        //----------------------------------------
 
         $manager = new SessionManager();
 
