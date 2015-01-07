@@ -12,22 +12,51 @@ namespace Application;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
-class Module
-{
-    public function onBootstrap(MvcEvent $e)
-    {
+use Zend\Session\Container;
+
+class Module{
+
+    public function onBootstrap(MvcEvent $e){
+
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        $this->bootstrapSession($e);
     }
 
-    public function getConfig()
-    {
+    public function bootstrapSession(MvcEvent $e){
+
+        $session = $e->getApplication()->getServiceManager()->get('SessionManager');
+
+        $session->start();
+
+        Container::setDefaultManager($session);
+
+        $container = new Container('initialised');
+
+        if (!isset($container->init)) {
+            $session->regenerateId(true);
+            $container->init = true;
+        }
+
+    } // function
+
+    public function getConfig(){
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig()
-    {
+    public function getServiceConfig(){
+
+        return [
+            'factories' => [
+                'SessionManager' => 'Application\Model\Service\Session\SessionFactory',
+            ],
+        ];
+
+    } // function
+
+    public function getAutoloaderConfig(){
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
@@ -36,4 +65,5 @@ class Module
             ),
         );
     }
-}
+
+} // class
