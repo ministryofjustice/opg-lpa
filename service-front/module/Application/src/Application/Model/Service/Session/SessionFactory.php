@@ -5,7 +5,6 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\Session\SessionManager;
-use Zend\Session\SaveHandler\Cache as CacheSaveHandler;
 
 use Zend\Cache\StorageFactory as CacheStorageFactory;
 
@@ -52,8 +51,7 @@ class SessionFactory implements FactoryInterface {
         # TODO - pull this from Config...
         $key = '0g5vi1m1602uyD5585lKNaUJE0p22p2k';
 
-        //$saveHandler = new SaveHandler\EncryptedCache( $redis, $key );
-        $saveHandler = new CacheSaveHandler( $redis );
+        $saveHandler = new SaveHandler\EncryptedCache( $redis, $key );
 
         $manager->setSaveHandler($saveHandler);
 
