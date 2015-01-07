@@ -7,8 +7,16 @@
         "zf2"
     ],
     "homepage": "http://framework.zend.com/",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-api-client"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zendframework": "2.3.*"
+        "zendframework/zendframework": "2.3.*",
+        "ministryofjustice/opg-lpa-api-client": "dev-develop"
     }
+    
 }
