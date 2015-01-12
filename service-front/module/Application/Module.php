@@ -6,6 +6,10 @@ use Zend\Mvc\MvcEvent;
 
 use Zend\Session\Container;
 
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClientAuthAdapter;
+
 use Opg\Lpa\Api\Client\Client as ApiClient;
 
 class Module{
@@ -50,12 +54,34 @@ class Module{
 
         return [
             'invokables' => [
-                'AuthenticationService' => 'Zend\Authentication\AuthenticationService'
+                'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
             ],
             'factories' => [
                 'SessionManager' => 'Application\Model\Service\Session\SessionFactory',
-                'ApiClient' => function( $sm ){
-                    return new ApiClient();
+                'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
+                    return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
+                },
+                'ApiClient' => function( ServiceLocatorInterface $sm ){
+
+                    $client = new ApiClient();
+
+                    //---
+
+                    $auth = $sm->get('AuthenticationService');
+
+                    if ($auth->hasIdentity()) {
+
+                        $identity = $auth->getIdentity();
+
+                        if( isset($identity->token) ){
+                            $client->setToken( $identity->token );
+                        }
+
+                    }
+
+                    //---
+
+                    return $client;
                 }
             ],
         ];
