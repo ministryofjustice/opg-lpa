@@ -4,6 +4,9 @@ namespace Application\Model\Service\Session;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+use Zend\Crypt\BlockCipher;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+
 use Zend\Session\SessionManager;
 use Zend\Session\Exception\RuntimeException;
 
@@ -63,7 +66,29 @@ class SessionFactory implements FactoryInterface {
 
         $key = $config['encryption']['key'];
 
-        $saveHandler = new SaveHandler\EncryptedCache( $redis, $key );
+        // AES is rijndael-128 with a 32 character (256 bit) key.
+        if( strlen( $key ) != 32 ){
+            throw new CryptInvalidArgumentException('Key must be a string of 32 characters');
+        }
+
+        //---
+
+        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        $blockCipher = BlockCipher::factory('mcrypt', [
+            'algorithm' => 'aes',
+            'mode' => 'cbc',
+        ]);
+
+        // Set the secret key
+        $blockCipher->setKey( $key );
+
+        // Output raw binary (as opposed to base64).
+        // It's smaller and Redis is fine with it.
+        $blockCipher->setBinaryOutput( true );
+
+        //---
+
+        $saveHandler = new SaveHandler\EncryptedCache( $redis, $blockCipher );
 
         $manager->setSaveHandler($saveHandler);
 

@@ -1,8 +1,6 @@
 <?php
 namespace Application\Model\Service\Session\SaveHandler;
 
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException;
-
 use Zend\Cache\Storage\StorageInterface as CacheStorageInterface;
 use Zend\Session\SaveHandler\Cache as CacheSaveHandler;
 
@@ -29,26 +27,11 @@ class EncryptedCache extends CacheSaveHandler {
      * Constructor
      *
      * @param CacheStorageInterface $cacheStorage
-     * @param string $key 32 character encryption key
+     * @param BlockCipher $blockCipher The BlockCipher to use for encryption.
      */
-    public function __construct( CacheStorageInterface $cacheStorage, $key ){
+    public function __construct( CacheStorageInterface $cacheStorage, BlockCipher $blockCipher ){
         $this->setCacheStorage($cacheStorage);
-
-        // AES is rijndael-128 with a 32 character (256 bit) key.
-        if( strlen( $key ) != 32 ){
-            throw new InvalidArgumentException('Key must be a string of 32 characters');
-        }
-
-        //---
-
-        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $this->blockCipher = BlockCipher::factory('mcrypt', ['algorithm' => 'aes', 'mode' => 'cbc']);
-
-        $this->blockCipher->setKey( $key );
-
-        // Output raw binary
-        $this->blockCipher->setBinaryOutput( true );
-
+        $this->blockCipher = $blockCipher;
     }
 
     /**
