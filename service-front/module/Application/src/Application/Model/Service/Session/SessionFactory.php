@@ -49,10 +49,6 @@ class SessionFactory implements FactoryInterface {
         }
 
         //----------------------------------------
-
-        $manager = new SessionManager();
-
-        //----------------------------------------
         // Setup Redis as the save handler
 
         $redis = CacheStorageFactory::factory([
@@ -63,7 +59,8 @@ class SessionFactory implements FactoryInterface {
         ]);
 
         //----------------------------------------
-        // Setup the encryption save handler
+        // Setup the save handler
+
 
         if( $config['encryption']['enabled'] === true ){
 
@@ -100,9 +97,11 @@ class SessionFactory implements FactoryInterface {
 
         }
 
-        $manager->setSaveHandler($saveHandler);
-
         //----------------------------------------
+
+        $manager = new SessionManager();
+
+        $manager->setSaveHandler($saveHandler);
 
         return $manager;
 

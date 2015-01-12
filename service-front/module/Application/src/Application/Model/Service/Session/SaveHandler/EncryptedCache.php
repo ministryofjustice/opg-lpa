@@ -42,6 +42,8 @@ class EncryptedCache extends CacheSaveHandler {
      */
     public function read($id){
 
+        $id = hash( 'sha512', $id );
+
         // Return the data from the cache
         $data = $this->getCacheStorage()->getItem($id);
 
@@ -61,6 +63,8 @@ class EncryptedCache extends CacheSaveHandler {
      * @return bool
      */
     public function write($id, $data){
+
+        $id = hash( 'sha512', $id );
 
         // Encrypt the data
         $data = $this->blockCipher->encrypt( $data );
