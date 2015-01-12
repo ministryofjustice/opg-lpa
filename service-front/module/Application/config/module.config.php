@@ -145,7 +145,7 @@ return array(
                     'defaults' => array(
                     ),
                 ),
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'child_routes' => array(
                     'about-you' => array(
                         'type'    => 'Literal',
@@ -247,7 +247,7 @@ return array(
                     'defaults' => array(
                     ),
                 ),
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'child_routes' => array(
                     'applicant' => array(
                         'type' => 'Literal',
