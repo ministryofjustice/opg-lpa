@@ -16,6 +16,11 @@ class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
+
+        $a = $this->getServiceLocator()->get('AuthenticationService');
+
+        var_dump($a); exit();
+
         return new ViewModel();
     }
 }

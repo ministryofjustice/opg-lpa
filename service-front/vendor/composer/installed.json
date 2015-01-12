@@ -383,12 +383,12 @@
         "source": {
             "type": "git",
             "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "f76d6b18483b3c3a6a829100137e1fed6f27f3f8"
+            "reference": "bbd9894932cccfff891cb944e3bf005b6c123686"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/f76d6b18483b3c3a6a829100137e1fed6f27f3f8",
-            "reference": "f76d6b18483b3c3a6a829100137e1fed6f27f3f8",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/bbd9894932cccfff891cb944e3bf005b6c123686",
+            "reference": "bbd9894932cccfff891cb944e3bf005b6c123686",
             "shasum": ""
         },
         "require": {
@@ -397,11 +397,12 @@
             "zendframework/zend-config": "2.3.*"
         },
         "require-dev": {
+            "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-01-07 14:27:07",
+        "time": "2015-01-07 17:44:51",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"

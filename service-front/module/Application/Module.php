@@ -1,12 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
@@ -25,16 +17,26 @@ class Module{
         $this->bootstrapSession($e);
     }
 
+    /**
+     * Sets up and starts global sessions.
+     *
+     * @param MvcEvent $e
+     */
     public function bootstrapSession(MvcEvent $e){
 
         $session = $e->getApplication()->getServiceManager()->get('SessionManager');
 
+        // Always starts the session.
         $session->start();
 
+        // Ensures this SessionManager is used for all Session Containers.
         Container::setDefaultManager($session);
+
+        //---
 
         $container = new Container('initialised');
 
+        // If it's a new session, regenerate the id.
         if (!isset($container->init)) {
             $session->regenerateId(true);
             $container->init = true;
@@ -42,13 +44,12 @@ class Module{
 
     } // function
 
-    public function getConfig(){
-        return include __DIR__ . '/config/module.config.php';
-    }
-
     public function getServiceConfig(){
 
         return [
+            'invokables' => [
+                'AuthenticationService' => 'Zend\Authentication\AuthenticationService'
+            ],
             'factories' => [
                 'SessionManager' => 'Application\Model\Service\Session\SessionFactory',
             ],
@@ -64,6 +65,10 @@ class Module{
                 ),
             ),
         );
+    }
+
+    public function getConfig(){
+        return include __DIR__ . '/config/module.config.php';
     }
 
 } // class
