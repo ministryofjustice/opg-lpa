@@ -6,6 +6,8 @@ use Zend\Mvc\MvcEvent;
 
 use Zend\Session\Container;
 
+use Opg\Lpa\Api\Client\Client as ApiClient;
+
 class Module{
 
     public function onBootstrap(MvcEvent $e){
@@ -52,6 +54,9 @@ class Module{
             ],
             'factories' => [
                 'SessionManager' => 'Application\Model\Service\Session\SessionFactory',
+                'ApiClient' => function( $sm ){
+                    return new ApiClient();
+                }
             ],
         ];
 
