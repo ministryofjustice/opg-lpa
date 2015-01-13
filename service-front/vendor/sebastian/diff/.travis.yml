@@ -1,7 +1,8 @@
 language: php
 
-install:
-  - travis_retry composer install --no-interaction --prefer-source
+before_script:
+  - composer self-update
+  - composer install --no-interaction --prefer-source --dev
 
 php:
   - 5.3.3

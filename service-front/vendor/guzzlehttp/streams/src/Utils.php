@@ -155,15 +155,13 @@ class Utils
      *
      * @param StreamInterface $stream    Stream to read from
      * @param int             $maxLength Maximum buffer length
-     * @param string          $eol       Line ending
      *
      * @return string|bool
      */
-    public static function readline(StreamInterface $stream, $maxLength = null, $eol = PHP_EOL)
+    public static function readline(StreamInterface $stream, $maxLength = null)
     {
         $buffer = '';
         $size = 0;
-        $negEolLen = -strlen($eol);
 
         while (!$stream->eof()) {
             if (false === ($byte = $stream->read(1))) {
@@ -171,7 +169,7 @@ class Utils
             }
             $buffer .= $byte;
             // Break when a new line is found or the max length - 1 is reached
-            if (++$size == $maxLength || substr($buffer, $negEolLen) === $eol) {
+            if ($byte == PHP_EOL || ++$size == $maxLength - 1) {
                 break;
             }
         }

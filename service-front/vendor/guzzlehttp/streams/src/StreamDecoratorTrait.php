@@ -1,6 +1,5 @@
 <?php
 namespace GuzzleHttp\Stream;
-
 use GuzzleHttp\Stream\Exception\CannotAttachException;
 
 /**

@@ -1,6 +1,8 @@
 <?php
 namespace Application\Model\Service\Authentication\Adapter;
 
+use DateTime;
+
 use Opg\Lpa\Api\Client\Client as ApiClient;
 
 use Zend\Authentication\Result;
@@ -20,15 +22,29 @@ class LpaApiClient implements AdapterInterface {
     private $email;
     private $password;
 
+    /**
+     * @param ApiClient $client
+     */
     public function __construct( ApiClient $client ){
         $this->client = $client;
     }
 
+    /**
+     * Set the credentials to attempt authentication with.
+     *
+     * @param $email
+     * @param $password
+     */
     public function setCredentials( $email, $password ){
         $this->email = strtolower($email);
         $this->password = $password;
     }
 
+    /**
+     * Attempt to authenticate the user with the set credentials, via the LPA API Client.
+     *
+     * @return Result
+     */
     public function authenticate(){
 
         if( !isset($this->email) ){ throw new RuntimeException( 'Email address not set' ); }
@@ -36,21 +52,26 @@ class LpaApiClient implements AdapterInterface {
 
         //---
 
-        //$response = $this->client->authenticate( $this->email, $this->password );
+        $response = $this->client->authenticate( $this->email, $this->password );
 
         //---
 
         // Don't leave this lying around
         unset( $this->password );
 
-        # TODO - getArrayCopy should get merged into the array below. Ideally
-        // in the stored identity we want their name, user_id, lastLogin and token.
-        //$response->getArrayCopy();
+        //---
 
-        return new Result( Result::SUCCESS, [
-            'id' => '699aaf1a14ff64239de1e0d03c2d66d4',
-            'token' => 'ac5e086ee81b0aa6ef7469cedf88ea38'
-        ]);
+        if( !$response->isAuthenticated() ){
+            return new Result( Result::FAILURE, null );
+        }
+
+        $identity = (object)[
+            'id' => $response->getUserId(),
+            'token' => $response->getToken(),
+            'lastLogin' => (new DateTime())->setTimestamp( $response->getLastLogin() ),
+        ];
+
+        return new Result( Result::SUCCESS, $identity );
 
     }
 
