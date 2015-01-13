@@ -33,7 +33,7 @@ class ReplacementAttorneyControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\ReplacementAttorney');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('ReplacementAttorneyController');
         $this->assertMatchedRouteName('lpa/replacement-attorney');        
     }

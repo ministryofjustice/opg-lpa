@@ -33,7 +33,7 @@ class HomeControllerTest extends AbstractTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\General\Home');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('HomeController');
         $this->assertMatchedRouteName('home');        
     }

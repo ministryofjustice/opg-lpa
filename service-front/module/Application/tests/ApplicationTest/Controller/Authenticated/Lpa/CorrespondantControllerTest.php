@@ -33,7 +33,7 @@ class CorrespondantControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\Correspondant');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('CorrespondantController');
         $this->assertMatchedRouteName('lpa/correspondant');        
     }

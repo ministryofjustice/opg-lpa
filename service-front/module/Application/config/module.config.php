@@ -16,7 +16,8 @@ return array(
                 'options' => array(
                     'route'    => '/forgot-password',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\ForgotPassword',
+                        'controllerName' => 'Application\Controller\General\ForgotPasswordController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -26,7 +27,8 @@ return array(
                 'options' => array(
                     'route'    => '/guidance',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Guidance',
+                        'controllerName' => 'Application\Controller\General\GuidanceController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -36,7 +38,8 @@ return array(
                 'options' => array(
                     'route'    => '/home',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Home',
+                        'controllerName' => 'Application\Controller\General\HomeController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -46,7 +49,8 @@ return array(
                 'options' => array(
                     'route'    => '/login',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Login',
+                        'controllerName' => 'Application\Controller\General\LoginController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -56,7 +60,8 @@ return array(
                 'options' => array(
                     'route'    => '/',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Home',
+                        'controller' => 'Application\Controller\General\HomeController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'redirect',
                     ),
                 ),
@@ -66,7 +71,8 @@ return array(
                 'options' => array(
                     'route'    => '/register',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Register',
+                        'controllerName' => 'Application\Controller\General\RegisterController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -79,7 +85,8 @@ return array(
                         'password_reset_id' => '[a-zA-Z0-9]+',
                     ),
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\ForgotPassword',
+                        'controllerName' => 'Application\Controller\General\ForgotPasswordController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'reset-password',
                     ),
                 ),
@@ -89,7 +96,8 @@ return array(
                 'options' => array(
                     'route'    => '/stats',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Stats',
+                        'controllerName' => 'Application\Controller\General\StatsController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -99,7 +107,8 @@ return array(
                 'options' => array(
                     'route'    => '/status',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\General\Status',
+                        'controllerName' => 'Application\Controller\General\StatusController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -123,7 +132,8 @@ return array(
                 'options' => array(
                     'route'    => '/admin/stats',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\Authenticated\Admin',
+                        'controllerName' => 'Application\Controller\Authenticated\AdminController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'stats',
                     ),
                 ),
@@ -133,7 +143,8 @@ return array(
                 'options' => array(
                     'route'    => '/postcode',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\Authenticated\Postcode',
+                        'controllerName' => 'Application\Controller\Authenticated\PostcodeController',
+                        'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),
                 ),
@@ -152,7 +163,8 @@ return array(
                         'options' => array(
                             'route'    => '/about-you',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\AboutYou',
+                                'controllerName' => 'Application\Controller\Authenticated\AboutYouController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -162,7 +174,8 @@ return array(
                         'options' => array(
                             'route'    => '/change-email-address',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\ChangeEmailAddress',
+                                'controllerName' => 'Application\Controller\Authenticated\ChangeEmailAddressController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -172,7 +185,8 @@ return array(
                         'options' => array(
                             'route'    => '/change-password',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\ChangePassword',
+                                'controllerName' => 'Application\Controller\Authenticated\ChangePasswordController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -182,7 +196,8 @@ return array(
                         'options' => array(
                             'route'    => '/dashboard',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Dashboard',
+                                'controllerName' => 'Application\Controller\Authenticated\DashboardController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -219,7 +234,8 @@ return array(
                         'options' => array(
                             'route'    => '/delete',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Delete',
+                                'controllerName' => 'Application\Controller\Authenticated\DeleteController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -229,7 +245,8 @@ return array(
                         'options' => array(
                             'route'    => '/logout',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Logout',
+                                'controllerName' => 'Application\Controller\Authenticated\LogoutController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -254,7 +271,8 @@ return array(
                         'options' => array(
                             'route'    => '/applicant',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Applicant',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\ApplicantController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -264,7 +282,8 @@ return array(
                         'options' => array(
                             'route'    => '/certificate-provider',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\CertificateProvider',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\CertificateProviderController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -274,7 +293,8 @@ return array(
                         'options' => array(
                             'route'    => '/complete',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Complete',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\CompleteController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -284,7 +304,8 @@ return array(
                         'options' => array(
                             'route'    => '/correspondant',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Correspondant',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\CorrespondantController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -308,7 +329,8 @@ return array(
                         'options' => array(
                             'route'    => '/created',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Created',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\CreatedController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -318,7 +340,8 @@ return array(
                         'options' => array(
                             'route'    => '/donor',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Donor',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\DonorController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -342,7 +365,8 @@ return array(
                         'options' => array(
                             'route'    => '/download',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Download',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\DownloadController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -352,7 +376,8 @@ return array(
                         'options' => array(
                             'route'    => '/fee',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Fee',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\FeeController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -362,7 +387,8 @@ return array(
                         'options' => array(
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecision',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -372,7 +398,8 @@ return array(
                         'options' => array(
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\HowReplacementAttorneysMakeDecision',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -382,7 +409,8 @@ return array(
                         'options' => array(
                             'route'    => '/instructions',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Instructions',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\InstructionsController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -392,7 +420,8 @@ return array(
                         'options' => array(
                             'route'    => '/life-sustaining',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\LifeSustaining',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\LifeSustainingController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -402,7 +431,8 @@ return array(
                         'options' => array(
                             'route'    => '/online-payment-success',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\OnlinePaymentSuccess',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\OnlinePaymentSuccessController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -412,7 +442,8 @@ return array(
                         'options' => array(
                             'route'    => '/online-payment-unsuccessful',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\OnlinePaymentUnsuccessful',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\OnlinePaymentUnsuccessfulController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -422,7 +453,8 @@ return array(
                         'options' => array(
                             'route'    => '/people-to-notify',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\PeopleToNotify',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\PeopleToNotifyController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -432,7 +464,8 @@ return array(
                         'options' => array(
                             'route'    => '/primary-attorney',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\PrimaryAttorney',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\PrimaryAttorneyController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -442,7 +475,8 @@ return array(
                         'options' => array(
                             'route'    => '/replacement-attorney',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\ReplacementAttorney',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\ReplacementAttorneyController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -452,7 +486,8 @@ return array(
                         'options' => array(
                             'route'    => '/type',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\Type',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\TypeController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -462,7 +497,8 @@ return array(
                         'options' => array(
                             'route'    => '/what-is-my-role',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\WhatIsMyRole',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\WhatIsMyRoleController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -472,7 +508,8 @@ return array(
                         'options' => array(
                             'route'    => '/when-lpa-starts',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\WhenLpaStarts',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\WhenLpaStartsController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -482,7 +519,8 @@ return array(
                         'options' => array(
                             'route'    => '/when-replacement-attorney-step-in',
                             'defaults' => array(
-                                'controller' => 'Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepIn',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepInController',
+                                'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
@@ -514,48 +552,8 @@ return array(
         ),
     ),
     'controllers' => array(
-        'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
-            
-            'Application\Controller\General\Home'           => 'Application\Controller\General\HomeController',
-            'Application\Controller\General\Guidance'       => 'Application\Controller\General\GuidanceController',
-            'Application\Controller\General\ForgotPassword'  => 'Application\Controller\General\ForgotPasswordController',
-            'Application\Controller\General\Login'          => 'Application\Controller\General\LoginController',
-            'Application\Controller\General\Register'       => 'Application\Controller\General\RegisterController',
-            'Application\Controller\General\Stats'          => 'Application\Controller\General\StatsController',
-            'Application\Controller\General\Status'         => 'Application\Controller\General\StatusController',
-            
-            'Application\Controller\Authenticated\AboutYou'           => 'Application\Controller\Authenticated\AboutYouController',
-            'Application\Controller\Authenticated\Admin'                   => 'Application\Controller\Authenticated\AdminController',
-            'Application\Controller\Authenticated\ChangeEmailAddress' => 'Application\Controller\Authenticated\ChangeEmailAddressController',
-            'Application\Controller\Authenticated\ChangePassword'     => 'Application\Controller\Authenticated\ChangePasswordController',
-            'Application\Controller\Authenticated\Dashboard'          => 'Application\Controller\Authenticated\DashboardController',
-            'Application\Controller\Authenticated\Delete'             => 'Application\Controller\Authenticated\DeleteController',
-            'Application\Controller\Authenticated\Logout'             => 'Application\Controller\Authenticated\LogoutController',
-            'Application\Controller\Authenticated\Postcode'           => 'Application\Controller\Authenticated\PostcodeController',
-             
-            'Application\Controller\Authenticated\Lpa\Type'                   => 'Application\Controller\Authenticated\Lpa\TypeController',
-            'Application\Controller\Authenticated\Lpa\Donor'                  => 'Application\Controller\Authenticated\Lpa\DonorController',
-            'Application\Controller\Authenticated\Lpa\WhenLpaStarts'          => 'Application\Controller\Authenticated\Lpa\WhenLpaStartsController',
-            'Application\Controller\Authenticated\Lpa\LifeSustaining'         => 'Application\Controller\Authenticated\Lpa\LifeSustainingController',
-            'Application\Controller\Authenticated\Lpa\PrimaryAttorney'                     => 'Application\Controller\Authenticated\Lpa\PrimaryAttorneyController',
-            'Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecision'     => 'Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
-            'Application\Controller\Authenticated\Lpa\ReplacementAttorney'                 => 'Application\Controller\Authenticated\Lpa\ReplacementAttorneyController',
-            'Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepIn'       => 'Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepInController',
-            'Application\Controller\Authenticated\Lpa\HowReplacementAttorneysMakeDecision' => 'Application\Controller\Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-            'Application\Controller\Authenticated\Lpa\CertificateProvider'    => 'Application\Controller\Authenticated\Lpa\CertificateProviderController',
-            'Application\Controller\Authenticated\Lpa\PeopleToNotify'         => 'Application\Controller\Authenticated\Lpa\PeopleToNotifyController',
-            'Application\Controller\Authenticated\Lpa\Instructions'           => 'Application\Controller\Authenticated\Lpa\InstructionsController',
-            'Application\Controller\Authenticated\Lpa\Created'                => 'Application\Controller\Authenticated\Lpa\CreatedController',
-            'Application\Controller\Authenticated\Lpa\Applicant'              => 'Application\Controller\Authenticated\Lpa\ApplicantController',
-            'Application\Controller\Authenticated\Lpa\Correspondant'          => 'Application\Controller\Authenticated\Lpa\CorrespondantController',
-            'Application\Controller\Authenticated\Lpa\WhatIsMyRole'           => 'Application\Controller\Authenticated\Lpa\WhatIsMyRoleController',
-            'Application\Controller\Authenticated\Lpa\Fee'                    => 'Application\Controller\Authenticated\Lpa\FeeController',
-            'Application\Controller\Authenticated\Lpa\OnlinePaymentSuccess'               => 'Application\Controller\Authenticated\Lpa\OnlinePaymentSuccessController',
-            'Application\Controller\Authenticated\Lpa\OnlinePaymentUnsuccessful'          => 'Application\Controller\Authenticated\Lpa\OnlinePaymentUnsuccessfulController',
-            'Application\Controller\Authenticated\Lpa\Complete'               => 'Application\Controller\Authenticated\Lpa\CompleteController',
-            'Application\Controller\Authenticated\Lpa\Clone'                  => 'Application\Controller\Authenticated\Lpa\CloneController',
-            'Application\Controller\Authenticated\Lpa\Download'               => 'Application\Controller\Authenticated\Lpa\DownloadController',
+        'factories' => array(
+            'ControllerFactory' => 'Application\ControllerFactory\ControllerFactory',
         ),
     ),
     'view_manager' => array(

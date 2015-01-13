@@ -33,7 +33,7 @@ class LoginControllerTest extends AbstractTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\General\Login');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('LoginController');
         $this->assertMatchedRouteName('login');        
     }

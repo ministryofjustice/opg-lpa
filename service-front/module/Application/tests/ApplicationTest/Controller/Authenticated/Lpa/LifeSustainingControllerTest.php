@@ -33,7 +33,7 @@ class LifeSustainingControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\LifeSustaining');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('LifeSustainingController');
         $this->assertMatchedRouteName('lpa/life-sustaining');        
     }

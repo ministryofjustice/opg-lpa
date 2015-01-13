@@ -33,7 +33,7 @@ class DeleteControllerTest extends AbstractAuthenticatedTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Delete');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('DeleteController');
         $this->assertMatchedRouteName('user/delete');        
     }

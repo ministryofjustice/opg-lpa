@@ -33,7 +33,7 @@ class AdminControllerTest extends AbstractAuthenticatedTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Admin');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('AdminController');
         $this->assertMatchedRouteName('admin-stats');        
     }

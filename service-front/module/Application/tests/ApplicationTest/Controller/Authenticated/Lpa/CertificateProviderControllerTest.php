@@ -33,7 +33,7 @@ class CertificateProviderControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\CertificateProvider');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('CertificateProviderController');
         $this->assertMatchedRouteName('lpa/certificate-provider');        
     }

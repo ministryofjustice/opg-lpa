@@ -34,7 +34,7 @@ class OnlinePaymentSuccessControllerTest extends AbstractLpaTest
         //$this->assertRedirectTo('/user/complete');
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\OnlinePaymentSuccess');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('OnlinePaymentSuccessController');
         $this->assertMatchedRouteName('lpa/online-payment-success');        
     }

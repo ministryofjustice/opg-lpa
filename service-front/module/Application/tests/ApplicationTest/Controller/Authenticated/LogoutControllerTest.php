@@ -33,7 +33,7 @@ class LogoutControllerTest extends AbstractAuthenticatedTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Logout');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('LogoutController');
         $this->assertMatchedRouteName('user/logout');        
     }

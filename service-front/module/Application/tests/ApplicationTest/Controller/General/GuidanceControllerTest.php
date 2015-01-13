@@ -33,7 +33,7 @@ class GuidanceControllerTest extends AbstractTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\General\Guidance');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('GuidanceController');
         $this->assertMatchedRouteName('guidance');        
     }

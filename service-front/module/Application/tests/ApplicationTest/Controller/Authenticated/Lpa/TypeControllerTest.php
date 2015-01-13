@@ -33,7 +33,7 @@ class TypeControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\Type');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('TypeController');
         $this->assertMatchedRouteName('lpa/form-type');        
     }

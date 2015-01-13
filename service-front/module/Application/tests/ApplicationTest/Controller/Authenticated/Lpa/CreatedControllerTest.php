@@ -33,7 +33,7 @@ class CreatedControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\Created');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('CreatedController');
         $this->assertMatchedRouteName('lpa/created');        
     }

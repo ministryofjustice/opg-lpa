@@ -33,7 +33,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepIn');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('WhenReplacementAttorneyStepInController');
         $this->assertMatchedRouteName('lpa/when-replacement-attorney-step-in');        
     }

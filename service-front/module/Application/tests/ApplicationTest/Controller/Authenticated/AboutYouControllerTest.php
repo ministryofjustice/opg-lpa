@@ -33,7 +33,7 @@ class AboutYouControllerTest extends AbstractAuthenticatedTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\AboutYou');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('AboutYouController');
         $this->assertMatchedRouteName('user/about-you');        
     }
