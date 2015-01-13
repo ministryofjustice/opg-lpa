@@ -19,8 +19,10 @@ class Module{
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-
-        $this->bootstrapSession($e);
+        
+        if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
+            $this->bootstrapSession($e);
+        }
     }
 
     /**
