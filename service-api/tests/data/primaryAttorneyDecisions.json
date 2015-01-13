@@ -1,8 +1,6 @@
 {
-    "primaryAttorneyDecisions": {
-        "how": "depends",
-        "when": "no-capacity",
-        "canSustainLife": true,
-        "howDetails": "Extra details."
-    }
+    "how": "depends",
+    "when": "no-capacity",
+    "canSustainLife": true,
+    "howDetails": "Extra details."
 }
