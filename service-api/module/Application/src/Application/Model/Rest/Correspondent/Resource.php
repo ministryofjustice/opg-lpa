@@ -59,6 +59,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $document = $lpa->document;
 
         $document->correspondent = (isset($data['correspondent'])) ? new Correspondence($data['correspondent']) : null;
+        $document->correspondent = new Correspondence($data);
 
         //---
 
