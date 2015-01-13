@@ -57,7 +57,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpa = $this->getLpa();
 
         $document = $lpa->document;
-        
+
         $document->donor = new Donor( $data );
 
         //---

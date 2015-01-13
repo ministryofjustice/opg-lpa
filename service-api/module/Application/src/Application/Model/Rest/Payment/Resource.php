@@ -56,8 +56,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
-
-        $lpa->payment = (isset($data['payment'])) ? new Payment($data['payment']) : null;
+        $lpa->payment = new Payment( $data );
 
         //---
 
