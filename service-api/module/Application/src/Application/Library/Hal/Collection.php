@@ -9,11 +9,13 @@ use Application\Model\Rest\CollectionInterface;
 class Collection extends Hal {
 
     protected $collection;
+    protected $collectionName;
 
     private $linksSet = false;
 
 
-    public function __construct( CollectionInterface $collection ){
+    public function __construct( CollectionInterface $collection, $collectionName ){
+        $this->collectionName = $collectionName;
         $this->setCollection($collection);
     }
 
@@ -31,7 +33,7 @@ class Collection extends Hal {
         // Add the resources...
 
         foreach( $data['items'] as $item ){
-            $this->addResource( 'applications', new Entity( $item ) );
+            $this->addResource( $this->collectionName, new Entity( $item ) );
         }
 
         unset( $data['items'] );
@@ -137,8 +139,8 @@ class Collection extends Hal {
 
         $resources = $this->getResources();
 
-        if( isset($resources['applications']) ){
-            foreach( $resources['applications'] as $resource ){
+        if( isset($resources[ $this->collectionName ]) ){
+            foreach( $resources[ $this->collectionName ] as $resource ){
                 $resource->setLinks( $routeCallback );
             }
         }

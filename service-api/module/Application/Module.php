@@ -69,7 +69,7 @@ class Module {
 
                 if( AuthenticationResult::SUCCESS !== $result->getCode() ){
                     # TODO - this!
-                    die('Bad authentication...');
+                    die('No - naughty token!');
                 }
 
             }

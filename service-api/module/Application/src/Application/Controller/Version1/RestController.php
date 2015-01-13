@@ -268,7 +268,7 @@ class RestController extends AbstractRestfulController {
 
         //---
 
-        $hal = new HalCollection( $collections );
+        $hal = new HalCollection( $collections, $this->getResource()->getName() );
 
         $hal->setLinks( [ $this, 'generateRoute' ] );
 
