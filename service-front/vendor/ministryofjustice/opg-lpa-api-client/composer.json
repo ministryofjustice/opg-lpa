@@ -1,0 +1,34 @@
+{
+	"name": "ministryofjustice/opg-lpa-api-client",
+    "description": "API Wrapper for opg-lpa-api",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-common"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "5.1.x",
+        "zendframework/zend-config": "2.3.*",
+        "ministryofjustice/opg-lpa-datamodels": "dev-develop"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*",
+        "phpspec/phpspec": "~2.0"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {"Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"}
+    }
+}
+
+
+    
