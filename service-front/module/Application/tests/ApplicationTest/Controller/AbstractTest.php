@@ -6,7 +6,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 /**
  * AbstractTest.
  */
-class AbstractTest extends AbstractHttpControllerTestCase
+abstract class AbstractTest extends AbstractHttpControllerTestCase
 {
     /**
      * Prepares the environment before running a test.
