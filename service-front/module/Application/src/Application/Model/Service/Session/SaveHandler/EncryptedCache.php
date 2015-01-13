@@ -42,7 +42,7 @@ class EncryptedCache extends CacheSaveHandler {
      */
     public function read($id){
 
-        $id = hash( 'sha512', $id );
+        $id = $this->hashId( $id );
 
         // Return the data from the cache
         $data = $this->getCacheStorage()->getItem($id);
@@ -64,13 +64,25 @@ class EncryptedCache extends CacheSaveHandler {
      */
     public function write($id, $data){
 
-        $id = hash( 'sha512', $id );
+        $id = $this->hashId( $id );
 
         // Encrypt the data
         $data = $this->blockCipher->encrypt( $data );
 
         // Save it to the cache
         return $this->getCacheStorage()->setItem($id, $data);
+
+    }
+
+    /**
+     * Returns a hash of the passed session id.
+     *
+     * @param $id
+     * @return string
+     */
+    private function hashId( $id ){
+
+        return hash( 'sha512', $id );
 
     }
 
