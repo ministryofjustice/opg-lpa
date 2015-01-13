@@ -7,7 +7,7 @@ use Application\Controller\AbstractBaseController;
 
 class HomeController extends AbstractBaseController
 {
-    public function indexAciton()
+    public function indexAction()
     {
         return new ViewModel();
     }
