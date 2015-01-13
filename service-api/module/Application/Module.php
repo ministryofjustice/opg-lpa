@@ -47,6 +47,7 @@ class Module {
             $response = $e->getResult();
 
             if( is_array($response) ){
+                throw new \RuntimeException('Deprecated - this should never be called.');
                 $e->setResult( new JsonModel($response) );
             }
 
