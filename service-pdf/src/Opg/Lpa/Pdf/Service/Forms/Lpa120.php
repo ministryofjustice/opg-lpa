@@ -26,10 +26,17 @@ class Lpa120 extends AbstractForm
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
      * 
-     * @return Form object
+     * @return Form object | null
      */
     public function generate()
     {
+        // check eligibility for exemption or remission.
+        if(!$this->lpa->payment->reducedFeeLowIncome && 
+            !($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) &&
+            !$this->lpa->payment->reducedFeeUniversalCredit) {
+                return null;
+            }
+        
         $pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplate);
         
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');

@@ -28,13 +28,13 @@ class Lp3 extends AbstractForm
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
      * 
-     * @return Form object
+     * @return Form object | null
      */
     public function generate()
     {
         // will not generate pdf if there's no people to notify
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
-        if($noOfPeopleToNotify == 0) return $this;
+        if($noOfPeopleToNotify == 0) return null;
         
         // generate standard notification letters for each people to be notified.
         for($i=0; $i<$noOfPeopleToNotify; $i++) {
