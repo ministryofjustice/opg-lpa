@@ -33,7 +33,7 @@ class PeopleToNotifyControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\PeopleToNotify');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('PeopleToNotifyController');
         $this->assertMatchedRouteName('lpa/people-to-notify');        
     }

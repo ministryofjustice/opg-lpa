@@ -33,7 +33,7 @@ class ForgotPasswordControllerTest extends AbstractTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\General\ForgotPassword');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('ForgotPasswordController');
         $this->assertMatchedRouteName('forgot-password');        
     }

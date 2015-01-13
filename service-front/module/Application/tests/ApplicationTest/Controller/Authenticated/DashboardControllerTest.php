@@ -33,7 +33,7 @@ class DashboardControllerTest extends AbstractAuthenticatedTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Dashboard');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('DashboardController');
         $this->assertMatchedRouteName('user/dashboard');        
     }

@@ -33,7 +33,7 @@ class RegisterControllerTest extends AbstractTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\General\Register');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('RegisterController');
         $this->assertMatchedRouteName('register');        
     }

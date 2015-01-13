@@ -35,7 +35,7 @@ class FeeControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\Fee');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('FeeController');
         $this->assertMatchedRouteName('lpa/fee');        
     }

@@ -33,7 +33,7 @@ class DownloadControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\Download');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('DownloadController');
         $this->assertMatchedRouteName('lpa/download');        
     }

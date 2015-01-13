@@ -33,7 +33,7 @@ class WhatIsMyRoleControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\WhatIsMyRole');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('WhatIsMyRoleController');
         $this->assertMatchedRouteName('lpa/what-is-my-role');        
     }

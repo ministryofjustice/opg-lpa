@@ -33,7 +33,7 @@ class StatsControllerTest extends AbstractTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\General\Stats');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('StatsController');
         $this->assertMatchedRouteName('stats');        
     }

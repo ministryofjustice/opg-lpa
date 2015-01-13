@@ -33,7 +33,7 @@ class InstructionsControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\Instructions');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('InstructionsController');
         $this->assertMatchedRouteName('lpa/instructions');        
     }

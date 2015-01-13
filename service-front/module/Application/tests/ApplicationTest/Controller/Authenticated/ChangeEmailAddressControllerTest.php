@@ -33,7 +33,7 @@ class ChangeEmailAddressControllerTest extends AbstractAuthenticatedTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\ChangeEmailAddress');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('ChangeEmailAddressController');
         $this->assertMatchedRouteName('user/change-email-address');        
     }

@@ -33,7 +33,7 @@ class OnlinePaymentUnsuccessfulControllerTest extends AbstractLpaTest
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
-        $this->assertControllerName('Application\Controller\Authenticated\Lpa\OnlinePaymentUnsuccessful');
+        $this->assertControllerName('ControllerFactory');
         $this->assertControllerClass('OnlinePaymentUnsuccessfulController');
         $this->assertMatchedRouteName('lpa/online-payment-unsuccessful');        
     }
