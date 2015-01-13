@@ -59,7 +59,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $document = $lpa->document;
 
-        $document->certificateProvider = (isset($data['certificateProvider'])) ? new CertificateProvider($data['certificateProvider']) : null;
+        $document->certificateProvider = new CertificateProvider( $data );
 
         //---
 
