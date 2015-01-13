@@ -11,13 +11,10 @@ use Application\Controller\Version1\RestController;
 
 use Application\Library\Authentication\Adapter;
 use Application\Library\Authentication\Identity;
+use Application\Library\Authentication\AuthenticationListener;
 
-use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
-
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 
 use Application\Model\Rest\UserConsumerInterface;
 use Application\Model\Rest\LpaConsumerInterface;
@@ -36,47 +33,10 @@ class Module {
         $moduleRouteListener->attach($eventManager);
         $sharedEvents = $eventManager->getSharedManager();
 
-        /*
-         * ------------------------------------------------------------------
-         * Perform authentication
-         *
-         */
 
-        // TODO - Move this into a proper listener
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function(MvcEvent $e){
+        // Setup authentication listener...
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [ new AuthenticationListener, 'authenticate' ], 500);
 
-            $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
-
-            /*
-             * Do some authentication. Initially this will will just be via the token passed from front-2.
-             * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
-             *      X-AuthOne
-             *
-             * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
-             */
-            $token = $e->getRequest()->getHeader('X-AuthOne');
-
-            if (!$token) {
-
-                // No token; set Guest....
-                $auth->getStorage()->write( new Identity\Guest() );
-
-            } else {
-
-                $token = trim($token->getFieldValue());
-
-                $authAdapter = new Adapter\LpaAuthOne( $token );
-
-                // If successful, the identity will be persisted for the request.
-                $result = $auth->authenticate($authAdapter);
-
-                if( AuthenticationResult::SUCCESS !== $result->getCode() ){
-                    return new ApiProblemResponse( new ApiProblem( 401, 'Authentication token missing or invalid' ) );
-                }
-
-            }
-
-        }, 500); // attach
 
         /**
          * If a controller returns an array, by default put it into a JsonModel.
