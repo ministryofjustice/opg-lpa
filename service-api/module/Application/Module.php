@@ -16,6 +16,9 @@ use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
+
 use Application\Model\Rest\UserConsumerInterface;
 use Application\Model\Rest\LpaConsumerInterface;
 
@@ -68,8 +71,7 @@ class Module {
                 $result = $auth->authenticate($authAdapter);
 
                 if( AuthenticationResult::SUCCESS !== $result->getCode() ){
-                    # TODO - this!
-                    die('No - naughty token!');
+                    return new ApiProblemResponse( new ApiProblem( 401, 'Authentication token missing or invalid' ) );
                 }
 
             }
