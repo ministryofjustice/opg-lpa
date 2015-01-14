@@ -18,4 +18,9 @@ class CorrespondantController extends AbstractLpaController
     {
         return new ViewModel();
     }
+    
+    public function editAction()
+    {
+        return new ViewModel();
+    }
 }

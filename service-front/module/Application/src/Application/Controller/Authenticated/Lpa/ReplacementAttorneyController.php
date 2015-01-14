@@ -18,4 +18,23 @@ class ReplacementAttorneyController extends AbstractLpaController
     {
         return new ViewModel();
     }
+    
+    public function addAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function editAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function deleteAction()
+    {
+        // @todo delete a replacement attorney
+        
+        $this->redirect()->toRoute('lpa/replacement-attorney', array('lpa-id'=>$this->getEvent()->getRouteMatch()->getParam('lpa-id')));
+        
+        return $this->response;
+    }
 }

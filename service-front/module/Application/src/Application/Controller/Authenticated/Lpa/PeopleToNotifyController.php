@@ -18,4 +18,23 @@ class PeopleToNotifyController extends AbstractLpaController
     {
         return new ViewModel();
     }
+    
+    public function addAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function editAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function deleteAction()
+    {
+        // @todo delete a notifyed person
+        
+        $this->redirect()->toRoute('lpa/people-to-notify', array('lpa-id'=>$this->getEvent()->getRouteMatch()->getParam('lpa-id')));
+        
+        return $this->response;
+    }
 }

@@ -18,4 +18,15 @@ class CertificateProviderController extends AbstractLpaController
     {
         return new ViewModel();
     }
+    
+    public function addAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function editAction()
+    {
+        return new ViewModel();
+    }
+    
 }

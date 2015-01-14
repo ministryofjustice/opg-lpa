@@ -298,6 +298,27 @@ return array(
                                 'action'     => 'index',
                             ),
                         ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'add' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/add',
+                                    'defaults' => array(
+                                        'action' => 'add',
+                                    ),
+                                ),
+                            ),
+                            'edit' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/edit',
+                                    'defaults' => array(
+                                        'action' => 'edit',
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                     'complete' => array(
                         'type' => 'Literal',
@@ -322,7 +343,7 @@ return array(
                         ),
                         'may_terminate' => true,
                         'child_routes' => array(
-                            'default' => array(
+                            'edit' => array(
                                 'type'    => 'Segment',
                                 'options' => array(
                                     'route'    => '/:action',
@@ -358,14 +379,21 @@ return array(
                         ),
                         'may_terminate' => true,
                         'child_routes' => array(
-                            'default' => array(
-                                'type'    => 'Segment',
+                            'add' => array(
+                                'type'    => 'Literal',
                                 'options' => array(
-                                    'route'    => '/:action',
-                                    'constraints' => array(
-                                            'action'     => 'add|edit',
-                                    ),
+                                    'route'    => '/add',
                                     'defaults' => array(
+                                        'action' => 'add',
+                                    ),
+                                ),
+                            ),
+                            'edit' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/edit',
+                                    'defaults' => array(
+                                        'action' => 'edit',
                                     ),
                                 ),
                             ),
@@ -469,6 +497,36 @@ return array(
                                 'action'     => 'index',
                             ),
                         ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'add' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/add',
+                                    'defaults' => array(
+                                        'action' => 'add',
+                                    ),
+                                ),
+                            ),
+                            'edit' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/edit',
+                                    'defaults' => array(
+                                        'action' => 'edit',
+                                    ),
+                                ),
+                            ),
+                            'delete' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/delete',
+                                    'defaults' => array(
+                                        'action' => 'delete',
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                     'primary-attorney' => array(
                         'type' => 'Literal',
@@ -480,6 +538,36 @@ return array(
                                 'action'     => 'index',
                             ),
                         ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'add' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/add',
+                                    'defaults' => array(
+                                        'action' => 'add',
+                                    ),
+                                ),
+                            ),
+                            'edit' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/edit',
+                                    'defaults' => array(
+                                        'action' => 'edit',
+                                    ),
+                                ),
+                            ),
+                            'delete' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/delete',
+                                    'defaults' => array(
+                                        'action' => 'delete',
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                     'replacement-attorney' => array(
                         'type' => 'Literal',
@@ -489,6 +577,36 @@ return array(
                                 'controllerName' => 'Application\Controller\Authenticated\Lpa\ReplacementAttorneyController',
                                 'controller' => 'ControllerFactory',
                                 'action'     => 'index',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'add' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/add',
+                                    'defaults' => array(
+                                        'action' => 'add',
+                                    ),
+                                ),
+                            ),
+                            'edit' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/edit',
+                                    'defaults' => array(
+                                        'action' => 'edit',
+                                    ),
+                                ),
+                            ),
+                            'delete' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/delete',
+                                    'defaults' => array(
+                                        'action' => 'delete',
+                                    ),
+                                ),
                             ),
                         ),
                     ),
