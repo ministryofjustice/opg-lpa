@@ -30,6 +30,10 @@ class LoginController extends AbstractBaseController {
             $result = $authenticationService->authenticate( $authenticationAdapter );
 
             if( $result->isValid() ){
+
+                // Regenerate the session ID post authentication
+                $this->getServiceLocator()->get('SessionManager')->regenerateId(true);
+
                 // Send them to the dashboard...
                 return $this->redirect()->toRoute( 'user/dashboard' );
             }

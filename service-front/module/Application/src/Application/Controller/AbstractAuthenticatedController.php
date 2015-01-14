@@ -1,8 +1,7 @@
 <?php
-
 namespace Application\Controller;
 
-use Application\Controller\AbstractBaseController;
+use Application\Model\Library\Authentication\Identity\User as Identity;
 
 class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {
@@ -18,9 +17,9 @@ class AbstractAuthenticatedController extends AbstractBaseController implements 
     }
 
     /**
-     * @param field_type $user
+     * @param Identity $user
      */
-    public function setUser ($user)
+    public function setUser( Identity $user )
     {
         $this->user = $user;
     }

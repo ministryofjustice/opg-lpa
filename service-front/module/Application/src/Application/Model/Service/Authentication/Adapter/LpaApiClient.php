@@ -9,6 +9,8 @@ use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
 
+use Application\Model\Library\Authentication\Identity\User;
+
 /**
  * Performs email address & password authentication with the LPA API Client.
  *
@@ -65,11 +67,11 @@ class LpaApiClient implements AdapterInterface {
             return new Result( Result::FAILURE, null );
         }
 
-        $identity = (object)[
-            'id' => $response->getUserId(),
-            'token' => $response->getToken(),
-            'lastLogin' => (new DateTime())->setTimestamp( $response->getLastLogin() ),
-        ];
+        $identity = new User(
+            $response->getUserId(),
+            $response->getToken(),
+            (new DateTime())->setTimestamp( $response->getLastLogin() )
+        );
 
         return new Result( Result::SUCCESS, $identity );
 
