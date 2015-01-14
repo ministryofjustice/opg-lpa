@@ -15,7 +15,7 @@ class Cs3 extends AbstractForm
     {
         $filePath = $this->registerTempFile('CS3');
     
-        $cs3 = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
+        $cs3 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
     
         $cs3->fillForm(array(
                 'donor-full-name' => $this->fullName($this->lpa->document->donor->name)
@@ -23,7 +23,7 @@ class Cs3 extends AbstractForm
         ->flatten()
         ->saveAs($filePath);
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
     } // function generate()
     
     public function __destruct()

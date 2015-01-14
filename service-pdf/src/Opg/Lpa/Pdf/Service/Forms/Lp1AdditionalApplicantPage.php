@@ -27,7 +27,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicant');
             
-            $additionalApplicant = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP1_AdditionalApplicant.pdf");
+            $additionalApplicant = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP1_AdditionalApplicant.pdf");
             $formData = array();
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
                 $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
@@ -66,7 +66,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             $this->drawCrossLines($filePath, $crossLineParams);
         }
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
     } // function generate()
     
     public function __destruct()

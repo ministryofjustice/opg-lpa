@@ -32,7 +32,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
             
-            $attorneySignaturePage = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP1_AdditionalAttorneySignature.pdf");
+            $attorneySignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP1_AdditionalAttorneySignature.pdf");
             $attorneySignaturePage->fillForm(array(
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
@@ -43,7 +43,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             
         } //endforeach
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
     } // function generate()
     
     public function __destruct()

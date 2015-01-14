@@ -5,7 +5,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class Lp3 extends AbstractForm
@@ -19,10 +18,9 @@ class Lp3 extends AbstractForm
         parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LP3-' . microtime(true) . '.pdf';
+        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
         
-        $this->basePdfTemplate = $this->basePdfTemplatePath."/LP3.pdf";
+        $this->basePdfTemplate = $this->pdfTemplatePath."/LP3.pdf";
     }
     
     /**
@@ -34,7 +32,9 @@ class Lp3 extends AbstractForm
     {
         // will not generate pdf if there's no people to notify
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
-        if($noOfPeopleToNotify == 0) return null;
+        if($noOfPeopleToNotify == 0) {
+            throw new \RuntimeException("LP3 is not available for this LPA.");
+        }
         
         // generate standard notification letters for each people to be notified.
         for($i=0; $i<$noOfPeopleToNotify; $i++) {
@@ -139,21 +139,21 @@ class Lp3 extends AbstractForm
     protected function mergePdfs()
     {
         if($this->countIntermediateFiles() == 1) {
-            $this->generatedPdfFilePath = $this->intermediateFilePaths['LP3'][0];
+            $this->generatedPdfFilePath = $this->interFileStack['LP3'][0];
             return;
         }
         
         $pdf = PdfProcessor::getPdftkInstance();
     
         $intPdfHandle = 'A';
-        foreach($this->intermediateFilePaths['LP3'] as $lp3Path) {
+        foreach($this->interFileStack['LP3'] as $lp3Path) {
             $pdf->addFile($lp3Path, $intPdfHandle);
     
-            if(isset($this->intermediateFilePaths['AdditionalAttorneys'])) {
+            if(isset($this->interFileStack['AdditionalAttorneys'])) {
                 $baseHandle = $intPdfHandle++;
                 $pdf->cat(1, 3, $baseHandle);
     
-                foreach($this->intermediateFilePaths['AdditionalAttorneys'] as $additionalPage) {
+                foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
                     $pdf->addFile($additionalPage, $intPdfHandle);
                     $pdf->cat(1, null, $intPdfHandle++);
                 }

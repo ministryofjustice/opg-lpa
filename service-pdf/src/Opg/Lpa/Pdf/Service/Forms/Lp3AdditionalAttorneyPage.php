@@ -62,7 +62,7 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                 }
             }
             
-            $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP3_AdditionalAttorney.pdf");
+            $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage
                 ->fillForm($mappings)
                 ->flatten()
@@ -79,7 +79,7 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
             $this->drawCrossLines($filePath, $crossLineParams);
         }
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
         
     } // function generate()
     

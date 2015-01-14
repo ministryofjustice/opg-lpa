@@ -2,7 +2,6 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
@@ -15,10 +14,9 @@ class Lp1f extends Lp1
         parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LP1F-' . microtime(true) . '.pdf';
+        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1F');
         
-        $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1F.pdf');
+        $this->pdf = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1F.pdf');
     }
 
     protected function dataMapping()

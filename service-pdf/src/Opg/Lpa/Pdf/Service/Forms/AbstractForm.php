@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\DataModel\Lpa\Formatter;
 
 abstract class AbstractForm
 {
@@ -35,15 +36,21 @@ abstract class AbstractForm
     protected $generatedPdfFilePath = null;
     
     /**
-     * Intermediate pdf files - needed for LP1F/H
+     * Storage path for intermediate pdf files - needed for LP1F/H and LP3.
      * @var array
      */
-    protected $intermediateFilePaths = array();
+    protected $interFileStack = array();
+    
+    /**
+     * Base path for intermediate files. It's a ram disk folder.
+     * @var string
+     */
+    protected $intermediateFileBasePath;
     
     /**
      * @var string
      */
-    protected $basePdfTemplatePath;
+    protected $pdfTemplatePath;
     
     protected $drawingTargets = array();
     
@@ -91,7 +98,8 @@ abstract class AbstractForm
         $this->lpa = $lpa;
         $this->flattenLpa = $lpa->flatten();
         $config = Config::getInstance();
-        $this->basePdfTemplatePath = $config['service']['assets']['path'].'/v2';
+        $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
+        $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
     }
     
     /**
@@ -125,7 +133,7 @@ abstract class AbstractForm
     protected function countIntermediateFiles()
     {
         $count = 0;
-        foreach($this->intermediateFilePaths as $type=>$paths) {
+        foreach($this->interFileStack as $type=>$paths) {
             if(is_array($paths)) {
                 $count += count($paths);
             }
@@ -144,23 +152,23 @@ abstract class AbstractForm
      */
     protected function getTmpFilePath($fileType)
     {
-        $filePath = '/tmp/pdf-'.$fileType.'-'.$this->lpa->id.'-'.microtime(true).'.pdf';
+        $filePath = $this->intermediateFileBasePath.'/'.$fileType.'-'.str_replace(array(' ','.'), '-', Formatter::id($this->lpa->id).'-'.microtime(true)).'.pdf';
         return $filePath;
     } // function getTmpFilePath($fileType)
     
     /**
-     * Register a temp file in self::$intermediateFilePaths
+     * Register a temp file in self::$interFileStack
      * @param string $fileType
      * @param string $path
      */
     public function registerTempFile($fileType)
     {
         $path = $this->getTmpFilePath($fileType);
-        if(!isset($this->intermediateFilePaths[$fileType])) {
-            $this->intermediateFilePaths[$fileType] = array($path);
+        if(!isset($this->interFileStack[$fileType])) {
+            $this->interFileStack[$fileType] = array($path);
         }
         else {
-            $this->intermediateFilePaths[$fileType][] = $path;
+            $this->interFileStack[$fileType][] = $path;
         }
         
         return $path;
@@ -225,11 +233,11 @@ abstract class AbstractForm
         if(empty($paths)) return;
         
         foreach($paths as $type=>$path) {
-            if(isset($this->intermediateFilePaths[$type])) {
-                $this->intermediateFilePaths[$type] = array_merge($this->intermediateFilePaths[$type], $path);
+            if(isset($this->interFileStack[$type])) {
+                $this->interFileStack[$type] = array_merge($this->interFileStack[$type], $path);
             }
             else {
-                $this->intermediateFilePaths[$type] = $path;
+                $this->interFileStack[$type] = $path;
             }
         }
     } // function mergerIntermediateFilePaths()
@@ -298,7 +306,7 @@ abstract class AbstractForm
         }
         
         // remove all generated intermediate pdf files
-        foreach($this->intermediateFilePaths as $type => $paths) {
+        foreach($this->interFileStack as $type => $paths) {
             if(is_string($paths)) {
                 if(\file_exists($paths)) {
                     unlink($paths);
