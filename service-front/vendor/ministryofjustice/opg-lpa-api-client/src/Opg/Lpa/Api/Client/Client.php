@@ -14,13 +14,13 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use GuzzleHttp\Message\Response;
 
 class Client
 {
 
     const PATH_API = 'http://localhost:8083';
     const PATH_AUTH = 'http://auth.local';
-    const PATH_PDF = 'http://pdf.local';
 
     /**
      * The API auth token
@@ -35,6 +35,26 @@ class Client
      */
     private $guzzleClient;
     
+    /**
+     * The status code from the last API call
+     * 
+     * @var number
+     */
+    private $lastStatusCode;
+    
+    /**
+     * The content body from the last API call
+     * 
+     * @var string
+     */
+    private $lastContent;
+    
+    /**
+     * Did the last API call return with an error?
+     * 
+     * @var boolean
+     */
+    private $isError;
     
     /**
      * Create an API client for the given uri endpoint.
@@ -73,7 +93,62 @@ class Client
         return $this->guzzleClient;
 
     }
+    
+    /**
+     * Register a new account
+     *
+     * @param array $params
+     * @return string $activationToken | boolean false
+     */
+    public function registerAccount(
+        $email,
+        $password
+    )
+    {
+        $response = $this->client()->post( self::PATH_AUTH . '/users' ,[
+            'body' => [
+                'username' => $email,
+                'password' => $password,
+            ]
+        ]);
+        
+        if( $response->getStatusCode() != 200 ){
+            return $this->log($response, false);
+        }
+        
+        $jsonDecode = json_decode($response->getBody());
+        
+        if (!property_exists($jsonDecode, 'activation_token')) {
+            return $this->log($response, false);
+        }
+        
+        $this->log($response, true);
+        return $jsonDecode->activation_token;
+    }
 
+    /**
+     * Activate an account from an activation token (generated at registration)
+     *
+     * @param string $activationToken
+     * @return boolean
+     */
+    public function activateAccount(
+        $activationToken
+    )
+    {
+        $response = $this->client()->post( self::PATH_AUTH . '/users/activate' ,[
+            'body' => [
+                'activation_token' => $activationToken,
+            ]
+        ]);
+        
+        if ($response->getStatusCode() != 204) {
+            return $this->log($response, false);
+        }
+
+        return $this->log($response, true);
+    }
+    
     /**
      * Authenticate against the authentication server and store the token
      * for future calls.
@@ -143,17 +218,6 @@ class Client
     }
     
     /**
-     * Register a new account
-     * 
-     * @param array $params
-     * @return Client $this
-     */
-    public function registerAccount(array $params)
-    {
-        return $this;
-    }
-    
-    /**
      * Delete an account
      *
      * @return Client $this
@@ -170,6 +234,21 @@ class Client
      * @return Client $this
      */
     public function resetPassword($email)
+    {
+        return $this;
+    }
+    
+    /**
+     * Set user's about me details
+     *
+     * @param string $userId
+     * @param array $params
+     * @return Client $this
+     */
+    public function setAboutMe(
+        $userId,
+        array $params
+    )
     {
         return $this;
     }
@@ -798,5 +877,82 @@ class Client
     )
     {
         return null;
-    } 
+    }
+
+    /**
+     * @return the $lastStatusCode
+     */
+    public function getLastStatusCode()
+    {
+        return $this->lastStatusCode;
+    }
+
+    /**
+     * @param number $lastStatusCode
+     */
+    private function setLastStatusCode($lastStatusCode)
+    {
+        $this->lastStatusCode = $lastStatusCode;
+    }
+
+     /**
+     * @return the $lastContent
+     */
+    public function getLastContent()
+    {
+        return $this->lastContent;
+    }
+
+    /**
+     * @param string $lastContent
+     */
+    private function setLastContent($lastContent)
+    {
+        $this->lastContent = $lastContent;
+    }
+    
+    /**
+     * @return $isError
+     */
+    public function isError()
+    {
+        return $this->isError;
+    }
+    
+    /**
+     * @param boolean $isError
+     */
+    private function setIsError($isError)
+    {
+        $this->isError = $isError;
+    }
+
+    /**
+     * Log the response of the API call and set some internal member vars
+     * If content body is JSON, convert it to an array
+     * 
+     * @param Response $response
+     * @param string $isSuccess
+     * @return boolean
+     * 
+     * @todo - External logging
+     */
+    private function log(Response $response, $isSuccess=true)
+    {
+        $this->setLastStatusCode($response->getStatusCode());
+        
+        $responseBody = $response->getBody()->getContents();
+        $jsonDecoded = json_decode($responseBody, true);
+        
+        if (json_last_error() == JSON_ERROR_NONE) {
+            $this->setLastContent($jsonDecoded);
+        } else {
+            $this->setLastContent($responseBody);
+        }
+        
+        
+        $this->setIsError(!$isSuccess);
+        
+        return $isSuccess;
+    }
 }

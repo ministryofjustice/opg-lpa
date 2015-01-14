@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "304ff6c6929f2421c3d66b0801d6b018",
+    "hash": "507167a1d5e7cee3669481483839b8dc",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -170,19 +170,18 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "34658fc38645cee512f95ed925b2e877c5537b8d"
+                "reference": "dd8fc33584e12179b0b97759fa4ef730782a50b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/34658fc38645cee512f95ed925b2e877c5537b8d",
-                "reference": "34658fc38645cee512f95ed925b2e877c5537b8d",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/dd8fc33584e12179b0b97759fa4ef730782a50b2",
+                "reference": "dd8fc33584e12179b0b97759fa4ef730782a50b2",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "5.1.x",
                 "ministryofjustice/opg-lpa-datamodels": "dev-develop",
-                "php": ">=5.4.0",
-                "zendframework/zend-config": "2.3.*"
+                "php": ">=5.4.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "~2.0",
@@ -202,7 +201,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-01-13 14:28:09"
+            "time": "2015-01-14 11:28:38"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -210,12 +209,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "1b2ecea45fbe30fbd23607b01bb52061e818fc00"
+                "reference": "856c5097b2a34a67a8e7151a5b739b914db33e51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/1b2ecea45fbe30fbd23607b01bb52061e818fc00",
-                "reference": "1b2ecea45fbe30fbd23607b01bb52061e818fc00",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/856c5097b2a34a67a8e7151a5b739b914db33e51",
+                "reference": "856c5097b2a34a67a8e7151a5b739b914db33e51",
                 "shasum": ""
             },
             "require": {
@@ -239,7 +238,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-01-13 11:31:31"
+            "time": "2015-01-14 16:00:27"
         },
         {
             "name": "react/promise",
@@ -335,16 +334,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "88c9b6f566fc1097f64ead155625db9bdfee531e"
+                "reference": "c878e047ab1c5dcfb201974bdff607be54ccb54b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/88c9b6f566fc1097f64ead155625db9bdfee531e",
-                "reference": "88c9b6f566fc1097f64ead155625db9bdfee531e",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/c878e047ab1c5dcfb201974bdff607be54ccb54b",
+                "reference": "c878e047ab1c5dcfb201974bdff607be54ccb54b",
                 "shasum": ""
             },
             "require": {
@@ -406,7 +405,7 @@
             },
             "require-dev": {
                 "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "dev-master#fcbb09b5204",
+                "fabpot/php-cs-fixer": "1.*",
                 "ircmaxell/random-lib": "dev-master",
                 "ircmaxell/security-lib": "dev-master",
                 "mikey179/vfsstream": "1.2.*",
@@ -449,7 +448,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2014-09-16 22:58:11"
+            "time": "2015-01-14 16:44:17"
         },
         {
             "name": "zendframework/zendxml",
@@ -1293,7 +1292,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ministryofjustice/opg-lpa-api-client": 20
+        "ministryofjustice/opg-lpa-api-client": 20,
+        "ministryofjustice/opg-lpa-datamodels": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -15,7 +15,6 @@
     "require": {
         "php": ">=5.4.0",
         "guzzlehttp/guzzle": "5.1.x",
-        "zendframework/zend-config": "2.3.*",
         "ministryofjustice/opg-lpa-datamodels": "dev-develop"
     },
     "require-dev": {
