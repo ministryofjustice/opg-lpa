@@ -14,15 +14,38 @@ class LoginController extends AbstractBaseController {
 
         //-----------------------
 
-        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
+        $authError = null;
 
-        $authenticationAdapter = $this->getServiceLocator()->get('LpaApiClientAuthAdapter');
+        $email = $this->params()->fromPost('email');
+        $password = $this->params()->fromPost('password');
 
-        $authenticationAdapter->setCredentials( 'neil.smith@digital.justice.gov.uk', 'xxx' );
+        if( !empty($email) && !empty($password) ){
 
-        $result = $authenticationService->authenticate( $authenticationAdapter );
+            $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
 
-        return new ViewModel();
-    }
+            $authenticationAdapter = $this->getServiceLocator()->get('LpaApiClientAuthAdapter');
 
-}
+            $authenticationAdapter->setCredentials( $email, $password );
+
+            $result = $authenticationService->authenticate( $authenticationAdapter );
+
+            if( $result->isValid() ){
+                // Send them to the dashboard...
+                return $this->redirect()->toRoute( 'user/dashboard' );
+            }
+
+            // Else
+            $authError = 'Email and password combination not recognised.';
+
+            // Help mitigate brute force attacks.
+            sleep(1);
+
+        } // if
+
+        //---
+
+        return new ViewModel( [ 'error'=>$authError ] );
+
+    } // function
+
+} // class
