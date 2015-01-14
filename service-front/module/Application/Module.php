@@ -74,10 +74,7 @@ class Module{
                     if ($auth->hasIdentity()) {
 
                         $identity = $auth->getIdentity();
-
-                        if( isset($identity->token) ){
-                            $client->setToken( $identity->token );
-                        }
+                        $client->setToken( $identity->token() );
 
                     }
 
