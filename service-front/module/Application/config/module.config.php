@@ -44,6 +44,17 @@ return array(
                     ),
                 ),
             ),
+            'enable-cookie' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/enable-cookie',
+                    'defaults' => array(
+                        'controllerName' => 'Application\Controller\General\HomeController',
+                        'controller' => 'ControllerFactory',
+                        'action'     => 'enable-cookie',
+                    ),
+                ),
+            ),
             'login' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(

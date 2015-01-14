@@ -4,6 +4,64 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 
-abstract class AbstractBaseController extends AbstractActionController
-{
-}
+abstract class AbstractBaseController extends AbstractActionController {
+
+    /**
+     * Ensures cookies are enabled.
+     *
+     * If we're passed the session cookies, we know they're enabled, so all is good.
+     *
+     * If we're not passed a session cookie, this could be because:
+     *  A - The session simply has not been started; or
+     *  B - They do not have cookies enabled.
+     *
+     * To rule out A, we redirect they user back to 'this' page, adding ?cookie=1 to the URL to record the
+     * redirect has happened. This ensures the session *should* have been started.
+     *
+     * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
+     *
+     * @return bool|\Zend\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
+     */
+    protected function checkCookie( $routeName ){
+
+        // Get the cookie names used for the session
+        $sessionCookieName = $this->getServiceLocator()->get('Config')['session']['native_settings']['name'];
+
+        $cookies = $this->getRequest()->getCookie();
+
+        if( $cookies !== false ){
+            // Check for session...
+            $cookieExists = $cookies->offsetExists( $sessionCookieName );
+        }
+
+        //---
+
+        if( !$cookies || !$cookieExists ){
+
+            /*
+             * Redirect them back to the same page, appending ?cookie=1 to the URL.
+             *  A - If they have cookies enabled, they should now have the session cookie, so all is well.
+             *  B - They still don't have the cookie, we can assume they have cookies disabled.
+             */
+
+            $cookieRedirect = (bool)$this->params()->fromQuery('cookie');
+
+            if( !$cookieRedirect ){
+
+                // Cannot see a cookie, so redirect them back to this page (which will set one), ready to check again.
+                return $this->redirect()->toRoute($routeName, array(), [ 'query' => ['cookie' => '1'] ]);
+
+            } else {
+
+                // Cookie is not set even after we;ve done a redirect, so assume the client doesn't support cookies.
+                return $this->redirect()->toRoute( 'enable-cookie' );
+
+            }
+
+        }
+
+        return true;
+
+    } // function
+
+} // class
