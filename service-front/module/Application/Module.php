@@ -90,6 +90,18 @@ class Module{
 
     } // function
 
+    public function getControllerConfig(){
+
+        return [
+            'initializers' => [
+                'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
+            ]
+        ];
+
+    }
+
+    //-------------------------------------------
+
     public function getAutoloaderConfig(){
         return array(
             'Zend\Loader\StandardAutoloader' => array(
