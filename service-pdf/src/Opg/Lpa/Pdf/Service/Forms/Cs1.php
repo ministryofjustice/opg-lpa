@@ -78,7 +78,7 @@ class Cs1 extends AbstractForm
                 $formData['cs1-'.$j.'-address-address1'] = $this->roleGroup[$roleIndex]->address->address1;
                 $formData['cs1-'.$j.'-address-address2'] = $this->roleGroup[$roleIndex]->address->address2;
                 $formData['cs1-'.$j.'-address-address3'] = $this->roleGroup[$roleIndex]->address->address3;
-                $formData['cs1-'.$j.'-address-postode']  = $this->roleGroup[$roleIndex]->address->postcode;
+                $formData['cs1-'.$j.'-address-postcode']  = $this->roleGroup[$roleIndex]->address->postcode;
                 
                 if(property_exists($this->roleGroup[$roleIndex], 'dob') && is_object($this->roleGroup[$roleIndex]->dob) && property_exists($this->roleGroup[$roleIndex]->dob, 'date')) {
                     $formData['cs1-'.$j.'-dob-date-day']   = $this->roleGroup[$roleIndex]->dob->date->format('d');
