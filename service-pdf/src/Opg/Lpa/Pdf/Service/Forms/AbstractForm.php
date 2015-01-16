@@ -214,7 +214,7 @@ abstract class AbstractForm
         foreach($paragraphs as &$paragraph) {
             $paragraph = trim($paragraph);
             if(strlen($paragraph) == 0) {
-                $paragraph = str_repeat(" ", Lp1::BOX_CHARS_PER_ROW);
+                $paragraph = str_repeat(" ", Lp1::BOX_CHARS_PER_ROW-1);
             }
             else {
                 // calculate how many space chars to be appended to replace the new line in this paragraph.
@@ -272,7 +272,7 @@ abstract class AbstractForm
         else {
             $chunks = str_split($flattenContent, Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2);
             if(isset($chunks[$pageNo])) {
-                return "\r\n".$chunks[$pageNo];
+                return "\n".$chunks[$pageNo];
             }
             else {
                 return null;
