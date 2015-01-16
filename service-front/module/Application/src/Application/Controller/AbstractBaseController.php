@@ -20,6 +20,7 @@ abstract class AbstractBaseController extends AbstractActionController {
      *
      * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
      *
+     * @param $routeName string The route name for the current page for if a redirect is needed.
      * @return bool|\Zend\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
      */
     protected function checkCookie( $routeName ){
@@ -29,8 +30,9 @@ abstract class AbstractBaseController extends AbstractActionController {
 
         $cookies = $this->getRequest()->getCookie();
 
+        // If there cookies...
         if( $cookies !== false ){
-            // Check for session...
+            // Check for the session cookie...
             $cookieExists = $cookies->offsetExists( $sessionCookieName );
         }
 
@@ -58,7 +60,7 @@ abstract class AbstractBaseController extends AbstractActionController {
 
             }
 
-        }
+        } // if
 
         return true;
 

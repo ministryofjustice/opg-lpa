@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e9c21c73655cb1ea891dbfbaaf767304",
+    "hash": "468d3b35c7b35110da5e7d69839cefd5",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -274,16 +274,16 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "dd8fc33584e12179b0b97759fa4ef730782a50b2"
+                "reference": "be1186d36615ed0c2a758e5e0c58b2c206ed340c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/dd8fc33584e12179b0b97759fa4ef730782a50b2",
-                "reference": "dd8fc33584e12179b0b97759fa4ef730782a50b2",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/be1186d36615ed0c2a758e5e0c58b2c206ed340c",
+                "reference": "be1186d36615ed0c2a758e5e0c58b2c206ed340c",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "5.1.x",
+                "guzzlehttp/guzzle": "5.1.*",
                 "ministryofjustice/opg-lpa-datamodels": "dev-develop",
                 "php": ">=5.4.0"
             },
@@ -305,7 +305,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-01-14 11:28:38"
+            "time": "2015-01-16 12:03:15"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
