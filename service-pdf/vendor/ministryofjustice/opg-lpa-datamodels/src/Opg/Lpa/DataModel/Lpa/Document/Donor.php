@@ -75,7 +75,6 @@ class Donor extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\NotBlank,
             new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
             new Assert\Valid,
         ]);
