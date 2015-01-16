@@ -81,7 +81,7 @@ class Donor extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('canSign', [
-            new Assert\NotBlank,
+            new Assert\NotNull,
             new Assert\Type([ 'type' => 'bool' ]),
         ]);
 

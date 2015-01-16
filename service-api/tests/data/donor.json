@@ -1,15 +1,15 @@
 {
     "name": {
-        "title": "Mr",
-        "first": "Bob",
-        "last": "Sanders"
+        "title": "Miss",
+        "first": "Anne",
+        "last": "Joans"
     },
-    "otherNames": "Fred",
+    "otherNames": "Alice",
     "address": {
-        "address1": "Line 1",
-        "address2": "Line 2",
-        "address3": "A new line",
-        "postcode": "SW1H 9AJ"
+        "address1": "The name",
+        "address2": "The Road",
+        "address3": "Third",
+        "postcode": "N4 3JW"
     },
     "dob": {
         "date": "2010-12-17T00:00:00+0000"
@@ -17,5 +17,5 @@
     "email": {
         "address": "test@digital.justice.gov.uk"
     },
-    "canSign": true
+    "canSign": false
 }

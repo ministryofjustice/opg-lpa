@@ -178,8 +178,6 @@ return array(
     'Opg\\Lpa\\DataModel\\ValidatableInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/ValidatableInterface.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\DateTimeUTC' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/DateTimeUTC.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\DateTimeUTCValidator' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/DateTimeUTCValidator.php',
-    'Opg\\Lpa\\DataModel\\Validator\\Validator' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Validator.php',
-    'Opg\\Lpa\\DataModel\\Validator\\ValidatorException' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorException.php',
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorResponse' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorResponse.php',
     'Opg\\Lpa\\DataModel\\Validator\\ValidatorResponseInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/ValidatorResponseInterface.php',
     'Opg\\Lpa\\DataModel\\WhoAreYou\\WhoAreYou' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/WhoAreYou/WhoAreYou.php',

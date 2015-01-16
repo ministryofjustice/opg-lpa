@@ -100,12 +100,12 @@ class Lpa extends AbstractData implements CompleteInterface {
         ]);
 
         $metadata->addPropertyConstraints('whoAreYouAnswered', [
-            new Assert\NotBlank,
+            new Assert\NotNull,
             new Assert\Type([ 'type' => 'bool' ]),
         ]);
 
         $metadata->addPropertyConstraints('locked', [
-            new Assert\NotBlank,
+            new Assert\NotNull,
             new Assert\Type([ 'type' => 'bool' ]),
         ]);
 
