@@ -72,7 +72,7 @@ class Address extends AbstractData {
         $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
 
             if( empty($object->address2) && empty($object->postcode) ){
-                $context->buildViolation('address2-or-postcode-required')->addViolation();
+                $context->buildViolation('address2-or-postcode-required')->atPath('address2/postcode')->addViolation();
             }
 
         }));
