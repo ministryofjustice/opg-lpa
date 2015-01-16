@@ -210,9 +210,16 @@ class Randomizer
     
     protected function rText($count)
     {
-        $str = $this->lorem();
+        $str = str_replace("\r", "", $this->lorem());
         
-        $paragraphs = explode("\r\n\r\n", $str);
+        $paragraphs = explode("\n\n", $str);
+        
+        foreach($paragraphs as &$para) {
+            $para = str_replace("\n", ' ', $para);
+        }
+        
+        $str = implode("\n\n", $paragraphs);
+        
         do {
             $startPara = rand(0, count($paragraphs)-1);
             $start = strpos($str, $paragraphs[$startPara]);

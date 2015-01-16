@@ -7,7 +7,7 @@ date_default_timezone_set('UTC');
 
 class JsonGenerator extends Randomizer
 {
-    protected $lpa, $lpaType, $donor, $primaryAttorneys=[], $replacementAttorneys=[], 
+    protected $lpa, $lpaType, $donor, $primaryAttorneys=[], $replacementAttorneys=[], $primaryAttorneyDecisions, $replacementAttorneyDecisions,
             $certificateProvider, $peopleToNotify=[], $correspondent, $applicant, $hasTrust=null;
     
     const HW = 'health-and-welfare';
@@ -118,6 +118,7 @@ class JsonGenerator extends Randomizer
                     3 => []
             ],
             'whenReplacementStepIn' => [
+                    null => [],
                     'first' => [],
                     'last' => [],
                     'depends' => [],
@@ -171,72 +172,72 @@ class JsonGenerator extends Randomizer
     {
         $this->lpaType = $this->random(array(self::HW, self::PF));
         
-        $lpa = array();
-        $lpa['id'] = rand(1, 99999999999);
+        $this->lpa = array();
+        $this->lpa['id'] = rand(1, 99999999999);
         $updated = time()-rand(0, 864000);
-        $lpa['createdAt'] = date('c', $updated - rand(0, 864000));
-        $lpa['updatedAt'] = date('c', $updated);
-        $lpa['user'] = $this->rString(32, self::HEX_NUMBER);
-        $lpa['repeatCaseNumber'] = $this->random(array(null, null, null, $this->rInt('random', array('min'=>10000000, 'max'=>99999999))));
-        $lpa['payment'] = array (
+        $this->lpa['createdAt'] = date('c', $updated - rand(0, 864000));
+        $this->lpa['updatedAt'] = date('c', $updated);
+        $this->lpa['user'] = $this->rString(32, self::HEX_NUMBER);
+        $this->lpa['repeatCaseNumber'] = $this->random(array(null, null, null, $this->rInt('random', array('min'=>10000000, 'max'=>99999999))));
+        $this->lpa['payment'] = array (
                 "reducedFeeReceivesBenefits" => $this->random(array(true, false)),
                 "reducedFeeAwardedDamages" => $this->random(array(true, false)),
                 "reducedFeeLowIncome" => $this->random(array(true, false)),
                 "reducedFeeUniversalCredit" => $this->random(array(true, false))
         );
         
-        if($lpa['payment']['reducedFeeReceivesBenefits']) {
-            if($lpa['payment']['reducedFeeAwardedDamages']) {
-                if($lpa['payment']['reducedFeeUniversalCredit']) {
-                    $lpa['payment']['amount'] = null;
+        if($this->lpa['payment']['reducedFeeReceivesBenefits']) {
+            if($this->lpa['payment']['reducedFeeAwardedDamages']) {
+                if($this->lpa['payment']['reducedFeeUniversalCredit']) {
+                    $this->lpa['payment']['amount'] = null;
                 }
                 else {
-                    if($lpa['payment']['reducedFeeLowIncome']) {
-                        $lpa['payment']['amount'] = 55;
+                    if($this->lpa['payment']['reducedFeeLowIncome']) {
+                        $this->lpa['payment']['amount'] = 55;
                     }
                     else {
-                        $lpa['payment']['amount'] = 110;
+                        $this->lpa['payment']['amount'] = 110;
                     }
                 }
             }
             else {
-                $lpa['payment']['amount'] = 0;
+                $this->lpa['payment']['amount'] = 0;
             }
         }
         else {
-            if($lpa['payment']['reducedFeeUniversalCredit']) {
-                $lpa['payment']['amount'] = null;
+            if($this->lpa['payment']['reducedFeeUniversalCredit']) {
+                $this->lpa['payment']['amount'] = null;
             }
             else {
-                if($lpa['payment']['reducedFeeLowIncome']) {
-                    $lpa['payment']['amount'] = 55;
+                if($this->lpa['payment']['reducedFeeLowIncome']) {
+                    $this->lpa['payment']['amount'] = 55;
                 }
                 else {
-                    $lpa['payment']['amount'] = 110;
+                    $this->lpa['payment']['amount'] = 110;
                 }
             }
         }
         
-        if($lpa['repeatCaseNumber'] && $lpa['repeatCaseNumber'] && $lpa['payment']['amount']) {
-            $lpa['payment']['amount'] = $lpa['payment']['amount']/2;
+        if($this->lpa['repeatCaseNumber'] && $this->lpa['repeatCaseNumber'] && $this->lpa['payment']['amount']) {
+            $this->lpa['payment']['amount'] = $this->lpa['payment']['amount']/2;
         }
         
-        if($lpa['payment']['amount'] > 0) {
-            $lpa['payment']['method'] = $this->random(array('card', 'cheque'));
-            if($lpa['payment']['method'] == 'card') {
-                $lpa['payment']["phone"] = array("number" => $this->rPhone());
-                $lpa['payment']['reference'] = $this->rString('32', self::ALPHA_NUMBER);
-                $lpa['payment']['date'] = date('c', $updated);
+        if($this->lpa['payment']['amount'] > 0) {
+            $this->lpa['payment']['method'] = $this->random(array('card', 'cheque'));
+            if($this->lpa['payment']['method'] == 'card') {
+                $this->lpa['payment']["phone"] = array("number" => $this->rPhone());
+                $this->lpa['payment']['reference'] = $this->rString('32', self::ALPHA_NUMBER);
+                $this->lpa['payment']['date'] = date('c', $updated);
             }
         }
         else {
-            $lpa['payment']['method'] = null;
+            $this->lpa['payment']['method'] = null;
         }
         
-        $lpa['whoAreYouAnswered'] = true;
-        $lpa['locked'] = true;
-        $lpa['seed'] = null;
-        $lpa['document'] = array(
+        $this->lpa['whoAreYouAnswered'] = true;
+        $this->lpa['locked'] = true;
+        $this->lpa['seed'] = null;
+        $this->lpa['document'] = array(
                 "type" => $this->lpaType,
                 "donor" => $this->donor(),
                 "primaryAttorneys" => $this->primaryAttorneys(),
@@ -250,8 +251,6 @@ class JsonGenerator extends Randomizer
                 "whoIsRegistering" => $this->applicant(),
                 "correspondent" => $this->correspondent(),
         );
-        
-        $this->lpa = $lpa;
         
         // update test coverage
         $this->updateCoverage();
@@ -379,11 +378,14 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rText(rand(300, 1512)),
-                    $this->rText(rand(1513, 2856)),
-                    $this->rText(rand(2857, 4284)),
+                    $this->rText(rand(300, 1764)),
+                    $this->rText(rand(1765, 3528)),
+                    $this->rText(rand(3529, 5292)),
             ));
         }
+        
+        $this->primaryAttorneyDecisions = $decisions;
+        
         return $decisions;
     }
     
@@ -391,34 +393,50 @@ class JsonGenerator extends Randomizer
     {
         if(empty($this->replacementAttorneys)) return null;
         
+        $hasMultiPrimaryAttorneys = (count($this->primaryAttorneys) > 1);
+        $hasMultiReplacementAttorneys = (count($this->replacementAttorneys) > 1);
+        
         $decisions = array();
-        if(count($this->replacementAttorneys) > 1) {
+        if($hasMultiReplacementAttorneys) {
             $decisions["how"] = $this->random(array("jointly", "jointly-attorney-severally", "depends"));
         }
         else {
             $decisions["how"] = "single-attorney";
         }
         
-        $decisions["when"] = $this->random(array('first', 'last', 'depends'));
+        $decisions["when"] = null;
+        if($hasMultiPrimaryAttorneys) {
+            $primaryDecision = $this->primaryAttorneyDecisions['how'];
+            if($primaryDecision == 'jointly-attorney-severally') {
+                $decisions["when"] = $this->random(array('first', 'last', 'depends'));
+                if($hasMultiReplacementAttorneys) {
+                    if($decisions["when"] != 'last') {
+                        $decisions["how"] = 'jointly-attorney-severally';
+                    }
+                }
+            }
+        }
         
         $decisions["howDetails"] = null;
         $decisions["whenDetails"] = null;
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rText(rand(300, 1512)),
-                    $this->rText(rand(1513, 2856)),
-                    $this->rText(rand(2857, 4284)),
+                    $this->rText(rand(300, 1764)),
+                    $this->rText(rand(1765, 3528)),
+                    $this->rText(rand(3529, 5292)),
             ));
         }
         
         if($decisions['when'] == 'depends') {
             $decisions['whenDetails'] = $this->random(array(
-                    $this->rText(rand(300, 1512)),
-                    $this->rText(rand(1513, 2856)),
-                    $this->rText(rand(2857, 4284)),
+                    $this->rText(rand(300, 1764)),
+                    $this->rText(rand(1765, 3528)),
+                    $this->rText(rand(3529, 5292)),
             ));
         }
+        
+        $this->replacementAttorneyDecisions = $decisions;
         
         return $decisions;
     }
@@ -427,8 +445,8 @@ class JsonGenerator extends Randomizer
     {
         return $this->random(array(
                 $this->rText(rand(300, 924)),
-                $this->rText(rand(925, 2352)),
-                $this->rText(rand(2353, 3780)),
+                $this->rText(rand(925, 2706)),
+                $this->rText(rand(2707, 4470)),
         ));
     }
     
@@ -436,8 +454,8 @@ class JsonGenerator extends Randomizer
     {
         return $this->random(array(
                 $this->rText(rand(300, 924)),
-                $this->rText(rand(925, 2352)),
-                $this->rText(rand(2353, 3780)),
+                $this->rText(rand(925, 2706)),
+                $this->rText(rand(2707, 4470)),
         ));
     }
     
@@ -474,6 +492,7 @@ class JsonGenerator extends Randomizer
             }
             
             $attorney = array(
+                    "id"        => $this->rInt('seq', array('name'=>'attorney_id', 'start'=>0)),
                     "address"   => $this->rAddr(),
                     "email"     => $this->random(array(null, array('address' => $this->rEmail()))),
                     'type'      => $type
@@ -515,6 +534,7 @@ class JsonGenerator extends Randomizer
             }
             
             $attorney = array(
+                    "id"        => $this->rInt('seq', array('name'=>'replacement_attorney_id', 'start'=>0)),
                     "address"   => $this->rAddr(),
                     "email"     => $this->random(array(null, array('address' => $this->rEmail()))),
                     'type'      => $type
@@ -546,6 +566,7 @@ class JsonGenerator extends Randomizer
         
         for($i=0; $i<$numNotified; $i++) {
             $this->peopleToNotify[] = array(
+                    "id"        => $this->rInt('seq', array('name'=>'notified_id', 'start'=>0)),
                     "name"      => array(
                             "title" => $this->rTitle(),
                             "first" => $this->rForename(),
@@ -653,7 +674,7 @@ class JsonGenerator extends Randomizer
         if(strlen($this->lpa['document']['instruction']) <= 11*84) {
             static::$coverage['numOfInstructionPages'][1][] = $this->getFileName();
         }
-        elseif((strlen($this->lpa['document']['instruction']) > 11*84) && ( strlen($this->lpa['document']['instruction']) <= (11*84 + 17*84) )) {
+        elseif((strlen($this->lpa['document']['instruction']) > 11*84) && ( strlen($this->lpa['document']['instruction']) <= (11*84 + 21*84) )) {
             static::$coverage['numOfInstructionPages'][2][] = $this->getFileName();
         }
         else {
@@ -663,7 +684,7 @@ class JsonGenerator extends Randomizer
         if(strlen($this->lpa['document']['preference']) <= 11*84) {
             static::$coverage['numOfPreferencePages'][1][] = $this->getFileName();
         }
-        elseif((strlen($this->lpa['document']['preference']) > 11*84) && ( strlen($this->lpa['document']['preference']) <= (11*84 + 17*84) )) {
+        elseif((strlen($this->lpa['document']['preference']) > 11*84) && ( strlen($this->lpa['document']['preference']) <= (11*84 + 21*84) )) {
             static::$coverage['numOfPreferencePages'][2][] = $this->getFileName();
         }
         else {
@@ -673,10 +694,10 @@ class JsonGenerator extends Randomizer
         static::$coverage['howPrimaryAttorneyAct'][$this->lpa['document']['primaryAttorneyDecisions']['how']][] = $this->getFileName();
         
         if($this->lpa['document']['primaryAttorneyDecisions']['how'] == 'depends') {
-            if(strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) <= 17*84) {
+            if(strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) <= 21*84) {
                 static::$coverage['numOfAttorneyDecisionPages'][1][] = $this->getFileName();
             }
-            elseif((strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) > 17*84) && (strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) <= 2*17*84)) {
+            elseif((strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) > 21*84) && (strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) <= 2*21*84)) {
                 static::$coverage['numOfAttorneyDecisionPages'][2][] = $this->getFileName();
             }
             else {
@@ -694,10 +715,10 @@ class JsonGenerator extends Randomizer
         static::$coverage['howReplacementAttorneyAct'][$this->lpa['document']['replacementAttorneyDecisions']['how']][] = $this->getFileName();
         
         if($this->lpa['document']['replacementAttorneyDecisions']['how'] == 'depends') {
-            if(strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) <= 17*84) {
+            if(strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) <= 21*84) {
                 static::$coverage['numOfReplacementAttorneyDecisionPages'][1][] = $this->getFileName();
             }
-            elseif((strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) > 17*84) && (strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) < 2*17*84)) {
+            elseif((strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) > 21*84) && (strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) < 2*21*84)) {
                 static::$coverage['numOfReplacementAttorneyDecisionPages'][2][] = $this->getFileName();
             }
             else {
@@ -708,10 +729,10 @@ class JsonGenerator extends Randomizer
         static::$coverage['whenReplacementStepIn'][$this->lpa['document']['replacementAttorneyDecisions']['when']][] = $this->getFileName();
         
         if($this->lpa['document']['replacementAttorneyDecisions']['when'] == 'depends') {
-            if(strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) <= 17*84) {
+            if(strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) <= 21*84) {
                 static::$coverage['numOfReplacementStepInDecisionPages'][1][] = $this->getFileName();
             }
-            elseif((strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) > 17*84) && (strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) < 2*17*84)) {
+            elseif((strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) > 21*84) && (strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) < 2*21*84)) {
                 static::$coverage['numOfReplacementStepInDecisionPages'][2][] = $this->getFileName();
             }
             else {
