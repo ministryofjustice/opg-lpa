@@ -2,7 +2,6 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Formatter;
 
 class Lp1h extends Lp1
 {
@@ -12,13 +11,13 @@ class Lp1h extends Lp1
         parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LP1H-' . microtime(true) . '.pdf';
+        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1H');
         
-        $this->pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LP1H.pdf');
+        $this->pdf = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1H.pdf');
+        
     }
     
-    public function dataMapping()
+    protected function dataMapping()
     {
         parent::dataMapping();
         
@@ -62,7 +61,7 @@ class Lp1h extends Lp1
         return $this->flattenLpa;
     } // function dataMapping()
     
-    public function generateAdditionalPages()
+    protected function generateAdditionalPages()
     {
         parent::generateAdditionalPages();
         

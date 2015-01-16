@@ -2,8 +2,6 @@
 
 namespace Opg\Lpa\Pdf\Service;
 
-use RuntimeException;
-
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\Forms\Lp1f;
@@ -23,7 +21,7 @@ class Generator implements GeneratorInterface {
     protected $formType;
     protected $lpa;
     protected $response;
-
+    
     public function __construct( $formType, Lpa $lpa, ResponseInterface $response ){
 
         # CHECK $TYPE IS VALID. THROW AN EXCEPTION IF NOT.
@@ -32,6 +30,10 @@ class Generator implements GeneratorInterface {
         $this->formType = $formType;
         $this->lpa = $lpa;
         $this->response = $response;
+        
+        // copy pdf template files to ram if they haven't.
+        $this->copyPdfSourceToRam();
+        
     }
 
     /**
@@ -44,12 +46,12 @@ class Generator implements GeneratorInterface {
 
         if( $this->lpa->validate()->hasErrors() ){
             // The LPA is invalid.
-            throw new RuntimeException('LPA failed validation');
+            throw new \RuntimeException('LPA failed validation');
         }
 
         if( $this->lpa->isComplete() !== true ){
             // The LPA is not complete.
-            throw new RuntimeException('LPA is not complete');
+            throw new \RuntimeException('LPA is not complete');
         }
         
         //---
@@ -100,5 +102,24 @@ class Generator implements GeneratorInterface {
         return true;
 
     } // function
+    
+    /**
+     * Copy LPA PDF template files into ram disk if they are not found on the ram disk.
+     */
+    private function copyPdfSourceToRam()
+    {
+        // check if 
+        if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'])) {
+            \mkdir($this->config['service']['assets']['template_path_on_ram_disk'], 0777, true);
+        }
+        
+        foreach(glob($this->config['service']['assets']['source_template_path'].'/*.pdf') as $pdf_source) {
+            $pathInfo = pathinfo($pdf_source);
+            
+            if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'])) {
+                copy($pdf_source, $this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename']);
+            }
+        }
+    }
 
 } // class

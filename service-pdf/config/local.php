@@ -6,8 +6,11 @@ return array(
 
         'assets'=>array(
 
-            'path' => __DIR__.'/../assets/',
-
+            'source_template_path' => __DIR__.'/../assets/v2',
+            
+            'template_path_on_ram_disk' => '/tmp/pdf_ramdisk/assets/v2',
+            
+            'intermediate_file_path' => '/tmp/pdf_ramdisk'
         ),
 
     ),

@@ -4,12 +4,13 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\DataModel\Lpa\Formatter;
 
 abstract class AbstractForm
 {
     const CHECK_BOX_ON = 'On';
     
-    const STROKE_LINE_WIDTH = 10;
+    const CROSS_LINE_WIDTH = 10;
     
     const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'cs-2-is-decisions';
     const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'cs-2-is-how-replacement-attorneys-step-in';
@@ -35,15 +36,21 @@ abstract class AbstractForm
     protected $generatedPdfFilePath = null;
     
     /**
-     * Intermediate pdf files - needed for LP1F/H
+     * Storage path for intermediate pdf files - needed for LP1F/H and LP3.
      * @var array
      */
-    protected $intermediateFilePaths = array();
+    protected $interFileStack = array();
+    
+    /**
+     * Base path for intermediate files. It's a ram disk folder.
+     * @var string
+     */
+    protected $intermediateFileBasePath;
     
     /**
      * @var string
      */
-    protected $basePdfTemplatePath;
+    protected $pdfTemplatePath;
     
     protected $drawingTargets = array();
     
@@ -52,9 +59,9 @@ abstract class AbstractForm
      * by - bottom y
      * tx - top x
      * ty - top y
-     * @var array - stroke corrrdinates
+     * @var array - cross lines corrrdinates
      */
-    protected $strokeParams = array(
+    protected $crossLineParams = array(
         'primaryAttorney-1'      => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>545),
         'primaryAttorney-2'      => array('bx'=>45,  'by'=>359, 'tx'=>283, 'ty'=>662),
         'primaryAttorney-3'      => array('bx'=>313, 'by'=>359, 'tx'=>550, 'ty'=>662),
@@ -91,7 +98,8 @@ abstract class AbstractForm
         $this->lpa = $lpa;
         $this->flattenLpa = $lpa->flatten();
         $config = Config::getInstance();
-        $this->basePdfTemplatePath = $config['service']['assets']['path'].'/v2';
+        $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
+        $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
     }
     
     /**
@@ -125,7 +133,7 @@ abstract class AbstractForm
     protected function countIntermediateFiles()
     {
         $count = 0;
-        foreach($this->intermediateFilePaths as $type=>$paths) {
+        foreach($this->interFileStack as $type=>$paths) {
             if(is_array($paths)) {
                 $count += count($paths);
             }
@@ -144,23 +152,23 @@ abstract class AbstractForm
      */
     protected function getTmpFilePath($fileType)
     {
-        $filePath = '/tmp/pdf-'.$fileType.'-'.$this->lpa->id.'-'.microtime(true).'.pdf';
+        $filePath = $this->intermediateFileBasePath.'/'.$fileType.'-'.str_replace(array(' ','.'), '-', Formatter::id($this->lpa->id).'-'.microtime(true)).'.pdf';
         return $filePath;
     } // function getTmpFilePath($fileType)
     
     /**
-     * Register a temp file in self::$intermediateFilePaths
+     * Register a temp file in self::$interFileStack
      * @param string $fileType
      * @param string $path
      */
     public function registerTempFile($fileType)
     {
         $path = $this->getTmpFilePath($fileType);
-        if(!isset($this->intermediateFilePaths[$fileType])) {
-            $this->intermediateFilePaths[$fileType] = array($path);
+        if(!isset($this->interFileStack[$fileType])) {
+            $this->interFileStack[$fileType] = array($path);
         }
         else {
-            $this->intermediateFilePaths[$fileType][] = $path;
+            $this->interFileStack[$fileType][] = $path;
         }
         
         return $path;
@@ -169,27 +177,27 @@ abstract class AbstractForm
     /**
      * Draw cross lines
      * @param string $filePath
-     * @param array $params[pageNo=>strokeParamName]
+     * @param array $params[pageNo=>crossLineParamName]
      */
-    protected function stroke($filePath, $params)
+    protected function drawCrossLines($filePath, $params)
     {
-        // draw strokes
+        // draw cross lines
         $pdf = PdfProcessor::load($filePath);
         foreach($params as $pageNo => $blockNames) {
-            $page = $pdf->pages[$pageNo]->setLineWidth(self::STROKE_LINE_WIDTH);
+            $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
             foreach($blockNames as $blockName) {
                 $page->drawLine(
-                        $this->strokeParams[$blockName]['bx'],
-                        $this->strokeParams[$blockName]['by'],
-                        $this->strokeParams[$blockName]['tx'],
-                        $this->strokeParams[$blockName]['ty']
+                        $this->crossLineParams[$blockName]['bx'],
+                        $this->crossLineParams[$blockName]['by'],
+                        $this->crossLineParams[$blockName]['tx'],
+                        $this->crossLineParams[$blockName]['ty']
                 );
             }
         } // foreach
     
         $pdf->save($filePath);
     
-    } // function stroke()
+    } // function drawCrossLines()
     
     /**
      * Convert all new lines with spaces to fill out to the end of each line
@@ -225,11 +233,11 @@ abstract class AbstractForm
         if(empty($paths)) return;
         
         foreach($paths as $type=>$path) {
-            if(isset($this->intermediateFilePaths[$type])) {
-                $this->intermediateFilePaths[$type] = array_merge($this->intermediateFilePaths[$type], $path);
+            if(isset($this->interFileStack[$type])) {
+                $this->interFileStack[$type] = array_merge($this->interFileStack[$type], $path);
             }
             else {
-                $this->intermediateFilePaths[$type] = $path;
+                $this->interFileStack[$type] = $path;
             }
         }
     } // function mergerIntermediateFilePaths()
@@ -298,7 +306,7 @@ abstract class AbstractForm
         }
         
         // remove all generated intermediate pdf files
-        foreach($this->intermediateFilePaths as $type => $paths) {
+        foreach($this->interFileStack as $type => $paths) {
             if(is_string($paths)) {
                 if(\file_exists($paths)) {
                     unlink($paths);

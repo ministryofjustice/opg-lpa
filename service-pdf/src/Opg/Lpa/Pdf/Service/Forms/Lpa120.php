@@ -3,7 +3,6 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
@@ -17,19 +16,25 @@ class Lpa120 extends AbstractForm
         parent::__construct($lpa);
         
         // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = '/tmp/pdf-' . Formatter::id($this->lpa->id) .
-                 '-LPA120-' . microtime(true) . '.pdf';
+        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
         
-        $this->basePdfTemplate = $this->basePdfTemplatePath."/LPA120.pdf";
+        $this->basePdfTemplate = $this->pdfTemplatePath."/LPA120.pdf";
     }
     
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
      * 
-     * @return Form object
+     * @return Form object | null
      */
     public function generate()
     {
+        // check eligibility for exemption or remission.
+        if(!$this->lpa->payment->reducedFeeLowIncome && 
+            !($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) &&
+            !$this->lpa->payment->reducedFeeUniversalCredit) {
+                throw new \RuntimeException("LPA120 is not available for this LPA.");
+            }
+        
         $pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplate);
         
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');

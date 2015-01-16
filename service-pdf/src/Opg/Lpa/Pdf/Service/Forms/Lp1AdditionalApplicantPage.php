@@ -27,7 +27,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicant');
             
-            $additionalApplicant = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LP1_AdditionalApplicant.pdf");
+            $additionalApplicant = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP1_AdditionalApplicant.pdf");
             $formData = array();
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
                 $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
@@ -57,16 +57,16 @@ class Lp1AdditionalApplicantPage extends AbstractForm
         
         } // endfor
         
-        // draw strokes if there's any blank slot
+        // draw cross lines if there's any blank slot
         if($totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
-            $strokeParams = array(array());
+            $crossLineParams = array(array());
             for($i=Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i>=1; $i--) {
-                $strokeParams[0][] = 'additional-applicant-'.(Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i);
+                $crossLineParams[0][] = 'additional-applicant-'.(Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i);
             }
-            $this->stroke($filePath, $strokeParams);
+            $this->drawCrossLines($filePath, $crossLineParams);
         }
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
     } // function generate()
     
     public function __destruct()

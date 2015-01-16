@@ -36,9 +36,7 @@ abstract class Lp1 extends AbstractForm
     public function generate()
     {
         $this->generateStandardForm();
-        
         $this->generateAdditionalPages();
-        
         $this->mergePdfs();
         
         return $this;
@@ -60,9 +58,9 @@ abstract class Lp1 extends AbstractForm
             ->flatten()
             ->saveAs($filePath);
         
-        // draw strokes if there's any blank slot
+        // draw cross lines if there's any blank slot
         if(!empty($this->drawingTargets)) {
-            $this->stroke($filePath, $this->drawingTargets);
+            $this->drawCrossLines($filePath, $this->drawingTargets);
         }
         
     } // function generateDefaultPdf()
@@ -118,7 +116,7 @@ abstract class Lp1 extends AbstractForm
             
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content))->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
-            } // endif
+        } // endif
         
         // generate a CS2 page if preference exceed available space on standard form.
         if(!$this->canFitIntoTextBox($this->lpa->document->preference)) {
@@ -404,26 +402,26 @@ abstract class Lp1 extends AbstractForm
     protected function mergePdfs()
     {
         if($this->countIntermediateFiles() == 1) {
-            $this->generatedPdfFilePath = $this->intermediateFilePaths['LP1'][0];
+            $this->generatedPdfFilePath = $this->interFileStack['LP1'][0];
             return;
         }
         
         $pdf = PdfProcessor::getPdftkInstance();
         $intPdfHandle = 'A';
-        if(isset($this->intermediateFilePaths['LP1'])) {
+        if(isset($this->interFileStack['LP1'])) {
             $lastInsertion = 0;
-            $pdf->addFile($this->intermediateFilePaths['LP1'], $intPdfHandle);
+            $pdf->addFile($this->interFileStack['LP1'], $intPdfHandle);
         }
         else {
             throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
         }
         
         // Section 11 - additional attorneys signature
-        if(isset($this->intermediateFilePaths['AdditionalAttorneySignature'])) {
+        if(isset($this->interFileStack['AdditionalAttorneySignature'])) {
             $insertAt = 15;
             $pdf->cat(++$lastInsertion, $insertAt, 'A');
             
-            foreach($this->intermediateFilePaths['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
+            foreach($this->interFileStack['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
                 $pdf->addFile($additionalAttorneySignature, ++$intPdfHandle);
                 $pdf->cat(1, null, $intPdfHandle);
             }
@@ -432,11 +430,11 @@ abstract class Lp1 extends AbstractForm
         }
         
         // Section 12 additional applicants
-        if(isset($this->intermediateFilePaths['AdditionalApplicant'])) {
+        if(isset($this->interFileStack['AdditionalApplicant'])) {
             $insertAt = 17;
             $pdf->cat(++$lastInsertion, $insertAt, 'A');
             
-            foreach($this->intermediateFilePaths['AdditionalApplicant'] as $additionalApplicant) {
+            foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
                 $pdf->addFile($additionalApplicant, ++$intPdfHandle);
                 $pdf->cat(1, null, $intPdfHandle);
             }
@@ -461,7 +459,7 @@ abstract class Lp1 extends AbstractForm
             $pdf->cat(++$lastInsertion, $insertAt, 'A');
             
             for($i=0; $i<$totalAdditionalPages; $i++) {
-                $pdf->addFile($this->basePdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
                 $pdf->cat(1, null, $intPdfHandle);
             }
             
@@ -469,12 +467,12 @@ abstract class Lp1 extends AbstractForm
         }
         
         // Continuation Sheet 1
-        if(isset($this->intermediateFilePaths['CS1'])) {
+        if(isset($this->interFileStack['CS1'])) {
             $insertAt = 20;
             if($lastInsertion != $insertAt) {
                 $pdf->cat(++$lastInsertion, $insertAt, 'A');
             }
-            foreach ($this->intermediateFilePaths['CS1'] as $cs1) {
+            foreach ($this->interFileStack['CS1'] as $cs1) {
                 $pdf->addFile($cs1, ++$intPdfHandle);
                 $pdf->cat(1, null, $intPdfHandle);
             }
@@ -483,12 +481,12 @@ abstract class Lp1 extends AbstractForm
         }
         
         // Continuation Sheet 2
-        if(isset($this->intermediateFilePaths['CS2'])) {
+        if(isset($this->interFileStack['CS2'])) {
             $insertAt = 20;
             if($lastInsertion != $insertAt) {
                 $pdf->cat(++$lastInsertion, $insertAt, 'A');
             }
-            foreach ($this->intermediateFilePaths['CS2'] as $cs2) {
+            foreach ($this->interFileStack['CS2'] as $cs2) {
                 $pdf->addFile($cs2, ++$intPdfHandle);
                 $pdf->cat(1, null, $intPdfHandle);
             }
@@ -497,24 +495,24 @@ abstract class Lp1 extends AbstractForm
         }
         
         // Continuation Sheet 3
-        if(isset($this->intermediateFilePaths['CS3'])) {
+        if(isset($this->interFileStack['CS3'])) {
             $insertAt = 20;
             if($lastInsertion != $insertAt) {
                 $pdf->cat(++$lastInsertion, $insertAt, 'A');
             }
-            $pdf->addFile($this->intermediateFilePaths['CS3'], ++$intPdfHandle);
+            $pdf->addFile($this->interFileStack['CS3'], ++$intPdfHandle);
             $pdf->cat(1, null, $intPdfHandle);
             
             $lastInsertion = $insertAt;
         }
         
         // Continuation Sheet 4
-        if(isset($this->intermediateFilePaths['CS4'])) {
+        if(isset($this->interFileStack['CS4'])) {
             $insertAt = 20;
             if($lastInsertion != $insertAt) {
                 $pdf->cat(++$lastInsertion, $insertAt, 'A');
             }
-            $pdf->addFile($this->intermediateFilePaths['CS4'], ++$intPdfHandle);
+            $pdf->addFile($this->interFileStack['CS4'], ++$intPdfHandle);
             $pdf->cat(1, null, $intPdfHandle);
             
             $lastInsertion = $insertAt;

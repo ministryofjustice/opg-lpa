@@ -58,7 +58,7 @@ class Cs1 extends AbstractForm
             
             $filePath = $this->registerTempFile('CS1');
             
-            $cs1 = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
             
             $formData = array();
             for($j=0; $j<$maxNumPersonOnCS1; $j++) {
@@ -105,12 +105,12 @@ class Cs1 extends AbstractForm
         } // loop each CS page
         
         
-        // draw strokes if there's any blank slot in the last CS1 pdf
+        // draw cross lines if there's any blank slot in the last CS1 pdf
         if($totalAdditionalPersonsOfSameRole % self::$SETTINGS['max-slots-on-cs1-form']) {
-            $this->stroke($filePath, array(array('cs1')));
+            $this->drawCrossLines($filePath, array(array('cs1')));
         }
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
     } // function generate()
     
     public function __destruct()

@@ -17,7 +17,7 @@ class Cs4 extends AbstractForm
     {
         $filePath = $this->registerTempFile('CS4');
         
-        $cs2 = PdfProcessor::getPdftkInstance($this->basePdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
+        $cs2 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
         
         $cs2->fillForm(
             array(
@@ -25,7 +25,7 @@ class Cs4 extends AbstractForm
             ))
         ->saveAs($filePath);
         
-        return $this->intermediateFilePaths;
+        return $this->interFileStack;
     } // function generate()
     
     public function __destruct()
