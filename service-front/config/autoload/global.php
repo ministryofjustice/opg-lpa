@@ -39,7 +39,7 @@ return array(
         ],
 
         'encryption' => [
-            'enabled' => false,
+            'enabled' => true,
             // Key MUST be a 32 character string
             'key' => 'insecure-encryption-session-key!'
         ],
