@@ -8,7 +8,7 @@ class Cs2 extends AbstractForm
     private $contentType;
     private $content;
     
-    const BOX_NO_OF_ROWS_CS2 = 17;
+    const BOX_NO_OF_ROWS_CS2 = 21;
     
     /**
      * @param Lpa $lpa

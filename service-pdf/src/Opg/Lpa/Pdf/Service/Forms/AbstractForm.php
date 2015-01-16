@@ -208,13 +208,13 @@ abstract class AbstractForm
     protected function flattenTextContent($content)
     {
         // strip space & new lines chars at both ends.
-        $content = trim($content);
+        $content = trim(str_replace("\r", '', $content));
     
         $paragraphs = explode("\n", $content);
         foreach($paragraphs as &$paragraph) {
             $paragraph = trim($paragraph);
             if(strlen($paragraph) == 0) {
-                $paragraph = str_repeat(" ", Lp1::BOX_CHARS_PER_ROW);
+                $paragraph = str_repeat(" ", Lp1::BOX_CHARS_PER_ROW-1);
             }
             else {
                 // calculate how many space chars to be appended to replace the new line in this paragraph.
@@ -225,7 +225,7 @@ abstract class AbstractForm
             }
         }
     
-        return implode("", $paragraphs);
+        return implode("\n", $paragraphs);
     } // function flattenBoxContent($content)
     
     protected function mergerIntermediateFilePaths($paths)
@@ -253,14 +253,14 @@ abstract class AbstractForm
     protected function getContentForBox($pageNo, $content, $contentType)
     {
         $flattenContent = $this->flattenTextContent($content);
-    
+        
         // return content for preference or instruction in section 7.
         if(($contentType==self::CONTENT_TYPE_INSTRUCTIONS) || ($contentType==self::CONTENT_TYPE_PREFERENCES)) {
             if($pageNo == 0) {
                 return "\n".substr($flattenContent, 0, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS);
             }
             else {
-                $chunks = str_split(substr($flattenContent, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS), Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2+1);
+                $chunks = str_split(substr($flattenContent, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS), Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2);
                 if(isset($chunks[$pageNo-1])) {
                     return "\n".$chunks[$pageNo-1];
                 }
@@ -270,21 +270,13 @@ abstract class AbstractForm
             }
         }
         else {
-            $chunks = str_split($flattenContent, Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2+1);
+            $chunks = str_split($flattenContent, Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2);
             if(isset($chunks[$pageNo])) {
                 return "\n".$chunks[$pageNo];
             }
             else {
                 return null;
             }
-        }
-    
-        $chunks = str_split(substr($flattenContent, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS), Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2+1);
-        if(isset($chunks[$pageNo-1])) {
-            return "\n".$chunks[$pageNo-1];
-        }
-        else {
-            return null;
         }
     } // function getContentForBox()
     
@@ -321,6 +313,17 @@ abstract class AbstractForm
             }
         }
         
+    }
+    
+    public function print_hex($text)
+    {
+        $chunks = str_split($text, 21);
+        foreach($chunks as $str) {
+            for ($i = 0; $i < strlen($str); $i++) {
+                echo '0x'.dechex(ord($str[$i])).' ';
+            }
+            echo "\t\t", $str.PHP_EOL;
+        }
     }
     
     /**
