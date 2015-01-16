@@ -3,8 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 
 use Opg\Lpa\DataModel\AbstractData;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Represents an email address.
@@ -19,21 +19,17 @@ class EmailAddress extends AbstractData {
      */
     protected $address;
 
-    public function __construct( $data = null ){
+    //------------------------------------------------
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        $this->validators['address'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Email,
-            ]);
-        };
+        // As there is only 1 property, include NotBlank as there is no point this object existing without it.
 
-        //---
+        $metadata->addPropertyConstraints('address', [
+            new Assert\NotBlank,
+            new Assert\Email([ 'strict' => true ])
+        ]);
 
-        parent::__construct( $data );
-
-    } // function
+    }
 
 } // class

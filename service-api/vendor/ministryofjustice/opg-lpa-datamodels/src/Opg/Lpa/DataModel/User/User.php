@@ -4,8 +4,11 @@ namespace Opg\Lpa\DataModel\User;
 use DateTime;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
 
 /**
  * Represents a user of the LPA platform.
@@ -51,94 +54,77 @@ class User extends AbstractData {
 
     //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Type mappers
+        $metadata->addPropertyConstraints('id', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'xdigit' ]),
+            new Assert\Length([ 'min' => 32, 'max' => 32 ]),
+        ]);
 
-        $this->typeMap['updatedAt'] = $this->typeMap['createdAt'] = function($v){
-            return ($v instanceof DateTime) ? $v : new DateTime( $v );
-        };
+        $metadata->addPropertyConstraints('createdAt', [
+            new Assert\NotBlank,
+            new DateTimeUTC,
+        ]);
 
-        $this->typeMap['name'] = function($v){
-            return ($v instanceof Name || is_null($v)) ? $v : new Name( $v );
-        };
+        $metadata->addPropertyConstraints('updatedAt', [
+            new Assert\NotBlank,
+            new DateTimeUTC,
+        ]);
 
-        $this->typeMap['address'] = function($v){
-            return ($v instanceof Address || is_null($v)) ? $v : new Address( $v );
-        };
+        $metadata->addPropertyConstraints('name', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\Name' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['dob'] = function($v){
-            return ($v instanceof Dob || is_null($v)) ? $v : new Dob( $v );
-        };
+        $metadata->addPropertyConstraints('address', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\Address' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['email'] = function($v){
-            return ($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress( $v );
-        };
+        $metadata->addPropertyConstraints('dob', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\Dob' ]),
+            new Assert\Valid,
+        ]);
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
-
-        $this->validators['id'] = function(){
-            return (new Validator)->addRules([
-                new Rules\NotEmpty,
-                new Rules\Xdigit,
-                new Rules\Length( 32, 32, true ),
-            ]);
-        };
-
-        $this->validators['createdAt'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'DateTime' ),
-                new Rules\Call(function($input){
-                    return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
-                }),
-            ]);
-        };
-
-        $this->validators['updatedAt'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'DateTime' ),
-                new Rules\Call(function($input){
-                    return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
-                }),
-            ]);
-        };
-
-        $this->validators['name'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\User\Name' ),
-            ]);
-        };
-
-        $this->validators['address'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\User\Address' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['dob'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\User\Dob' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['email'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\User\EmailAddress' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('email', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\EmailAddress' ]),
+            new Assert\Valid,
+        ]);
 
     } // function
 
-    //--------------------------------------------------------------------
+    //------------------------------------------------
+
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
+
+        switch( $property ){
+            case 'updatedAt':
+            case 'createdAt':
+                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
+            case 'name':
+                return ($v instanceof Name || is_null($v)) ? $v : new Name( $v );
+            case 'address':
+                return ($v instanceof Address || is_null($v)) ? $v : new Address( $v );
+            case 'dob':
+                return ($v instanceof Dob || is_null($v)) ? $v : new Dob( $v );
+            case 'email':
+                return ($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress( $v );
+        }
+
+        // else...
+        return parent::map( $property, $v );
+
+    } // function
+
+    //------------------------------------------------
 
     /**
      * Returns $this as an array suitable for inserting into MongoDB.
