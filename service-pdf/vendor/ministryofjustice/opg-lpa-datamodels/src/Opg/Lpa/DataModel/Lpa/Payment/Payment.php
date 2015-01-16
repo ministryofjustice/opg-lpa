@@ -32,7 +32,10 @@ class Payment extends AbstractData {
     protected $phone;
 
     /**
-     * @var int|float The amount that has or should be charged.
+     * null = The amount it undecided.
+     * 0 = The donor does not need to pay.
+     *
+     * @var null|float The amount that has or should be charged.
      */
     protected $amount;
 
@@ -81,7 +84,6 @@ class Payment extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('amount', [
-            new Assert\NotBlank,
             new Assert\Type([ 'type' => 'float' ]),
             new Assert\Range([ 'min' => 0 ]),
         ]);
