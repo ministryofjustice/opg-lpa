@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
+        "php": ">=5.5.9",
         "guzzlehttp/guzzle": "5.1.x",
         "zendframework/zendframework": "2.3.*",
         "ministryofjustice/opg-lpa-api-client": "dev-develop",

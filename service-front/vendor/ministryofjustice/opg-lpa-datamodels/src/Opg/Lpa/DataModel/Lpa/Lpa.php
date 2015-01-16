@@ -1,15 +1,14 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
-use DateTime;
-
 use Opg\Lpa\DataModel\AbstractData;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator; // Extended instance of Respect\Validation\Validator
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
 
 /**
  * Represents a full LPA document, plus associated metadata.
@@ -25,12 +24,12 @@ class Lpa extends AbstractData implements CompleteInterface {
     protected $id;
 
     /**
-     * @var DateTime the LPA was created.
+     * @var \DateTime the LPA was created.
      */
     protected $createdAt;
 
     /**
-     * @var DateTime the LPA was last updated.
+     * @var \DateTime the LPA was last updated.
      */
     protected $updatedAt;
 
@@ -71,106 +70,88 @@ class Lpa extends AbstractData implements CompleteInterface {
 
     //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Type mappers
+        $metadata->addPropertyConstraints('id', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'int' ]),
+            new Assert\Range([ 'min' => 0, 'max' => 99999999999 ]),
+        ]);
 
-        $this->typeMap['updatedAt'] = $this->typeMap['createdAt'] = function($v){
-            return ($v instanceof DateTime) ? $v : new DateTime( $v );
-        };
+        $metadata->addPropertyConstraints('createdAt', [
+            new Assert\NotBlank,
+            new DateTimeUTC,
+        ]);
 
-        $this->typeMap['payment'] = function($v){
-            return ($v instanceof Payment || is_null($v)) ? $v : new Payment( $v );
-        };
+        $metadata->addPropertyConstraints('updatedAt', [
+            new Assert\NotBlank,
+            new DateTimeUTC,
+        ]);
 
-        $this->typeMap['document'] = function($v){
-            return ($v instanceof Document || is_null($v)) ? $v : new Document( $v );
-        };
+        $metadata->addPropertyConstraints('user', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'xdigit' ]),
+            new Assert\Length([ 'min' => 32, 'max' => 32 ]),
+        ]);
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('payment', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Payment\Payment' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->validators['id'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Int,
-                new Rules\Between( 0, 99999999999, true ),
-            ]);
-        };
+        $metadata->addPropertyConstraints('whoAreYouAnswered', [
+            new Assert\NotNull,
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['createdAt'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'DateTime' ),
-                new Rules\Call(function($input){
-                    return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
-                }),
-            ]);
-        };
+        $metadata->addPropertyConstraints('locked', [
+            new Assert\NotNull,
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['updatedAt'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'DateTime' ),
-                new Rules\Call(function($input){
-                    return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
-                }),
-            ]);
-        };
+        $metadata->addPropertyConstraints('seed', [
+            new Assert\Type([ 'type' => 'int' ]),
+            new Assert\Range([ 'min' => 0, 'max' => 99999999999 ]),
+        ]);
 
-        $this->validators['user'] = function(){
-            return (new Validator)->addRules([
-                new Rules\NotEmpty,
-                new Rules\Xdigit,
-                new Rules\Length( 32, 32, true ),
-            ]);
-        };
+        $metadata->addPropertyConstraints('repeatCaseNumber', [
+            new Assert\Type([ 'type' => 'int' ]),
+        ]);
 
-        $this->validators['payment'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Payment\Payment' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['whoAreYouAnswered'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Bool,
-            ]);
-        };
-
-        $this->validators['locked'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Bool,
-            ]);
-        };
-
-        $this->validators['seed'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Int,
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['repeatCaseNumber'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Int,
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['document'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Document' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('document', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Document' ]),
+            new Assert\Valid,
+        ]);
 
     } // function
 
-    //--------------------------------------------------------------------
+    //------------------------------------------------
+
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
+
+        switch( $property ){
+            case 'updatedAt':
+            case 'createdAt':
+                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
+            case 'payment':
+                return ($v instanceof Payment || is_null($v)) ? $v : new Payment( $v );
+            case 'document':
+                return ($v instanceof Document || is_null($v)) ? $v : new Document( $v );
+        }
+
+        // else...
+        return parent::map( $property, $v );
+
+    } // function
+
+    //------------------------------------------------
 
     /**
      * Returns $this as an array suitable for inserting into MongoDB.

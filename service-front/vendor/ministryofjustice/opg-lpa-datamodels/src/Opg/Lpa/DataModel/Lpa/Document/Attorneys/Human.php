@@ -3,8 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
 use Opg\Lpa\DataModel\Lpa\Elements;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Represents a Human Attorney.
@@ -24,41 +24,48 @@ class Human extends AbstractAttorney {
      */
     protected $dob;
 
+    //------------------------------------------------
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-    public function __construct( $data ){
+        $metadata->addPropertyConstraints('name', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name' ]),
+            new Assert\Valid,
+        ]);
 
-        //-----------------------------------------------------
-        // Type mappers
-
-        $this->typeMap['name'] = function($v){
-            return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
-        };
-
-        $this->typeMap['dob'] = function($v){
-            return ($v instanceof Elements\Dob) ? $v : new Elements\Dob( $v );
-        };
-
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
-
-        $this->validators['name'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Name' ),
-            ]);
-        };
-
-        $this->validators['dob'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Dob' ),
-            ]);
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('dob', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Dob' ]),
+            new Assert\Valid,
+        ]);
 
     } // function
+
+    //------------------------------------------------
+
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
+
+        switch( $property ){
+            case 'name':
+                return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+            case 'dob':
+                return ($v instanceof Elements\Dob) ? $v : new Elements\Dob( $v );
+        }
+
+        // else...
+        return parent::map( $property, $v );
+
+    } // function
+
+    //------------------------------------------------
 
     public function toArray(){
 

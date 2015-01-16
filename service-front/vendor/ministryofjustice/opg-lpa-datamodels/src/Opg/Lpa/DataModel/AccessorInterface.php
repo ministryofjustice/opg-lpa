@@ -22,14 +22,12 @@ interface AccessorInterface {
 
     /**
      * Sets a property's value.
-     * Optionally (but ideally) the value can be validated before it's set.
      *
      * @param string $property The property name.
      * @param mixed $value The value to set the property to.
-     * @param bool $validate Whether or not to validate the value before setting it.
      * @return mixed
      */
-    public function set( $property, $value, $validate = true );
+    public function set( $property, $value );
 
     /**
      * Sets a property's value, after validating it.

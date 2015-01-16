@@ -4,8 +4,8 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Base Represents of an Attorney. This can be extended with one of two types, either Human or TrustCorporation.
@@ -30,45 +30,48 @@ abstract class AbstractAttorney extends AbstractData {
      */
     protected $email;
 
+    //------------------------------------------------
 
-    public function __construct( $data ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Type mappers
+        $metadata->addPropertyConstraints('id', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'int' ]),
+        ]);
 
-        $this->typeMap['address'] = function($v){
-            return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
-        };
+        $metadata->addPropertyConstraints('address', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['email'] = function($v){
-            return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
-        };
+        $metadata->addPropertyConstraints('email', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
+            new Assert\Valid,
+        ]);
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+    } // function
 
-        $this->validators['id'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Int,
-            ]);
-        };
+    //------------------------------------------------
 
-        $this->validators['address'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Address' ),
-            ]);
-        };
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
 
-        $this->validators['email'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ),
-                new Rules\NullValue,
-            ]));
-        };
+        switch( $property ){
+            case 'address':
+                return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+            case 'email':
+                return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+        }
 
-        //---
-
-        parent::__construct( $data );
+        // else...
+        return parent::map( $property, $v );
 
     } // function
 

@@ -3,8 +3,9 @@ namespace Opg\Lpa\DataModel\User;
 
 use Opg\Lpa\DataModel\AbstractData;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Represents a postal address.
@@ -39,61 +40,53 @@ class Address extends AbstractData {
      */
     protected $country;
 
+    //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('address1', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 50 ]),
+        ]);
 
-        $this->validators['address1'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 50, true ),
-            ]);
-        };
+        $metadata->addPropertyConstraints('address2', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 50 ]),
+        ]);
 
-        $this->validators['address2'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\Length( 1, 50, true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('address3', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 50 ]),
+        ]);
 
-        $this->validators['address3'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\Length( 1, 50, true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('address3', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 50 ]),
+        ]);
 
-        $this->validators['postcode'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\Length( 5, 8, true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        // This could be improved, but we'd need to be very careful not to block valid postcodes.
+        $metadata->addPropertyConstraints('postcode', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'min' => 5, 'max' => 8 ]),
+        ]);
 
-        $this->validators['country'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 2, 2, true ),
-            ]);
-        };
+        $metadata->addPropertyConstraints('country', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Country(),
+        ]);
 
         //---
 
-        parent::__construct( $data );
+        // We required either address2 OR postcode to be set for an address to be considered valid.
+        $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
+
+            if( empty($object->address2) && empty($object->postcode) ){
+                $context->buildViolation('address2-or-postcode-required')->addViolation();
+            }
+
+        }));
 
     } // function
 

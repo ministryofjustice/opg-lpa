@@ -3,8 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 
 use Opg\Lpa\DataModel\AbstractData;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Represents a person's name.
@@ -29,42 +29,27 @@ class Name extends AbstractData {
      */
     protected $last;
 
+    //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('title', [
+            // Can be null
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'min' => 1, 'max' => 5 ]),
+        ]);
 
-        $this->validators['title'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\NotEmpty,
-                    new Rules\Length( 1, 5, true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('first', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 50 ]),
+        ]);
 
-        $this->validators['first'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 50, true ),
-            ]);
-        };
-
-        $this->validators['last'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 50, false ),
-            ]);
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('last', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 50 ]),
+        ]);
 
     } // function
 
