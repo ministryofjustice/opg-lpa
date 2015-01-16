@@ -6,8 +6,9 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class Document extends AbstractData {
 
@@ -99,155 +100,131 @@ class Document extends AbstractData {
      */
     protected $peopleToNotify = array();
 
-    //-----------------------------
+    //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Type mappers
+        $metadata->addPropertyConstraints('type', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Choice([ 'choices' => [ self::LPA_TYPE_PF, self::LPA_TYPE_HW ] ]),
+        ]);
 
-        $this->typeMap['donor'] = function($v){
-            return ($v instanceof Donor || is_null($v)) ? $v : new Donor( $v );
-        };
+        $metadata->addPropertyConstraints('donor', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Donor' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['primaryAttorneyDecisions'] = function($v){
-            return ($v instanceof Decisions\PrimaryAttorneyDecisions || is_null($v)) ? $v : new Decisions\PrimaryAttorneyDecisions( $v );
-        };
+        // whoIsRegistering should (if set) be either an array, or the string 'donor'.
+        $metadata->addPropertyConstraint('whoIsRegistering', new Assert\Callback(function ($value, ExecutionContextInterface $context){
 
-        $this->typeMap['replacementAttorneyDecisions'] = function($v){
-            return ($v instanceof Decisions\ReplacementAttorneyDecisions || is_null($v)) ? $v : new Decisions\ReplacementAttorneyDecisions( $v );
-        };
+            if( empty($value) || is_array($value) || $value == 'donor' ){ return; }
 
-        $this->typeMap['correspondent'] = function($v){
-            return ($v instanceof Correspondence || is_null($v)) ? $v : new Correspondence( $v );
-        };
+            $context->buildViolation( (new Assert\Choice())->message )->addViolation();
 
-        $this->typeMap['certificateProvider'] = function($v){
-            return ($v instanceof CertificateProvider || is_null($v)) ? $v : new CertificateProvider( $v );
-        };
+        }));
 
-        $this->typeMap['primaryAttorneys'] = $this->typeMap['replacementAttorneys'] = function($v){
-            return array_map( function($v){
-                if( $v instanceof Attorneys\AbstractAttorney){
-                    return $v;
-                } elseif( isset( $v['number'] ) ){
-                    return new Attorneys\TrustCorporation( $v );
-                } else {
-                    return new Attorneys\Human( $v );
-                }
-            }, $v );
-        };
+        $metadata->addPropertyConstraints('primaryAttorneyDecisions', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['peopleToNotify'] = function($v){
-            return array_map( function($v){
-                return ($v instanceof NotifiedPerson) ? $v : new NotifiedPerson( $v );
-            }, $v );
-        };
-        
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('replacementAttorneyDecisions', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->validators['type'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\In( [ self::LPA_TYPE_PF, self::LPA_TYPE_HW ], true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('correspondent', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Correspondence' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->validators['donor'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Donor' ),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('instruction', [
+            new Assert\Type([ 'type' => 'string' ]),
+        ]);
 
-        $this->validators['whoIsRegistering'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\Equals('donor', true)
-                ]),
-                new Rules\Arr,
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('preference', [
+            new Assert\Type([ 'type' => 'string' ]),
+        ]);
 
-        $this->validators['primaryAttorneyDecisions'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions' ),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('certificateProvider', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->validators['replacementAttorneyDecisions'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions' ),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('primaryAttorneys', [
+            new Assert\All([
+                'constraints' => [
+                    new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
+                    //new Assert\Valid,
+                ]
+            ])
+        ]);
 
-        $this->validators['correspondent'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Correspondence' ),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('replacementAttorneys', [
+            new Assert\All([
+                'constraints' => [
+                    new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
+                    //new Assert\Valid,
+                ]
+            ])
+        ]);
 
-        $this->validators['instruction'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\String,
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['preference'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\String,
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['certificateProvider'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\CertificateProvider' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['primaryAttorneys'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Arr,
-                new Rules\Each(
-                    new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' )
-                ),
-            ]);
-        };
-
-        $this->validators['replacementAttorneys'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Arr,
-                new Rules\Each(
-                    new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' )
-                ),
-            ]);
-        };
-
-        $this->validators['peopleToNotify'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Arr,
-                new Rules\Each(
-                    new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson' )
-                ),
-            ]);
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('peopleToNotify', [
+            new Assert\All([
+                'constraints' => [
+                    new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson' ]),
+                    //new Assert\Valid,
+                ]
+            ])
+        ]);
 
     } // function
+
+    //------------------------------------------------
+
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
+
+        switch( $property ){
+            case 'donor':
+                return ($v instanceof Donor || is_null($v)) ? $v : new Donor( $v );
+            case 'primaryAttorneyDecisions':
+                return ($v instanceof Decisions\PrimaryAttorneyDecisions || is_null($v)) ? $v : new Decisions\PrimaryAttorneyDecisions( $v );
+            case 'replacementAttorneyDecisions':
+                return ($v instanceof Decisions\ReplacementAttorneyDecisions || is_null($v)) ? $v : new Decisions\ReplacementAttorneyDecisions( $v );
+            case 'correspondent':
+                return ($v instanceof Correspondence || is_null($v)) ? $v : new Correspondence( $v );
+            case 'certificateProvider':
+                return ($v instanceof CertificateProvider || is_null($v)) ? $v : new CertificateProvider( $v );
+
+            case 'primaryAttorneys':
+            case 'replacementAttorneys':
+                return array_map( function($v){
+                    if( $v instanceof Attorneys\AbstractAttorney){
+                        return $v;
+                    } elseif( isset( $v['number'] ) ){
+                        return new Attorneys\TrustCorporation( $v );
+                    } else {
+                        return new Attorneys\Human( $v );
+                    }
+                }, $v );
+
+            case 'peopleToNotify':
+                return array_map( function($v){
+                    return ($v instanceof NotifiedPerson) ? $v : new NotifiedPerson( $v );
+                }, $v );
+        }
+
+        // else...
+        return parent::map( $property, $v );
+
+    } // function
+
 
 } // class

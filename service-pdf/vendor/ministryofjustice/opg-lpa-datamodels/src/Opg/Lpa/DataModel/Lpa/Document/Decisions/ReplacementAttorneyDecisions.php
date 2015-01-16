@@ -3,8 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Opg\Lpa\DataModel\Lpa\Elements;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ReplacementAttorneyDecisions extends AbstractDecisions {
 
@@ -18,37 +18,25 @@ class ReplacementAttorneyDecisions extends AbstractDecisions {
      */
     protected $whenDetails;
 
-    public function __construct( $data = null ){
+    //------------------------------------------------
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        $this->validators['when'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( [
-                    self::LPA_DECISION_WHEN_FIRST,
-                    self::LPA_DECISION_WHEN_LAST,
-                    self::LPA_DECISION_WHEN_DEPENDS
-                ], true ),
-            ]);
-        };
+        $metadata->addPropertyConstraints('when', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Choice([ 'choices' => [
+                self::LPA_DECISION_WHEN_FIRST,
+                self::LPA_DECISION_WHEN_LAST,
+                self::LPA_DECISION_WHEN_DEPENDS
+            ] ]),
+        ]);
 
-        $this->validators['whenDetails'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\Length( 1, (1000*1024), true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('howDetails', [
+            // Can be null
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'min' => 1, 'max' => (1000*1024) ]),
+        ]);
 
     } // function
-
 
 } // class

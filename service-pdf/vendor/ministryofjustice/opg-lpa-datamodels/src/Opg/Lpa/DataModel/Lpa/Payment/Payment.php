@@ -4,10 +4,11 @@ namespace Opg\Lpa\DataModel\Lpa\Payment;
 use DateTime;
 
 use Opg\Lpa\DataModel\AbstractData;
-
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
 use Opg\Lpa\DataModel\Lpa\Elements;
+
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
 
 /**
  * Represents payment information associated with an LPA.
@@ -65,97 +66,75 @@ class Payment extends AbstractData {
      */
     protected $reducedFeeUniversalCredit;
 
+    //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Type mappers
+        $metadata->addPropertyConstraints('method', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Choice([ 'choices' => [ self::PAYMENT_TYPE_CARD, self::PAYMENT_TYPE_CHEQUE ] ]),
+        ]);
 
-        $this->typeMap['phone'] = function($v){
-            return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
-        };
+        $metadata->addPropertyConstraints('phone', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['date'] = function($v){
-            return ($v instanceof DateTime) ? $v : new DateTime( $v );
-        };
+        $metadata->addPropertyConstraints('amount', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'float' ]),
+            new Assert\Range([ 'min' => 0 ]),
+        ]);
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('reference', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 32 ]),
+        ]);
 
-        $this->validators['method'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\In( [ self::PAYMENT_TYPE_CARD, self::PAYMENT_TYPE_CHEQUE ], true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('date', [
+            new DateTimeUTC,
+        ]);
 
-        $this->validators['reference'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('reducedFeeReceivesBenefits', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['amount'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Float,
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('reducedFeeAwardedDamages', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['reference'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\String,
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('reducedFeeLowIncome', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['date'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\Instance( 'DateTime' ),
-                    new Rules\Call(function($input){
-                        return ( $input instanceof \DateTime ) ? $input->gettimezone()->getName() : 'UTC';
-                    }),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('reducedFeeUniversalCredit', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['reducedFeeReceivesBenefits'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-                new Rules\NullValue,
-            ]));
-        };
+    } // function
 
-        $this->validators['reducedFeeAwardedDamages'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-                new Rules\NullValue,
-            ]));
-        };
+    //------------------------------------------------
 
-        $this->validators['reducedFeeLowIncome'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-                new Rules\NullValue,
-            ]));
-        };
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
 
-        $this->validators['reducedFeeUniversalCredit'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-                new Rules\NullValue,
-            ]));
-        };
+        switch( $property ){
+            case 'date':
+                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
+            case 'phone':
+                return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
+            case 'amount':
+                return ( !is_int( $v ) ) ? $v : (float)$v;
+        }
 
-        //---
-
-        parent::__construct( $data );
+        // else...
+        return parent::map( $property, $v );
 
     } // function
 

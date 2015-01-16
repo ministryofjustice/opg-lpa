@@ -3,8 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Opg\Lpa\DataModel\Lpa\Elements;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class PrimaryAttorneyDecisions extends AbstractDecisions {
 
@@ -16,37 +16,22 @@ class PrimaryAttorneyDecisions extends AbstractDecisions {
      */
     protected $canSustainLife;
 
+    //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('when', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Choice([ 'choices' => [
+                self::LPA_DECISION_WHEN_NOW,
+                self::LPA_DECISION_WHEN_NO_CAPACITY
+            ] ]),
+        ]);
 
-        $this->validators['when'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\In( [
-                        self::LPA_DECISION_WHEN_NOW,
-                        self::LPA_DECISION_WHEN_NO_CAPACITY
-                    ], true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
+        $metadata->addPropertyConstraints('canSustainLife', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        $this->validators['canSustainLife'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-                new Rules\NullValue,
-            ]));
-        };
-
-        //---
-
-        parent::__construct( $data );
-
-    } // function
-
+    }
 
 } // class

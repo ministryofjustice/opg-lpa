@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\DataModel\WHoAreYou;
+namespace Opg\Lpa\DataModel\WhoAreYou;
 
 use Opg\Lpa\DataModel\AbstractData;
 use Respect\Validation\Rules;

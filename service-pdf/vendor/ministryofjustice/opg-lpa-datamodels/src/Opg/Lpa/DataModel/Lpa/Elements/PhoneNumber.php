@@ -6,6 +6,9 @@ use Opg\Lpa\DataModel\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Represents a phone number.
  *
@@ -19,20 +22,21 @@ class PhoneNumber extends AbstractData {
      */
     protected $number;
 
-    public function __construct( $data = null ){
+    //------------------------------------------------
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        $this->validators['number'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Phone,
-            ]);
-        };
+        // As there is only 1 property, include NotBlank as there is no point this object existing without it.
 
-        //---
+        // Regex taken from: https://github.com/Respect/Validation/blob/master/library/Rules/Phone.php
 
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('number', [
+            new Assert\NotBlank,
+            new Assert\Regex([
+                'pattern' => '/^[+]?([\d]{0,3})?[\(\.\-\s]?([\d]{1,3})[\)\.\-\s]*(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/',
+                'message' => 'invalid-phone-number',
+            ]),
+        ]);
 
     } // function
 

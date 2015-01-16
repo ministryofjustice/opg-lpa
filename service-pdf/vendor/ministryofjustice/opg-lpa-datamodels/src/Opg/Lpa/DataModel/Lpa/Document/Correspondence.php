@@ -4,8 +4,8 @@ namespace Opg\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Represents the person with whom Correspondence relating to the LPA should be sent.
@@ -63,94 +63,80 @@ class Correspondence extends AbstractData {
      */
     protected $contactInWelsh;
 
+    //------------------------------------------------
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-    public function __construct( $data = null ){
+        $metadata->addPropertyConstraints('who', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Choice([ 'choices' => [ self::WHO_DONOR, self::WHO_ATTORNEY, self::WHO_OTHER ] ]),
+        ]);
 
-        //-----------------------------------------------------
-        // Type mappers
+        $metadata->addPropertyConstraints('name', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['name'] = function($v){
-            return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
-        };
+        $metadata->addPropertyConstraints('company', [
+            // Can be null
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'min' => 1, 'max' => 75 ]),
+        ]);
 
-        $this->typeMap['address'] = function($v){
-            return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
-        };
+        $metadata->addPropertyConstraints('address', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['email'] = function($v){
-            return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
-        };
+        $metadata->addPropertyConstraints('email', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
+            new Assert\Valid,
+        ]);
 
-        $this->typeMap['phone'] = function($v){
-            return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
-        };
+        $metadata->addPropertyConstraints('phone', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ]),
+            new Assert\Valid,
+        ]);
 
+        $metadata->addPropertyConstraints('contactByPost', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
-
-        $this->validators['who'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( [ self::WHO_DONOR, self::WHO_ATTORNEY, self::WHO_OTHER ], true ),
-            ]);
-        };
-
-        $this->validators['name'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Name' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['company'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                (new Rules\AllOf)->addRules([
-                    new Rules\String,
-                    new Rules\NotEmpty,
-                    new Rules\Length( 1, 75, true ),
-                ]),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['address'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\Address' ),
-            ]);
-        };
-
-        $this->validators['email'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['phone'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Instance( 'Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ),
-                new Rules\NullValue,
-            ]));
-        };
-
-        $this->validators['contactByPost'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-            ]));
-        };
-
-        $this->validators['contactInWelsh'] = function(){
-            return (new Validator)->addRule((new Rules\OneOf)->addRules([
-                new Rules\Bool,
-            ]));
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('contactInWelsh', [
+            new Assert\Type([ 'type' => 'bool' ]),
+        ]);
 
     } // function
+
+    //------------------------------------------------
+
+    /**
+     * Map property values to their correct type.
+     *
+     * @param string $property string Property name
+     * @param mixed $v mixed Value to map.
+     * @return mixed Mapped value.
+     */
+    protected function map( $property, $v ){
+
+        switch( $property ){
+            case 'name':
+                return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+            case 'address':
+                return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+            case 'email':
+                return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+            case 'phone':
+                return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
+        }
+
+        // else...
+        return parent::map( $property, $v );
+
+    } // function
+
 
 } // class

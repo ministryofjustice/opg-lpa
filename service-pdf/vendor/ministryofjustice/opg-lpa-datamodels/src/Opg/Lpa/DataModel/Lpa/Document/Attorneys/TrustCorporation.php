@@ -3,8 +3,8 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
 use Opg\Lpa\DataModel\Lpa\Elements;
 
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Represents a Trust Corporation Attorney.
@@ -24,33 +24,25 @@ class TrustCorporation extends AbstractAttorney {
      */
     protected $number;
 
+    //------------------------------------------------
 
-    public function __construct( $data ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('name', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'min' => 1, 'max' => 75 ]),
+        ]);
 
-        $this->validators['name'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 75, true ),
-            ]);
-        };
-
-        $this->validators['number'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\NotEmpty,
-                new Rules\Length( 1, 75, true ),
-            ]);
-        };
-
-        //---
-
-        parent::__construct( $data );
+        $metadata->addPropertyConstraints('number', [
+            new Assert\NotBlank,
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'min' => 1, 'max' => 75 ]),
+        ]);
 
     } // function
+
+    //------------------------------------------------
 
     public function toArray(){
 
@@ -58,4 +50,4 @@ class TrustCorporation extends AbstractAttorney {
 
     }
 
-}
+} // class

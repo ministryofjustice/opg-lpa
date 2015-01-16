@@ -10,8 +10,12 @@ return array(
     'Zend\\Memory\\' => array($vendorDir . '/zendframework/zend-memory'),
     'ZendPdf\\' => array($vendorDir . '/zendframework/zendpdf/library'),
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
+    'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
+    'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
+    'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Resque' => array($vendorDir . '/chrisboulton/php-resque/lib'),
-    'Respect\\Validation' => array($vendorDir . '/respect/validation/library'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src'),
+    'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
 );
