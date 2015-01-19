@@ -37,4 +37,23 @@ class ReplacementAttorneyController extends AbstractLpaController
         
         return $this->response;
     }
+    
+    public function addTrustAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function editTrustAction()
+    {
+        return new ViewModel();
+    }
+    
+    public function deleteTrustAction()
+    {
+        // @todo delete trust from primaryAttorneys
+                
+        $this->redirect()->toRoute('lpa/primary-attorney', array('lpa-id'=>$this->getEvent()->getRouteMatch()->getParam('lpa-id')));
+        
+        return $this->response;
+    }
 }

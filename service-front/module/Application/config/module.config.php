@@ -344,13 +344,11 @@ return array(
                         'may_terminate' => true,
                         'child_routes' => array(
                             'edit' => array(
-                                'type'    => 'Segment',
+                                'type'    => 'Literal',
                                 'options' => array(
-                                    'route'    => '/:action',
-                                    'constraints' => array(
-                                        'action'     => 'edit',
-                                    ),
+                                    'route'    => '/edit',
                                     'defaults' => array(
+                                        'action' => 'edit',
                                     ),
                                 ),
                             ),
@@ -416,6 +414,17 @@ return array(
                             'route'    => '/fee',
                             'defaults' => array(
                                 'controllerName' => 'Application\Controller\Authenticated\Lpa\FeeController',
+                                'controller' => 'ControllerFactory',
+                                'action'     => 'index',
+                            ),
+                        ),
+                    ),
+                    'form-type' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route'    => '/type',
+                            'defaults' => array(
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\TypeController',
                                 'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
@@ -509,18 +518,24 @@ return array(
                                 ),
                             ),
                             'edit' => array(
-                                'type'    => 'Literal',
+                                'type'    => 'Segment',
                                 'options' => array(
-                                    'route'    => '/edit',
+                                    'route'    => '/edit/:person_index',
+                                    'constraints' => array(
+                                        'person_index' => '[0-9]+',
+                                    ),
                                     'defaults' => array(
                                         'action' => 'edit',
                                     ),
                                 ),
                             ),
                             'delete' => array(
-                                'type'    => 'Literal',
+                                'type'    => 'Segment',
                                 'options' => array(
-                                    'route'    => '/delete',
+                                    'route'    => '/delete/:person_index',
+                                    'constraints' => array(
+                                        'person_index' => '[0-9]+',
+                                    ),
                                     'defaults' => array(
                                         'action' => 'delete',
                                     ),
@@ -550,20 +565,53 @@ return array(
                                 ),
                             ),
                             'edit' => array(
-                                'type'    => 'Literal',
+                                'type'    => 'Segment',
                                 'options' => array(
-                                    'route'    => '/edit',
+                                    'route'    => '/edit/:person_index',
+                                    'constraints' => array(
+                                        'person_index' => '[0-9]+',
+                                    ),
                                     'defaults' => array(
                                         'action' => 'edit',
                                     ),
                                 ),
                             ),
                             'delete' => array(
-                                'type'    => 'Literal',
+                                'type'    => 'Segment',
                                 'options' => array(
-                                    'route'    => '/delete',
+                                    'route'    => '/delete/:person_index',
+                                    'constraints' => array(
+                                        'person_index' => '[0-9]+',
+                                    ),
                                     'defaults' => array(
                                         'action' => 'delete',
+                                    ),
+                                ),
+                            ),
+                            'add-trust' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/add-trust',
+                                    'defaults' => array(
+                                        'action' => 'add-trust',
+                                    ),
+                                ),
+                            ),
+                            'edit-trust' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/edit-trust',
+                                    'defaults' => array(
+                                        'action' => 'edit-trust',
+                                    ),
+                                ),
+                            ),
+                            'delete-trust' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/delete-trust',
+                                    'defaults' => array(
+                                        'action' => 'delete-trust',
                                     ),
                                 ),
                             ),
@@ -591,33 +639,28 @@ return array(
                                 ),
                             ),
                             'edit' => array(
-                                'type'    => 'Literal',
+                                'type'    => 'Segment',
                                 'options' => array(
-                                    'route'    => '/edit',
+                                    'route'    => '/edit/:person_index',
+                                    'constraints' => array(
+                                        'person_index' => '[0-9]+',
+                                    ),
                                     'defaults' => array(
                                         'action' => 'edit',
                                     ),
                                 ),
                             ),
                             'delete' => array(
-                                'type'    => 'Literal',
+                                'type'    => 'Segment',
                                 'options' => array(
-                                    'route'    => '/delete',
+                                    'route'    => '/delete/:person_index',
+                                    'constraints' => array(
+                                        'person_index' => '[0-9]+',
+                                    ),
                                     'defaults' => array(
                                         'action' => 'delete',
                                     ),
                                 ),
-                            ),
-                        ),
-                    ),
-                    'form-type' => array(
-                        'type' => 'Literal',
-                        'options' => array(
-                            'route'    => '/type',
-                            'defaults' => array(
-                                'controllerName' => 'Application\Controller\Authenticated\Lpa\TypeController',
-                                'controller' => 'ControllerFactory',
-                                'action'     => 'index',
                             ),
                         ),
                     ),
