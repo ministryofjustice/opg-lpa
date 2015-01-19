@@ -398,9 +398,12 @@ return array(
                         ),
                     ),
                     'download' => array(
-                        'type' => 'Literal',
+                        'type' => 'Segment',
                         'options' => array(
-                            'route'    => '/download',
+                            'route'    => '/download/:pdf_type',
+                            'constraints' => array(
+                                'pdf_type' => 'lp1|lp3|lpa120',
+                            ),
                             'defaults' => array(
                                 'controllerName' => 'Application\Controller\Authenticated\Lpa\DownloadController',
                                 'controller' => 'ControllerFactory',
