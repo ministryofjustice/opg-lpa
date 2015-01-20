@@ -100,7 +100,7 @@ class Resource extends AbstractResource {
 
         //---
 
-        $data = array_merge( $data, $user );
+        $data = array_merge( $user, $data );
 
         //---
 
