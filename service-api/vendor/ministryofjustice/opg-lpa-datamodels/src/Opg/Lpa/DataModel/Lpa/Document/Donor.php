@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents the Donor associated with the LPA.
@@ -75,7 +75,6 @@ class Donor extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\NotBlank,
             new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
             new Assert\Valid,
         ]);

@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Base Represents of an Attorney. This can be extended with one of two types, either Human or TrustCorporation.

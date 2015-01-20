@@ -7,8 +7,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 class Document extends AbstractData {
 
@@ -116,10 +116,8 @@ class Document extends AbstractData {
 
         // whoIsRegistering should (if set) be either an array, or the string 'donor'.
         $metadata->addPropertyConstraint('whoIsRegistering', new Assert\Callback(function ($value, ExecutionContextInterface $context){
-
             if( empty($value) || is_array($value) || $value == 'donor' ){ return; }
-
-            $context->buildViolation( (new Assert\Choice())->message )->addViolation();
+            $context->buildViolation( 'allowed-values|donor,Array' )->addViolation();
 
         }));
 
@@ -138,13 +136,17 @@ class Document extends AbstractData {
             new Assert\Valid,
         ]);
 
-        $metadata->addPropertyConstraints('instruction', [
-            new Assert\Type([ 'type' => 'string' ]),
-        ]);
+        // instruction should be string or boolean false.
+        $metadata->addPropertyConstraint('instruction', new Assert\Callback(function ($value, ExecutionContextInterface $context){
+            if( is_null($value) || is_string($value) || $value === false ){ return; }
+            $context->buildViolation( 'expected-type|string-or-bool=false' )->addViolation();
+        }));
 
-        $metadata->addPropertyConstraints('preference', [
-            new Assert\Type([ 'type' => 'string' ]),
-        ]);
+        // preference should be string or boolean false.
+        $metadata->addPropertyConstraint('preference', new Assert\Callback(function ($value, ExecutionContextInterface $context){
+            if( is_null($value) || is_string($value) || $value === false ){ return; }
+            $context->buildViolation( 'expected-type|string-or-bool=false' )->addViolation();
+        }));
 
         $metadata->addPropertyConstraints('certificateProvider', [
             new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider' ]),
@@ -155,7 +157,6 @@ class Document extends AbstractData {
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
-                    //new Assert\Valid,
                 ]
             ])
         ]);
@@ -164,7 +165,6 @@ class Document extends AbstractData {
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
-                    //new Assert\Valid,
                 ]
             ])
         ]);
@@ -173,7 +173,6 @@ class Document extends AbstractData {
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson' ]),
-                    //new Assert\Valid,
                 ]
             ])
         ]);

@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Validation;
  * Class AbstractData
  * @package Opg\Lpa\DataModel\Lpa
  */
-abstract class AbstractData implements AccessorInterface, ValidatableInterface, JsonSerializable {
+abstract class AbstractData implements AccessorInterface, JsonSerializable, Validator\ValidatableInterface {
 
     /**
      * Builds and populates $this chunk of the LPA.

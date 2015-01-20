@@ -4,8 +4,7 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
-use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 
 /**
@@ -29,7 +28,7 @@ class Dob extends AbstractData {
 
         $metadata->addPropertyConstraints('date', [
             new Assert\NotBlank,
-            new DateTimeUTC(),
+            new Assert\Custom\DateTimeUTC,
             new Assert\LessThanOrEqual( [ 'value' => new \DateTime('today') ] ),
         ]);
 

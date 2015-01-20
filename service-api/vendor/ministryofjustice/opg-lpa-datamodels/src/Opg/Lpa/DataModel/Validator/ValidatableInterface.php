@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\DataModel;
+namespace Opg\Lpa\DataModel\Validator;
 
 interface ValidatableInterface {
 
