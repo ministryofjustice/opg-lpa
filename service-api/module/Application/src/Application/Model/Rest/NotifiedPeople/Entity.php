@@ -9,22 +9,22 @@ use Opg\Lpa\DataModel\AccessorInterface as LpaAccessorInterface;
 
 class Entity implements EntityInterface {
 
-    protected $lap;
+    protected $lpa;
     protected $person;
 
     public function __construct( NotifiedPerson $person = null, Lpa $lpa ){
 
-        $this->lap = $lpa;
+        $this->lpa = $lpa;
         $this->person = $person;
 
     }
 
     public function userId(){
-        return $this->lap->userId;
+        return $this->lpa->userId;
     }
 
     public function lpaId(){
-        return $this->lap->id;
+        return $this->lpa->id;
     }
 
     public function resourceId(){
