@@ -33,7 +33,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
     }
 
     /**
-     * Create a new LAP.
+     * Create a new LPA.
      *
      * @param  mixed $data
      * @return Entity|ApiProblem
@@ -237,5 +237,27 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
     } // function
 
+    /**
+     * Deletes all applications for the current user.
+     *
+     * @return bool
+     */
+    public function deleteAll(){
+
+        $this->checkAccess();
+
+        //------------------------
+
+        $query = [ 'user'=>$this->getRouteUser()->userId() ];
+
+        $lpas = $this->getCollection('lpa')->find( $query, [ '_id' => true ] );
+
+        foreach( $lpas as $lpa ){
+            $this->delete( $lpa['_id'] );
+        }
+
+        return true;
+
+    } // function
 
 } // class

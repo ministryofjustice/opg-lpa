@@ -156,4 +156,27 @@ class Resource extends AbstractResource {
 
     } // function
 
+    /**
+     * Deletes the user AND all the user's LPAs!!!
+     *
+     * @param  mixed $id
+     * @return ApiProblem|bool
+     * @throw UnauthorizedException If the current user is not authorized.
+     */
+    public function delete($id){
+
+        $this->checkAccess( $id );
+
+        //------------------------
+
+        // Delete all applications for the user.
+        $this->getServiceLocator()->get('resource-applications')->deleteAll();
+
+        // Delete the user's About Me details.
+        $this->getCollection( 'user' )->remove( [ '_id' => $id ], [ 'justOne' => true ] );
+
+        return true;
+
+    } // function
+
 } // class
