@@ -3,7 +3,7 @@ namespace Application\Controller;
 
 use Application\Model\Library\Authentication\Identity\User as Identity;
 
-class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
+abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {
     
     private $user;
