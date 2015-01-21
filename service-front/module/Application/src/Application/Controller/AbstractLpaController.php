@@ -4,7 +4,7 @@ namespace Application\Controller;
 
 use Application\Controller\AbstractAuthenticatedController;
 
-class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
+abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
     private $lpa;
     
