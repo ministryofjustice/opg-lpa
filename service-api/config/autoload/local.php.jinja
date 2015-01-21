@@ -1,0 +1,21 @@
+<?php
+
+return array(
+
+    'db' => [
+
+        'mongo' => [
+
+            'default' => [
+
+                'options' => [
+                    'password' => '{{pillar.mongodb.databases[appslug]['password']}}',
+                ],
+
+            ],
+
+        ], // mongo
+
+    ],
+
+);
