@@ -58,7 +58,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $document = $lpa->document;
 
-        $document->replacementAttorneyDecisions = (isset($data['replacementAttorneyDecisions'])) ? new ReplacementAttorneyDecisions($data['replacementAttorneyDecisions']) : null;
+        $document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions( $data );
 
         //---
 
