@@ -11,7 +11,7 @@ class AccessController extends AbstractActionController {
 
     public function indexAction(){
 
-        # TODO - check the user is singed in.
+        # TODO - check the user is singed in. If not, redirect to login
 
         //-----
 
@@ -81,7 +81,7 @@ class AccessController extends AbstractActionController {
             $session->cookie = array_pop($headers['Set-Cookie']);
         }
 
-        // Define what headers will want to be relayed across...
+        // Define what headers we want to be relayed across...
         $headers = array_intersect_key( $headers, array_flip([
             'Location',
             'Pragma',

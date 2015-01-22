@@ -6,11 +6,58 @@ use GuzzleHttp\Client as GuzzleClient;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+use Zend\Session\Container;
+
+use Zend\Cache\StorageFactory as CacheStorageFactory;
+
 class Module {
 
     public function getServiceConfig() {
         return [
+            'invokables' => [
+                'ProxyDashboard' => 'V1Proxy\Model\Dashboard',
+            ],
             'factories' => [
+                'ProxyCache' => function( ServiceLocatorInterface $sm ){
+
+                    $config = $sm->get('Config')['v1proxy'];
+
+                    var_dump($config); exit();
+
+                    $redis = CacheStorageFactory::factory([
+                        'adapter' => [
+                            'name' => 'redis',
+                            'options' => $config['redis'],
+                        ]
+                    ]);
+
+                },
+                'ProxyOldApiClient' => function( ServiceLocatorInterface $sm ){
+
+                    $auth = $sm->get('AuthenticationService');
+
+                    if (!$auth->hasIdentity()) {
+                        throw new \RuntimeException('V1Proxy Authentication error: no token');
+                    }
+
+                    $token = $auth->getIdentity()->token();
+
+                    //---
+
+                    $client = new GuzzleClient();
+
+                    // Proxy errors (4xx) to the browser.
+                    $client->setDefaultOption( 'exceptions', false );
+
+                    // Proxy redirects to the browser.
+                    $client->setDefaultOption( 'allow_redirects', false );
+
+                    // Set the authentication token.
+                    $client->setDefaultOption( 'headers/Token', $token );
+
+                    return $client;
+
+                },
                 'ProxyClient' => function( ServiceLocatorInterface $sm ){
 
                     $auth = $sm->get('AuthenticationService');
