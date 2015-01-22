@@ -5,6 +5,9 @@ use Opg\Lpa\DataModel\AbstractData;
 use Respect\Validation\Rules;
 use Opg\Lpa\DataModel\Validator\Validator;
 
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+
 /**
  * Represents a response to the 'Who are you?' question.
  *
@@ -28,8 +31,11 @@ class WhoAreYou extends AbstractData {
      */
     protected $qualifier;
 
-
     //------------------------------------------------
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
+
+    } // function
 
     public function __construct( $data = null ){
 

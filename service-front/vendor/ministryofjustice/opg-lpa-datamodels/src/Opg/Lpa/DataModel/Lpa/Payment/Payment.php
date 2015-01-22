@@ -7,8 +7,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
-use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents payment information associated with an LPA.
@@ -94,7 +93,7 @@ class Payment extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('date', [
-            new DateTimeUTC,
+            new Assert\Custom\DateTimeUTC,
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeReceivesBenefits', [
