@@ -43,6 +43,11 @@ class AccessController extends AbstractActionController {
 
         if( $this->getRequest()->isPost() ){
 
+            // This post may have changed data, so clear the cache.
+            $this->getServiceLocator()->get('ProxyDashboard')->clearLpaCacheForUser();
+
+            //---
+
             // Copy the body across...
             $options['body'] = $this->getRequest()->getContent();
 

@@ -22,9 +22,7 @@ class Module {
 
                     $config = $sm->get('Config')['v1proxy'];
 
-                    var_dump($config); exit();
-
-                    $redis = CacheStorageFactory::factory([
+                    return CacheStorageFactory::factory([
                         'adapter' => [
                             'name' => 'redis',
                             'options' => $config['redis'],
