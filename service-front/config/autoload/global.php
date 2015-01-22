@@ -14,6 +14,14 @@ return array(
             'hash_function' => 'sha512',
             'hash_bits_per_character' => 5,
 
+            // Only allow the cookie to be sent over https
+            'cookie_secure' => false, # TODO - change to true once we have SSL on dev.
+
+            // Prevent cookie from being accessed from JavaScript
+            'cookie_httponly' => true,
+
+            // Don't accept uninitialized session IDs
+            'use_strict_mode' => true,
         ],
 
         'redis' => [
