@@ -4,7 +4,6 @@ namespace Application\Model\Rest\Applications;
 use Application\Model\Rest\EntityInterface;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Application\Library\Hal\Hal;
 
 class Entity implements EntityInterface {
 
@@ -31,7 +30,7 @@ class Entity implements EntityInterface {
     }
 
     public function toArray(){
-        return [ 'id' => $this->lpaId() ] +  $this->lpa->document->toArray();
+        return $this->lpa->toArray();
     }
 
 } // class

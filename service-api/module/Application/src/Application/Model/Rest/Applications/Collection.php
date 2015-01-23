@@ -39,7 +39,7 @@ class Collection extends Paginator implements CollectionInterface {
 
         // Map the embedded items to Entities...
         $items = array_map( function($i){
-            return new Entity( $i );
+            return new AbbreviatedEntity( $i );
         }, $items );
 
         return [
