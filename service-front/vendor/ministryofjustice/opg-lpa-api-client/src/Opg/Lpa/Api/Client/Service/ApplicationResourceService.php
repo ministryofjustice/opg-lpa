@@ -6,10 +6,11 @@ use Opg\Lpa\Api\Client\Common\Guzzle\Client as GuzzleClient;
 use GuzzleHttp\Message\Response;
 use Opg\Lpa\Api\Client\Client;
 
-class LpaResourceService
+class ApplicationResourceService
 {
     private $apiClient;
     private $endpoint;
+    private $resourceType;
     private $isSuccess = false;
     
     /**
@@ -24,6 +25,7 @@ class LpaResourceService
     )
     {
         $this->apiClient = $apiClient;
+        $this->resourceType = $resourceType;
         $this->endpoint = Client::PATH_API . '/v1/users/' . $this->apiClient->getUserId() . '/applications/' . $lpaId . '/' . $resourceType;
     }
 
@@ -32,7 +34,7 @@ class LpaResourceService
      * 
      * If property not yet set, return null
      * If error, return false
-
+     *
      * @return Response
      */
     public function getResource()
@@ -53,6 +55,47 @@ class LpaResourceService
     
         $this->isSuccess = true;
         return $response;
+    }
+    
+    /**
+     * Get list of resources for the current user
+     * Combine pages, if necessary
+     *
+     * @return array<Lpa>
+     */
+    public function getResourceList($entityClass)
+    {
+        $resourceList = array();
+    
+        do {
+            $response = $this->httpClient()->get( $this->endpoint );
+    
+            $json = $response->json();
+    
+            if (!isset($json['_links']) || !isset($json['count'])) {
+                return $this->log($response, false);
+            }
+            
+            if ($json['count'] == 0) {
+                return [];
+            }
+             
+            if (!isset($json['_embedded'][$this->resourceType])) {
+                return $this->log($response, false);
+            }
+            
+            foreach ($json['_embedded'][$this->resourceType] as $singleResourceJson) {
+                $resourceList[] = new $entityClass($singleResourceJson);
+            }
+    
+            if (isset($json['_links']['next']['href'])) {
+                $path = $json['_links']['next']['href'];
+            } else {
+                $path = null;
+            }
+        } while (!is_null($path));
+    
+        return $resourceList;
     }
     
     /**
@@ -95,14 +138,15 @@ class LpaResourceService
      * (e.g., type or preferences, which are both simply strings rather than classes)
      *
      * @param string $entityClass The class of the data model entity to populate with the JSON from the API response
+     * @param $index number in series, if applicable
      * If property not yet set, return null
      * If error, return false
      * Else, return the value
      * @return boolean|null|mixed
      */
-    public function getEntityResource($entityClass)
+    public function getEntityResource($entityClass, $index=null)
     {
-        $response = $this->httpClient()->get( $this->endpoint, [
+        $response = $this->httpClient()->get( $this->endpoint . (!is_null($index) ? '/' . $index : ''), [
             'headers' => ['Content-Type' => 'application/json']
         ]);
     
@@ -127,11 +171,12 @@ class LpaResourceService
      * Set the data for the given resource
      *
      * @param string $jsonBody
+     * @param $index number in series, if applicable
      * @return boolean
      */
-    public function setResource($jsonBody)
+    public function setResource($jsonBody, $index=null)
     {
-        $response = $this->httpClient()->put( $this->endpoint, [
+        $response = $this->httpClient()->put( $this->endpoint . (!is_null($index) ? '/' . $index : ''), [
             'body' => $jsonBody,
             'headers' => ['Content-Type' => 'application/json']
         ]);
@@ -145,13 +190,35 @@ class LpaResourceService
     }
     
     /**
-     * Delete the resource type from the LPA
-     * 
+     * Add data for the given resource
+     *
+     * @param string $jsonBody
      * @return boolean
      */
-    public function deleteResource()
+    public function addResource($jsonBody)
     {
-        $response = $this->httpClient()->delete( $this->endpoint, [
+        $response = $this->httpClient()->post( $this->endpoint, [
+            'body' => $jsonBody,
+            'headers' => ['Content-Type' => 'application/json']
+        ]);
+
+        if ($response->getStatusCode() != 201) {
+            return $this->log($response, false);
+        }
+    
+        $this->isSuccess = true;
+        return true;
+    }
+    
+    /**
+     * Delete the resource type from the LPA
+     * 
+     * @param $index number in series, if applicable
+     * @return boolean
+     */
+    public function deleteResource($index=null)
+    {
+        $response = $this->httpClient()->delete( $this->endpoint . (!is_null($index) ? '/' . $index : ''), [
             'headers' => ['Content-Type' => 'application/json']
         ]);
     

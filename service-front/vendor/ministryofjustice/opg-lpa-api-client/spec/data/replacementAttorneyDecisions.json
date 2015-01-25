@@ -1,8 +1,6 @@
 {
-    "replacementAttorneyDecisions": {
         "how": "depends",
         "when": "depends",
         "howDetails": "How extra details.",
         "whenDetails": "When extra details."
-    }
 }

@@ -1,0 +1,30 @@
+{
+    "name": "philipbrown/worldpay",
+    "description": "A PHP wrapper for WorldPay.com",
+    "keywords": ["WorldPay"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philip Brown",
+            "email": "phil@ipbrown.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PhilipBrown\\WorldPay\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhilipBrown\\WorldPay\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=5.4",
+        "symfony/http-foundation": "~2.0",
+        "beberlei/assert": "~2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    }
+}
