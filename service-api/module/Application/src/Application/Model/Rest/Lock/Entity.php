@@ -32,7 +32,10 @@ class Entity implements EntityInterface {
     public function toArray(){
 
         if( is_bool($this->locked) ){
-            return [ 'locked' => $this->locked ];
+            return [
+                'locked' => $this->locked,
+                'lockedAt' => ( $this->lpa->lockedAt instanceof \DateTime ) ? $this->lpa->lockedAt->format( 'Y-m-d\TH:i:s.uO' ) : null,
+            ];
         } else {
             return array();
         }

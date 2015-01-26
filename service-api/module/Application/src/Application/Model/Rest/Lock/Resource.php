@@ -10,6 +10,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
 
+use Application\Library\DateTime;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 
@@ -65,6 +66,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         //---
 
         $lpa->locked = true;
+        $lpa->lockedAt = new DateTime();
 
         //---
 
