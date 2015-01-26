@@ -199,4 +199,29 @@ class Lpa extends AbstractData implements CompleteInterface {
 
     } // function
 
+    //------------------------------------------------
+
+    /**
+     * Return an abbreviated (summary) version of the LPA.
+     *
+     * @return array
+     */
+    public function abbreviatedToArray(){
+
+        $data = $this->toArray();
+
+        // Include these top level fields...
+        $data = array_intersect_key( $data, array_flip([
+            'id', 'lockedAt', 'updatedAt', 'createdAt', 'user', 'document'
+        ]));
+
+        // Include these document level fields...
+        $data['document'] = array_intersect_key( $data['document'], array_flip([
+            'donor'
+        ]));
+
+        return $data;
+
+    } // function
+
 } // class

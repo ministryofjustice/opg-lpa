@@ -1,5 +1,4 @@
 {
-    "certificateProvider": {
         "name": {
             "title": "Mr",
             "first": "Bob",
@@ -11,5 +10,4 @@
             "address3": "A new line",
             "postcode": "SW1H 9AJ"
         }
-    }
 }

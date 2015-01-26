@@ -25,5 +25,5 @@ class Null extends SymfonyConstraints\Null
 {
     use ValidatorPathTrait;
 
-    public $message = 'This value should be null.';
+    public $message = 'must-be-null';
 }

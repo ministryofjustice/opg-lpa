@@ -1,47 +1,16 @@
 <?php
-/**
- * Exporter
+/*
+ * This file is part of the Exporter package.
  *
- * Copyright (c) 2001-2014, Sebastian Bergmann <sebastian@phpunit.de>.
- * All rights reserved.
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   * Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in
- *     the documentation and/or other materials provided with the
- *     distribution.
- *
- *   * Neither the name of Sebastian Bergmann nor the names of his
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * @package    Exporter
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2001-2014 Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       https://github.com/sebastianbergmann/exporter
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace SebastianBergmann\Exporter;
+
+use SebastianBergmann\RecursionContext\Context;
 
 /**
  * A nifty utility for visualizing PHP variables.
@@ -56,7 +25,7 @@ namespace SebastianBergmann\Exporter;
  *
  * @package    Exporter
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2001-2014 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       https://github.com/sebastianbergmann/exporter
  */
@@ -89,21 +58,21 @@ class Exporter
      *
      * @param  mixed $value The value to export
      * @param  integer $indentation The indentation level of the 2nd+ line
-     * @param  SebastianBergmann\Exporter\Context $processed Contains all objects and arrays that have previously been rendered
+     * @param  \SebastianBergmann\RecursionContext\Context $processed Previously processed objects
      * @return string
      * @see    SebastianBergmann\Exporter\Exporter::export
      */
-    protected function recursiveExport(&$value, $indentation, $processed = NULL)
+    protected function recursiveExport(&$value, $indentation, $processed = null)
     {
-        if ($value === NULL) {
+        if ($value === null) {
             return 'null';
         }
 
-        if ($value === TRUE) {
+        if ($value === true) {
             return 'true';
         }
 
-        if ($value === FALSE) {
+        if ($value === false) {
             return 'false';
         }
 
@@ -113,9 +82,9 @@ class Exporter
 
         if (is_resource($value)) {
             return sprintf(
-              'resource(%d) of type (%s)',
-              $value,
-              get_resource_type($value)
+                'resource(%d) of type (%s)',
+                $value,
+                get_resource_type($value)
             );
         }
 
@@ -137,20 +106,20 @@ class Exporter
         }
 
         if (is_array($value)) {
-            if (($key = $processed->contains($value)) !== FALSE) {
+            if (($key = $processed->contains($value)) !== false) {
                 return 'Array &' . $key;
             }
 
-            $key = $processed->add($value);
+            $key    = $processed->add($value);
             $values = '';
 
             if (count($value) > 0) {
                 foreach ($value as $k => $v) {
                     $values .= sprintf(
-                      '%s    %s => %s' . "\n",
-                      $whitespace,
-                      $this->recursiveExport($k, $indentation),
-                      $this->recursiveExport($value[$k], $indentation + 1, $processed)
+                        '%s    %s => %s' . "\n",
+                        $whitespace,
+                        $this->recursiveExport($k, $indentation),
+                        $this->recursiveExport($value[$k], $indentation + 1, $processed)
                     );
                 }
 
@@ -167,18 +136,17 @@ class Exporter
                 return sprintf('%s Object &%s', $class, $hash);
             }
 
-            $hash = $processed->add($value);
+            $hash   = $processed->add($value);
             $values = '';
-
-            $array = $this->toArray($value);
+            $array  = $this->toArray($value);
 
             if (count($array) > 0) {
                 foreach ($array as $k => $v) {
                     $values .= sprintf(
-                      '%s    %s => %s' . "\n",
-                      $whitespace,
-                      $this->recursiveExport($k, $indentation),
-                      $this->recursiveExport($v, $indentation + 1, $processed)
+                        '%s    %s => %s' . "\n",
+                        $whitespace,
+                        $this->recursiveExport($k, $indentation),
+                        $this->recursiveExport($v, $indentation + 1, $processed)
                     );
                 }
 
@@ -188,7 +156,7 @@ class Exporter
             return sprintf('%s Object &%s (%s)', $class, $hash, $values);
         }
 
-        return var_export($value, TRUE);
+        return var_export($value, true);
     }
 
     /**
@@ -219,16 +187,16 @@ class Exporter
 
         if (is_object($value)) {
             return sprintf(
-              '%s Object (%s)',
-              get_class($value),
-              count($this->toArray($value)) > 0 ? '...' : ''
+                '%s Object (%s)',
+                get_class($value),
+                count($this->toArray($value)) > 0 ? '...' : ''
             );
         }
 
         if (is_array($value)) {
             return sprintf(
-              'Array (%s)',
-              count($value) > 0 ? '...' : ''
+                'Array (%s)',
+                count($value) > 0 ? '...' : ''
             );
         }
 
@@ -252,11 +220,9 @@ class Exporter
 
         foreach ((array)$value as $key => $val) {
             // properties are transformed to keys in the following way:
-
             // private   $property => "\0Classname\0property"
             // protected $property => "\0*\0property"
             // public    $property => "property"
-
             if (preg_match('/^\0.+\0(.+)$/', $key, $matches)) {
                 $key = $matches[1];
             }
@@ -276,13 +242,15 @@ class Exporter
             // However, the fast method does work in HHVM, and exposes the
             // internal implementation. Hide it again.
             if (property_exists('\SplObjectStorage', '__storage')) {
-              unset($array['__storage']);
-            } else if (property_exists('\SplObjectStorage', 'storage')) {
-              unset($array['storage']);
+                unset($array['__storage']);
+            } elseif (property_exists('\SplObjectStorage', 'storage')) {
+                unset($array['storage']);
             }
+
             if (property_exists('\SplObjectStorage', '__key')) {
-              unset($array['__key']);
+                unset($array['__key']);
             }
+
             foreach ($value as $key => $val) {
                 $array[spl_object_hash($val)] = array(
                     'obj' => $val,

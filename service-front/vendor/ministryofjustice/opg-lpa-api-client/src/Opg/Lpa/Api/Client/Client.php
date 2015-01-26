@@ -14,7 +14,9 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use GuzzleHttp\Message\Response;
-use Opg\Lpa\Api\Client\Service\LpaResourceService;
+use Opg\Lpa\Api\Client\Service\ApplicationResourceService;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 
 class Client
 {
@@ -548,7 +550,7 @@ class Client
      */
     public function getType($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'type', $this);
+        $helper = new ApplicationResourceService($lpaId, 'type', $this);
         return $helper->getSingleValueResource('type');
     }
     
@@ -561,7 +563,7 @@ class Client
      */
     public function setType($lpaId, $lpaType)
     {
-        $helper = new LpaResourceService($lpaId, 'type', $this);
+        $helper = new ApplicationResourceService($lpaId, 'type', $this);
         return $helper->setResource(json_encode(['type' => $lpaType]));
     }
     
@@ -573,7 +575,7 @@ class Client
      */
     public function deleteType($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'type', $this);
+        $helper = new ApplicationResourceService($lpaId, 'type', $this);
         return $helper->deleteResource();
     }
     
@@ -589,7 +591,7 @@ class Client
      */
     public function getInstructions($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'instruction', $this);
+        $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
         return $helper->getSingleValueResource('instruction');
     }
     
@@ -602,7 +604,7 @@ class Client
      */
     public function setInstructions($lpaId, $lpaInstructions)
     {
-        $helper = new LpaResourceService($lpaId, 'instruction', $this);
+        $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
         return $helper->setResource(json_encode(['instruction' => $lpaInstructions]));
     }
     
@@ -614,7 +616,7 @@ class Client
      */
     public function deleteInstructions($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'instruction', $this);
+        $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
         return $helper->deleteResource();
     }
     
@@ -630,7 +632,7 @@ class Client
      */
     public function getPreferences($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'preference', $this);
+        $helper = new ApplicationResourceService($lpaId, 'preference', $this);
         return $helper->getSingleValueResource('preference');    
     }
     
@@ -643,7 +645,7 @@ class Client
      */
     public function setPreferences($lpaId, $preferences)
     {
-        $helper = new LpaResourceService($lpaId, 'preference', $this);
+        $helper = new ApplicationResourceService($lpaId, 'preference', $this);
         return $helper->setResource(json_encode(['preference' => $preferences]));
     }
     
@@ -655,7 +657,7 @@ class Client
      */
     public function deletePreferences($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'preference', $this);
+        $helper = new ApplicationResourceService($lpaId, 'preference', $this);
         return $helper->deleteResource();
     }
 
@@ -667,7 +669,7 @@ class Client
      */
     public function getPrimaryAttorneyDecisions($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'primary-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions');
     }
     
@@ -680,10 +682,10 @@ class Client
      */
     public function setPrimaryAttorneyDecisions(
         $lpaId,
-        $primaryAttorneyDecisions
+        PrimaryAttorneyDecisions $primaryAttorneyDecisions
     )
     {
-        $helper = new LpaResourceService($lpaId, 'primary-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
         return $helper->setResource($primaryAttorneyDecisions->toJson());
     }
     
@@ -695,7 +697,7 @@ class Client
      */
     public function deletePrimaryAttorneyDecisions($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'primary-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
         return $helper->deleteResource();
     }
     
@@ -707,7 +709,7 @@ class Client
      */
     public function getReplacementAttorneyDecisions($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions');
     }
     
@@ -720,10 +722,10 @@ class Client
      */
     public function setReplacementAttorneyDecisions(
         $lpaId,
-        $replacementAttorneyDecisions
+        ReplacementAttorneyDecisions $replacementAttorneyDecisions
     )
     {
-        $helper = new LpaResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
         return $helper->setResource($replacementAttorneyDecisions->toJson());
     }
     
@@ -735,7 +737,7 @@ class Client
      */
     public function deleteReplacementAttorneyDecisions($lpaId)
     {
-        $helper = new LpaResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
         return $helper->deleteResource();
     }
     
@@ -747,7 +749,8 @@ class Client
      */
     public function getDonor($lpaId)
     {
-        return new Donor();
+        $helper = new ApplicationResourceService($lpaId, 'donor', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Donor');
     }
     
     /**
@@ -759,10 +762,11 @@ class Client
      */
     public function setDonor(
         $lpaId,
-        $donor
+        Donor $donor
     )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'donor', $this);
+        return $helper->setResource($donor->toJson());
     }
     
     /**
@@ -773,7 +777,8 @@ class Client
      */
     public function deleteDonor($lpaId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'donor', $this);
+        return $helper->deleteResource();
     }
     
     /**
@@ -784,7 +789,8 @@ class Client
      */
     public function getCorrespondent($lpaId)
     {
-        return new Correspondence();
+        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Correspondence');
     }
     
     /**
@@ -799,7 +805,8 @@ class Client
         Correspondence $correspondent
     )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
+        return $helper->setResource($correspondent->toJson());
     }
     
     /**
@@ -810,7 +817,8 @@ class Client
      */
     public function deleteCorrespondent($lpaId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
+        return $helper->deleteResource();
     }
     
     /**
@@ -821,7 +829,8 @@ class Client
      */
     public function getPayment($lpaId)
     {
-        return new Correspondence();
+        $helper = new ApplicationResourceService($lpaId, 'payment', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Payment\Payment');
     }
     
     /**
@@ -836,7 +845,8 @@ class Client
         Payment $payment
     )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'payment', $this);
+        return $helper->setResource($payment->toJson());
     }
     
     /**
@@ -847,7 +857,8 @@ class Client
      */
     public function deletePayment($lpaId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'payment', $this);
+        return $helper->deleteResource();
     }
     
     /**
@@ -872,7 +883,8 @@ class Client
         WhoAreYou $whoAreYou
     )
     {
-        return true;    
+        $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this);
+        return $helper->addResource($whoAreYou->toJson());
     }
     
     /**
@@ -883,7 +895,8 @@ class Client
      */
     public function isLpaLocked($lpaId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'lock', $this);
+        return $helper->getSingleValueResource('locked');
     }
     
     /**
@@ -910,7 +923,7 @@ class Client
         
         return $json['locked'];
     }
-    
+        
     /**
      * Returns the id of the seed LPA document and the list of actors
      * 
@@ -919,7 +932,8 @@ class Client
      */
     public function getSeedDetails($lpaId)
     {
-        return [];
+        $helper = new ApplicationResourceService($lpaId, 'seed', $this);
+        return $helper->getSingleValueResource('seed');
     }
     
     /**
@@ -928,9 +942,10 @@ class Client
      * @param string $lpaId
      * @return boolean
      */
-    public function setSeed($lpaId)
+    public function setSeed($lpaId, $seedId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'seed', $this);
+        return $helper->setResource(json_encode(['seed' => $seedId]));
     }
  
     /**
@@ -941,7 +956,8 @@ class Client
      */
     public function deleteSeed($lpaId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'seed', $this);
+        return $helper->deleteResource();
     }
     
     /**
@@ -1019,18 +1035,24 @@ class Client
      */
     public function getNotifiedPersons($lpaId)
     {
-        return [];
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson');
     }
     
     /**
      * Adds a new notified person
      *
      * @param string $lpaId
+     * @param NotifiedPerson $notifiedPerson
      * @return boolean
      */
-    public function addNotifiedPerson($lpaId)
+    public function addNotifiedPerson(
+        $lpaId,
+        NotifiedPerson $notifiedPerson
+    )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        return $helper->addResource($notifiedPerson->toJson());
     }
     
     /**
@@ -1045,22 +1067,26 @@ class Client
         $notifiedPersonId
     )
     {
-        return null;
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson', $notifiedPersonId);
     }
     
     /**
      * Sets the notified person for the given notified person id
      *
      * @param string $lpaId
+     * @param NotifiedPerson $notifiedPerson
      * @param string $notifiedPersonId
      * @return boolean
      */
     public function setNotifiedPerson(
         $lpaId,
+        $notifiedPerson,
         $notifiedPersonId
     )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        return $helper->setResource($notifiedPerson->toJson(), $notifiedPersonId);
     }
     
     /**
@@ -1075,7 +1101,86 @@ class Client
         $notifiedPersonId
     )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        return $helper->deleteResource($notifiedPersonId);
+    }
+    
+    /**
+     * Returns a list of all currently set primary attorneys
+     *
+     * @param string $lpaId
+     * @return array
+     */
+    public function getPrimaryAttorneys($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+    }
+    
+    /**
+     * Adds a new primary attorney
+     *
+     * @param string $lpaId
+     * @param PrimaryAttorney $primaryAttorney
+     * @return boolean
+     */
+    public function addPrimaryAttorney(
+        $lpaId,
+        AbstractAttorney $primaryAttorney
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        return $helper->addResource($primaryAttorney->toJson());
+    }
+    
+    /**
+     * Returns the primary attorney for the given primary attorney id
+     *
+     * @param string $lpaId
+     * @param string $primaryAttorneyId
+     * @return \Opg\Lpa\DataModel\Lpa\Document\PrimaryAttorney
+     */
+    public function getPrimaryAttorney(
+        $lpaId,
+        $primaryAttorneyId
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human', $primaryAttorneyId);
+    }
+    
+    /**
+     * Sets the primary attorney for the given primary attorney id
+     *
+     * @param string $lpaId
+     * @param AbstractAttorney $primaryAttorney
+     * @param string $primaryAttorneyId
+     * @return boolean
+     */
+    public function setPrimaryAttorney(
+        $lpaId,
+        AbstractAttorney $primaryAttorney,
+        $primaryAttorneyId
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        return $helper->setResource($primaryAttorney->toJson(), $primaryAttorneyId);
+    }
+    
+    /**
+     * Deletes the person to notify for the given primary attorney id
+     *
+     * @param string $lpaId
+     * @param string $primaryAttorneyId
+     * @return boolean
+     */
+    public function deletePrimaryAttorney(
+        $lpaId,
+        $primaryAttorneyId
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        return $helper->deleteResource($primaryAttorneyId);
     }
     
     /**
@@ -1086,7 +1191,8 @@ class Client
      */
     public function getCertificateProvider($lpaId)
     {
-        return new CertificateProvider();
+        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider');
     }
     
     /**
@@ -1101,7 +1207,8 @@ class Client
         $certificateProvider
     )
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
+        return $helper->setResource($certificateProvider->toJson());
     }
     
     /**
@@ -1112,7 +1219,8 @@ class Client
      */
     public function deleteCertificateProvider($lpaId)
     {
-        return true;
+        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
+        return $helper->deleteResource();
     }
     
     /**

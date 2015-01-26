@@ -1,5 +1,4 @@
 {
-    "correspondent": {
         "who": "other",
         "name": {
             "title": "Mr",
@@ -21,5 +20,4 @@
         },
         "contactByPost": true,
         "contactInWelsh": true
-    }
 }
