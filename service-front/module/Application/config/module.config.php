@@ -331,12 +331,12 @@ return array(
                             ),
                         ),
                     ),
-                    'correspondant' => array(
+                    'correspondent' => array(
                         'type' => 'Literal',
                         'options' => array(
-                            'route'    => '/correspondant',
+                            'route'    => '/correspondent',
                             'defaults' => array(
-                                'controllerName' => 'Application\Controller\Authenticated\Lpa\CorrespondantController',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\CorrespondentController',
                                 'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
