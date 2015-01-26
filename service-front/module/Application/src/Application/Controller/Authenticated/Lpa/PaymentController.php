@@ -11,9 +11,9 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use PhilipBrown\WorldPay\Environment;
-use PhilipBrown\WorldPay\Currency;
-use PhilipBrown\WorldPay\Request;
+
+use Omnipay\Omnipay;
+use Omnipay\Common\CreditCard;
 
 class PaymentController extends AbstractLpaController
 {
@@ -22,26 +22,39 @@ class PaymentController extends AbstractLpaController
      */
     public function indexAction()
     {
+        $gateway = Omnipay::create('WorldPayXML');
+        $email = 'todo@example.com';
         
         $lpa = $this->getLpa();
-
         $config = $this->getServiceLocator()->get('config')['worldpay'];
 
-        $request = new Request(
-            Environment::set($config['environment']),
-            $config['installation_id'],
-            $config['cart_id'],
-            $config['api_token_secret'],
-            $lpa->payment->amount,
-            Currency::set($config['currency']),
-            $config['url'],
-            ['lpa_id' => $lpa->id]
-        );
+        $gateway->setInstallation($config['installation_id']);
+        $gateway->setMerchant($config['merchant_code']);
+        $gateway->setPassword($config['xml_password']);
+        $gateway->setPassword($config['test_mode']);
         
-        $request->setSignatureFields(['lpa_id']);
-        
-        $request->send();
+        // The credit card object is used by Omnipay even when redirecting
+        // to an offsite credit card processor. In this case, it just stores 
+        // customer info.
+        $customerInfo = new CreditCard([
+            'email' => $email,
+        ]);
 
+        $donorName = $lpa->document->donor->name;
+        
+        $returnUrl = $this->url()->fromRoute('lpa/payment-callback', ['lpa-id' => $lpa->id]);
+        $options = [
+            'amount' => $lpa->payment->amount,
+            'currency' => $config['currency'],
+            'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
+            'transactionId' => $lpa->id,
+            'token' => $config['api_token_secret'],
+            'returnUrl' => $returnUrl,
+            'cancelUrl' => $returnUrl,
+        ];
+        
+        $request = $gateway->authorize($options);
+        
     }
     
     public function getLpa()

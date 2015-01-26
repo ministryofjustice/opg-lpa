@@ -242,10 +242,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
 
         $values = get_object_vars( $this );
 
-        // We shouldn't include these...
-        unset( $values['typeMap'] );
-        unset( $values['validators'] );
-
         foreach( $values as $k=>$v ){
 
             if ( $v instanceof DateTime ) {
