@@ -477,23 +477,23 @@ return array(
                             ),
                         ),
                     ),
-                    'online-payment-success' => array(
+                    'payment' => array(
                         'type' => 'Literal',
                         'options' => array(
-                            'route'    => '/online-payment-success',
+                            'route'    => '/payment',
                             'defaults' => array(
-                                'controllerName' => 'Application\Controller\Authenticated\Lpa\OnlinePaymentSuccessController',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\PaymentController',
                                 'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
                     ),
-                    'online-payment-unsuccessful' => array(
+                    'payment-callback' => array(
                         'type' => 'Literal',
                         'options' => array(
-                            'route'    => '/online-payment-unsuccessful',
+                            'route'    => '/payment-return',
                             'defaults' => array(
-                                'controllerName' => 'Application\Controller\Authenticated\Lpa\OnlinePaymentUnsuccessfulController',
+                                'controllerName' => 'Application\Controller\Authenticated\Lpa\PaymentCallbackController',
                                 'controller' => 'ControllerFactory',
                                 'action'     => 'index',
                             ),
