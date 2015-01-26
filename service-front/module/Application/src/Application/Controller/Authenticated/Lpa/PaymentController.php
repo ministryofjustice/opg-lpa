@@ -31,15 +31,8 @@ class PaymentController extends AbstractLpaController
         $gateway->setInstallation($config['installation_id']);
         $gateway->setMerchant($config['merchant_code']);
         $gateway->setPassword($config['xml_password']);
-        $gateway->setPassword($config['test_mode']);
+        $gateway->setTestMode($config['test_mode']);
         
-        // The credit card object is used by Omnipay even when redirecting
-        // to an offsite credit card processor. In this case, it just stores 
-        // customer info.
-        $customerInfo = new CreditCard([
-            'email' => $email,
-        ]);
-
         $donorName = $lpa->document->donor->name;
         
         $returnUrl = $this->url()->fromRoute('lpa/payment-callback', ['lpa-id' => $lpa->id]);
@@ -48,13 +41,22 @@ class PaymentController extends AbstractLpaController
             'currency' => $config['currency'],
             'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
             'transactionId' => $lpa->id,
+        // The credit card object is used by Omnipay even when redirecting
+        // to an offsite credit card processor. In this case, it just stores 
+        // customer info.
+            'card' => new CreditCard([
+                    'email' => $email,
+                    'number' => '4111111111111111',
+                    'expiryMonth' => '12',
+                    'expiryYear' => date('Y') + 1,
+                    'cvv' => '123',
+                ]),
             'token' => $config['api_token_secret'],
             'returnUrl' => $returnUrl,
             'cancelUrl' => $returnUrl,
         ];
         
-        $request = $gateway->authorize($options);
-        
+        $response = $gateway->purchase($options)->send();
     }
     
     public function getLpa()
