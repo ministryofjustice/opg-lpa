@@ -592,8 +592,6 @@
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
             "time": "2015-01-26 11:52:16"
-<<<<<<< HEAD
-=======
         },
         {
             "name": "omnipay/common",
@@ -710,7 +708,6 @@
                 "purchase"
             ],
             "time": "2015-01-11 04:54:29"
->>>>>>> 27cc746f1b154e64210534514e34c40c2cc99e62
         },
         {
             "name": "react/promise",
