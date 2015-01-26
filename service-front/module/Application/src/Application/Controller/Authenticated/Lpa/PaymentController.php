@@ -12,6 +12,8 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use PhilipBrown\WorldPay\Environment;
+use PhilipBrown\WorldPay\Currency;
+use PhilipBrown\WorldPay\Request;
 
 class PaymentController extends AbstractLpaController
 {
@@ -22,16 +24,24 @@ class PaymentController extends AbstractLpaController
     {
         
         $lpa = $this->getLpa();
-        $paymentAmount = $lpa->payment->amount;
 
         $config = $this->getServiceLocator()->get('config')['worldpay'];
-        
-        $env = Environment::set($config['environment']);
 
-        return [
-            'name' => $this->getLpa()->payment->amount,
-            'url' => $config['url'],
-        ];
+        $request = new Request(
+            Environment::set($config['environment']),
+            $config['installation_id'],
+            $config['cart_id'],
+            $config['api_token_secret'],
+            $lpa->payment->amount,
+            Currency::set($config['currency']),
+            $config['url'],
+            ['lpa_id' => $lpa->id]
+        );
+        
+        $request->setSignatureFields(['lpa_id']);
+        
+        $request->send();
+
     }
     
     public function getLpa()
