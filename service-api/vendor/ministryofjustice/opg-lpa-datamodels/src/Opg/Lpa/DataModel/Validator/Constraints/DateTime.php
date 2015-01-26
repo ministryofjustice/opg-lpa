@@ -35,5 +35,5 @@ class DateTime extends SymfonyConstraints\DateTime
         self::INVALID_TIME_ERROR => 'INVALID_TIME_ERROR',
     );
 
-    public $message = 'expected-type|DateTime';
+    public $message = 'expected-type:DateTime';
 }

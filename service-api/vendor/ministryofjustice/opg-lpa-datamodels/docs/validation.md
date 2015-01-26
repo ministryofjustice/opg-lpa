@@ -17,46 +17,46 @@ Type Validation
 ---------------
 If a supplied value is of the incorrect type, you'll receive the response:
 
-`expected-type|{type}`
+`expected-type:{type}`
 
 where ``{type}`` is the expected data type or class. For example:
 
-- ``expected-type|int``
-- ``expected-type|xdigit`` (i.e. must be a hexadecimal value)
-- ``expected-type|\Opg\Lpa\DataModel\Lpa\Payment\Payment``
+- ``expected-type:int``
+- ``expected-type:xdigit`` (i.e. must be a hexadecimal value)
+- ``expected-type:\Opg\Lpa\DataModel\Lpa\Payment\Payment``
 
 Invalid value size (range or length)
 --------------------------------------
 If a supplied value is the too big/long or small/short, you'll receive the response:
 
-- For too small/short: ``must-be-greater-than-or-equal|{limit}``
-- For too big/long: ``must-be-less-than-or-equal|{limit}``
+- For too small/short: ``must-be-greater-than-or-equal:{limit}``
+- For too big/long: ``must-be-less-than-or-equal:{limit}``
 
 if a string much be exactly _N_ characters long, an invalid value will result in:
 
-`length-must-equal|{N}`
+`length-must-equal:{N}`
 
 
 DateTime
 ---------
 All dates and times should be stored as a ``DateTime`` object with a UTC time zone. If they're not, you'll receive the response:
 
-``expected-type|DateTime`` or ``timezone-not-utc``
+``expected-type:DateTime`` or ``timezone-not-utc``
 
 
 Choice Values
 --------------
 Some properties require a string containing one of a set of predefined values. If an invalid value is passed, you'll receive the response:
 
-``expected-values|{value0},{value1},{valueN}``
+``expected-values:{value0},{value1},{valueN}``
 
 If a minimum number of values need selecting you'll receive:
 
-`minimum-number-of-values|{limit}`
+`minimum-number-of-values:{limit}`
 
 And if a maximum number of values need selecting you'll receive:
 
-`maximum-number-of-values|{limit}`
+`maximum-number-of-values:{limit}`
 
 Email Addresses
 ---------------

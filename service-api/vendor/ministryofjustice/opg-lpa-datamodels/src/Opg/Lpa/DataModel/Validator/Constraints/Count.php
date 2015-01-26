@@ -34,8 +34,8 @@ class Count extends SymfonyConstraints\Count
         self::TOO_MANY_ERROR => 'TOO_MANY_ERROR',
     );
 
-    public $minMessage = 'This collection should contain {{ limit }} element or more.|This collection should contain {{ limit }} elements or more.';
-    public $maxMessage = 'This collection should contain {{ limit }} element or less.|This collection should contain {{ limit }} elements or less.';
-    public $exactMessage = 'This collection should contain exactly {{ limit }} element.|This collection should contain exactly {{ limit }} elements.';
+    public $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
+    public $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
+    public $exactMessage = 'length-must-equal:{{ limit }}';
 
 }

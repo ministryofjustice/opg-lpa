@@ -34,17 +34,29 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function __construct( $data = null ){
 
-        // If it's a string, assume it's JSON...
+        // If it's a string...
         if( is_string( $data ) ){
-            $data = json_decode( $data, true );
-        }
 
-        // If it's (now) an array...
+            // Assume it's JSON.
+            $data = json_decode( $data, true );
+
+            // Throw an exception if it turns out to not be JSON...
+            if( is_null($data) ){ throw new InvalidArgumentException('Invalid JSON passed to constructor'); }
+
+        } // if
+
+
+        // If it's [now] an array...
         if( is_array($data) ){
 
             $this->populate( $data );
 
-        } // if
+        } elseif( !is_null( $data ) ){
+
+            // else if it's not null (or array) now, it was an invalid data type...
+            throw new InvalidArgumentException('Invalid argument passed to constructor');
+
+        }
 
     } // function
 
@@ -229,10 +241,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
         //---
 
         $values = get_object_vars( $this );
-
-        // We shouldn't include these...
-        unset( $values['typeMap'] );
-        unset( $values['validators'] );
 
         foreach( $values as $k=>$v ){
 

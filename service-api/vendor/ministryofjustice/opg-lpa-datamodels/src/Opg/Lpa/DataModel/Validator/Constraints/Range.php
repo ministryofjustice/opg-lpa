@@ -35,8 +35,8 @@ class Range extends SymfonyConstraints\Range
         self::BELOW_RANGE_ERROR => 'BELOW_RANGE_ERROR',
     );
 
-    public $minMessage = 'must-be-greater-than-or-equal|{{ limit }}';
-    public $maxMessage = 'must-be-less-than-or-equal|{{ limit }}';
-    public $invalidMessage = 'expected-type|number';
+    public $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
+    public $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
+    public $invalidMessage = 'expected-type:number';
 
 }

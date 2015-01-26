@@ -32,7 +32,7 @@ class ReplacementAttorneyDecisions extends AbstractDecisions {
             ] ]),
         ]);
 
-        $metadata->addPropertyConstraints('howDetails', [
+        $metadata->addPropertyConstraints('whenDetails', [
             // Can be null
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'min' => 1, 'max' => (1000*1024) ]),

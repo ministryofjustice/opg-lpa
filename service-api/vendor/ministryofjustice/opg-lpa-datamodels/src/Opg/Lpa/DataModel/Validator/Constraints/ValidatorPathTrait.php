@@ -21,7 +21,8 @@ trait ValidatorPathTrait {
      */
     public function validatedBy()
     {
-        return 'Symfony\\Component\\Validator\\Constraints\\'.end(explode('\\',get_class($this))).'Validator';
+        $pathParts = explode('\\',get_class($this));
+        return 'Symfony\\Component\\Validator\\Constraints\\'.end( $pathParts ).'Validator';
     }
 
 } // trait

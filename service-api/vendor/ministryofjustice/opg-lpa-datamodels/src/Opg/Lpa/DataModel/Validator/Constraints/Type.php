@@ -25,7 +25,7 @@ class Type extends SymfonyConstraints\Type
 {
     use ValidatorPathTrait;
 
-    public $message = 'expected-type|{{ type }}';
+    public $message = 'expected-type:{{ type }}';
     public $type;
 
     /**

@@ -34,9 +34,9 @@ class Length extends SymfonyConstraints\Length
         self::TOO_LONG_ERROR => 'TOO_LONG_ERROR',
     );
 
-    public $minMessage = 'must-be-greater-than-or-equal|{{ limit }}';
-    public $maxMessage = 'must-be-less-than-or-equal|{{ limit }}';
-    public $exactMessage = 'length-must-equal|{{ limit }}';
+    public $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
+    public $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
+    public $exactMessage = 'length-must-equal:{{ limit }}';
 
 
 }

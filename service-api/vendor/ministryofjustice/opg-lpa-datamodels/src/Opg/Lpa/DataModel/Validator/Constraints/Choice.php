@@ -25,8 +25,8 @@ class Choice extends SymfonyConstraints\Choice
 {
     use ValidatorPathTrait;
 
-    public $minMessage = 'minimum-number-of-values|{{ limit }}';
-    public $maxMessage = 'maximum-number-of-values|{{ limit }}';
+    public $minMessage = 'minimum-number-of-values:{{ limit }}';
+    public $maxMessage = 'maximum-number-of-values:{{ limit }}';
 
     // Values are overridden in the constructor
     public $message = 'invalid-value-selected';
@@ -36,8 +36,8 @@ class Choice extends SymfonyConstraints\Choice
 
         // Include the allowed values in the error message
         if( isset($options['choices']) ){
-            $this->message = 'allowed-values|'.implode(',', $options['choices']);
-            $this->multipleMessage = 'allowed-values|'.implode(',', $options['choices']);
+            $this->message = 'allowed-values:'.implode(',', $options['choices']);
+            $this->multipleMessage = 'allowed-values:'.implode(',', $options['choices']);
         }
 
         parent::__construct( $options );
