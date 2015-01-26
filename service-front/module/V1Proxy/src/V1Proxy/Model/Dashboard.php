@@ -70,15 +70,19 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Map the returned LPAs to a standard data structure
 
-        $result = array();
-
         foreach( $array['lpa'] as $lpa ){
 
             $application = $lpa['application'];
 
+            $href = $application['@attributes']['href'];
+
             //---
 
             $obj = new \stdClass();
+
+            $obj->id = (int)array_pop( explode( '/', $href ) );
+
+            $obj->version = 1;
 
             $obj->donor = ( isset($application['donor-name']) ) ? $application['donor-name'] : null;
 
