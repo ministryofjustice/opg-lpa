@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
-    'PhilipBrown\\WorldPay\\' => array($vendorDir . '/philipbrown/worldpay/src'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Opg\\Lpa\\Api\\Client\\' => array($vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),

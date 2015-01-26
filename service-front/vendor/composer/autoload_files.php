@@ -8,5 +8,4 @@ $baseDir = dirname($vendorDir);
 return array(
     $vendorDir . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/functions.php',
     $vendorDir . '/react/promise/src/functions_include.php',
-    $vendorDir . '/beberlei/assert/lib/Assert/functions.php',
 );
