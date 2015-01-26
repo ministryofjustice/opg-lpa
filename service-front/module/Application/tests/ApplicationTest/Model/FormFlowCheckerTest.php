@@ -9,11 +9,11 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 /**
  * FormFlowChecker test case.
@@ -482,6 +482,42 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/certificate-provider', $this->checker->check('lpa/people-to-notify'));
     }
     
+    public function testRoutePeopleToNotifyAdd()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify/add', $this->checker->check('lpa/people-to-notify/add'));
+    }
+    
+    public function testRoutePeopleToNotifyAddFallback()
+    {
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->check('lpa/people-to-notify/add'));
+    }
+
+    public function testRoutePeopleToNotifyEdit()
+    {
+        $this->addPeopleToNotify();
+        $this->assertEquals('lpa/people-to-notify/edit', $this->checker->check('lpa/people-to-notify/edit', 0));
+    }
+    
+    public function testRoutePeopleToNotifyEditFallback()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->check('lpa/people-to-notify/edit', 0));
+    }
+
+    public function testRoutePeopleToNotifyDelete()
+    {
+        $this->addPeopleToNotify();
+        $this->assertEquals('lpa/people-to-notify/delete', $this->checker->check('lpa/people-to-notify/delete', 0));
+    }
+    
+    public function testRoutePeopleToNotifyDeleteFallback()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->check('lpa/people-to-notify/delete', 0));
+    }
+    
     public function testRouteInstructions()
     {
         $this->addCertificateProvider();
@@ -530,21 +566,100 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteCorrespondent()
     {
-        $this->
+        $this->setLpaApplicant();
         $this->assertEquals('lpa/correspondent', $this->checker->check('lpa/correspondent'));
     }
     
     public function testRouteCorrespondentFallback()
     {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/applicant', $this->checker->check('lpa/correspondent'));
+    }
+
+    public function testRouteCorrespondentEdit()
+    {
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/correspondent/edit', $this->checker->check('lpa/correspondent/edit'));
+    }
+    
+    public function testRouteCorrespondentEditFallback()
+    {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/applicant', $this->checker->check('lpa/correspondent/edit'));
+    }
+    
+    public function testRouteWhatIsMyRole()
+    {
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/what-is-my-role', $this->checker->check('lpa/what-is-my-role'));
+    }
+
+    public function testRouteWhatIsMyRoleFallback()
+    {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/applicant', $this->checker->check('lpa/what-is-my-role'));
+    }
+    
+    public function testRouteFee()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->assertEquals('lpa/fee', $this->checker->check('lpa/fee'));
+    }
+    
+    public function testRouteFeeFallback()
+    {
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/what-is-my-role', $this->checker->check('lpa/fee'));
+    }
+    
+    public function testRouteComplete()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->lpa->payment = new Payment();
+        
+        $this->lpa->payment->amount = null;
+        $this->lpa->payment->reducedFeeUniversalCredit = true;
+        $this->assertEquals('lpa/complete', $this->checker->check('lpa/complete'));
+        
+        $this->lpa->payment->amount = 0.0;
+        $this->lpa->payment->reducedFeeUniversalCredit = null;
+        $this->assertEquals('lpa/complete', $this->checker->check('lpa/complete'));
+        
+        $this->lpa->payment->amount = 100;
+        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
+        $this->assertEquals('lpa/complete', $this->checker->check('lpa/complete'));
+        
+        $this->lpa->payment->amount = 100;
+        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+        $this->lpa->payment->reference = "PAYMENT RECEIVED";
+        $this->assertEquals('lpa/complete', $this->checker->check('lpa/complete'));
         
     }
     
+    public function testRouteCompleteFallback()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->lpa->payment = new Payment();
+        $this->assertEquals('lpa/fee', $this->checker->check('lpa/complete'));
+        
+        $this->lpa->payment->amount = 100;
+        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+        $this->assertEquals('lpa/fee', $this->checker->check('lpa/complete'));
+    }
+
+    
 ############################## Private methods ###########################################################################
 
+    private function setWhoAreYouAnswered()
+    {
+        $this->setLpaApplicant();
+        $this->lpa->whoAreYouAnswered = true;
+    }
+    
     private function setLpaApplicant()
     {
         $this->setLpaCreated();
-        $this->lpa->document->applicant = 'donor';
+        $this->lpa->document->whoIsRegistering = 'donor';
         $this->lpa->document->correspondent = new Correspondence();
     }
     
