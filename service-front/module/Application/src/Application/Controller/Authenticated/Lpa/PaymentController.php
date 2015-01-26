@@ -10,14 +10,28 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use PhilipBrown\WorldPay\Environment;
 
 class PaymentController extends AbstractLpaController
 {
+    /**
+     * Gathers the LPA information and forwards the payment request to Worldpay
+     */
     public function indexAction()
     {
-        echo $this->getLpa()->document->donor->name->first;
+        
+        $lpa = $this->getLpa();
+        $paymentAmount = $lpa->payment->amount;
+
+        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        
+        $env = Environment::set($config['environment']);
+
+        return [
+            'name' => $this->getLpa()->payment->amount,
+            'url' => $config['url'],
+        ];
     }
     
     public function getLpa()
