@@ -1,8 +1,6 @@
 <?php
-
 namespace Application\Controller;
 
-use Application\Controller\AbstractAuthenticatedController;
 use Zend\Mvc\MvcEvent;
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -45,7 +43,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     /**
      * @param field_type $lpa
      */
-    public function setLpa ($lpa)
+    public function setLpa ( Lpa $lpa )
     {
         $this->lpa = $lpa;
     }

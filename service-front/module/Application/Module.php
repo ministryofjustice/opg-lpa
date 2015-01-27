@@ -12,6 +12,8 @@ use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClien
 
 use Opg\Lpa\Api\Client\Client as ApiClient;
 
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+
 class Module{
 
     public function onBootstrap(MvcEvent $e){
@@ -19,7 +21,8 @@ class Module{
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        
+
+        //Only bootstrap the session if it's *not* PHPUnit.
         if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
             $this->bootstrapSession($e);
         }
@@ -60,6 +63,9 @@ class Module{
             ],
             'factories' => [
                 'SessionManager' => 'Application\Model\Service\Session\SessionFactory',
+                'LpaApplicationService' => function( ServiceLocatorInterface $sm ){
+                    return new LpaApplicationService( $sm->get('ApiClient') );
+                },
                 'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
                     return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
                 },
@@ -74,6 +80,7 @@ class Module{
                     if ($auth->hasIdentity()) {
 
                         $identity = $auth->getIdentity();
+                        $client->setUserId( $identity->id() );
                         $client->setToken( $identity->token() );
 
                     }
@@ -92,6 +99,7 @@ class Module{
         return [
             'initializers' => [
                 'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
+                'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
             ]
         ];
 
