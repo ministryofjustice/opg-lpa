@@ -24,6 +24,8 @@ class PaymentController extends AbstractLpaController
     {
         $gateway = Omnipay::create('WorldPayXML');
         $email = 'todo@example.com';
+        $firstName = 'Jane';
+        $lastName = 'Smith';
         
         $lpa = $this->getLpa();
         $config = $this->getServiceLocator()->get('config')['worldpay'];
@@ -34,22 +36,21 @@ class PaymentController extends AbstractLpaController
         $gateway->setTestMode($config['test_mode']);
         
         $donorName = $lpa->document->donor->name;
+        $opgPaymentRef = $lpa->id . '-' . time();
         
-        $returnUrl = $this->url()->fromRoute('lpa/payment-callback', ['lpa-id' => $lpa->id]);
+        $uri = $this->getRequest()->getUri();
+        $baseUri = sprintf('%s://%s', $uri->getScheme(), $uri->getHost());
+        $returnUrl = $baseUri . $this->url()->fromRoute('lpa/payment-callback', ['lpa-id' => $lpa->id]);
         $options = [
             'amount' => $lpa->payment->amount,
             'currency' => $config['currency'],
             'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
-            'transactionId' => $lpa->id,
-        // The credit card object is used by Omnipay even when redirecting
-        // to an offsite credit card processor. In this case, it just stores 
-        // customer info.
+            'transactionId' => $opgPaymentRef,
+            // The credit card object is used by Omnipay even when redirecting
+            // to an offsite credit card processor. In this case, it just stores 
+            // customer info.
             'card' => new CreditCard([
                     'email' => $email,
-                    'number' => '4111111111111111',
-                    'expiryMonth' => '12',
-                    'expiryYear' => date('Y') + 1,
-                    'cvv' => '123',
                 ]),
             'token' => $config['api_token_secret'],
             'returnUrl' => $returnUrl,
@@ -57,6 +58,10 @@ class PaymentController extends AbstractLpaController
         ];
         
         $response = $gateway->purchase($options)->send();
+        
+        $data = $response->getData();
+
+        $redirectUrl = $data->reference;
     }
     
     public function getLpa()

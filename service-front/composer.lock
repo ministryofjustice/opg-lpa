@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "21dc49bbf4949efa0543eff7cc43eb25",
+    "hash": "0768eadae16e374097119d99a5ee2a45",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -560,12 +560,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "f57678425dc4a0988f2ae1582d8ceedc5e8021a3"
+                "reference": "139227d94cc7c5ae9749918c18fe82fa68050efc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/f57678425dc4a0988f2ae1582d8ceedc5e8021a3",
-                "reference": "f57678425dc4a0988f2ae1582d8ceedc5e8021a3",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/139227d94cc7c5ae9749918c18fe82fa68050efc",
+                "reference": "139227d94cc7c5ae9749918c18fe82fa68050efc",
                 "shasum": ""
             },
             "require": {
@@ -591,7 +591,63 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-01-26 11:52:16"
+            "time": "2015-01-26 14:43:11"
+        },
+        {
+            "name": "netsensia/omnipay-worldpay-xml",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Netsensia/omnipay-worldpay-xml.git",
+                "reference": "368bc9086b0e22d952c751563ca43fe828e935d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Netsensia/omnipay-worldpay-xml/zipball/368bc9086b0e22d952c751563ca43fe828e935d5",
+                "reference": "368bc9086b0e22d952c751563ca43fe828e935d5",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/plugin-cookie": "~3.9",
+                "omnipay/common": "~2.3"
+            },
+            "require-dev": {
+                "omnipay/tests": "~2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Omnipay\\WorldPayXML\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dave Nash",
+                    "email": "dave.nash@teaandcode.com"
+                }
+            ],
+            "description": "WorldPay XML driver for the Omnipay payment processing library",
+            "homepage": "https://github.com/teaandcode/omnipay-worldpay-xml",
+            "keywords": [
+                "gateway",
+                "merchant",
+                "omnipay",
+                "pay",
+                "payment",
+                "worldpay"
+            ],
+            "support": {
+                "source": "https://github.com/Netsensia/omnipay-worldpay-xml/tree/master"
+            },
+            "time": "2015-01-26 17:33:06"
         },
         {
             "name": "omnipay/common",
@@ -1067,60 +1123,6 @@
             "description": "Symfony Validator Component",
             "homepage": "http://symfony.com",
             "time": "2015-01-05 17:57:42"
-        },
-        {
-            "name": "tea-and-code/omnipay-worldpay-xml",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/teaandcode/omnipay-worldpay-xml.git",
-                "reference": "f4d38285c9fab116f6611924ddbcca227e3e561f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/teaandcode/omnipay-worldpay-xml/zipball/f4d38285c9fab116f6611924ddbcca227e3e561f",
-                "reference": "f4d38285c9fab116f6611924ddbcca227e3e561f",
-                "shasum": ""
-            },
-            "require": {
-                "guzzle/plugin-cookie": "~3.9",
-                "omnipay/common": "~2.3"
-            },
-            "require-dev": {
-                "omnipay/tests": "~2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Omnipay\\WorldPayXML\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dave Nash",
-                    "email": "dave.nash@teaandcode.com"
-                }
-            ],
-            "description": "WorldPay XML driver for the Omnipay payment processing library",
-            "homepage": "https://github.com/teaandcode/omnipay-worldpay-xml",
-            "keywords": [
-                "gateway",
-                "merchant",
-                "omnipay",
-                "pay",
-                "payment",
-                "worldpay"
-            ],
-            "time": "2014-11-27 11:58:06"
         },
         {
             "name": "zendframework/zendframework",
@@ -2134,8 +2136,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "ministryofjustice/opg-lpa-api-client": 20,
-        "ministryofjustice/opg-lpa-datamodels": 20,
-        "tea-and-code/omnipay-worldpay-xml": 20
+        "ministryofjustice/opg-lpa-datamodels": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -286,9 +286,15 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'card');
-        $this->getCard()->validate();
-
+        if ($this->getCard()->getNumber() == '') {
+            $this->validate('amount');
+            $useCreditCard = false;
+        } else {
+            $this->validate('amount', 'card');
+            $this->getCard()->validate();
+            $useCreditCard = true;
+        }
+        
         $data = new \SimpleXMLElement('<paymentService />');
         $data->addAttribute('version', self::VERSION);
         $data->addAttribute('merchantCode', $this->getMerchant());
@@ -304,8 +310,6 @@ class PurchaseRequest extends AbstractRequest
         $amount->addAttribute('currencyCode', $this->getCurrency());
         $amount->addAttribute('exponent', $this->getCurrencyDecimalPlaces());
 
-        $payment = $order->addChild('paymentDetails');
-
         $codes = array(
             CreditCard::BRAND_AMEX        => 'AMEX-SSL',
             CreditCard::BRAND_DANKORT     => 'DANKORT-SSL',
@@ -318,45 +322,56 @@ class PurchaseRequest extends AbstractRequest
             CreditCard::BRAND_SWITCH      => 'MAESTRO-SSL',
             CreditCard::BRAND_VISA        => 'VISA-SSL'
         );
+        
+        if ($useCreditCard) {
+            $payment = $order->addChild('paymentDetails');
 
-        $card = $payment->addChild($codes[$this->getCard()->getBrand()]);
-        $card->addChild('cardNumber', $this->getCard()->getNumber());
-
-        $expiry = $card->addChild('expiryDate')->addChild('date');
-        $expiry->addAttribute('month', $this->getCard()->getExpiryDate('m'));
-        $expiry->addAttribute('year', $this->getCard()->getExpiryDate('Y'));
-
-        $card->addChild('cardHolderName', $this->getCard()->getName());
-
-        if (
-                $this->getCard()->getBrand() == CreditCard::BRAND_MAESTRO
-             || $this->getCard()->getBrand() == CreditCard::BRAND_SWITCH
-        ) {
-            $start = $card->addChild('startDate')->addChild('date');
-            $start->addAttribute('month', $this->getCard()->getStartDate('m'));
-            $start->addAttribute('year', $this->getCard()->getStartDate('Y'));
-
-            $card->addChild('issueNumber', $this->getCard()->getIssueNumber());
+            $card = $payment->addChild($codes[$this->getCard()->getBrand()]);
+            $card->addChild('cardNumber', $this->getCard()->getNumber());
+    
+            $expiry = $card->addChild('expiryDate')->addChild('date');
+            $expiry->addAttribute('month', $this->getCard()->getExpiryDate('m'));
+            $expiry->addAttribute('year', $this->getCard()->getExpiryDate('Y'));
+    
+            $card->addChild('cardHolderName', $this->getCard()->getName());
+    
+            if (
+                    $this->getCard()->getBrand() == CreditCard::BRAND_MAESTRO
+                 || $this->getCard()->getBrand() == CreditCard::BRAND_SWITCH
+            ) {
+                $start = $card->addChild('startDate')->addChild('date');
+                $start->addAttribute('month', $this->getCard()->getStartDate('m'));
+                $start->addAttribute('year', $this->getCard()->getStartDate('Y'));
+    
+                $card->addChild('issueNumber', $this->getCard()->getIssueNumber());
+            }
+    
+            $card->addChild('cvc', $this->getCard()->getCvv());
+    
+            $address = $card->addChild('cardAddress')->addChild('address');
+            $address->addChild('street', $this->getCard()->getAddress1());
+            $address->addChild('postalCode', $this->getCard()->getPostcode());
+            $address->addChild('countryCode', $this->getCard()->getCountry());
+    
+            $session = $payment->addChild('session');
+            $session->addAttribute('shopperIPAddress', $this->getClientIP());
+            $session->addAttribute('id', $this->getSession());
+    
+            $paResponse = $this->getPaResponse();
+    
+            if (!empty($paResponse)) {
+                $info3DSecure = $payment->addChild('info3DSecure');
+                $info3DSecure->addChild('paResponse', $paResponse);
+            }
+        } else {
+            $payment = $order->addChild('paymentMethodMask');
+            
+            foreach ($codes as $code) {
+                $include = $payment->addChild('include');
+                $include->addAttribute('code', $code);
+            }
         }
-
-        $card->addChild('cvc', $this->getCard()->getCvv());
-
-        $address = $card->addChild('cardAddress')->addChild('address');
-        $address->addChild('street', $this->getCard()->getAddress1());
-        $address->addChild('postalCode', $this->getCard()->getPostcode());
-        $address->addChild('countryCode', $this->getCard()->getCountry());
-
-        $session = $payment->addChild('session');
-        $session->addAttribute('shopperIPAddress', $this->getClientIP());
-        $session->addAttribute('id', $this->getSession());
-
-        $paResponse = $this->getPaResponse();
-
-        if (!empty($paResponse)) {
-            $info3DSecure = $payment->addChild('info3DSecure');
-            $info3DSecure->addChild('paResponse', $paResponse);
-        }
-
+        
         $shopper = $order->addChild('shopper');
 
         $email = $this->getCard()->getEmail();
@@ -377,7 +392,7 @@ class PurchaseRequest extends AbstractRequest
         if (!empty($echoData)) {
             $order->addChild('echoData', $echoData);
         }
-
+        
         return $data;
     }
 
@@ -438,7 +453,7 @@ class PurchaseRequest extends AbstractRequest
         $this->httpClient->addSubscriber($this->cookiePlugin);
 
         $xml = $document->saveXML();
-
+        
         $httpResponse = $this->httpClient
             ->post($this->getEndpoint(), $headers, $xml)
             ->send();
