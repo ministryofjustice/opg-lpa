@@ -6,7 +6,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
-use Symfony\Component\Intl\Exception\UnexpectedTypeException;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 class FormFlowChecker
 {
@@ -18,8 +23,8 @@ class FormFlowChecker
             'lpa/certificate-provider/add'                  => 'isCertificateProviderAddAccessible',
             'lpa/certificate-provider/edit'                 => 'isCertificateProviderEditAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
-            'lpa/correspondant'                             => 'isCorrespondentAccessible',
-            'lpa/correspondant/edit'                        => 'isCorrespondentEditAccessible',
+            'lpa/correspondent'                             => 'isCorrespondentAccessible',
+            'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
             'lpa/created'                                   => 'isCreatedAccessible',
             'lpa/donor'                                     => 'isDonorAccessible',
             'lpa/donor/add'                                 => 'isDonorAddAccessible',
@@ -68,7 +73,6 @@ class FormFlowChecker
         
         $checkFunction = static::$checkerFunctionMap[$currentRouteName];
         $checkValue = call_user_func(array($this, $checkFunction), $personIdex);
-        
         if($checkValue === true) {
             return $currentRouteName;
         }
@@ -203,10 +207,8 @@ class FormFlowChecker
     private function isReplacementAttorneyAccessible()
     {
         if($this->lpaHasMultiplePrimaryAttorneys()) {
-            if(in_array($this->lpa->document->primaryAttorneyDecisions->how, array(
-                    PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
-                    PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
-                    PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS))) {
+            if(($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions) 
+                &&$this->lpaHowPrimaryAttorneysMakeDecisionHasValue()) {
                 return true;
             }
             else {
@@ -235,9 +237,356 @@ class FormFlowChecker
         }
     }
     
+    private function isReplacementAttorneyDeleteAccessible($idx)
+    {
+        if($this->lpaHasReplacementAttorney($idx)) {
+            return true;
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+    
+    private function isWhenReplacementAttorneyStepInAccessible()
+    {
+        if($this->lpaHasReplacementAttorney() && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+            return true;
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+    
+    private function isHowReplacementAttorneysMakeDecisionAccessible()
+    {
+        if($this->lpaHasMultipleReplacementAttorneys()) {
+            if((count($this->lpa->document->primaryAttorneys) == 1)
+              ||($this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct())
+              ||($this->lpaPrimaryAttorneysMakeDecisionJointly())
+                ) {
+                    return true;
+            }
+            else {
+                if($this->lpaHasMultiplePrimaryAttorneys()
+                    && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+                    return 'lpa/when-replacement-attorney-step-in';
+                }
+                else {
+                    return 'lpa/replacement-attorney';
+                }
+            }
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+    
+    private function isCertificateProviderAccessible()
+    {
+        if($this->lpaHasPrimaryAttorney() && (
+            ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends())
+            || (count($this->lpa->document->replacementAttorneys) == 0)
+            || ((count($this->lpa->document->replacementAttorneys) == 1) && (count($this->lpa->document->primaryAttorneys) == 1))
+            || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly())
+            || ($this->lpaHasMultipleReplacementAttorneys() && (count($this->lpa->document->primaryAttorneys) == 1) && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
+            || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaWhenReplacementAttorneyStepInHasValue())
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions) && in_array($this->lpa->document->replacementAttorneyDecisions->when, [ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST, ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS]))
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
+        )) {
+            return true;
+        }
+        else {
+            if($this->lpaHasMultipleReplacementAttorneys()
+                && ((count($this->lpa->document->primaryAttorneys)==1) 
+                    || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly())
+                    || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct())
+                )
+                && (!$this->lpaHowReplacementAttorneysMakeDecisionHasValue() || ($this->lpa->document->replacementAttorneyDecisions->how == null)))
+                {
+                return 'lpa/how-replacement-attorneys-make-decision';
+            }
+            elseif($this->lpaHasReplacementAttorney() && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+                return 'lpa/when-replacement-attorney-step-in';
+            }
+            else{
+                return 'lpa/replacement-attorney';
+            }
+        }
+    }
+    
+    private function isPeopleToNotifyAccessible()
+    {
+        if($this->lpaHasCertificateProvider()) {
+            return true;
+        }
+        else {
+            return 'lpa/certificate-provider';
+        }
+    }
+
+    private function isPeopleToNotifyAddAccessible()
+    {
+        return $this->isPeopleToNotifyAccessible();
+    }
+
+    private function isPeopleToNotifyEditAccessible($idx)
+    {
+        if($this->lpaHasPeopleToNotify($idx)) {
+            return true;
+        }
+        else {
+            return 'lpa/people-to-notify';
+        }
+    }
+
+    private function isPeopleToNotifyDeleteAccessible($idx)
+    {
+        if($this->lpaHasPeopleToNotify($idx)) {
+            return true;
+        }
+        else {
+            return 'lpa/people-to-notify';
+        }
+    }
+    
+    private function isInstructionsAccessible()
+    {
+        if($this->lpaHasCertificateProvider()) {
+            return true;
+        }
+        else {
+            return 'lpa/people-to-notify';
+        }
+    }
+    
+    private function isCreatedAccessible()
+    {
+        if($this->lpaHasCertificateProvider() && ($this->lpa->document->instruction !== null)) {
+            return true;
+        }
+        else {
+            return 'lpa/instructions';
+        }
+    }
+    
+    private function isApplicantAccessible()
+    {
+        if($this->lpaHasCreated()) {
+            return true;
+        }
+        else {
+            return 'lpa/created';
+        }
+    }
+    
+    private function isCorrespondentAccessible()
+    {
+        if($this->lpaHasApplicant()) {
+            return true;
+        }
+        else {
+            return 'lpa/applicant';
+        }
+    }
+
+    private function isCorrespondentEditAccessible()
+    {
+        if($this->lpaHasCorrespondent()) {
+            return true;
+        }
+        else {
+            return 'lpa/applicant';
+        }
+    }
+    
+    private function isWhatIsMyRoleAccessible()
+    {
+        if($this->lpaHasCorrespondent()) {
+            return true;
+        }
+        else {
+            return 'lpa/correspondent';
+        }
+    }
+    
+    private function isFeeAccessible()
+    {
+        if($this->isWhatIsMyRoleAnswered()) {
+            return true;
+        }
+        else {
+            return 'lpa/what-is-my-role';
+        }
+    }
+    
+    private function isCompleteAccessible()
+    {
+        if($this->paymentResolved()) {
+            return true;
+        }
+        else {
+            return 'lpa/fee';
+        }
+    }
     
 ###################  Private methods - lpa property value check methods #################################################
+    
+    
+    private function paymentResolved()
+    {
+        if(!$this->isWhatIsMyRoleAnswered() || !($this->lpa->payment instanceof Payment)) {
+            return false;
+        }
+        
+        if(($this->lpa->payment->reducedFeeUniversalCredit===true) || ($this->lpa->payment->amount === 0.0)) {
+            return true;
+        }
 
+        
+        if($this->lpa->payment->amount > 0.0 ) {
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
+                return true;
+            }
+            else { // pay by card
+                if($this->lpa->payment->reference != null) {
+                   return true; 
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isWhatIsMyRoleAnswered()
+    {
+        return ($this->lpaHasCorrespondent() && ($this->lpa->whoAreYouAnswered==true));
+    }
+    
+    private function lpaHasCorrespondent()
+    {
+        return ($this->lpaHasApplicant() && ($this->lpa->document->correspondent instanceof Correspondence));
+    }
+    
+    private function lpaHasApplicant()
+    {
+        return ($this->lpaHasCreated() &&
+                ( ($this->lpa->document->whoIsRegistering == 'donor')
+                        ||
+                        ( is_array($this->lpa->document->whoIsRegistering)
+                                &&
+                                (count($this->lpa->document->whoIsRegistering)>0)
+                        )
+                )
+        );
+    }
+    
+    private function lpaHasCreated()
+    {
+        return ($this->lpaHasCertificateProvider() && ($this->lpa->completedAt !== null));
+    }
+    
+    private function lpaHasPeopleToNotify($index = null)
+    {
+        if($index === null) {
+            return ($this->lpaHasCertificateProvider()
+                    && ( count( $this->lpa->document->peopleToNotify ) > 0 ) );
+        }
+        else {
+            return ($this->lpaHasCertificateProvider()
+                    && array_key_exists($index, $this->lpa->document->peopleToNotify)
+                    && ($this->lpa->document->peopleToNotify[$index] instanceof NotifiedPerson));
+        }
+    }
+    
+    private function lpaHasCertificateProvider()
+    {
+        return ($this->lpaHasPrimaryAttorney() && ($this->lpa->document->certificateProvider instanceof CertificateProvider));
+    }
+    
+    /**
+    private function routeReplacementAttorneyHasBeenAccessed()
+    {
+        // $this->lpa->document->replacementAttorney must be unempty array or false
+        return ($this->lpaHasPrimaryAttorney() && $this->lpa->document->replacementAttorneys !== []);
+    }*/
+    
+    private function lpaHowReplacementAttorneysMakeDecisionHasValue()
+    {
+        return ($this->lpaHasMultipleReplacementAttorneys() 
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && in_array($this->lpa->document->replacementAttorneyDecisions->how, 
+                [AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                AbstractDecisions::LPA_DECISION_HOW_DEPENDS]
+        ));
+    }
+    
+    private function lpaReplacementAttorneysMakeDecisionJointlyAndSeverally()
+    {
+        return ($this->lpaHasMultipleReplacementAttorneys()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY));
+    }
+    
+    private function lpaReplacementAttorneysMakeDecisionJointly()
+    {
+        return ($this->lpaHasMultipleReplacementAttorneys()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY));
+    }
+
+    private function lpaReplacementAttorneysMakeDecisionDepends()
+    {
+        return ($this->lpaHasMultipleReplacementAttorneys()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS));
+    }
+    
+    private function lpaWhenReplacementAttorneyStepInHasValue()
+    {
+        return ($this->lpaHasReplacementAttorney()
+            && $this->lpaHasMultiplePrimaryAttorneys()
+            && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && in_array($this->lpa->document->replacementAttorneyDecisions->when, [
+                ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST,
+                ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
+            ]));
+    }
+
+    private function lpaReplacementAttorneyStepInDepends()
+    {
+        return ($this->lpaHasReplacementAttorney()
+            && $this->lpaHasMultiplePrimaryAttorneys()
+            && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS));
+    }
+    
+    private function lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()
+    {
+        return ($this->lpaHasReplacementAttorney()
+            && $this->lpaHasMultiplePrimaryAttorneys()
+            && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST));
+    }
+    
+    private function lpaReplacementAttorneyStepInWhenFirstPrimaryUnableAct()
+    {
+        return ($this->lpaHasReplacementAttorney() 
+            && $this->lpaHasMultiplePrimaryAttorneys()
+            && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+            && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST)); 
+    }
+    
     private function lpaHasMultipleReplacementAttorneys()
     {
         return ($this->lpaHasReplacementAttorney() && (count($this->lpa->document->replacementAttorneys) > 1));
@@ -254,6 +603,38 @@ class FormFlowChecker
                 && array_key_exists($index, $this->lpa->document->replacementAttorneys)
                 && ($this->lpa->document->replacementAttorneys[$index] instanceof AbstractAttorney));
         }
+    }
+    
+    private function lpaHowPrimaryAttorneysMakeDecisionHasValue()
+    {
+        return ($this->lpaHasMultiplePrimaryAttorneys() 
+            && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
+            && in_array($this->lpa->document->primaryAttorneyDecisions->how, [ 
+                AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                AbstractDecisions::LPA_DECISION_HOW_DEPENDS
+        ]));
+    }
+    
+    private function lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+    {
+        return ($this->lpaHasMultiplePrimaryAttorneys()
+        && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
+        && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY));
+    }
+    
+    private function lpaPrimaryAttorneysMakeDecisionJointly()
+    {
+        return ($this->lpaHasMultiplePrimaryAttorneys()
+            && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY));
+    }
+
+    private function lpaPrimaryAttorneysMakeDecisionDepends()
+    {
+        return ($this->lpaHasMultiplePrimaryAttorneys()
+            && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
+            && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS));
     }
     
     private function lpaHasMultiplePrimaryAttorneys()
