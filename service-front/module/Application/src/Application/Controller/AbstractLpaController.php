@@ -13,7 +13,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     
     public function onDispatch(MvcEvent $e)
     {
-        parent::onDispatch($e);
+        # uncomment below line to bypass form flow checker.
+        // return parent::onDispatch($e);
         
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
@@ -27,6 +28,9 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
             $this->redirect()->toRoute($calculatedRoute);
         }
+        
+        return parent::onDispatch($e);
+        
     }
     
     /**
