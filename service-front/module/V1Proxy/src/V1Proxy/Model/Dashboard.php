@@ -72,7 +72,11 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         foreach( $array['lpa'] as $lpa ){
 
-            $application = $lpa['application'];
+            if( isset($lpa['application']) ){
+                $application = $lpa['application'];
+            } else {
+                $application = $lpa;
+            }
 
             $href = $application['@attributes']['href'];
 
@@ -84,7 +88,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
             $obj->version = 1;
 
-            $obj->donor = ( isset($application['donor-name']) ) ? $application['donor-name'] : null;
+            $obj->donor = ( isset($application['donor-name']) && is_string($application['donor-name']) ) ? $application['donor-name'] : null;
 
             //---
 
