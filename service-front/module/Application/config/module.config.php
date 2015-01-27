@@ -219,7 +219,7 @@ return array(
                                 'options' => array(
                                     'route'    => '/clone/:lpa-id',
                                     'constraints' => array(
-                                        'lpa-id' => '[a-zA-Z0-9]+',
+                                        'lpa-id' => '[0-9]+',
                                     ),
                                     'defaults' => array(
                                         'action'     => 'clone',
@@ -231,7 +231,7 @@ return array(
                                 'options' => array(
                                     'route'    => '/delete-lpa/:lpa-id',
                                     'constraints' => array(
-                                        'lpa-id' => '[a-zA-Z0-9]+',
+                                        'lpa-id' => '[0-9]+',
                                     ),
                                     'defaults' => array(
                                         'action'     => 'delete-lpa',
@@ -270,7 +270,7 @@ return array(
                 'options' => array(
                     'route'    => '/lpa/:lpa-id',
                     'constraints' => array(
-                        'lpa-id' => '[a-zA-Z0-9]+',
+                        'lpa-id' => '[0-9]+',
                     ),
                     'defaults' => array(
                     ),
