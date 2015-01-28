@@ -36,6 +36,29 @@ return array(
                 ],
             ],
 
+            'proxy-help' => [
+                'type' => 'Zend\Mvc\Router\Http\Regex',
+                'options' => [
+                    'regex'    => '^/help(.)*',
+                    'spec'     => '/help',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+
+            'proxy-loggedin' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/is-logged-in',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+
             'proxy-service' => [
                 'type' => 'Zend\Mvc\Router\Http\Regex',
                 'options' => [

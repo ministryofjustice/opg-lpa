@@ -20,6 +20,12 @@ class AccessController extends AbstractActionController {
         // Get the path the user is requesting...
         $path = $this->getRequest()->getUri()->getPath();
 
+        $query = $this->getRequest()->getUri()->getQuery();
+
+        if( !empty($query) ){
+            $path = $path.'?'.$query;
+        }
+
         # TODO - remove this.
         if( $path == '/old-dashboard' ){
             $path = '/user/dashboard';
@@ -39,6 +45,15 @@ class AccessController extends AbstractActionController {
 
         //---
 
+        // Copy relevant headers across...
+        $headers = $this->getRequest()->getHeaders();
+
+        if( ($value = $headers->get('X-Requested-With')) != false ){
+            $options['headers']['X-Requested-With'] = $value->getFieldValue();
+        }
+
+        //---
+
         if( $this->getRequest()->isPost() ){
 
             // This post may have changed data, so clear the cache.
@@ -50,9 +65,6 @@ class AccessController extends AbstractActionController {
             $options['body'] = $this->getRequest()->getContent();
 
             //---
-
-            // Copy relevant headers across...
-            $headers = $this->getRequest()->getHeaders();
 
             if( ($value = $headers->get('Content-Length')) != false ){
                 $options['headers']['Content-Length'] = $value->getFieldValue();
