@@ -20,9 +20,7 @@ class AccessController extends AbstractActionController {
         // Get the path the user is requesting...
         $path = $this->getRequest()->getUri()->getPath();
 
-        // Map the /static path back to the original.
-        //$path = str_replace( '/old-static/', '/static/', $path );
-
+        # TODO - remove this.
         if( $path == '/old-dashboard' ){
             $path = '/user/dashboard';
         }
@@ -110,6 +108,7 @@ class AccessController extends AbstractActionController {
         // Get the body from v1
         $body = $response->getBody();
 
+        // Replace /static/ paths with /old-static/...
         $body = str_replace( '/static/', '/old-static/', $body );
 
         // Copy the body across...

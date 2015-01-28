@@ -1,6 +1,8 @@
 <?php
 namespace Application;
 
+use DateTime;
+
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -25,6 +27,7 @@ class Module{
         //Only bootstrap the session if it's *not* PHPUnit.
         if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
             $this->bootstrapSession($e);
+            $this->bootstrapIdentity($e);
         }
     }
 
@@ -55,6 +58,56 @@ class Module{
 
     } // function
 
+    /**
+     * This performs lazy checking of the user's auth token (if there is one).
+     *
+     * It works by only checking if the token is invalid if once we've gone past our recorded (in session)
+     * 'tokenExpiresAt' time. Before then we assume the token is valid (leaving the API to verify this).
+     *
+     * If we're past 'tokenExpiresAt', then we query the Auth service to check the token's state. If it's still
+     * valid we update 'tokenExpiresAt'. Otherwise we clear the user's identity form the session.
+     *
+     * We don't deal with forcing the user to re-authenticate here as they
+     * may be accessing a page that does not require authentication.
+     *
+     * @param MvcEvent $e
+     */
+    public function bootstrapIdentity(MvcEvent $e){
+
+        $sm = $e->getApplication()->getServiceManager();
+
+        $auth = $sm->get('AuthenticationService');
+
+        // If we have an identity...
+        if ( ($identity = $auth->getIdentity()) != null ) {
+
+            // If we're beyond the original time we expected the token to expire...
+            if( (new DateTime) > $identity->tokenExpiresAt() ){
+
+                // Get the tokens details...
+                $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() ) ;
+
+                // If the token has not expired...
+                if( isset($info['expires_in']) ){
+
+                    // update the time the token expires in the session
+                    $identity->tokenExpiresIn( $info['expires_in'] );
+
+                } else {
+
+                    // else the user will need to re-login, so remove the current identity.
+                    $auth->clearIdentity();
+
+                }
+
+            } // if we're beyond tokenExpiresAt
+
+        } // if we have an identity
+
+    } // function
+
+    //-------------------------------------------
+
     public function getServiceConfig(){
 
         return [
@@ -77,7 +130,7 @@ class Module{
 
                     $auth = $sm->get('AuthenticationService');
 
-                    if ($auth->hasIdentity()) {
+                    if ( $auth->hasIdentity() ) {
 
                         $identity = $auth->getIdentity();
                         $client->setUserId( $identity->id() );

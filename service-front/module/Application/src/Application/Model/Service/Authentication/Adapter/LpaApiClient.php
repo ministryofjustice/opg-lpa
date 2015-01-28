@@ -70,6 +70,7 @@ class LpaApiClient implements AdapterInterface {
         $identity = new User(
             $response->getUserId(),
             $response->getToken(),
+            $response->getExpiresIn(),
             (new DateTime())->setTimestamp( $response->getLastLogin() )
         );
 
