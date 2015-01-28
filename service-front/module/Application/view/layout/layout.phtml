@@ -12,16 +12,16 @@
 
         <!-- Le styles -->
         <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                        ->prependStylesheet($this->basePath() . '/css/style.css')
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
+                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/bootstrap-theme.min.css')
+                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/bootstrap.min.css') ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()
-            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
-            ->prependFile($this->basePath() . '/js/jquery.min.js')
-            ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
-            ->prependFile($this->basePath() . '/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath() . '/assets/lpa/js/bootstrap.min.js')
+            ->prependFile($this->basePath() . '/assets/lpa/js/jquery.min.js')
+            ->prependFile($this->basePath() . '/assets/lpa/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath() . '/assets/lpa/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
         ; ?>
 
     </head>
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img width=30 src="<?php echo $this->basePath('img/gov.uk_logotype_crown.png') ?>" alt="GOV.UK"/>&nbsp;<?php echo $this->translate('GOV.UK') ?></a>
+                    <a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img width=30 src="<?php echo $this->basePath('/assets/lpa/img/gov.uk_logotype_crown.png') ?>" alt="GOV.UK"/>&nbsp;<?php echo $this->translate('GOV.UK') ?></a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
