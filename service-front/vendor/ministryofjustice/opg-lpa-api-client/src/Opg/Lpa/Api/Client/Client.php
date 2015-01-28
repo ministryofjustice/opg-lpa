@@ -333,24 +333,38 @@ class Client
 
         return $authResponse;
     }
-    
+
+    /**
+     * Gets all the info relating to a token from the authentication service.
+     *
+     * @param string $token
+     * @return array|boolean Token details or false if token invalid
+     */
+    public function getTokenInfo($token)
+    {
+
+        $response = $this->client()->get( self::PATH_AUTH . '/tokeninfo', [
+            'query' => [ 'access_token' => $token ]
+        ]);
+
+        if( $response->getStatusCode() != 200 ){
+            return false;
+        }
+
+        return $response->json();
+
+    }
+
     /**
      * Get the email from a token
      * 
-     * @param string token
+     * @param string $token
      * @return string|boolean User email or false if token invalid
      */
     public function getEmailFromToken($token)
     {
-        $response = $this->client()->get( self::PATH_AUTH . '/tokeninfo', [
-            'query' => [ 'access_token' => $token ]
-        ]);
-        
-        if( $response->getStatusCode() != 200 ){
-            return false;
-        }
-        
-        $response = $response->json();
+
+        $response = $this->getTokenInfo( $token );
         
         if( !isset($response['user_id']) ){
             return false;
@@ -366,15 +380,8 @@ class Client
      */
     private function setEmailAndUserIdFromToken()
     {
-        $response = $this->client()->get( self::PATH_AUTH . '/tokeninfo', [
-            'query' => [ 'access_token' => $this->token ]
-        ]);
-    
-        if( $response->getStatusCode() != 200 ){
-            return false;
-        }
-    
-        $response = $response->json();
+
+        $response = $this->getTokenInfo( $this->token );
     
         if( !isset($response['user_id']) ){
             return false;

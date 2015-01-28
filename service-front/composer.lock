@@ -521,12 +521,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "e73be60ba2573970161b55585fce6b47b91bd1e7"
+                "reference": "ed676f6f3758d1edeb9eec6b16cfd20938aa1fca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/e73be60ba2573970161b55585fce6b47b91bd1e7",
-                "reference": "e73be60ba2573970161b55585fce6b47b91bd1e7",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/ed676f6f3758d1edeb9eec6b16cfd20938aa1fca",
+                "reference": "ed676f6f3758d1edeb9eec6b16cfd20938aa1fca",
                 "shasum": ""
             },
             "require": {
@@ -552,7 +552,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-01-24 19:21:57"
+            "time": "2015-01-28 11:04:03"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -560,12 +560,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "139227d94cc7c5ae9749918c18fe82fa68050efc"
+                "reference": "558849dcdaffbdeafa74ac22e3cb25379a05894c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/139227d94cc7c5ae9749918c18fe82fa68050efc",
-                "reference": "139227d94cc7c5ae9749918c18fe82fa68050efc",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/558849dcdaffbdeafa74ac22e3cb25379a05894c",
+                "reference": "558849dcdaffbdeafa74ac22e3cb25379a05894c",
                 "shasum": ""
             },
             "require": {
@@ -591,7 +591,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-01-26 14:43:11"
+            "time": "2015-01-27 09:07:53"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
@@ -1589,16 +1589,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.4.4",
+            "version": "4.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2047ae17f6e8cfd10fbde0b4535c97eb22d99cbe"
+                "reference": "2e8580deebb7d1ac92ac878595e6bffe01069c2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2047ae17f6e8cfd10fbde0b4535c97eb22d99cbe",
-                "reference": "2047ae17f6e8cfd10fbde0b4535c97eb22d99cbe",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2e8580deebb7d1ac92ac878595e6bffe01069c2a",
+                "reference": "2e8580deebb7d1ac92ac878595e6bffe01069c2a",
                 "shasum": ""
             },
             "require": {
@@ -1616,8 +1616,9 @@
                 "sebastian/comparator": "~1.0",
                 "sebastian/diff": "~1.1",
                 "sebastian/environment": "~1.1",
-                "sebastian/exporter": "~1.0",
+                "sebastian/exporter": "~1.1",
                 "sebastian/global-state": "~1.0",
+                "sebastian/recursion-context": "~1.0",
                 "sebastian/version": "~1.0",
                 "symfony/yaml": "~2.0"
             },
@@ -1656,7 +1657,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-01-24 14:23:56"
+            "time": "2015-01-27 16:06:15"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
