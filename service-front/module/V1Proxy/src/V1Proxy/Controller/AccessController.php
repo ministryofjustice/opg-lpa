@@ -108,9 +108,6 @@ class AccessController extends AbstractActionController {
         // Get the body from v1
         $body = $response->getBody();
 
-        // Replace /static/ paths with /old-static/...
-        $body = str_replace( '/static/', '/old-static/', $body );
-
         // Copy the body across...
         $this->getResponse()->setContent( $body );
 

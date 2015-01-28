@@ -223,6 +223,10 @@ class Client
         
         do {
             $response = $this->client()->get( self::PATH_API . $path );
+
+            if ($response->getStatusCode() != 200) {
+                return $this->log($response, false);
+            }
             
             $json = $response->json();
                         

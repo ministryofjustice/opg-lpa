@@ -70,6 +70,9 @@ class Module{
      * We don't deal with forcing the user to re-authenticate here as they
      * may be accessing a page that does not require authentication.
      *
+     * TODO - Consider using an extended AuthenticationService and put this logic in hasIdentity(), meaning we'd
+     * TODO - only check if we try to access the identity, making the logic even lazier.
+     *
      * @param MvcEvent $e
      */
     public function bootstrapIdentity(MvcEvent $e){

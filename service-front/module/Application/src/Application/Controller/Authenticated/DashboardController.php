@@ -21,7 +21,13 @@ class DashboardController extends AbstractAuthenticatedController
         echo "<br />\n";
 
         foreach( $lpas as $lpa ){
-            echo "<p>id:{$lpa->id} - v{$lpa->version} - {$lpa->donor} - {$lpa->type} - {$lpa->updatedAt->format('r')}</p>\n";
+            if( $lpa->version == 2 ){
+                echo "<p>id:{$lpa->id} - v{$lpa->version} - {$lpa->donor} - {$lpa->type} - {$lpa->updatedAt->format('r')}</p>\n";
+            } else {
+                echo "<p>id:{$lpa->id} - v{$lpa->version} - {$lpa->donor} - {$lpa->type} - {$lpa->updatedAt->format('r')}";
+                echo ' <a href="/forward/lpa/'.$lpa->id.'">Load</a> ';
+                echo "</p>\n";
+            }
         }
 
         exit();
