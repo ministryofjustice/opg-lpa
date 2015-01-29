@@ -23,9 +23,6 @@ class PaymentController extends AbstractLpaController
     public function indexAction()
     {
         $gateway = Omnipay::create('WorldPayXML');
-        $email = 'todo@example.com';
-        $firstName = 'Jane';
-        $lastName = 'Smith';
         
         $lpa = $this->getLpa();
         $config = $this->getServiceLocator()->get('config')['worldpay'];
@@ -35,40 +32,68 @@ class PaymentController extends AbstractLpaController
         $gateway->setPassword($config['xml_password']);
         $gateway->setTestMode($config['test_mode']);
         
-        $donorName = $lpa->document->donor->name;
-        $opgPaymentRef = $lpa->id . '-' . time();
-        
-        $uri = $this->getRequest()->getUri();
-        $baseUri = sprintf('%s://%s', $uri->getScheme(), $uri->getHost());
-
-        $options = [
-            'amount' => $lpa->payment->amount,
-            'currency' => $config['currency'],
-            'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
-            'transactionId' => $opgPaymentRef,
-            // The credit card object is used by Omnipay even when redirecting
-            // to an offsite credit card processor. In this case, it just stores 
-            // customer info.
-            'card' => new CreditCard([
-                    'email' => $email,
-                ]),
-            'token' => $config['api_token_secret'],
-        ];
-        
-        $response = $gateway->purchase($options)->send();
+        $response = $gateway->purchase($this->getOptions($lpa))->send();
         
         $data = $response->getData();
         
         $redirectUrl = 
              $data->reference .
-             '&successURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/success', ['lpa-id' => $lpa->id]) .
-             '&pendingURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/pending', ['lpa-id' => $lpa->id]) .
-             '&failureURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/failure', ['lpa-id' => $lpa->id]) .
-             '&cancelURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/cancel', ['lpa-id' => $lpa->id]);
+             '&successURL=' .  $this->getCallbackEndpoint('success', $lpa->id) .
+             '&pendingURL=' . $this->getCallbackEndpoint('pending', $lpa->id) .
+             '&failureURL=' . $this->getCallbackEndpoint('failure', $lpa->id) .
+             '&cancelURL=' . $this->getCallbackEndpoint('cancel', $lpa->id);
         
-        echo $redirectUrl; die;
+        $this->redirect()->toUrl($redirectUrl);
     }
     
+    /**
+     * Helper function to construct the callback URLs
+     * 
+     * @param string $type
+     * @param string $lpaId
+     * @return string
+     */
+    private function getCallbackEndpoint($type, $lpaId)
+    {
+        $uri = $this->getRequest()->getUri();
+        $baseUri = sprintf('%s://%s', $uri->getScheme(), $uri->getHost());
+        return $baseUri . $this->url()->fromRoute('lpa/payment/return/' . $type, ['lpa-id' => $lpaId]);
+    }
+    
+    /**
+     * Helper function to construct the options use to create
+     * the XML for the initial request to Worldpay.
+     * 
+     * @param Lpa $lpa
+     * @return array
+     */
+    private function getOptions($lpa)
+    {
+        $email = 'todo@example.com';
+        
+        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        
+        $donorName = $lpa->document->donor->name;
+        
+        $options = [
+            'amount' => $lpa->payment->amount,
+            'currency' => $config['currency'],
+            'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
+            'transactionId' => $lpa->id . '-' . time(),
+            'card' => new CreditCard([
+                'email' => $email,
+            ]),
+            'token' => $config['api_token_secret'],
+        ];
+        
+        return $options;
+    }
+    
+    /**
+     * Temporary helper function to get a dummy LPA
+     * 
+     * @return \Opg\Lpa\DataModel\Lpa\Lpa
+     */
     public function getLpa()
     {
         return new Lpa('{

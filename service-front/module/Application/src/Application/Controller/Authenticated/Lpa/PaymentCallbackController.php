@@ -10,12 +10,26 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 
 class PaymentCallbackController extends AbstractLpaController
 {
-    public function indexAction()
+    public function successAction()
     {
-        return new ViewModel();
+        echo __FUNCTION__;
+    }
+    
+    public function failureAction()
+    {
+        echo __FUNCTION__;
+    }
+    
+    public function cancelAction()
+    {
+        echo __FUNCTION__;
+    }
+    
+    public function pendingAction()
+    {
+        echo __FUNCTION__;
     }
 }
