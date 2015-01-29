@@ -38,8 +38,13 @@ class AccessController extends AbstractActionController {
         // Check to see if we have a v1 session cookie
         $session = new Container('V1Proxy');
 
-        if( $session->cookie ){
-            // if so, set it...
+        //---
+
+        $token = $client->getDefaultOption( 'headers/X-AuthOne' );
+
+        // If we have a cookie AND it was created with the current access token...
+        if( isset($session->cookie) && isset($session->token) && $session->token == $token ){
+            // set it.
             $options['headers']['Cookie'] = $session->cookie;
         }
 
@@ -94,6 +99,8 @@ class AccessController extends AbstractActionController {
         if( isset($headers['Set-Cookie']) ){
             // store a copy
             $session->cookie = array_pop($headers['Set-Cookie']);
+            // Also store the token associated with the cookie, as the cookie becomes invalid if the token changes.
+            $session->token = $client->getDefaultOption( 'headers/X-AuthOne' );
         }
 
         // Define what headers we want to be relayed across...

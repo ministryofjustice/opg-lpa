@@ -9,7 +9,15 @@
 
 return [
 
+    /* ------------------------------------------------------------- */
     /* ------------ All routes are in module.routes.php ------------ */
+    /* ------------------------------------------------------------- */
+
+    'controllers' => [
+        'abstract_factories' => [
+            'Application\ControllerFactory\ControllerAbstractFactory'
+        ],
+    ],
 
     'service_manager' => [
         'abstract_factories' => [
@@ -20,6 +28,7 @@ return [
             'translator' => 'MvcTranslator',
         ],
     ],
+
     'translator' => [
         'locale' => 'en_US',
         'translation_file_patterns' => [
@@ -30,11 +39,7 @@ return [
             ],
         ],
     ],
-    'controllers' => [
-        'abstract_factories' => [
-            'Application\ControllerFactory\ControllerAbstractFactory'
-        ],
-    ],
+
     'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
@@ -51,6 +56,7 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+
     // Placeholder for console routes
     'console' => [
         'router' => [
@@ -58,4 +64,5 @@ return [
             ],
         ],
     ],
+
 ];

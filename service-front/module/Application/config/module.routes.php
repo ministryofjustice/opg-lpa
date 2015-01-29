@@ -6,7 +6,8 @@ return [
 
         'routes' => [
 
-            // ====== General =======
+            // ========================== General ==========================
+
             'index-redirect' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -144,7 +145,7 @@ return [
             ], // status
 
 
-            // ====== Authenticated =======
+            // ========================== Authenticated ==========================
             'admin-stats' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
