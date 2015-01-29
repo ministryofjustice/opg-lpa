@@ -2,6 +2,11 @@
 
 return array(
 
+    'redirects' => [
+        'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
+        'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+    ],
+
     'session' => [
 
         // ini session.* settings...

@@ -14,6 +14,18 @@ class AuthController extends AbstractBaseController {
 
         //-----------------------
 
+        // This action can be called with a number of combinations of messages.
+        # TODO - how to deal with these?
+
+        switch( $this->params('state') ){
+            case 'timeout':
+                // The user has timed out
+            case 'worldpay':
+                // The user needs to log back in to complete their payment
+        }
+
+        //-----------------------
+
         $authError = null;
 
         $email = $this->params()->fromPost('email');
@@ -67,9 +79,7 @@ class AuthController extends AbstractBaseController {
 
         //---
 
-        return $this->forward()->dispatch('General\AuthController', [
-            'action' => 'index',
-        ]);
+        return $this->redirect()->toUrl( $this->config()['redirects']['logout'] );
 
     }
 

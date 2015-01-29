@@ -73,4 +73,13 @@ abstract class AbstractBaseController extends AbstractActionController {
 
     } // function
 
+    /**
+     * Returns the global config.
+     *
+     * @return array
+     */
+    protected function config(){
+        return $this->getServiceLocator()->get('Config');
+    }
+
 } // class
