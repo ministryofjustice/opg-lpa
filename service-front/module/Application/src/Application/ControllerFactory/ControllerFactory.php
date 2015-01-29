@@ -22,6 +22,7 @@ class ControllerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $controllerManager)
     {
+        die('Deprecated');
 
         $locator = $controllerManager->getServiceLocator();
 

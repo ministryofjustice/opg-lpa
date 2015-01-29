@@ -14,7 +14,9 @@ class HomeController extends AbstractBaseController
     
     public function redirectAction()
     {
-        return new ViewModel();
+        # TODO - Remove die
+        die( "This page will redirect to: " . $this->config()['redirects']['index'] );
+        return $this->redirect()->toUrl( $this->config()['redirects']['index'] );
     }
 
     public function enableCookieAction(){
