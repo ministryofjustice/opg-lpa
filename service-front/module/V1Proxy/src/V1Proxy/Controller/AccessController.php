@@ -1,6 +1,8 @@
 <?php
 namespace V1Proxy\Controller;
 
+use RuntimeException;
+
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -29,6 +31,11 @@ class AccessController extends AbstractActionController {
         # TODO - remove this.
         if( $path == '/old-dashboard' ){
             $path = '/user/dashboard';
+        }
+
+        // Prevent a user creating a new v1 LPA.
+        if( $path == '/forward/newlpa' ){
+            throw new RuntimeException("Invalid path");
         }
 
         $options = array( 'headers' => array() );

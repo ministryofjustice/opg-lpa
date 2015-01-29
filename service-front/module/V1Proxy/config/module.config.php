@@ -11,6 +11,10 @@ return array(
              * /create
              * /register
              * /pdf
+             * /help
+             * /postcode
+             * /user/is-logged-in'
+             *
              */
 
             'proxy-dashboard' => [
