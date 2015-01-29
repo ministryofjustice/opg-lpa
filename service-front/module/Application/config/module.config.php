@@ -16,8 +16,7 @@ return array(
                 'options' => array(
                     'route'    => '/forgot-password',
                     'defaults' => array(
-                        'controllerName' => 'General\ForgotPasswordController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\ForgotPasswordController',
                         'action'     => 'index',
                     ),
                 ),
@@ -27,8 +26,7 @@ return array(
                 'options' => array(
                     'route'    => '/guidance',
                     'defaults' => array(
-                        'controllerName' => 'General\GuidanceController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\GuidanceController',
                         'action'     => 'index',
                     ),
                 ),
@@ -38,8 +36,7 @@ return array(
                 'options' => array(
                     'route'    => '/home',
                     'defaults' => array(
-                        'controllerName' => 'General\HomeController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\HomeController',
                         'action'     => 'index',
                     ),
                 ),
@@ -49,8 +46,7 @@ return array(
                 'options' => array(
                     'route'    => '/enable-cookie',
                     'defaults' => array(
-                        'controllerName' => 'General\HomeController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\HomeController',
                         'action'     => 'enable-cookie',
                     ),
                 ),
@@ -81,7 +77,6 @@ return array(
                     'route'    => '/',
                     'defaults' => array(
                         'controller' => 'General\HomeController',
-                        'controller' => 'ControllerFactory',
                         'action'     => 'redirect',
                     ),
                 ),
@@ -91,8 +86,7 @@ return array(
                 'options' => array(
                     'route'    => '/register',
                     'defaults' => array(
-                        'controllerName' => 'General\RegisterController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\RegisterController',
                         'action'     => 'index',
                     ),
                 ),
@@ -105,8 +99,7 @@ return array(
                         'password_reset_id' => '[a-zA-Z0-9]+',
                     ),
                     'defaults' => array(
-                        'controllerName' => 'General\ForgotPasswordController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\ForgotPasswordController',
                         'action'     => 'reset-password',
                     ),
                 ),
@@ -116,8 +109,7 @@ return array(
                 'options' => array(
                     'route'    => '/stats',
                     'defaults' => array(
-                        'controllerName' => 'General\StatsController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\StatsController',
                         'action'     => 'index',
                     ),
                 ),
@@ -127,8 +119,7 @@ return array(
                 'options' => array(
                     'route'    => '/status',
                     'defaults' => array(
-                        'controllerName' => 'General\StatusController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'General\StatusController',
                         'action'     => 'index',
                     ),
                 ),
@@ -152,8 +143,7 @@ return array(
                 'options' => array(
                     'route'    => '/admin/stats',
                     'defaults' => array(
-                        'controllerName' => 'Authenticated\AdminController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'Authenticated\AdminController',
                         'action'     => 'stats',
                     ),
                 ),
@@ -163,8 +153,7 @@ return array(
                 'options' => array(
                     'route'    => '/postcode',
                     'defaults' => array(
-                        'controllerName' => 'Authenticated\PostcodeController',
-                        'controller' => 'ControllerFactory',
+                        'controller' => 'Authenticated\PostcodeController',
                         'action'     => 'index',
                     ),
                 ),
@@ -183,8 +172,7 @@ return array(
                         'options' => array(
                             'route'    => '/about-you',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\AboutYouController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\AboutYouController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -194,8 +182,7 @@ return array(
                         'options' => array(
                             'route'    => '/change-email-address',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\ChangeEmailAddressController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\ChangeEmailAddressController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -205,8 +192,7 @@ return array(
                         'options' => array(
                             'route'    => '/change-password',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\ChangePasswordController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\ChangePasswordController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -216,8 +202,7 @@ return array(
                         'options' => array(
                             'route'    => '/dashboard',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\DashboardController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\DashboardController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -254,8 +239,7 @@ return array(
                         'options' => array(
                             'route'    => '/delete',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\DeleteController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\DeleteController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -280,8 +264,7 @@ return array(
                         'options' => array(
                             'route'    => '/applicant',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\ApplicantController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\ApplicantController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -291,8 +274,7 @@ return array(
                         'options' => array(
                             'route'    => '/certificate-provider',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\CertificateProviderController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\CertificateProviderController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -323,8 +305,7 @@ return array(
                         'options' => array(
                             'route'    => '/complete',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\CompleteController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\CompleteController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -334,8 +315,7 @@ return array(
                         'options' => array(
                             'route'    => '/correspondent',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\CorrespondentController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\CorrespondentController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -357,8 +337,7 @@ return array(
                         'options' => array(
                             'route'    => '/created',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\CreatedController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\CreatedController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -368,8 +347,7 @@ return array(
                         'options' => array(
                             'route'    => '/donor',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\DonorController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\DonorController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -403,8 +381,7 @@ return array(
                                 'pdf_type' => 'lp1|lp3|lpa120',
                             ),
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\DownloadController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\DownloadController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -414,8 +391,7 @@ return array(
                         'options' => array(
                             'route'    => '/fee',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\FeeController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\FeeController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -425,8 +401,7 @@ return array(
                         'options' => array(
                             'route'    => '/type',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\TypeController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\TypeController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -436,8 +411,7 @@ return array(
                         'options' => array(
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -447,8 +421,7 @@ return array(
                         'options' => array(
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -458,8 +431,7 @@ return array(
                         'options' => array(
                             'route'    => '/instructions',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\InstructionsController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\InstructionsController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -469,8 +441,7 @@ return array(
                         'options' => array(
                             'route'    => '/life-sustaining',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\LifeSustainingController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\LifeSustainingController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -480,8 +451,7 @@ return array(
                         'options' => array(
                             'route'    => '/payment',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\PaymentController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\PaymentController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -491,8 +461,7 @@ return array(
                         'options' => array(
                             'route'    => '/payment-return',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\PaymentCallbackController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\PaymentCallbackController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -502,8 +471,7 @@ return array(
                         'options' => array(
                             'route'    => '/people-to-notify',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\PeopleToNotifyController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -549,8 +517,7 @@ return array(
                         'options' => array(
                             'route'    => '/primary-attorney',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\PrimaryAttorneyController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\PrimaryAttorneyController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -623,8 +590,7 @@ return array(
                         'options' => array(
                             'route'    => '/replacement-attorney',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\ReplacementAttorneyController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\ReplacementAttorneyController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -670,8 +636,7 @@ return array(
                         'options' => array(
                             'route'    => '/what-is-my-role',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\WhatIsMyRoleController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\WhatIsMyRoleController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -681,8 +646,7 @@ return array(
                         'options' => array(
                             'route'    => '/when-lpa-starts',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\WhenLpaStartsController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\WhenLpaStartsController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -692,8 +656,7 @@ return array(
                         'options' => array(
                             'route'    => '/when-replacement-attorney-step-in',
                             'defaults' => array(
-                                'controllerName' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
-                                'controller' => 'ControllerFactory',
+                                'controller' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
                                 'action'     => 'index',
                             ),
                         ),
@@ -725,15 +688,9 @@ return array(
         ),
     ),
     'controllers' => array(
-        'factories' => array(
-            'ControllerFactory' => 'Application\ControllerFactory\ControllerFactory',
-        ),
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],
-        'shared' => array(
-            //'ControllerFactory' => false,
-        ),
     ),
     'view_manager' => array(
         'display_not_found_reason' => true,
