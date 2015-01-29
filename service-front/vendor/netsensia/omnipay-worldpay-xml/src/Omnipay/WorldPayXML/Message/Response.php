@@ -139,7 +139,7 @@ class Response extends AbstractResponse
      */
     public function isRedirect()
     {
-        if (isset($this->data->requestInfo->request3DSecure->issuerURL)) {
+        if (isset($this->data->reference)) {
             return true;
         }
 

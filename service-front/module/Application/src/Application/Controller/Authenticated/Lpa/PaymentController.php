@@ -60,8 +60,11 @@ class PaymentController extends AbstractLpaController
         $response = $gateway->purchase($options)->send();
         
         $data = $response->getData();
-
+        
+        $response->redirect();
+        
         $redirectUrl = $data->reference;
+        
     }
     
     public function getLpa()

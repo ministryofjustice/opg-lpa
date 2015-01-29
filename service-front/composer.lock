@@ -595,16 +595,16 @@
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
-            "version": "v1.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Netsensia/omnipay-worldpay-xml.git",
-                "reference": "368bc9086b0e22d952c751563ca43fe828e935d5"
+                "reference": "ac6627015069b681311f1532a3e95e394e7c1113"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Netsensia/omnipay-worldpay-xml/zipball/368bc9086b0e22d952c751563ca43fe828e935d5",
-                "reference": "368bc9086b0e22d952c751563ca43fe828e935d5",
+                "url": "https://api.github.com/repos/Netsensia/omnipay-worldpay-xml/zipball/ac6627015069b681311f1532a3e95e394e7c1113",
+                "reference": "ac6627015069b681311f1532a3e95e394e7c1113",
                 "shasum": ""
             },
             "require": {
@@ -647,7 +647,7 @@
             "support": {
                 "source": "https://github.com/Netsensia/omnipay-worldpay-xml/tree/master"
             },
-            "time": "2015-01-26 17:33:06"
+            "time": "2015-01-29 11:32:17"
         },
         {
             "name": "omnipay/common",

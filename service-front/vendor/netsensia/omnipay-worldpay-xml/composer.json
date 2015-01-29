@@ -1,5 +1,5 @@
 {
-    "name": "tea-and-code/omnipay-worldpay-xml",
+    "name": "netsensia/omnipay-worldpay-xml",
     "type": "library",
     "description": "WorldPay XML driver for the Omnipay payment processing library",
     "keywords": [

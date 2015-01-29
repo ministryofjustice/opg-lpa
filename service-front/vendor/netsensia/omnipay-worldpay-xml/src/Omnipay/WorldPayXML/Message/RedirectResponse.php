@@ -72,6 +72,6 @@ class RedirectResponse extends Response implements RedirectResponseInterface
      */
     public function getRedirectUrl()
     {
-        return $this->data->requestInfo->request3DSecure->issuerURL;
+        return $this->data->reference;
     }
 }
