@@ -60,7 +60,7 @@ return array(
                 'options' => array(
                     'route'    => '/login',
                     'defaults' => array(
-                        'controllerName' => 'Application\Controller\General\LoginController',
+                        'controllerName' => 'Application\Controller\General\AuthController',
                         'controller' => 'ControllerFactory',
                         'action'     => 'index',
                     ),

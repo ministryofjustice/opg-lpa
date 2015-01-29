@@ -144,8 +144,8 @@ class Module{
                     //---
 
                     return $client;
-                }
-            ],
+                } // ApiClient
+            ], // factories
         ];
 
     } // function

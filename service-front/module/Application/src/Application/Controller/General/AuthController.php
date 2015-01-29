@@ -5,7 +5,7 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
-class LoginController extends AbstractBaseController {
+class AuthController extends AbstractBaseController {
 
     public function indexAction(){
 
@@ -22,13 +22,15 @@ class LoginController extends AbstractBaseController {
         if( !empty($email) && !empty($password) ){
 
             $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
-
             $authenticationAdapter = $this->getServiceLocator()->get('LpaApiClientAuthAdapter');
 
+            // Pass the user's email address and password...
             $authenticationAdapter->setCredentials( $email, $password );
 
+            // Perform the authentication..
             $result = $authenticationService->authenticate( $authenticationAdapter );
 
+            // If all went well...
             if( $result->isValid() ){
 
                 // Regenerate the session ID post authentication

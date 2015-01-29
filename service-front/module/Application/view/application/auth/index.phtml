@@ -1,5 +1,9 @@
 <h1>Login</h1>
 
+<? if( !empty($error) ){ ?>
+    <?= $this->escapeHtml($error) ?>
+<? } ?>
+
 <form method="POST" action="/login">
 
     <input type="text" name="email" />

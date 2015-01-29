@@ -163,6 +163,10 @@ class Dashboard implements ServiceLocatorAwareInterface {
         return $result;
     }
 
+    /**
+     * Clears any cached LPA details for the current user.
+     * This should be called when any amends are made to any v1 LAP.
+     */
     public function clearLpaCacheForUser(){
 
         $hashedUserId = $this->getHashedUserId();
@@ -173,6 +177,11 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
     }
 
+    /**
+     * Conceal user ids in the cache by using a hash.
+     *
+     * @return string
+     */
     private function getHashedUserId(){
 
         $auth = $this->getServiceLocator()->get('AuthenticationService');
