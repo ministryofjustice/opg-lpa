@@ -30,6 +30,32 @@ class Module {
                     ]);
 
                 },
+                'ProxyOldApiClient' => function( ServiceLocatorInterface $sm ){
+
+                    $auth = $sm->get('AuthenticationService');
+
+                    if (!$auth->hasIdentity()) {
+                        throw new \RuntimeException('V1Proxy Authentication error: no token');
+                    }
+
+                    $token = $auth->getIdentity()->token();
+
+                    //---
+
+                    $client = new GuzzleClient();
+
+                    // Proxy errors (4xx) to the browser.
+                    $client->setDefaultOption( 'exceptions', false );
+
+                    // Proxy redirects to the browser.
+                    $client->setDefaultOption( 'allow_redirects', false );
+
+                    // Set the authentication token.
+                    $client->setDefaultOption( 'headers/Token', $token );
+
+                    return $client;
+
+                },
                 'ProxyClient' => function( ServiceLocatorInterface $sm ){
 
                     $auth = $sm->get('AuthenticationService');

@@ -83,6 +83,18 @@ return array(
                 ],
             ],
 
+            'proxy-postcode' => [
+                'type' => 'Zend\Mvc\Router\Http\Regex',
+                'options' => [
+                    'regex'    => '^/postcode(.)*',
+                    'spec'     => '/postcode',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+
             'proxy-register' => [
                 'type' => 'Zend\Mvc\Router\Http\Regex',
                 'options' => [
