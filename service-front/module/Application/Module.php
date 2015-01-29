@@ -3,6 +3,8 @@ namespace Application;
 
 use DateTime;
 
+use Zend\Stdlib\ArrayUtils;
+
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -174,7 +176,23 @@ class Module{
     }
 
     public function getConfig(){
-        return include __DIR__ . '/config/module.config.php';
+
+        $configFiles = [
+            __DIR__ . '/config/module.config.php',
+            __DIR__ . '/config/module.routes.php',
+        ];
+
+        //---
+
+        $config = array();
+
+        // Merge all module config options
+        foreach($configFiles as $configFile) {
+            $config = ArrayUtils::merge( $config, include($configFile) );
+        }
+
+        return $config;
+
     }
 
 } // class

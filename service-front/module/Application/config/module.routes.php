@@ -1,668 +1,679 @@
 <?php
 
-return array(
-    // ====== General =======
-    'index-redirect' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/',
-            'defaults' => array(
-                'controller' => 'General\HomeController',
-                'action'     => 'redirect',
-            ),
-        ),
-    ), // index-redirect
+return [
 
-    'home' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/home',
-            'defaults' => array(
-                'controller' => 'General\HomeController',
-                'action'     => 'index',
-            ),
-        ),
-    ), // home
+    'router' => [
 
-    'forgot-password' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/forgot-password',
-            'defaults' => array(
-                'controller' => 'General\ForgotPasswordController',
-                'action'     => 'index',
-            ),
-        ),
-    ), // forgot-password
+        'routes' => [
 
-    'guidance' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/guidance',
-            'defaults' => array(
-                'controller' => 'General\GuidanceController',
-                'action'     => 'index',
-            ),
-        ),
-    ), // guidance
+            // ====== General =======
+            'index-redirect' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'redirect',
+                    ],
+                ],
+            ], // index-redirect
 
-    'enable-cookie' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/enable-cookie',
-            'defaults' => array(
-                'controller' => 'General\HomeController',
-                'action'     => 'enable-cookie',
-            ),
-        ),
-    ), // enable-cookie
+            'home' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/home',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // home
 
-    'login' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/login',
-            'defaults' => array(
-                'controller' => 'General\AuthController',
-                'action'     => 'index',
-            ),
-        ),
-    ), // login
+            'forgot-password' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/forgot-password',
+                    'defaults' => [
+                        'controller' => 'General\ForgotPasswordController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // forgot-password
 
-    'logout' => array(
-        'type'    => 'Literal',
-        'options' => array(
-            'route'    => '/logout',
-            'defaults' => array(
-                'controller' => 'General\AuthController',
-                'action'     => 'logout',
-            ),
-        ),
-    ), // logout
+            'guidance' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/guidance',
+                    'defaults' => [
+                        'controller' => 'General\GuidanceController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // guidance
 
-    'register' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/register',
-            'defaults' => array(
-                'controller' => 'General\RegisterController',
-                'action'     => 'index',
-            ),
-        ),
-    ), // register
+            'enable-cookie' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/enable-cookie',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'enable-cookie',
+                    ],
+                ],
+            ], // enable-cookie
 
-    'reset-password' => array(
-        'type'    => 'Zend\Mvc\Router\Http\Segment',
-        'options' => array(
-            'route'    => '/reset-password/:password_reset_id',
-            'constraints' => array(
-                'password_reset_id' => '[a-zA-Z0-9]+',
-            ),
-            'defaults' => array(
-                'controller' => 'General\ForgotPasswordController',
-                'action'     => 'reset-password',
-            ),
-        ),
-    ), // reset-password
+            'login' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/login',
+                    'defaults' => [
+                        'controller' => 'General\AuthController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // login
 
-    'stats' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/stats',
-            'defaults' => array(
-                'controller' => 'General\StatsController',
-                'action'     => 'index',
-            ),
-        ),
-    ), // stats
-
-    'status' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/status',
-            'defaults' => array(
-                'controller' => 'General\StatusController',
-                'action'     => 'index',
-            ),
-        ),
-        'may_terminate' => true,
-        'child_routes' => array(
-            'default' => array(
-                'type'    => 'Segment',
-                'options' => array(
-                    'route'    => '/pingdom',
-                    'defaults' => array(
-                        'action'     => 'pingdom',
-                    ),
-                ),
-            ),
-        ),
-    ), // status
-
-
-    // ====== Authenticated =======
-    'admin-stats' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/admin/stats',
-            'defaults' => array(
-                'controller' => 'Authenticated\AdminController',
-                'action'     => 'stats',
-            ),
-        ),
-    ),
-    'postcode' => array(
-        'type'    => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/postcode',
-            'defaults' => array(
-                'controller' => 'Authenticated\PostcodeController',
-                'action'     => 'index',
-            ),
-        ),
-    ),
-    'user' => array(
-        'type' => 'Zend\Mvc\Router\Http\Literal',
-        'options' => array(
-            'route'    => '/user',
-            'defaults' => array(
-            ),
-        ),
-        'may_terminate' => false,
-        'child_routes' => array(
-            'about-you' => array(
+            'logout' => [
                 'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/about-you',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\AboutYouController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'change-email-address' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/change-email-address',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\ChangeEmailAddressController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'change-password' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/change-password',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\ChangePasswordController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'dashboard' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/dashboard',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\DashboardController',
-                        'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'clone' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/clone/:lpa-id',
-                            'constraints' => array(
-                                'lpa-id' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action'     => 'clone',
-                            ),
-                        ),
-                    ),
-                    'delete-lpa' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/delete-lpa/:lpa-id',
-                            'constraints' => array(
-                                'lpa-id' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action'     => 'delete-lpa',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'delete' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/delete',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\DeleteController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-        ),
-    ),
+                'options' => [
+                    'route'    => '/logout',
+                    'defaults' => [
+                        'controller' => 'General\AuthController',
+                        'action'     => 'logout',
+                    ],
+                ],
+            ], // logout
 
-    'lpa' => array(
-        'type' => 'Zend\Mvc\Router\Http\Segment',
-        'options' => array(
-            'route'    => '/lpa/:lpa-id',
-            'constraints' => array(
-                'lpa-id' => '[0-9]+',
-            ),
-            'defaults' => array(
-            ),
-        ),
-        'may_terminate' => false,
-        'child_routes' => array(
-            'applicant' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/applicant',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\ApplicantController',
+            'register' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/register',
+                    'defaults' => [
+                        'controller' => 'General\RegisterController',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'certificate-provider' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/certificate-provider',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\CertificateProviderController',
+                    ],
+                ],
+            ], // register
+
+            'reset-password' => [
+                'type'    => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/reset-password/:password_reset_id',
+                    'constraints' => [
+                        'password_reset_id' => '[a-zA-Z0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => 'General\ForgotPasswordController',
+                        'action'     => 'reset-password',
+                    ],
+                ],
+            ], // reset-password
+
+            'stats' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/stats',
+                    'defaults' => [
+                        'controller' => 'General\StatsController',
                         'action'     => 'index',
-                    ),
-                ),
+                    ],
+                ],
+            ], // stats
+
+            'status' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/status',
+                    'defaults' => [
+                        'controller' => 'General\StatusController',
+                        'action'     => 'index',
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'add' => array(
-                        'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/add',
-                            'defaults' => array(
-                                'action' => 'add',
-                            ),
-                        ),
-                    ),
-                    'edit' => array(
-                        'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/edit',
-                            'defaults' => array(
-                                'action' => 'edit',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'complete' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/complete',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\CompleteController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'correspondent' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/correspondent',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\CorrespondentController',
-                        'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'edit' => array(
-                        'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/edit',
-                            'defaults' => array(
-                                'action' => 'edit',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'created' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/created',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\CreatedController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'donor' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/donor',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\DonorController',
-                        'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'add' => array(
-                        'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/add',
-                            'defaults' => array(
-                                'action' => 'add',
-                            ),
-                        ),
-                    ),
-                    'edit' => array(
-                        'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/edit',
-                            'defaults' => array(
-                                'action' => 'edit',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'download' => array(
-                'type' => 'Segment',
-                'options' => array(
-                    'route'    => '/download/:pdf_type',
-                    'constraints' => array(
-                        'pdf_type' => 'lp1|lp3|lpa120',
-                    ),
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\DownloadController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'fee' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/fee',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\FeeController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'form-type' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/type',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\TypeController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'how-primary-attorneys-make-decision' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/how-primary-attorneys-make-decision',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'how-replacement-attorneys-make-decision' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/how-replacement-attorneys-make-decision',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'instructions' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/instructions',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\InstructionsController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'life-sustaining' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/life-sustaining',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\LifeSustainingController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'payment' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/payment',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\PaymentController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'payment-callback' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/payment-return',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\PaymentCallbackController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'people-to-notify' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/people-to-notify',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
-                        'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'add' => array(
-                        'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/add',
-                            'defaults' => array(
-                                'action' => 'add',
-                            ),
-                        ),
-                    ),
-                    'edit' => array(
+                'child_routes' => [
+                    'default' => [
                         'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/edit/:person_index',
-                            'constraints' => array(
-                                'person_index' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action' => 'edit',
-                            ),
-                        ),
-                    ),
-                    'delete' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/delete/:person_index',
-                            'constraints' => array(
-                                'person_index' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action' => 'delete',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'primary-attorney' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/primary-attorney',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\PrimaryAttorneyController',
+                        'options' => [
+                            'route'    => '/pingdom',
+                            'defaults' => [
+                                'action'     => 'pingdom',
+                            ],
+                        ],
+                    ],
+                ],
+            ], // status
+
+
+            // ====== Authenticated =======
+            'admin-stats' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/admin/stats',
+                    'defaults' => [
+                        'controller' => 'Authenticated\AdminController',
+                        'action'     => 'stats',
+                    ],
+                ],
+            ],
+            'postcode' => [
+                'type'    => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/postcode',
+                    'defaults' => [
+                        'controller' => 'Authenticated\PostcodeController',
                         'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'add' => array(
+                    ],
+                ],
+            ],
+            'user' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user',
+                    'defaults' => [
+                    ],
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'about-you' => [
                         'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/add',
-                            'defaults' => array(
-                                'action' => 'add',
-                            ),
-                        ),
-                    ),
-                    'edit' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/edit/:person_index',
-                            'constraints' => array(
-                                'person_index' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action' => 'edit',
-                            ),
-                        ),
-                    ),
-                    'delete' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/delete/:person_index',
-                            'constraints' => array(
-                                'person_index' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action' => 'delete',
-                            ),
-                        ),
-                    ),
-                    'add-trust' => array(
+                        'options' => [
+                            'route'    => '/about-you',
+                            'defaults' => [
+                                'controller' => 'Authenticated\AboutYouController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'change-email-address' => [
                         'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/add-trust',
-                            'defaults' => array(
-                                'action' => 'add-trust',
-                            ),
-                        ),
-                    ),
-                    'edit-trust' => array(
+                        'options' => [
+                            'route'    => '/change-email-address',
+                            'defaults' => [
+                                'controller' => 'Authenticated\ChangeEmailAddressController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'change-password' => [
                         'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/edit-trust',
-                            'defaults' => array(
-                                'action' => 'edit-trust',
-                            ),
-                        ),
-                    ),
-                    'delete-trust' => array(
+                        'options' => [
+                            'route'    => '/change-password',
+                            'defaults' => [
+                                'controller' => 'Authenticated\ChangePasswordController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'dashboard' => [
                         'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/delete-trust',
-                            'defaults' => array(
-                                'action' => 'delete-trust',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'replacement-attorney' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/replacement-attorney',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\ReplacementAttorneyController',
-                        'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'add' => array(
+                        'options' => [
+                            'route'    => '/dashboard',
+                            'defaults' => [
+                                'controller' => 'Authenticated\DashboardController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'clone' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/clone/:lpa-id',
+                                    'constraints' => [
+                                        'lpa-id' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action'     => 'clone',
+                                    ],
+                                ],
+                            ],
+                            'delete-lpa' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/delete-lpa/:lpa-id',
+                                    'constraints' => [
+                                        'lpa-id' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action'     => 'delete-lpa',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'delete' => [
                         'type'    => 'Literal',
-                        'options' => array(
-                            'route'    => '/add',
-                            'defaults' => array(
-                                'action' => 'add',
-                            ),
-                        ),
-                    ),
-                    'edit' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/edit/:person_index',
-                            'constraints' => array(
-                                'person_index' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action' => 'edit',
-                            ),
-                        ),
-                    ),
-                    'delete' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/delete/:person_index',
-                            'constraints' => array(
-                                'person_index' => '[0-9]+',
-                            ),
-                            'defaults' => array(
-                                'action' => 'delete',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'what-is-my-role' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/what-is-my-role',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\WhatIsMyRoleController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'when-lpa-starts' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/when-lpa-starts',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\WhenLpaStartsController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'when-replacement-attorney-step-in' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route'    => '/when-replacement-attorney-step-in',
-                    'defaults' => array(
-                        'controller' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                        'options' => [
+                            'route'    => '/delete',
+                            'defaults' => [
+                                'controller' => 'Authenticated\DeleteController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
+            'lpa' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/lpa/:lpa-id',
+                    'constraints' => [
+                        'lpa-id' => '[0-9]+',
+                    ],
+                    'defaults' => [
+                    ],
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'applicant' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/applicant',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\ApplicantController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'certificate-provider' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/certificate-provider',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\CertificateProviderController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add',
+                                    'defaults' => [
+                                        'action' => 'add',
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/edit',
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'complete' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/complete',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\CompleteController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'correspondent' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/correspondent',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\CorrespondentController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'edit' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/edit',
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'created' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/created',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\CreatedController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'donor' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/donor',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\DonorController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add',
+                                    'defaults' => [
+                                        'action' => 'add',
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/edit',
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'download' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route'    => '/download/:pdf_type',
+                            'constraints' => [
+                                'pdf_type' => 'lp1|lp3|lpa120',
+                            ],
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\DownloadController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'fee' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/fee',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\FeeController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'form-type' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/type',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\TypeController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'how-primary-attorneys-make-decision' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/how-primary-attorneys-make-decision',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'how-replacement-attorneys-make-decision' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/how-replacement-attorneys-make-decision',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'instructions' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/instructions',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\InstructionsController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'life-sustaining' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/life-sustaining',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\LifeSustainingController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'payment' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/payment',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\PaymentController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'payment-callback' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/payment-return',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\PaymentCallbackController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'people-to-notify' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/people-to-notify',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add',
+                                    'defaults' => [
+                                        'action' => 'add',
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/edit/:person_index',
+                                    'constraints' => [
+                                        'person_index' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                            'delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/delete/:person_index',
+                                    'constraints' => [
+                                        'person_index' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'delete',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'primary-attorney' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/primary-attorney',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\PrimaryAttorneyController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add',
+                                    'defaults' => [
+                                        'action' => 'add',
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/edit/:person_index',
+                                    'constraints' => [
+                                        'person_index' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                            'delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/delete/:person_index',
+                                    'constraints' => [
+                                        'person_index' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'delete',
+                                    ],
+                                ],
+                            ],
+                            'add-trust' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add-trust',
+                                    'defaults' => [
+                                        'action' => 'add-trust',
+                                    ],
+                                ],
+                            ],
+                            'edit-trust' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/edit-trust',
+                                    'defaults' => [
+                                        'action' => 'edit-trust',
+                                    ],
+                                ],
+                            ],
+                            'delete-trust' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/delete-trust',
+                                    'defaults' => [
+                                        'action' => 'delete-trust',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'replacement-attorney' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/replacement-attorney',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\ReplacementAttorneyController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add',
+                                    'defaults' => [
+                                        'action' => 'add',
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/edit/:person_index',
+                                    'constraints' => [
+                                        'person_index' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                            'delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/delete/:person_index',
+                                    'constraints' => [
+                                        'person_index' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'delete',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'what-is-my-role' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/what-is-my-role',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\WhatIsMyRoleController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'when-lpa-starts' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/when-lpa-starts',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\WhenLpaStartsController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'when-replacement-attorney-step-in' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/when-replacement-attorney-step-in',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
+        ], // routes
+
+    ], // router
+];
+
+
