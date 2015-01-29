@@ -54,4 +54,23 @@ class AuthController extends AbstractBaseController {
 
     } // function
 
+    public function logoutAction(){
+
+        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
+
+        $authenticationService->clearIdentity();
+
+        //---
+
+        // Regenerate the session ID post logout
+        $this->getServiceLocator()->get('SessionManager')->regenerateId(true);
+
+        //---
+
+        return $this->forward()->dispatch('General\AuthController', [
+            'action' => 'index',
+        ]);
+
+    }
+
 } // class

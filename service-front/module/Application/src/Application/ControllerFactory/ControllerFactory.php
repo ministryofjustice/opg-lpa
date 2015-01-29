@@ -29,6 +29,8 @@ class ControllerFactory implements FactoryInterface
 
         $controllerName = $locator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('controllerName');
 
+        $controllerName = 'Application\Controller\\' . $controllerName;
+
         // Check the class exists...
         if( !class_exists($controllerName) ){
             throw new RuntimeException( 'Unknown controller name' );
