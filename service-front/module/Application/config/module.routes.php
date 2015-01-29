@@ -454,26 +454,67 @@ return [
                             ],
                         ],
                     ],
-                    'payment' => [
+                    'payment' => array(
                         'type' => 'Literal',
-                        'options' => [
+                        'options' => array(
                             'route'    => '/payment',
-                            'defaults' => [
+                            'defaults' => array(
                                 'controller' => 'Authenticated\Lpa\PaymentController',
                                 'action'     => 'index',
-                            ],
-                        ],
-                    ],
-                    'payment-callback' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route'    => '/payment-return',
-                            'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PaymentCallbackController',
-                                'action'     => 'index',
-                            ],
-                        ],
-                    ],
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'return' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/return',
+                                    'defaults' => array(
+                                        'controller' => 'Authenticated\Lpa\PaymentCallbackController',
+                                    ),
+                                ),
+                                'may_terminate' => false,
+                                'child_routes' => array(
+                                    'success' => array(
+                                        'type'    => 'Literal',
+                                        'options' => array(
+                                            'route'    => '/success',
+                                            'defaults' => array(
+                                                'action' => 'success',
+                                            ),
+                                        ),
+                                    ),
+                                    'pending' => array(
+                                        'type'    => 'Literal',
+                                        'options' => array(
+                                            'route'    => '/pending',
+                                            'defaults' => array(
+                                                'action' => 'pending',
+                                            ),
+                                        ),
+                                    ),
+                                    'cancel' => array(
+                                        'type'    => 'Literal',
+                                        'options' => array(
+                                            'route'    => '/cancel',
+                                            'defaults' => array(
+                                                'action' => 'cancel',
+                                            ),
+                                        ),
+                                    ),
+                                    'failure' => array(
+                                        'type'    => 'Literal',
+                                        'options' => array(
+                                            'route'    => '/failure',
+                                            'defaults' => array(
+                                                'action' => 'failure',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                     'people-to-notify' => [
                         'type' => 'Literal',
                         'options' => [

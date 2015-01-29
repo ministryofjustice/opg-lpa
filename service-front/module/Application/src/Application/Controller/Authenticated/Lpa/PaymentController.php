@@ -40,7 +40,7 @@ class PaymentController extends AbstractLpaController
         
         $uri = $this->getRequest()->getUri();
         $baseUri = sprintf('%s://%s', $uri->getScheme(), $uri->getHost());
-        $returnUrl = $baseUri . $this->url()->fromRoute('lpa/payment-callback', ['lpa-id' => $lpa->id]);
+
         $options = [
             'amount' => $lpa->payment->amount,
             'currency' => $config['currency'],
@@ -53,18 +53,20 @@ class PaymentController extends AbstractLpaController
                     'email' => $email,
                 ]),
             'token' => $config['api_token_secret'],
-            'returnUrl' => $returnUrl,
-            'cancelUrl' => $returnUrl,
         ];
         
         $response = $gateway->purchase($options)->send();
         
         $data = $response->getData();
         
-        $response->redirect();
+        $redirectUrl = 
+             $data->reference .
+             '&successURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/success', ['lpa-id' => $lpa->id]) .
+             '&pendingURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/pending', ['lpa-id' => $lpa->id]) .
+             '&failureURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/failure', ['lpa-id' => $lpa->id]) .
+             '&cancelURL=' . $baseUri . $this->url()->fromRoute('lpa/payment/return/cancel', ['lpa-id' => $lpa->id]);
         
-        $redirectUrl = $data->reference;
-        
+        echo $redirectUrl; die;
     }
     
     public function getLpa()
