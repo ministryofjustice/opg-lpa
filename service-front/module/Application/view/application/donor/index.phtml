@@ -1,1 +1,46 @@
-donor
+<div class="accordion-content">
+		<div class="section-intro">
+			<p>The 'donor' is the person appointing other people to make decisions on their behalf. The donor:</p>
+
+			<ul>
+				<li>must be 18 or over</li>
+				<li>must be able to make their own decisions when they create the LPA – this is known as having mental capacity</li>
+			</ul>
+
+			<p>Only the donor can make decisions about their LPA and the people to involve.</p>
+
+
+			<p><a href="/help/#topic-donor" class="js-guidance" data-journey-click="stageprompt.lpa:help:donor">Find out more about being a donor</a></p>
+		</div>
+		
+<?php if($this->donor): ?>		
+		<div class="person-summary group">
+			<div class="person">
+				<h3>Mrs Louise Mary James</h3>
+				<p>Bank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL, UK</p>
+			</div>
+
+			<ul class="actions">
+				<li><a href="/lpa/1111222233334444/donor/edit" data-form="donor" class="js-form-popup">View/edit details</a></li>
+			</ul>
+		</div>
+		<div class="accordion-actions group">
+			<p>
+				<a href="/lpa/11111/when-lpa-starts" class="button gotonextpart" role="button">Save and continue</a>
+			</p>
+		</div>
+
+<?php else:?>
+
+        <p>
+            <a class="add button js-form-popup" data-form="donor" href="/lpa/1111222233334444/donor/add" role="button">Add donor details</a>
+        </p>
+		
+		<div class="accordion-actions group">
+			<p>
+				<span disabled="1" class="button">Save and continue</span>
+			</p>
+		</div>
+<?php endif;?>
+
+</div>	

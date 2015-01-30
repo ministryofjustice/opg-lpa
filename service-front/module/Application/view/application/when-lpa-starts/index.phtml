@@ -1,1 +1,39 @@
-when lpa starts
+<?php
+    $title          = 'LPA Type';
+    $this->headTitle($title);
+    $form           = $this->form;
+    $whenLpaStarts  = $form->get('whenLpaStarts');
+    $submit         = $form->get('submit');
+    
+    $formLabel      = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+
+<?= $this->form()->openTag($form); ?>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+    
+    <?= $this->formRadio($whenLpaStarts) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($whenLpaStarts) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $this->formInput($submit) ?>
+
+</div>
+
+
+<?= $this->formElement($form->get('secret')) ?>
+
+<?= $this->form()->closeTag(); ?>
