@@ -72,9 +72,6 @@ class Module{
      * We don't deal with forcing the user to re-authenticate here as they
      * may be accessing a page that does not require authentication.
      *
-     * TODO - Consider using an extended AuthenticationService and put this logic in hasIdentity(), meaning we'd
-     * TODO - only check if we try to access the identity, making the logic even lazier.
-     *
      * @param MvcEvent $e
      */
     public function bootstrapIdentity(MvcEvent $e){
@@ -90,7 +87,7 @@ class Module{
             if( (new DateTime) > $identity->tokenExpiresAt() ){
 
                 // Get the tokens details...
-                $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() ) ;
+                $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
 
                 // If the token has not expired...
                 if( isset($info['expires_in']) ){
@@ -120,33 +117,17 @@ class Module{
                 'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
             ],
             'factories' => [
-                'SessionManager' => 'Application\Model\Service\Session\SessionFactory',
+                'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
+                'ApiClient'         => 'Application\Model\Service\Lpa\ApiClientFactory',
+
                 'LpaApplicationService' => function( ServiceLocatorInterface $sm ){
                     return new LpaApplicationService( $sm->get('ApiClient') );
                 },
+
                 'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
                     return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
                 },
-                'ApiClient' => function( ServiceLocatorInterface $sm ){
 
-                    $client = new ApiClient();
-
-                    //---
-
-                    $auth = $sm->get('AuthenticationService');
-
-                    if ( $auth->hasIdentity() ) {
-
-                        $identity = $auth->getIdentity();
-                        $client->setUserId( $identity->id() );
-                        $client->setToken( $identity->token() );
-
-                    }
-
-                    //---
-
-                    return $client;
-                } // ApiClient
             ], // factories
         ];
 
