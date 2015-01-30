@@ -38,7 +38,7 @@ class Module{
      *
      * @param MvcEvent $e
      */
-    public function bootstrapSession(MvcEvent $e){
+    private function bootstrapSession(MvcEvent $e){
 
         $session = $e->getApplication()->getServiceManager()->get('SessionManager');
 
@@ -74,7 +74,7 @@ class Module{
      *
      * @param MvcEvent $e
      */
-    public function bootstrapIdentity(MvcEvent $e){
+    private function bootstrapIdentity(MvcEvent $e){
 
         $sm = $e->getApplication()->getServiceManager();
 

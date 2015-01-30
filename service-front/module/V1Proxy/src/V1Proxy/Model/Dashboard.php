@@ -1,6 +1,8 @@
 <?php
 namespace V1Proxy\Model;
 
+use Zend\Session\Container;
+
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -25,6 +27,8 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         $hashedUserId = $this->getHashedUserId();
 
+        $session = $this->getSession();
+
         //--------------------------------------------------------------
         // Check if we've cached that the user has no v1 LPAs
 
@@ -38,10 +42,8 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Check if we've cached a list of v1 LPAs
 
-        $result = $cache->getItem( self::CACHED_V1_LAPS . $hashedUserId );
-
-        if( is_string($result) ){
-            return unserialize( $result );
+        if( isset($session->laps) && is_array($session->laps) ){
+            return $session->laps;
         }
 
         //--------------------------------------------------------------
@@ -152,11 +154,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Cache the generated list of v1 LPAs
 
-        // Amend the TTL to 24 hours for this...
-        $cache->setOptions( $cache->getOptions()->setTtl( 60 * 60 * 24 ) );
-
-        // Cache the results...
-        $cache->setItem( self::CACHED_V1_LAPS . $hashedUserId, serialize( $result ) );
+        $session->laps = $result;
 
         //----------------
 
@@ -169,12 +167,14 @@ class Dashboard implements ServiceLocatorAwareInterface {
      */
     public function clearLpaCacheForUser(){
 
-        $hashedUserId = $this->getHashedUserId();
+        $session = $this->getSession();
 
-        $cache = $this->getServiceLocator()->get('ProxyCache');
+        unset($session->laps);
 
-        $cache->removeItem( self::CACHED_V1_LAPS . $hashedUserId );
+    }
 
+    private function getSession(){
+        return new Container('V1ProxyLpaCache');
     }
 
     /**
