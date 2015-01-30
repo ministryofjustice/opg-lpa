@@ -17,11 +17,50 @@ use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClien
 use Opg\Lpa\Api\Client\Client as ApiClient;
 
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Zend\ModuleManager\ModuleManager;
 
 class Module{
+    
+    public function init(ModuleManager $manager)
+    {
+        $events = $manager->getEventManager();
+        $sharedEvents = $events->getSharedManager();
+        $sharedEvents->attach(__NAMESPACE__, 'dispatch', function($e) {
+            $controller = $e->getTarget();
+            
+            // choose correct layout template.
+            if(in_array(get_class($controller), [
+                    'Application\Controller\Authenticated\Lpa\CertificateProviderController',
+                    'Application\Controller\Authenticated\Lpa\CreatedController',
+                    'Application\Controller\Authenticated\Lpa\DonorController',
+                    'Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
+                    'Application\Controller\Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
+                    'Application\Controller\Authenticated\Lpa\InstructionsController',
+                    'Application\Controller\Authenticated\Lpa\LifeSustainingController',
+                    'Application\Controller\Authenticated\Lpa\PeopleToNotifyController',
+                    'Application\Controller\Authenticated\Lpa\PrimaryAttorneyController',
+                    'Application\Controller\Authenticated\Lpa\ReplacementAttorneyController',
+                    'Application\Controller\Authenticated\Lpa\TypeController',
+                    'Application\Controller\Authenticated\Lpa\WhatIsMyRoleController',
+                    'Application\Controller\Authenticated\Lpa\WhenLpaStartsController',
+                    'Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepInController',
+            ])) {
+                $controller->layout('layout/creation');
+            }
+                    if(in_array(get_class($controller), [
+                    'Application\Controller\Authenticated\Lpa\ApplicantController',
+                    'Application\Controller\Authenticated\Lpa\CompleteController',
+                    'Application\Controller\Authenticated\Lpa\CorrespondentController',
+                    'Application\Controller\Authenticated\Lpa\FeeController',
+                    'Application\Controller\Authenticated\Lpa\PaymentController',
+            ])) {
+                $controller->layout('layout/registration');
+            }
+        }, 100);
+    }
 
     public function onBootstrap(MvcEvent $e){
-
+        
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -31,6 +70,7 @@ class Module{
             $this->bootstrapSession($e);
             $this->bootstrapIdentity($e);
         }
+        
     }
 
     /**

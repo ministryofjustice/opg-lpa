@@ -1,0 +1,72 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('Make a Lasting Power of Attorney | GOV.UK'. $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/bootstrap-theme.min.css')
+                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/bootstrap.min.css') ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath() . '/assets/lpa/js/bootstrap.min.js')
+            ->prependFile($this->basePath() . '/assets/lpa/js/jquery.min.js')
+            ->prependFile($this->basePath() . '/assets/lpa/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath() . '/assets/lpa/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
+        ; ?>
+
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img width=30 src="<?php echo $this->basePath('/assets/lpa/img/gov.uk_logotype_crown.png') ?>" alt="GOV.UK"/>&nbsp;<?php echo $this->translate('GOV.UK') ?></a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+        <div class="container">
+        <header class="page-header group">
+        	<hgroup>
+        	<nav role="navigation" class="progress-indicator group static" style="width: 1004px;">
+        		<ol class="group">
+        			<li>About you</li>
+        			<li class="active">Create the LPA</li>
+        			<li>Sign the LPA</li>
+        			<li>Register the LPA</li>
+        			<li>Done</li>
+        		</ol>
+        	</nav>
+        		<h1>Create a lasting power of attorney</h1>
+        	</hgroup>
+        	</header>
+        	
+        	<p>We'll use your answers to the questions that follow to create an LPA that you can save and print, sign and then apply to register. We'll save your LPA as you progress so you don't need to do it all in one go.</p>
+        	
+            <?php echo $this->content; ?>
+            <hr>
+            <footer>
+                <p>Built by MOJ Digital Services</p>
+            </footer>
+        </div> <!-- /container -->
+        <?php echo $this->inlineScript() ?>
+    </body>
+</html>
