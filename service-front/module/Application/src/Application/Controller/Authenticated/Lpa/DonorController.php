@@ -11,6 +11,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
+use Application\Form\DonorForm;
 
 class DonorController extends AbstractLpaController
 {
@@ -21,11 +22,39 @@ class DonorController extends AbstractLpaController
     
     public function addAction()
     {
-        return new ViewModel();
+        $form = new DonorForm();
+        
+        if($this->request->isPost()) {
+            $postData = $this->request->getPost();
+            
+            $form->setData($postData);
+            
+            if($form->isValid()) {
+                
+//                 $this->redirect('lpa/donor', ['lpa-id'=>$this->request->getPost('lpa-id')]);
+            }
+        }
+        
+        return array('form'=>$form);
     }
     
     public function editAction()
     {
-        return new ViewModel();
+        $form = new DonorForm();
+        
+        $form->bind(new \ArrayObject($this->getLpa()->document->donor->flatten()));
+        
+        if($this->request->isPost()) {
+            
+            $postData = $this->request->getPost();
+            
+            $form->setData($postData);
+            
+            if($form->isValid()) {
+//                 $this->redirect('lpa/donor', ['lpa-id'=>$this->request->getPost('lpa-id')]);
+            }
+        }
+        
+        return array('form'=>$form);
     }
 }

@@ -10,12 +10,25 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
+use Application\Form\TypeForm;
 
 class TypeController extends AbstractLpaController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        $form = new TypeForm();
+        
+        if($this->request->isPost()) {
+            $postData = $this->request->getPost();
+            
+            $form->setData($postData);
+            
+            if($form->isValid()) {
+                
+//                 $this->redirect('lpa/donor', ['lpa-id'=>$this->request->getPost('lpa-id')]);
+            }
+        }
+        
+        return array('form'=>$form);
     }
 }
