@@ -469,9 +469,6 @@ return [
                                 'type'    => 'Literal',
                                 'options' => array(
                                     'route'    => '/return',
-                                    'defaults' => array(
-                                        'controller' => 'Authenticated\Lpa\PaymentCallbackController',
-                                    ),
                                 ),
                                 'may_terminate' => false,
                                 'child_routes' => array(

@@ -22,28 +22,77 @@ class PaymentController extends AbstractLpaController
      */
     public function indexAction()
     {
+        $lpa = $this->getLpa();
+        
+        $gateway = $this->getGateway();
+        
+        $response = $gateway->purchase(
+            $this->getOptions($lpa)
+        )->send();
+        
+        // The purchase method will give us the URL to which to redirect the user for payment
+        $this->redirect()->toUrl(
+            $this->getRedirectUrl(
+                $response->getData()->reference,
+                $lpa
+            )
+        );
+    }
+    
+    public function successAction()
+    {
+        echo __FUNCTION__;
+    }
+    
+    public function failureAction()
+    {
+        echo __FUNCTION__;
+    }
+    
+    public function cancelAction()
+    {
+        echo __FUNCTION__;
+    }
+    
+    public function pendingAction()
+    {
+        echo __FUNCTION__;
+    }
+    
+    /**
+     * Helper function to create and configure the Omnipay gateway object
+     */
+    private function getGateway()
+    {
+        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        
         $gateway = Omnipay::create('WorldPayXML');
         
-        $lpa = $this->getLpa();
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
-
         $gateway->setInstallation($config['installation_id']);
         $gateway->setMerchant($config['merchant_code']);
         $gateway->setPassword($config['xml_password']);
         $gateway->setTestMode($config['test_mode']);
         
-        $response = $gateway->purchase($this->getOptions($lpa))->send();
+        return $gateway;
+    }
+    
+    /**
+     * Helper function to construct the Worldpay redirect URL
+     * 
+     * @param string $baseUrl
+     * @param Lpa $lpa
+     * @return string
+     */
+    private function getRedirectUrl($baseUrl, $lpa)
+    {
+        $redirectUrl =
+            $baseUrl .
+            '&successURL=' .  $this->getCallbackEndpoint('success', $lpa->id) .
+            '&pendingURL=' . $this->getCallbackEndpoint('pending', $lpa->id) .
+            '&failureURL=' . $this->getCallbackEndpoint('failure', $lpa->id) .
+            '&cancelURL=' . $this->getCallbackEndpoint('cancel', $lpa->id);
         
-        $data = $response->getData();
-        
-        $redirectUrl = 
-             $data->reference .
-             '&successURL=' .  $this->getCallbackEndpoint('success', $lpa->id) .
-             '&pendingURL=' . $this->getCallbackEndpoint('pending', $lpa->id) .
-             '&failureURL=' . $this->getCallbackEndpoint('failure', $lpa->id) .
-             '&cancelURL=' . $this->getCallbackEndpoint('cancel', $lpa->id);
-        
-        $this->redirect()->toUrl($redirectUrl);
+        return $redirectUrl;
     }
     
     /**
@@ -57,7 +106,11 @@ class PaymentController extends AbstractLpaController
     {
         $uri = $this->getRequest()->getUri();
         $baseUri = sprintf('%s://%s', $uri->getScheme(), $uri->getHost());
-        return $baseUri . $this->url()->fromRoute('lpa/payment/return/' . $type, ['lpa-id' => $lpaId]);
+        
+        return $baseUri . $this->url()->fromRoute(
+            'lpa/payment/return/' . $type,
+            ['lpa-id' => $lpaId]
+        );
     }
     
     /**
