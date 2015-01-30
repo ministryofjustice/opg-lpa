@@ -19,29 +19,119 @@ class PaymentController extends AbstractLpaController
 {
     /**
      * Gathers the LPA information and forwards the payment request to Worldpay
+     * Uses the Omnipay purchase interface to obtain a URL to which to redirect
+     * the user for payment.
      */
     public function indexAction()
     {
-        $lpa = $this->getLpa();
+        $response = 
+            $this->getGateway()
+                 ->purchase($this->getOptions())
+                 ->send();
         
-        $gateway = $this->getGateway();
-        
-        $response = $gateway->purchase(
-            $this->getOptions($lpa)
-        )->send();
-        
-        // The purchase method will give us the URL to which to redirect the user for payment
-        $this->redirect()->toUrl(
+        $redirectUrl = 
             $this->getRedirectUrl(
-                $response->getData()->reference,
-                $lpa
-            )
-        );
+                $response->getData()->reference
+            );
+        
+        $this->redirect()->toUrl($redirectUrl);
     }
     
     public function successAction()
     {
-        echo __FUNCTION__;
+        $params = $this->getSuccessParams();
+        
+        $this->verifyMacString($params);
+        
+        $this->verifyOrderKey($params);
+    }
+    
+    
+    /**
+     * Helper function to verify the order key returned by Worldpay
+     * 
+     * @param array $params
+     */
+    private function verifyOrderKey($params)
+    {
+        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        
+        $regexString = "/^" . $config['administration_code'] . '\^'. $config['merchant_code'] . '\^' . "(.+)-(.+)$/";
+        
+        if (preg_match($regexString, $params['orderKey'], $matches)) {
+            if ($matches[1] != $this->getLpa()->id) {
+                throw new \Exception(
+                    'Invalid Worldpay orderKey received: ' . $params['orderKey'] . ', ' .
+                    'LPA ID ' . $matches[1] . ' does not match session LPA ' . $this->getLpa()->id
+                );
+            }
+        } else {
+            throw new \Exception(
+                'Invalid Worldpay orderKey received: ' . $params['orderKey'] . ', ' .
+                'expected match with regex ' . $regexString
+            );
+        }
+    }
+    
+    /**
+     * Helper function to verify the MAC string returned from Worldpay
+     * 
+     * @param array $params
+     */
+    private function verifyMacString($params)
+    {
+        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        
+        $macString =
+            $params['orderKey'] .
+            $params['paymentAmount'] .
+            $params['paymentCurrency'] .
+            $params['paymentStatus'] .
+            $config['mac_secret'];
+        
+        $md5Mac = md5($macString);
+        
+        if ($params['mac'] != $md5Mac) {
+            throw new \Exception(
+                'Worldpay MAC string not verified: ' . $params['mac'] . ' expected ' . $md5Mac
+            );
+        }
+    }
+    
+    /**
+     * Helper function to verify and extract the success params
+     * 
+     * @return array
+     */
+    private function getSuccessParams()
+    {
+        $params = [
+            'paymentStatus' => null,
+            'orderKey' => null,
+            'paymentAmount' => null,
+            'paymentCurrency' => null,
+            'mac' => null
+        ];
+        
+        foreach ($params as $key => &$value) {
+            if ($this->request->getQuery($key) == null) {
+                throw new \Exception(
+                    'Invalid success response from Worldpay. ' .
+                    'Expected ' . $key . ' parameter was not found. ' .
+                    $_SERVER["REQUEST_URI"]
+                );
+            }
+            $value = $this->request->getQuery($key);
+        }
+        
+        if ($params['paymentStatus'] != 'AUTHORISED') {
+            throw new \Exception(
+                'Invalid success response from Worldpay. ' .
+                'paymentStatus was ' . $params['paymentStatus'] . ' (expected AUTHORISED)'
+            );
+        }
+        
+        return $params;
     }
     
     public function failureAction()
@@ -85,6 +175,8 @@ class PaymentController extends AbstractLpaController
      */
     private function getRedirectUrl($baseUrl, $lpa)
     {
+        $lpa = $this->getLpa();
+        
         $redirectUrl =
             $baseUrl .
             '&successURL=' .  $this->getCallbackEndpoint('success', $lpa->id) .
@@ -117,11 +209,12 @@ class PaymentController extends AbstractLpaController
      * Helper function to construct the options use to create
      * the XML for the initial request to Worldpay.
      * 
-     * @param Lpa $lpa
      * @return array
      */
-    private function getOptions($lpa)
+    private function getOptions()
     {
+        $lpa = $this->getLpa();
+        
         $email = 'todo@example.com';
         
         $config = $this->getServiceLocator()->get('config')['worldpay'];
