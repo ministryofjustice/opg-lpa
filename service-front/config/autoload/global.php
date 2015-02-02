@@ -1,6 +1,13 @@
 <?php
 
+$commit = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : null;
+
 return array(
+
+    'version' => [
+        'commit' => $commit,
+        'cache' => ( !is_null($commit) ) ? abs( crc32( $commit ) ) : time(),
+    ],
 
     'redirects' => [
         'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
