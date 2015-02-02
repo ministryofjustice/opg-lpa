@@ -1,57 +1,13 @@
-<?php echo $this->doctype(); ?>
+<?php echo $this->partial('partials/document/document-top.phtml'); ?>
 
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <?php echo $this->headTitle('Make a Lasting Power of Attorney | GOV.UK'. $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
+<header class="page-header group">
+<hgroup>
+<h1><?php echo $this->pageTitle(); ?></h1>
+</hgroup>
+</header>
 
-        <?php echo $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
-        ?>
+<?php echo $this->partial('partials/document/body/opg/opg-content-top.phtml'); ?>
 
-        <!-- Le styles -->
-        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/style.css')
-                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/bootstrap-theme.min.css')
-                        ->prependStylesheet($this->basePath() . '/assets/lpa/css/bootstrap.min.css') ?>
+<?php echo $this->layout()->content; ?>
 
-        <!-- Scripts -->
-        <?php echo $this->headScript()
-            ->prependFile($this->basePath() . '/assets/lpa/js/bootstrap.min.js')
-            ->prependFile($this->basePath() . '/assets/lpa/js/jquery.min.js')
-            ->prependFile($this->basePath() . '/assets/lpa/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
-            ->prependFile($this->basePath() . '/assets/lpa/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
-        ; ?>
-
-    </head>
-    <body>
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="<?php echo $this->url('home') ?>"><img width=30 src="<?php echo $this->basePath('/assets/lpa/img/gov.uk_logotype_crown.png') ?>" alt="GOV.UK"/>&nbsp;<?php echo $this->translate('GOV.UK') ?></a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a></li>
-                    </ul>
-                </div><!--/.nav-collapse -->
-            </div>
-        </nav>
-        <div class="container">
-            <?= $this->layoutPartial(); ?>
-            
-            <?php echo $this->content; ?>
-            <hr>
-            <footer>
-                <p>Built by MOJ Digital Services</p>
-            </footer>
-        </div> <!-- /container -->
-        <?php echo $this->inlineScript() ?>
-    </body>
-</html>
+<?php echo $this->partial('partials/document/document-bottom.phtml'); ?>

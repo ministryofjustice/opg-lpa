@@ -1,0 +1,27 @@
+<?php
+    $routeName = $this->getHelperPluginManager()->getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
+    $isHomepage = ($routeName == 'home');
+?>
+
+<header role="banner" id="global-header" class="global-header with-proposition">
+  <div class="header-wrapper">
+    <div class="header-global">
+      <div class="header-logo">
+        <a href="https://www.gov.uk/" title="Go to the GOV.UK homepage" id="logo" class="content">
+          <img src="<?= $this->staticAssetPath('/assets/v1/images/gov.uk_logotype_crown.png') ?>" width="35" height="31" alt=""> GOV.UK
+        </a>
+      </div>
+    </div>
+
+
+    <?php if (!$isHomepage) : ?>
+      <div class="header-proposition">
+        <div class="content">
+          <nav id="proposition-menu">
+             <span class="home"><a href="<?= $this->url( 'home', [] ) ?>" id="proposition-name">Make a lasting power of attorney</a></span>
+          </nav>
+        </div>
+      </div>
+    <?php endif; ?>
+  </div>
+</header>

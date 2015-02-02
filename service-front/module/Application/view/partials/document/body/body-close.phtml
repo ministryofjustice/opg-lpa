@@ -1,0 +1,46 @@
+
+<script src="<?= $this->staticAssetPath('/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'); ?>"></script>
+
+<? if( Default_Model_Http::isDevelopmentEnvironment() ){ ?>
+  <script src="<?= $this->staticAssetPath('/assets/v1/js/application.js') ?>"></script>
+<? } else { ?>
+  <script src="<?= $this->staticAssetPath('/assets/v1/js/application.min.js') ?>"></script>
+<? } ?>
+
+
+<?php echo $this->headScript()?>
+
+
+
+<?php if(APPLICATION_ENV == 'production'): ?>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-33184303-1', { 'allowLinker': true });
+        
+        var type = document.getElementById('lpa-type');
+        
+        if (type && type.className.match(/complete/i)) {
+            type = type.innerHTML.match(/(health|welfare)/i) ? 'health and welfare' : 'property and financial';
+            ga('set', 'dimension1', type);
+        }
+        
+        <?php
+            // New Google Analytics code to set User ID.
+            // $userId is a unique, persistent, and non-personally identifiable string ID.
+            $session = Opg_Session::getSession();
+        
+            if (isset($session->userId)) {
+                $gacode = "ga('set', '&uid','%s');"; // Set the user ID using signed-in user_id.
+                echo sprintf($gacode, $session->userId);
+            }
+        ?>   
+        ga('send', 'pageview');
+        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
+    </script>
+<?php endif;?>
+ 
+</body>

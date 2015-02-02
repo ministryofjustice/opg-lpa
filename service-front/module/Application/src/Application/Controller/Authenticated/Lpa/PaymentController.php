@@ -42,7 +42,6 @@ class PaymentController extends AbstractLpaController
         $params = $this->getSuccessParams();
         
         $this->verifyMacString($params);
-        
         $this->verifyOrderKey($params);
     }
     
