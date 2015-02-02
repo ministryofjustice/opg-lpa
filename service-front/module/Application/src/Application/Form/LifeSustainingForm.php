@@ -15,26 +15,18 @@ class LifeSustainingForm extends AbstractForm implements InputFilterAwareInterfa
                                     false => "Option B: No. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf",
                             ],
                     ],
-                    'attributes' => [
-                            'class' => 'form-element form-radio',
-                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
                     'attributes' => [
-                            'id' => 'submit-button',
-                            'class' => ' form-element form-button',
-                            'value' => 'Submit'
+                            'value' => 'Save and continue'
                     ],
                     
             ],
     ];
         
-    public function __construct ($formName = null)
+    public function __construct ($formName = 'lifeSustaining')
     {
-        if($formName == null) {
-            $formName = 'lifeSustaining';
-        }
         
         parent::__construct($formName);
         

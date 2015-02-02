@@ -15,26 +15,18 @@ class WhenLpaStartsForm extends AbstractForm implements InputFilterAwareInterfac
                                     PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => "only if I don't have mental capacity",
                             ],
                     ],
-                    'attributes' => [
-                            'class' => 'form-element form-radio',
-                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
                     'attributes' => [
-                            'id' => 'submit-button',
-                            'class' => ' form-element form-button',
-                            'value' => 'Submit'
+                            'value' => 'Save and continue'
                     ],
                     
             ],
     ];
         
-    public function __construct ($formName = null)
+    public function __construct ($formName = 'whenLpaStarts')
     {
-        if($formName == null) {
-            $formName = 'whenLpaStarts';
-        }
         
         parent::__construct($formName);
         

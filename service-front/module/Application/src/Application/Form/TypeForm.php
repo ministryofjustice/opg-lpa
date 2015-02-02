@@ -15,26 +15,18 @@ class TypeForm extends AbstractForm implements InputFilterAwareInterface
                                     Document::LPA_TYPE_HW => 'Health and welfare',
                             ],
                     ],
-                    'attributes' => [
-                            'class' => 'form-element form-radio',
-                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
                     'attributes' => [
-                            'id' => 'submit-button',
-                            'class' => ' form-element form-button',
                             'value' => 'Save and continue'
                     ],
                     
             ],
     ];
     
-    public function __construct ($formName = null)
+    public function __construct ($formName = 'type')
     {
-        if($formName == null) {
-            $formName = 'type';
-        }
         
         parent::__construct($formName);
         
