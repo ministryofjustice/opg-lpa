@@ -39,14 +39,6 @@ return [
             ],
         ],
     ],
-    
-    'view_helpers' => [
-        'invokables' => [
-            'pageTitle' => 'Application\View\Helper\PageTitle',
-            'accountInfo' => 'Application\View\Helper\AccountInfo',
-            'staticAssetPath' => 'Application\View\Helper\StaticAssetPath',
-        ],
-    ],
 
     'view_manager' => [
         'display_not_found_reason' => true,
@@ -67,8 +59,11 @@ return [
     
     'view_helpers' => [
             'invokables' => [
-                    'progressBars' => 'Application\View\Helper\ProgressBars',
-                    'layoutPartial' => 'Application\View\Helper\LayoutPartial',
+                'progressBars' => 'Application\View\Helper\ProgressBars',
+                'layoutPartial' => 'Application\View\Helper\LayoutPartial',
+                'pageTitle' => 'Application\View\Helper\PageTitle',
+                'accountInfo' => 'Application\View\Helper\AccountInfo',
+                'staticAssetPath' => 'Application\View\Helper\StaticAssetPath',
             ],
     ],
 
