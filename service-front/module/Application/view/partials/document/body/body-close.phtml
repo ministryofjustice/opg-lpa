@@ -1,16 +1,9 @@
 
 <script src="<?= $this->staticAssetPath('/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'); ?>"></script>
 
-<? if( Default_Model_Http::isDevelopmentEnvironment() ){ ?>
-  <script src="<?= $this->staticAssetPath('/assets/v1/js/application.js') ?>"></script>
-<? } else { ?>
-  <script src="<?= $this->staticAssetPath('/assets/v1/js/application.min.js') ?>"></script>
-<? } ?>
-
+<script src="<?= $this->staticAssetPath('/assets/v1/js/application.js') ?>"></script>
 
 <?php echo $this->headScript()?>
-
-
 
 <?php if(APPLICATION_ENV == 'production'): ?>
     <script>
@@ -29,6 +22,10 @@
         }
         
         <?php
+        /*
+         *
+         * # TODO - Move to v2 sessions
+         *
             // New Google Analytics code to set User ID.
             // $userId is a unique, persistent, and non-personally identifiable string ID.
             $session = Opg_Session::getSession();
@@ -37,6 +34,7 @@
                 $gacode = "ga('set', '&uid','%s');"; // Set the user ID using signed-in user_id.
                 echo sprintf($gacode, $session->userId);
             }
+        */
         ?>   
         ga('send', 'pageview');
         GOVUK.performance.stageprompt.setupForGoogleAnalytics();
