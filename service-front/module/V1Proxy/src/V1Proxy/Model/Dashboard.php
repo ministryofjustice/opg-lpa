@@ -35,8 +35,8 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Check if we've cached a list of v1 LPAs
 
-        if( isset($session->laps) && is_array($session->laps) ){
-            return $session->laps;
+        if( isset($session->lpas) && is_array($session->lpas) ){
+            return $session->lpas;
         }
 
         //--------------------------------------------------------------
@@ -147,7 +147,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Cache the generated list of v1 LPAs
 
-        $session->laps = $result;
+        $session->lpas = $result;
 
         //----------------
 
