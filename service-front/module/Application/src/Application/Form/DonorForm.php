@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form;
 
-use Zend\InputFilter\InputFilterAwareInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
-class DonorForm extends AbstractForm implements InputFilterAwareInterface
+class DonorForm extends AbstractForm
 {
     protected $formElements = [
             'name-title' => [

@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form;
 
-use Zend\InputFilter\InputFilterAwareInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class LifeSustainingForm extends AbstractForm implements InputFilterAwareInterface
+class LifeSustainingForm extends AbstractForm
 {
     protected $formElements = [
             'whenLpaStarts' => [

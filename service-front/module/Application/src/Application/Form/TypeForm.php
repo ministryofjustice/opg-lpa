@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form;
 
-use Zend\InputFilter\InputFilterAwareInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class TypeForm extends AbstractForm implements InputFilterAwareInterface
+class TypeForm extends AbstractForm
 {
     protected $formElements = [
             'type' => [
