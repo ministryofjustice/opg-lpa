@@ -31,7 +31,7 @@ return array(
 
         'redis' => [
             // Set a default (longish) Redis TTL to protect against long term stale data.
-            'ttl' => (60 * 60 * 24 * 28), // 28 days
+            'ttl' => (60 * 60 * 24 * 7), // 7 days
             'namespace' => 'session',
             'server' => [
                 'host' => 'redisfront.local',
@@ -42,7 +42,7 @@ return array(
 
         'encryption' => [
             'enabled' => true,
-            // Key MUST be a 32 character string
+            // Key MUST be a 32 character ASCII string
             'key' => 'insecure-encryption-session-key!'
         ],
 

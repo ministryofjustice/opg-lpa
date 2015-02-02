@@ -23,8 +23,9 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $personIndex = $e->getRouteMatch()->getParam('person_index');
         
         $calculatedRoute = $checker->check($currentRoute, $personIndex);
+
         if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
-            $this->redirect()->toRoute($calculatedRoute);
+            return $this->redirect()->toRoute($calculatedRoute);
         }
         
         return parent::onDispatch($e);

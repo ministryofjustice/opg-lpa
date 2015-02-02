@@ -16,13 +16,6 @@ class Dashboard implements ServiceLocatorAwareInterface {
      */
     const USER_HAS_NO_V1_LAPS = 'no-laps:';
 
-    /**
-     * Namespace used to cache a returned list
-     * of v1 LPAs for a given user.
-     */
-    const CACHED_V1_LAPS = 'laps:';
-
-
     public function getLpas(){
 
         $hashedUserId = $this->getHashedUserId();
