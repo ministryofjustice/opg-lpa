@@ -7,6 +7,6 @@ class StaticAssetPath extends AbstractHelper
 {
     public function __invoke($path)
     {
-        return str_replace('/static/', '/assets/v1/', $path);
+        return $path;
     }
 }

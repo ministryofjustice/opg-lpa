@@ -1,10 +1,10 @@
 
-<script src="<?= $this->staticAssetPath('/static/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'); ?>"></script>
+<script src="<?= $this->staticAssetPath('/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'); ?>"></script>
 
 <? if( Default_Model_Http::isDevelopmentEnvironment() ){ ?>
-  <script src="<?= $this->staticAssetPath('/static/js/application.js') ?>"></script>
+  <script src="<?= $this->staticAssetPath('/assets/v1/js/application.js') ?>"></script>
 <? } else { ?>
-  <script src="<?= $this->staticAssetPath('/static/js/application.min.js') ?>"></script>
+  <script src="<?= $this->staticAssetPath('/assets/v1/js/application.min.js') ?>"></script>
 <? } ?>
 
 
