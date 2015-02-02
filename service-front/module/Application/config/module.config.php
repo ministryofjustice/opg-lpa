@@ -39,6 +39,14 @@ return [
             ],
         ],
     ],
+    
+    'view_helpers' => [
+        'invokables' => [
+            'pageTitle' => 'Application\View\Helper\PageTitle',
+            'accountInfo' => 'Application\View\Helper\AccountInfo',
+            'staticAssetPath' => 'Application\View\Helper\StaticAssetPath',
+        ],
+    ],
 
     'view_manager' => [
         'display_not_found_reason' => true,
