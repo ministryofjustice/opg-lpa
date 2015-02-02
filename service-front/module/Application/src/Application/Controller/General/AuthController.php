@@ -34,7 +34,7 @@ class AuthController extends AbstractBaseController {
         if( !empty($email) && !empty($password) ){
 
             $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
-            $authenticationAdapter = $this->getServiceLocator()->get('LpaApiClientAuthAdapter');
+            $authenticationAdapter = $this->getServiceLocator()->get('AuthenticationAdapter');
 
             // Pass the user's email address and password...
             $authenticationAdapter->setCredentials( $email, $password );
