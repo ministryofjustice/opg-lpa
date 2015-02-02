@@ -29,7 +29,7 @@ class Module{
             $this->bootstrapIdentity($e);
         }
         
-    }
+    } // function
 
     /**
      * Sets up and starts global sessions.

@@ -18,6 +18,9 @@ class DashboardController extends AbstractAuthenticatedController
 
         echo '<h3><a href="/user/dashboard/create">Create new LPA</a></h3>';
 
+        echo '<h4>Commit: '.$this->config()['version']['commit'].'</h4>';
+        echo '<h4>Cache: '.$this->config()['version']['cache'].'</h4>';
+
         echo "<p>ID: <strong>".$this->getUser()->id()."</strong></p>";
         echo "<p>Token: <strong>".$this->getUser()->token()."</strong></p>";
         echo "<p>Last login: <strong>".$this->getUser()->lastLogin()->format('r')."</strong></p>";
