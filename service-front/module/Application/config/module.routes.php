@@ -216,15 +216,15 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'clone' => [
+                            'create-lpa' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/clone/:lpa-id',
+                                    'route'    => '/create[/:lpa-id]',
                                     'constraints' => [
                                         'lpa-id' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'clone',
+                                        'action'     => 'create',
                                     ],
                                 ],
                             ],

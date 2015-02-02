@@ -24,4 +24,13 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         $this->user = $user;
     }
 
+    /**
+     * Returns an instance of the LPA Application Service.
+     *
+     * @return object
+     */
+    protected function getLpaApplicationService(){
+        return $this->getServiceLocator()->get('LpaApplicationService');
+    }
+
 }

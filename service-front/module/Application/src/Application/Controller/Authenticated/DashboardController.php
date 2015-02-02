@@ -2,6 +2,8 @@
 
 namespace Application\Controller\Authenticated;
 
+use Zend\Session\Container as SessionContainer;
+
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
@@ -13,6 +15,8 @@ class DashboardController extends AbstractAuthenticatedController
         $lpas = $this->getLpaList();
 
         echo '<h1>Dashboard!</h1>';
+
+        echo '<h3><a href="/user/dashboard/create">Create new LPA</a></h3>';
 
         echo "<p>ID: <strong>".$this->getUser()->id()."</strong></p>";
         echo "<p>Token: <strong>".$this->getUser()->token()."</strong></p>";
@@ -34,11 +38,44 @@ class DashboardController extends AbstractAuthenticatedController
 
         return new ViewModel();
     }
-    
-    public function cloneAction()
-    {
-        
-    }
+
+    /**
+     * Creates a new LPA
+     *
+     * If 'lpa-id' is set, use the passed ID to seed the new LPA.
+     */
+    public function createAction(){
+
+        //-------------------------------------
+        // Create a new LPA...
+
+        $newLpaId = $this->getLpaApplicationService()->createApplication();
+
+        if( $newLpaId === false ){
+            // Bad things happened!
+            die('Error!');
+        }
+
+        //-------------------------------------
+        // If we're seeding the new LPA...
+
+        if( ($seedId = $this->params()->fromRoute('lpa-id')) != null ){
+
+            $result = $this->getLpaApplicationService()->setSeed( $newLpaId, (int)$seedId );
+
+            if( $result !== true ){
+                $messages = new SessionContainer('FlashMessages');
+                $messages->warning = 'LPA created but could not set seed';
+            }
+
+        }
+
+        //---
+
+        // Redirect them to the first page...
+        return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$newLpaId ] );
+
+    } // function
     
     public function deleteLpaAction()
     {
@@ -64,7 +101,7 @@ class DashboardController extends AbstractAuthenticatedController
 
         //----
 
-        $v2Apis = $this->getServiceLocator()->get('ApiClient')->getApplicationList();
+        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList();
 
         foreach($v2Apis as $lpa){
 
