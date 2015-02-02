@@ -35,7 +35,12 @@ class DonorController extends AbstractLpaController
             }
         }
         
-        return array('form'=>$form);
+        $viewModel = new ViewModel(['form'=>$form]);
+        if ( $this->getRequest()->isXmlHttpRequest() ) {
+            $viewModel->setTerminal(true);
+        }
+        
+        return $viewModel;
     }
     
     public function editAction()
@@ -55,6 +60,11 @@ class DonorController extends AbstractLpaController
             }
         }
         
-        return array('form'=>$form);
+        $viewModel = new ViewModel(['form'=>$form]);
+        if ( $this->getRequest()->isXmlHttpRequest() ) {
+            $viewModel->setTerminal(true);
+        }
+        
+        return $viewModel;
     }
 }
