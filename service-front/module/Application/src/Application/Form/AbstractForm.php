@@ -127,20 +127,30 @@ abstract class AbstractForm extends Form
                 $params = [
                         'name' => $name,
                         'required' => false,
-                        'filters'  => [
-                                ['name' => 'StripTags'],
-                                ['name' => 'StringTrim'],
-                        ],
                 ];
-    
+                
                 if(array_key_exists('required', $elm)) {
                     $params['required'] = $elm['required'];
                 }
-    
-                if(array_key_exists('filters', $elm)) {
+                
+                // if 'filters' is not set in a form class, add the default filters - StripTags and StringTrim,
+                // if 'filters' is set in a form class and is not false, merge filters with the default ones.
+                // if 'filters; is set in a form class and is false, filtering is disabled.
+                if(!array_key_exists('filters', $elm)) {
+                    $elm['filters']  = [
+                            ['name' => 'StripTags'],
+                            ['name' => 'StringTrim'],
+                    ];
+                }
+                elseif($elm['filters'] !== false) {
+                    $elm['filters']  = [
+                        ['name' => 'StripTags'],
+                        ['name' => 'StringTrim'],
+                    ];
+                
                     array_merge($params['filters'], $elm['filters']);
                 }
-    
+                
                 $inputFilter->add($params);
             }
     
