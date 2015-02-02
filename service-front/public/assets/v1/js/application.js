@@ -3360,6 +3360,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var self = this,
           html = this._hasCachedContent();
 
+      // todo - remove this
+      html = false;
+      
       // if content has been cached, load it straight in
       if (html !== false) {
         moj.Modules.Popup.open(html, {

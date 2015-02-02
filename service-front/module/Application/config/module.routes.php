@@ -42,12 +42,16 @@ return [
             ], // forgot-password
 
             'guidance' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/guidance',
+                    'route'    => '/guidance[/:section]',
                     'defaults' => [
                         'controller' => 'General\GuidanceController',
                         'action'     => 'index',
+                        'section'    => '',
+                    ],
+                    'constraints' => [
+                        'section' => '[\#0-9a-zA-Z\-]*',
                     ],
                 ],
             ], // guidance
