@@ -229,7 +229,12 @@ abstract class AbstractForm extends Form
             
             if($this->has($key) && ($this->get($key) instanceof Checkbox)) {
                 // convert checkbox value 0/1 to true/false
-                $m = ($value?true:false);
+                if($value === 0) {
+                    $m = false;
+                }
+                elseif($value === 1) {
+                    $m = true;
+                }
             }
             else {
                 $m = $value;
