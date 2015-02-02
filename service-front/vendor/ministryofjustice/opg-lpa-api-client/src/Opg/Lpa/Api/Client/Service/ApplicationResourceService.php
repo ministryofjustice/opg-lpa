@@ -85,7 +85,12 @@ class ApplicationResourceService
             }
             
             foreach ($json['_embedded'][$this->resourceType] as $singleResourceJson) {
-                $resourceList[] = new $entityClass($singleResourceJson);
+                $concreteClass = $this->getConcreteClassIfAbstract(
+                    $entityClass,
+                    $singleResourceJson
+                );
+                
+                $resourceList[] = new $concreteClass($singleResourceJson);
             }
     
             if (isset($json['_links']['next']['href'])) {
@@ -96,6 +101,25 @@ class ApplicationResourceService
         } while (!is_null($path));
     
         return $resourceList;
+    }
+    
+    /**
+     * Determine the concrete class for the abstract base
+     * 
+     * @param string $entityClass
+     * @param string $json
+     */
+    private function getConcreteClassIfAbstract($entityClass, $json)
+    {
+        if ($entityClass == '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney') {
+            switch ($json['type']) {
+                case 'human' : return '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human';
+                case 'trust' : return '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation';
+                      default: throw new \Exception('Invalid attorney type: ' . $json['type']);
+            }
+        }
+        
+        return $entityClass;
     }
     
     /**
@@ -162,7 +186,12 @@ class ApplicationResourceService
     
         $json = $response->json();
     
-        $entity = new $entityClass($json);
+        $concreteClass = $this->getConcreteClassIfAbstract(
+            $entityClass,
+            $json
+        );
+        
+        $entity = new $concreteClass($json);
         
         return $entity;
     }

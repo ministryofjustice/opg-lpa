@@ -875,11 +875,13 @@ class Client
     /**
      * Returns whether or not the Who Are You information has been provided
      * 
+     * @param unknown $lpaId
      * @return boolean
      */
-    public function isWhoAreYouSet()
+    public function isWhoAreYouSet($lpaId)
     {
-        return false;
+        $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this);
+        return $helper->getSingleValueResource('whoAreYouAnswered');
     }
     
     /**
@@ -972,73 +974,6 @@ class Client
     }
     
     /**
-     * Returns a list of all currently set attorneys
-     * 
-     * @param string $lpaId
-     * @return array
-     */
-    public function getAttorneys($lpaId)
-    {
-        return [];
-    }
-
-    /**
-     * Adds a new attorney
-     * 
-     * @param string $lpaId
-     * @return boolean
-     */
-    public function addAttorney($lpaId)
-    {
-        return true;
-    }
-    
-    /**
-     * Returns the attorney for the given attorney id
-     * 
-     * @param string $lpaId
-     * @param string $attorneyId
-     * @return \Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney
-     */
-    public function getAttorney(
-        $lpaId,
-        $attorneyId
-    )
-    {
-        return null;
-    }
-    
-    /**
-     * Sets the attorney for the given attorney id
-     * 
-     * @param string $lpaId
-     * @param string $attorneyId
-     * @return boolean
-     */
-    public function setAttorney(
-        $lpaId,
-        $attorneyId
-    )
-    {
-        return true;
-    }
-    
-    /**
-     * Deletes the attorney for the given attorney id
-     *
-     * @param string $lpaId
-     * @param string $attorneyId
-     * @return boolean
-     */
-    public function deleteAttorney(
-        $lpaId,
-        $attorneyId
-    )
-    {
-        return true;
-    }
-    
-    /**
      * Returns a list of all currently set notified persons
      *
      * @param string $lpaId
@@ -1125,7 +1060,7 @@ class Client
     public function getPrimaryAttorneys($lpaId)
     {
         $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
-        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney');
     }
     
     /**
@@ -1157,7 +1092,7 @@ class Client
     )
     {
         $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human', $primaryAttorneyId);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney', $primaryAttorneyId);
     }
     
     /**

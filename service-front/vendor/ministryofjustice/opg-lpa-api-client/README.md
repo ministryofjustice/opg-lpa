@@ -32,18 +32,9 @@ Development
     cd opg-lpa-api-client
     php composer.phar install
 
-## PHPSpec Unit Test
-
 ### Run the tests
 
 	bin/phpspec run --format=pretty
 
-### Create a new test
-
-Example for AuthReponse class
-
-	bin/phpspec desc Opg/Lpa/Api/Client/Response/AuthResponse
-	
-Write the specs by editing the file /spec/Opg/Lpa/Api/Client/Response/AuthResponseSpec.php
 
 

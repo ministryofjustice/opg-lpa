@@ -326,8 +326,8 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @return array
      */
-    public function flatten(){
-        return $this->flattenArray( $this->toArray( 'string' ) );
+    public function flatten($prefix = ''){
+        return $this->flattenArray( $this->toArray( 'string' ), $prefix );
     }
 
     //-------------------
@@ -336,7 +336,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Method for recursively walking over our array, flattening it.
      * To trigger it, call $this->flatten()
      */
-    private function flattenArray($array, $prefix = 'lpa-') {
+    private function flattenArray($array, $prefix) {
         $result = array();
         foreach($array as $key=>$value) {
             if(is_array($value)) {

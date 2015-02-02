@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\User\Name as UserName;
 use Opg\Lpa\DataModel\User\Address as UserAddress;
 use Opg\Lpa\DataModel\User\Dob as UserDob;
 use Opg\Lpa\DataModel\User\EmailAddress as UserEmailAddress;
+use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 
 date_default_timezone_set('UTC');
 

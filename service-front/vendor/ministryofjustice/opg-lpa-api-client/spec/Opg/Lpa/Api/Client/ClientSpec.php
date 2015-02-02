@@ -13,89 +13,12 @@ class ClientSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
 
-    function it_will_return_the_lock_status_when_locked()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->lockLpa($lpaId)->shouldBe(true);
-        $this->isLpaLocked($lpaId)->shouldBe(true);
-    }
-    
-    function it_will_return_the_lock_status_when_not_locked()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->isLpaLocked($lpaId)->shouldBe(false);
-    }
-    
-    function it_can_lock_an_application()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->lockLpa($lpaId)->shouldBe(true);
-    }
-    
-    function it_will_report_an_already_locked_lpa()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->lockLpa($lpaId)->shouldBe(true);
-        $this->lockLpa($lpaId)->shouldBe(false);
-        $this->getLastStatusCode()->shouldBe(403);
-    }
-    
-    function it_will_return_null_if_seed_has_not_been_set()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->getSeedDetails($lpaId)->shouldBe(null);
-    }
-    
-    function skipped_it_can_set_and_get_the_lpa_seed()
-    {
-        $seed1 = uniqid();
-        $seed2 = uniqid();
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->setSeed($lpaId, $seed1)->shouldBe(true);
-        $this->getSeedDetails($lpaId)->shouldBe($seed1);
-        $this->setSeed($lpaId, $seed2)->shouldBe(true);
-        $this->getSeedDetails($lpaId)->shouldBe($seed2);
-    }
-    
-    function it_will_fail_if_attempting_to_set_an_invalid_seed()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->setSeed($lpaId, 'this-is-not-valid')->shouldBe(false);
-    }
-    
-    function it_can_delete_the_seed()
-    {
-        $seed1 = uniqid();
-        
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->setSeed($lpaId, $seed1);
-        $this->deleteSeed($lpaId)->shouldBe(true);
-        $this->getSeedDetails($lpaId)->shouldBe(null);
-    }
-    
-    function skipped_it_can_set_the_who_are_you_details()
-    {
-        $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
-    
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
-    }
-    
     function it_can_delete_a_primary_attorney()
     {
         $primaryAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
-        $primaryAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $primaryAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation');
         $primaryAttorney3 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
-        $primaryAttorney2->name->first = 'Sally';
+        $primaryAttorney2->name = 'Solicitors Limited';
         $primaryAttorney3->name->first = 'John';
     
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
@@ -107,15 +30,15 @@ class ClientSpec extends ObjectBehavior
         $this->deletePrimaryAttorney($lpaId, 3)->shouldBe(true);
         $this->deletePrimaryAttorney($lpaId, 1)->shouldBe(true);
         $this->getPrimaryAttorneys($lpaId)->shouldBeAnArrayOfAttorneys(1);
-        $this->getPrimaryAttorneys($lpaId)[0]->name->first->shouldBe('Sally');
+        $this->getPrimaryAttorneys($lpaId)[0]->name->shouldBe('Solicitors Limited');
     }
     
     function it_can_return_a_list_of_primary_attorneys()
     {
         $primaryAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
-        $primaryAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
-        $primaryAttorney2->name->first = 'Sally';
-    
+        $primaryAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation');
+        $primaryAttorney2->name = 'Solicitors Limited';
+            
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
@@ -123,7 +46,7 @@ class ClientSpec extends ObjectBehavior
     
         $this->getPrimaryAttorneys($lpaId)->shouldBeAnArrayOfAttorneys(2);
         $this->getPrimaryAttorneys($lpaId)[0]->name->first->shouldBe('John');
-        $this->getPrimaryAttorneys($lpaId)[1]->name->first->shouldBe('Sally');
+        $this->getPrimaryAttorneys($lpaId)[1]->name->shouldBe('Solicitors Limited');
     }
     
     function it_will_return_an_empty_array_if_no_primary_attorneys_have_been_set()
@@ -164,6 +87,112 @@ class ClientSpec extends ObjectBehavior
         $this->setPrimaryAttorney($lpaId, $primaryAttorney2, 2)->shouldBe(true);
         $this->getPrimaryAttorney($lpaId, 1)->name->first->shouldBe('Henry');
         $this->getPrimaryAttorney($lpaId, 2)->name->first->shouldBe('Beth');
+    }
+    
+    function it_will_return_null_if_seed_has_not_been_set()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->getSeedDetails($lpaId)->shouldBe(null);
+    }
+    
+    function skipped_it_can_set_and_get_the_lpa_seed()
+    {
+        $seed1 = uniqid();
+        $seed2 = uniqid();
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->setSeed($lpaId, $seed1)->shouldBe(true);
+        $this->getSeedDetails($lpaId)->shouldBe($seed1);
+        $this->setSeed($lpaId, $seed2)->shouldBe(true);
+        $this->getSeedDetails($lpaId)->shouldBe($seed2);
+    }
+    
+    function it_will_correctly_report_if_the_who_are_details_are_set()
+    {
+        $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->isWhoAreYouSet($lpaId, $whoAreYou)->shouldBe(false);
+    }
+    
+    function it_will_correctly_report_if_the_who_are_details_are_not_set()
+    {
+        $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
+        $this->isWhoAreYouSet($lpaId, $whoAreYou)->shouldBe(true);
+    }
+    
+    function it_can_set_the_who_are_you_details()
+    {
+        $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
+    }
+    
+    function it_will_raise_an_error_if_setting_who_are_you_details_after_they_have_already_been_set()
+    {
+        $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
+        $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(false);
+    }
+    
+    function it_will_return_the_lock_status_when_locked()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->lockLpa($lpaId)->shouldBe(true);
+        $this->isLpaLocked($lpaId)->shouldBe(true);
+    }
+    
+    function it_will_return_the_lock_status_when_not_locked()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->isLpaLocked($lpaId)->shouldBe(false);
+    }
+    
+    function it_can_lock_an_application()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->lockLpa($lpaId)->shouldBe(true);
+    }
+    
+    function it_will_report_an_already_locked_lpa()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->lockLpa($lpaId)->shouldBe(true);
+        $this->lockLpa($lpaId)->shouldBe(false);
+        $this->getLastStatusCode()->shouldBe(403);
+    }
+    
+    function it_will_fail_if_attempting_to_set_an_invalid_seed()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->setSeed($lpaId, 'this-is-not-valid')->shouldBe(false);
+    }
+    
+    function it_can_delete_the_seed()
+    {
+        $seed1 = uniqid();
+        
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->setSeed($lpaId, $seed1);
+        $this->deleteSeed($lpaId)->shouldBe(true);
+        $this->getSeedDetails($lpaId)->shouldBe(null);
     }
     
     function it_can_delete_a_notified_person()
