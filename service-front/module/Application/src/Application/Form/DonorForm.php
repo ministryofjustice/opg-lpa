@@ -6,8 +6,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class DonorForm extends AbstractForm implements InputFilterAwareInterface
 {
-    protected $inputFilter;
-    
     protected $formElements = [
             'name-title' => [
                     'type' => 'Zend\Form\Element\Select',

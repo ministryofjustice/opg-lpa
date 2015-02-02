@@ -6,8 +6,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 class WhenLpaStartsForm extends AbstractForm implements InputFilterAwareInterface
 {
-    protected $inputFilter;
-    
     protected $formElements = [
             'whenLpaStarts' => [
                     'type' => 'Zend\Form\Element\Radio',

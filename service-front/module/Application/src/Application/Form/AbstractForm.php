@@ -11,6 +11,8 @@ use Zend\InputFilter\InputFilter;
 
 abstract class AbstractForm extends Form
 {
+    protected $inputFilter;
+    
     public function __construct($formName)
     {
         parent::__construct($formName);
