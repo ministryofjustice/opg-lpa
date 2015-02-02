@@ -13,11 +13,11 @@ class DonorForm extends AbstractForm implements InputFilterAwareInterface
                             'label' => 'Title',
                             'empty_option' => 'Please choose your title',
                             'value_options' => [
-                                    '0'=>'Mr',
-                                    '1'=>'Mrs',
-                                    '2'=>'Ms',
-                                    '3'=>'Miss',
-                                    '4'=>'Sir'
+                                    'Mr'   => 'Mr',
+                                    'Mrs'  => 'Mrs',
+                                    'Ms'   => 'Ms',
+                                    'Miss' => 'Miss',
+                                    'Sir'  => 'Sir'
                             ],
                     ],
                     'attributes' => [
