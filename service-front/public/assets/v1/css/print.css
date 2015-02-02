@@ -1,0 +1,6 @@
+.print-hidden,
+.help-sections .hidden,
+#help-system header,
+#popup .close,
+#popup .close-help {
+  display: none; }
