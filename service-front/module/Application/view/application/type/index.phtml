@@ -2,7 +2,7 @@
     $title      = 'LPA Type';
     $this->headTitle($title);
     $form       = $this->form;
-    $whenLpaStarts    = $form->get('lpaType');
+    $type       = $form->get('type');
     $submit     = $form->get('submit');
     
     $formLabel  = $this->plugin('formLabel');
@@ -20,12 +20,12 @@
 
         <div class="form_element">
         
-            <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+            <?= $formLabel->openTag() . $type->getOption('label'); ?>
             
-            <?= $this->formRadio($whenLpaStarts) ?>
+            <?= $this->formRadio($type) ?>
             
             <p class='form-element-errors'>
-                <?= $this->formElementErrors($whenLpaStarts) ?>
+                <?= $this->formElementErrors($type) ?>
             </p>
             
             <?= $formLabel->closeTag() ?>
