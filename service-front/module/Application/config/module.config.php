@@ -56,6 +56,13 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    
+    'view_helpers' => [
+            'invokables' => [
+                    'progressBars' => 'Application\View\Helper\ProgressBars',
+                    'layoutPartial' => 'Application\View\Helper\LayoutPartial',
+            ],
+    ],
 
     // Placeholder for console routes
     'console' => [
