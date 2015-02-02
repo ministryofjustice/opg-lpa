@@ -14,6 +14,10 @@ return [
     /* ------------------------------------------------------------- */
 
     'controllers' => [
+        'initializers' => [
+            'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
+            'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
+        ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],

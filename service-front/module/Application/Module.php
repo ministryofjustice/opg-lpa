@@ -111,6 +111,9 @@ class Module{
     public function getServiceConfig(){
 
         return [
+            'aliases' => [
+                'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
+            ],
             'invokables' => [
                 'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
             ],
@@ -118,10 +121,12 @@ class Module{
                 'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'         => 'Application\Model\Service\Lpa\ApiClientFactory',
 
+                // LPA access service...
                 'LpaApplicationService' => function( ServiceLocatorInterface $sm ){
                     return new LpaApplicationService( $sm->get('ApiClient') );
                 },
 
+                // Authentication Adapter...
                 'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
                     return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
                 },
@@ -130,17 +135,6 @@ class Module{
         ];
 
     } // function
-
-    public function getControllerConfig(){
-
-        return [
-            'initializers' => [
-                'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
-                'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
-            ]
-        ];
-
-    }
 
     //-------------------------------------------
 
