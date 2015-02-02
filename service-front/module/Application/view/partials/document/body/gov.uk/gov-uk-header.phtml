@@ -1,6 +1,11 @@
 <?php
-    $routeName = $this->getHelperPluginManager()->getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
-    $isHomepage = ($routeName == 'home');
+    $routeMatch = $this->getHelperPluginManager()->getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch();
+    if ($routeMatch) {
+        $routeName = $routeMatch->getMatchedRouteName();
+        $isHomepage = ($routeName == 'home');
+    } else {
+        $isHomepage = false;
+    }
 ?>
 
 <header role="banner" id="global-header" class="global-header with-proposition">

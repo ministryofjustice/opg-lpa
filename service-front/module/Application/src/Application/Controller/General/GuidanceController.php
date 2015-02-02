@@ -16,6 +16,8 @@ class GuidanceController extends AbstractBaseController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        $model = new ViewModel();
+        $model->setTemplate('partials/document/body/opg/opg-help-system.phtml');
+        return $model;
     }
 }

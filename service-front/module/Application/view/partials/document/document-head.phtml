@@ -1,9 +1,14 @@
 <?php
-    $routeName = $this->getHelperPluginManager()->getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
-    $isHomepage = ($routeName == 'home');
+    $routeMatch = $this->getHelperPluginManager()->getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch();
+    if ($routeMatch) {
+        $routeName = $routeMatch->getMatchedRouteName();
+        $isHomepage = ($routeName == 'home');
+    } else {
+        $isHomepage = false;
+    }
 ?>
 
-  <head>
+<head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <title><?= $isHomepage?'Make a lasting power of attorney':$this->pageTitle() ?> | GOV.UK</title>
