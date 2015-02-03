@@ -74,8 +74,7 @@
                     <div class="header-proposition">
                         <div class="content">
                             <nav id="proposition-menu">
-                                <span class="home"><a href="<?= $this->url( 'home', [] ) ?>"
-                                    id="proposition-name">Make a lasting power of attorney</a></span>
+                                <span class="home"><a href="<?= $this->url( 'home', [] ) ?>" id="proposition-name">Make a lasting power of attorney</a></span>
                             </nav>
                         </div>
                     </div>
@@ -87,7 +86,12 @@
                     <?= $this->accountInfo()?>
                     <header class="page-header group">
                         <hgroup>
-                            <h1><?php echo $this->pageTitle(); ?></h1>
+                            <h1>
+                                <?php if ($this->routeName() == 'home'): ?>
+                                <span>Service</span>
+                                <?php endif; ?>
+                                <?php echo $this->pageTitle(); ?>
+                            </h1>
                         </hgroup>
                     </header>
                     <div class="article-container group">
@@ -105,9 +109,7 @@
                     <div class="lpa-footer inner">
                         <hr>
                         <p>
-                            Your <a href="/feedback">feedback</a> will help us to improve <span
-                                style="float: right"><a target="_blank"
-                                href="/terms-and-conditions/">Terms and conditions</a></span>
+                            Your <a href="/feedback">feedback</a> will help us to improve <span style="float: right"><a target="_blank" href="/terms-and-conditions/">Terms and conditions</a></span>
                         </p>
                     </div>
                 </section>

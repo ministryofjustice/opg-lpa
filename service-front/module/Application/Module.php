@@ -117,6 +117,9 @@ class Module{
             'invokables' => [
                 'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
             ],
+            'aliases' => array(
+                'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
+            ),
             'factories' => [
                 'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'         => 'Application\Model\Service\Lpa\ApiClientFactory',
