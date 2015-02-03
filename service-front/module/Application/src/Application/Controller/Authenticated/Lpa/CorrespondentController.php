@@ -14,6 +14,9 @@ use Zend\View\Model\ViewModel;
 
 class CorrespondentController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'registration-partial.phtml';
+    
     public function indexAction()
     {
         return new ViewModel();

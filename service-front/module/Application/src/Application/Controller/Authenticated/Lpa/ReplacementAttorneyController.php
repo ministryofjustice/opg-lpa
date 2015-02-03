@@ -14,6 +14,9 @@ use Zend\View\Model\ViewModel;
 
 class ReplacementAttorneyController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'creation-partial.phtml';
+    
     public function indexAction()
     {
         return new ViewModel();

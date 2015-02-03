@@ -14,6 +14,9 @@ use Application\Form\WhenLpaStartsForm;
 
 class WhenLpaStartsController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'creation-partial.phtml';
+    
     public function indexAction()
     {
         $form = new WhenLpaStartsForm();

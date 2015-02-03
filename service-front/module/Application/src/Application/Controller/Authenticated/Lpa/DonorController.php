@@ -15,6 +15,9 @@ use Application\Form\DonorForm;
 
 class DonorController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'creation-partial.phtml';
+    
     public function indexAction()
     {
         return new ViewModel();

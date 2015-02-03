@@ -14,6 +14,9 @@ use Application\Form\LifeSustainingForm;
 
 class LifeSustainingController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'creation-partial.phtml';
+    
     public function indexAction()
     {
         $form = new LifeSustainingForm();

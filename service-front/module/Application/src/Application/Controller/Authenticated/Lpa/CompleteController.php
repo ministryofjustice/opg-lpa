@@ -14,6 +14,9 @@ use Zend\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'complete-partial.phtml';
+    
     public function indexAction()
     {
         return new ViewModel();

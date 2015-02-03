@@ -14,6 +14,9 @@ use Zend\View\Model\ViewModel;
 
 class CreatedController extends AbstractLpaController
 {
+    
+    protected $contentHeader = 'created-partial.phtml';
+    
     public function indexAction()
     {
         return new ViewModel();
