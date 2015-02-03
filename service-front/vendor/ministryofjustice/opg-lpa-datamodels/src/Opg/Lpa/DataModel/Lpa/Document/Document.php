@@ -31,7 +31,7 @@ class Document extends AbstractData {
 
     /**
      * If string, it's the donor who is registering.
-     * If array, it contains a reference to one or more attorneys.
+     * If array, it contains a reference to one or more primary attorneys.
      *
      * @var string|array
      */
@@ -114,9 +114,34 @@ class Document extends AbstractData {
             new Assert\Valid,
         ]);
 
-        // whoIsRegistering should (if set) be either an array, or the string 'donor'.
+
         $metadata->addPropertyConstraint('whoIsRegistering', new Assert\Callback(function ($value, ExecutionContextInterface $context){
-            if( empty($value) || is_array($value) || $value == 'donor' ){ return; }
+
+            if( empty($value) || $value == 'donor' ){ return; }
+
+            //---
+
+            $validAttorneyIds = array_map(function($v){
+                return $v->id;
+            }, $context->getObject()->primaryAttorneys);
+
+            //---
+
+            // If it's an array, ensure the IDs are valid primary attorney IDs.
+            if( is_array($value) ){
+
+                foreach( $value as $attorneyId ){
+                    if( !in_array( $attorneyId, $validAttorneyIds ) ){
+                        $context->buildViolation( 'allowed-values:Attorney['.implode(',', $validAttorneyIds).']' )
+                            ->setInvalidValue( implode(',', $value) )
+                            ->addViolation();
+                        return;
+                    }
+                }
+
+                return;
+            }
+
             $context->buildViolation( 'allowed-values:donor,Array' )->addViolation();
 
         }));
