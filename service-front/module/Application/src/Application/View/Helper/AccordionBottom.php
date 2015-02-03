@@ -12,5 +12,3 @@ class AccordionBottom extends AbstractHelper
     }
     
 }
-
-?>
