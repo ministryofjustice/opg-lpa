@@ -8,8 +8,12 @@
 
 <?php echo $this->partial('partials/document/body/opg/opg-content-top.phtml'); ?>
 
-<?= $this->layoutPartial(); ?>
+<?php if(isset($this->contentHeader)): ?>
 
-<?php echo $this->layout()->content; ?>
+    <?= $this->partial('layout/partials/'.$this->contentHeader) ?>
+    
+<?php endif; ?>
+
+<?= $this->renderMainContent($this->content); ?>
 
 <?php echo $this->partial('partials/document/document-bottom.phtml'); ?>
