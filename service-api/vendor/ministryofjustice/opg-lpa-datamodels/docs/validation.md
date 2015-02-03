@@ -3,7 +3,14 @@ LPA Data Model Validation
 
 This document contains an explanation of LPA (in)validation responses.
 
-Null/Not Blank
+Null
+------------
+If a value must be null, you'll receive the response:
+
+`must-be-null`
+
+
+Not Null & Blank
 ---------------
 If a value cannot be blank/null, you'll receive the response:
 
@@ -24,6 +31,7 @@ where ``{type}`` is the expected data type or class. For example:
 - ``expected-type:int``
 - ``expected-type:xdigit`` (i.e. must be a hexadecimal value)
 - ``expected-type:\Opg\Lpa\DataModel\Lpa\Payment\Payment``
+
 
 Invalid value size (range or length)
 --------------------------------------
