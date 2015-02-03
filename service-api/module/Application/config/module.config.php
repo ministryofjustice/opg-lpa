@@ -146,7 +146,7 @@ return [
             'resource-donor'                            => 'Application\Model\Rest\Donor\Resource',
             'resource-correspondent'                    => 'Application\Model\Rest\correspondent\Resource',
             'resource-payment'                          => 'Application\Model\Rest\Payment\Resource',
-            'resource-who-is-registering'               => 'Application\Model\Rest\xxx\Resource',
+            'resource-who-is-registering'               => 'Application\Model\Rest\WhoIsRegistering\Resource',
             'resource-who-are-you'                      => 'Application\Model\Rest\WhoAreYou\Resource',
             'resource-certificate-provider'             => 'Application\Model\Rest\CertificateProvider\Resource',
             'resource-lock'                             => 'Application\Model\Rest\Lock\Resource',
