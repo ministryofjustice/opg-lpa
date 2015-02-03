@@ -117,7 +117,7 @@ class Document extends AbstractData {
 
         $metadata->addPropertyConstraint('whoIsRegistering', new Assert\Callback(function ($value, ExecutionContextInterface $context){
 
-            if( empty($value) || $value == 'donor' ){ return; }
+            if( is_null($value) || $value == 'donor' ){ return; }
 
             //---
 
@@ -132,7 +132,7 @@ class Document extends AbstractData {
 
                 foreach( $value as $attorneyId ){
                     if( !in_array( $attorneyId, $validAttorneyIds ) ){
-                        $context->buildViolation( 'allowed-values:Attorney['.implode(',', $validAttorneyIds).']' )
+                        $context->buildViolation( 'allowed-values:'.implode(',', $validAttorneyIds) )
                             ->setInvalidValue( implode(',', $value) )
                             ->addViolation();
                         return;
@@ -251,10 +251,8 @@ class Document extends AbstractData {
                 return array_map( function($v){
                     if( $v instanceof Attorneys\AbstractAttorney){
                         return $v;
-                    } elseif( isset( $v['number'] ) ){
-                        return new Attorneys\TrustCorporation( $v );
                     } else {
-                        return new Attorneys\Human( $v );
+                        return Attorneys\AbstractAttorney::factory( $v );
                     }
                 }, $v );
 

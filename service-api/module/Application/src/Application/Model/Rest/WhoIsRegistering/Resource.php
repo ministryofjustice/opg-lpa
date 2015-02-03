@@ -3,8 +3,6 @@ namespace Application\Model\Rest\WhoIsRegistering;
 
 use RuntimeException;
 
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-
 use Application\Model\Rest\AbstractResource;
 
 use Application\Model\Rest\LpaConsumerInterface;
@@ -109,7 +107,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
     /**
      * Delete a resource
      *
-     * @param  mixed $id
      * @return ApiProblem|bool
      * @throw UnauthorizedException If the current user is not authorized.
      */
