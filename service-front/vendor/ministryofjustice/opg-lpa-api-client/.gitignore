@@ -4,3 +4,4 @@
 vendor/
 bin/
 .idea
+composer.lock

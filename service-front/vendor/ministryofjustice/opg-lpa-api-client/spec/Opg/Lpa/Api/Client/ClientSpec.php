@@ -13,6 +13,73 @@ class ClientSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
 
+    //--------------------------------------------------------------
+    // Who Is Registering
+
+    function it_will_return_null_if_who_is_registering_has_not_been_set()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->getWhoIsRegistering($lpaId)->shouldBe(null);
+    }
+
+
+    function it_can_set_and_get_the_lpa_who_is_registering_when_it_is_a_donor()
+    {
+        $who = 'donor';
+
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+
+        $this->setWhoIsRegistering($lpaId, $who)->shouldBe(true);
+        $this->getWhoIsRegistering($lpaId)->shouldBe($who);
+
+    }
+
+
+    function it_can_set_and_get_the_lpa_who_is_registering_when_they_are_attorneys()
+    {
+
+        $primaryAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $primaryAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $primaryAttorney3 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation');
+
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
+        $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
+        $this->addPrimaryAttorney($lpaId, $primaryAttorney3)->shouldBe(true);
+
+        //---
+
+        $who = [ 1, 3 ];
+
+        $this->setWhoIsRegistering($lpaId, $who)->shouldBe(true);
+        $result = $this->getWhoIsRegistering($lpaId);
+        $result->shouldHaveCount(2);
+
+        $result[0]->shouldBeAnInstanceOf( '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human' );
+        $result[0]->id->shouldBe( array_shift($who) );
+
+        $result[1]->shouldBeAnInstanceOf( '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation' );
+        $result[1]->id->shouldBe( array_shift($who) );
+
+    }
+
+    function it_can_delete_who_is_registering()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+
+
+        $this->setWhoIsRegistering($lpaId, 'donor')->shouldBe(true);
+        $this->deleteWhoIsRegistering($lpaId)->shouldBe(true);
+        $this->getWhoIsRegistering($lpaId)->shouldBe(null);
+
+    }
+
+    //--------------------------------------------------------------
+
     function it_can_delete_a_primary_attorney()
     {
         $primaryAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
@@ -823,7 +890,7 @@ class ClientSpec extends ObjectBehavior
     
         $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
     }
-    
+
     /**
      * This one takes a long time - re-instate it to test pagination
      * from the API - perhaps by changing the pagination in the API to

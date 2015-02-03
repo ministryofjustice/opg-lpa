@@ -1168,6 +1168,58 @@ class Client
         $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
         return $helper->deleteResource();
     }
+
+    /**
+     * Get Who Is Registering
+     *
+     * @param string $lpaId
+     * @return string|array
+     */
+    public function getWhoIsRegistering($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
+        $result = $helper->getSingleValueResource('who');
+
+        if( is_array($result) ){
+
+            // If it's an array, returns instances of Attorneys
+            $result = array_map( function( $v ){
+                return AbstractAttorney::factory( $v );
+            }, $result );
+
+        }
+
+        return $result;
+
+    }
+
+    /**
+     * Set Who Is Registering
+     *
+     * @param string $lpaId
+     * @param string|array $who
+     * @return boolean
+     */
+    public function setWhoIsRegistering(
+        $lpaId,
+        $who
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
+        return $helper->setResource( json_encode([ 'who' => $who ]) );
+    }
+
+    /**
+     * Delete Who Is Registering
+     *
+     * @param string $lpaId
+     * @return boolean
+     */
+    public function deleteWhoIsRegistering($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
+        return $helper->deleteResource();
+    }
     
     /**
      * Returns a list of all currently available PDFs, with a href to download them
