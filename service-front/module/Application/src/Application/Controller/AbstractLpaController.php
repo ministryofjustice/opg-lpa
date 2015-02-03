@@ -11,7 +11,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     
     public function onDispatch(MvcEvent $e)
     {
-        # uncomment below line to bypass form flow checker.
+        # load content header in the layout if controller has a $contentHeader
+        if(isset($this->contentHeader)) {
+            $this->layout()->contentHeader = $this->contentHeader;
+        }
+        
+        #@todo: remove the line below once form data can persist.
         return parent::onDispatch($e);
         
         /**
@@ -23,13 +28,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $personIndex = $e->getRouteMatch()->getParam('person_index');
         
         $calculatedRoute = $checker->check($currentRoute, $personIndex);
-
+        
         if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
             return $this->redirect()->toRoute($calculatedRoute);
         }
         
         return parent::onDispatch($e);
-        
     }
     
     /**
@@ -37,7 +41,10 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
      */
     public function getLpa ()
     {
-        if(!($this->lpa instanceof Lpa)) $this->lpa = new Lpa();
+        if(!($this->lpa instanceof Lpa)) {
+            $this->lpa = new Lpa();
+        }
+        
         return $this->lpa;
     }
     

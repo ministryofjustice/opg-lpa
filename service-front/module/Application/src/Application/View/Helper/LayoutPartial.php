@@ -4,6 +4,9 @@ namespace Application\View\Helper;
 use Zend\View\Helper\AbstractHelper;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * @deprecated
+ */
 class LayoutPartial extends AbstractHelper
 {
     public function __invoke ()
