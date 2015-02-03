@@ -68,6 +68,7 @@ return [
             'accountInfo'       => 'Application\View\Helper\AccountInfo',
             'pageTitle'         => 'Application\View\Helper\PageTitle',
             'routeName'         => 'Application\View\Helper\RouteName',
+            'environment'       => 'Application\View\Helper\Environment',
         ],
     ],
 
