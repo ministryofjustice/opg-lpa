@@ -1,13 +1,44 @@
+<p>Sign in or <a href="/user/register">create an account</a> to get started.</p>
+
+<div class="account form">
+
+	<form autcomplete="off" class="form" method="POST">
+	
+        <?php if (false /*$this->isTimedOut*/) : ?>
+            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+              <h1 id="error-heading">Session timed out</h1>
+              <p>Sorry, your session has timed out either due to inactivity or because you have signed in on another browser. Please log in again.</p>
+            </div>
+        <?php endif; // timed out ?>
+        
+        <? if (!empty($error)):  ?>
+            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+              <h1 id="error-heading">Login error</h1>
+              <p><?= $this->escapeHtml($error) ?></p>
+            </div>
+        <? endif; // error ?>
+	
+    	<div class="group ">
+            <label for="signin-email" id="signin-email-label" class="required">Email address</label>
+            <input name="email" type="email" id="signin-email" value="" autocomplete="off">
+        </div>
+        
+        <div class="group">
+            <label for="signin-password" id="signin-password-label" class="required">Password</label>
+            <input name="password" type="password" id="signin-password" value="" autocomplete="off">
+        </div>
+    	<p class="action group">
+    	  <p class="action group">
+             <input type="submit" name="submit" id="signin-form-submit" value="Sign in" class="button">
+          </p>
+        </p>
+    
+    	<p class="action group">
+            <input type="submit" name="forgotpw" id="forgotpw-submit" value="Forgotten your password?" class="link-style">
+        </p>	
+   </form>
+
+</div>
+
+
 <h1>Login</h1>
-
-<? if( !empty($error) ){ ?>
-    <?= $this->escapeHtml($error) ?>
-<? } ?>
-
-<form method="POST" action="/login">
-
-    <input type="text" name="email" />
-    <input type="password" name="password" />
-    <input type="submit" value="Login">
-
-</form>
