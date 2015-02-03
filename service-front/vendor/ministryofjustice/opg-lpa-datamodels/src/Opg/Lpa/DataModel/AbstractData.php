@@ -6,6 +6,7 @@ use DateTime, InvalidArgumentException, JsonSerializable;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * This class is extended by all entities that make up an LPA, including the LPA object itself.
@@ -148,17 +149,31 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Validates the concrete class which this method is called on.
      *
+     * @param $properties Array An array of property names to check. An empty array means all properties.
      * @return ValidatorResponse
      * @throws InvalidArgumentException
      */
-    public function validate(){
+    public function validate( Array $properties = array() ){
 
         $validator = Validation::createValidatorBuilder()
             ->setApiVersion( Validation::API_VERSION_2_5 )
             ->addMethodMapping('loadValidatorMetadata')->getValidator();
 
-        // Perform the validation...
-        $violations = $validator->validate( $this );
+        if( !empty($properties) ){
+
+            // Validate the passed properties...
+
+            $violations = new ConstraintViolationList();
+
+            foreach( $properties as $property ){
+                $result = $validator->validateProperty( $this, $property );
+                $violations->addAll( $result );
+            }
+
+        } else {
+            // Validate all properties...
+            $violations = $validator->validate( $this );
+        }
 
         //---
 
