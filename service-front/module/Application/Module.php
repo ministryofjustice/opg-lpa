@@ -138,6 +138,21 @@ class Module{
 
     //-------------------------------------------
 
+    public function getViewHelperConfig(){
+
+        return array(
+            'factories' => array(
+                'staticAssetPath' => function( $sm ){
+                    $config = $sm->getServiceLocator()->get('Config');
+                    return new \Application\View\Helper\StaticAssetPath( $config['version']['cache'] );
+                },
+            ),
+        );
+
+    } // function
+
+    //-------------------------------------------
+
     public function getAutoloaderConfig(){
         return array(
             'Zend\Loader\StandardAutoloader' => array(
