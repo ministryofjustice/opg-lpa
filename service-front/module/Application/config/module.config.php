@@ -63,9 +63,10 @@ return [
     
     'view_helpers' => [
         'invokables' => [
-            'progressBars' => 'Application\View\Helper\ProgressBars',
-            'pageTitle' => 'Application\View\Helper\PageTitle',
-            'accountInfo' => 'Application\View\Helper\AccountInfo',
+            'accordionTop'      => 'Application\View\Helper\AccordionTop',
+            'accordionBottom'   => 'Application\View\Helper\AccordionBottom',
+            'accountInfo'       => 'Application\View\Helper\AccountInfo',
+            'pageTitle'         => 'Application\View\Helper\PageTitle',
         ],
     ],
 

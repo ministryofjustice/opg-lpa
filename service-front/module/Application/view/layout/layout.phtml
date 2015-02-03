@@ -14,6 +14,8 @@
     
 <?php endif; ?>
 
-<?= $this->renderMainContent($this->content); ?>
+<?= $this->accordionTop() ?>
+<?= $this->content ?>
+<?= $this->accordionBottom() ?>
 
 <?php echo $this->partial('partials/document/document-bottom.phtml'); ?>
