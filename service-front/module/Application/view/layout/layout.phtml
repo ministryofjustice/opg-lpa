@@ -100,9 +100,9 @@
                                 <?php if(isset($this->contentHeader)): ?>
                                 <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
                                 <?php endif; ?>
-                                <?= $this->accordionTop()?>
+                                <?= $this->accordionTop($this->lpa)?>
                                 <?= $this->content?>
-                                <?= $this->accordionBottom()?>
+                                <?= $this->accordionBottom($this->lpa)?>
                             </div>
                         </article>
                     </div>
