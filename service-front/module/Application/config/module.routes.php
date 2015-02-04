@@ -711,8 +711,10 @@ return [
                             ],
                         ],
                     ],
-                ],
-            ],
+
+                ], // child_routes
+                
+            ], // lpa
 
         ], // routes
 

@@ -425,12 +425,56 @@ class Client
      * Request a password reset. API server will send email with further instructions.
      *
      * @param string $email
-     * @return Client $this
+     * @return bool|string Returns false on an error or the reset token on success.
      */
-    public function resetPassword($email)
+    public function requestPasswordReset( $email )
     {
-        return $this;
+
+        $response = $this->client()->post( self::PATH_AUTH . '/pwreset' ,[
+            'body' => [
+                'email' => $email,
+            ]
+        ]);
+
+        if( $response->getStatusCode() != 200 ){
+            return $this->log($response, false);
+
+        }
+
+        $data = $response->json();
+
+        if( !isset( $data['success'] ) || $data['success'] != true || !isset($data['pw_reset_id']) ){
+            return $this->log($response, false);
+        }
+
+        return $data['pw_reset_id'];
     }
+
+
+    /**
+     * Exchanges a password reset token for a auth token (which can then be used to reset the user's password).
+     *
+     * @param $resetToken string Token supplied by requestPasswordReset()
+     * @return bool|string Returns false on an error or the auth token on success.
+     */
+    public function requestPasswordResetAuthToken( $resetToken ){
+
+        $response = $this->client()->get( self::PATH_AUTH . '/pwreset/' . $resetToken );
+
+        if( $response->getStatusCode() != 200 ){
+            return $this->log($response, false);
+        }
+
+        $data = $response->json();
+
+        if ( !isset($data['access_token']) ){
+            return $this->log($response, false);
+        }
+
+        return $data['access_token'];
+
+    }
+
     
     /**
      * Update auth email
@@ -456,7 +500,14 @@ class Client
     }
     
     /**
-     * Update auth password
+     * Update the user's password.
+     *
+     * The password should be validated in advance to:
+     *  - Be >= 6 characters
+     *  - Contain at least one numeric digit
+     *  - Contain at least one alphabet character
+     *
+     * (The auth service will also validate this, but not return meaningful error messages)
      *
      * @param string $newPassword
      * 

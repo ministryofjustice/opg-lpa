@@ -7,9 +7,12 @@ use Application\Model\Library\Authentication\Identity\User as Identity;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {
-    
+    /**
+     * @var Identity The Identity of the current authenticated user.
+     */
     private $user;
-    
+
+
     /**
      * Return the Identity of the current authenticated user.
      *
