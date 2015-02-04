@@ -9,6 +9,7 @@ class PageTitle extends AbstractHelper
     {
         switch ($this->view->routeName()) {
             case 'login': return 'Sign in';
+            case 'register': return 'Create an account';
             case 'home' : return 'Make a lasting power of attorney';
             default: '@Todo - page title unknown';
         }

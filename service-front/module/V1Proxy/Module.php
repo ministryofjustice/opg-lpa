@@ -57,15 +57,14 @@ class Module {
 
                 },
                 'ProxyClient' => function( ServiceLocatorInterface $sm ){
-
+                    
                     $auth = $sm->get('AuthenticationService');
-
+                    
                     if (!$auth->hasIdentity()) {
                         throw new \RuntimeException('V1Proxy Authentication error: no token');
                     }
-
                     $token = $auth->getIdentity()->token();
-
+                    
                     //---
 
                     $client = new GuzzleClient();

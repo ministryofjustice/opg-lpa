@@ -92,7 +92,7 @@ return [
             'register' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/register',
+                    'route'    => '/signup',
                     'defaults' => [
                         'controller' => 'General\RegisterController',
                         'action'     => 'index',
