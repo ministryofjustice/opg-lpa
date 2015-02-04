@@ -117,13 +117,13 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function applicant()
     {
-        if($this->lpa->document->applicant == 'donor') {
+        if($this->lpa->document->whoIsRegistering == 'donor') {
             $donor = $this->lpa->document->donor->name;
-            return ['who'=>$this->lpa->document->applicant, 'name'=>$donor->title.' '.$donor->first.' '.$donor->last];
+            return ['who'=>'donor', 'name'=>$donor->title.' '.$donor->first.' '.$donor->last];
         }
         else {
             $names = [];
-            foreach($this->lpa->document->applicant as $attorneyIdx) {
+            foreach($this->lpa->document->whoIsRegistering as $attorneyIdx) {
                 $attorney = $this->lpa->document->primaryAttorneys[attorneyIdx]->name;
                 $names[] = $attorney->title.' '.$attorney->first.' '.$attorney->last;
             }
@@ -151,5 +151,3 @@ abstract class AbstractAccordion extends AbstractHelper
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $barDataFuncName)).'.phtml';
     }
 }
-
-?>
