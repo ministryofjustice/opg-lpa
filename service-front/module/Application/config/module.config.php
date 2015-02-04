@@ -65,6 +65,7 @@ return [
         'invokables' => [
             'accordionTop'      => 'Application\View\Helper\AccordionTop',
             'accordionBottom'   => 'Application\View\Helper\AccordionBottom',
+            'accordionIdx'      => 'Application\View\Helper\AccordionIdx',
             'accountInfo'       => 'Application\View\Helper\AccountInfo',
             'pageTitle'         => 'Application\View\Helper\PageTitle',
             'routeName'         => 'Application\View\Helper\RouteName',
