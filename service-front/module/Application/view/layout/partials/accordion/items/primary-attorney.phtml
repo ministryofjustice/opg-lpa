@@ -1,0 +1,30 @@
+<?=$this->params['idx'] ?>. 
+
+<?php if(count($this->params['values'])>1): ?>
+
+The attorneys are 
+<?php 
+$names=[];
+$tatalAttorneys = count($this->params['values']);
+for($i=0; $i<$tatalAttorneys-1; $i++) {
+    $attorney = $this->params['values'][$i];
+    $names[] = $attorney->name->title.' '.$attorney->name->first.' '.$attorney->name->last;
+}
+
+echo implode(', ', $names);
+?>
+ and 
+<?php 
+$attorney = $this->params['values'][$i-1];
+echo $attorney->name->title.' '.$attorney->name->first.' '.$attorney->name->last;
+?>
+
+<?php else: ?>
+
+    The attorney is <?php 
+    $attorney = $this->params['values'][0];
+    echo $attorney->name->title.' '.$attorney->name->first.' '.$attorney->name->last;
+
+?>
+
+<?php endif;?>

@@ -11,6 +11,8 @@ class AccordionBottom extends AbstractAccordion
         if($lpa === null) {
             return '';
         }
+
+        $this->lpa = $lpa;
         
         $routeName = $this->getRouteName();
         $barConfig = $this->getBarConfig($routeName);
@@ -25,27 +27,25 @@ class AccordionBottom extends AbstractAccordion
         $barList = [];
         
         $skip = true;
-        foreach($barConfig as $barRouteName => $barTextSettings) {
-            if($barRouteName == $routeName) {
-                $seq++;
-                $skip = false;
-                continue;
-            }
-            
-            if($skip) {
-                $seq++;
-                continue;
-            }
-            
+        foreach($barConfig as $barRouteName => $barDataFuncName) {
             if($barRouteName == $flowChecker->check($barRouteName)) {
+                if($barRouteName == $routeName) {
+                    $seq++;
+                    $skip = false;
+                    continue;
+                }
+                
+                if($skip) {
+                    $seq++;
+                    continue;
+                }
+                
                 $seq++;
-                $barList[$seq-1] = $seq.'. ' . $this->$barTextSettings['inactive']();
+                $barList[$seq-1] = $this->view->partial('layout/partials/accordion/accordion.phtml', 
+                        ['name'=>$this->getViewScriptName($barDataFuncName), 'params'=>['idx'=>$seq, 'values'=>$this->$barDataFuncName()]]);
             }
         }
         
-        printr($barList);
-        
-        return '';
-        
+        return implode('', $barList);
     }
 }

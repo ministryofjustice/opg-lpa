@@ -12,6 +12,8 @@ class AccordionTop extends AbstractAccordion
             return '';
         }
         
+        $this->lpa = $lpa;
+        
         $routeName = $this->getRouteName();
         $barConfig = $this->getBarConfig($routeName);
         
@@ -22,23 +24,19 @@ class AccordionTop extends AbstractAccordion
         $flowChecker = new FormFlowChecker($lpa);
         $seq = 0;
         $barList = [];
-        
-        foreach($barConfig as $barRouteName => $barTextSettings) {
-            $seq++;
+        foreach($barConfig as $barRouteName => $barDataValues) {
             if($barRouteName == $flowChecker->check($barRouteName)) {
                 if($barRouteName == $routeName) {
-                    $barList[$seq-1] = $seq.'. ' . $barTextSettings['active'];
                     break;
                 }
                 else {
-                    $barList[$seq-1] = $seq.'. ' . $this->$barTextSettings['inactive']();
+                    $barList[$seq++] = $this->view->partial('layout/partials/accordion/accordion.phtml', 
+                            ['name'=>$this->getViewScriptName($barDataValues), 'params'=>['idx'=>$seq, 'values'=>$this->$barDataValues()]]);
                 }
             }
         }
         
-        printr($barList);
-        
-        return '';
+        return implode('', $barList);
         
     }
 }

@@ -1,0 +1,9 @@
+<?php use Opg\Lpa\DataModel\Lpa\Document\Document;?>
+
+<?= $this->params['idx'] ?>. This LPA covers 
+
+<?php if( $this->params['values']==Document::LPA_TYPE_PF ): ?>
+    property and financial affairs
+<?php elseif ($this->params['values']==Document::LPA_TYPE_HW ): ?>
+    health and welfare
+<?php endif;?>

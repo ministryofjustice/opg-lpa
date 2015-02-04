@@ -1,0 +1,11 @@
+<?php use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions; ?>
+
+<?=$this->params['idx'] ?>. The replacement attorneys will step in 
+
+<?php if( $this->params['values'] ==  ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST): ?>
+    as soon as one/none of the original attorneys can no longer act/act
+<?php elseif( $this->params['values'] ==  ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST):?>
+    as soon as none of the original attorneys can act
+<?php else:?>
+    as per instructions
+<?php endif;?>

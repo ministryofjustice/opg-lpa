@@ -1,0 +1,26 @@
+<?=$this->params['idx'] ?>.  
+<?php if(count($this->params['values']) == 0 ):?>
+    There are no 'people to be told'
+<?php elseif(count($this->params['values']) == 1):?>
+    The person to be told is <?= $this->params['values'][0]->name->title.' '.$this->params['values'][0]->name->first.' '.$this->params['values'][0]->name->last ?>
+<?php else:?>
+    The person to be told are 
+<?php
+$names=[];
+$tatalNotified = count($this->params['values']);
+for($i=0; $i<$tatalNotified-1; $i++) {
+    $notified = $this->params['values'][$i];
+    $names[] = $notified->name->title.' '.$notified->name->first.' '.$notified->name->last;
+}
+
+echo implode(', ', $names);
+?>
+ and 
+<?php 
+$notified = $this->params['values'][$i-1];
+echo $notified->name->title.' '.$notified->name->first.' '.$notified->name->last;
+?>
+
+
+    
+<?php endif;?>

@@ -7,6 +7,9 @@ class AccordionIdx extends AbstractAccordion
 {
     public function __invoke (Lpa $lpa = null)
     {
+        
+        $this->lpa = $lpa;
+        
         return 'VI';
         
     }
