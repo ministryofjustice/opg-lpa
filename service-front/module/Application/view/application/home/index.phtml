@@ -3,11 +3,11 @@
 
 <p>Remember, an LPA must be registered before it can be used.</p>
 
-<?php if($this->noticeBoard()): ?>
+<?php if (false): // @todo ?>
 <div class="help-notice application-notice">
-	<p><?= $this->noticeBoard() ?></p>
 </div>
 <?php endif;?>
+
 
 <p class="homepage-cta"><strong>Follow the steps below<?php if ($this->identity()) : ?>, or <a href="/user/login">sign in</a>.<?php endif; ?></strong></p>
 </div>
@@ -34,7 +34,7 @@
   <li>
     <img src="<?= $this->staticAssetPath('/assets/v1/images/pictogram-register-lpa.png') ?>" alt="">
     <p class="step-title"><strong>Register the LPA</strong></p>
-    <p>When you’re ready, sign back in here to complete a registration form and pay the £<?= $this->fee() ?> fee. Then post the LPA and registration form to OPG.</p>
+    <p>When you’re ready, sign back in here to complete a registration form and pay the £<!-- @todo --> fee. Then post the LPA and registration form to OPG.</p>
     <p><a class="js-guidance" href="/guidance/#topic-registering-the-lpa" data-journey-click="stageprompt.lpa:help:registering-the-lpa">More about registering</a></p>
   </li>
   <li class="what-next">
@@ -58,7 +58,7 @@
 
 <details>
   <summary data-journey-click="stageprompt.lpa:help.inline:/:how-much-does-it-cost-to-apply-to-register-an-lpa">How much does it cost to apply to register an LPA?</summary>
-  <p>There's a £<?= $this->fee() ?> application fee to register an LPA, paid by or on behalf of the donor – that’s the person who’s making the LPA. If the donor has an income below £12,000, or gets certain benefits, they might qualify for a lower fee, or the fee might be waived altogether.</p>
+  <p>There's a £<!-- @todo --> application fee to register an LPA, paid by or on behalf of the donor – that’s the person who’s making the LPA. If the donor has an income below £12,000, or gets certain benefits, they might qualify for a lower fee, or the fee might be waived altogether.</p>
   <p><a class="js-guidance" href="/guidance/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Fees and reductions</a></p>
   <p>Remember, an LPA must be registered before it can be used.</p>
 </details>

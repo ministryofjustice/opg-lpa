@@ -2198,5 +2198,102 @@
             "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
             "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
         }
+    },
+    {
+        "name": "sendgrid/smtpapi",
+        "version": "0.2.0",
+        "version_normalized": "0.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sendgrid/smtpapi-php.git",
+            "reference": "125b6071fb1f339feff13459cbe7bf07466fd54a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/125b6071fb1f339feff13459cbe7bf07466fd54a",
+            "reference": "125b6071fb1f339feff13459cbe7bf07466fd54a",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "replace": {
+            "sendgrid/smtpapi-php": "*"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*"
+        },
+        "time": "2015-01-24 04:19:15",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Smtpapi": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Build SendGrid X-SMTPAPI headers in PHP.",
+        "homepage": "http://github.com/sendgrid/smtpapi-php",
+        "keywords": [
+            "X-SMTP",
+            "api",
+            "email",
+            "grid",
+            "send",
+            "sendgrid",
+            "smtp",
+            "smtpapi",
+            "xsmtp"
+        ]
+    },
+    {
+        "name": "sendgrid/sendgrid",
+        "version": "2.2.1",
+        "version_normalized": "2.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sendgrid/sendgrid-php.git",
+            "reference": "83cec4aa7a86064c8ea30cc7180b1b558b0ac7e9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/83cec4aa7a86064c8ea30cc7180b1b558b0ac7e9",
+            "reference": "83cec4aa7a86064c8ea30cc7180b1b558b0ac7e9",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3",
+            "sendgrid/smtpapi": "0.*"
+        },
+        "replace": {
+            "sendgrid/sendgrid-php": "*"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*",
+            "vlucas/phpdotenv": "1.0.2"
+        },
+        "time": "2015-01-29 22:34:03",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "SendGrid": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "This library allows you to quickly and easily send emails through SendGrid using PHP.",
+        "homepage": "http://github.com/sendgrid/sendgrid-php",
+        "keywords": [
+            "email",
+            "grid",
+            "send",
+            "sendgrid"
+        ]
     }
 ]

@@ -7,13 +7,28 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 class ForgotPasswordController extends AbstractActionController
 {
-    public function indexAction()
-    {
+
+    /**
+     * GET: Display's the 'Enter your email address' form.
+     * POST: Sends the password reset email.
+     *
+     * @return ViewModel
+     */
+    public function indexAction(){
+
+
+
         return new ViewModel();
     }
-    
-    public function resetPasswordAction()
-    {
+
+    /**
+     * GET: Displays the 'Enter new password' form.
+     * POST: Sets the new password.
+     *
+     * @return ViewModel
+     */
+    public function resetPasswordAction(){
+
         return new ViewModel();
     }
 }

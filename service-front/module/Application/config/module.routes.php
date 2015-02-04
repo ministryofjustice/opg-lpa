@@ -31,12 +31,27 @@ return [
             ], // home
 
             'forgot-password' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Segment',
                 'options' => [
                     'route'    => '/forgot-password',
                     'defaults' => [
                         'controller' => 'General\ForgotPasswordController',
                         'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'default' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/reset/:password_reset_id',
+                            'constraints' => [
+                                'password_reset_id' => '[a-zA-Z0-9]+',
+                            ],
+                            'defaults' => [
+                                'action'     => 'reset-password',
+                            ],
+                        ],
                     ],
                 ],
             ], // forgot-password
@@ -100,20 +115,6 @@ return [
                 ],
             ], // register
 
-            'reset-password' => [
-                'type'    => 'Zend\Mvc\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/reset-password/:password_reset_id',
-                    'constraints' => [
-                        'password_reset_id' => '[a-zA-Z0-9]+',
-                    ],
-                    'defaults' => [
-                        'controller' => 'General\ForgotPasswordController',
-                        'action'     => 'reset-password',
-                    ],
-                ],
-            ], // reset-password
-
             'stats' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -148,8 +149,9 @@ return [
                 ],
             ], // status
 
+            //--------------------------------------------------
+            // Signed in User routes
 
-            // ========================== Authenticated ==========================
             'admin-stats' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -160,6 +162,7 @@ return [
                     ],
                 ],
             ],
+
             'postcode' => [
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -170,6 +173,7 @@ return [
                     ],
                 ],
             ],
+
             'user' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -257,7 +261,10 @@ return [
                         ],
                     ],
                 ],
-            ],
+            ], // user
+
+            //--------------------------------------------------
+            // LPA Routes
 
             'lpa' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
@@ -713,7 +720,7 @@ return [
                     ],
 
                 ], // child_routes
-                
+
             ], // lpa
 
         ], // routes
