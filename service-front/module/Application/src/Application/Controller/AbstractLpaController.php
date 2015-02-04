@@ -1,6 +1,8 @@
 <?php
 namespace Application\Controller;
 
+use RuntimeException;
+
 use Zend\Mvc\MvcEvent;
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -40,15 +42,22 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     }
     
     /**
-     * @return the $lpa
+     * Returns the LPA currently referenced in to the URL
+     *
+     * @return Lpa
      */
     public function getLpa ()
     {
+        if( !( $this->lpa instanceof Lpa ) ){
+            throw new RuntimeException('A LPA has not been set');
+        }
         return $this->lpa;
     }
     
     /**
-     * @param field_type $lpa
+     * Sets the LPA currently referenced in to the URL
+     *
+     * @param Lpa $lpa
      */
     public function setLpa ( Lpa $lpa )
     {
