@@ -55,6 +55,24 @@ return array(
 
     ], // session
 
+    'email' => [
+
+        'sendgrid' => [
+            'user' => null,
+            'key' => null,
+        ], //sendgrid
+
+    ], // email
+
+    'postcode' => [
+
+        'postcodeanywhere' => [
+            'key' => null,
+            'code' => null,
+        ],
+
+    ], // postcode
+
     'worldpay' => [
 
         'test_mode' => true,

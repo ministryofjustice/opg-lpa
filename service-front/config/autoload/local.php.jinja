@@ -11,6 +11,24 @@ return array(
 
     ], // session
 
+    'postcode' => [
+
+        'postcodeanywhere' => [
+            'key' => "{{pillar['postcode']['license_key']}}",
+            'code' => "{{pillar['postcode']['account_code']}}",
+        ],
+
+    ], // postcode
+
+    'email' => [
+
+        'sendgrid' => [
+            'user' => "{{pillar['email']['username']}}",
+            'key' => "{{pillar['email']['password']}}",
+        ], //sendgrid
+
+    ], // email
+
     'worldpay' => [
         'test_mode' => true,
         'url' => 'https://secure-test.worldpay.com/wcc/purchase',
