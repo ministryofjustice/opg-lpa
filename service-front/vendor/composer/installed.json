@@ -2124,12 +2124,12 @@
         "source": {
             "type": "git",
             "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "7abbea42f6cdf43aa392957115ffff1996837c07"
+            "reference": "548753541bda6748aa39178f89cdeb625f8ad868"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/7abbea42f6cdf43aa392957115ffff1996837c07",
-            "reference": "7abbea42f6cdf43aa392957115ffff1996837c07",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/548753541bda6748aa39178f89cdeb625f8ad868",
+            "reference": "548753541bda6748aa39178f89cdeb625f8ad868",
             "shasum": ""
         },
         "require": {
@@ -2141,7 +2141,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-02-03 16:02:58",
+        "time": "2015-02-04 14:59:21",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2165,12 +2165,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "deac607ae7a8bc3d77153fdad4b6262a6f60a0b2"
+            "reference": "df5b48bea3902afec69a41dbc5a401bd457beb80"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/deac607ae7a8bc3d77153fdad4b6262a6f60a0b2",
-            "reference": "deac607ae7a8bc3d77153fdad4b6262a6f60a0b2",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/df5b48bea3902afec69a41dbc5a401bd457beb80",
+            "reference": "df5b48bea3902afec69a41dbc5a401bd457beb80",
             "shasum": ""
         },
         "require": {
@@ -2182,7 +2182,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-02-03 16:03:49",
+        "time": "2015-02-04 10:11:52",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

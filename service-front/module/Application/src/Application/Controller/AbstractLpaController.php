@@ -9,8 +9,12 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
+    /**
+     * @var LPA The LPA currently referenced in to the URL
+     */
     private $lpa;
-    
+
+
     public function onDispatch(MvcEvent $e)
     {
         # load content header in the layout if controller has a $contentHeader

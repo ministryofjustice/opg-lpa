@@ -14,6 +14,55 @@ class ClientSpec extends ObjectBehavior
     }
 
     //--------------------------------------------------------------
+    // Password Reset
+
+
+    function it_will_return_a_password_reset_token(){
+
+        $this->requestPasswordReset( TEST_AUTH_EMAIL )->shouldBeString();
+
+        // A second request straight away should return false
+        $this->requestPasswordReset( TEST_AUTH_EMAIL )->shouldBe(false);
+
+        destroyAndRecreateTestUser();
+
+    }
+
+    function it_will_return_a_auth_token_from_reset_token(){
+
+        $token = $this->requestPasswordReset( TEST_AUTH_EMAIL );
+
+        $this->requestPasswordResetAuthToken( $token )->shouldBeString();
+
+        destroyAndRecreateTestUser();
+
+    }
+
+    function it_will_set_a_new_password_from_a_reset_auth_token(){
+
+        $token = $this->requestPasswordReset( TEST_AUTH_EMAIL );
+
+        $token = $this->requestPasswordResetAuthToken( $token );
+
+        // Use the generated token...
+        $this->setToken( $token );
+
+        $password = 'N3wTestPassword';
+
+        // ... to se the new password.
+        $this->updateAuthPassword( $password )->shouldBe(true);
+
+        // Check we can login with the new password.
+        $this->authenticate(TEST_AUTH_EMAIL, $password)->isAuthenticated()->shouldBe(true);
+
+        // Delete the new account (as it now has the 'wrong' password)
+        $this->deleteUserAndAllTheirLpas( $this->getToken() );
+
+        destroyAndRecreateTestUser();
+
+    }
+
+    //--------------------------------------------------------------
     // Who Is Registering
 
     function it_will_return_null_if_who_is_registering_has_not_been_set()

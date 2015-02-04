@@ -62,7 +62,7 @@ abstract class AbstractBaseController extends AbstractActionController {
 
             } else {
 
-                // Cookie is not set even after we;ve done a redirect, so assume the client doesn't support cookies.
+                // Cookie is not set even after we've done a redirect, so assume the client doesn't support cookies.
                 return $this->redirect()->toRoute( 'enable-cookie' );
 
             }
