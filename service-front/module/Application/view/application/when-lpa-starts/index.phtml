@@ -9,31 +9,40 @@
     $form->prepare();
 ?>
 
-
-<?= $this->form()->openTag($form); ?>
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+<section id="when-lpa-starts" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx(); ?>. When can your LPA be used?</h2>
+	
+    <div class="accordion-content">
+        
+        <?= $this->form()->openTag($form); ?>
+        
+        <div class="form_element">
+        
+            <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+            
+            <?= $this->formRadio($whenLpaStarts) ?>
+            
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($whenLpaStarts) ?>
+            </p>
+            
+            <?= $formLabel->closeTag() ?>
+        
+        </div>
+        
+        
+        <div class="form_element">
+        
+            <?= $this->formInput($submit) ?>
+        
+        </div>
+        
+        
+        <?= $this->formElement($form->get('secret')) ?>
+        
+        <?= $this->form()->closeTag(); ?>
+        
+    </div>
     
-    <?= $this->formRadio($whenLpaStarts) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($whenLpaStarts) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
-</div>
-
-
-<div class="form_element">
-
-    <?= $this->formInput($submit) ?>
-
-</div>
-
-
-<?= $this->formElement($form->get('secret')) ?>
-
-<?= $this->form()->closeTag(); ?>
+</section>

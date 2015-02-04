@@ -8,32 +8,40 @@
     $formLabel      = $this->plugin('formLabel');
     $form->prepare();
 ?>
+<section id="life-sustaining" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx(); ?>. Can your attorneys give or refuse consent to life-sustaining treatment?</h2>
 
-
-<?= $this->form()->openTag($form); ?>
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+    <div class="accordion-content">
     
-    <?= $this->formRadio($whenLpaStarts) ?>
+        <?= $this->form()->openTag($form); ?>
+        
+        <div class="form_element">
+        
+            <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+            
+            <?= $this->formRadio($whenLpaStarts) ?>
+            
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($whenLpaStarts) ?>
+            </p>
+            
+            <?= $formLabel->closeTag() ?>
+        
+        </div>
+        
+        
+        <div class="form_element">
+        
+            <?= $this->formInput($submit) ?>
+        
+        </div>
+        
+        
+        <?= $this->formElement($form->get('secret')) ?>
+        
+        <?= $this->form()->closeTag(); ?>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($whenLpaStarts) ?>
-    </p>
+    </div>
     
-    <?= $formLabel->closeTag() ?>
-
-</div>
-
-
-<div class="form_element">
-
-    <?= $this->formInput($submit) ?>
-
-</div>
-
-
-<?= $this->formElement($form->get('secret')) ?>
-
-<?= $this->form()->closeTag(); ?>
+</section>
