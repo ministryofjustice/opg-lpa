@@ -42,7 +42,7 @@ class AccordionBottom extends AbstractAccordion
                 
                 $seq++;
                 $barList[$seq-1] = $this->view->partial('layout/partials/accordion/accordion.phtml', 
-                        ['name'=>$this->getViewScriptName($barDataFuncName), 'params'=>['idx'=>$seq, 'values'=>$this->$barDataFuncName()]]);
+                        ['name'=>$this->getViewScriptName($barDataFuncName), 'routeName'=>$barRouteName, 'lpaId'=>$lpa->id, 'params'=>['idx'=>$seq, 'values'=>$this->$barDataFuncName()]]);
             }
         }
         
