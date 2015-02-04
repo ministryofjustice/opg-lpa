@@ -114,7 +114,7 @@ return [
                     ],
                 ],
             ], // register
-            
+
             'stats' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
