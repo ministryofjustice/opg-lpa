@@ -22,6 +22,8 @@ class WhenLpaStartsController extends AbstractLpaController
     {
         $form = new WhenLpaStartsForm();
         
+        $form->bind(new \ArrayObject(['whenLpaStarts'=>$this->getLpa()->document->primaryAttorneyDecisions->when]));
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             

@@ -22,6 +22,8 @@ class LifeSustainingController extends AbstractLpaController
     {
         $form = new LifeSustainingForm();
         
+        $form->bind(new \ArrayObject(['lifeSustaining'=>$this->getLpa()->document->primaryAttorneyDecisions->canSustainLife]));
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
