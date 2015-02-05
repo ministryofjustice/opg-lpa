@@ -11,6 +11,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Form\LifeSustainingForm;
+use Zend\View\Model\ViewModel;
 
 class LifeSustainingController extends AbstractLpaController
 {
@@ -32,6 +33,6 @@ class LifeSustainingController extends AbstractLpaController
             }
         }
         
-        return array('form'=>$form);
+        return new ViewModel(['form'=>$form]);
     }
 }

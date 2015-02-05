@@ -11,6 +11,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Form\WhenLpaStartsForm;
+use Zend\View\Model\ViewModel;
 
 class WhenLpaStartsController extends AbstractLpaController
 {
@@ -32,6 +33,6 @@ class WhenLpaStartsController extends AbstractLpaController
             }
         }
         
-        return array('form'=>$form);
+        return new ViewModel(['form'=>$form]);
     }
 }
