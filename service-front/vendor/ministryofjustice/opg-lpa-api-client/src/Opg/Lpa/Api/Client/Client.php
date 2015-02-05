@@ -123,7 +123,7 @@ class Client
     {
         $response = $this->client()->post( self::PATH_AUTH . '/users' ,[
             'body' => [
-                'username' => $email,
+                'username' => strtolower($email),
                 'password' => $password,
             ]
         ]);
@@ -293,7 +293,7 @@ class Client
 
         $response = $this->client()->post( self::PATH_AUTH . '/token' ,[
             'body' => [
-                'username' => $email,
+                'username' => strtolower($email),
                 'password' => $password,
                 'grant_type' => 'password',
             ]
@@ -432,7 +432,7 @@ class Client
 
         $response = $this->client()->post( self::PATH_AUTH . '/pwreset' ,[
             'body' => [
-                'email' => $email,
+                'email' => strtolower($email),
             ]
         ]);
 
@@ -1390,7 +1390,7 @@ class Client
      * If content body is JSON, convert it to an array
      * 
      * @param Response $response
-     * @param string $isSuccess
+     * @param bool $isSuccess
      * @return boolean
      * 
      * @todo - External logging
@@ -1398,19 +1398,18 @@ class Client
     public function log(Response $response, $isSuccess=true)
     {
         $this->setLastStatusCode($response->getStatusCode());
-        
-        $responseBody = $response->getBody()->getContents();
+
+        $responseBody = (string)$response->getBody();
         $jsonDecoded = json_decode($responseBody, true);
-        
+
         if (json_last_error() == JSON_ERROR_NONE) {
             $this->setLastContent($jsonDecoded);
         } else {
             $this->setLastContent($responseBody);
         }
-        
-        
+
         $this->setIsError(!$isSuccess);
-        
+
         return $isSuccess;
     }
 }
