@@ -112,22 +112,27 @@ class Module{
 
         return [
             'aliases' => [
+                'MailTransport' => 'SendGridTransport',
                 'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'invokables' => [
                 'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
+                'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
             ],
             'factories' => [
                 'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'         => 'Application\Model\Service\Lpa\ApiClientFactory',
 
-                // LPA access service...
+                // Access via 'MailTransport'
+                'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',
+
+                // LPA access service
                 'LpaApplicationService' => function( ServiceLocatorInterface $sm ){
                     return new LpaApplicationService( $sm->get('ApiClient') );
                 },
 
-                // Authentication Adapter...
+                // Authentication Adapter. Access via 'AuthenticationAdapter'
                 'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
                     return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
                 },
