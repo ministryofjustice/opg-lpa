@@ -6,6 +6,7 @@ use RuntimeException;
 use Zend\Mvc\MvcEvent;
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\View\Model\ViewModel;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
@@ -25,9 +26,14 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         # inject lpa into layout.
         $this->layout()->lpa = $this->getLpa();
         
-        # @todo: remove the line below once form data can persist.
-        return parent::onDispatch($e);
+        # @todo: remove the lines below to the return $view line once form data can persist.
+        $view = parent::onDispatch($e);
+        if($view instanceof ViewModel) {
+            $view->setVariable('lpa', $this->getLpa());
+        }
         
+        return $view;
+                
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
          */   
@@ -42,7 +48,13 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             return $this->redirect()->toRoute($calculatedRoute);
         }
         
-        return parent::onDispatch($e);
+        // inject lpa into view
+        $view = parent::onDispatch($e);
+        if($view instanceof ViewModel) {
+            $view->setVariable('lpa', $this->getLpa());
+        }
+        
+        return $view;
     }
     
     /**
