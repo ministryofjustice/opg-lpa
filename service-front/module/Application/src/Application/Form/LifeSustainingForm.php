@@ -6,7 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 class LifeSustainingForm extends AbstractForm
 {
     protected $formElements = [
-            'whenLpaStarts' => [
+            'lifeSustaining' => [
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
