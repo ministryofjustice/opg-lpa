@@ -23,12 +23,9 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
     <?php if($this->lpa->document->donor instanceof Donor): ?>		
     		<div class="person-summary group">
     			<div class="person">
-    				<h3><?=$this->lpa->document->donor->name->title?> <?=$this->lpa->document->donor->name->first?> <?=$this->lpa->document->donor->name->last?></h3>
+    				<h3><?=$this->lpa->document->donor->name->__toString()?></h3>
     				<p>
-    				<?=$this->lpa->document->donor->address->address1?>,
-    				<?=$this->lpa->document->donor->address->address2?>,
-    				<?=$this->lpa->document->donor->address->address3?>,
-    				<?=$this->lpa->document->donor->address->postcode?>
+    				<?=$this->lpa->document->donor->address->__toString()?>
     				</p>
     			</div>
     
@@ -55,6 +52,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
     		</div>
     <?php endif;?>
     
-    </div>	
+    </div>
 
 </section>
