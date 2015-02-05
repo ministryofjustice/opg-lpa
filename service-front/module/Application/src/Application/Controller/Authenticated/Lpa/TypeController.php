@@ -12,6 +12,8 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Form\TypeForm;
 use Zend\View\Model\ViewModel;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class TypeController extends AbstractLpaController
 {
@@ -21,6 +23,10 @@ class TypeController extends AbstractLpaController
     public function indexAction()
     {
         $form = new TypeForm();
+        
+        if(($this->getLpa() instanceof Lpa) && ($this->getLpa()->document instanceof Document)) {
+            $form->bind(new \ArrayObject(['type'=>$this->getLpa()->document->type]));
+        }
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
