@@ -62,7 +62,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function donor()
     {
-        return $this->lpa->document->donor->name;
+        return $this->lpa->document->donor->name->__toString();
     }
     
     protected function whenLpaStarts()
@@ -77,7 +77,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        return $this->lpa->document->primaryAttorneys;
+        return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are ').$this->joinNames($this->lpa->document->primaryAttorneys);
     }
     
     protected function howPrimaryAttorneysMakeDecision()
@@ -87,7 +87,9 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function replacementAttorney()
     {
-        return $this->lpa->document->replacementAttorneys;
+        if(count($this->lpa->document->replacementAttorneys)==0) return '';
+        
+        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').$this->joinNames($this->lpa->document->replacementAttorneys);
     }
     
     protected function whenReplacementAttorneyStepIn()
@@ -102,12 +104,14 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function certificateProvider()
     {
-        return $this->lpa->document->certificateProvider->name;
+        return $this->lpa->document->certificateProvider->name->__toString();
     }
     
     protected function peopleToNotify()
     {
-        return $this->lpa->document->peopleToNotify;
+        if(count($this->lpa->document->peopleToNotify)==0) return '';
+        
+        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').$this->joinNames($this->lpa->document->peopleToNotify);
     }
     
     protected function instructions()
@@ -118,22 +122,16 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function applicant()
     {
         if($this->lpa->document->whoIsRegistering == 'donor') {
-            $donor = $this->lpa->document->donor->name;
-            return ['who'=>'donor', 'name'=>$donor->title.' '.$donor->first.' '.$donor->last];
+            return ['who' => 'donor', 'name' => $this->lpa->document->donor->name->__toString()];
         }
         else {
-            $names = [];
-            foreach($this->lpa->document->whoIsRegistering as $attorneyIdx) {
-                $attorney = $this->lpa->document->primaryAttorneys[attorneyIdx]->name;
-                $names[] = $attorney->title.' '.$attorney->first.' '.$attorney->last;
-            }
-            return ['who'=>'attorney', 'name'=>$names];
+            return ['who'=>'attorney', 'name'=>$this->joinNames($this->lpa->document->primaryAttorneys)];
         }
     }
     
     protected function correspondent()
     {
-        return $this->lpa->document->correspondent->name;
+        return $this->lpa->document->correspondent->name->__toString();
     }
     
     protected function whatIsMyRole()
@@ -149,5 +147,21 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function getViewScriptName($barDataFuncName)
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $barDataFuncName)).'.phtml';
+    }
+    
+    private function joinNames(array $nameList)
+    {
+        $count = count($nameList);
+        if($count == 0) {
+            return null;
+        }
+        elseif($count == 1) {
+            return $nameList[0]->name->__toString();
+        }
+       else {
+           $lastItem = array_pop($nameList);
+           return implode(', ', array_map( function( $item ) { return $item->name->__toString(); }, $nameList) )
+                  . ' and ' . $lastItem->name->__toString();
+       }
     }
 }
