@@ -81,18 +81,64 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
     } // function
 
+
+    /**
+     * Check if a given reset token is currently valid.
+     *
+     * @param $restToken
+     * @return bool
+     */
     public function isResetTokenValid( $restToken ){
+
+        // If we can exchange it for a auth token, then it's valid.
         return is_string( $this->getAuthTokenFromRestToken( $restToken ) );
-    } // function
-
-    public function setNewPassword(){
 
     } // function
 
+
+
+    public function setNewPassword( $restToken, $password ){
+
+        $authToken = $this->getAuthTokenFromRestToken( $restToken );
+
+        if( !is_string( $authToken ) ){
+            // error
+            return false;
+        }
+
+        //---
+
+        $client = $this->getServiceLocator()->get('ApiClient');
+
+        // Set the new auth token on this client.
+        $client->setToken( $authToken );
+
+        $result = $client->updateAuthPassword( $password );
+
+        //---
+
+        if( $result !== true ){
+            // error
+        }
+
+        //---
+
+        return true;
+
+    } // function
+
+    //----------------------------------------------------
+
+    /**
+     * Exchange the reset token for an auth token.
+     *
+     * @param $restToken string The reset token.
+     * @return bool|string Returns false on an error or the auth token on success.
+     */
     private function getAuthTokenFromRestToken( $restToken ){
 
+        return $this->getServiceLocator()->get('ApiClient')->requestPasswordResetAuthToken( $restToken );
 
-        return false;
     }  // function
 
 } // class
