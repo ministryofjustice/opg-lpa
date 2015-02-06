@@ -6,10 +6,14 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class AccordionTop extends AbstractAccordion
 {
+    /**
+     * @param Lpa $lpa
+     * @return array|null
+     */
     public function __invoke (Lpa $lpa = null)
     {
         if($lpa === null) {
-            return '';
+            return null;
         }
         
         $this->lpa = $lpa;
@@ -18,7 +22,7 @@ class AccordionTop extends AbstractAccordion
         $barConfig = $this->getBarConfig($routeName);
         
         if($barConfig == null) {
-            return '';
+            return null;
         }
         
         $flowChecker = new FormFlowChecker($lpa);
@@ -30,13 +34,19 @@ class AccordionTop extends AbstractAccordion
                     break;
                 }
                 else {
-                    $barList[$seq++] = $this->getView()->partial('layout/partials/accordion/accordion.phtml', 
-                            ['name'=>$this->getViewScriptName($barDataValues), 'routeName'=>$barRouteName, 'lpaId'=>$lpa->id, 'params'=>['idx'=>$seq, 'values'=>$this->$barDataValues()]]);
+                    $barList[$seq++] = [
+                            'name'      => $this->getViewScriptName($barDataValues),
+                            'routeName' => $barRouteName,
+                            'lpaId'     => $lpa->id,
+                            'params'    => [
+                                'idx'    => $seq,
+                                'values'=> $this->$barDataValues()]
+                        ];
                 }
             }
         }
         
-        return implode('', $barList);
+        return $barList;
         
     }
 }

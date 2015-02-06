@@ -6,10 +6,14 @@ use Application\Model\FormFlowChecker;
 
 class AccordionIdx extends AbstractAccordion
 {
+    /**
+     * @param Lpa $lpa
+     * @return int|null
+     */
     public function __invoke (Lpa $lpa = null)
     {
         if($lpa === null) {
-            return '';
+            return null;
         }
         
         $this->lpa = $lpa;
@@ -18,7 +22,7 @@ class AccordionIdx extends AbstractAccordion
         $barConfig = $this->getBarConfig($routeName);
         
         if($barConfig == null) {
-            return '';
+            return null;
         }
         
         $flowChecker = new FormFlowChecker($lpa);

@@ -100,9 +100,22 @@
                                 <?php if(isset($this->contentHeader)): ?>
                                 <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
                                 <?php endif; ?>
-                                <?= $this->accordionTop($this->lpa)?>
+                                
+                                <?php
+                                    $accordionTop = $this->accordionTop($this->lpa);
+                                    if(is_array($accordionTop)) {
+                                        echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionTop);
+                                    }
+                                ?>
+                                
                                 <?= $this->content?>
-                                <?= $this->accordionBottom($this->lpa)?>
+                                
+                                <?php
+                                    $accordionBottom = $this->accordionBottom($this->lpa);
+                                    if(is_array($accordionBottom)) {
+                                        echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionBottom);
+                                    }
+                                ?>
                             </div>
                         </article>
                     </div>
