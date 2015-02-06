@@ -1,17 +1,17 @@
 <?php
-namespace Application\Form;
+namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class TypeForm extends AbstractForm
+class WhenLpaStartsForm extends AbstractForm
 {
     protected $formElements = [
-            'type' => [
+            'whenLpaStarts' => [
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
-                                    Document::LPA_TYPE_PF => 'Property and financial affairs',
-                                    Document::LPA_TYPE_HW => 'Health and welfare',
+                                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW         => "as soon as it's registered (with my consent)",
+                                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => "only if I don't have mental capacity",
                             ],
                     ],
             ],
@@ -23,8 +23,8 @@ class TypeForm extends AbstractForm
                     
             ],
     ];
-    
-    public function __construct ($formName = 'type')
+        
+    public function __construct ($formName = 'whenLpaStarts')
     {
         
         parent::__construct($formName);
@@ -33,9 +33,9 @@ class TypeForm extends AbstractForm
     
     public function modelValidation()
     {
-        $document = new Document($this->unflattenForModel($this->data));
+        $decisions = new PrimaryAttorneyDecisions($this->unflattenForModel($this->data));
         
-        $validation = $document->validate();
+        $validation = $decisions->validate();
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];

@@ -14,10 +14,19 @@ class AuthController extends AbstractBaseController {
 
         //-----------------------
 
+        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
+
+        // Ensure the user it logged out
+        $authenticationService->clearIdentity();
+
+        //-----------------------
+
         // This action can be called with a number of combinations of messages.
         # TODO - how to deal with these?
 
         switch( $this->params('state') ){
+            case 'pwrest':
+                // The user has just reset their password
             case 'timeout':
                 // The user has timed out
             case 'worldpay':
@@ -33,7 +42,6 @@ class AuthController extends AbstractBaseController {
 
         if( !empty($email) && !empty($password) ){
 
-            $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
             $authenticationAdapter = $this->getServiceLocator()->get('AuthenticationAdapter');
 
             // Pass the user's email address and password...
