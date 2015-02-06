@@ -8,6 +8,8 @@ use Zend\InputFilter\InputFilterInterface;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\InputFilter\InputFilter;
+use Zend\Form\FormInterface;
+use Opg\Lpa\DataModel\AbstractData;
 
 abstract class AbstractForm extends Form
 {
@@ -256,6 +258,16 @@ abstract class AbstractForm extends Form
         }
         
         return $modelData;
+    }
+    
+    public function bind($modelAbstractData, $flags = FormInterface::VALUES_NORMALIZED)
+    {
+        if($modelAbstractData instanceof AbstractData) {
+            return parent::bind(new \ArrayObject($modelAbstractData->flatten()));
+        }
+        else {
+            return parent::bind($modelAbstractData);
+        }
     }
     
     abstract protected function modelValidation();

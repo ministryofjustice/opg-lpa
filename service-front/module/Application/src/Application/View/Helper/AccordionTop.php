@@ -30,7 +30,7 @@ class AccordionTop extends AbstractAccordion
                     break;
                 }
                 else {
-                    $barList[$seq++] = $this->view->partial('layout/partials/accordion/accordion.phtml', 
+                    $barList[$seq++] = $this->getView()->partial('layout/partials/accordion/accordion.phtml', 
                             ['name'=>$this->getViewScriptName($barDataValues), 'routeName'=>$barRouteName, 'lpaId'=>$lpa->id, 'params'=>['idx'=>$seq, 'values'=>$this->$barDataValues()]]);
                 }
             }

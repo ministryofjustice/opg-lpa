@@ -25,7 +25,7 @@ class TypeController extends AbstractLpaController
         $form = new TypeForm();
         
         if(($this->getLpa() instanceof Lpa) && ($this->getLpa()->document instanceof Document)) {
-            $form->bind(new \ArrayObject(['type'=>$this->getLpa()->document->type]));
+            $form->bind($this->getLpa()->document);
         }
         
         if($this->request->isPost()) {

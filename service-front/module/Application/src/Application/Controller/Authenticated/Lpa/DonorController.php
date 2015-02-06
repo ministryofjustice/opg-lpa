@@ -50,7 +50,7 @@ class DonorController extends AbstractLpaController
     {
         $form = new DonorForm();
         
-        $form->bind(new \ArrayObject($this->getLpa()->document->donor->flatten()));
+        $form->bind($this->getLpa()->document->donor);
         
         if($this->request->isPost()) {
             
