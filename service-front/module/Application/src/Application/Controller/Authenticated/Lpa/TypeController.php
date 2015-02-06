@@ -10,7 +10,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Form\TypeForm;
+use Application\Form\Lpa\TypeForm;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;

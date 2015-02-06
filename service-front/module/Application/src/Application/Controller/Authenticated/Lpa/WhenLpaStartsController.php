@@ -10,7 +10,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Form\WhenLpaStartsForm;
+use Application\Form\Lpa\WhenLpaStartsForm;
 use Zend\View\Model\ViewModel;
 
 class WhenLpaStartsController extends AbstractLpaController

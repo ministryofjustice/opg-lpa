@@ -1,5 +1,5 @@
 <?php
-namespace Application\Form;
+namespace Application\Form\Lpa;
 
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;

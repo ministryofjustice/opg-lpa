@@ -11,7 +11,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\DonorForm;
+use Application\Form\Lpa\DonorForm;
 
 class DonorController extends AbstractLpaController
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Application\Form;
+namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
