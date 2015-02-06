@@ -1,15 +1,13 @@
 <?php
 namespace ApplicationTest\View\Helper;
-
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
 
 /**
  * AccordionTop test case.
  */
 class AccordionTopTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Prepares the environment before running a test.
      */
@@ -31,33 +29,294 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     /**
      * Test
      */
-    public function testAccordionTop ()
+    public function testLpaType ()
     {
-        $accordion = $this->getMockBuilder('Application\View\Helper\AccordionTop')
-                    ->setMethods(array('getRouteName', 'getView'))
-                    ->getMock();
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/hw.json'));
+        $lpa->id = 99999999;
         
-        $view = new PhpRenderer();
+        $this->assertEmpty(
+                $this->getAccordion('lpa/type')
+                    ->__invoke($lpa));
+    }
+
+    public function testDonor ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/hw.json'));
+        $lpa->id = 99999999;
         
-        $resolver = new TemplatePathStack([
-            'script_paths' => [
-                __DIR__.'/../../../../view'
-            ]
-        ]);
+        $helperReturns = $this->getAccordion('lpa/donor')->__invoke($lpa);
+        $this->assertEquals(
+                [
+                        0 => [
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => [
+                                        'idx' => 1,
+                                        'values' => 'health-and-welfare'
+                                ]
+                        ]
+                ], $helperReturns);
+    }
+
+    public function testLifeSustaining ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/hw.json'));
+        $lpa->id = 99999999;
         
-        $view->setResolver($resolver);
-        $view->viewModel()->setTemplate('aaa');
+        $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'health-and-welfare'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Miss Tayla Travis'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testWhenLpaStarts ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
         
-        $accordion->method('getRouteName')->willReturn('lpa/donor');
-        $accordion->method('getView')->willReturn($view);
+        $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testPrimaryAttorney ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
         
-        $json = file_get_contents(__DIR__.'/hw.json');
-        $lpa = new Lpa($json);
-        $lpa->user = 4678234672;
-        $lpa->id = 75095661466;
-        $lpa->completedAt = new \DateTime();
-        print_r($accordion->__invoke($lpa));
+        $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testPrimaryAttorneyDecision ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
         
+        $helperReturns = $this->getAccordion(
+                'lpa/how-primary-attorneys-make-decision')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testReplacementAttorney ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+    
+        $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
+                $lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array (
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => 
+                            array (
+                                      'idx' => 5,
+                                      'values' => 'jointly-attorney-severally',
+                            ),
+                        ),
+                ), $helperReturns);
+        
+        $lpa->document->primaryAttorneys = [$lpa->document->primaryAttorneys[0]];
+        
+        $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'is Dr Lilly Simpson'
+                                )
+                        ),
+                ), $helperReturns);
+        
+    }
+    
+    private function getAccordion ($routeName)
+    {
+        $accordion = $this->getMockBuilder(
+                'Application\View\Helper\AccordionTop')
+            ->setMethods(array(
+                'getRouteName'
+        ))
+            ->getMock();
+        $accordion->expects($this->any())
+            ->method('getRouteName')
+            ->willReturn($routeName);
+        return $accordion;
     }
 }
 
