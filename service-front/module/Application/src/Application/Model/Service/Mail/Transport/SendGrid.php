@@ -10,6 +10,8 @@ use Zend\Mail\Transport\TransportInterface;
 use Zend\Mail\Exception\InvalidArgumentException;
 use Zend\Mail\Header\GenericHeader;
 
+use Zend\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
+
 /**
  * Sends an email out via SendGrid's HTTP interface.
  *
@@ -28,7 +30,8 @@ class SendGrid implements TransportInterface {
      * Send a mail message
      *
      * @param Message $message
-     * @return bool|string TRUE if it was successful. An error message otherwise.
+     * @throws InvalidArgumentException
+     * @throws TransportInvalidArgumentException
      */
     public function send( Message $message ){
 
@@ -121,6 +124,28 @@ class SendGrid implements TransportInterface {
         }
 
         //--------------------------------
+        // Categories
+
+        // If the messages supports Categories...
+        if( is_callable( [ $message, 'getCategories' ] ) ){
+
+            // This requires getCategories() to return an array of strings.
+
+            $categories = $message->getCategories();
+
+            if( is_array( $categories ) ){
+
+                foreach( $categories as $category ){
+                    if( is_string( $category ) ){
+                        $email->addCategory( $category );
+                    }
+                } // foreach
+
+            } // if
+
+        } // if
+
+        //--------------------------------
         // Set Content
 
         $plainTextSet = false;
@@ -176,8 +201,9 @@ class SendGrid implements TransportInterface {
         // Send the message...
         $result = $this->client->send( $email );
 
-        // If successful, return true. Otherwise return the error.
-        return ( isset($result->message) && $result->message == 'success' ) ? true : $result->message;
+        if( $result->message != 'success' ){
+            throw new TransportInvalidArgumentException("Email sending failed: {$result->message}");
+        }
 
     } // function
 

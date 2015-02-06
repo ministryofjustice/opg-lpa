@@ -63,7 +63,7 @@ return [
 
     'email_view_manager' => array(
         'template_path_stack' => array(
-            'emails' => __DIR__ . '/../view/emails',
+            'emails' => __DIR__ . '/../view/email',
         ),
     ),
     
