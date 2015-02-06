@@ -30,8 +30,6 @@ return array(
     ], // email
 
     'worldpay' => [
-        'test_mode' => true,
-        'url' => 'https://secure-test.worldpay.com/wcc/purchase',
         'merchant_code' => '{{pillar['payment']['worldpay']['merchant_code']}}',
         'xml_password' => '{{pillar['payment']['worldpay']['xml_password']}}',
         'administration_code' => '{{pillar['payment']['worldpay']['administration_code']}}',
