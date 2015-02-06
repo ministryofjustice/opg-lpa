@@ -30,13 +30,12 @@ return array(
     ], // email
 
     'worldpay' => [
-        'test_mode' => true,
-        'url' => 'https://secure-test.worldpay.com/wcc/purchase',
-        'xml_password' => '',
-        'administration_code' => '',
-        'installation_id' => '',
-        'mac_secret' => '',
-        'api_token_secret' => '',
+        'merchant_code' => '{{pillar['payment']['worldpay']['merchant_code']}}',
+        'xml_password' => '{{pillar['payment']['worldpay']['xml_password']}}',
+        'administration_code' => '{{pillar['payment']['worldpay']['administration_code']}}',
+        'installation_id' => '{{pillar['payment']['worldpay']['installation_id']}}',
+        'mac_secret' => '{{pillar['payment']['worldpay']['mac_secret']}}',
+        'api_token_secret' => '{{pillar['payment']['worldpay']['api_token_secret']}}',
     ], // worldpay
 
 );

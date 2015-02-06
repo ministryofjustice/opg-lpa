@@ -15,11 +15,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
     //---
 
-    public function requestPasswordResetEmail( $email ){
+    public function requestPasswordResetEmail( $email, callable $routeCallback ){
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        /*
         $resetToken = $client->requestPasswordReset( $email );
 
         // A successful response is a string...
@@ -36,54 +35,49 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         } // if
 
-
-        var_dump($resetToken); exit();
-        */
-
-        $resetToken = 'c8ab95fec073f9a82cbc057a5d077bdc';
-
         //-------------------------------
         // Send the email
 
         $message = new MailMessage();
 
-        $message->addFrom("neil.smith@digital.justice.gov.uk", "Neil Smith")
-                    ->addTo("one@nsmith.net")
-                    ->setSubject("My Subject! ".time());
+        $message->addFrom('opg@lastingpowerofattorney.service.gov.uk', 'Office of the Public Guardian');
 
+        $message->addTo( $email );
 
-        //$message->addCc("one@nsmith.me.uk");
-
-        $message->addReplyTo("mrsmith@nsmith.net", "Neil Smith");
-
-        //$message->setSender("jim@nsmith.net", "Jim");
-
-        $message->getHeaders()->addHeaderLine('X-API-Key', 'FOO-BAR-BAZ-BAT');
-
-        //--------------------
-
-        $text = new MimePart("This is my plain text message.");
-        $text->type = "text/plain";
-
-        $html = new MimePart("<p>This is my HTML message</p>");
-        $html->type = "text/html";
-
-        //$image = new MimePart(fopen($pathToImage, 'r'));
-        //$image->type = "image/jpeg";
-
-        $body = new MimeMessage();
-        $body->setParts(array($text, $html));
-
-        $message->setBody($body);
-        //$message->setBody("Just testing");
+        $message->setSubject( 'Password reset request' );
 
         //---
 
-        $result = $this->getServiceLocator()->get('MailTransport')->send( $message );
+        $message->addCategory('opg');
+        $message->addCategory('opg-lpa');
+        $message->addCategory('opg-lpa-passwordreset');
 
-        var_dump($result);
+        //---
 
-        die('here');
+        // Load the content from the view and merge in our variables...
+        $content = $this->getServiceLocator()->get('EmailPhpRenderer')->render('password-reset', [
+            // Use the passed callback to load the URL (the model should not be aware of how this is generated)
+            'callback' => $routeCallback( $resetToken ),
+        ]);
+
+        //---
+
+        $html = new MimePart( $content );
+        $html->type = "text/html";
+
+        $body = new MimeMessage();
+        $body->setParts([$html]);
+
+        $message->setBody($body);
+
+        //--------------------
+
+        try {
+            $this->getServiceLocator()->get('MailTransport')->send($message);
+        } catch ( \Exception $e ){
+
+        }
+
 
     } // function
 

@@ -41,12 +41,12 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'default' => [
+                    'callback' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/reset/:password_reset_id',
+                            'route'    => '/reset/:token',
                             'constraints' => [
-                                'password_reset_id' => '[a-zA-Z0-9]+',
+                                'token' => '[a-zA-Z0-9]+',
                             ],
                             'defaults' => [
                                 'action'     => 'reset-password',

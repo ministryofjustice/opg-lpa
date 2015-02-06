@@ -77,14 +77,8 @@ return array(
 
         'test_mode' => true,
         'url' => 'https://secure-test.worldpay.com/wcc/purchase',
-        'merchant_code' => '',
-        'xml_password' => '',
         'currency' => 'GBP',
-        'administration_code' => '',
-        'installation_id' => '',
         'cart_id' => 'LPAv2',
-        'mac_secret' => '',
-        'api_token_secret' => '',
         'log' => false,
 
     ], // worldpay
