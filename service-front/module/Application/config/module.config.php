@@ -60,6 +60,12 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+
+    'email_view_manager' => array(
+        'template_path_stack' => array(
+            'emails' => __DIR__ . '/../view/emails',
+        ),
+    ),
     
     'view_helpers' => [
         'invokables' => [
