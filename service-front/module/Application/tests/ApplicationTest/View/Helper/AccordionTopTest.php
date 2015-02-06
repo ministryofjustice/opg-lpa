@@ -64,7 +64,8 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/hw.json'));
         $lpa->id = 99999999;
         
-        $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke(
+                $lpa);
         $this->assertEquals(
                 array(
                         0 => array(
@@ -93,7 +94,8 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
         $lpa->id = 99999999;
         
-        $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke(
+                $lpa);
         $this->assertEquals(
                 array(
                         0 => array(
@@ -122,7 +124,8 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
         $lpa->id = 99999999;
         
-        $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke(
+                $lpa);
         $this->assertEquals(
                 array(
                         0 => array(
@@ -162,6 +165,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         
         $helperReturns = $this->getAccordion(
                 'lpa/how-primary-attorneys-make-decision')->__invoke($lpa);
+        
         $this->assertEquals(
                 array(
                         0 => array(
@@ -207,8 +211,255 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
         $lpa->id = 99999999;
-    
+        
         $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
+                $lpa);
+        
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
+                        )
+                ), $helperReturns);
+        
+        $lpa->document->primaryAttorneys = [
+                $lpa->document->primaryAttorneys[0]
+        ];
+        
+        $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
+                $lpa);
+        
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'is Dr Lilly Simpson'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testReplacementAttorneyStepIn ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        
+        $helperReturns = $this->getAccordion(
+                'lpa/when-replacement-attorney-step-in')->__invoke($lpa);
+        
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
+                        ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testReplacementAttorneyMakeDecision ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        
+        $helperReturns = $this->getAccordion(
+                'lpa/how-replacement-attorneys-make-decision')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
+                        ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        ),
+                        6 => array(
+                                'name' => 'when-replacement-attorney-step-in.phtml',
+                                'routeName' => 'lpa/when-replacement-attorney-step-in',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 7,
+                                        'values' => 'last'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testCertificateProvider ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        
+        $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
         $this->assertEquals(
                 array(
@@ -248,21 +499,49 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                         'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
-                        4 => array (
+                        4 => array(
                                 'name' => 'how-primary-attorneys-make-decision.phtml',
                                 'routeName' => 'lpa/how-primary-attorneys-make-decision',
                                 'lpaId' => $lpa->id,
-                                'params' => 
-                            array (
-                                      'idx' => 5,
-                                      'values' => 'jointly-attorney-severally',
-                            ),
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
                         ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        ),
+                        6 => array(
+                                'name' => 'when-replacement-attorney-step-in.phtml',
+                                'routeName' => 'lpa/when-replacement-attorney-step-in',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 7,
+                                        'values' => 'last'
+                                )
+                        ),
+                        7 => array(
+                                'name' => 'how-replacement-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-replacement-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 8,
+                                        'values' => 'depends'
+                                )
+                        )
                 ), $helperReturns);
         
-        $lpa->document->primaryAttorneys = [$lpa->document->primaryAttorneys[0]];
+        $lpa->document->replacementAttorneyDecisions->when = 'first';
         
-        $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
+                $lpa);
+        
         $this->assertEquals(
                 array(
                         0 => array(
@@ -298,13 +577,407 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'is Dr Lilly Simpson'
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
+                        ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        ),
+                        6 => array(
+                                'name' => 'when-replacement-attorney-step-in.phtml',
+                                'routeName' => 'lpa/when-replacement-attorney-step-in',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 7,
+                                        'values' => 'first'
+                                )
+                        )
                 ), $helperReturns);
         
+        $lpa->document->primaryAttorneyDecisions->how = 'depends';
+        
+        $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
+                $lpa);
+        
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'depends'
+                                )
+                        ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        )
+                ), $helperReturns);
     }
-    
+
+    public function testPeopleToNotify ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        
+        $helperReturns = $this->getAccordion('lpa/people-to-notify')->__invoke(
+                $lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
+                        ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        ),
+                        6 => array(
+                                'name' => 'when-replacement-attorney-step-in.phtml',
+                                'routeName' => 'lpa/when-replacement-attorney-step-in',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 7,
+                                        'values' => 'last'
+                                )
+                        ),
+                        7 => array(
+                                'name' => 'how-replacement-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-replacement-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 8,
+                                        'values' => 'depends'
+                                )
+                        ),
+                        8 => array(
+                                'name' => 'certificate-provider.phtml',
+                                'routeName' => 'lpa/certificate-provider',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 9,
+                                        'values' => 'Dr Michaela Shepherd'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testInstructions ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        
+        $helperReturns = $this->getAccordion('lpa/instructions')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'type.phtml',
+                                'routeName' => 'lpa/form-type',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => 'property-and-financial'
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'donor.phtml',
+                                'routeName' => 'lpa/donor',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Hon Ayden Armstrong'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'when-lpa-starts.phtml',
+                                'routeName' => 'lpa/when-lpa-starts',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'now'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'primary-attorney.phtml',
+                                'routeName' => 'lpa/primary-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'how-primary-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'jointly-attorney-severally'
+                                )
+                        ),
+                        5 => array(
+                                'name' => 'replacement-attorney.phtml',
+                                'routeName' => 'lpa/replacement-attorney',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 6,
+                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                )
+                        ),
+                        6 => array(
+                                'name' => 'when-replacement-attorney-step-in.phtml',
+                                'routeName' => 'lpa/when-replacement-attorney-step-in',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 7,
+                                        'values' => 'last'
+                                )
+                        ),
+                        7 => array(
+                                'name' => 'how-replacement-attorneys-make-decision.phtml',
+                                'routeName' => 'lpa/how-replacement-attorneys-make-decision',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 8,
+                                        'values' => 'depends'
+                                )
+                        ),
+                        8 => array(
+                                'name' => 'certificate-provider.phtml',
+                                'routeName' => 'lpa/certificate-provider',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 9,
+                                        'values' => 'Dr Michaela Shepherd'
+                                )
+                        ),
+                        9 => array(
+                                'name' => 'people-to-notify.phtml',
+                                'routeName' => 'lpa/people-to-notify',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 10,
+                                        'values' => ''
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testApplicant ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->completedAt = new \DateTime();
+        
+        $helperReturns = $this->getAccordion('lpa/applicant')->__invoke($lpa);
+        $this->assertEquals(array(), $helperReturns);
+    }
+
+    public function testCorrespondent ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->completedAt = new \DateTime();
+        
+        $helperReturns = $this->getAccordion('lpa/correspondent')->__invoke(
+                $lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'applicant.phtml',
+                                'routeName' => 'lpa/applicant',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => array(
+                                                'who' => 'attorney',
+                                                'name' => 'Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        )
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testWhatIsMyRole ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->completedAt = new \DateTime();
+        
+        $helperReturns = $this->getAccordion('lpa/what-is-my-role')->__invoke(
+                $lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'applicant.phtml',
+                                'routeName' => 'lpa/applicant',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => array(
+                                                'who' => 'attorney',
+                                                'name' => 'Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        )
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'correspondent.phtml',
+                                'routeName' => 'lpa/correspondent',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Mrs Annabella Collier'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
+    public function testFee ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->completedAt = new \DateTime();
+        
+        $helperReturns = $this->getAccordion('lpa/fee')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'applicant.phtml',
+                                'routeName' => 'lpa/applicant',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => array(
+                                                'who' => 'attorney',
+                                                'name' => 'Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        )
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'correspondent.phtml',
+                                'routeName' => 'lpa/correspondent',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Mrs Annabella Collier'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'what-is-my-role.phtml',
+                                'routeName' => 'lpa/what-is-my-role',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'Who was using the LPA tool answered'
+                                )
+                        )
+                ), $helperReturns);
+    }
+
     private function getAccordion ($routeName)
     {
         $accordion = $this->getMockBuilder(

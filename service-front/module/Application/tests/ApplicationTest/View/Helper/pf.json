@@ -184,7 +184,7 @@
         ],
         "replacementAttorneyDecisions": {
             "how": "depends",
-            "when": null,
+            "when": "last",
             "howDetails": "Akela the Lone Wolf lay by the side of his rock as a sign that the leadership of the Pack was open, and Shere Khan with his following of scrap-fed wolves walked to and fro openly being flattered. Bagheera lay close to Mowgli, and the fire pot was between Mowgli's knees. When they were all gathered together, Shere Khan began to speak--a thing he would never have dared to do when Akela was in his prime.\n\n\"He has no right,\" whispered Bagheera. \"Say so. He is a dog's son. He will be frightened.\"\n\nMowgli sprang to his feet. \"Free People,\" he cried, \"does Shere Khan lead the Pack? What has a tiger to do with our leadership?\"\n\n\"Seeing that the leadership is yet open, and being asked to speak--\" Shere Khan began.\n\n\"By whom?\" said Mowgli. \"Are we all jackals, to fawn on this cattle butcher? The leadership of the Pack is with the Pack alone.\"\n\nThere were yells of \"Silence, thou man's cub!\" \"Let him speak. He has kept our Law\"; and at last the seniors of the Pack thundered: \"Let the Dead Wolf speak.\" When a leader of the Pack has missed his kill, he is called the Dead Wolf as long as he lives, which is not long.\n\nAkela raised his old head wearily:--\n\n\"Free People, and ye too, jackals of Shere Khan, for twelve seasons I have led ye to and from the kill, and in all that time not one has been trapped or maimed. Now I have missed my kill. Ye know how that plot was made. Ye know how ye brought me up to an untried buck to make my weakness known. It was cleverly done. Your right is to kill me here on the Council Rock,",
             "whenDetails": null
         },
