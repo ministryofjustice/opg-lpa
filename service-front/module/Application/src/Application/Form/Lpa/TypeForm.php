@@ -35,7 +35,7 @@ class TypeForm extends AbstractForm
     {
         $document = new Document($this->unflattenForModel($this->data));
         
-        $validation = $document->validate();
+        $validation = $document->validate(['type']);
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];
