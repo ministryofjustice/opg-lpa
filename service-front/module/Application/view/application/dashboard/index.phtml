@@ -23,3 +23,31 @@
     </div>
   </div>
   
+  <?php if (!empty($this->lpas)) : ?>
+  <table id="savedforms" class="lpa-list">
+  <thead>
+  <tr>
+    <th>ID/Version</th>
+    <th>Donor</th>
+    <th>LPA</th>
+    <th>Last saved on</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php foreach($this->lpas as $lpa): ?>
+      <tr>
+      <td><?php echo $lpa->id . ' v' . $lpa->version ?></td>
+      <td><?php echo $lpa->donor; ?></td>
+      <td><?php echo $lpa->type; ?></td>
+      <td><?php echo $lpa->updatedAt->format('r'); ?></td>
+      <td><?php if ($lpa->version != 2): ?><a href="/forward/lpa/'.$lpa->id.'">Load</a><?php endif; ?></td>
+      </tr>
+  <?php endforeach;?>
+  
+  </tbody>
+  </table>
+  <p>
+<?php endif; ?>
+  
+  
