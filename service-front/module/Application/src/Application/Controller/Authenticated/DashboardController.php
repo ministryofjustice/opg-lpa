@@ -23,34 +23,6 @@ class DashboardController extends AbstractAuthenticatedController
                 'lastLogin' => $this->getUser()->lastLogin()->format('r'),
             ]
         ]);
-        
-        $lpas = $this->getLpaList();
-
-        echo '<h1>Dashboard!</h1>';
-
-        echo '<h3><a href="/user/dashboard/create">Create new LPA</a></h3>';
-
-        echo '<h4>Commit: '.$this->config()['version']['commit'].'</h4>';
-        echo '<h4>Cache: '.$this->config()['version']['cache'].'</h4>';
-
-        echo "<p>ID: <strong>".$this->getUser()->id()."</strong></p>";
-        echo "<p>Token: <strong>".$this->getUser()->token()."</strong></p>";
-        echo "<p>Last login: <strong>".$this->getUser()->lastLogin()->format('r')."</strong></p>";
-
-        echo "<br />\n";
-
-        foreach( $lpas as $lpa ){
-            if( $lpa->version == 2 ){
-                echo "<p>id:{$lpa->id} - v{$lpa->version} - {$lpa->donor} - {$lpa->type} - {$lpa->updatedAt->format('r')}</p>\n";
-            } else {
-                echo "<p>id:{$lpa->id} - v{$lpa->version} - {$lpa->donor} - {$lpa->type} - {$lpa->updatedAt->format('r')}";
-                echo ' <a href="/forward/lpa/'.$lpa->id.'">Load</a> ';
-                echo "</p>\n";
-            }
-        }
-
-        exit();
-
     }
 
     /**
