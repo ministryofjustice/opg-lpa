@@ -5,6 +5,8 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 
+use Application\Form\User\ResetPasswordEmail as ResetPasswordEmailForm;
+
 class ForgotPasswordController extends AbstractActionController
 {
 
@@ -16,23 +18,40 @@ class ForgotPasswordController extends AbstractActionController
      */
     public function indexAction(){
 
-        $email = $this->params()->fromPost('email');
-        $confirmation = $this->params()->fromPost('email_confirm');
+        $form = new ResetPasswordEmailForm();
+        $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password') );
 
-        if( !empty($email) && !empty($confirmation) ){
+        $sent = false;
+        $error = null;
 
-            # TODO - checks addresses are the same.
+        //---
 
-            // Create a callback for the Model to get the callback URL from.
-            $callback = function( $token ) {
-                return $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
-            };
+        $request = $this->getRequest();
 
-            $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $email, $callback );
+        if ($request->isPost()) {
+
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+
+                // Create a callback for the Model to get the callback URL from.
+                $callback = function( $token ) {
+                    return $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
+                };
+
+                $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $form->getData()['email'], $callback );
+
+                if( $result === true ){
+                    $sent = true;
+                } else {
+                    $error = $result;
+                }
+
+            } // if
 
         } // if
 
-        return new ViewModel();
+        return new ViewModel( compact('form', 'error', 'sent') );
 
     } // function
 
