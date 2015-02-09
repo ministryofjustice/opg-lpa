@@ -251,6 +251,9 @@ abstract class AbstractForm extends Form
                 elseif($value === 1) {
                     $m = true;
                 }
+                else {
+                    $m = $value;
+                }
             }
             else {
                 $m = $value;

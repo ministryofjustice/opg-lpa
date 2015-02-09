@@ -31,11 +31,19 @@ class TypeController extends AbstractLpaController
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
+            // set data for validation
             $form->setData($postData);
             
             if($form->isValid()) {
                 
-//                 $this->redirect('lpa/donor', ['lpa-id'=>$this->request->getPost('lpa-id')]);
+                $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+                
+                // persist data
+                if(!$this->lpaService->setType($lpaId, $form->get('type')->getValue())) {
+                    throw new \RuntimeException('API client failed to set LPA type for id: '.$lpaId);
+                }
+                
+                $this->redirect()->toRoute('lpa/donor', ['lpa-id' => $lpaId]);
             }
         }
         

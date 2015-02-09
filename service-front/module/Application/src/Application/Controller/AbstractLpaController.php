@@ -14,10 +14,17 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
      * @var LPA The LPA currently referenced in to the URL
      */
     private $lpa;
+    
+    /**
+     * @var Application\Model\Service\Lpa\Application
+     */
+    protected $lpaService;
 
 
     public function onDispatch(MvcEvent $e)
     {
+        $this->lpaService = $this->getServiceLocator()->get('LpaApplicationService');
+        
         # load content header in the layout if controller has a $contentHeader
         if(isset($this->contentHeader)) {
             $this->layout()->contentHeader = $this->contentHeader;

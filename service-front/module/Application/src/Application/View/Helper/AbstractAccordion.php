@@ -3,6 +3,10 @@ namespace Application\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use Zend\ServiceManager\ServiceManager;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
@@ -62,17 +66,23 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function donor()
     {
-        return $this->lpa->document->donor->name->__toString();
+        if($this->lpa->document->donor instanceof Donor) {
+            return $this->lpa->document->donor->name->__toString();
+        }
     }
     
     protected function whenLpaStarts()
     {
-        return $this->lpa->document->primaryAttorneyDecisions->when;
+        if($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+            return $this->lpa->document->primaryAttorneyDecisions->when;
+        }
     }
     
     protected function lifeSustaining()
     {
-        return $this->lpa->document->primaryAttorneyDecisions->canSustainLife;
+        if($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+            return $this->lpa->document->primaryAttorneyDecisions->canSustainLife;
+        }
     }
     
     protected function primaryAttorney()
@@ -82,7 +92,9 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function howPrimaryAttorneysMakeDecision()
     {
-        return $this->lpa->document->primaryAttorneyDecisions->how;
+        if($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+            return $this->lpa->document->primaryAttorneyDecisions->how;
+        }
     }
     
     protected function replacementAttorney()
@@ -94,17 +106,23 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function whenReplacementAttorneyStepIn()
     {
-        return $this->lpa->document->replacementAttorneyDecisions->when;
+        if($this->lpa->document->primaryAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+            return $this->lpa->document->replacementAttorneyDecisions->when;
+        }
     }
     
     protected function howReplacementAttorneysMakeDecision()
     {
-        return $this->lpa->document->replacementAttorneyDecisions->how;
+        if($this->lpa->document->primaryAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+            return $this->lpa->document->replacementAttorneyDecisions->how;
+        }
     }
     
     protected function certificateProvider()
     {
-        return $this->lpa->document->certificateProvider->name->__toString();
+        if($this->lpa->document->certificateProvider instanceof CertificateProvider) {
+            return $this->lpa->document->certificateProvider->name->__toString();
+        }
     }
     
     protected function peopleToNotify()
