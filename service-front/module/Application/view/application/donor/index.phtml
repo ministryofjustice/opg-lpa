@@ -30,12 +30,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
     			</div>
     
     			<ul class="actions">
-    				<li><a href="/lpa/<?=$this->lpa->id?>/donor/edit" data-form="donor" class="js-form-popup">View/edit details</a></li>
+    				<li><a href="<?=$this->editDonorUrl?>" data-form="donor" class="js-form-popup">View/edit details</a></li>
     			</ul>
     		</div>
     		<div class="accordion-actions group">
     			<p>
-    				<a href="/lpa/<?=$this->lpa->id?>/when-lpa-starts" class="button gotonextpart" role="button">Save and continue</a>
+    				<a href="<?=$this->nextRoute?>" class="button gotonextpart" role="button">Save and continue</a>
     			</p>
     		</div>
     
