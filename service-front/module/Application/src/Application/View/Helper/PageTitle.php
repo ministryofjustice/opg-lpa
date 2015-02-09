@@ -12,7 +12,7 @@ class PageTitle extends AbstractHelper
             case 'enable-cookie': return 'Enable Cookies';
             case 'register': return 'Create an account';
             case 'home' : return 'Make a lasting power of attorney';
-            case 'user/dashboard' : return 'Dashboard'; 
+            case 'user/dashboard' : return 'Your LPAs'; 
             default: return '@Todo - page title unknown';
         }
     }
