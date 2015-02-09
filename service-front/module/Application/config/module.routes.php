@@ -686,6 +686,33 @@ return [
                                     ],
                                 ],
                             ],
+                            'add-trust' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/add-trust',
+                                    'defaults' => [
+                                        'action' => 'add-trust',
+                                    ],
+                                ],
+                            ],
+                            'edit-trust' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/edit-trust',
+                                    'defaults' => [
+                                        'action' => 'edit-trust',
+                                    ],
+                                ],
+                            ],
+                            'delete-trust' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/delete-trust',
+                                    'defaults' => [
+                                        'action' => 'delete-trust',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     'what-is-my-role' => [
