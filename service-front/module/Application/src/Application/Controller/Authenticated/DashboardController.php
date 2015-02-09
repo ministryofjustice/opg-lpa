@@ -11,7 +11,19 @@ class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-
+        return new ViewModel([
+            'lpas' => $this->getLpaList(),
+            'version' => [
+                'commit' => $this->config()['version']['commit'],
+                'cache' => $this->config()['version']['cache'],
+            ],
+            'user' => [
+                'id' => $this->getUser()->id(),
+                'token' => $this->getUser()->token(),
+                'lastLogin' => $this->getUser()->lastLogin()->format('r'),
+            ]
+        ]);
+        
         $lpas = $this->getLpaList();
 
         echo '<h1>Dashboard!</h1>';
@@ -39,7 +51,6 @@ class DashboardController extends AbstractAuthenticatedController
 
         exit();
 
-        return new ViewModel();
     }
 
     /**

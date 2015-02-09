@@ -53,4 +53,22 @@ class Name extends AbstractData {
 
     } // function
 
+    /**
+     * Returns a string representation of the name.
+     *
+     * @return string
+     */
+    public function __toString(){
+
+        $name  = ( !empty($this->title) ) ? "{$this->title} " : '';
+        $name .= ( !empty($this->first) ) ? "{$this->first} " : '';
+        $name .= ( !empty($this->last) )  ? "{$this->last}"    : '';
+
+        // Tidy the string up...
+        $name = trim($name);
+
+        return $name;
+
+    } // function
+
 } // class
