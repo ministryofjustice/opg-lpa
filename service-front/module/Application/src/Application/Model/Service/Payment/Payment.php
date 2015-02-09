@@ -5,6 +5,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Omnipay\Omnipay;
 use Omnipay\Common\CreditCard;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment as PaymentEntity;
 
 class Payment implements ServiceLocatorAwareInterface {
 
@@ -13,9 +14,24 @@ class Payment implements ServiceLocatorAwareInterface {
     /**
      * Update the LPA with the successful payment information
      *
+     * @param array $params
+     * @param Lpa $lpa
      */
-    public function updateLpa($params)
+    public function updateLpa($params, $lpa)
     {
+        $client = $this->getServiceLocator()->get('ApiClient');
+        
+        $payment = $lpa->payment;
+        $payment->amount = $params['paymentAmount'];
+        $payment->reference = $params['orderKey'];
+        $payment->method = PaymentEntity::PAYMENT_TYPE_CARD;
+        $payment->date = new \DateTime('today');
+        
+        $result = $client->setPayment($lpa->id, $payment);
+        
+        if ($result === false) {
+            throw new \Exception('Unable to update LPA with all payment information');
+        }
     }
     
     /**

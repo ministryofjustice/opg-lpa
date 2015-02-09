@@ -50,12 +50,12 @@ class PaymentController extends AbstractLpaController
         
         $params = $this->getSuccessParams();
         
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
         
-        $paymentService->verifyMacString($params, $lpaId);
-        $paymentService->verifyOrderKey($params, $lpaId);
+        $paymentService->verifyMacString($params, $lpa->id);
+        $paymentService->verifyOrderKey($params, $lpa->id);
         
-        $paymentService->updateLpa($params);
+        $paymentService->updateLpa($params, $lpa);
     }
     
     /**
