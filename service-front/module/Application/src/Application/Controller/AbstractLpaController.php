@@ -19,8 +19,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
      * @var Application\Model\Service\Lpa\Application
      */
     protected $lpaService;
-
-
+    
     public function onDispatch(MvcEvent $e)
     {
         $this->lpaService = $this->getServiceLocator()->get('LpaApplicationService');
@@ -40,16 +39,15 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         }
         
         return $view;
-                
+        
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
          */   
-        $checker = new FormFlowChecker($this->getLpa());
-        $checker->setLpa($this->getLpa());
+        $formFlowChecker = $this->getFlowChecker();
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
         $personIndex = $e->getRouteMatch()->getParam('person_index');
         
-        $calculatedRoute = $checker->check($currentRoute, $personIndex);
+        $calculatedRoute = $formFlowChecker->check($currentRoute, $personIndex);
         
         if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
             return $this->redirect()->toRoute($calculatedRoute);
@@ -87,4 +85,11 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $this->lpa = $lpa;
     }
     
+    public function getFlowChecker()
+    {
+        $formFlowChecker = new FormFlowChecker($this->getLpa());
+        $formFlowChecker->setLpa($this->getLpa());
+        
+        return $formFlowChecker;
+    }
 }
