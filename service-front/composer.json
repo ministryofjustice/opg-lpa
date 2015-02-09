@@ -2,13 +2,38 @@
     "name": "zendframework/skeleton-application",
     "description": "Skeleton Application for ZF2",
     "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "keywords": [
         "framework",
         "zf2"
     ],
     "homepage": "http://framework.zend.com/",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-api-client"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Netsensia/omnipay-worldpay-xml"
+        }
+    ],
     "require": {
-        "php": ">=5.3.3",
-        "zendframework/zendframework": "2.3.*"
+        "php": ">=5.5.9",
+        "guzzlehttp/guzzle": "5.1.*",
+        "zendframework/zendframework": "2.3.*",
+        "sendgrid/sendgrid": "2.2.*",
+        "ministryofjustice/opg-lpa-api-client": "dev-develop",
+        "ministryofjustice/opg-lpa-datamodels": "dev-develop",
+        "Netsensia/omnipay-worldpay-xml": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*"
     }
+    
 }

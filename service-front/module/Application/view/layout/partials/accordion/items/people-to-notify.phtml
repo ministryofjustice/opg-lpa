@@ -1,0 +1,6 @@
+<?=$this->params['idx'] ?>.  
+<?php if($this->params['values'] == '' ):?>
+    There are no 'people to be told'
+<?php else:?>
+    The person to be told <?= $this->params['values'] ?>
+<?php endif;?>

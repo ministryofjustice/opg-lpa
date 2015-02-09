@@ -1,0 +1,58 @@
+<?php
+    $title          = 'LPA Type';
+    $this->headTitle($title);
+    $form           = $this->form;
+    $whenLpaStarts  = $form->get('whenLpaStarts');
+    $submit         = $form->get('submit');
+    
+    $formLabel      = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<section id="when-lpa-starts">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. When can your LPA be used?</h2>
+	
+    <div class="accordion-content">
+    
+		<div class="section-intro">
+			<p>If you want help straight away with certain decisions about your property and financial affairs you can say that your LPA can be used as soon as it's registered.</p>
+			<p>As long as you have mental capacity your registered LPA can only be used with your consent. You decide how and when it is used. Your attorneys will also be able to use your LPA fully if you don’t have mental capacity in the future.</p>
+			<p>Alternatively, you can say that your LPA can only be used if you don’t have mental capacity.</p>
+			<p><a href="/help/#topic-when-an-lpa-can-be-used" class="js-guidance" data-journey-click="stageprompt.lpa:help:when-an-lpa-can-be-used">Find out more about your options</a></p>
+
+		</div>
+		
+		<h3>My LPA can be used:</h3>
+		
+        <?= $this->form()->openTag($form); ?>
+        
+        <div class="form_element">
+        
+            <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+            
+            <?= $this->formRadio($whenLpaStarts) ?>
+            
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($whenLpaStarts) ?>
+            </p>
+            
+            <?= $formLabel->closeTag() ?>
+        
+        </div>
+        
+        
+        <div class="form_element">
+        
+            <?= $this->formInput($submit) ?>
+        
+        </div>
+        
+        
+        <?= $this->formElement($form->get('secret')) ?>
+        
+        <?= $this->form()->closeTag(); ?>
+        
+    </div>
+    
+</section>

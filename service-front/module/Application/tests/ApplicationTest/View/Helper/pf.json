@@ -1,0 +1,216 @@
+{
+    "id": 74739653105,
+    "createdAt": "2015-01-02T16:01:03+00:00",
+    "updatedAt": "2015-01-11T03:36:01+00:00",
+    "user": "7942ebc4b2c4626b452e76371e7da0a1",
+    "repeatCaseNumber": 62907134,
+    "payment": {
+        "reducedFeeReceivesBenefits": true,
+        "reducedFeeAwardedDamages": true,
+        "reducedFeeLowIncome": false,
+        "reducedFeeUniversalCredit": true,
+        "amount": null,
+        "method": null
+    },
+    "whoAreYouAnswered": true,
+    "locked": true,
+    "seed": null,
+    "document": {
+        "type": "property-and-financial",
+        "donor": {
+            "name": {
+                "title": "Hon",
+                "first": "Ayden",
+                "last": "Armstrong"
+            },
+            "otherNames": null,
+            "address": {
+                "address1": "562 Queen Street",
+                "address2": "Charlestown",
+                "address3": "Cornwall, England",
+                "postcode": "EH9K 8UC"
+            },
+            "dob": {
+                "date": "1948-10-07T23:07:10+00:00"
+            },
+            "email": {
+                "address": "92zx2n1nk@wx.co.uk"
+            },
+            "canSign": true
+        },
+        "primaryAttorneys": [
+            {
+                "id": 14,
+                "address": {
+                    "address1": "867 Richmond Road",
+                    "address2": "Saltney",
+                    "address3": "Flintshire, Wales",
+                    "postcode": "WA19 8DH"
+                },
+                "email": null,
+                "type": "human",
+                "name": {
+                    "title": "Dr",
+                    "first": "Lilly",
+                    "last": "Simpson"
+                },
+                "dob": {
+                    "date": "1959-10-04T16:10:23+00:00"
+                }
+            },
+            {
+                "id": 15,
+                "address": {
+                    "address1": "70 Manchester Road",
+                    "address2": "Seaton",
+                    "address3": "Devon, England",
+                    "postcode": "W94 6UR"
+                },
+                "email": null,
+                "type": "human",
+                "name": {
+                    "title": "Mr",
+                    "first": "Marcel",
+                    "last": "Tanner"
+                },
+                "dob": {
+                    "date": "1925-06-30T12:21:09+00:00"
+                }
+            },
+            {
+                "id": 16,
+                "address": {
+                    "address1": "765 St. John's Road",
+                    "address2": "Holbeach",
+                    "address3": "Lincolnshire, England",
+                    "postcode": "TA2 0PP"
+                },
+                "email": null,
+                "type": "human",
+                "name": {
+                    "title": "Mrs",
+                    "first": "Annabella",
+                    "last": "Collier"
+                },
+                "dob": {
+                    "date": "1935-10-24T17:46:04+00:00"
+                }
+            }
+        ],
+        "certificateProvider": {
+            "name": {
+                "title": "Dr",
+                "first": "Michaela",
+                "last": "Shepherd"
+            },
+            "address": {
+                "address1": "413 The Avenue",
+                "address2": "Hatherleigh",
+                "address3": "Devon, England",
+                "postcode": "CT4 8DJ"
+            }
+        },
+        "peopleToNotify": [
+
+        ],
+        "instruction": "\"No man's cub can run with the people of the jungle,\" howled Shere Khan. \"Give him to me!\"\n\n\"He is our brother in all but blood,\" Akela went on, \"and ye would kill him here! In truth, I have lived too long. Some of ye are eaters of cattle, and of others I have heard that, under Shere Khan's teaching, ye go by dark night and snatch children from the villager's doorstep. Therefore I know ye to be cowards, and it is to cowards I speak. It is certain that I must die, and my life is of no worth, or I would offer that in the man-cub's place. But for the sake of the Honor of the Pack,--a little matter that by being without a leader ye have forgotten,--I promise that if ye let the man-cub go to his own place, I will not, when my time comes to die, bare one tooth against ye. I will die without fighting. That will at least save the Pack three lives. More I cannot do; but if ye will, I can save ye the shame that comes of killing a brother against whom there is no fault--a brother spoken for and bought into the Pack according to the Law of the Jungle.\"\n\n\"He is a man--a man--a man!\" snarled the Pack. And most of the wolves began to gather round Shere Khan, whose tail was beginning to switch.\n\n\"Now the business is in thy hands,\" said Bagheera to Mowgli. \"We can do no more except fight.\"\n\nMowgli stood upright--the fire pot in his hands. Then he stretched out his arms, and yawned in the face of the Council; but he was furious with rage and sorrow, for, wolflike, the wolves had never told him how they hated him. \"Listen you!\" he cried. \"There is no need for this dog's jabber. Ye have told me so often tonight that I am a man (and indeed I would have been a wolf with you to my life's end) that I feel your words are true. So I do not call ye my brothers any more, but sag [dogs], as a man should. What ye will do, and what ye will not do, is not yours to say. That matter is with me; and that we may see the matter more plainly, I, the man, have brought here a little of the Red Flower which ye, dogs, fear.\"\n\nHe flung the fire pot on the ground, and some of the red coals lit a tuft of dried moss that flared up, as all the Council drew back in terror before the leaping flames.\n\nMowgli thrust his dead branch into the fire till the twigs lit and crackled, and whirled it above his head among the cowering wolves.\n\n\"Thou art the master,\" said Bagheera in an undertone. \"Save Akela from the death. He was ever thy friend.\"\n\nAkela, the grim old wolf who had never asked for mercy in his life, gave one piteous look at Mowgli as the boy stood all naked, his long black hair tossing over his shoulders in the light of the blazing branch that made the shadows jump and quiver.\n\n\"Good!\" said Mowgli, staring round slowly. \"I see that ye are dogs. I go from you to my own people--if they be my own people. The jungle is shut to me, and I must forget your talk and your companionship. But I will be more merciful than ye are. Because I was all but your brother in blood, I promise that when I am a man among men I will not betray ye to men as ye have betrayed me.\" He kicked the fire with his foot, and the sparks flew up. \"There shall be no war between any of us in the Pack. But here is a debt to pay before I go.\" He strode forward to where Shere Khan sat blinking stupidly at the flames, and caught him by the tuft on his chin. Bagheera followed in case of accidents. \"Up, dog!\" Mowgli cried. \"Up, when a man speaks, or I will set that coat ablaze!\"\n\nShere Khan's ears lay flat back on his head, and he shut his eyes, for the blazing branch was very near.\n\n\"This cattle-killer said he would kill me in the Council because he had not killed me when I was a cub. Thus and thus, then, do we beat dogs when we are men. Stir a whisker, Lungri, and I ram",
+        "preference": "\"This cattle-killer said he would kill me in the Council because he had not killed me when I was a cub. Thus and thus, then, do we beat dogs when we are men. Stir a whisker, Lungri, and I ram the Red Flower down thy gullet!\" He beat Shere Khan over the head with the branch, and the tiger whimpered and whined in an agony of fear.\n\n\"Pah! Singed jungle cat--go now! But remember when next I come to the Council Rock, as a man should come, it will be with Shere Khan's hide on my head. For the",
+        "primaryAttorneyDecisions": {
+            "how": "jointly-attorney-severally",
+            "when": "now"
+        },
+        "replacementAttorneys": [
+            {
+                "id": 2,
+                "address": {
+                    "address1": "170 Queens Road",
+                    "address2": "Kilton",
+                    "address3": "Nottinghamshire, England",
+                    "postcode": "FY4 0IJ"
+                },
+                "email": {
+                    "address": "mj1my@pqqys.co.uk"
+                },
+                "type": "human",
+                "name": {
+                    "title": "Ms",
+                    "first": "Dennis",
+                    "last": "Jackson"
+                },
+                "dob": {
+                    "date": "1981-04-07T02:23:37+00:00"
+                }
+            },
+            {
+                "id": 3,
+                "address": {
+                    "address1": "279 Stanley Road",
+                    "address2": "Askern",
+                    "address3": "South Yorkshire, England",
+                    "postcode": "SR2T 2UB"
+                },
+                "email": null,
+                "type": "human",
+                "name": {
+                    "title": "Mr",
+                    "first": "Ethan",
+                    "last": "Fulton"
+                },
+                "dob": {
+                    "date": "1979-07-01T21:41:20+00:00"
+                }
+            },
+            {
+                "id": 4,
+                "address": {
+                    "address1": "810 Grange Road",
+                    "address2": "Tow Law",
+                    "address3": "County Durham, England",
+                    "postcode": "BN38 6WD"
+                },
+                "email": {
+                    "address": "iaz9s8lz5@pxprjpn.co.uk"
+                },
+                "type": "human",
+                "name": {
+                    "title": "Mrs",
+                    "first": "Aron",
+                    "last": "Puckett"
+                },
+                "dob": {
+                    "date": "1955-02-28T04:10:34+00:00"
+                }
+            }
+        ],
+        "replacementAttorneyDecisions": {
+            "how": "depends",
+            "when": "last",
+            "howDetails": "Akela the Lone Wolf lay by the side of his rock as a sign that the leadership of the Pack was open, and Shere Khan with his following of scrap-fed wolves walked to and fro openly being flattered. Bagheera lay close to Mowgli, and the fire pot was between Mowgli's knees. When they were all gathered together, Shere Khan began to speak--a thing he would never have dared to do when Akela was in his prime.\n\n\"He has no right,\" whispered Bagheera. \"Say so. He is a dog's son. He will be frightened.\"\n\nMowgli sprang to his feet. \"Free People,\" he cried, \"does Shere Khan lead the Pack? What has a tiger to do with our leadership?\"\n\n\"Seeing that the leadership is yet open, and being asked to speak--\" Shere Khan began.\n\n\"By whom?\" said Mowgli. \"Are we all jackals, to fawn on this cattle butcher? The leadership of the Pack is with the Pack alone.\"\n\nThere were yells of \"Silence, thou man's cub!\" \"Let him speak. He has kept our Law\"; and at last the seniors of the Pack thundered: \"Let the Dead Wolf speak.\" When a leader of the Pack has missed his kill, he is called the Dead Wolf as long as he lives, which is not long.\n\nAkela raised his old head wearily:--\n\n\"Free People, and ye too, jackals of Shere Khan, for twelve seasons I have led ye to and from the kill, and in all that time not one has been trapped or maimed. Now I have missed my kill. Ye know how that plot was made. Ye know how ye brought me up to an untried buck to make my weakness known. It was cleverly done. Your right is to kill me here on the Council Rock,",
+            "whenDetails": null
+        },
+        "whoIsRegistering": [
+            0
+        ],
+        "correspondent": {
+            "who": "attorney",
+            "name": {
+                "title": "Mrs",
+                "first": "Annabella",
+                "last": "Collier"
+            },
+            "company": null,
+            "address": {
+                "address1": "765 St. John's Road",
+                "address2": "Holbeach",
+                "address3": "Lincolnshire, England",
+                "postcode": "TA2 0PP"
+            },
+            "email": null,
+            "phone": {
+                "number": "+768 251 340761"
+            },
+            "contactByPost": false,
+            "contactInWelsh": true
+        }
+    }
+}

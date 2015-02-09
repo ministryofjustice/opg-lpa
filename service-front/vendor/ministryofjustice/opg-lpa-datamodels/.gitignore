@@ -1,0 +1,10 @@
+/composer.lock
+/composer.phar
+vendor/
+
+/.idea/
+
+/test.php
+
+/.DS_Store
+.DS_Store

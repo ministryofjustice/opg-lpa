@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+    bootstrap="./../module/Application/tests/Bootstrap.php"
+    colors="true"
+    strict="true"
+    syntaxCheck="false"
+    verbose="true">
+    <testsuite name="ApplicationTest">
+        <directory>./../module/Application/tests/ApplicationTest/Controller/General</directory>
+        <directory>./../module/Application/tests/ApplicationTest/Controller/Authenticated</directory>
+    </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./../module/Application/src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

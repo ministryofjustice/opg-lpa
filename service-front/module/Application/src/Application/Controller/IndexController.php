@@ -12,10 +12,21 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
+# TODO - remove this file.
+
 class IndexController extends AbstractActionController
 {
+    public function __construct(){
+        throw new \RuntimeException('Deprecated');
+    }
+
     public function indexAction()
     {
+
+        $a = $this->getServiceLocator()->get('AuthenticationService');
+
+        var_dump($a); exit();
+
         return new ViewModel();
     }
 }
