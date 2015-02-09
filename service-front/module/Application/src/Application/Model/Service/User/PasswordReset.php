@@ -28,10 +28,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             $body = $client->getLastContent();
 
             if( isset($body['reason']) ){
-                var_dump($body['reason']); exit();
+                return trim( $body['reason'] );
             }
 
-            # TODO - else we don't know what went wrong...
+            return "unknown-error";
 
         } // if
 
@@ -73,10 +73,16 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         //--------------------
 
         try {
+
             $this->getServiceLocator()->get('MailTransport')->send($message);
+
         } catch ( \Exception $e ){
 
+            return "failed-sending-email";
+
         }
+
+        return true;
 
 
     } // function
