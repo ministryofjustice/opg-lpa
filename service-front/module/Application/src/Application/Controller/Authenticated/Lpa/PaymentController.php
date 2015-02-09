@@ -24,14 +24,21 @@ class PaymentController extends AbstractLpaController
      */
     public function indexAction()
     {
+        $paymentService = $this->getServiceLocator()->get('Payment');
+
+        $options = $paymentService->getOptions($this->getLpa());
+        
         $response = 
-            $this->getGateway()
-                 ->purchase($this->getOptions())
+            $paymentService
+                 ->getGateway()
+                 ->purchase($options)
                  ->send();
         
         $redirectUrl = 
             $this->getRedirectUrl(
-                $response->getData()->reference
+                $response->getData()->reference,
+                $this->getLpa()->id,
+                $this->getRequest()->getUri()
             );
         
         $this->redirect()->toUrl($redirectUrl);
@@ -39,62 +46,16 @@ class PaymentController extends AbstractLpaController
     
     public function successAction()
     {
+        $paymentService = $this->getServiceLocator()->get('Payment');
+        
         $params = $this->getSuccessParams();
         
-        $this->verifyMacString($params);
-        $this->verifyOrderKey($params);
-    }
-    
-    
-    /**
-     * Helper function to verify the order key returned by Worldpay
-     * 
-     * @param array $params
-     */
-    private function verifyOrderKey($params)
-    {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $lpaId = $this->getLpa()->id;
         
-        $regexString = "/^" . $config['administration_code'] . '\^'. $config['merchant_code'] . '\^' . "(.+)-(.+)$/";
+        $paymentService->verifyMacString($params, $lpaId);
+        $paymentService->verifyOrderKey($params, $lpaId);
         
-        if (preg_match($regexString, $params['orderKey'], $matches)) {
-            if ($matches[1] != $this->getLpa()->id) {
-                throw new \Exception(
-                    'Invalid Worldpay orderKey received: ' . $params['orderKey'] . ', ' .
-                    'LPA ID ' . $matches[1] . ' does not match session LPA ' . $this->getLpa()->id
-                );
-            }
-        } else {
-            throw new \Exception(
-                'Invalid Worldpay orderKey received: ' . $params['orderKey'] . ', ' .
-                'expected match with regex ' . $regexString
-            );
-        }
-    }
-    
-    /**
-     * Helper function to verify the MAC string returned from Worldpay
-     * 
-     * @param array $params
-     */
-    private function verifyMacString($params)
-    {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
-        
-        $macString =
-            $params['orderKey'] .
-            $params['paymentAmount'] .
-            $params['paymentCurrency'] .
-            $params['paymentStatus'] .
-            $config['mac_secret'];
-        
-        $md5Mac = md5($macString);
-        
-        if ($params['mac'] != $md5Mac) {
-            throw new \Exception(
-                'Worldpay MAC string not verified: ' . $params['mac'] . ' expected ' . $md5Mac
-            );
-        }
+        $paymentService->updateLpa($params);
     }
     
     /**
@@ -149,89 +110,41 @@ class PaymentController extends AbstractLpaController
     }
     
     /**
-     * Helper function to create and configure the Omnipay gateway object
-     */
-    private function getGateway()
-    {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
-        
-        $gateway = Omnipay::create('WorldPayXML');
-        
-        $gateway->setInstallation($config['installation_id']);
-        $gateway->setMerchant($config['merchant_code']);
-        $gateway->setPassword($config['xml_password']);
-        $gateway->setTestMode($config['test_mode']);
-        
-        return $gateway;
-    }
-    
-    /**
      * Helper function to construct the Worldpay redirect URL
-     * 
+     *
      * @param string $baseUrl
-     * @param Lpa $lpa
+     * @param string $lpaId
+     * @param Uri $uri
      * @return string
      */
-    private function getRedirectUrl($baseUrl, $lpa)
+    public function getRedirectUrl($baseUrl, $lpaId, $uri)
     {
-        $lpa = $this->getLpa();
-        
         $redirectUrl =
             $baseUrl .
-            '&successURL=' .  $this->getCallbackEndpoint('success', $lpa->id) .
-            '&pendingURL=' . $this->getCallbackEndpoint('pending', $lpa->id) .
-            '&failureURL=' . $this->getCallbackEndpoint('failure', $lpa->id) .
-            '&cancelURL=' . $this->getCallbackEndpoint('cancel', $lpa->id);
-        
+                '&successURL=' .  $this->getCallbackEndpoint('success', $lpaId, $uri) .
+                '&pendingURL=' . $this->getCallbackEndpoint('pending', $lpaId, $uri) .
+                '&failureURL=' . $this->getCallbackEndpoint('failure', $lpaId, $uri) .
+                '&cancelURL=' . $this->getCallbackEndpoint('cancel', $lpaId, $uri);
+    
         return $redirectUrl;
     }
     
     /**
      * Helper function to construct the callback URLs
-     * 
+     *
      * @param string $type
      * @param string $lpaId
+     * @param Uri $uri
      * @return string
      */
-    private function getCallbackEndpoint($type, $lpaId)
+    public function getCallbackEndpoint($type, $lpaId, $uri)
     {
-        $uri = $this->getRequest()->getUri();
         $baseUri = sprintf('%s://%s', $uri->getScheme(), $uri->getHost());
-        
+    
         return $baseUri . $this->url()->fromRoute(
             'lpa/payment/return/' . $type,
             ['lpa-id' => $lpaId]
         );
-    }
-    
-    /**
-     * Helper function to construct the options use to create
-     * the XML for the initial request to Worldpay.
-     * 
-     * @return array
-     */
-    private function getOptions()
-    {
-        $lpa = $this->getLpa();
-        
-        $email = 'todo@example.com';
-        
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
-        
-        $donorName = $lpa->document->donor->name;
-        
-        $options = [
-            'amount' => $lpa->payment->amount,
-            'currency' => $config['currency'],
-            'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
-            'transactionId' => $lpa->id . '-' . time(),
-            'card' => new CreditCard([
-                'email' => $email,
-            ]),
-            'token' => $config['api_token_secret'],
-        ];
-        
-        return $options;
     }
     
     /**
