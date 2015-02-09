@@ -273,5 +273,12 @@ abstract class AbstractForm extends Form
         }
     }
     
+    public function getDataForModel()
+    {
+        if($this->data != null) {
+            return $this->unflattenForModel($this->data);
+        }
+    }
+    
     abstract protected function modelValidation();
 }
