@@ -1,1 +1,21 @@
-forgot password
+<p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
+
+<div class="form">
+
+  <form action="<?php echo $this->url('forgot-password'); ?>" method="POST" autcomplete="off" class="form">
+    
+    <div class="group ">
+      <label for="email" id="email-label" class="required">Email address</label>
+      <input name="email" type="email" id="email" value="" autocomplete="off">
+      </div>
+    <div class="group ">
+      <label for="email_confirm" id="email_confirm-label" class="required">Re-enter your email address</label>
+      <input name="email_confirm" type="email" id="email_confirm" value="" autocomplete="off">
+      </div>    
+    <p class="action group"><p class="action group">
+    
+    <input type="submit" name="submit" id="form-submit" value="Email me the link" class="button"></p></p>
+
+  </form>
+
+</div>

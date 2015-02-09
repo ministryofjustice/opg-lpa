@@ -13,6 +13,7 @@ class PageTitle extends AbstractHelper
             case 'register': return 'Create an account';
             case 'home' : return 'Make a lasting power of attorney';
             case 'user/dashboard' : return 'Your LPAs'; 
+            case 'forgot-password': return 'Reset your password';
             default: return '@Todo - page title unknown';
         }
     }
