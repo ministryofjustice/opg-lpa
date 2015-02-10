@@ -106,14 +106,14 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function whenReplacementAttorneyStepIn()
     {
-        if($this->lpa->document->primaryAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+        if($this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
             return $this->lpa->document->replacementAttorneyDecisions->when;
         }
     }
     
     protected function howReplacementAttorneysMakeDecision()
     {
-        if($this->lpa->document->primaryAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+        if($this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
             return $this->lpa->document->replacementAttorneyDecisions->how;
         }
     }
