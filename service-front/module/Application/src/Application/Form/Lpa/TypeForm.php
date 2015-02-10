@@ -33,7 +33,7 @@ class TypeForm extends AbstractForm
     
     public function modelValidation()
     {
-        $document = new Document($this->unflattenForModel($this->data));
+        $document = new Document($this->modelization($this->data));
         
         $validation = $document->validate(['type']);
         

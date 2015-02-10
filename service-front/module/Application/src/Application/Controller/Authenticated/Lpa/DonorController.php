@@ -87,17 +87,12 @@ class DonorController extends AbstractLpaController
         
         $form = new DonorForm();
         
-        $donor = $this->getLpa()->document->donor->flatten();
-        $donor['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
-        $form->bind($donor);
-        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
             $form->setData($postData);
             
             if($form->isValid()) {
-                
                 $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
@@ -115,6 +110,11 @@ class DonorController extends AbstractLpaController
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
+        }
+        else {
+            $donor = $this->getLpa()->document->donor->flatten();
+            $donor['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
+            $form->bind($donor);
         }
         
         $viewModel->form = $form;
