@@ -233,7 +233,7 @@ abstract class AbstractForm extends Form
      * 
      * @return array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
-    protected function unflattenForModel($formData)
+    protected function modelization($formData)
     {
         $modelData = [];
         foreach($formData as $key=>$value) {
@@ -266,20 +266,20 @@ abstract class AbstractForm extends Form
         return $modelData;
     }
     
-    public function bind($modelAbstractData, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind($modelizedDataArray, $flags = FormInterface::VALUES_NORMALIZED)
     {
-        if($modelAbstractData instanceof AbstractData) {
-            return parent::bind(new \ArrayObject($modelAbstractData->flatten()));
-        }
-        else {
-            return parent::bind($modelAbstractData);
-        }
+        return parent::bind(new \ArrayObject($modelizedDataArray));
     }
     
-    public function getDataForModel()
+    /**
+     * Convert form data to model-compatible input data format.
+     * 
+     * @return \Application\Form\Lpa\array.
+     */
+    public function getModelizedData()
     {
         if($this->data != null) {
-            return $this->unflattenForModel($this->data);
+            return $this->modelization($this->data);
         }
     }
     

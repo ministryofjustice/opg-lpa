@@ -99,7 +99,7 @@ class DonorForm extends AbstractForm
     
     public function modelValidation()
     {
-        $modelizedData = $this->unflattenForModel($this->data);
+        $modelizedData = $this->modelization($this->data);
         
         if($modelizedData['dob']['date'] == "") {
             $modelizedData['dob'] = null;
@@ -134,9 +134,9 @@ class DonorForm extends AbstractForm
         }
     }
     
-    public function getModelData()
+    public function getModelizedData()
     {
-        $modelizedData = $this->unflattenForModel($this->data);
+        $modelizedData = parent::getModelizedData();
         
         if($modelizedData['dob']['date'] == "") {
             $modelizedData['dob'] = null;
@@ -146,5 +146,6 @@ class DonorForm extends AbstractForm
             $modelizedData['email'] = null;
         }
         
+        return $modelizedData;
     }
 }
