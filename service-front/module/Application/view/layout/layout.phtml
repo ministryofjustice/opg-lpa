@@ -100,6 +100,14 @@
                                 <?php if(isset($this->contentHeader)): ?>
                                 <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
                                 <?php endif; ?>
+
+                                <?php
+                                    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissible', 'alert-danger'));
+                                    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissible', 'alert-info'));
+                                    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissible', 'alert-warning'));
+                                    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissible', 'alert-success'));
+                                    echo $this->flashMessenger()->render('warning', array('alert', 'alert-dismissible', 'alert-warning'));
+                                ?>
                                 
                                 <?php
                                     $accordionTop = $this->accordionTop($this->lpa);
