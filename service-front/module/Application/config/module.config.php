@@ -74,6 +74,8 @@ return [
             'accordionIdx'      => 'Application\View\Helper\AccordionIdx',
             'accountInfo'       => 'Application\View\Helper\AccountInfo',
             'pageTitle'         => 'Application\View\Helper\PageTitle',
+            'elementGroupClass' => 'Application\View\Helper\ElementGroupClass',
+            'linkedErrorList'   => 'Application\View\Helper\LinkedErrorList',
             'routeName'         => 'Application\View\Helper\RouteName',
             'formElementErrors' => 'Application\View\Helper\FormElementErrors',
         ],

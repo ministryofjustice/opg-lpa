@@ -16,17 +16,11 @@ class ResetPasswordEmail extends AbstractForm {
         //---
 
         $this->add(array(
-            'options' => [
-                'label' => 'Email address',
-            ],
             'name' => 'email',
             'type' => 'Email',
         ));
 
         $this->add(array(
-            'options' => [
-                'label' => 'Re-enter your email address',
-            ],
             'name' => 'email_confirm',
             'type' => 'Email',
         ));

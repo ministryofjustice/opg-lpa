@@ -1,12 +1,22 @@
 <?php
 
-
 $form           = $this->form;
 
 $email          = $form->get('email');
 $email_confirm  = $form->get('email_confirm');
 $submit         = $form->get('submit');
+$csrf           = $form->get('secret');
 $formLabel      = $this->plugin('formLabel');
+
+$email->setAttributes([
+    'id' => 'email',
+    'autocomplete' => 'off'
+]);
+
+$email_confirm->setAttributes([
+    'id' => 'email_confirm',
+    'autocomplete' => 'off'
+]);
 
 $form->prepare();
 
@@ -15,11 +25,8 @@ $form->prepare();
 <? if( $this->sent ){ ?>
 
     <h2>Thank you</h2>
-
     <p>We've emailed a link to <strong><?= $email->getValue() ?></strong> so that you can reset your password.</p>
-
     <p>If you haven't received the email within a few minutes, please check your spam, bulk or junk email folder – it may have been mistakenly blocked by your email system.</p>
-
     <p>If it doesn't arrive at all, please check that you've given us the correct email address for your existing LPA account &ndash; we'll only send a password reset link to the email address belonging to an account.</p>
 
     <p><a href="<?= $this->url('login') ?>">Sign in</a></p>
@@ -32,12 +39,9 @@ $form->prepare();
 
         <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
 
-            <? # TODO - how are errors meant to be styled? ?>
-
-            <?= $this->formElement($form->get('secret')) ?>
-            
-            <div class="group <?= count($form->get('secret')->getMessages()) > 0 ? 'validation' : ''; ?>">
-            <?= $this->formElementErrors($form->get('secret')) ?>
+            <div class="<?= $this->elementGroupClass($csrf) ?>">
+                <?= $this->formElement($csrf) ?>
+                <?= $this->formElementErrors($csrf) ?>
             </div>
 
             <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
@@ -46,14 +50,8 @@ $form->prepare();
                 <p>Because of the following problems:</p>
                 <ol>
                 <?php 
-                    foreach ($form->getElements() as $element) {
-                        foreach ($element->getMessages() as $elementMessage) {
-                            echo '<li><a href="#' . $element->getAttribute('name') . '">';
-                            echo $elementMessage;
-                            echo '</a></li>';
-                        }
-                    }            
-
+                    $this->linkedErrorList($form);
+                    
                     if (isset($this->error)) {
                         echo '<li><a href="">';
                         switch($this->error){
@@ -73,52 +71,30 @@ $form->prepare();
                 </div>
             <? } ?>
 
-            <div class="group <?= count($email->getMessages()) > 0 ? 'validation' : ''; ?>">
-
+            <div class="<?= $this->elementGroupClass($email); ?>">
                 <?= $formLabel->openTag() . $email->getOption('label'); ?>
-                    <?= $this->formElementErrors($email) ?>
-                    <?= $this->formInput(
-                            $email->setAttributes([
-                                'id' => 'email',
-                                'autocomplete' => 'off'
-                            ])
-                        ) 
-                    ?>
-
-                <?= $formLabel->closeTag() ?>
-                
+                Email
+                <br>
+                <?= $this->formElementErrors($email) ?>
+                <?= $this->formInput($email) ?>
+                <?= $formLabel->closeTag() ?>                
             </div>
             
-            <div class="group <?= count($email_confirm->getMessages()) > 0 ? 'validation' : ''; ?>">
-
-            <?= $formLabel->openTag() . $email_confirm->getOption('label'); ?>
+            <div class="<?= $this->elementGroupClass($email_confirm); ?>">
+                <?= $formLabel->openTag() . $email_confirm->getOption('label'); ?>
+                Please re-enter your email address
+                <br>
                 <?= $this->formElementErrors($email_confirm) ?>
-                
-                <?= $this->formInput(
-                        $email_confirm->setAttributes([
-                            'id' => 'email_confirm',
-                            'autocomplete' => 'off'
-                        ])
-                    ) 
-                ?>
-
+                <?= $this->formInput($email_confirm) ?>
                 <?= $formLabel->closeTag() ?>
             </div>
 
             <div class="action group"><p class="action group">
-
-                <?= $this->formInput(
-                    $submit->setAttributes([
-                        'id' => 'form-submit',
-                        'value' => 'Email me the link',
-                        'class' => 'button'
-                    ])
-                ) ?>
-
+                <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
             </div>
 
         <?= $this->form()->closeTag(); ?>
 
     </div>
 
-<? } ?>
+<? }
