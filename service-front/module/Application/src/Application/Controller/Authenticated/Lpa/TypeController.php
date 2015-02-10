@@ -39,7 +39,7 @@ class TypeController extends AbstractLpaController
                 $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
                 
                 // persist data
-                if(!$this->lpaService->setType($lpaId, $form->get('type')->getValue())) {
+                if(!$this->getLpaApplicationService()->setType($lpaId, $form->get('type')->getValue())) {
                     throw new \RuntimeException('API client failed to set LPA type for id: '.$lpaId);
                 }
                 

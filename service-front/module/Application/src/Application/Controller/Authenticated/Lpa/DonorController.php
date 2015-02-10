@@ -55,7 +55,7 @@ class DonorController extends AbstractLpaController
                 
                 // persist data
                 $donor = new Donor($form->getDataForModel());
-                if(!$this->lpaService->setDonor($lpaId, $donor)) {
+                if(!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
                     throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
                 }
                 
