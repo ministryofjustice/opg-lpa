@@ -2,6 +2,8 @@
 
 <phpunit bootstrap="Bootstrap.php" colors="true">
     <testsuite name="ApplicationTest">
-        <directory>./ApplicationTest/</directory>
+        <directory>./ApplicationTest/Form</directory>
+        <directory>./ApplicationTest/Model</directory>
+        <directory>./ApplicationTest/View</directory>
     </testsuite>
 </phpunit>
