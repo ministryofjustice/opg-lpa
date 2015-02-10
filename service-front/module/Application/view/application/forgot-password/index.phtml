@@ -35,55 +35,73 @@ $form->prepare();
             <? # TODO - how are errors meant to be styled? ?>
 
             <?= $this->formElement($form->get('secret')) ?>
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($form->get('secret')) ?>
-            </p>
+            
+            <div class="group <?= count($form->get('secret')->getMessages()) > 0 ? 'validation' : ''; ?>">
+            <?= $this->formElementErrors($form->get('secret')) ?>
+            </div>
 
-            <? if( isset($this->error) ){ ?>
-                <p>
-                <?
-                    switch($this->error){
-                        case 'RECEIVED_IN_LAST_5_MINUTES':
-                            echo $this->escapehtml( "You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake." ); break;
-                        case 'ACCOUNT_NOT_FOUND':
-                            echo$this->escapehtml( "We could not find an account for this email address." ); break;
-                        case 'ACCOUNT_NOT_ACTIVE':
-                            echo $this->escapehtml( "You need to activate your account before you reset your password." ); break;
-                        default:
-                            echo $this->escapehtml( $this->error );
+            <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
+                <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+                <h1 id="error-heading">There was a problem submitting the form</h1>
+                <p>Because of the following problems:</p>
+                
+                <?php 
+                    foreach ($form->getElements() as $element) {
+                        foreach ($element->getMessages() as $elementMessage) {
+                            echo '<ol><li><a href="#' . $element->getAttribute('name') . '">';
+                            echo $elementMessage;
+                            echo '</a></li></ol>';
+                        }
+                    }            
+
+                    if (isset($this->error)) {
+                        echo '<ol><li><a href="">';
+                        switch($this->error){
+                            case 'RECEIVED_IN_LAST_5_MINUTES':
+                                echo $this->escapehtml( "You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake." ); break;
+                            case 'ACCOUNT_NOT_FOUND':
+                                echo$this->escapehtml( "We could not find an account for this email address." ); break;
+                            case 'ACCOUNT_NOT_ACTIVE':
+                                echo $this->escapehtml( "You need to activate your account before you reset your password." ); break;
+                            default:
+                                echo $this->escapehtml( $this->error );
+                        }
+                        echo '</a></li></ol>';
                     }
                 ?>
-                </p>
+                </div>
             <? } ?>
 
             <div class="group <?= count($email->getMessages()) > 0 ? 'validation' : ''; ?>">
 
-                <label for="email" id="email-label" class="required">Email address
+                <?= $formLabel->openTag() . $email->getOption('label'); ?>
                     <?= $this->formElementErrors($email) ?>
                     <?= $this->formInput(
-                    $email->setAttributes([
-                        'id' => 'email',
-                        'autocomplete' => 'off'
-                    ])
-                ) ?>
+                            $email->setAttributes([
+                                'id' => 'email',
+                                'autocomplete' => 'off'
+                            ])
+                        ) 
+                    ?>
 
-                </label>
+                <?= $formLabel->closeTag() ?>
                 
             </div>
             
             <div class="group <?= count($email_confirm->getMessages()) > 0 ? 'validation' : ''; ?>">
 
-                <label for="email_confirm" id="email_confirm-label" class="required">Re-enter your email address
+            <?= $formLabel->openTag() . $email_confirm->getOption('label'); ?>
                 <?= $this->formElementErrors($email_confirm) ?>
                 
                 <?= $this->formInput(
-                    $email_confirm->setAttributes([
-                        'id' => 'email_confirm',
-                        'autocomplete' => 'off'
-                    ])
-                ) ?>
+                        $email_confirm->setAttributes([
+                            'id' => 'email_confirm',
+                            'autocomplete' => 'off'
+                        ])
+                    ) 
+                ?>
 
-                </label>
+                <?= $formLabel->closeTag() ?>
             </div>
 
             <div class="action group"><p class="action group">
