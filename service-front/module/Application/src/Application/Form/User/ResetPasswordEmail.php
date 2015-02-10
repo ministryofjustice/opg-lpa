@@ -18,6 +18,9 @@ class ResetPasswordEmail extends AbstractForm {
         //---
 
         $this->add(array(
+            'options' => [
+                'label' => 'Title',
+            ],
             'name' => 'email',
             'type' => 'Email',
         ));

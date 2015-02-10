@@ -58,29 +58,23 @@ $form->prepare();
 
             <div class="group <?= count($email->getMessages()) > 0 ? 'validation' : ''; ?>">
 
-                <?= $formLabel->openTag() . $email->getOption('label'); ?>
-                <label for="email" id="email-label" class="required">Email address</label>
-                <p class='form-element-errors'>
+                <label for="email" id="email-label" class="required">Email address
                     <?= $this->formElementErrors($email) ?>
-                </p>
-                <?= $this->formInput(
+                    <?= $this->formInput(
                     $email->setAttributes([
                         'id' => 'email',
                         'autocomplete' => 'off'
                     ])
                 ) ?>
 
-                <?= $formLabel->closeTag() ?>
+                </label>
                 
             </div>
             
             <div class="group <?= count($email_confirm->getMessages()) > 0 ? 'validation' : ''; ?>">
 
-                <label for="email_confirm" id="email_confirm-label" class="required">Re-enter your email address</label>
-                
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($email_confirm) ?>
-                </p>
+                <label for="email_confirm" id="email_confirm-label" class="required">Re-enter your email address
+                <?= $this->formElementErrors($email_confirm) ?>
                 
                 <?= $this->formInput(
                     $email_confirm->setAttributes([
@@ -89,6 +83,7 @@ $form->prepare();
                     ])
                 ) ?>
 
+                </label>
             </div>
 
             <div class="action group"><p class="action group">
