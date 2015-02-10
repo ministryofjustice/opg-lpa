@@ -23,7 +23,7 @@ class WhenLpaStartsForm extends AbstractForm
                     
             ],
     ];
-        
+    
     public function __construct ($formName = 'whenLpaStarts')
     {
         
@@ -33,9 +33,9 @@ class WhenLpaStartsForm extends AbstractForm
     
     public function modelValidation()
     {
-        $decisions = new PrimaryAttorneyDecisions($this->unflattenForModel($this->data));
+        $decisions = new PrimaryAttorneyDecisions($this->modelization($this->data));
         
-        $validation = $decisions->validate();
+        $validation = $decisions->validate(['when']);
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];

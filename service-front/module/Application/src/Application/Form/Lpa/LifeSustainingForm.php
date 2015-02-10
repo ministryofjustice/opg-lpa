@@ -6,7 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 class LifeSustainingForm extends AbstractForm
 {
     protected $formElements = [
-            'lifeSustaining' => [
+            'canSustainLife' => [
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
@@ -33,9 +33,9 @@ class LifeSustainingForm extends AbstractForm
     
     public function modelValidation()
     {
-        $decisions = new PrimaryAttorneyDecisions($this->unflattenForModel($this->data));
+        $decisions = new PrimaryAttorneyDecisions($this->modelization($this->data));
         
-        $validation = $decisions->validate();
+        $validation = $decisions->validate(['canSustainLife']);
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];

@@ -12,7 +12,6 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Form\Lpa\TypeForm;
 use Zend\View\Model\ViewModel;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class TypeController extends AbstractLpaController
@@ -24,10 +23,6 @@ class TypeController extends AbstractLpaController
     {
         $form = new TypeForm();
         
-        if(($this->getLpa() instanceof Lpa) && ($this->getLpa()->document instanceof Document)) {
-            $form->bind($this->getLpa()->document);
-        }
-        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -37,16 +32,21 @@ class TypeController extends AbstractLpaController
             if($form->isValid()) {
                 
                 $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setType($lpaId, $form->get('type')->getValue())) {
                     throw new \RuntimeException('API client failed to set LPA type for id: '.$lpaId);
                 }
                 
-                $this->redirect()->toRoute('lpa/donor', ['lpa-id' => $lpaId]);
+                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
-        
+        else {
+            if($this->getLpa()->document instanceof Document) {
+                $form->bind($this->getLpa()->document->flatten());
+            }
+        }
         return new ViewModel(['form'=>$form]);
     }
 }
