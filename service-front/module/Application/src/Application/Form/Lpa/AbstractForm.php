@@ -9,7 +9,6 @@ use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\InputFilter\InputFilter;
 use Zend\Form\FormInterface;
-use Opg\Lpa\DataModel\AbstractData;
 
 abstract class AbstractForm extends Form
 {
@@ -125,42 +124,40 @@ abstract class AbstractForm extends Form
      */
     public function getInputFilter()
     {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-    
-            foreach($this->formElements as $name => $elm) {
-                $params = [
-                        'name' => $name,
-                        'required' => false,
-                ];
-                
-                if(array_key_exists('required', $elm)) {
-                    $params['required'] = $elm['required'];
-                }
-                
-                // if 'filters' is not set in a form class, add the default filters - StripTags and StringTrim,
-                // if 'filters' is set in a form class and is not false, merge filters with the default ones.
-                // if 'filters; is set in a form class and is false, filtering is disabled.
-                if(!array_key_exists('filters', $elm)) {
-                    $elm['filters']  = [
-                            ['name' => 'StripTags'],
-                            ['name' => 'StringTrim'],
-                    ];
-                }
-                elseif($elm['filters'] !== false) {
-                    $elm['filters']  = [
+        $inputFilter = parent::getInputFilter();
+
+        foreach($this->formElements as $name => $elm) {
+            $params = [
+                    'name' => $name,
+                    'required' => false,
+            ];
+            
+            if(array_key_exists('required', $elm)) {
+                $params['required'] = $elm['required'];
+            }
+            
+            // if 'filters' is not set in a form class, add the default filters - StripTags and StringTrim,
+            // if 'filters' is set in a form class and is not false, merge filters with the default ones.
+            // if 'filters; is set in a form class and is false, filtering is disabled.
+            if(!array_key_exists('filters', $elm)) {
+                $elm['filters']  = [
                         ['name' => 'StripTags'],
                         ['name' => 'StringTrim'],
-                    ];
-                
-                    array_merge($params['filters'], $elm['filters']);
-                }
-                
-                $inputFilter->add($params);
+                ];
             }
-    
-            $this->inputFilter = $inputFilter;
+            elseif($elm['filters'] !== false) {
+                $elm['filters']  = [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ];
+            
+                array_merge($params['filters'], $elm['filters']);
+            }
+            
+            $inputFilter->add($params);
         }
+
+        $this->inputFilter = $inputFilter;
     
         return $this->inputFilter;
     }
