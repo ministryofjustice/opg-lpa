@@ -1,8 +1,9 @@
 <?php
+    $csrf           = $form->get('secret');
     $title          = 'LPA Type';
     $this->headTitle($title);
     $form           = $this->form;
-    $whenLpaStarts = $form->get('lifeSustaining');
+    $canSustainLife = $form->get('canSustainLife');
     $submit         = $form->get('submit');
     
     $formLabel      = $this->plugin('formLabel');
@@ -33,12 +34,17 @@
         
         <div class="form_element">
         
-            <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
+        
+        <?= $formLabel->openTag() . $canSustainLife->getOption('label'); ?>
             
-            <?= $this->formRadio($whenLpaStarts) ?>
+            <?= $this->formRadio($canSustainLife) ?>
             
             <p class='form-element-errors'>
-                <?= $this->formElementErrors($whenLpaStarts) ?>
+                <?= $this->formElementErrors($canSustainLife) ?>
             </p>
             
             <?= $formLabel->closeTag() ?>
@@ -51,10 +57,7 @@
             <?= $this->formInput($submit) ?>
         
         </div>
-        
-        
-        <?= $this->formElement($form->get('secret')) ?>
-        
+                
         <?= $this->form()->closeTag(); ?>
     
     </div>
