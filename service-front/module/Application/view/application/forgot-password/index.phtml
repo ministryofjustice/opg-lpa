@@ -1,10 +1,12 @@
 <?php
 
+
 $form           = $this->form;
 
 $email          = $form->get('email');
 $email_confirm  = $form->get('email_confirm');
 $submit         = $form->get('submit');
+$formLabel      = $this->plugin('formLabel');
 
 $form->prepare();
 
@@ -54,10 +56,13 @@ $form->prepare();
                 </p>
             <? } ?>
 
-            <div class="group ">
+            <div class="group <?= count($email->getMessages()) > 0 ? 'validation' : ''; ?>">
 
+                <?= $formLabel->openTag() . $email->getOption('label'); ?>
                 <label for="email" id="email-label" class="required">Email address</label>
-
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($email) ?>
+                </p>
                 <?= $this->formInput(
                     $email->setAttributes([
                         'id' => 'email',
@@ -65,24 +70,24 @@ $form->prepare();
                     ])
                 ) ?>
 
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($email) ?>
-                </p>
-
+                <?= $formLabel->closeTag() ?>
+                
             </div>
-            <div class="group ">
+            
+            <div class="group <?= count($email_confirm->getMessages()) > 0 ? 'validation' : ''; ?>">
 
                 <label for="email_confirm" id="email_confirm-label" class="required">Re-enter your email address</label>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($email_confirm) ?>
+                </p>
+                
                 <?= $this->formInput(
                     $email_confirm->setAttributes([
                         'id' => 'email_confirm',
                         'autocomplete' => 'off'
                     ])
                 ) ?>
-
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($email_confirm) ?>
-                </p>
 
             </div>
 
