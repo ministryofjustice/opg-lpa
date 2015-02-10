@@ -1,8 +1,6 @@
 <?php
 namespace Application\Form\User;
 
-use Zend\InputFilter\InputFilter;
-
 /**
  * For to request a password reset email be sent out.
  *
@@ -18,11 +16,17 @@ class ResetPasswordEmail extends AbstractForm {
         //---
 
         $this->add(array(
+            'options' => [
+                'label' => 'Email address',
+            ],
             'name' => 'email',
             'type' => 'Email',
         ));
 
         $this->add(array(
+            'options' => [
+                'label' => 'Re-enter your email address',
+            ],
             'name' => 'email_confirm',
             'type' => 'Email',
         ));
