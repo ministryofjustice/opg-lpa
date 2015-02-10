@@ -16,14 +16,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     private $lpa;
     
     /**
-     * @var Application\Model\Service\Lpa\Application
+     * @var Application\Model\FormFlowChecker
      */
-    protected $lpaService;
+    private $flowChecker;
     
     public function onDispatch(MvcEvent $e)
     {
-        $this->lpaService = $this->getServiceLocator()->get('LpaApplicationService');
-        
         # load content header in the layout if controller has a $contentHeader
         if(isset($this->contentHeader)) {
             $this->layout()->contentHeader = $this->contentHeader;
@@ -43,11 +41,10 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
          */   
-        $formFlowChecker = $this->getFlowChecker();
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
         $personIndex = $e->getRouteMatch()->getParam('person_index');
         
-        $calculatedRoute = $formFlowChecker->check($currentRoute, $personIndex);
+        $calculatedRoute = $this->getFlowChecker()->check($currentRoute, $personIndex);
         
         if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
             return $this->redirect()->toRoute($calculatedRoute);
@@ -85,11 +82,17 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $this->lpa = $lpa;
     }
     
+    /**
+     * @return \Application\Controller\Application\Model\FormFlowChecker
+     */
     public function getFlowChecker()
     {
-        $formFlowChecker = new FormFlowChecker($this->getLpa());
-        $formFlowChecker->setLpa($this->getLpa());
+        if($this->flowChecker == null) {
+            $formFlowChecker = new FormFlowChecker($this->getLpa());
+            $formFlowChecker->setLpa($this->getLpa());
+            $this->flowChecker = $formFlowChecker;
+        }
         
-        return $formFlowChecker;
+        return $this->flowChecker;
     }
 }
