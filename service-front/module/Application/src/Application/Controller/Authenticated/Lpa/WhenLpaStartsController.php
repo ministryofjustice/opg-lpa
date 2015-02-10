@@ -12,6 +12,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Form\Lpa\WhenLpaStartsForm;
 use Zend\View\Model\ViewModel;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 class WhenLpaStartsController extends AbstractLpaController
 {
@@ -22,8 +23,6 @@ class WhenLpaStartsController extends AbstractLpaController
     {
         $form = new WhenLpaStartsForm();
         
-        $form->bind(new \ArrayObject(['whenLpaStarts'=>$this->getLpa()->document->primaryAttorneyDecisions->when]));
-        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -31,7 +30,22 @@ class WhenLpaStartsController extends AbstractLpaController
             
             if($form->isValid()) {
                 
-//                 $this->redirect('lpa/donor', ['lpa-id'=>$this->request->getPost('lpa-id')]);
+                $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+                
+                $primaryAttorneyDecisions = new PrimaryAttorneyDecisions(['when' => $form->get('whenLpaStarts')->getValue()]);
+                
+                // persist data
+                if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
+                    throw new \RuntimeException('API client failed to set when LPA starts for id: '.$lpaId);
+                }
+                
+                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            }
+        }
+        else {
+            if($this->getLpa()->document->primaryAttorneyDecisions != null) {
+                $form->bind($this->getLpa()->document->primaryAttorneyDecisions->flatten());
             }
         }
         
