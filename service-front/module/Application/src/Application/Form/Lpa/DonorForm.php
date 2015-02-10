@@ -45,7 +45,7 @@ class DonorForm extends AbstractForm
                     ],
             ],
             'email-address' => [
-                    'type' => 'Text',
+                    'type' => 'Email',
                     'options' => [
                             'label' => 'Email address'
                     ],
@@ -132,5 +132,19 @@ class DonorForm extends AbstractForm
                     'messages' => $this->modelValidationMessageConverter($validation),
             ];
         }
+    }
+    
+    public function getModelData()
+    {
+        $modelizedData = $this->unflattenForModel($this->data);
+        
+        if($modelizedData['dob']['date'] == "") {
+            $modelizedData['dob'] = null;
+        }
+        
+        if($modelizedData['email']['address'] == "") {
+            $modelizedData['email'] = null;
+        }
+        
     }
 }
