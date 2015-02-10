@@ -99,7 +99,7 @@ abstract class AbstractForm extends Form
         $modelValidationResult = $this->modelValidation();
         
         // take both Zend validation and model validation result into account 
-        $this->isValid = $result = $filter->isValid() & $modelValidationResult['isValid'];
+        $this->isValid = $result = (bool) ($filter->isValid() & $modelValidationResult['isValid']);
         
         $this->hasValidated = true;
         
