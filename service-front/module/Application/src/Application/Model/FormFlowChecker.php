@@ -12,6 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class FormFlowChecker
 {
@@ -27,12 +28,18 @@ class FormFlowChecker
             'lpa/primary-attorney'                          => 'isAttorneyAccessible',
             'lpa/primary-attorney/add'                      => 'isAttorneyAddAccessible',
             'lpa/primary-attorney/edit'                     => 'isAttorneyEditAccessible',
-            'lpa/primary-attorney/delete'                   => 'isAttorneyEditAccessible',
+            'lpa/primary-attorney/delete'                   => 'isAttorneyDeleteAccessible',
+            'lpa/primary-attorney/add-trust'                => 'isAttorneyAddTrustAccessible',
+            'lpa/primary-attorney/edit-trust'               => 'isAttorneyEditTrustAccessible',
+            'lpa/primary-attorney/delete-trust'             => 'isAttorneyDeleteTrustAccessible',
             'lpa/how-primary-attorneys-make-decision'       => 'isHowPrimaryAttorneysMakeDecisionAccessible',
             'lpa/replacement-attorney'                      => 'isReplacementAttorneyAccessible',
             'lpa/replacement-attorney/add'                  => 'isReplacementAttorneyAddAccessible',
             'lpa/replacement-attorney/edit'                 => 'isReplacementAttorneyEditAccessible',
             'lpa/replacement-attorney/delete'               => 'isReplacementAttorneyDeleteAccessible',
+            'lpa/replacement-attorney/add-trust'            => 'isReplacementAttorneyAddTrustAccessible',
+            'lpa/replacement-attorney/edit-trust'           => 'isReplacementAttorneyEditTrustAccessible',
+            'lpa/replacement-attorney/delete-trust'         => 'isReplacementAttorneyDeleteTrustAccessible',
             'lpa/when-replacement-attorney-step-in'         => 'isWhenReplacementAttorneyStepInAccessible',
             'lpa/how-replacement-attorneys-make-decision'   => 'isHowReplacementAttorneysMakeDecisionAccessible',
             'lpa/certificate-provider'                      => 'isCertificateProviderAccessible',
@@ -66,11 +73,17 @@ class FormFlowChecker
             'lpa/primary-attorney/add'                      => 'lpa/primary-attorney',
             'lpa/primary-attorney/edit'                     => 'lpa/primary-attorney',
             'lpa/primary-attorney/delete'                   => 'lpa/primary-attorney',
+            'lpa/primary-attorney/add-trust'                => 'lpa/primary-attorney',
+            'lpa/primary-attorney/edit-trust'               => 'lpa/primary-attorney',
+            'lpa/primary-attorney/delete-trust'             => 'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision'       => 'lpa/replacement-attorney',
             'lpa/replacement-attorney'                      => ['lpa/when-replacement-attorney-step-in', 'lpa/how-replacement-attorneys-make-decision', 'lpa/how-replacement-attorneys-make-decision', 'lpa/certificate-provider'],
             'lpa/replacement-attorney/add'                  => 'lpa/replacement-attorney',
             'lpa/replacement-attorney/edit'                 => 'lpa/replacement-attorney',
             'lpa/replacement-attorney/delete'               => 'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add-trust'            => 'lpa/replacement-attorney',
+            'lpa/replacement-attorney/edit-trust'           => 'lpa/replacement-attorney',
+            'lpa/replacement-attorney/delete-trust'         => 'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in'         => ['lpa/how-replacement-attorneys-make-decision', 'lpa/how-replacement-attorneys-make-decision', 'lpa/certificate-provider'],
             'lpa/how-replacement-attorneys-make-decision'   => 'lpa/certificate-provider',
             'lpa/certificate-provider'                      => 'lpa/people-to-notify',
@@ -240,6 +253,36 @@ class FormFlowChecker
             return 'lpa/primary-attorney';
         }
     }
+
+    private function isAttorneyAddTrustAccessible()
+    {
+        if($this->isAttorneyAccessible() && (!$this->lpaHasTrustCorporation())) {
+            return true;
+        }
+        else {
+            return 'lpa/primary-attorney';
+        }
+    }
+    
+    private function isAttorneyEditTrustAccessible()
+    {
+        if($this->lpaHasTrustCorporation('primary')) {
+            return true;
+        }
+        else {
+            return 'lpa/primary-attorney';
+        }
+    }
+    
+    private function isAttorneyDeleteTrustAccessible($idx)
+    {
+        if($this->lpaHasTrustCorporation('primary')) {
+            return true;
+        }
+        else {
+            return 'lpa/primary-attorney';
+        }
+    }
     
     private function isHowPrimaryAttorneysMakeDecisionAccessible()
     {
@@ -287,6 +330,36 @@ class FormFlowChecker
     private function isReplacementAttorneyDeleteAccessible($idx)
     {
         if($this->lpaHasReplacementAttorney($idx)) {
+            return true;
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+
+    private function isReplacementAttorneyAddTrustAccessible()
+    {
+        if($this->isReplacementAttorneyAccessible() && (!$this->lpaHasTrustCorporation())) {
+            return true;
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+    
+    private function isReplacementAttorneyEditTrustAccessible()
+    {
+        if($this->lpaHasTrustCorporation('replacement')) {
+            return true;
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+    
+    private function isReplacementAttorneyDeleteTrustAccessible($idx)
+    {
+        if($this->lpaHasTrustCorporation('replacement')) {
             return true;
         }
         else {
@@ -700,6 +773,42 @@ class FormFlowChecker
                 && array_key_exists($index, $this->lpa->document->primaryAttorneys)
                 && ($this->lpa->document->primaryAttorneys[$index] instanceof AbstractAttorney));
         }
+    }
+    
+    private function lpaHasTrustCorporation($whichGroup)
+    {
+        if($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining()) {
+            
+            if($whichGroup == 'primary') {
+                foreach($this->lpa->document->primaryAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
+                    }
+                }
+            }
+            elseif($whichGroup == 'replacement') {
+                foreach($this->lpa->document->replacementAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
+                    }
+                }
+            }
+            else {
+                foreach($this->lpa->document->primaryAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
+                    }
+                }
+                
+                foreach($this->lpa->document->replacementAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
     
     private function lpaHasLifeSustaining()
