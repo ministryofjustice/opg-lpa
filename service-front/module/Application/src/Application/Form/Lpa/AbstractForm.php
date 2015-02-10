@@ -21,8 +21,11 @@ abstract class AbstractForm extends Form
         
         $this->setAttribute('method', 'post');
         $this->setAttribute('enctype', 'multipart/form-data');
-        
-        $this->add(new Csrf('secret'));
+
+        $this->add( (new Csrf('secret'))->setCsrfValidatorOptions([
+            'timeout' => null,
+            'salt' => sha1('Application\Form\Lpa-Salt'),
+        ]));
         
         foreach($this->formElements as $name => $elm) {
             $params = [
