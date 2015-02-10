@@ -99,9 +99,29 @@ class DonorForm extends AbstractForm
     
     public function modelValidation()
     {
-        $donor = new Donor($this->unflattenForModel($this->data));
+        $modelizedData = $this->unflattenForModel($this->data);
+        
+        if($modelizedData['dob']['date'] == "") {
+            $modelizedData['dob'] = null;
+        }
+        
+        if($modelizedData['email']['address'] == "") {
+            $modelizedData['email'] = null;
+        }
+        
+        $donor = new Donor($modelizedData);
         
         $validation = $donor->validate();
+        
+        if(($modelizedData['dob'] == null) && array_key_exists('dob', $validation)) {
+            $validation['dob-date'] = $validation['dob'];
+            unset($validation['dob']);
+        }
+        
+        if(($modelizedData['email'] == null) && array_key_exists('email', $validation)) {
+            $validation['email-address'] = $validation['email'];
+            unset($validation['email']);
+        }
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];
@@ -112,5 +132,19 @@ class DonorForm extends AbstractForm
                     'messages' => $this->modelValidationMessageConverter($validation),
             ];
         }
+    }
+    
+    public function getModelData()
+    {
+        $modelizedData = $this->unflattenForModel($this->data);
+        
+        if($modelizedData['dob']['date'] == "") {
+            $modelizedData['dob'] = null;
+        }
+        
+        if($modelizedData['email']['address'] == "") {
+            $modelizedData['email'] = null;
+        }
+        
     }
 }

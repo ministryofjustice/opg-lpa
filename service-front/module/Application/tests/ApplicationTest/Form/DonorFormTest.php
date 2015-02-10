@@ -13,6 +13,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                 [
                         'name-first' => 'first',
                         'name-last' => 'last',
+                        'email-address' => '',
                         'address-address1' => 'add1',
                         'address-postcode' => 'postcode',
                         'dob-date' => new \DateTime('1984-05-20'),
@@ -27,6 +28,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                         'name-first' => '',
                         'name-last' => '',
                         'address-address1' => 'add1',
+                        'email-address' => 'inv@lid@mail.address',
                         'dob-date' => '',
                         'canSign' => 0
                 ]);
@@ -41,7 +43,10 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                                 0 => 'cannot-be-blank'
                         ),
                         'dob-date' => array(
-                                0 => 'must-be-less-than-or-equal:'.Date('M j, Y', time()).' 12:00 AM',
+                                0 => 'cannot-be-blank'
+                        ),
+                        'email-address' => array(
+                                0 => 'invalid-email-address'
                         ),
                         'address-address2' => array(
                                 0 => 'linked-1-cannot-be-null'

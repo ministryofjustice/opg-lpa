@@ -7,6 +7,10 @@ class PageTitle extends AbstractHelper
 {
     public function __invoke()
     {
+        # TODO - remove.
+        // This helper is Deprecated.
+        return '';
+
         switch ($this->view->routeName()) {
             case 'login': return 'Sign in';
             case 'enable-cookie': return 'Enable Cookies';
