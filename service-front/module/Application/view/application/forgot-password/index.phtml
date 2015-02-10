@@ -44,18 +44,18 @@ $form->prepare();
                 <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
                 <h1 id="error-heading">There was a problem submitting the form</h1>
                 <p>Because of the following problems:</p>
-                
+                <ol>
                 <?php 
                     foreach ($form->getElements() as $element) {
                         foreach ($element->getMessages() as $elementMessage) {
-                            echo '<ol><li><a href="#' . $element->getAttribute('name') . '">';
+                            echo '<li><a href="#' . $element->getAttribute('name') . '">';
                             echo $elementMessage;
-                            echo '</a></li></ol>';
+                            echo '</a></li>';
                         }
                     }            
 
                     if (isset($this->error)) {
-                        echo '<ol><li><a href="">';
+                        echo '<li><a href="">';
                         switch($this->error){
                             case 'RECEIVED_IN_LAST_5_MINUTES':
                                 echo $this->escapehtml( "You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake." ); break;
@@ -66,9 +66,10 @@ $form->prepare();
                             default:
                                 echo $this->escapehtml( $this->error );
                         }
-                        echo '</a></li></ol>';
+                        echo '</a></li>';
                     }
                 ?>
+                </ol>
                 </div>
             <? } ?>
 

@@ -9,6 +9,7 @@ class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
     {
         $this->setMessageOpenFormat('<span class="validation-message">');
         $this->setMessageCloseString('</span>');
+        $this->setMessageSeparatorString('<br>');
         
         return parent::__invoke($element, $attributes);
     }
