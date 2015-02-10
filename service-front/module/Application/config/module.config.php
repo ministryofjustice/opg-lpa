@@ -75,9 +75,7 @@ return [
             'accountInfo'       => 'Application\View\Helper\AccountInfo',
             'pageTitle'         => 'Application\View\Helper\PageTitle',
             'routeName'         => 'Application\View\Helper\RouteName',
-            'environment'       => 'Application\View\Helper\Environment',
-            'noticeBoard'       => 'Application\View\Helper\NoticeBoard',
-            'fee'               => 'Application\View\Helper\Fee',
+            'formElementErrors' => 'Application\View\Helper\FormElementErrors',
         ],
     ],
 
