@@ -1,4 +1,5 @@
 <?php
+    $csrf       = $form->get('secret');
     $title      = 'LPA Donor';
     $this->headTitle($title);
     $form       = $this->form;
@@ -21,6 +22,11 @@
 
 
 <?= $this->form()->openTag($form); ?>
+
+<div class="<?= $this->elementGroupClass($csrf) ?>">
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
+</div>
 
 <div class="form_element">
 
@@ -192,8 +198,5 @@
     <?= $this->formInput($submit) ?>
 
 </div>
-
-
-<?= $this->formElement($form->get('secret')) ?>
 
 <?= $this->form()->closeTag(); ?>
