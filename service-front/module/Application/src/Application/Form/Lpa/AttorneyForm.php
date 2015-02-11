@@ -1,7 +1,7 @@
 <?php
 namespace Application\Form\Lpa;
 
-class DonorForm extends AbstractForm
+class AttorneyForm extends AbstractForm
 {
     use \Application\Form\Lpa\Traits\PersonFormModelization;
     
@@ -75,12 +75,6 @@ class DonorForm extends AbstractForm
                     ],
                     
             ],
-            'canSign' => [
-                    'type' => 'CheckBox',
-                    'options' => [
-                            'label' => 'Donor is able to sign on the form'
-                    ],
-            ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
                     'attributes' => [
@@ -90,7 +84,7 @@ class DonorForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'donor')
+    public function __construct ($formName = 'primary-attorney')
     {
         
         parent::__construct($formName);
@@ -100,8 +94,7 @@ class DonorForm extends AbstractForm
     public function modelValidation()
     {
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Donor');
+        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
         
     }
-    
 }
