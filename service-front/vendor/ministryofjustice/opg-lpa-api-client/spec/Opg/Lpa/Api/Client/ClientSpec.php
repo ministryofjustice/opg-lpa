@@ -426,10 +426,11 @@ class ClientSpec extends ObjectBehavior
         $this->getReplacementAttorneyDecisions($lpaId)->shouldBe(null);
     }
     
-    function it_can_set_and_get_the_replacement_attorney_decisions()
+    function it_can_set_and_get_and_update_the_replacement_attorney_decisions()
     {
         $decisions = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions');
         $decisions2 = clone($decisions);
+        $decisions3 = clone($decisions);
         $decisions2->howDetails = 'Second Object';
     
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
@@ -438,6 +439,13 @@ class ClientSpec extends ObjectBehavior
         $this->getReplacementAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions->toJson());
         $this->setReplacementAttorneyDecisions($lpaId, $decisions2)->shouldBe(true);
         $this->getReplacementAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions2->toJson());
+
+        $decisions3->when = $decisions3::LPA_DECISION_WHEN_FIRST;
+        $this->setReplacementAttorneyDecisions($lpaId, $decisions3)->shouldBe(true);
+        $this->updateReplacementAttorneyDecisions($lpaId, ['when'=>$decisions3::LPA_DECISION_WHEN_LAST])->shouldBe(true);
+
+        $decisions3->when = $decisions3::LPA_DECISION_WHEN_LAST;
+        $this->getReplacementAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions3->toJson());
     }
     
     function it_can_delete_the_replacement_attorney_decisions()
@@ -456,18 +464,27 @@ class ClientSpec extends ObjectBehavior
         $this->getPrimaryAttorneyDecisions($lpaId)->shouldBe(null);
     }
     
-    function it_can_set_and_get_the_primary_attorney_decisions()
+    function it_can_set_and_get_and_update_the_primary_attorney_decisions()
     {
         $decisions = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions');
         $decisions2 = clone($decisions);
+        $decisions3 = clone($decisions);
         $decisions2->howDetails = 'Second Object';
-    
+
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
+
         $this->setPrimaryAttorneyDecisions($lpaId, $decisions)->shouldBe(true);
         $this->getPrimaryAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions->toJson());
+
         $this->setPrimaryAttorneyDecisions($lpaId, $decisions2)->shouldBe(true);
         $this->getPrimaryAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions2->toJson());
+
+        $decisions3->canSustainLife = true;
+        $this->setPrimaryAttorneyDecisions($lpaId, $decisions3)->shouldBe(true);
+        $this->updatePrimaryAttorneyDecisions($lpaId, ['canSustainLife'=>false])->shouldBe(true);
+        $decisions3->canSustainLife = false;
+        $this->getPrimaryAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions3->toJson());
     }
     
     function it_can_delete_the_primary_attorney_decisions()

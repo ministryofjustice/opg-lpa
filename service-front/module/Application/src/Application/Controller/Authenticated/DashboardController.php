@@ -38,8 +38,10 @@ class DashboardController extends AbstractAuthenticatedController
         $newLpaId = $this->getLpaApplicationService()->createApplication();
 
         if( $newLpaId === false ){
-            // Bad things happened!
-            die('Error!');
+
+            $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+            return $this->redirect()->toRoute( 'user/dashboard' );
+
         }
 
         //-------------------------------------
@@ -50,8 +52,7 @@ class DashboardController extends AbstractAuthenticatedController
             $result = $this->getLpaApplicationService()->setSeed( $newLpaId, (int)$seedId );
 
             if( $result !== true ){
-                $messages = new SessionContainer('FlashMessages');
-                $messages->warning = 'LPA created but could not set seed';
+                $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');
             }
 
         }
@@ -87,6 +88,8 @@ class DashboardController extends AbstractAuthenticatedController
 
         //----
 
+        # TODO - Move this to the service level.
+
         $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList();
 
         foreach($v2Apis as $lpa){
@@ -107,10 +110,6 @@ class DashboardController extends AbstractAuthenticatedController
 
             $lpas[] = $obj;
         }
-
-        # Get the v2 LPAs.
-
-        # Merge the list
 
         //---
         # Sort the list

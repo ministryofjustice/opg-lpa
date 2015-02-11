@@ -100,7 +100,7 @@ class AccessController extends AbstractActionController {
         }
 
         //------------------------------------
-        // Build out response from v1's
+        // Build our response from v1's
 
         $headers = $response->getHeaders();
 

@@ -22,7 +22,6 @@ class ForgotPasswordController extends AbstractActionController
         $form = new ResetPasswordEmailForm();
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password') );
 
-        $sent = false;
         $error = null;
 
         //---
@@ -43,16 +42,18 @@ class ForgotPasswordController extends AbstractActionController
                 $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $form->getData()['email'], $callback );
 
                 if( $result === true ){
-                    $sent = true;
-                } else {
-                    $error = $result;
+
+                    return (new ViewModel( ['email'=>$form->getData()['email']] ))->setTemplate('application/forgot-password/email-sent');
+
                 }
+
+                $error = $result;
 
             } // if
 
         } // if
 
-        return new ViewModel( compact('form', 'error', 'sent') );
+        return new ViewModel( compact('form', 'error' ) );
 
     } // function
 
@@ -98,7 +99,7 @@ class ForgotPasswordController extends AbstractActionController
                 $result = $this->getServiceLocator()->get('PasswordReset')->setNewPassword( $token, $form->getData()['password'] );
 
                 // if all good, direct them back to login.
-                if( $result == true ){
+                if( $result === true ){
 
                     $this->flashMessenger()->addSuccessMessage('Password successfully reset');
 
