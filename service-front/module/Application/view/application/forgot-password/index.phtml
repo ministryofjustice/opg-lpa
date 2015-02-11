@@ -4,7 +4,6 @@ $form           = $this->form;
 
 $email          = $form->get('email');
 $email_confirm  = $form->get('email_confirm');
-$submit         = $form->get('submit');
 $csrf           = $form->get('secret');
 $formLabel      = $this->plugin('formLabel');
 
@@ -22,81 +21,69 @@ $form->prepare();
 
 ?>
 
-<? if( $this->sent ){ ?>
+<p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
 
-    <h2>Thank you</h2>
-    <p>We've emailed a link to <strong><?= $email->getValue() ?></strong> so that you can reset your password.</p>
-    <p>If you haven't received the email within a few minutes, please check your spam, bulk or junk email folder – it may have been mistakenly blocked by your email system.</p>
-    <p>If it doesn't arrive at all, please check that you've given us the correct email address for your existing LPA account &ndash; we'll only send a password reset link to the email address belonging to an account.</p>
+<div class="form">
 
-    <p><a href="<?= $this->url('login') ?>">Sign in</a></p>
+    <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
 
-<? } else { ?>
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
 
-    <p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
+        <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
+            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+            <h1 id="error-heading">There was a problem submitting the form</h1>
+            <p>Because of the following problems:</p>
+            <ol>
+            <?php
+                $this->linkedErrorList($form);
 
-    <div class="form">
-
-        <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
-
-            <div class="<?= $this->elementGroupClass($csrf) ?>">
-                <?= $this->formElement($csrf) ?>
-                <?= $this->formElementErrors($csrf) ?>
-            </div>
-
-            <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
-                <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
-                <h1 id="error-heading">There was a problem submitting the form</h1>
-                <p>Because of the following problems:</p>
-                <ol>
-                <?php 
-                    $this->linkedErrorList($form);
-                    
-                    if (isset($this->error)) {
-                        echo '<li><a href="">';
-                        switch($this->error){
-                            case 'RECEIVED_IN_LAST_5_MINUTES':
-                                echo $this->escapehtml( "You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake." ); break;
-                            case 'ACCOUNT_NOT_FOUND':
-                                echo$this->escapehtml( "We could not find an account for this email address." ); break;
-                            case 'ACCOUNT_NOT_ACTIVE':
-                                echo $this->escapehtml( "You need to activate your account before you reset your password." ); break;
-                            default:
-                                echo $this->escapehtml( $this->error );
-                        }
-                        echo '</a></li>';
+                if (isset($this->error)) {
+                    echo '<li><a href="">';
+                    switch($this->error){
+                        case 'RECEIVED_IN_LAST_5_MINUTES':
+                            echo $this->escapehtml( "You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake." ); break;
+                        case 'ACCOUNT_NOT_FOUND':
+                            echo$this->escapehtml( "We could not find an account for this email address." ); break;
+                        case 'ACCOUNT_NOT_ACTIVE':
+                            echo $this->escapehtml( "You need to activate your account before you reset your password." ); break;
+                        default:
+                            echo $this->escapehtml( $this->error );
                     }
-                ?>
-                </ol>
-                </div>
-            <? } ?>
-
-            <div class="<?= $this->elementGroupClass($email); ?>">
-                <?= $formLabel->openTag() . $email->getOption('label'); ?>
-                Email
-                <br>
-                <?= $this->formElementErrors($email) ?>
-                <?= $this->formInput($email) ?>
-                <?= $formLabel->closeTag() ?>                
+                    echo '</a></li>';
+                }
+            ?>
+            </ol>
             </div>
-            
-            <div class="<?= $this->elementGroupClass($email_confirm); ?>">
-                <?= $formLabel->openTag() . $email_confirm->getOption('label'); ?>
-                Please re-enter your email address
-                <br>
-                <?= $this->formElementErrors($email_confirm) ?>
-                <?= $this->formInput($email_confirm) ?>
-                <?= $formLabel->closeTag() ?>
-            </div>
+        <? } ?>
 
-            <div class="action group">
-                <p class="action group">
-                    <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
-                </p>
-            </div>
+        <div class="<?= $this->elementGroupClass($email); ?>">
+            <?= $formLabel->openTag() . $email->getOption('label'); ?>
+            Email
+            <br>
+            <?= $this->formElementErrors($email) ?>
+            <?= $this->formInput($email) ?>
+            <?= $formLabel->closeTag() ?>
+        </div>
 
-        <?= $this->form()->closeTag(); ?>
+        <div class="<?= $this->elementGroupClass($email_confirm); ?>">
+            <?= $formLabel->openTag() . $email_confirm->getOption('label'); ?>
+            Please re-enter your email address
+            <br>
+            <?= $this->formElementErrors($email_confirm) ?>
+            <?= $this->formInput($email_confirm) ?>
+            <?= $formLabel->closeTag() ?>
+        </div>
 
-    </div>
+        <div class="action group">
+            <p class="action group">
+                <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
+            </p>
+        </div>
 
-<? }
+    <?= $this->form()->closeTag(); ?>
+
+</div>
+

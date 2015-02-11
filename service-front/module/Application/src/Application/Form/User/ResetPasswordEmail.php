@@ -25,11 +25,6 @@ class ResetPasswordEmail extends AbstractForm {
             'type' => 'Email',
         ));
 
-        $this->add(array(
-            'name' => 'submit',
-            'type' => 'Submit',
-        ));
-
         //--------------------------------
 
         $inputFilter = $this->getInputFilter();

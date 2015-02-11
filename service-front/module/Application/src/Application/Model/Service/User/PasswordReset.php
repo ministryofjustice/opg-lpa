@@ -124,7 +124,16 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         //---
 
         if( $result !== true ){
-            // error
+
+            // Error...
+            $body = $client->getLastContent();
+
+            if( isset($body['error_description']) ){
+                return $body['error_description'];
+            }
+
+            return "unknown-error";
+
         }
 
         //---
