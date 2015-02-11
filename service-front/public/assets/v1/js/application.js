@@ -4332,8 +4332,8 @@ lpa.updateSelectbox = function (el, value) {
   }
 
   // Apply the correct value
-  // As the field changes to a text box we loose it's reference,
-  // so we need to re-slect the element.
+  // As the field changes to a text box we lose its reference,
+  // so we need to reselect the element.
   form.find('[name=' + field + ']').val(value); // use the name attr as it's unique & will always exist
 };
 
