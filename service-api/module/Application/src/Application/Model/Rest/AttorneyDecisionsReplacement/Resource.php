@@ -86,6 +86,48 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
     } // function
 
+    public function patch($data, $id){
+
+        $this->checkAccess();
+
+        //---
+
+        $lpa = $this->getLpa();
+
+        $document = $lpa->document;
+
+        if( !($document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) ){
+            $document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+        }
+
+        $document->replacementAttorneyDecisions->populate( $data );
+
+        //---
+
+        $validation = $document->replacementAttorneyDecisions->validate();
+
+        if( $validation->hasErrors() ){
+            return new ValidationApiProblem( $validation );
+        }
+
+        //---
+
+        if( $lpa->validate()->hasErrors() ){
+
+            /*
+             * This is not based on user input (we already validated the Document above),
+             * thus if we have errors here it is our fault!
+             */
+            throw new RuntimeException('A malformed LPA object');
+
+        }
+
+        $this->updateLpa( $lpa );
+
+        return new Entity( $lpa->document->replacementAttorneyDecisions, $lpa );
+
+    }
+
     /**
      * Delete a resource
      *

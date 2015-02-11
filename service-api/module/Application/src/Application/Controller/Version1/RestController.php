@@ -315,9 +315,39 @@ class RestController extends AbstractRestfulController {
      * @param  $id
      * @param  $data
      */
-    public function patch($id, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined');
+    public function patch($id, $data){
+
+        if( !is_callable( [ $this->getResource(), 'patch' ] ) ){
+            return new ApiProblem(405, 'The PATCH method has not been defined');
+        }
+
+        $result = @$this->getResource()->patch( $data, $id );
+
+        //---
+
+        if( $result instanceof ApiProblem ){
+
+            return $result;
+
+        } elseif( $result instanceof EntityInterface ) {
+
+            if( count($result->toArray()) == 0 ){
+                return new NoContentResponse();
+            }
+
+            $hal = new HalEntity( $result );
+
+            $hal->setLinks( [ $this, 'generateRoute' ] );
+
+            $response = new HalResponse( $hal, 'json' );
+
+            return $response;
+
+        }
+
+        // If we get here...
+        return new ApiProblem(500, 'Unable to process request');
+
     }
 
     /**
