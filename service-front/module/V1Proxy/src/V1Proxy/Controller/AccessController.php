@@ -15,6 +15,8 @@ class AccessController extends AbstractActionController {
 
         # TODO - check the user is singed in. If not, redirect to login
 
+        $config = $this->getServiceLocator()->get('Config')['v1proxy'];
+
         //-----
 
         $client = $this->getServiceLocator()->get('ProxyClient');
@@ -34,7 +36,7 @@ class AccessController extends AbstractActionController {
         }
 
         // Prevent a user creating a new v1 LPA.
-        if( $path == '/forward/newlpa' ){
+        if( $path == '/forward/newlpa' && !$config['allow-v1-laps-to-be-created'] ){
             throw new RuntimeException("Invalid path");
         }
 

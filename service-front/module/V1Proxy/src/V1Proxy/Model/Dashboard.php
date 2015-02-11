@@ -18,6 +18,8 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
     public function getLpas(){
 
+        $config = $this->getServiceLocator()->get('Config')['v1proxy'];
+
         $hashedUserId = $this->getHashedUserId();
 
         $session = $this->getSession();
@@ -58,7 +60,11 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         // If no LPAs were found, cache that fact...
         if( !isset($array['lpa']) || count($array['lpa']) == 0 ){
-            $cache->setItem( self::USER_HAS_NO_V1_LAPS . $hashedUserId, true );
+
+            if( $config['cache-no-laps'] ){
+                $cache->setItem( self::USER_HAS_NO_V1_LAPS . $hashedUserId, true );
+            }
+
             return array();
         }
 
