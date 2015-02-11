@@ -98,6 +98,7 @@
                         <article role="article" class="group">
                             <div class="inner">
                                 <?php if(isset($this->contentHeader)): ?>
+                                <div id="accordion" class="accordion-form">
                                 <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
                                 <?php endif; ?>
 
@@ -124,6 +125,10 @@
                                         echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionBottom);
                                     }
                                 ?>
+                                
+                                <?php if(isset($this->contentHeader)): ?>
+                                </div> <!-- Close accordion --> 
+                                <?php endif; ?>
                             </div>
                         </article>
                     </div>
