@@ -1,12 +1,45 @@
 <section id="primary-attorney">
 	
-	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who are your attorneys?</h2>
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who are your attorneys?</h2>
 
     <div class="accordion-content">
+
+    <div class="section-intro">
+        <p>Attorneys are people that you appoint to make decisions on your behalf.</p>
+        <ul>
+            <li>You can have 1 or more attorneys</li>
+            <li>Attorneys must be 18 or over</li>
+            <li>Attorneys must have mental capacity – the ability to make decisions</li>
+            <li>An attorney must not be bankrupt or subject to a debt relief order</li>
+        </ul>
+		<p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
+		<p>There are some other things you must know and consider before you decide.</p>
+		<p><a class="js-guidance" href="/help/#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
+	</div>
+	
+    <?php if(isset($this->attorneys)): ?>
     
+        <?= $this->partialloop('application/primary-attorney/partials/attorney.phtml', $this->attorneys)?>
+
+        <p class="add-another"><a class="add js-form-popup" href="<?= $this->addRoute ?>">Add another attorney?</a></p>
+		
+        <div class="accordion-actions group">
+            <p>
+                <a href="<?= $this->nextRoute ?>" class="button gotonextpart" role="button">Save and continue</a>
+            </p>
+        </div>
     
+    <?php else:?>
     
+        <p><a class="add button js-form-popup" href="<?= $this->addRoute ?>" role="button">Add an attorney</a></p>
+		
+        <div class="accordion-actions group">
+            <p>
+                <span class="disabled button">Save and continue</span>
+            </p>
+        </div>
     
+    <?php endif; ?>
     
     </div>
     
