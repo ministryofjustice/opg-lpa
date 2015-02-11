@@ -7,7 +7,6 @@ use Zend\Form\Exception;
 use Zend\InputFilter\InputFilterInterface;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
-use Zend\InputFilter\InputFilter;
 use Zend\Form\FormInterface;
 
 abstract class AbstractForm extends Form
