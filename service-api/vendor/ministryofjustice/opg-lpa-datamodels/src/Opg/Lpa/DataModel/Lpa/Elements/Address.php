@@ -55,11 +55,6 @@ class Address extends AbstractData {
             new Assert\Length([ 'max' => 50 ]),
         ]);
 
-        $metadata->addPropertyConstraints('address3', [
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'max' => 50 ]),
-        ]);
-
         // This could be improved, but we'd need to be very careful not to block valid postcodes.
         $metadata->addPropertyConstraints('postcode', [
             new Assert\Type([ 'type' => 'string' ]),
@@ -76,6 +71,25 @@ class Address extends AbstractData {
             }
 
         }));
+
+    } // function
+
+    /**
+     * Returns a comma separated string representation of the address.
+     *
+     * @return string
+     */
+    public function __toString(){
+
+        $address  = "{$this->address1}, ";
+        $address .= ( !empty($this->address2) ) ? "{$this->address2}, " : '';
+        $address .= ( !empty($this->address3) ) ? "{$this->address3}, " : '';
+        $address .= ( !empty($this->postcode) ) ? "{$this->postcode}"   : '';
+
+        // Tidy the string up...
+        $address = rtrim( trim($address), ',' );
+
+        return $address;
 
     } // function
 

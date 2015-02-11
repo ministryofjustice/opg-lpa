@@ -39,8 +39,9 @@ class WhoAreYou extends AbstractData {
             new Assert\Choice([ 'choices' => array_keys(self::options()) ]),
         ]);
 
-        // For subquestion
-        $metadata->addConstraint( new Assert\Callback(function (WhoAreYou $object, ExecutionContextInterface $context){
+        $metadata->addPropertyConstraint('subquestion', new Assert\Callback(function ($value, ExecutionContextInterface $context){
+
+            $object = $context->getObject();
 
             $options = $object::options();
 
@@ -51,16 +52,17 @@ class WhoAreYou extends AbstractData {
             if( !isset($options[$object->who]) ){ return; }
 
             // Ensure the value is in the subquestion array...
-            if( !in_array( $object->subquestion, $options[$object->who]['subquestion'], true ) ){
+            if( !in_array( $value, $options[$object->who]['subquestion'], true ) ){
                 $context->buildViolation(
                     'allowed-values:'.implode(',', $options[$object->who]['subquestion'])
-                )->setInvalidValue($object->subquestion)->atPath('subquestion')->addViolation();
+                )->addViolation();
             }
 
         }));
 
-        // For qualifier
-        $metadata->addConstraint( new Assert\Callback(function (WhoAreYou $object, ExecutionContextInterface $context){
+        $metadata->addPropertyConstraint('qualifier', new Assert\Callback(function ($value, ExecutionContextInterface $context){
+
+            $object = $context->getObject();
 
             $options = $object::options();
 
@@ -71,10 +73,10 @@ class WhoAreYou extends AbstractData {
             if( !isset($options[$object->who]) ){ return; }
 
             // A qualifier is optional, so only invalid if a qualifier is not allowed, but one is set.
-            if( $options[$object->who]['qualifier'] == false && !is_null($object->qualifier) ){
+            if( $options[$object->who]['qualifier'] == false && !is_null($value) ){
                 $context->buildViolation(
                     (new Assert\Null)->message
-                )->setInvalidValue($object->qualifier)->atPath('qualifier')->addViolation();
+                )->addViolation();
             }
 
         }));

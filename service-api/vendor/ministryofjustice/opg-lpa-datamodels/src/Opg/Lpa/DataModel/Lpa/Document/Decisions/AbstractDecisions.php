@@ -36,7 +36,7 @@ abstract class AbstractDecisions extends AbstractData {
     public static function loadValidatorMetadata(ClassMetadata $metadata){
 
         $metadata->addPropertyConstraints('how', [
-            new Assert\NotBlank,
+            // Can be null
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Choice([ 'choices' => [
                 self::LPA_DECISION_HOW_DEPENDS,
