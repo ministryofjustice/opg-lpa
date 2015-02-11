@@ -55,7 +55,7 @@ class DonorController extends AbstractLpaController
             $form->setData($postData);
             if($form->isValid()) {
                 
-                $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+                $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 // persist data
@@ -93,7 +93,7 @@ class DonorController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+                $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 // persist data

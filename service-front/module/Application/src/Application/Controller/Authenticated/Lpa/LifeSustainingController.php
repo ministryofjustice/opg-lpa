@@ -30,13 +30,14 @@ class LifeSustainingController extends AbstractLpaController
             
             if($form->isValid()) {
                 
-                $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+                $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 $primaryAttorneyDecisions = new PrimaryAttorneyDecisions(['canSustainLife' => $form->get('canSustainLife')->getValue()]);
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
+                    printr($this->getLpaApplicationService()->getLastContent());exit;
                     throw new \RuntimeException('API client failed to set life sustaining for id: '.$lpaId);
                 }
                 
