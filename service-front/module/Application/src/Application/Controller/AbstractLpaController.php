@@ -106,5 +106,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                 return true;
             }
         }
+        return false;
     }
 }
