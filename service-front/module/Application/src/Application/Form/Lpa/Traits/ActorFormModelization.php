@@ -1,17 +1,17 @@
 <?php
 namespace Application\Form\Lpa\Traits;
 
-trait PersonFormModelization
+trait ActorFormModelization
 {
     public function validateModel($modelClass)
     {
         $modelizedData = $this->modelization($this->data);
     
-        if($modelizedData['dob']['date'] == "") {
+        if(array_key_exists('dob', $modelizedData) && ($modelizedData['dob']['date'] == "")) {
             $modelizedData['dob'] = null;
         }
     
-        if($modelizedData['email']['address'] == "") {
+        if(array_key_exists('email', $modelizedData) && ($modelizedData['email']['address'] == "")) {
             $modelizedData['email'] = null;
         }
     
@@ -19,12 +19,12 @@ trait PersonFormModelization
     
         $validation = $personModel->validate();
     
-        if(($modelizedData['dob'] == null) && array_key_exists('dob', $validation)) {
+        if(array_key_exists('dob', $modelizedData) && ($modelizedData['dob'] == null) && array_key_exists('dob', $validation)) {
             $validation['dob-date'] = $validation['dob'];
             unset($validation['dob']);
         }
     
-        if(($modelizedData['email'] == null) && array_key_exists('email', $validation)) {
+        if(array_key_exists('email', $modelizedData) && ($modelizedData['email'] == null) && array_key_exists('email', $validation)) {
             $validation['email-address'] = $validation['email'];
             unset($validation['email']);
         }
@@ -44,11 +44,11 @@ trait PersonFormModelization
     {
         $modelizedData = parent::getModelizedData();
     
-        if($modelizedData['dob']['date'] == "") {
+        if(array_key_exists('dob', $modelizedData) && ($modelizedData['dob']['date'] == "")) {
             $modelizedData['dob'] = null;
         }
     
-        if($modelizedData['email']['address'] == "") {
+        if(array_key_exists('email', $modelizedData) && ($modelizedData['email']['address'] == "")) {
             $modelizedData['email'] = null;
         }
     

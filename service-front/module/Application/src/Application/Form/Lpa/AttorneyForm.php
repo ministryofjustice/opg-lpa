@@ -3,7 +3,7 @@ namespace Application\Form\Lpa;
 
 class AttorneyForm extends AbstractForm
 {
-    use \Application\Form\Lpa\Traits\PersonFormModelization;
+    use \Application\Form\Lpa\Traits\ActorFormModelization;
     
     protected $formElements = [
             'name-title' => [
@@ -78,7 +78,7 @@ class AttorneyForm extends AbstractForm
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
                     'attributes' => [
-                            'value' => 'Save and continue'
+                            'value' => 'Save details'
                     ],
                     
             ],
