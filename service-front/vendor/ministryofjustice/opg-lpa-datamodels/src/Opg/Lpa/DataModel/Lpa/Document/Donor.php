@@ -103,9 +103,9 @@ class Donor extends AbstractData {
             case 'address':
                 return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
             case 'dob':
-                return ($v instanceof Elements\Dob) ? $v : new Elements\Dob( $v );
+                return ($v instanceof Elements\Dob || is_null($v)) ? $v : new Elements\Dob( $v );
             case 'email':
-                return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+                return ($v instanceof Elements\EmailAddress || is_null($v)) ? $v : new Elements\EmailAddress( $v );
         }
 
         // else...

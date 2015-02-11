@@ -750,6 +750,22 @@ class Client
         $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
         return $helper->setResource($primaryAttorneyDecisions->toJson());
     }
+
+    /**
+     * Update (patch) the primary attorney decisions
+     *
+     * @param string $lpaId
+     * @param Array $primaryAttorneyDecisions
+     * @return boolean
+     */
+    public function updatePrimaryAttorneyDecisions(
+        $lpaId,
+        Array $primaryAttorneyDecisions
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
+        return $helper->updateResource( json_encode($primaryAttorneyDecisions) );
+    }
     
     /**
      * Delete the primary attorney decisions
@@ -790,7 +806,23 @@ class Client
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
         return $helper->setResource($replacementAttorneyDecisions->toJson());
     }
-    
+
+    /**
+     * Update (patch) the replacement attorney decisions
+     *
+     * @param string $lpaId
+     * @param Array $replacementAttorneyDecisions
+     * @return boolean
+     */
+    public function updateReplacementAttorneyDecisions(
+        $lpaId,
+        Array $replacementAttorneyDecisions
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        return $helper->updateResource( json_encode($replacementAttorneyDecisions) );
+    }
+
     /**
      * Delete the replacement attorney decisions
      *
