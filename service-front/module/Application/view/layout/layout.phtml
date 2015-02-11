@@ -97,7 +97,14 @@
                     <div class="article-container group">
                         <article role="article" class="group">
                             <div class="inner">
-                                <?php if(isset($this->contentHeader)): ?>
+                                
+                                <?php
+                                    $accordionTop = $this->accordionTop($this->lpa);
+                                    $accordionBottom = $this->accordionBottom($this->lpa);
+                                    $hasAccordion = ((is_array($accordionTop) && (count($accordionTop) > 0)) || (is_array($accordionBottom) && (count($accordionBottom) > 0)));
+                                ?>
+                                
+                                <?php if($hasAccordion): ?>
                                 <div id="accordion" class="accordion-form">
                                 <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
                                 <?php endif; ?>
@@ -111,8 +118,7 @@
                                 ?>
                                 
                                 <?php
-                                    $accordionTop = $this->accordionTop($this->lpa);
-                                    if(is_array($accordionTop)) {
+                                    if(is_array($accordionTop) && (count($accordionTop) > 0)) {
                                         echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionTop);
                                     }
                                 ?>
@@ -120,13 +126,12 @@
                                 <?= $this->content?>
                                 
                                 <?php
-                                    $accordionBottom = $this->accordionBottom($this->lpa);
-                                    if(is_array($accordionBottom)) {
+                                    if(is_array($accordionBottom) && (count($accordionBottom) > 0)) {
                                         echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionBottom);
                                     }
                                 ?>
                                 
-                                <?php if(isset($this->contentHeader)): ?>
+                                <?php if($hasAccordion): ?>
                                 </div> <!-- Close accordion --> 
                                 <?php endif; ?>
                             </div>
