@@ -7,6 +7,7 @@ use Zend\Mvc\MvcEvent;
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
@@ -42,7 +43,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
          * check the requested route and redirect user to the correct one if the requested route is not available.
          */   
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
-        $personIndex = $e->getRouteMatch()->getParam('person_index');
+        $personIndex = $e->getRouteMatch()->getParam('person-index');
         
         $calculatedRoute = $this->getFlowChecker()->check($currentRoute, $personIndex);
         
@@ -94,5 +95,16 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         }
         
         return $this->flowChecker;
+    }
+
+    
+    protected function hasTrust()
+    {
+        $hasTrust = false;
+        foreach(array_merge($this->getLpa()->document->primaryAttorneys,$this->getLpa()->document->replacementAttorneys) as $attorney) {
+            if($attorney instanceof TrustCorporation) {
+                return true;
+            }
+        }
     }
 }
