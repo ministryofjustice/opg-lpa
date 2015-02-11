@@ -4,8 +4,12 @@ return array(
 
     'v1proxy' => [
 
+        // Should we cache the fact there are no v1 LPAs in a user's account.
+        // Should be TRUE in production.
         'cache-no-laps' => false,
 
+        // Should we allow new v1 LPAs to be created.
+        // Should be FALSE in production.
         'allow-v1-laps-to-be-created' => true,
 
         'redis' => [
