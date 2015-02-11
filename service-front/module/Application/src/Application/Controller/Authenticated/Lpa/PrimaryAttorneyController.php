@@ -13,6 +13,9 @@ use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Application\Controller\AbstractLpaController;
 use Application\Form\Lpa\AttorneyForm;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Application\Form\Lpa\TrustCorporationForm;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class PrimaryAttorneyController extends AbstractLpaController
 {
@@ -28,26 +31,22 @@ class PrimaryAttorneyController extends AbstractLpaController
             
             $attorneysParams = [];
             foreach($this->getLpa()->document->primaryAttorneys as $idx=>$attorney) {
+                $params = [
+                        'attorney' => [
+                                'address'   => $attorney->address->__toString()
+                        ],
+                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $attorney->id ]),
+                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $attorney->id ]),
+                ];
+                
                 if($attorney instanceof Human) {
-                    $attorneysParams[] = [
-                            'attorney' => [
-                                    'name'      => $attorney->name->__toString(),
-                                    'address'   => $attorney->address->__toString()
-                            ],
-                            'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'person-index' => $attorney->id ]),
-                            'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'person-index' => $attorney->id ]),
-                    ];
+                    $params['attorney']['name'] = $attorney->name->__toString();
                 }
                 else {
-                    $attorneysParams[] = [
-                            'attorney' => [
-                                    'name'      => $attorney->name->__toString(),
-                                    'address'   => $attorney->address->__toString()
-                            ],
-                            'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit-trust', ['lpa-id' => $lpaId]),
-                            'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete-trust', ['lpa-id' => $lpaId]),
-                    ];
+                    $params['attorney']['name'] = $attorney->name;
                 }
+                
+                $attorneysParams[] = $params;
             }
             
             return new ViewModel([
@@ -103,8 +102,8 @@ class PrimaryAttorneyController extends AbstractLpaController
         
         $viewModel->form = $form;
         
-        if(!$this->hasTrust()) {
-            $viewModel->trustCorporationRoute = $this->url()->fromRoute( 'lpa/primary-attorney/add-trust', ['lpa-id' => $lpaId] );
+        if(!$this->hasTrust() && ($this->getLpa()->document->type == Document::LPA_TYPE_PF) ) {
+            $viewModel->addTrustCorporationRoute = $this->url()->fromRoute( 'lpa/primary-attorney/add-trust', ['lpa-id' => $lpaId] );
         }
         
         return $viewModel;
@@ -121,9 +120,24 @@ class PrimaryAttorneyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new AttorneyForm();
+        $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
+        foreach($this->getLpa()->document->primaryAttorneys as $primaryAttorney) {
+            if($primaryAttorney->id == $attorneyIdx) {
+                $attorney = $primaryAttorney;
+            }
+        }
         
-        $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('person-index');
+        if(!isset($attorney)) {
+            return $this->notFoundAction();
+        }
+        
+        if($attorney instanceof Human) {
+            $form = new AttorneyForm();
+        }
+        else {
+            $form = new TrustCorporationForm();
+            $viewModel->setTemplate('application/primary-attorney/edit-trust.phtml');
+        }
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -131,7 +145,12 @@ class PrimaryAttorneyController extends AbstractLpaController
             
             if($form->isValid()) {
                 // persist data
-                $attorney = new Human($form->getModelizedData());
+                if($attorney instanceof Human) {
+                    $attorney = new Human($form->getModelizedData());
+                }
+                else {
+                    $attorney = new TrustCorporation($form->getModelizedData());
+                }
                 
                 if(!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorneyIdx)) {
                     throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
@@ -146,9 +165,12 @@ class PrimaryAttorneyController extends AbstractLpaController
             }
         }
         else {
-            $attorney = $this->getLpa()->document->primaryAttorneys[$attorneyIdx]->flatten();
-            $attorney['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
-            $form->bind($attorney);
+            $flattenAttorneyData = $attorney->flatten();
+            if($attorney instanceof Human) {
+                $flattenAttorneyData['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
+            }
+            
+            $form->bind($flattenAttorneyData);
         }
         
         $viewModel->form = $form;
@@ -159,7 +181,7 @@ class PrimaryAttorneyController extends AbstractLpaController
     public function deleteAction()
     {
         $lpaId = $this->getLpa()->id;
-        $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('person-index');
+        $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyIdx)) {
             throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
@@ -176,20 +198,40 @@ class PrimaryAttorneyController extends AbstractLpaController
     
     public function addTrustAction()
     {
-        return new ViewModel();
-    }
-    
-    public function editTrustAction()
-    {
-        return new ViewModel();
-    }
-    
-    public function deleteTrustAction()
-    {
-        // @todo delete trust from primaryAttorneys
-                
-        $this->redirect()->toRoute('lpa/primary-attorney', array('lpa-id'=>$this->getEvent()->getRouteMatch()->getParam('lpa-id')));
+        $viewModel = new ViewModel();
+        if ( $this->getRequest()->isXmlHttpRequest() ) {
+            $viewModel->setTerminal(true);
+        }
         
-        return $this->response;
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
+        $form = new TrustCorporationForm();
+        
+        if($this->request->isPost()) {
+            $postData = $this->request->getPost();
+            $form->setData($postData);
+            
+            if($form->isValid()) {
+            
+                // persist data
+                $attorney = new TrustCorporation($form->getModelizedData());
+                if( !$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney) ) {
+                    throw new \RuntimeException('API client failed to add an attorney for id: '.$lpaId);
+                }
+                
+                if ( $this->getRequest()->isXmlHttpRequest() ) {
+                    return $viewModel;
+                }
+                else {
+                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                }
+            }
+        }
+        
+        $viewModel->form = $form;
+        $viewModel->addAttorneyRoute = $this->url()->fromRoute( 'lpa/primary-attorney/add', ['lpa-id' => $lpaId] );
+        
+        return $viewModel;
     }
 }
