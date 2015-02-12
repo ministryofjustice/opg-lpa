@@ -3,7 +3,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class HowPrimaryAttorneysMakeDecisionForm extends AbstractForm
+class HowAttorneysMakeDecisionForm extends AbstractForm
 {
     protected $formElements = [
             'how' => [
