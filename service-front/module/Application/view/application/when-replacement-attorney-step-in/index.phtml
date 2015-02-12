@@ -1,12 +1,101 @@
+<?php
+    $csrf       = $form->get('secret');
+    $title      = 'How replacement attorney step in';
+    $this->headTitle($title);
+    $form       = $this->form;
+    $form->setAttributes(['id'=>'step-in-form']);
+    
+    $when        = $form->get('when');
+    $whenOptions = $when->getOptions()['value_options'];
+    $whenOptions['first'] += [
+            'label_attributes' => [
+                    'for' => 'when-first'
+            ],
+            'attributes' => [
+                    'id' => 'when-first'
+            ],
+    ];
+    $whenOptions['last'] += [
+            'label_attributes' => [
+                    'for' => 'when-last'
+            ],
+            'attributes' => [
+                    'id' => 'when-last'
+            ],
+    ];
+    $whenOptions['depends'] += [
+            'label_attributes' => [
+                    'for' => 'when-depends'
+            ],
+            'attributes' => [
+                    'id' => 'when-depends'
+            ],
+    ];
+    
+    $when->setOptions(['value_options'=>$whenOptions]);
+    $when->setLabelOptions(['disable_html_escape' => true]);
+    
+    $whenDetails = $form->get('whenDetails');
+    $submit     = $form->get('submit');
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
 <section id="when-replacement-attorney-step-in">
 	
 	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. How should your replacement attorneys step in?</h2>
 
     <div class="accordion-content">
     
-    
-    
-    
+		<div class="section-intro">
+
+			<p>You can choose when your replacement attorneys step in, and in what order.</p>
+
+			<p>Your replacement attorneys will usually all step in together as soon as 1 of your original attorneys can no longer act. They will be able to make
+				any decision jointly and severally along with the other original attorneys.</p>
+
+			<p>If you'd rather they stepped in later, or you want to choose a specific order, then select 1 of the other 2 options.</p>
+		</div>
+
+		<h3>My replacement attorneys will step in...</h3>
+		
+		<?= $this->form()->openTag($form); ?>
+		
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
+		
+        <div class="emphasised option group">
+            
+            <?= $this->formElement($when)?>
+            
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($when) ?>
+            </p>
+            
+        </div>
+        
+		<div id="toggle-when-depends" class="details-textbox" data-toggled-by="#when-depends" style="display: none;">
+			<p class="hint">
+		  	Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice. <a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Not sure what to put?</a>
+			</p>
+			<p>
+                <?= $this->formElement($whenDetails)?>
+            </p>
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($whenDetails) ?>
+            </p>
+		</div>
+
+		<div class="accordion-actions group">
+			<p>
+                <input type="submit" name="save" id="go-to-next-part" value="Save and continue" class="button gotonextpart">
+            </p>
+		</div>
+
+		<?= $this->form()->closeTag(); ?>
     
     </div>
     

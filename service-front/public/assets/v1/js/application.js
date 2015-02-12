@@ -4434,7 +4434,7 @@ $(document).ready(function () {
 
   $('[name="certificateProviderStatementType"]').hasConditionalContent();
   $('[name="how"]').hasConditionalContent();
-  $('[name="howReplacementAttorneysStepIn"]').hasConditionalContent();
+  $('[name="when"]').hasConditionalContent();
 
 
   // Who is applying to register?
