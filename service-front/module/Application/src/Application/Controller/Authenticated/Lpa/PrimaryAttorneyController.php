@@ -88,7 +88,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 // persist data
                 $attorney = new Human($form->getModelizedData());
                 if( !$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney) ) {
-                    throw new \RuntimeException('API client failed to add an attorney for id: '.$lpaId);
+                    throw new \RuntimeException('API client failed to add a primary attorney for id: '.$lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -156,7 +156,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 
                 // update attorney
                 if(!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                    throw new \RuntimeException('API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -190,7 +190,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
             if($attorney->id == $attorneyIdx) {
                 if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                    throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
                 $deletionFlag = true;
             }
@@ -236,7 +236,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 // persist data
                 $attorney = new TrustCorporation($form->getModelizedData());
                 if( !$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney) ) {
-                    throw new \RuntimeException('API client failed to add an attorney for id: '.$lpaId);
+                    throw new \RuntimeException('API client failed to add a trust corporation attorney for id: '.$lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
