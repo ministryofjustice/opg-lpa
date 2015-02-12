@@ -1,10 +1,105 @@
+<?php
+    $csrf       = $form->get('secret');
+    $title      = 'How replacement attorneys make decisions';
+    $this->headTitle($title);
+    $form       = $this->form;
+    $form->setAttributes(['id'=>'decisions-form']);
+    
+    $how        = $form->get('how');
+    $howOptions = $how->getOptions()['value_options'];
+    $howOptions['jointly-attorney-severally']['label'] .= $this->partial('application/how-replacement-attorneys-make-decision/partials/jointly-severally.phtml');
+    $howOptions['jointly']['label'] .= $this->partial('application/how-replacement-attorneys-make-decision/partials/jointly.phtml');
+    $howOptions['depends']['label'] .= $this->partial('application/how-replacement-attorneys-make-decision/partials/depends.phtml');
+    
+    $howOptions['jointly-attorney-severally'] += [
+            'label_attributes' => [
+                    'for' => 'how-jointly-attorney-severally'
+            ],
+            'attributes' => [
+                    'id' => 'how-jointly-attorney-severally'
+            ],
+    ];
+    $howOptions['jointly'] += [
+            'label_attributes' => [
+                    'for' => 'how-jointly'
+            ],
+            'attributes' => [
+                    'id' => 'how-jointly'
+            ],
+    ];
+    $howOptions['depends'] += [
+            'label_attributes' => [
+                    'for' => 'how-depends'
+            ],
+            'attributes' => [
+                    'id' => 'how-depends'
+            ],
+    ];
+    
+    $how->setOptions(['value_options'=>$howOptions]);
+    $how->setLabelOptions(['disable_html_escape' => true]);
+    
+    $howDetails = $form->get('howDetails');
+    $submit     = $form->get('submit');
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
 <section id="replacement-attorney-decisions">
 	
 	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. How should your replacement attorneys make decisions?</h2>
 	
     <div class="accordion-content">
 
+        <div class="section-intro">
+			
+    		<p>Most people want their replacement attorneys to work together in the same way that their original attorneys did.</p>
+    		<p>But if you want, you can choose to appoint your replacement attorneys differently to your originals.</p>
+			<p><a class="js-guidance" href="/help/#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Get help with making this decision</a></p>
+			
+		</div>
+		
+		<h3>How should the replacement attorneys make decisions?</h3>
+		
+        <?= $this->form()->openTag($form); ?>
     
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
+
+        <div class="emphasised option group">
+            
+            <?= $this->formElement($how)?>
+            
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($how) ?>
+            </p>
+            
+        </div>
+
+        <div id="toggle-how-depends" class="details-textbox" data-toggled-by="#how-depends" style="display: none;">
+        
+                <p class="hint">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. 
+                
+                <a class="js-guidance" href="/help/#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
+        
+                <?= $this->formElement($howDetails)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($howDetails) ?>
+                </p>
+        </div>        
+
+        <div class="accordion-actions">
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+            </p>
+        </div>
+        
+        <?= $this->form()->closeTag(); ?>
+		
         
     </div>	
 
