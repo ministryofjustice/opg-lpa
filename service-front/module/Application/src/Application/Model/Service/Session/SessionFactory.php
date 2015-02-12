@@ -7,7 +7,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 
-use Zend\Session\SessionManager;
 use Zend\Session\Exception\RuntimeException;
 use Zend\Session\SaveHandler\Cache as CacheSaveHandler;
 

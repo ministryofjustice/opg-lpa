@@ -48,13 +48,7 @@ class Module{
 
         //---
 
-        $container = new Container('initialised');
-
-        // If it's a new session, regenerate the id.
-        if (!isset($container->init)) {
-            $session->regenerateId(true);
-            $container->init = true;
-        }
+        $session->initialise();
 
     } // function
 

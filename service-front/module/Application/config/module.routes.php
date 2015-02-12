@@ -57,7 +57,7 @@ return [
                         'options' => [
                             'route'    => '/reset/:token',
                             'constraints' => [
-                                'token' => '[a-zA-Z0-9]+',
+                                'token' => '[a-f0-9]+',
                             ],
                             'defaults' => [
                                 'action'     => 'reset-password',
@@ -116,7 +116,7 @@ return [
             ], // logout
 
             'register' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Segment',
                 'options' => [
                     'route'    => '/signup',
                     'defaults' => [
@@ -129,9 +129,9 @@ return [
                     'callback' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/signup/:token',
+                            'route'    => '/confirm/:token',
                             'constraints' => [
-                                'token' => '[a-zA-Z0-9]+',
+                                'token' => '[a-f0-9]+',
                             ],
                             'defaults' => [
                                 'action'     => 'confirm',
