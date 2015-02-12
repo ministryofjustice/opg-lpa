@@ -78,7 +78,9 @@ class DonorForm extends AbstractForm
             'canSign' => [
                     'type' => 'CheckBox',
                     'options' => [
-                            'label' => 'Donor is able to sign on the form'
+                            'label' => 'This person cannot physically sign the LPA',
+                            'checked_value' => false,
+                            'unchecked_value' => true,
                     ],
             ],
             'submit' => [
