@@ -14,10 +14,15 @@ class AuthController extends AbstractBaseController {
 
         //-----------------------
 
-        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
+        $session = $this->getServiceLocator()->get('SessionManager');
 
-        // Ensure the user it logged out
-        $authenticationService->clearIdentity();
+        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
+        $session->getStorage()->clear();
+        $session->initialise();
+
+        //---
+
+        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
 
         //-----------------------
 
@@ -55,7 +60,7 @@ class AuthController extends AbstractBaseController {
             if( $result->isValid() ){
 
                 // Regenerate the session ID post authentication
-                $this->getServiceLocator()->get('SessionManager')->regenerateId(true);
+                $session->regenerateId(true);
 
                 // Send them to the dashboard...
                 return $this->redirect()->toRoute( 'user/dashboard' );
@@ -97,9 +102,9 @@ class AuthController extends AbstractBaseController {
      */
     public function logoutAction(){
 
+        // Both is probably over the top, but better to be safe!
         $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
-
-        $this->getServiceLocator()->get('SessionManager')->regenerateId(true);
+        $this->getServiceLocator()->get('SessionManager')->destroy([ 'clear_storage'=>true ]);
 
         //---
 
