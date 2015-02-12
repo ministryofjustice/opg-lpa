@@ -50,7 +50,7 @@ class ReplacementAttorneyController extends AbstractLpaController
             }
             
             return new ViewModel([
-                    'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>999] ),
+                    'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
                     'lpaId'     => $lpaId,
                     'attorneys' => $attorneysParams,
                     'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )

@@ -1,6 +1,3 @@
-<?php 
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-?>
 <section id="donor" class="section current">
 	
 	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who is the donor for this LPA?</h2>
@@ -20,12 +17,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
     			<p><a href="/guidance/#topic-donor" class="js-guidance" data-journey-click="stageprompt.lpa:help:donor">Find out more about being a donor</a></p>
     		</div>
     		
-    <?php if($this->lpa->document->donor instanceof Donor): ?>		
+    <?php if($this->lpa->document->donor instanceof \Opg\Lpa\DataModel\Lpa\Document\Donor): ?>		
     		<div class="person-summary group">
     			<div class="person">
-    				<h3><?=$this->lpa->document->donor->name->__toString()?></h3>
+    				<h3><?=$this->donor['name']?></h3>
     				<p>
-    				<?=$this->lpa->document->donor->address->__toString()?>
+    				<?=$this->donor['address']?>
     				</p>
     			</div>
     
@@ -42,7 +39,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
     <?php else:?>
     
             <p>
-                <a class="add button js-form-popup" data-form="donor" href="/lpa/<?=$this->lpa->id?>/donor/add" role="button">Add donor details</a>
+                <a class="add button js-form-popup" data-form="donor" href="<?= $this->addDonorRoute ?>" role="button">Add donor details</a>
             </p>
     		
     		<div class="accordion-actions group">

@@ -13,7 +13,6 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Application\Form\Lpa\DonorForm;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class DonorController extends AbstractLpaController
 {
@@ -25,17 +24,22 @@ class DonorController extends AbstractLpaController
         $viewModel = new ViewModel();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        if($this->getLpa() instanceof Lpa) {
-            
-            $lpaId = $this->getLpa()->id;
+        $lpaId = $this->getLpa()->id;
+        
+        $donor = $this->getLpa()->document->donor;
+        if( $donor instanceof Donor ) {
             
             return new ViewModel([
+                    'donor'         => [
+                            'name'  => $donor->name->__toString(),
+                            'address' => $donor->address->__toString(),
+                    ],
                     'editDonorUrl'  => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] ),
                     'nextRoute'     => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
             ]);
         }
         else {
-            return new ViewModel();
+            return new ViewModel([ 'addDonorRoute' => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ) ]);
         }
         
     }
@@ -100,7 +104,7 @@ class DonorController extends AbstractLpaController
                 $donor = new Donor($form->getModelizedData());
                 
                 if(!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
-                    throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
+                    throw new \RuntimeException('API client failed to update LPA donor for id: '.$lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {

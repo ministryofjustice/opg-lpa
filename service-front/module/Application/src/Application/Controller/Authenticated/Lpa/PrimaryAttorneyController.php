@@ -50,8 +50,7 @@ class PrimaryAttorneyController extends AbstractLpaController
             }
             
             return new ViewModel([
-                    'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>999] ),
-                    'lpaId'     => $lpaId,
+                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id' => $lpaId] ),
                     'attorneys' => $attorneysParams,
                     'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
             ]);
@@ -61,7 +60,6 @@ class PrimaryAttorneyController extends AbstractLpaController
             
             return new ViewModel([
                     'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
-                    'lpaId'     => $lpaId,
             ]);
             
         }
