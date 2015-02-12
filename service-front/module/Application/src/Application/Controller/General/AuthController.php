@@ -50,6 +50,7 @@ class AuthController extends AbstractBaseController {
             // Perform the authentication..
             $result = $authenticationService->authenticate( $authenticationAdapter );
 
+
             // If all went well...
             if( $result->isValid() ){
 
@@ -58,10 +59,25 @@ class AuthController extends AbstractBaseController {
 
                 // Send them to the dashboard...
                 return $this->redirect()->toRoute( 'user/dashboard' );
+
             }
 
-            // Else
-            $authError = 'Email and password combination not recognised.';
+
+            $message = $result->getMessages();
+
+            if( is_array($message) && count($message) > 0 ){
+                $message = array_pop($message);
+            }
+
+            switch( $message ){
+                case 'not-activated':
+                    $authError = 'Your account has not yet been activated.';
+                    break;
+                case 'authentication-failed':
+                default:
+                    $authError = 'Email and password combination not recognised.';
+            }
+
 
             // Help mitigate brute force attacks.
             sleep(1);

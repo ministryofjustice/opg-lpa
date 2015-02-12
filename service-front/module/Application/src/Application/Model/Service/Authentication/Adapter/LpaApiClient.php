@@ -64,7 +64,7 @@ class LpaApiClient implements AdapterInterface {
         //---
 
         if( !$response->isAuthenticated() ){
-            return new Result( Result::FAILURE, null );
+            return new Result( Result::FAILURE, null, [ $response->getErrorDescription() ] );
         }
 
         $identity = new User(
