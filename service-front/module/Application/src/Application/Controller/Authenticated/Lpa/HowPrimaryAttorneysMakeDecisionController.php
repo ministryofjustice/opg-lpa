@@ -51,7 +51,6 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $decision)) {
-                    echo $this->getLpaApplicationService()->getLAstContent();
                     throw new \RuntimeException('API client failed to set primary attorney decisions for id: '.$lpaId);
                 }
                 
