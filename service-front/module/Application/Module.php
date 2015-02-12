@@ -119,6 +119,7 @@ class Module{
             'invokables' => [
                 'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
                 'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
+                'Register'              => 'Application\Model\Service\User\Register',
                 'Payment'               => 'Application\Model\Service\Payment\Payment',
             ],
             'factories' => [

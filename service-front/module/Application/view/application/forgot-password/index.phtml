@@ -1,23 +1,26 @@
 <?php
 
-$form           = $this->form;
+    $form = $this->form;
 
-$email          = $form->get('email');
-$email_confirm  = $form->get('email_confirm');
-$csrf           = $form->get('secret');
-$formLabel      = $this->plugin('formLabel');
+    $email          = $form->get('email');
+    $email_confirm  = $form->get('email_confirm');
 
-$email->setAttributes([
-    'id' => 'email',
-    'autocomplete' => 'off'
-]);
 
-$email_confirm->setAttributes([
-    'id' => 'email_confirm',
-    'autocomplete' => 'off'
-]);
+    $email->setAttributes([
+        'id' => 'email',
+        'autocomplete' => 'off'
+    ]);
 
-$form->prepare();
+    $email_confirm->setAttributes([
+        'id' => 'email_confirm',
+        'autocomplete' => 'off'
+    ]);
+
+    $form->prepare();
+
+    //---
+
+    $formLabel = $this->plugin('formLabel');
 
 ?>
 
@@ -27,9 +30,8 @@ $form->prepare();
 
     <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
 
-        <div class="<?= $this->elementGroupClass($csrf) ?>">
-            <?= $this->formElement($csrf) ?>
-            <?= $this->formElementErrors($csrf) ?>
+        <div class="<?= $this->elementGroupClass($form->get('secret')) ?>">
+            <?= $this->formElement($form->get('secret')) ?>
         </div>
 
         <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
