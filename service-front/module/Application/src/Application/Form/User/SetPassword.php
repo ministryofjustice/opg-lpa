@@ -9,11 +9,11 @@ use Zend\Validator;
  * Class ResetPasswordEmail
  * @package Application\Form\User
  */
-class ResetPasswordPassword extends AbstractForm {
+class SetPassword extends AbstractForm {
 
-    public function __construct(){
+    public function __construct( $formName = 'set-password' ){
 
-        parent::__construct('reset-password-password');
+        parent::__construct( $formName );
 
         //---
 
