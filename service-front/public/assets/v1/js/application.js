@@ -4433,7 +4433,7 @@ $(document).ready(function () {
   }
 
   $('[name="certificateProviderStatementType"]').hasConditionalContent();
-  $('[name="howAttorneysAct"]').hasConditionalContent();
+  $('[name="how"]').hasConditionalContent();
   $('[name="howReplacementAttorneysStepIn"]').hasConditionalContent();
 
 
