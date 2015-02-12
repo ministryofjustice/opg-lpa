@@ -6,7 +6,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 
 use Application\Form\User\ResetPasswordEmail as ResetPasswordEmailForm;
-use Application\Form\User\ResetPasswordPassword as ResetPasswordPasswordForm;
+use Application\Form\User\SetPassword as ResetPasswordPasswordForm;
 
 class ForgotPasswordController extends AbstractActionController
 {

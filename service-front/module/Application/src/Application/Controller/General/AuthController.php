@@ -74,15 +74,15 @@ class AuthController extends AbstractBaseController {
 
     } // function
 
+    /**
+     * Logs the user out by clearing the identity from the session.
+     *
+     * @return \Zend\Http\Response
+     */
     public function logoutAction(){
 
-        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
+        $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
 
-        $authenticationService->clearIdentity();
-
-        //---
-
-        // Regenerate the session ID post logout
         $this->getServiceLocator()->get('SessionManager')->regenerateId(true);
 
         //---
