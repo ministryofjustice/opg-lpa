@@ -30,6 +30,17 @@ return [
                 ],
             ], // home
 
+            'terms' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/terms-and-conditions',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'terms',
+                    ],
+                ],
+            ], // terms
+
             'forgot-password' => [
                 'type' => 'Segment',
                 'options' => [
@@ -111,6 +122,21 @@ return [
                     'defaults' => [
                         'controller' => 'General\RegisterController',
                         'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'callback' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/signup/:token',
+                            'constraints' => [
+                                'token' => '[a-zA-Z0-9]+',
+                            ],
+                            'defaults' => [
+                                'action'     => 'confirm',
+                            ],
+                        ],
                     ],
                 ],
             ], // register

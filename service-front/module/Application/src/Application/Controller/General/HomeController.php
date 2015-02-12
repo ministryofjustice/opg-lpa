@@ -23,4 +23,8 @@ class HomeController extends AbstractBaseController
         return new ViewModel();
     }
 
+    public function termsAction(){
+        return new ViewModel();
+    }
+
 }

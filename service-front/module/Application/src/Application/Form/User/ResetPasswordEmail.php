@@ -1,6 +1,8 @@
 <?php
 namespace Application\Form\User;
 
+use Zend\Validator;
+
 /**
  * For to request a password reset email be sent out.
  *
@@ -55,6 +57,9 @@ class ResetPasswordEmail extends AbstractForm {
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
+                        'messageTemplates' => [
+                            Validator\Identical::NOT_SAME => 'Your email addresses did not match.',
+                        ],
                     ),
                 ),
             ),
