@@ -102,6 +102,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         
         $viewModel->form = $form;
         
+        // only provide add trust corp link if lpa has not a trust already and lpa is of PF type.
         if(!$this->hasTrust() && ($this->getLpa()->document->type == Document::LPA_TYPE_PF) ) {
             $viewModel->addTrustCorporationRoute = $this->url()->fromRoute( 'lpa/primary-attorney/add-trust', ['lpa-id' => $lpaId] );
         }
@@ -127,6 +128,7 @@ class PrimaryAttorneyController extends AbstractLpaController
             }
         }
         
+        // if attorney idx does not exist in lpa, return 404.
         if(!isset($attorney)) {
             return $this->notFoundAction();
         }
@@ -152,6 +154,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                     $attorney = new TrustCorporation($form->getModelizedData());
                 }
                 
+                // update attorney
                 if(!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorneyIdx)) {
                     throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
@@ -183,8 +186,19 @@ class PrimaryAttorneyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
-        if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyIdx)) {
-            throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+        $deletionFlag = true;
+        foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
+            if($attorney->id == $attorneyIdx) {
+                if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyIdx)) {
+                    throw new \RuntimeException('API client failed to update attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                }
+                $deletionFlag = true;
+            }
+        }
+        
+        // if attorney idx does not exist in lpa, return 404.
+        if(!$deletionFlag) {
+            return $this->notFoundAction();
         }
         
         if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -205,6 +219,11 @@ class PrimaryAttorneyController extends AbstractLpaController
         
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
+        // redirect to add human attorney if lpa is of hw type or a trust was added already.
+        if( ($this->getLpa()->document->type == Document::LPA_TYPE_HW) || $this->hasTrust() ) {
+            $this->redirect()->toRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]);
+        }
         
         $form = new TrustCorporationForm();
         
