@@ -521,12 +521,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "ea25bdda6bb04f8cfcb688443e63b8b07e76e292"
+                "reference": "54c1f893ca3a5c88eb9204e9ae47eb543e395b6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/ea25bdda6bb04f8cfcb688443e63b8b07e76e292",
-                "reference": "ea25bdda6bb04f8cfcb688443e63b8b07e76e292",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/54c1f893ca3a5c88eb9204e9ae47eb543e395b6c",
+                "reference": "54c1f893ca3a5c88eb9204e9ae47eb543e395b6c",
                 "shasum": ""
             },
             "require": {
@@ -552,7 +552,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-02-11 14:20:15"
+            "time": "2015-02-12 15:10:09"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",

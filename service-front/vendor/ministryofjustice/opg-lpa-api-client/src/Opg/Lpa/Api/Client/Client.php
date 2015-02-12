@@ -301,7 +301,15 @@ class Client
 
         if( $response->getStatusCode() != 200 ){
             $this->log($response, false);
-            return $authResponse->setErrorDescription( "Authentication failed" );
+
+            $json = $response->json();
+
+            if( isset($json['error_description']) && $json['error_description'] == 'account is not activated' ){
+                return $authResponse->setErrorDescription( "not-activated" );
+            }
+
+            return $authResponse->setErrorDescription( "authentication-failed" );
+
         }
 
         $authResponse->exchangeJson( $response->getBody() );
