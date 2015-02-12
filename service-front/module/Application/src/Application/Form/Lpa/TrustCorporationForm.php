@@ -1,53 +1,29 @@
 <?php
 namespace Application\Form\Lpa;
 
-class AttorneyForm extends AbstractForm
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+
+class TrustCorporationForm extends AbstractForm
 {
     use \Application\Form\Lpa\Traits\ActorFormModelization;
     
     protected $formElements = [
-            'name-title' => [
-                    'type' => 'Zend\Form\Element\Select',
-                    'options' => [
-                            'label' => 'Title',
-                            'empty_option' => 'Please choose your title',
-                            'value_options' => [
-                                    'Mr'   => 'Mr',
-                                    'Mrs'  => 'Mrs',
-                                    'Ms'   => 'Ms',
-                                    'Miss' => 'Miss',
-                                    'Sir'  => 'Sir'
-                            ],
-                    ],
-            ],
-            'name-first' => [
+            'name' => [
                     'type' => 'Text',
                     'options' => [
-                            'label' => 'First names'
+                            'label' => 'Company names'
                     ],
             ],
-            'name-last' => [
+            'number' => [
                     'type' => 'Text',
                     'options' => [
-                            'label' => 'Last name'
-                    ],
-            ],
-            'otherNames' => [
-                    'type' => 'Text',
-                    'options' => [
-                            'label' => 'Other names'
-                    ],
-            ],
-            'dob-date' => [
-                    'type' => 'Date',
-                    'options' => [
-                            'label' => 'Date of birth'
+                            'label' => 'Registration No. (Optional)'
                     ],
             ],
             'email-address' => [
                     'type' => 'Email',
                     'options' => [
-                            'label' => 'Email address'
+                            'label' => 'Email (optional)'
                     ],
             ],
             'address-address1' => [
@@ -84,7 +60,7 @@ class AttorneyForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'primary-attorney')
+    public function __construct ($formName = 'donor')
     {
         
         parent::__construct($formName);
@@ -94,7 +70,7 @@ class AttorneyForm extends AbstractForm
     public function modelValidation()
     {
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation');
         
     }
 }

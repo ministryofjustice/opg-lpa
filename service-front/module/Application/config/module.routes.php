@@ -546,9 +546,9 @@ return [
                             'edit' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/edit/:person-index',
+                                    'route'    => '/edit/:idx',
                                     'constraints' => [
-                                        'person-index' => '[0-9]+',
+                                        'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
                                         'action' => 'edit',
@@ -558,9 +558,9 @@ return [
                             'delete' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/delete/:person-index',
+                                    'route'    => '/delete/:idx',
                                     'constraints' => [
-                                        'person-index' => '[0-9]+',
+                                        'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
                                         'action' => 'delete',
@@ -592,9 +592,9 @@ return [
                             'edit' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/edit/:person-index',
+                                    'route'    => '/edit/:idx',
                                     'constraints' => [
-                                        'person-index' => '[0-9]+',
+                                        'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
                                         'action' => 'edit',
@@ -604,9 +604,9 @@ return [
                             'delete' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/delete/:person-index',
+                                    'route'    => '/delete/:idx',
                                     'constraints' => [
-                                        'person-index' => '[0-9]+',
+                                        'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
                                         'action' => 'delete',
@@ -665,9 +665,9 @@ return [
                             'edit' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/edit/:person-index',
+                                    'route'    => '/edit/:idx',
                                     'constraints' => [
-                                        'person-index' => '[0-9]+',
+                                        'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
                                         'action' => 'edit',
@@ -677,9 +677,9 @@ return [
                             'delete' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/delete/:person-index',
+                                    'route'    => '/delete/:idx',
                                     'constraints' => [
-                                        'person-index' => '[0-9]+',
+                                        'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
                                         'action' => 'delete',

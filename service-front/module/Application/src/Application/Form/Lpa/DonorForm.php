@@ -3,7 +3,7 @@ namespace Application\Form\Lpa;
 
 class DonorForm extends AbstractForm
 {
-    use \Application\Form\Lpa\Traits\PersonFormModelization;
+    use \Application\Form\Lpa\Traits\ActorFormModelization;
     
     protected $formElements = [
             'name-title' => [

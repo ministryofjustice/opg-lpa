@@ -1,6 +1,6 @@
 <?php
     $csrf       = $form->get('secret');
-    $title      = 'LPA Attorney';
+    $title      = 'Add an attorney';
     $this->headTitle($title);
     $form       = $this->form;
     $title      = $form->get('name-title');
@@ -18,9 +18,9 @@
     $form->prepare();
 ?>
 
-<?php if(isset($this->trustCorporationRoute )): ?>
+<?php if(isset($this->addTrustCorporationRoute )): ?>
 <p>
-    <a href="<?= $this->trustCorporationRoute ?>">Using a trust corporation?</a>
+    <a href="<?= $this->addTrustCorporationRoute ?>">Using a trust corporation?</a>
 </p>
 <?php endif;?>
 
