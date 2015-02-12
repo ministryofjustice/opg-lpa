@@ -1,8 +1,6 @@
 <?php
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-
 class TrustCorporationForm extends AbstractForm
 {
     use \Application\Form\Lpa\Traits\ActorFormModelization;
