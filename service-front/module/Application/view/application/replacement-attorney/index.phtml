@@ -1,12 +1,34 @@
 <section id="replacement-attorney">
 	
-	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Do you want any replacement attorneys?</h2>
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Do you want any replacement attorneys?</h2>
 
     <div class="accordion-content">
+
+    <div class="section-intro">
+
+		<p>The people you add here step in if your original attorney can no longer act.</p>
+		<p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
+
+		<p><a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
+	</div>
+	
+    <?php if(isset($this->attorneys)): ?>
     
+        <?= $this->partialloop('application/replacement-attorney/partials/attorney.phtml', $this->attorneys)?>
+
+        <p class="add-another"><a class="add js-form-popup" href="<?= $this->addRoute ?>">Add another attorney?</a></p>
+		
+    <?php else:?>
     
+        <p><a class="add button js-form-popup" href="<?= $this->addRoute ?>" role="button">Add an attorney</a></p>
+		
+    <?php endif; ?>
     
-    
+        <div class="accordion-actions group">
+            <p>
+                <a href="<?= $this->nextRoute ?>" class="button gotonextpart" role="button">Save and continue</a>
+            </p>
+        </div>
     
     </div>
     
