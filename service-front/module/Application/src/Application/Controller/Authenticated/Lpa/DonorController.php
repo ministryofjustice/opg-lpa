@@ -39,7 +39,7 @@ class DonorController extends AbstractLpaController
             ]);
         }
         else {
-            return new ViewModel([ 'addDonorRoute' => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ) ]);
+            return new ViewModel([ 'addRoute' => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ) ]);
         }
         
     }
