@@ -123,7 +123,10 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ] );
 
         if( is_null($result) ){
-            return new ApiProblem( 404, 'Document not found' );
+            return new ApiProblem( 
+                404, 
+                'Document ' . $id . ' not found for user ' . $this->getRouteUser()->userId() 
+            );
         }
 
         $result = [ 'id' => $result['_id'] ] + $result;
