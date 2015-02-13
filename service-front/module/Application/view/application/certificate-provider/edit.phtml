@@ -1,1 +1,136 @@
-edit certificate provider
+<?php
+    $csrf       = $form->get('secret');
+    $form       = $this->form;
+    $title      = $form->get('name-title');
+    $firstname  = $form->get('name-first');
+    $lastname   = $form->get('name-last');
+    $address1   = $form->get('address-address1');
+    $address2   = $form->get('address-address2');
+    $address3   = $form->get('address-address3');
+    $postcode   = $form->get('address-postcode');
+    $submit     = $form->get('submit');
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<?= $this->form()->openTag($form); ?>
+
+<div class="<?= $this->elementGroupClass($csrf) ?>">
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
+</div>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $title->getOption('label'); ?>
+    
+    <?= $this->formSelect($title) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($title) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $firstname->getOption('label'); ?>
+    
+    <?= $this->formInput($firstname) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($firstname) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $lastname->getOption('label'); ?>
+    
+    <?= $this->formInput($lastname) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($lastname) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $address1->getOption('label'); ?>
+    
+    <?= $this->formInput($address1) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($address1) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $address2->getOption('label'); ?>
+    
+    <?= $this->formInput($address2) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($address2) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $address3->getOption('label'); ?>
+    
+    <?= $this->formInput($address3) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($address3) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $postcode->getOption('label'); ?>
+    
+    <?= $this->formInput($postcode) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($postcode) ?>
+    </p>
+    
+    <?= $formLabel->closeTag() ?>
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $this->formInput($submit) ?>
+
+</div>
+
+
+<?= $this->form()->closeTag(); ?>

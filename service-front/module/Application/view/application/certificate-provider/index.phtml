@@ -4,8 +4,53 @@
 	
     <div class="accordion-content">
 
+		<div class="section-intro">
+			<p>A certificate provider is a person who confirms that you understand your LPA and are making it of your own free will.</p>
+			<p>They must be 18 or over, and should be <strong>someone who would speak out if anything was wrong</strong>. You can choose either:</p>
+				<ul>
+						<li>a person who has known you well personally for at least 2 years, or</li>
+						<li>a person with relevant professional skills and expertise</li>
+				</ul>
+
+			<p>There are some <strong>people who can't be your certificate provider</strong>:</p>
+				<ul>
+						<li>any of your attorneys or replacement attorneys for this or any other LPA or enduring power of attorney</li>
+						<li>a member of your family or of any of your attorneys' families – including spouses, civil partners, in-laws and step-relations</li>
+						<li>an unmarried partner, boyfriend or girlfriend of you or any of your attorneys</li>
+						<li>your business partner or any attorney’s business partner</li>
+						<li>your employee or any attorney’s employee</li>
+						<li>anyone running or working for a care home where you live, or a member of their family</li>
+						<li>anyone running or working for a trust corporation appointed as an attorney in this LPA</li>
+
+				</ul>
+
+			<p><a class="js-guidance" href="/help/#topic-certificate-providers" data-journey-click="stageprompt.lpa:help:certificate-providers">Find out how to choose a certificate provider</a></p>
+		</div>
+
+		<?php if(isset($this->certificateProvider)):?>
+    		<div class="person-summary group">
+    			<div class="person">
+    				<h3><?= $this->certificateProvider['name'] ?></h3>
+    				<p><?= $this->certificateProvider['address'] ?></p>
+    			</div>
     
-        
+    			<ul class="actions">
+    				<li><a href="<?= $this->editRoute ?>" data-form="certificateprovider1" class="js-form-popup">View/edit details</a></li>
+    			</ul>
+    		</div>
+    		
+    		<div class="accordion-actions group">
+    			<p>
+    				<a href="<?=$this->nextRoute?>" class="button gotonextpart" role="button">Save and continue</a>
+    			</p>
+    		</div>
+    		
+		<?php else:?>
+            <p>
+				<a class="add button js-form-popup" data-form="certificateprovider1" href="<?= $this->addRoute ?>" role="button">Add a certificate provider</a>
+			</p>
+		<?php endif;?>
+
     </div>	
 
 </section>
