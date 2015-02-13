@@ -22,6 +22,7 @@ use Application\Model\Rest\LpaConsumerInterface;
 use PhlyMongo\MongoCollectionFactory;
 use PhlyMongo\MongoConnectionFactory;
 use PhlyMongo\MongoDbFactory;
+use Application\Library\ApiProblem\ApiProblem;
 
 
 class Module {
@@ -128,7 +129,11 @@ class Module {
                         $resource = $sm->get("resource-applications");
 
                         $lpa = $resource->fetch( $lpaId );
-
+                        
+                        if ($lpa instanceof ApiProblem) {
+                            throw new \Exception(print_r($lpa->toArray(), true));
+                        }
+                        
                         $object->setLpa( $lpa->getLpa() );
 
                     } // LpaConsumerInterface
