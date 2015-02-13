@@ -41,7 +41,10 @@
       <td><?php echo $lpa->donor; ?></td>
       <td><?php echo $lpa->type; ?></td>
       <td><?php echo $lpa->updatedAt->format('r'); ?></td>
-      <td><a href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id."/type"):("/forward/lpa/".$lpa->id) ?>">Load</a></td>
+      <td>
+        <a href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id."/type"):("/forward/lpa/".$lpa->id) ?>">Load</a>
+        <a href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) ?>">Delete</a>
+      </td>
       </tr>
   <?php endforeach;?>
   
