@@ -15,8 +15,10 @@
         <?php if(isset($this->peopleToNotify)):?>
             
             <?= $this->partialloop('application/people-to-notify/partials/people-to-notify.phtml', $this->peopleToNotify)?>
-        
-            <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add another 'person to be told'</a></p>
+            
+            <?php if(isset($this->addRoute)):?>
+                <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add another 'person to be told'</a></p>
+            <?php endif;?>
             
         <?php else: ?>
         

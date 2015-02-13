@@ -38,12 +38,16 @@ class PeopleToNotifyController extends AbstractLpaController
                 ];
             }
             
-            return new ViewModel([
+            $view = new ViewModel([
                     'peopleToNotify' => $peopleToNotifyParams,
-                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id' => $lpaId] ),
                     'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
             ]);
             
+            if( count($this->getLpa()->document->peopleToNotify) < 5) {
+                $view->addRoute  = $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id' => $lpaId] );
+            }
+            
+            return $view;
         }
         else {
             
