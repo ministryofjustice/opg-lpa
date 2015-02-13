@@ -97,9 +97,11 @@ class FormFlowChecker
             'lpa/what-is-my-role'                           => 'lpa/fee',
     );
     
-    public function __construct(Lpa $lpa)
+    public function __construct(Lpa $lpa = null)
     {
-        $this->setLpa($lpa);
+        if($lpa instanceof Lpa) {
+            $this->setLpa($lpa);
+        }
     }
     
     public function setLpa(Lpa $lpa)
