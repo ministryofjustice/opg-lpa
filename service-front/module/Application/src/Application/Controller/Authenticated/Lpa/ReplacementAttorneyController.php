@@ -156,7 +156,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 
                 // update attorney
                 if(!$this->getLpaApplicationService()->setReplacementAttorney($lpaId, $attorney, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to update a replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                    throw new \RuntimeException('API client failed to update replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -190,7 +190,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         foreach($this->getLpa()->document->replacementAttorneys as $attorney) {
             if($attorney->id == $attorneyIdx) {
                 if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to delete a replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                    throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
                 $deletionFlag = true;
             }
@@ -236,7 +236,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 // persist data
                 $attorney = new TrustCorporation($form->getModelizedData());
                 if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
-                    throw new \RuntimeException('API client failed to add a trust corporation replacement attorney for id: '.$lpaId);
+                    throw new \RuntimeException('API client failed to add trust corporation replacement attorney for id: '.$lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
