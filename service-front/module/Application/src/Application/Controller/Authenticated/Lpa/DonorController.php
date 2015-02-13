@@ -46,6 +46,13 @@ class DonorController extends AbstractLpaController
     
     public function addAction()
     {
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
+        if( $this->getLpa()->document->donor instanceof Donor ) {
+            $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
+        }
+        
         $viewModel = new ViewModel();
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
@@ -58,9 +65,6 @@ class DonorController extends AbstractLpaController
             
             $form->setData($postData);
             if($form->isValid()) {
-                
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 // persist data
                 $donor = new Donor($form->getModelizedData());
