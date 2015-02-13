@@ -1,14 +1,33 @@
 <?php
-    $csrf       = $form->get('secret');
-    $title      = 'LPA Type';
+    $csrf        = $form->get('secret');
+    $title       = 'LPA Type';
     $this->headTitle($title);
-    $form       = $this->form;
+    $form        = $this->form;
 
-    $type       = $form->get('type');
-
-    $submit     = $form->get('submit');
+    $type        = $form->get('type');
+    $typeValueOptions = $type->getOptions()['value_options'];
+    $typeValueOptions['property-and-financial'] += [
+            'label_attributes' => [
+                    'for' => 'property-and-financial',
+            ],
+            'attributes' => [
+                    'id' => 'property-and-financial',
+            ],
+    ];
+    $typeValueOptions['health-and-welfare'] += [
+            'label_attributes' => [
+                    'for' => 'health-and-welfare',
+            ],
+            'attributes' => [
+                    'id' => 'health-and-welfare',
+            ],
+    ];
     
-    $formLabel  = $this->plugin('formLabel');
+    $type->setOptions( ['value_optionbs' => $typeValueOptions] );
+    
+    $submit      = $form->get('submit');
+    
+    $formLabel   = $this->plugin('formLabel');
     $form->prepare();
 ?>
 
@@ -31,12 +50,11 @@
         </div>
 
             <div class="emphasised option group">
-                <?php foreach ($type->getOptions()['value_options'] as $key => $value) : ?>
-                    <label for="<?= $key ?>">
-                        <input type="radio" name="<?= $type->getName() ?>" id="<?= $key ?>" value="<?= $key ?>" <?= $type->getValue() == $key ? 'checked="checked"' : '' ?>>
-                        <?= $value ?>
-                    </label>
-                <?php endforeach; ?>
+                <?= $this->formElement($type)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($type) ?>
+                </p>
             </div>
     
     		<details>

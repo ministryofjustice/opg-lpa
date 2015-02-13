@@ -10,8 +10,14 @@ class TypeForm extends AbstractForm
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
-                                    Document::LPA_TYPE_PF => 'Property and financial affairs',
-                                    Document::LPA_TYPE_HW => 'Health and welfare',
+                                    'property-and-financial' => [
+                                            'label' => 'Property and financial affairs',
+                                            'value' => 'property-and-financial',
+                                    ],
+                                    'health-and-welfare' => [
+                                            'label' => 'Health and welfare',
+                                            'value' => 'health-and-welfare',
+                                    ]
                             ],
                     ],
             ],
