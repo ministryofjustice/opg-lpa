@@ -93,7 +93,7 @@ class FormFlowChecker
             'lpa/people-to-notify/add'                      => 'lpa/people-to-notify',
             'lpa/people-to-notify/edit'                     => 'lpa/people-to-notify',
             'lpa/people-to-notify/delete'                   => 'lpa/people-to-notify',
-            'lpa/instructions'                              => 'lpa/applicant',
+            'lpa/instructions'                              => 'lpa/created',
             'lpa/applicant'                                 => 'lpa/correspondent',
             'lpa/correspondent'                             => 'lpa/what-is-my-role',
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
