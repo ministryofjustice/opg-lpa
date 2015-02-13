@@ -20,17 +20,23 @@ class Payment implements ServiceLocatorAwareInterface {
     public function updateLpa($params, $lpa)
     {
         $client = $this->getServiceLocator()->get('ApiClient');
+        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $prefix = $config['administration_code'] . '^' . $config['merchant_code'] . '^';
         
         $payment = $lpa->payment;
-        $payment->amount = $params['paymentAmount'];
-        $payment->reference = $params['orderKey'];
+        $payment->amount = intval($params['paymentAmount']);
+        $payment->reference = str_replace($prefix, '', $params['orderKey']);
         $payment->method = PaymentEntity::PAYMENT_TYPE_CARD;
         $payment->date = new \DateTime('today');
         
         $result = $client->setPayment($lpa->id, $payment);
         
         if ($result === false) {
-            throw new \Exception('Unable to update LPA with all payment information');
+            throw new \Exception(
+                'Unable to update LPA with all payment information: ' .
+                'API status code: ' . $client->getLastStatusCode() . ' ' .
+                'API returned content: ' . print_r($client->getLastContent(), true) 
+            );
         }
     }
     
