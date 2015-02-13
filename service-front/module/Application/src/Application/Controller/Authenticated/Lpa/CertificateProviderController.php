@@ -43,6 +43,13 @@ class CertificateProviderController extends AbstractLpaController
     
     public function addAction()
     {
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
+        if( $this->getLpa()->document->certificateProvider instanceof CertificateProvider ) {
+            $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id'=>$lpaId]);
+        }
+        
         $viewModel = new ViewModel();
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
@@ -55,9 +62,6 @@ class CertificateProviderController extends AbstractLpaController
             
             $form->setData($postData);
             if($form->isValid()) {
-                
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 // persist data
                 $cp = new CertificateProvider($form->getModelizedData());
