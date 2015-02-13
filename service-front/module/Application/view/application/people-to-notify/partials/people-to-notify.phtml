@@ -1,0 +1,11 @@
+        <div class="person-summary group">
+            <div class="person">
+                <h3><?= $this->notifiedPerson['name'] ?></h3>
+                <p><?= $this->notifiedPerson['address'] ?></p>
+            </div>
+            
+            <ul class="actions">
+                <li><a href="<?= $this->editRoute ?>" class="js-form-popup">View/edit details</a></li>
+                <li><a class="delete-confirmation" href="<?= $this->deleteRoute ?>">Delete</a></li>
+            </ul>
+        </div>

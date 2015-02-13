@@ -4,9 +4,32 @@
 
     <div class="accordion-content">
     
+		<div class="section-intro">
+			<p>It's a good idea to let people know when you apply to register your LPA. You can add up to 5 ‘people to be told’. Many donors just add 1 or 2.</p>
+			<p>These people have a chance to raise any concerns before your LPA is registered, as a safeguard for you.</p>
+			<p>If you prefer, you can add a second certificate provider instead. You'll be given this option next.</p>
+			
+			<p><a class="js-guidance" href="/help/#topic-people-to-be-told" data-journey-click="stageprompt.lpa:help:people-to-be-told">Find out more about 'people to be told'</a></p>
+		</div>
+		
+        <?php if(isset($this->peopleToNotify)):?>
+            
+            <?= $this->partialloop('application/people-to-notify/partials/people-to-notify.phtml', $this->peopleToNotify)?>
+        
+            <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add another 'person to be told'</a></p>
+            
+        <?php else: ?>
+        
+		    <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add a 'person to be told'</a></p>
+		    
+        <?php endif;?>
+        
     
-    
-    
+		<div class="accordion-actions group">
+			<p>
+				<a href="<?= $this->nextRoute ?>" class="button gotonextpart" role="button">Save and continue</a>
+    		</p>
+		</div>
     
     </div>
     
