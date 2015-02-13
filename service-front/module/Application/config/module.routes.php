@@ -300,9 +300,11 @@ return [
                         'lpa-id' => '[0-9]+',
                     ],
                     'defaults' => [
+                            'controller' => 'Authenticated\Lpa\IndexController',
+                            'action'     => 'index',
                     ],
                 ],
-                'may_terminate' => false,
+                'may_terminate' => true,
                 'child_routes' => [
                     'applicant' => [
                         'type' => 'Literal',
