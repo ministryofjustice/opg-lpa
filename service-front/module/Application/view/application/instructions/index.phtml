@@ -1,13 +1,92 @@
-<section id="instructions">
+<?php
+$csrf        = $form->get('secret');
+$form        = $this->form;
+
+$instructions= $form->get('instruction');
+$instructions->setAttribute('id', 'instruction');
+
+$preferences = $form->get('preference');
+$preferences->setAttribute('id', 'preference');
+
+$submit      = $form->get('submit');
+
+$formLabel   = $this->plugin('formLabel');
+$form->prepare();
+?>
+<section id="instructions-and-preferences">
 	
 	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. LPA created</h2>
 
     <div class="accordion-content">
     
+		<div class="section-intro">
+			<p>You've entered all the essential information needed for your LPA.</p>
+
+			<p>Please read back through the details above and check everything's correct before you continue. You can click on any section to make changes.</p>
+
+			<p>The optional section below lets you add instructions for your attorneys. You don't have to put anything there, but you can state things that the attorneys must or mustn't do, give guidance that you'd like them to follow, or provide details of how they should be paid for their time.</p>
+
+		</div>
+
+        <?= $this->form()->openTag($form); ?>
     
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
+
+		<details>
+		
+    		<summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions for the attorneys?</summary>
+		    
+		    <p>If you'd like to add anything here, please <a class="js-guidance" href="/help/#topic-restrictions-and-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on restrictions and guidance</a>. It contains useful examples and can help you avoid mistakes.</p>
+		    
+            <div class="emphasised option group">
+                
+                <h3 id="instructions-label">
+                    <?= $formLabel->openTag($instructions) . $instructions->getOption('label'); ?>
+                    <?= $formLabel->closeTag() ?>
+                </h3>
+                <p class="hint">These are things that the attorneys MUST or MUST NOT do. <a href="/help/#topic-restrictions-and-guidance" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a></p>
+                
+                <p>
+                <?= $this->formElement($instructions)?>
+                </p>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($instructions) ?>
+                </p>
+                
+            </div>
     
-    
-    
+            <div class="emphasised option group">
+                
+                <h3 id="instructions-label">
+                <?= $formLabel->openTag($preferences) . $preferences->getOption('label'); ?><?= $formLabel->closeTag() ?>
+                </h3>
+                
+                <p class="hint">These are things you would like attorneys to think about when making decisions. <a href="/help/#topic-restrictions-and-guidance" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a></p>
+                
+                <p>
+                <?= $this->formElement($preferences)?>
+                </p>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($preferences) ?>
+                </p>
+                
+            </div>
+        
+		</details>
+				
+		<div class="accordion-actions group">
+		<p>
+            <input type="submit" name="save" id="go-to-next-part" value="Save and continue" class="button gotonextpart" role="button">
+        </p>
+        </div>
+            
+        <?= $this->form()->closeTag(); ?>
+  		
     </div>
     
 </section>
