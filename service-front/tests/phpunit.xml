@@ -7,8 +7,9 @@
     syntaxCheck="false"
     verbose="true">
     <testsuite name="ApplicationTest">
-        <directory>./../module/Application/tests/ApplicationTest/Controller/General</directory>
-        <directory>./../module/Application/tests/ApplicationTest/Controller/Authenticated</directory>
+        <directory>./../module/Application/tests/ApplicationTest/Form</directory>
+        <directory>./../module/Application/tests/ApplicationTest/Model</directory>
+        <directory>./../module/Application/tests/ApplicationTest/View</directory>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
