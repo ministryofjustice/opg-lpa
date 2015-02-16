@@ -56,6 +56,7 @@ class CertificateProviderController extends AbstractLpaController
         }
         
         $form = new CertificateProviderForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -70,7 +71,7 @@ class CertificateProviderController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -89,8 +90,12 @@ class CertificateProviderController extends AbstractLpaController
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
+
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $form = new CertificateProviderForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -98,9 +103,6 @@ class CertificateProviderController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-                
                 // persist data
                 $cp = new CertificateProvider($form->getModelizedData());
                 
@@ -109,7 +111,7 @@ class CertificateProviderController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

@@ -59,6 +59,7 @@ class DonorController extends AbstractLpaController
         }
         
         $form = new DonorForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -73,7 +74,7 @@ class DonorController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -93,7 +94,11 @@ class DonorController extends AbstractLpaController
             $viewModel->setTerminal(true);
         }
         
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
         $form = new DonorForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -101,8 +106,6 @@ class DonorController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 // persist data
                 $donor = new Donor($form->getModelizedData());
@@ -112,7 +115,7 @@ class DonorController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

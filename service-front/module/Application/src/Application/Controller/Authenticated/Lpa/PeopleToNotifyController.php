@@ -73,8 +73,8 @@ class PeopleToNotifyController extends AbstractLpaController
             $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
         }
         
-        
         $form = new PeopleToNotifyForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -88,7 +88,7 @@ class PeopleToNotifyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -124,6 +124,7 @@ class PeopleToNotifyController extends AbstractLpaController
         }
         
         $form = new PeopleToNotifyForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -139,7 +140,7 @@ class PeopleToNotifyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

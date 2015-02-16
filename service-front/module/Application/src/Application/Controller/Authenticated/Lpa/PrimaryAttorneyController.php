@@ -76,6 +76,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $form = new AttorneyForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -90,7 +91,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -139,6 +140,8 @@ class PrimaryAttorneyController extends AbstractLpaController
             $viewModel->setTemplate('application/primary-attorney/edit-trust.phtml');
         }
         
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             $form->setData($postData);
@@ -158,7 +161,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -224,6 +227,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         }
         
         $form = new TrustCorporationForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -238,7 +242,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

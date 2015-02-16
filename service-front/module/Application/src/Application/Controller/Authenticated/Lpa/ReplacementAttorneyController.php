@@ -79,6 +79,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $form = new AttorneyForm('replacement-attorney');
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -93,7 +94,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -141,6 +142,8 @@ class ReplacementAttorneyController extends AbstractLpaController
             $viewModel->setTemplate('application/replacement-attorney/edit-trust.phtml');
         }
         
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             $form->setData($postData);
@@ -160,7 +163,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -226,6 +229,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         }
         
         $form = new TrustCorporationForm();
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -240,7 +244,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $viewModel;
+                    return $this->response;
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
