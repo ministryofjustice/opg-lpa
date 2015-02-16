@@ -102,6 +102,7 @@ class DonorController extends AbstractLpaController
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
+            $postData['canSign'] = (bool) $postData['canSign'];
             
             $form->setData($postData);
             
