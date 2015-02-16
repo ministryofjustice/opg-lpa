@@ -40,7 +40,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                     $decision = $this->getLpa()->document->primaryAttorneyDecisions;
                 }
                 else {
-                    $decision = new PrimaryAttorneyDecisions();
+                    $decision = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
                 }
                 
                 $decision->how = $howAttorneyAct;

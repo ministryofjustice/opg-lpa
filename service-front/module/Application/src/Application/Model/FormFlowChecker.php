@@ -84,7 +84,7 @@ class FormFlowChecker
             'lpa/replacement-attorney/add-trust'            => 'lpa/replacement-attorney',
             'lpa/replacement-attorney/edit-trust'           => 'lpa/replacement-attorney',
             'lpa/replacement-attorney/delete-trust'         => 'lpa/replacement-attorney',
-            'lpa/when-replacement-attorney-step-in'         => ['lpa/how-replacement-attorneys-make-decision', 'lpa/how-replacement-attorneys-make-decision', 'lpa/certificate-provider'],
+            'lpa/when-replacement-attorney-step-in'         => ['lpa/how-replacement-attorneys-make-decision','lpa/certificate-provider'],
             'lpa/how-replacement-attorneys-make-decision'   => 'lpa/certificate-provider',
             'lpa/certificate-provider'                      => 'lpa/people-to-notify',
             'lpa/certificate-provider/add'                  => 'lpa/certificate-provider',
