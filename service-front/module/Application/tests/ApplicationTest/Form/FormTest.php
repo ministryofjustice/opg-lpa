@@ -1,7 +1,7 @@
 <?php
 namespace ApplicationTest\Form;
 
-class DonorFormTest extends \PHPUnit_Framework_TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testAllFormsHaveCsrfCheck()
