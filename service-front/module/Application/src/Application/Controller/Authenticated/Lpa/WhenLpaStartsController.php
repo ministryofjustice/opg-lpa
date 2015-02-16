@@ -37,7 +37,7 @@ class WhenLpaStartsController extends AbstractLpaController
                     $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
                 }
                 else {
-                    $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+                    $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
                 }
                 
                 $primaryAttorneyDecisions->when = $form->get('whenLpaStarts')->getValue();

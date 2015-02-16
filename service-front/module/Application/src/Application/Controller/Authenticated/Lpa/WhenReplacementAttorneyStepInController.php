@@ -23,22 +23,21 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
     {
         $form = new WhenReplacementAttorneyStepInForm();
         
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
             // set data for validation
             $form->setData($postData);
-            
             if($form->isValid()) {
-                
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
                     $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions;
                 }
                 else {
-                    $replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
                 }
                 
                 $replacementAttorneyDecisions->when = $form->get('when')->getValue();
