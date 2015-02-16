@@ -39,6 +39,7 @@
     
     $howDetails = $form->get('howDetails');
     $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart']);
     
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();
@@ -92,7 +93,7 @@
 
         <div class="accordion-actions">
 			<p>
-                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                <?= $this->formInput($submit) ?>
             </p>
         </div>
         

@@ -23,6 +23,7 @@
     $whenLpaStarts->setOptions(['value_options'=>$whenLpaStartsOptions]);
     
     $submit         = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart']);
     
     $formLabel      = $this->plugin('formLabel');
     $form->prepare();
@@ -63,9 +64,9 @@
         
         
         <div class="accordion-actions">
-        
+        <p>
             <?= $this->formInput($submit) ?>
-        
+        </p>
         </div>
         
         <?= $this->form()->closeTag(); ?>

@@ -9,6 +9,7 @@ $preferences = $form->get('preference');
 $preferences->setAttribute('id', 'preference');
 
 $submit      = $form->get('submit');
+$submit->setAttributes(['class'=>'button gotonextpart']);
 
 $formLabel   = $this->plugin('formLabel');
 $form->prepare();
@@ -81,7 +82,7 @@ $form->prepare();
 				
 		<div class="accordion-actions group">
 		<p>
-            <input type="submit" name="save" id="go-to-next-part" value="Save and continue" class="button gotonextpart" role="button">
+            <?= $this->formInput($submit) ?>
         </p>
         </div>
             
