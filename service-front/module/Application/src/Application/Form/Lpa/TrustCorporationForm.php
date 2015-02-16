@@ -15,7 +15,7 @@ class TrustCorporationForm extends AbstractForm
             'number' => [
                     'type' => 'Text',
                     'options' => [
-                            'label' => 'Registration No. (Optional)'
+                            'label' => 'Registration No.'
                     ],
             ],
             'email-address' => [
