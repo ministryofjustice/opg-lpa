@@ -10,8 +10,14 @@ class WhenLpaStartsForm extends AbstractForm
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
-                                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW         => "as soon as it's registered (with my consent)",
-                                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => "only if I don't have mental capacity",
+                                    'now' => [
+                                            'label' => "as soon as it's registered (with my consent)",
+                                            'value' => 'now',
+                                    ],
+                                    'no-capacity' => [
+                                            'label' => "only if I don't have mental capacity",
+                                            'value' => 'no-capacity',
+                                    ],
                             ],
                     ],
             ],

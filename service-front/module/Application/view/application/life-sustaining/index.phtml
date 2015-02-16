@@ -2,6 +2,26 @@
     $form           = $this->form;
     $csrf           = $form->get('secret');
     $canSustainLife = $form->get('canSustainLife');
+    
+    $canSustainLifeOptions = $canSustainLife->getOptions()['value_options'];
+    $canSustainLifeOptions[true] += [
+            'label_attributes' => [
+                    'for' => 'can-sustain-life-true'
+            ],
+            'attributes' => [
+                    'id' => 'can-sustain-life-true'
+            ],
+    ];
+    $canSustainLifeOptions[false] += [
+            'label_attributes' => [
+                    'for' => 'can-sustain-life-false'
+            ],
+            'attributes' => [
+                    'id' => 'can-sustain-life-false'
+            ],
+    ];
+    $canSustainLife->setOptions(['value_options'=>$canSustainLifeOptions]);
+    
     $submit         = $form->get('submit');
     
     $formLabel      = $this->plugin('formLabel');
@@ -30,27 +50,22 @@
     
         <?= $this->form()->openTag($form); ?>
         
-        <div class="form_element">
         
         <div class="<?= $this->elementGroupClass($csrf) ?>">
             <?= $this->formElement($csrf) ?>
             <?= $this->formElementErrors($csrf) ?>
         </div>
         
-        <?= $formLabel->openTag() . $canSustainLife->getOption('label'); ?>
-            
+        <div class="emphasised option group">
             <?= $this->formRadio($canSustainLife) ?>
             
             <p class='form-element-errors'>
                 <?= $this->formElementErrors($canSustainLife) ?>
             </p>
-            
-            <?= $formLabel->closeTag() ?>
-        
         </div>
         
         
-        <div class="form_element">
+        <div class="accordion-actions">
         
             <?= $this->formInput($submit) ?>
         

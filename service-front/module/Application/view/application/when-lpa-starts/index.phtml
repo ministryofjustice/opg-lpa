@@ -1,7 +1,27 @@
 <?php
     $form           = $this->form;
     $csrf           = $form->get('secret');
+    
     $whenLpaStarts  = $form->get('whenLpaStarts');
+    $whenLpaStartsOptions = $whenLpaStarts->getOptions()['value_options'];
+    $whenLpaStartsOptions['now'] += [
+            'label_attributes' => [
+                    'for' => 'now'
+            ],
+            'attributes' => [
+                    'id' => 'now'
+            ],
+    ];
+    $whenLpaStartsOptions['no-capacity'] += [
+            'label_attributes' => [
+                    'for' => 'no-capacity'
+            ],
+            'attributes' => [
+                    'id' => 'no-capacity'
+            ],
+    ];
+    $whenLpaStarts->setOptions(['value_options'=>$whenLpaStartsOptions]);
+    
     $submit         = $form->get('submit');
     
     $formLabel      = $this->plugin('formLabel');
@@ -31,22 +51,18 @@
             <?= $this->formElementErrors($csrf) ?>
         </div>
         
-        <div class="form_element">
+        <div class="emphasised option grou">
         
-            <?= $formLabel->openTag() . $whenLpaStarts->getOption('label'); ?>
-            
             <?= $this->formRadio($whenLpaStarts) ?>
             
             <p class='form-element-errors'>
                 <?= $this->formElementErrors($whenLpaStarts) ?>
             </p>
             
-            <?= $formLabel->closeTag() ?>
-        
         </div>
         
         
-        <div class="form_element">
+        <div class="accordion-actions">
         
             <?= $this->formInput($submit) ?>
         
