@@ -1,8 +1,6 @@
 <?php
-    $csrf       = $form->get('secret');
-    $title      = 'Add an attorney';
-    $this->headTitle($title);
     $form       = $this->form;
+    $csrf       = $form->get('secret');
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
