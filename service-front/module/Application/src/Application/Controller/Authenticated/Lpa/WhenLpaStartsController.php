@@ -37,7 +37,6 @@ class WhenLpaStartsController extends AbstractLpaController
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
-                    printr($this->getLpaApplicationService()->getLastContent());exit;
                     throw new \RuntimeException('API client failed to set when LPA starts for id: '.$lpaId);
                 }
                 
