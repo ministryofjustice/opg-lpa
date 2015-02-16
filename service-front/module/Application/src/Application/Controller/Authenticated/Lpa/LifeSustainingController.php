@@ -33,7 +33,14 @@ class LifeSustainingController extends AbstractLpaController
                 $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
-                $primaryAttorneyDecisions = new PrimaryAttorneyDecisions(['canSustainLife' => $form->get('canSustainLife')->getValue()]);
+                if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+                    $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
+                }
+                else {
+                    $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+                }
+                
+                $primaryAttorneyDecisions->canSustainLife = (bool) $form->get('canSustainLife')->getValue();
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {

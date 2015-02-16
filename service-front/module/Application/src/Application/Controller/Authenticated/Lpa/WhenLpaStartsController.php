@@ -33,7 +33,14 @@ class WhenLpaStartsController extends AbstractLpaController
                 $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
-                $primaryAttorneyDecisions = new PrimaryAttorneyDecisions(['when' => $form->get('whenLpaStarts')->getValue()]);
+                if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+                    $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
+                }
+                else {
+                    $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+                }
+                
+                $primaryAttorneyDecisions->when = $form->get('whenLpaStarts')->getValue();
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
