@@ -1,52 +1,141 @@
-<form action="<?= $this->url('register'); ?>" method="POST" class="account form">
+<?php
 
-  <p>You need to give your email address and create a password. This is so you can make, save and retrieve LPAs.</p>
-  <p>You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
-  <p>If you already have an account please <a href="/user/login">sign in</a>.</p>
+    $form = $this->form;
 
-  <fieldset>
-    <legend>Email address</legend>
-        <div class="group ">
-            <label class="required">Email address</label>
-            <input type="email" autocomplete="off">
-        </div>
-        
-        <div class="group ">
-            <label class="required">Confirm Email address</label>
-            <input type="email" autocomplete="off">
-        </div>
 
-  </fieldset>
+    $email              = $form->get('email');
+    $email_confirm      = $form->get('email_confirm');
+    $password           = $form->get('password');
+    $password_confirm   = $form->get('password_confirm');
+    $terms              = $form->get('terms');
 
-  <fieldset>
-    <legend>Password</legend>
-    <p>Your password has to be at least 8 characters long and must contain at least 1 lower-case letter, 1 capital letter and 1 number. Never share your password with anyone.</p>
-    
-         <div class="group">
-            <label class="required">Password</label>
-            <input type="password" autocomplete="off">
-        </div>
-        
-        <div class="group ">
-            <label class="required">Confirm Password</label>
-            <input type="password" autocomplete="off">
-        </div>
-  </fieldset>
 
-  <hr>
-  <fieldset>
-    <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
-    <div class="group ">
-      <label for="confirmUnderstanding" id="confirmUnderstanding-label" class="required checkbox"><input type="checkbox" name="confirmUnderstanding" id="confirmUnderstanding" value="1">I agree to the <a href="/terms-and-conditions/" target="_blank">Terms and conditions and privacy policy</a></label>
+    $email->setAttributes([
+        'id' => 'email',
+        'autocomplete' => 'off'
+    ]);
+
+    $email_confirm->setAttributes([
+        'id' => 'email_confirm',
+        'autocomplete' => 'off'
+    ]);
+
+    $password->setAttributes([
+        'id' => 'password',
+        'autocomplete' => 'off'
+    ]);
+
+    $password_confirm->setAttributes([
+        'id' => 'password_confirm',
+        'autocomplete' => 'off'
+    ]);
+
+    $terms->setAttributes([
+        'id' => 'terms',
+    ]);
+
+    $form->prepare();
+
+    //---
+
+    $formLabel = $this->plugin('formLabel');
+
+?>
+
+<?= $this->form()->openTag( $form->setAttribute( 'class', 'account form' ) ); ?>
+
+    <div class="<?= $this->elementGroupClass($form->get('secret')) ?>">
+        <?= $this->formElement($form->get('secret')) ?>
     </div>
-  </fieldset>
-      
 
+    <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
+        <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+            <h1 id="error-heading">There was a problem submitting the form</h1>
+            <p>Because of the following problems:</p>
+            <ol>
+                <?php
+                $this->linkedErrorList($form);
 
-      	<p class="action group">
-    	  <p class="action group">
-             <input type="submit" name="submit" id="signin-form-submit" value="Sign up" class="button">
-          </p>
-        </p>
+                if (isset($this->error)) {
+                    echo '<li><a href="">';
+                    switch($this->error){
+                        default:
+                            echo $this->escapehtml( $this->error );
+                    }
+                    echo '</a></li>';
+                }
+                ?>
+            </ol>
+        </div>
+    <? } ?>
 
-</form>
+    <p>You need to give your email address and create a password. This is so you can make, save and retrieve LPAs.</p>
+    <p>You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
+    <p>If you already have an account please <a href="<?= $this->url('login') ?>">sign in</a>.</p>
+
+    <fieldset>
+        <legend>Email address</legend>
+
+        <div class="<?= $this->elementGroupClass($email); ?>">
+            <?= $formLabel->openTag() . $email->getOption('label'); ?>
+            Email address
+            <br>
+            <?= $this->formElementErrors($email) ?>
+            <?= $this->formInput($email) ?>
+            <?= $formLabel->closeTag() ?>
+        </div>
+
+        <div class="<?= $this->elementGroupClass($email_confirm); ?>">
+            <?= $formLabel->openTag() . $email_confirm->getOption('label'); ?>
+            Confirm Email address
+            <br>
+            <?= $this->formElementErrors($email_confirm) ?>
+            <?= $this->formInput($email_confirm) ?>
+            <?= $formLabel->closeTag() ?>
+        </div>
+
+    </fieldset>
+
+    <fieldset>
+        <legend>Password</legend>
+        <p>Your password has to be at least 8 characters long and must contain at least 1 lower-case letter, 1 capital letter and 1 number. Never share your password with anyone.</p>
+
+        <div class="<?= $this->elementGroupClass($password); ?>">
+            <?= $formLabel->openTag() . $password->getOption('label'); ?>
+            Password
+            <br>
+            <?= $this->formElementErrors($password) ?>
+            <?= $this->formInput($password) ?>
+            <?= $formLabel->closeTag() ?>
+        </div>
+
+        <div class="<?= $this->elementGroupClass($password_confirm); ?>">
+            <?= $formLabel->openTag() . $password_confirm->getOption('label'); ?>
+            Confirm Password
+            <br>
+            <?= $this->formElementErrors($password_confirm) ?>
+            <?= $this->formInput($password_confirm) ?>
+            <?= $formLabel->closeTag() ?>
+        </div>
+
+    </fieldset>
+
+    <hr>
+    <fieldset>
+        <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
+
+        <div class="<?= $this->elementGroupClass($terms); ?>">
+            <?= $formLabel->openTag() . $terms->getOption('label'); ?>
+            <?= $this->formElementErrors($terms) ?>
+            <?= $this->formCheckbox($terms) ?>
+            I agree to the <a href="<?= $this->url('terms') ?>" target="_blank">Terms and conditions and privacy policy</a>
+            <?= $formLabel->closeTag() ?>
+        </div>
+
+    </fieldset>
+
+    <p class="action group">
+        <input type="submit" name="submit" id="signin-form-submit" value="Sign up" class="button">
+    </p>
+
+<?= $this->form()->closeTag(); ?>
