@@ -7,40 +7,26 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
 {
     protected $formElements = [
             'when' => [
-                    'type' => 'Zend\Form\Element\Radio',
-                    'options' => [
-                            'value_options' => [
-                                    'first' => [
-                                            'label' => 'As soon as one of the original attorneys can no longer act',
-                                            'value' => 'first',
-                                    ],
-                                    'last' => [
-                                            'label' => 'Only when none of the original attorneys can act',
-                                            'value' => 'last',
-                                    ],
-                                    'depends' => [
-                                            'label' => 'In some other way...',
-                                            'value' => 'depends'
-                                    ],
-                            ],
+                'type' => 'Zend\Form\Element\Radio',
+                'options' => [
+                    'value_options' => [
+                        'first' => [
+                                'value' => 'first',
+                        ],
+                        'last' => [
+                                'value' => 'last',
+                        ],
+                        'depends' => [
+                                'value' => 'depends'
+                        ],
                     ],
+                ],
             ],
             'whenDetails' => [
                     'type' => 'TextArea',
-                    'options' => [
-                            'label' => '',
-                    ],
-                    'attributes' => [
-                            'rows' => 24,
-                            'cols' => 80,
-                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
-                    'attributes' => [
-                            'value' => 'Save and continue'
-                    ],
-                    
             ],
     ];
     

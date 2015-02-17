@@ -3,13 +3,23 @@ $form        = $this->form;
 $csrf        = $form->get('secret');
 
 $instructions= $form->get('instruction');
-$instructions->setAttribute('id', 'instruction');
+$instructions->setOptions(['label' => 'Instructions']);
+$instructions->setAttributes([
+        'id'   =>'instruction',
+        'rows' => 10,
+        'cols' => 67,
+]);
 
 $preferences = $form->get('preference');
-$preferences->setAttribute('id', 'preference');
+$preferences->setOptions(['label' => 'Preferences']);
+$preferences->setAttributes([
+        'id' => 'preference',
+        'rows' => 10,
+        'cols' => 67,
+]);
 
 $submit      = $form->get('submit');
-$submit->setAttributes(['class'=>'button gotonextpart']);
+$submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
 
 $formLabel   = $this->plugin('formLabel');
 $form->prepare();

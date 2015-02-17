@@ -6,16 +6,14 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 class WhenLpaStartsForm extends AbstractForm
 {
     protected $formElements = [
-            'whenLpaStarts' => [
+            'when' => [
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
                                     'now' => [
-                                            'label' => "as soon as it's registered (with my consent)",
                                             'value' => 'now',
                                     ],
                                     'no-capacity' => [
-                                            'label' => "only if I don't have mental capacity",
                                             'value' => 'no-capacity',
                                     ],
                             ],
@@ -23,10 +21,6 @@ class WhenLpaStartsForm extends AbstractForm
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
-                    'attributes' => [
-                            'value' => 'Save and continue'
-                    ],
-                    
             ],
     ];
     

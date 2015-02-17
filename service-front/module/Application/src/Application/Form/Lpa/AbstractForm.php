@@ -8,6 +8,7 @@ use Zend\InputFilter\InputFilterInterface;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
+use Zend\Form\Element\Radio;
 
 abstract class AbstractForm extends Form
 {
@@ -242,9 +243,9 @@ abstract class AbstractForm extends Form
                 $m = &$m[$names[$i]];
             }
             
-            if($this->has($key) && ($this->get($key) instanceof Checkbox)) {
-                // convert checkbox value 0/1 to true/false
-                if($value == '0') {
+            if($this->has($key) && (($this->get($key) instanceof Checkbox)||($this->get($key) instanceof Radio))) {
+                // convert checkbox/radio value "" to false and "1" to true
+                if($value == '') {
                     $m = false;
                 }
                 elseif($value === '1') {

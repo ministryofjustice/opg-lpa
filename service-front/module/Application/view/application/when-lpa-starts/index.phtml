@@ -2,9 +2,13 @@
     $form           = $this->form;
     $csrf           = $form->get('secret');
     
-    $whenLpaStarts  = $form->get('whenLpaStarts');
-    $whenLpaStartsOptions = $whenLpaStarts->getOptions()['value_options'];
-    $whenLpaStartsOptions['now'] += [
+    $when  = $form->get('when');
+    $whenValueOptions = $when->getOptions()['value_options'];
+    
+    $whenValueOptions['now']['label'] = "as soon as it's registered (with my consent)";
+    $whenValueOptions['no-capacity']['label'] = "only if I don't have mental capacity";
+    
+    $whenValueOptions['now'] += [
             'label_attributes' => [
                     'for' => 'now'
             ],
@@ -12,7 +16,7 @@
                     'id' => 'now'
             ],
     ];
-    $whenLpaStartsOptions['no-capacity'] += [
+    $whenValueOptions['no-capacity'] += [
             'label_attributes' => [
                     'for' => 'no-capacity'
             ],
@@ -20,10 +24,11 @@
                     'id' => 'no-capacity'
             ],
     ];
-    $whenLpaStarts->setOptions(['value_options'=>$whenLpaStartsOptions]);
+    
+    $when->setOptions( [ 'value_options' => $whenValueOptions ] );
     
     $submit         = $form->get('submit');
-    $submit->setAttributes(['class'=>'button gotonextpart']);
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
     
     $formLabel      = $this->plugin('formLabel');
     $form->prepare();
@@ -54,10 +59,10 @@
         
         <div class="emphasised option group">
         
-            <?= $this->formRadio($whenLpaStarts) ?>
+            <?= $this->formRadio($when) ?>
             
             <p class='form-element-errors'>
-                <?= $this->formElementErrors($whenLpaStarts) ?>
+                <?= $this->formElementErrors($when) ?>
             </p>
             
         </div>

@@ -8,8 +8,18 @@
     $address2   = $form->get('address-address2');
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
-    $submit     = $form->get('submit');
+
+    $name->setOptions( ['label' => 'Company name'] );
+    $companyNumber->setOptions( ['label' => 'Registration No.'] );
+    $email->setOptions( ['label' => 'Email address'] );
+    $address1->setOptions( ['label' => 'Address line 1'] );
+    $address2->setOptions( ['label' => 'Address line 2'] );
+    $address3->setOptions( ['label' => 'Address line 3'] );
+    $postcode->setOptions( ['label' => 'Postcode'] );
     
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['value'=>'Save and continue']);
+        
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();
 ?>

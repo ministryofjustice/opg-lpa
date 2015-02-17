@@ -3,8 +3,11 @@
     $csrf           = $form->get('secret');
     $canSustainLife = $form->get('canSustainLife');
     
-    $canSustainLifeOptions = $canSustainLife->getOptions()['value_options'];
-    $canSustainLifeOptions[true] += [
+    $canSustainLifeValueOptions = $canSustainLife->getOptions()['value_options'];
+    $canSustainLifeValueOptions[true]['label'] = "Option A: Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf";
+    $canSustainLifeValueOptions[false]['label'] = "Option B: No. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf";
+    
+    $canSustainLifeValueOptions[true] += [
             'label_attributes' => [
                     'for' => 'can-sustain-life-true'
             ],
@@ -12,7 +15,7 @@
                     'id' => 'can-sustain-life-true'
             ],
     ];
-    $canSustainLifeOptions[false] += [
+    $canSustainLifeValueOptions[false] += [
             'label_attributes' => [
                     'for' => 'can-sustain-life-false'
             ],
@@ -20,10 +23,10 @@
                     'id' => 'can-sustain-life-false'
             ],
     ];
-    $canSustainLife->setOptions(['value_options'=>$canSustainLifeOptions]);
+    $canSustainLife->setOptions(['value_options'=>$canSustainLifeValueOptions]);
     
     $submit         = $form->get('submit');
-    $submit->setAttributes(['class'=>'button gotonextpart']);
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
     
     $formLabel      = $this->plugin('formLabel');
     $form->prepare();

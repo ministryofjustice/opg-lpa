@@ -10,13 +10,11 @@ class LifeSustainingForm extends AbstractForm
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
-                                    '1' => [
-                                            'label' => "Option A: Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf",
-                                            'value' => '1',
+                                    true => [
+                                            'value' => true,
                                     ],
-                                    '0' => [
-                                            'label' => "Option B: No. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf",
-                                            'value' => '0',
+                                    false => [
+                                            'value' => false,
                                     ],
                             ],
                     ],

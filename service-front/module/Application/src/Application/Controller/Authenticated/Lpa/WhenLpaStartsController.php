@@ -40,7 +40,7 @@ class WhenLpaStartsController extends AbstractLpaController
                     $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
                 }
                 
-                $primaryAttorneyDecisions->when = $form->get('whenLpaStarts')->getValue();
+                $primaryAttorneyDecisions->when = $form->get('when')->getValue();
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
@@ -51,7 +51,7 @@ class WhenLpaStartsController extends AbstractLpaController
             }
         }
         else {
-            if($this->getLpa()->document->primaryAttorneyDecisions != null) {
+            if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
                 $form->bind($this->getLpa()->document->primaryAttorneyDecisions->flatten());
             }
         }
