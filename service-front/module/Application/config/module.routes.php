@@ -675,7 +675,7 @@ return [
                         'options' => [
                             'route'    => '/register',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\RegisterController',
+                                'controller' => 'Authenticated\Lpa\RegisterLpaController',
                                 'action'     => 'index',
                             ],
                         ],
