@@ -7,7 +7,7 @@ use Zend\Session\SessionManager as ZFSessionManager;
 class SessionManager extends ZFSessionManager {
 
     /**
-     * Tracks whether we've seen this session before and regenerateId() if not.
+     * Tracks whether we've seen this session before and does a regenerateId() if not.
      */
     public function initialise(){
 

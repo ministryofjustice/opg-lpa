@@ -1417,7 +1417,7 @@ article table {
           margin-bottom: 0.5em;
           padding: 0.5em 1em 0.5em 2em;
           background-color: #f8f8f8;
-          background-image: url("/static/images/icon/progress-tick.png");
+          background-image: url("/assets/v1/images/icon/progress-tick.png");
           background-repeat: no-repeat;
           background-position: 10px 50%;
           color: #0b0c0c;

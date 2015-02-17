@@ -1,15 +1,13 @@
 <?php
-namespace Application\Model\Library\Authentication\Identity;
+namespace Application\Model\Service\Authentication\Identity;
 
 use DateTime;
-
-# TODO - delete this.
 
 /**
  * Class representing the identity of a currently authenticated user.
  *
  * Class User
- * @package Application\Library\Authentication\Identity
+ * @package Application\Model\Service\Authentication\Identity
  */
 class User {
 
@@ -51,9 +49,6 @@ class User {
      * @param bool $isAdmin Whether of not the user is an admin.
      */
     public function __construct( $userId, $token, $expiresIn, DateTime $lastLogin, $isAdmin = false ){
-
-        throw new \RuntimeException('Deprecated. If you get this tell Neil!');
-
         $this->id = $userId;
         $this->token = $token;
         $this->lastLogin = $lastLogin;

@@ -1,7 +1,7 @@
 <?php
 namespace Application\Controller;
 
-use Application\Model\Library\Authentication\Identity\User as Identity;
+use Application\Model\Service\Authentication\Identity\User as Identity;
 
 interface UserAwareInterface
 {

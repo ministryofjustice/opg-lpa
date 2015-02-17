@@ -3,7 +3,7 @@ namespace Application\Controller;
 
 use RuntimeException;
 
-use Application\Model\Library\Authentication\Identity\User as Identity;
+use Application\Model\Service\Authentication\Identity\User as Identity;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {

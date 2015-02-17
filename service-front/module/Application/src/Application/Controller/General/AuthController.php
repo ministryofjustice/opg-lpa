@@ -67,9 +67,11 @@ class AuthController extends AbstractBaseController {
 
             }
 
+            // else authentication failed...
 
             $message = $result->getMessages();
 
+            // If there is a message, extract it (there will only ever be one).
             if( is_array($message) && count($message) > 0 ){
                 $message = array_pop($message);
             }
@@ -102,7 +104,6 @@ class AuthController extends AbstractBaseController {
      */
     public function logoutAction(){
 
-        // Both is probably over the top, but better to be safe!
         $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
         $this->getServiceLocator()->get('SessionManager')->destroy([ 'clear_storage'=>true ]);
 
@@ -110,6 +111,6 @@ class AuthController extends AbstractBaseController {
 
         return $this->redirect()->toUrl( $this->config()['redirects']['logout'] );
 
-    }
+    } // function
 
 } // class

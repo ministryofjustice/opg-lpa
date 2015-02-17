@@ -9,7 +9,7 @@ use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
 
-use Application\Model\Library\Authentication\Identity\User;
+use Application\Model\Service\Authentication\Identity\User;
 
 /**
  * Performs email address & password authentication with the LPA API Client.
