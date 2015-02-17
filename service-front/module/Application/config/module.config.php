@@ -73,7 +73,7 @@ return [
             'accordionBottom'   => 'Application\View\Helper\AccordionBottom',
             'accordionIdx'      => 'Application\View\Helper\AccordionIdx',
             'accountInfo'       => 'Application\View\Helper\AccountInfo',
-            'pageTitle'         => 'Application\View\Helper\PageTitle',
+            'pageHeaders'       => 'Application\View\Helper\PageHeaders',
             'elementGroupClass' => 'Application\View\Helper\ElementGroupClass',
             'linkedErrorList'   => 'Application\View\Helper\LinkedErrorList',
             'routeName'         => 'Application\View\Helper\RouteName',

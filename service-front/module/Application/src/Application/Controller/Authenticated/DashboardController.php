@@ -21,7 +21,8 @@ class DashboardController extends AbstractAuthenticatedController
                 'id' => $this->getUser()->id(),
                 'token' => $this->getUser()->token(),
                 'lastLogin' => $this->getUser()->lastLogin()->format('r'),
-            ]
+            ],
+            'pageTitle' => 'Your LPAs',
         ]);
     }
 
