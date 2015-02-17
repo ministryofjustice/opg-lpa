@@ -3,9 +3,15 @@ namespace Application\Model\Service\Authentication;
 
 use DateTime;
 
+# TODO - delete this.
+
 use Zend\Authentication\AuthenticationService as ZFAuthenticationService;
 
 class AuthenticationService extends ZFAuthenticationService {
+
+    public function __construct(){
+        throw new \RuntimeException('Deprecated. If you get this tell Neil!');
+    }
 
     /**
      * Returns true if and only if an identity is available from storage
