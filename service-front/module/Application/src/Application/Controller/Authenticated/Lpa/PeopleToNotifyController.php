@@ -62,6 +62,7 @@ class PeopleToNotifyController extends AbstractLpaController
     public function addAction()
     {
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/people-to-notify/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
@@ -104,6 +105,7 @@ class PeopleToNotifyController extends AbstractLpaController
     public function editAction()
     {
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/people-to-notify/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
