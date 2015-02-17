@@ -6,6 +6,7 @@
     $when        = $form->get('when');
     $whenOptions = $when->getOptions()['value_options'];
     $whenOptions['first'] += [
+            'label' => 'As soon as one of the original attorneys can no longer act',
             'label_attributes' => [
                     'for' => 'when-first'
             ],
@@ -14,6 +15,7 @@
             ],
     ];
     $whenOptions['last'] += [
+            'label' => 'Only when none of the original attorneys can act',
             'label_attributes' => [
                     'for' => 'when-last'
             ],
@@ -22,6 +24,7 @@
             ],
     ];
     $whenOptions['depends'] += [
+            'label' => 'In some other way...',
             'label_attributes' => [
                     'for' => 'when-depends'
             ],
@@ -34,7 +37,13 @@
     $when->setLabelOptions(['disable_html_escape' => true]);
     
     $whenDetails = $form->get('whenDetails');
+    $whenDetails->setAttributes([
+            'rows' => 24,
+            'cols' => 80,
+    ]);
+    
     $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
     
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();

@@ -11,11 +11,9 @@ class TypeForm extends AbstractForm
                     'options' => [
                             'value_options' => [
                                     'property-and-financial' => [
-                                            'label' => 'Property and financial affairs',
                                             'value' => 'property-and-financial',
                                     ],
                                     'health-and-welfare' => [
-                                            'label' => 'Health and welfare',
                                             'value' => 'health-and-welfare',
                                     ]
                             ],
@@ -23,14 +21,10 @@ class TypeForm extends AbstractForm
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
-                    'attributes' => [
-                            'value' => 'Save and continue'
-                    ],
-                    
             ],
     ];
     
-    public function __construct ($formName = 'type')
+    public function __construct ($formName = 'type-form')
     {
         
         parent::__construct($formName);

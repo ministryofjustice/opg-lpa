@@ -11,15 +11,12 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
                     'options' => [
                             'value_options' => [
                                     'jointly-attorney-severally' => [
-                                            'label' => 'Jointly and severally', 
                                             'value' => 'jointly-attorney-severally', 
                                     ],
                                     'jointly' => [
-                                            'label' => 'Jointly',
                                             'value' => 'jointly',
                                     ],
                                     'depends' => [
-                                            'label' => 'Jointly for some decisions, and jointly and severally for other decisions',
                                             'value' => 'depends',
                                     ],
                             ],
@@ -27,20 +24,9 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
             ],
             'howDetails' => [
                     'type' => 'TextArea',
-                    'options' => [
-                            'label' => '',
-                    ],
-                    'attributes' => [
-                            'rows' => 24,
-                            'cols' => 80,
-                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
-                    'attributes' => [
-                            'value' => 'Save and continue'
-                    ],
-                    
             ],
     ];
     

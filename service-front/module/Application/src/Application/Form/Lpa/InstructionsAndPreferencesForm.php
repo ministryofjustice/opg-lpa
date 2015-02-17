@@ -7,30 +7,12 @@ class InstructionsAndPreferencesForm extends AbstractForm
     protected $formElements = [
             'instruction' => [
                     'type' => 'Textarea',
-                    'options' => [
-                            'label' => 'Instructions',
-                    ],
-                    'attributes' => [
-                            'rows' => 10,
-                            'cols' => 67,
-                    ],
             ],
             'preference' => [
                     'type' => 'Textarea',
-                    'options' => [
-                            'label' => 'Preferences'
-                    ],
-                    'attributes' => [
-                            'rows' => 10,
-                            'cols' => 67,
-                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
-                    'attributes' => [
-                            'value' => 'Save and continue'
-                    ],
-                    
             ],
     ];
     

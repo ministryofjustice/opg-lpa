@@ -4,12 +4,12 @@
     $form->setAttributes(['id'=>'decisions-form']);
     
     $how        = $form->get('how');
-    $howOptions = $how->getOptions()['value_options'];
-    $howOptions['jointly-attorney-severally']['label'] .= $this->partial('application/how-primary-attorneys-make-decision/partials/jointly-severally.phtml');
-    $howOptions['jointly']['label'] .= $this->partial('application/how-primary-attorneys-make-decision/partials/jointly.phtml');
-    $howOptions['depends']['label'] .= $this->partial('application/how-primary-attorneys-make-decision/partials/depends.phtml');
+    $howValueOptions = $how->getOptions()['value_options'];
+    $howValueOptions['jointly-attorney-severally']['label'] = 'Jointly and severally' . $this->partial('application/how-primary-attorneys-make-decision/partials/jointly-severally.phtml');
+    $howValueOptions['jointly']['label'] = 'Jointly' . $this->partial('application/how-primary-attorneys-make-decision/partials/jointly.phtml');
+    $howValueOptions['depends']['label'] = 'Jointly for some decisions, and jointly and severally for other decisions' . $this->partial('application/how-primary-attorneys-make-decision/partials/depends.phtml');
     
-    $howOptions['jointly-attorney-severally'] += [
+    $howValueOptions['jointly-attorney-severally'] += [
             'label_attributes' => [
                     'for' => 'how-jointly-attorney-severally'
             ],
@@ -17,7 +17,7 @@
                     'id' => 'how-jointly-attorney-severally'
             ],
     ];
-    $howOptions['jointly'] += [
+    $howValueOptions['jointly'] += [
             'label_attributes' => [
                     'for' => 'how-jointly'
             ],
@@ -25,7 +25,7 @@
                     'id' => 'how-jointly'
             ],
     ];
-    $howOptions['depends'] += [
+    $howValueOptions['depends'] += [
             'label_attributes' => [
                     'for' => 'how-depends'
             ],
@@ -34,13 +34,18 @@
             ],
     ];
     
-    $how->setOptions(['value_options'=>$howOptions]);
+    $how->setOptions(['value_options'=>$howValueOptions]);
     $how->setLabelOptions(['disable_html_escape' => true]);
     
     $howDetails = $form->get('howDetails');
-    $submit     = $form->get('submit');
-    $submit->setAttributes(['class'=>'button gotonextpart']);
+    $howDetails->setAttributes([
+        'rows' => 24,
+        'cols' => 80,
+    ]);
     
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+        
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();
 ?>
