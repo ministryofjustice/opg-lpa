@@ -423,7 +423,7 @@ return [
                     'download' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route'    => '/download/:pdf_type',
+                            'route'    => '/download/:pdf-type',
                             'constraints' => [
                                 'pdf_type' => 'lp1|lp3|lpa120',
                             ],
@@ -667,6 +667,16 @@ return [
                                         'action' => 'delete-trust',
                                     ],
                                 ],
+                            ],
+                        ],
+                    ],
+                    'register' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/register',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\RegisterController',
+                                'action'     => 'index',
                             ],
                         ],
                     ],
