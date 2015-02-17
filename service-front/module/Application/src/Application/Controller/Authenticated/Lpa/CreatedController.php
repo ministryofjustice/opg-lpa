@@ -19,6 +19,18 @@ class CreatedController extends AbstractLpaController
     
     public function indexAction()
     {
-        return new ViewModel();
+        //@todo remove this line once its can be set by api. 
+        $this->getLpa()->completedAt = new \DateTime();
+        
+        $lpaId = $this->getLpa()->id;
+        return new ViewModel([
+                'lpaType'       => ("property-and-financial" == $this->getLpa()->document->type)? 'Property and financial affairs':'Health and welfare',
+                'donorName'     => $this->getLpa()->document->donor->name->__toString(),
+                'creationDate'  => $this->getLpa()->completedAt->format('d/m/Y'),
+                'editRoute'     => $this->url()->fromRoute('lpa/instructions', ['lpa-id'=>$lpaId]),
+                'deleteRoute'   => $this->url()->fromRoute('user/dashboard/delete-lpa', ['lpa-id'=>$lpaId]),
+                'downloadRoute' => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpaId, 'pdf-type'=>'LP1']),
+                'nextRoute'     => $this->url()->fromRoute('lpa/register', ['lpa-id'=>$lpaId]),
+        ]);
     }
 }
