@@ -39,11 +39,13 @@
       <tr>
       <td><?php echo $lpa->id . ' v' . $lpa->version ?></td>
       <td><?php echo $lpa->donor; ?></td>
-      <td><?php echo $lpa->type; ?></td>
-      <td><?php echo $lpa->updatedAt->format('r'); ?></td>
+      <td><?php echo ($lpa->type == 'property-and-financial') ? 'Property and financial affairs' : 'Health and welfare'; ?></td>
+      <td><?php echo $lpa->updatedAt->format('M jS, Y'); ?></td>
       <td>
-        <a href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) ?>">Load</a>
-        <a href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) ?>">Delete</a>
+        <div class="lpa-actions">
+        <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) ?>">Continue</a>
+        <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) ?>">Delete</a>
+        </div>
       </td>
       </tr>
   <?php endforeach;?>
