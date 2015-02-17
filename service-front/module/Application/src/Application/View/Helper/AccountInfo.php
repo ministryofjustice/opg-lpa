@@ -14,15 +14,6 @@ class AccountInfo extends AbstractHelper
         
         if ($auth->hasIdentity()) {
             $identity = $auth->getIdentity();
-            $params['issignedin'] = true;
-            $params['username'] = 'Unknown name';
-            
-            $email = $params['username'];
-            // stop really long email addresses distrupting the nav bar
-            $maxEmailLength = 40;
-            if (strlen($email) > $maxEmailLength) {
-                $email = substr($email, 0, $maxEmailLength - 4) . '&hellip;';
-            }
             
             $params['name'] = '@todo Firstname Lastname';
             
@@ -39,8 +30,6 @@ class AccountInfo extends AbstractHelper
                 'url' => $this->view->url('logout'),
             );
         } else {
-            $params['issignedin'] = false;
-            $params['username'] = '';
             $params['email'] = '';
             $params['links'][] = array(
                 'text' => 'Sign in',
