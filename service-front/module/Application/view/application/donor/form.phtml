@@ -12,6 +12,8 @@
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
     $canSign    = $form->get('canSign');
+    
+    $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
 
     $title->setOptions( [
             'label' => 'Title',
@@ -48,9 +50,11 @@
     <?= $this->formElementErrors($csrf) ?>
 </div>
 
-<div class="form_element">
+<fieldset>
 
-    <?= $formLabel->openTag() . $title->getOption('label'); ?>
+<div class="group">
+
+    <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formSelect($title) ?>
     
@@ -58,29 +62,28 @@
         <?= $this->formElementErrors($title) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
-<div class="form_element">
+<div class="group">
 
-    <?= $formLabel->openTag() . $firstname->getOption('label'); ?>
+    <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
     
+     
     <?= $this->formInput($firstname) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($firstname) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
-
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $lastname->getOption('label'); ?>
+    <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($lastname) ?>
     
@@ -88,14 +91,14 @@
         <?= $this->formElementErrors($lastname) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $otherNames->getOption('label'); ?>
+    <?= $formLabel->openTag() . $otherNames->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($otherNames) ?>
     
@@ -103,14 +106,14 @@
         <?= $this->formElementErrors($otherNames) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $dob->getOption('label'); ?>
+    <?= $formLabel->openTag() . $dob->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formDate($dob) ?>
     
@@ -118,14 +121,14 @@
         <?= $this->formElementErrors($dob) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $email->getOption('label'); ?>
+    <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($email) ?>
     
@@ -133,14 +136,14 @@
         <?= $this->formElementErrors($email) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
-
+</fieldset>
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $address1->getOption('label'); ?>
+    <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($address1) ?>
     
@@ -148,14 +151,14 @@
         <?= $this->formElementErrors($address1) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $address2->getOption('label'); ?>
+    <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($address2) ?>
     
@@ -163,14 +166,14 @@
         <?= $this->formElementErrors($address2) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $address3->getOption('label'); ?>
+    <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($address3) ?>
     
@@ -178,14 +181,14 @@
         <?= $this->formElementErrors($address3) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $postcode->getOption('label'); ?>
+    <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formInput($postcode) ?>
     
@@ -193,14 +196,14 @@
         <?= $this->formElementErrors($postcode) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
 
 <div class="form_element">
 
-    <?= $formLabel->openTag() . $canSign->getOption('label'); ?>
+    <?= $formLabel->openTag() . $canSign->getOption('label') . $formLabel->closeTag(); ?>
     
     <?= $this->formcheckbox($canSign) ?>
     
@@ -208,7 +211,7 @@
         <?= $this->formElementErrors($canSign) ?>
     </p>
     
-    <?= $formLabel->closeTag() ?>
+    
 
 </div>
 
