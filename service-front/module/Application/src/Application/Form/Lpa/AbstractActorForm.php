@@ -1,11 +1,13 @@
 <?php
-namespace Application\Form\Lpa\Traits;
+namespace Application\Form\Lpa;
 
-trait ActorFormModelization
+abstract class AbstractActorForm extends AbstractForm
 {
-    public function validateModel($modelClass)
+    protected $actor;
+    
+    public function validateByModel()
     {
-        $modelizedData = $this->modelization($this->data);
+        $modelizedData = $this->formDataModelization($this->data);
     
         if(array_key_exists('dob', $modelizedData) && ($modelizedData['dob']['date'] == "")) {
             $modelizedData['dob'] = null;
@@ -14,10 +16,9 @@ trait ActorFormModelization
         if(array_key_exists('email', $modelizedData) && ($modelizedData['email']['address'] == "")) {
             $modelizedData['email'] = null;
         }
-    
-        $personModel = new $modelClass($modelizedData);
-    
-        $validation = $personModel->validate();
+        
+        $this->actor->populate($modelizedData);
+        $validation = $this->actor->validate();
     
         if(array_key_exists('dob', $modelizedData) && ($modelizedData['dob'] == null) && array_key_exists('dob', $validation)) {
             $validation['dob-date'] = $validation['dob'];

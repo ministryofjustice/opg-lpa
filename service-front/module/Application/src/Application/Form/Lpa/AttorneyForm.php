@@ -1,10 +1,10 @@
 <?php
 namespace Application\Form\Lpa;
 
-class AttorneyForm extends AbstractForm
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+
+class AttorneyForm extends AbstractActorForm
 {
-    use \Application\Form\Lpa\Traits\ActorFormModelization;
-    
     protected $formElements = [
             'name-title' => [
                     'type' => 'Zend\Form\Element\Select',
@@ -49,10 +49,10 @@ class AttorneyForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
+        $this->actor = new Human();
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
-        
+        return parent::validateByModel();
     }
 }

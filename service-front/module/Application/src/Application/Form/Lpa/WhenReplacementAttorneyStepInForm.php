@@ -37,9 +37,9 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
-        $document = new ReplacementAttorneyDecisions($this->modelization($this->data));
+        $document = new ReplacementAttorneyDecisions($this->formDataModelization($this->data));
         
         $validation = $document->validate(['when']);
         

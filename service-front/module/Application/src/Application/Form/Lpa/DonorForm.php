@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form\Lpa;
 
-class DonorForm extends AbstractForm
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
+class DonorForm extends AbstractActorForm
 {
-    use \Application\Form\Lpa\Traits\ActorFormModelization;
-    
     protected $formElements = [
             'name-title' => [
                     'type' => 'Zend\Form\Element\Select',
@@ -56,11 +55,10 @@ class DonorForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
+        $this->actor = new Donor();
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Donor');
-        
+        return parent::validateByModel();
     }
-    
 }

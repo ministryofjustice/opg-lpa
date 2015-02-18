@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form\Lpa;
 
-class CertificateProviderForm extends AbstractForm
+use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+class CertificateProviderForm extends AbstractActorForm
 {
-    use \Application\Form\Lpa\Traits\ActorFormModelization;
-    
     protected $formElements = [
             'name-title' => [
                     'type' => 'Zend\Form\Element\Select',
@@ -39,10 +38,10 @@ class CertificateProviderForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
+        $this->actor = new CertificateProvider();
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider');
-        
+        return parent::validateByModel();
     }
 }

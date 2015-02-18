@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form\Lpa;
 
-class PeopleToNotifyForm extends AbstractForm
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+class PeopleToNotifyForm extends AbstractActorForm
 {
-    use \Application\Form\Lpa\Traits\ActorFormModelization;
-    
     protected $formElements = [
             'name-title' => [
                     'type' => 'Zend\Form\Element\Select',
@@ -39,10 +38,10 @@ class PeopleToNotifyForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
+        $this->actor = new NotifiedPerson();
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson');
-        
+        return parent::validateByModel();
     }
 }

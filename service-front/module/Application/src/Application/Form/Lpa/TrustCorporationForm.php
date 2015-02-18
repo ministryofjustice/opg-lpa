@@ -1,10 +1,9 @@
 <?php
 namespace Application\Form\Lpa;
 
-class TrustCorporationForm extends AbstractForm
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+class TrustCorporationForm extends AbstractActorForm
 {
-    use \Application\Form\Lpa\Traits\ActorFormModelization;
-    
     protected $formElements = [
             'name' => [
                     'type' => 'Text',
@@ -39,10 +38,10 @@ class TrustCorporationForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
+        $this->actor = new TrustCorporation();
         
-        return $this->validateModel('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation');
-        
+        return parent::validateByModel();
     }
 }
