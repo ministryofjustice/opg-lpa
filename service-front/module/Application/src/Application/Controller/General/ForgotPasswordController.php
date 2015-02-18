@@ -53,7 +53,13 @@ class ForgotPasswordController extends AbstractActionController
 
         } // if
 
-        return new ViewModel( compact('form', 'error' ) );
+        return new ViewModel(
+            array_merge([
+                    'pageTitle' => 'Reset your password',    
+                ],
+                compact('form', 'error')
+            ) 
+        );
 
     } // function
 
@@ -117,6 +123,12 @@ class ForgotPasswordController extends AbstractActionController
 
         //---------------------------
 
-        return new ViewModel( compact('form', 'error') );
+        return new ViewModel(
+            array_merge([
+                    'pageTitle' => 'Reset your password',    
+                ],
+                compact('form', 'error')
+            ) 
+        );
     }
 }

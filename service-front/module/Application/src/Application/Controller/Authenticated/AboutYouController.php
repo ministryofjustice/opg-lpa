@@ -9,6 +9,6 @@ class AboutYouController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel(['pageTitle' => 'Your Details']);
     }
 }
