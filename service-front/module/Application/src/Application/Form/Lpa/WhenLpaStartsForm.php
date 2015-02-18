@@ -33,7 +33,7 @@ class WhenLpaStartsForm extends AbstractForm
     
     public function validateByModel()
     {
-        $decisions = new PrimaryAttorneyDecisions($this->formDataModelization($this->data));
+        $decisions = new PrimaryAttorneyDecisions($this->data);
         
         $validation = $decisions->validate(['when']);
         

@@ -39,7 +39,7 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
     
     public function validateByModel()
     {
-        $decision = new PrimaryAttorneyDecisions($this->formDataModelization($this->data));
+        $decision = new PrimaryAttorneyDecisions($this->data);
         
         $validation = $decision->validate(['how']);
         
