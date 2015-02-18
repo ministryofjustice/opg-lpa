@@ -7,7 +7,7 @@
         <!--<![endif]-->
         <head>
             <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-            <title><?= $this->routeName() == 'home'?'Make a lasting power of attorney':$this->pageTitle() ?> | GOV.UK</title>
+            <title>Make a lasting power of attorney | GOV.UK</title>
             <script type="text/javascript">
                 (function(){if(navigator.userAgent.match(/IEMobile\/10\.0/)){var d=document,c="appendChild",a=d.createElement("style");a[c](d.createTextNode("@-ms-viewport{width:auto!important}"));d.getElementsByTagName("head")[0][c](a);}})();
             </script>
@@ -84,16 +84,7 @@
             <div id="wrapper">
                 <section id="content" role="main" class="group">
                     <?= $this->accountInfo(); ?>
-                    <header class="page-header group">
-                        <hgroup>
-                            <h1>
-                                <?php if ($this->routeName() == 'home'): ?>
-                                <span>Service</span>
-                                <?php endif; ?>
-                                <?php echo $this->pageTitle(); ?>
-                            </h1>
-                        </hgroup>
-                    </header>
+                    <?= $this->pageHeaders(); ?>
                     <div class="article-container group">
                         <article role="article" class="group">
                             <div class="inner">

@@ -93,7 +93,7 @@ class AuthController extends AbstractBaseController {
 
         //---
 
-        return new ViewModel( [ 'error'=>$authError ] );
+        return new ViewModel( [ 'error'=>$authError, 'pageTitle' => 'Sign in' ] );
 
     } // function
 
