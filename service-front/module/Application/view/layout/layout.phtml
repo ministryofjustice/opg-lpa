@@ -91,13 +91,12 @@
                 <section id="content" role="main" class="group">
                     <?= $this->accountInfo(); ?>
                     <?= $this->pageHeaders(); ?>
-                    <div class="article-container group">
-                        <article role="article" class="group">
-                            <div class="inner">
+                    
                                 
                                 <?php if(isset($this->contentHeader)): ?>
-                                <div id="accordion" class="accordion-form">
                                 <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
+                                
+                                <div id="accordion" class="accordion-form">
                                 <?php endif; ?>
 
                                 <?php
@@ -109,13 +108,14 @@
                                 ?>
                                 
                                 <?php
+                                
                                     $accordionTop = $this->accordionTop($this->lpa);
                                     if(is_array($accordionTop)) {
                                         echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionTop);
                                     }
                                 ?>
                                 
-                                <?= $this->content?>
+                                <?= $this->content; ?>
                                 
                                 <?php
                                     $accordionBottom = $this->accordionBottom($this->lpa);
@@ -127,9 +127,9 @@
                                 <?php if(isset($this->contentHeader)): ?>
                                 </div> <!-- Close accordion --> 
                                 <?php endif; ?>
-                                
-                            </div>
-                        </article>
+                            
+                            </div> <!-- article-container group -->
+                            </article> <!-- These tags opened either in pageHeaders() or in $this->contentHeader -->
                     </div>
                     <div class="lpa-footer inner">
                         <hr>
