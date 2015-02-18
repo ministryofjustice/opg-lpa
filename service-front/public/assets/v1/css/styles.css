@@ -1474,7 +1474,7 @@ article table {
   border-bottom: 1px solid #bfc1c3; }
 
 .person-summary {
-  background: url("/static/images/icon/person.png") no-repeat 0px 3px;
+  background: url("/assets/v1/images/icon/person.png") no-repeat 0px 3px;
   background-size: Auto 4.2em;
   padding-left: 4em;
   margin-bottom: 1em;
@@ -1937,7 +1937,7 @@ input.hasDatepicker {
     font-weight: 400;
     text-transform: none;
     font-weight: 700;
-    background: url("/static/images/icon/person.png") 18px center no-repeat;
+    background: url("/assets/v1/images/icon/person.png") 18px center no-repeat;
     background-size: 2.5%;
     padding-left: 2.5em; }
     @media (max-width: 640px) {
@@ -2134,7 +2134,7 @@ input.hasDatepicker {
     margin: 0 0 0 -1em;
     padding-bottom: 0.8em;
     @if $is-ie == false {
-      background: url("/static/images/icon/person.png") no-repeat 1em 17px;
+      background: url("/assets/v1/images/icon/person.png") no-repeat 1em 17px;
       background-size: 2.5%;
       padding-left: 2.5em;
     }
