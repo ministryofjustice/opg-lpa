@@ -68,6 +68,7 @@ class PrimaryAttorneyController extends AbstractLpaController
     public function addAction()
     {
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/primary-attorney/person-form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
@@ -134,10 +135,11 @@ class PrimaryAttorneyController extends AbstractLpaController
         
         if($attorney instanceof Human) {
             $form = new AttorneyForm();
+            $viewModel->setTemplate('application/primary-attorney/person-form.phtml');
         }
         else {
             $form = new TrustCorporationForm();
-            $viewModel->setTemplate('application/primary-attorney/edit-trust.phtml');
+            $viewModel->setTemplate('application/primary-attorney/trust-form.phtml');
         }
         
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
@@ -214,6 +216,7 @@ class PrimaryAttorneyController extends AbstractLpaController
     public function addTrustAction()
     {
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/primary-attorney/trust-form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }

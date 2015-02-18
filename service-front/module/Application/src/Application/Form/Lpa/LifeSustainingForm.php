@@ -35,9 +35,9 @@ class LifeSustainingForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
-        $decisions = new PrimaryAttorneyDecisions($this->modelization($this->data));
+        $decisions = new PrimaryAttorneyDecisions($this->formDataModelization($this->data));
         
         $validation = $decisions->validate(['canSustainLife']);
         

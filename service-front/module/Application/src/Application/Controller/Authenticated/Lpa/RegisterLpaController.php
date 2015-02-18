@@ -12,10 +12,10 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 
-class CreatedController extends AbstractLpaController
+class RegisterLpaController extends AbstractLpaController
 {
     
-    protected $contentHeader = 'created-partial.phtml';
+    protected $contentHeader = 'registration-partial.phtml';
     
     public function indexAction()
     {
@@ -29,8 +29,7 @@ class CreatedController extends AbstractLpaController
                 'creationDate'  => $this->getLpa()->completedAt->format('d/m/Y'),
                 'editRoute'     => $this->url()->fromRoute('lpa/instructions', ['lpa-id'=>$lpaId]),
                 'deleteRoute'   => $this->url()->fromRoute('user/dashboard/delete-lpa', ['lpa-id'=>$lpaId]),
-                'downloadRoute' => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpaId, 'pdf-type'=>'LP1']),
-                'nextRoute'     => $this->url()->fromRoute('lpa/register', ['lpa-id'=>$lpaId]),
+                'nextRoute'     => $this->url()->fromRoute('lpa/applicant', ['lpa-id'=>$lpaId]),
         ]);
     }
 }

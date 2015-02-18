@@ -23,9 +23,9 @@ class InstructionsAndPreferencesForm extends AbstractForm
         
     }
     
-    public function modelValidation()
+    public function validateByModel()
     {
-        $document = new Document($this->modelization($this->data));
+        $document = new Document($this->formDataModelization($this->data));
         
         $validation = $document->validate(['instructions, preferences']);
         

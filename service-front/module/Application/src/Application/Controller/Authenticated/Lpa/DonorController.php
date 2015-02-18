@@ -54,6 +54,7 @@ class DonorController extends AbstractLpaController
         }
         
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/donor/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
@@ -90,6 +91,8 @@ class DonorController extends AbstractLpaController
     public function editAction()
     {
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/donor/form.phtml');
+        
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }

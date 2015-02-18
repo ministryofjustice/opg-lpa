@@ -96,7 +96,7 @@ abstract class AbstractForm extends Form
         }
         
         // validate data though model validators.
-        $modelValidationResult = $this->modelValidation();
+        $modelValidationResult = $this->validateByModel();
         
         // take both Zend validation and model validation result into account 
         $this->isValid = $result = (bool) ($filter->isValid() & $modelValidationResult['isValid']);
@@ -230,7 +230,7 @@ abstract class AbstractForm extends Form
      * 
      * @return array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
-    protected function modelization($formData)
+    protected function formDataModelization($formData)
     {
         $modelData = [];
         foreach($formData as $key=>$value) {
@@ -276,9 +276,9 @@ abstract class AbstractForm extends Form
     public function getModelizedData()
     {
         if($this->data != null) {
-            return $this->modelization($this->data);
+            return $this->formDataModelization($this->data);
         }
     }
     
-    abstract protected function modelValidation();
+    abstract protected function validateByModel();
 }

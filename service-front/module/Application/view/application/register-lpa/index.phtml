@@ -1,0 +1,43 @@
+<article role="article" class="group">
+		<div class="inner">
+<div class="LPA-details right">
+<h3>LPA for <?= $this->lpaType ?></h3>
+<ul>
+  <li>Donor: <?= $this->donorName ?></li>
+  <li>Created: <?= $this->creationDate ?></li>
+  <!--<li>Reference: 5367171250</li>-->
+</ul>
+<div class="LPA-actions">
+  <a href="<?= $this->editRoute ?>">View or edit this LPA</a> &nbsp;&nbsp; | &nbsp;&nbsp; <a href="<?= $this->deleteRoute ?>">Delete this LPA</a>
+</div>
+</div>
+
+<h2>How to register this LPA</h2>
+
+<ol class="next steps">
+  <li>
+    Over the next few pages, we’ll ask you a few questions about things like the signing dates of the LPA.
+    You'll also need to notify any 'people to be told'.
+  </li>
+  <li>
+    You then need to pay the £110 application fee. You can do this through our secure online service.
+  </li>
+  <li>
+    Finally, print, sign and date the registration form, and send it to us with the signed LPA.
+  </li>
+</ol>
+
+<p><a class="js-guidance" href="/help/#topic-registering-the-lpa" data-journey-click="stageprompt.lpa:help:registering-the-lpa">More about registering an LPA</a></p>
+
+<h3>Need to change something?</h3>
+
+<p>Please don't amend any of the information in the LPA by hand. If the donor
+wants to change something, they must <a href="<?= $this->editRoute ?>">edit this LPA online</a>
+and print off another copy. Everyone must sign it again.</p>
+
+
+<p><a class="button" href="<?= $this->nextRoute ?>" role="button">Register this LPA</a></p>
+
+                        
+</div>
+</article>

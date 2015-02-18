@@ -51,6 +51,7 @@ class CertificateProviderController extends AbstractLpaController
         }
         
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/certificate-provider/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
@@ -87,6 +88,7 @@ class CertificateProviderController extends AbstractLpaController
     public function editAction()
     {
         $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/certificate-provider/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
