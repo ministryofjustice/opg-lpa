@@ -3,6 +3,9 @@ namespace Application\Form\Lpa;
 
 abstract class AbstractActorForm extends AbstractForm
 {
+    /**
+     * @var Opg\Lpa\DataModel\AbstractData $actor
+     */
     protected $actor;
     
     public function validateByModel()
