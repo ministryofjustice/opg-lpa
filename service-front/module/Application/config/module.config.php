@@ -78,6 +78,7 @@ return [
             'linkedErrorList'   => 'Application\View\Helper\LinkedErrorList',
             'routeName'         => 'Application\View\Helper\RouteName',
             'formElementErrors' => 'Application\View\Helper\FormElementErrors',
+            'concatNames'       => 'Application\View\Helper\ConcatNames',
         ],
     ],
 
