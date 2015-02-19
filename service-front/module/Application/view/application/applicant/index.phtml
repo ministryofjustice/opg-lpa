@@ -1,12 +1,105 @@
+<?php 
+$form       = $this->form;
+$form->setAttributes(['class'=>'form']);
+$csrf       = $form->get('secret');
+
+$whoIsRegistering = $form->get('whoIsRegistering');
+$whoIsRegisteringValueOptions = $whoIsRegistering->getOptions()['value_options'];
+$whoIsRegisteringValueOptions['donor']['label'] = "The donor - ".$this->lpa->document->donor->name->__toString();
+
+$whoIsRegisteringValueOptions['donor'] += [
+        'label_attributes' => [
+                'for' => 'whoIsRegistering-donor'
+        ],
+        'attributes' => [
+                'id' => 'whoIsRegistering-donor'
+        ],
+];
+
+if($form->has('attorneyList')) {
+    $whoIsRegisteringValueOptions['attorney']['label'] = "The attorneys -";
+    $attorneyList = $form->get('attorneyList');
+}
+else {
+    if(count($this->lpa->document->primaryAttorneys) > 1) {
+        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorneys - ". $this->concatNames($this->lpa->document->primaryAttorneys);
+    }
+    else {
+        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".$this->lpa->document->primaryAttorneys[0]->name->__toString();
+    }
+    
+    $whoIsRegisteringValueOptions['attorney'] += [
+            'label_attributes' => [
+                    'for' => 'whoIsRegistering-attorney'
+            ],
+            'attributes' => [
+                    'id' => 'whoIsRegistering-attorney'
+            ],
+    ];
+}
+
+$whoIsRegistering->setOptions(['value_options'=>$whoIsRegisteringValueOptions]);
+
+$submit     = $form->get('submit');
+$submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+
+$formLabel  = $this->plugin('formLabel');
+$form->prepare();
+?>
 <section id="applicant" class="section current">
 	
 	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who’s applying to register the LPA?</h2>
 
     <div class="accordion-content">
     
-    
-    
-    
+        <div class="section-intro">
+        
+            <p>Either the donor, or 1 or more of the attorneys, can apply to register the LPA.</p>
+            
+            <p>If the attorneys have been appointed jointly, they must <strong>all</strong> apply.</p>
+            
+            <p>Whoever's applying will have to sign the application to register form.</p>
+            
+            <p><a href="/help/#topic-applicant" class="js-guidance" data-journey-click="stageprompt.lpa:help:applicant">Find out more about the role of the applicant</a></p>
+        
+        </div>
+        
+        <?= $this->form()->openTag($form); ?>
+        
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
+        
+        <h3>This LPA is being registered by</h3>
+        
+        <div class="emphasised option group">
+        
+            <?= $this->formElement($whoIsRegistering)?>
+                
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($whoIsRegistering) ?>
+            </p>
+            
+        </div>
+        
+        <?php if(isset($attorneyList)):?>
+    		<div class="attorney-applicant">
+                <?= $this->formElement($attorneyList)?>
+                    
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($attorneyList) ?>
+                </p>
+            </div>
+        <?php endif;?>
+
+		<div class="accordion-actions group">
+            <p>
+                <?= $this->formInput($submit) ?>
+            </p>
+		</div>
+
+		<?= $this->form()->closeTag(); ?>
     
     </div>
     
