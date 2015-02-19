@@ -6,6 +6,9 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Application\Form\Lpa\ApplicantForm;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class ApplicantController extends AbstractLpaController
 {
@@ -42,8 +45,35 @@ class ApplicantController extends AbstractLpaController
                     }
                 }
                 
+                // save applicant
                 if(!$this->getLpaApplicationService()->setWhoIsRegistering($lpaId, $applicants)) {
                     throw new \RuntimeException('API client failed to set applicant for id: '.$lpaId);
+                }
+                
+                // work out the default correspondent - donor or an attorney.
+                if($applicants == 'donor') {
+                    $correspondent = $this->getLpa()->document->donor;
+                }
+                else {
+                    $firstAttorneyId = array_values($applicants)[0];
+                    foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
+                        if($attorney->id == $firstAttorneyId) {
+                            $correspondent = $attorney;
+                        }
+                    }
+                }
+                
+                // save default correspondent if it has not been set
+                if($this->getLpa()->document->correspondent == null) {
+                    if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence([
+                            'who'       => (($postData['whoIsRegistering'] == 'donor')?'donor':'attorney'),
+                            'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
+                            'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
+                            'address'   => $correspondent->address,
+                            'email'     => $correspondent->email,
+                    ]))) {
+                        throw new \RuntimeException('API client failed to set correspondent for id: '.$lpaId);
+                    }
                 }
                 
                 $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
