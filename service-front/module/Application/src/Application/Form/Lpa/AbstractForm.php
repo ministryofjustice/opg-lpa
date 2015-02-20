@@ -19,7 +19,6 @@ abstract class AbstractForm extends Form
         parent::__construct($formName);
         
         $this->setAttribute('method', 'post');
-        $this->setAttribute('enctype', 'multipart/form-data');
 
         $this->add( (new Csrf('secret'))->setCsrfValidatorOptions([
             'timeout' => null,
