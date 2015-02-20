@@ -1,1 +1,204 @@
-edit correspondent
+<?php
+    /**
+     * Switcher form
+     */
+    $switcherForm   = $this->switcherForm;
+    $sCsrf          = $switcherForm->get('secret');
+    $switchTo = $switcherForm->get('switch-to-type');
+    $switchTo->setOptions([
+            'label' => 'Use these details',
+            'empty_option' => 'Choose a person',
+    ]);
+    
+    $switchSubmit     = $switcherForm->get('submit');
+    $switchSubmit->setAttributes(['value'=>'switch']);
+    $switchFormLabel  = $this->plugin('formLabel');
+    $switcherForm->prepare();
+    
+    /**
+     * Correspondent form
+     */
+    $form       = $this->correspondentForm;
+    $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
+    
+    $csrf       = $form->get('secret');
+    $who        = $form->get('who');
+    $title      = $form->get('name-title');
+    $firstname  = $form->get('name-first');
+    $lastname   = $form->get('name-last');
+    $address1   = $form->get('address-address1');
+    $address2   = $form->get('address-address2');
+    $address3   = $form->get('address-address3');
+    $postcode   = $form->get('address-postcode');
+    
+    $title->setOptions( ['label' => 'Title'] );
+    $firstname->setOptions( ['label' => 'First names'] );
+    $lastname->setOptions( ['label' => 'Last names'] );
+    $address1->setOptions( ['label' => 'Address line 1'] );
+    $address2->setOptions( ['label' => 'Address line 2'] );
+    $address3->setOptions( ['label' => 'Address line 3'] );
+    $postcode->setOptions( ['label' => 'Postcode'] );
+    
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['value'=>'Save and continue']);
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+<h2 class="header">Edit the donor's details</h2>
+
+
+<?php // switcher form ?>
+
+<?= $this->form()->openTag($switcherForm); ?>
+
+<div class="<?= $this->elementGroupClass($sCsrf) ?>">
+    <?= $this->formElement($sCsrf) ?>
+    <?= $this->formElementErrors($sCsrf) ?>
+</div>
+
+<div class="group">
+
+    <?= $formLabel->openTag() . $switchTo->getOption('label') . $formLabel->closeTag(); ?>
+     
+    <?= $this->formSelect($switchTo) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($switchTo) ?>
+    </p>
+    
+</div>
+
+<div class="form_element">
+
+    <?= $this->formInput($switchSubmit) ?>
+
+</div>
+
+<?= $this->form()->closeTag(); ?>
+
+<?php // corespondent form ?>
+
+<?= $this->form()->openTag($form); ?>
+
+<div class="<?= $this->elementGroupClass($csrf) ?>">
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
+</div>
+
+<fieldset>
+
+<div class="group">
+
+    <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formInput($title) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($title) ?>
+    </p>
+    
+    
+
+</div>
+
+
+<div class="group">
+
+    <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
+    
+     
+    <?= $this->formInput($firstname) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($firstname) ?>
+    </p>
+    
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formInput($lastname) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($lastname) ?>
+    </p>
+    
+    
+
+</div>
+
+</fieldset>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formInput($address1) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($address1) ?>
+    </p>
+    
+    
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formInput($address2) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($address2) ?>
+    </p>
+    
+    
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formInput($address3) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($address3) ?>
+    </p>
+    
+    
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formInput($postcode) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($postcode) ?>
+    </p>
+    
+    
+
+</div>
+
+
+<div class="form_element">
+
+    <?= $this->formInput($submit) ?>
+
+</div>
+
+<?= $this->formhidden($who) ?>
+
+<?= $this->form()->closeTag(); ?>
