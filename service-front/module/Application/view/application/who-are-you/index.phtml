@@ -1,0 +1,80 @@
+<section id="who-are-you" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who was using the LPA tool?</h2>
+
+    <div class="accordion-content">
+    
+		<div class="section-intro">
+			<p>We think we can make this service better by finding out how people use it.</p>
+			<p>To do this, we'd like to know who was using the digital LPA tool - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
+			<p>Your answer will be completely anonymous. It will not be linked to you, your LPA or your personal information.</p>
+		</div>
+
+			<form id="WhoAreYou" class="form" method="post" action="/register/who-are-you">
+
+
+				<div class="emphasised option group">
+
+					
+					<div class="set">
+						<label for="who-donor"><input type="radio" value="donor" id="who-donor" name="who">The donor used this online service with little or no help</label>
+					</div>
+
+					<div class="set">
+						<label for="who-friendOrFamily"><input type="radio" value="friendOrFamily" id="who-friendOrFamily" name="who">A friend or family member helped the donor get online, navigate or enter information</label>
+					</div>
+
+					<div class="set">
+						<label for="who-professional"><input type="radio" value="professional" id="who-professional" name="who">A paid professional made the LPA on the donor's behalf</label>
+						
+						<div class="indent subquestion" style="padding-left: 2em;padding-bottom: 1em;display:none;">
+							<label for="who-professional-solicitor"><input type="radio" value="solicitor" id="who-professional-solicitor" name="professional">Solicitor</label>
+							<label for="who-professional-will-writer"><input type="radio" value="will-writer" id="who-professional-will-writer" name="professional">Will-writer</label>
+							
+							<div class="set">
+								<label for="who-professional-other"><input type="radio" value="other" id="who-professional-other" name="professional">Other</label>
+								<div class="subquestion" style="display:none;">
+									<label for="who-professional-other-input" class="required">Please tell us your profession</label>
+									<input name="professional-other" id="who-professional-other-input" maxlength="75" type="text" style="margin-left:0.5em;min-width: 20em;">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="set">
+						<label for="who-digitalPartner"><input type="radio" value="digitalPartner" id="who-digitalPartner" name="who">One of OPG's Assisted Digital Partners helped the donor</label>
+						
+						<div class="indent subquestion" style="padding-left: 2em;padding-bottom: 1em;display:none;">
+							<label for="who-digitalPartner-AgeUk"><input type="radio" value="Age-Uk" id="who-digitalPartner-AgeUk" name="digitalPartner">Age UK</label>
+							<label for="who-digitalPartner-AlzheimerSociety"><input type="radio" value="Alzheimer-Society" id="who-digitalPartner-AlzheimerSociety" name="digitalPartner">Alzheimer's Society</label>
+							<label for="who-digitalPartner-CitizensAdviceBureau"><input type="radio" value="Citizens-Advice-Bureau" id="who-digitalPartner-CitizensAdviceBureau" name="digitalPartner">Citizens Advice Bureau</label>
+						</div>
+					</div>
+
+					<div class="set">
+						<label for="who-organisation"><input type="radio" value="organisation" id="who-organisation" name="who">Another organisation, such as a charity, council or community group, helped the donor</label>
+						
+						<div class="indent subquestion" style="padding-left: 2em;padding-bottom: 1em;display:none;">
+							<div>
+								<label for="who-organisation-input" class="required">Which organisation helped?</label>
+								<input name="organisation" id="who-organisation-input" maxlength="75" type="text" style="margin-left:0.5em;min-width: 20em;">
+							</div>
+						</div>
+					</div>
+
+					<div class="set">
+						<label for="who-notSaid"><input type="radio" value="notSaid" id="who-notSaid" name="who">I'd prefer not to say</label>
+					</div>
+
+				</div>
+
+				<p>
+<input type="submit" name="save" id="go-to-next-part" value="Save and continue" class="button gotonextpart"></p>
+			</form>
+
+    
+    
+    
+    </div>
+    
+</section>

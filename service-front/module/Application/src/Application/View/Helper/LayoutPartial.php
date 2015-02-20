@@ -46,7 +46,7 @@ class LayoutPartial extends AbstractHelper
                 'lpa/complete',
                 'lpa/correspondent',
                 'lpa/fee',
-                'lpa/what-is-my-role',
+                'lpa/who-are-you',
         ])) {
             return $this->view->partial('layout/registration-partial.phtml');
         }

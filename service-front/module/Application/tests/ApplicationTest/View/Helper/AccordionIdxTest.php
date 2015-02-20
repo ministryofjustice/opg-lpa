@@ -204,13 +204,13 @@ class AccordionIdxTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $helperReturns);
     }
 
-    public function testWhatIsMyRole ()
+    public function testWhoAreYou ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
         
-        $helperReturns = $this->getAccordion('lpa/what-is-my-role')->__invoke(
+        $helperReturns = $this->getAccordion('lpa/who-are-you')->__invoke(
                 $lpa);
         
         $this->assertEquals(3, $helperReturns);

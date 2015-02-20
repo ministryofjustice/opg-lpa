@@ -902,13 +902,13 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                 ), $helperReturns);
     }
 
-    public function testWhatIsMyRole ()
+    public function testWhoAreYou ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
         
-        $helperReturns = $this->getAccordion('lpa/what-is-my-role')->__invoke(
+        $helperReturns = $this->getAccordion('lpa/who-are-you')->__invoke(
                 $lpa);
         $this->assertEquals(
                 array(
@@ -967,8 +967,8 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 )
                         ),
                         2 => array(
-                                'name' => 'what-is-my-role.phtml',
-                                'routeName' => 'lpa/what-is-my-role',
+                                'name' => 'who-are-you.phtml',
+                                'routeName' => 'lpa/who-are-you',
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 3,

@@ -55,7 +55,7 @@ class FormFlowChecker
             'lpa/applicant'                                 => 'isApplicantAccessible',
             'lpa/correspondent'                             => 'isCorrespondentAccessible',
             'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
-            'lpa/what-is-my-role'                           => 'isWhatIsMyRoleAccessible',
+            'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/fee'                                       => 'isFeeAccessible',
             'lpa/online-payment-success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/online-payment-unsuccessful'               => 'isOnlinePaymentUnsuccessfulAccessible',
@@ -95,9 +95,9 @@ class FormFlowChecker
             'lpa/people-to-notify/delete'                   => 'lpa/people-to-notify',
             'lpa/instructions'                              => 'lpa/created',
             'lpa/applicant'                                 => 'lpa/correspondent',
-            'lpa/correspondent'                             => 'lpa/what-is-my-role',
+            'lpa/correspondent'                             => 'lpa/who-are-you',
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
-            'lpa/what-is-my-role'                           => 'lpa/fee',
+            'lpa/who-are-you'                               => 'lpa/fee',
     );
     
     public function __construct(Lpa $lpa = null)
@@ -525,7 +525,7 @@ class FormFlowChecker
         }
     }
     
-    private function isWhatIsMyRoleAccessible()
+    private function isWhoAreYouAccessible()
     {
         if($this->lpaHasCorrespondent()) {
             return true;
@@ -537,11 +537,11 @@ class FormFlowChecker
     
     private function isFeeAccessible()
     {
-        if($this->isWhatIsMyRoleAnswered()) {
+        if($this->isWhoAreYouAnswered()) {
             return true;
         }
         else {
-            return 'lpa/what-is-my-role';
+            return 'lpa/who-are-you';
         }
     }
     
@@ -560,7 +560,7 @@ class FormFlowChecker
     
     private function paymentResolved()
     {
-        if(!$this->isWhatIsMyRoleAnswered() || !($this->lpa->payment instanceof Payment)) {
+        if(!$this->isWhoAreYouAnswered() || !($this->lpa->payment instanceof Payment)) {
             return false;
         }
         
@@ -587,7 +587,7 @@ class FormFlowChecker
         }
     }
     
-    private function isWhatIsMyRoleAnswered()
+    private function isWhoAreYouAnswered()
     {
         return ($this->lpaHasCorrespondent() && ($this->lpa->whoAreYouAnswered==true));
     }

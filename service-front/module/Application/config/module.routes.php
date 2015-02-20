@@ -753,12 +753,12 @@ return [
                             ],
                         ],
                     ],
-                    'what-is-my-role' => [
+                    'who-are-you' => [
                         'type' => 'Literal',
                         'options' => [
-                            'route'    => '/what-is-my-role',
+                            'route'    => '/who-are-you',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhatIsMyRoleController',
+                                'controller' => 'Authenticated\Lpa\WhoAreYouController',
                                 'action'     => 'index',
                             ],
                         ],

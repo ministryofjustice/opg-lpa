@@ -4,9 +4,9 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use ApplicationTest\Controller\AbstractLpaTest;
 
 /**
- * WhatIsMyRoleController test case.
+ * WhoAreYouController test case.
  */
-class WhatIsMyRoleControllerTest extends AbstractLpaTest
+class WhoAreYouControllerTest extends AbstractLpaTest
 {
     /**
      * Prepares the environment before running a test.
@@ -25,17 +25,17 @@ class WhatIsMyRoleControllerTest extends AbstractLpaTest
     }
 
     /**
-     * Tests WhatIsMyRoleController->indexAction()
+     * Tests WhoAreYouController->indexAction()
      */
     public function testIndexActionCanBeAccessed ()
     {
-        $this->dispatch('/lpa/'.$this->lpa_id.'/what-is-my-role');
+        $this->dispatch('/lpa/'.$this->lpa_id.'/who-are-you');
         $this->assertResponseStatusCode(200);
         
         $this->assertModuleName('Application');
         $this->assertControllerName('ControllerFactory');
-        $this->assertControllerClass('WhatIsMyRoleController');
-        $this->assertMatchedRouteName('lpa/what-is-my-role');        
+        $this->assertControllerClass('WhoAreYouController');
+        $this->assertMatchedRouteName('lpa/who-are-you');        
     }
 }
 

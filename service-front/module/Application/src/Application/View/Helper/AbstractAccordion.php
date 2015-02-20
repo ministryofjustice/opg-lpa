@@ -30,7 +30,7 @@ abstract class AbstractAccordion extends AbstractHelper
         'registration' => [
             'lpa/applicant' => 'applicant',
             'lpa/correspondent' => 'correspondent',
-            'lpa/what-is-my-role' => 'whatIsMyRole',
+            'lpa/who-are-you' => 'whoAreYou',
             'lpa/fee' => 'fee',
         ],
     ];
@@ -152,7 +152,7 @@ abstract class AbstractAccordion extends AbstractHelper
         return $this->lpa->document->correspondent->name->__toString();
     }
     
-    protected function whatIsMyRole()
+    protected function whoAreYou()
     {
         return "Who was using the LPA tool answered";
     }
