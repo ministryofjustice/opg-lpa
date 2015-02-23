@@ -9,16 +9,7 @@
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
     
-    $title->setOptions( [
-            'label' => 'Title',
-            'empty_option' => 'Please choose your title',
-            'value_options' => [
-                    'Mr'   => 'Mr',
-                    'Mrs'  => 'Mrs',
-                    'Ms'   => 'Ms',
-                    'Miss' => 'Miss',
-                    'Sir'  => 'Sir'
-    ]] );
+    $title->setOptions( ['label' => 'Title'] );
     $firstname->setOptions( ['label' => 'First names'] );
     $lastname->setOptions( ['label' => 'Last names'] );
     $address1->setOptions( ['label' => 'Address line 1'] );

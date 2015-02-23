@@ -6,7 +6,7 @@ class CertificateProviderForm extends AbstractActorForm
 {
     protected $formElements = [
             'name-title' => [
-                    'type' => 'Zend\Form\Element\Select',
+                    'type' => 'Text',
             ],
             'name-first' => [
                     'type' => 'Text',
