@@ -2752,9 +2752,9 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
         return;
       }
       if (this.options.placement === 'after') {
-        this.$spinElement.after($('<img src="/static/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.after($('<img src="/assets/v1/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
       } else if (this.options.placement === 'before') {
-        this.$spinElement.before($('<img src="/static/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.before($('<img src="/assets/v1/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
       }
       this.disable();
     },
@@ -3046,7 +3046,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"loading\">\n  <p><img src=\"/static/images/ajax/ajax-loader.gif\" class=\"spinner\"> Loading</p>\n</div>\n";
+  return "<div class=\"loading\">\n  <p><img src=\"/assets/v1/images/ajax/ajax-loader.gif\" class=\"spinner\"> Loading</p>\n</div>\n";
   });
 // Popup module for LPA
 // Dependencies: moj, jQuery

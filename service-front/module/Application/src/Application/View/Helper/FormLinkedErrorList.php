@@ -5,7 +5,7 @@ use Zend\View\Helper\AbstractHelper;
 use Zend\Form\ElementInterface;
 use Zend\Form\Form;
 
-class LinkedErrorList extends AbstractHelper
+class FormLinkedErrorList extends AbstractHelper
 {
     /**
      * @param ElementInterface

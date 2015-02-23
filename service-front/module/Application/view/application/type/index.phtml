@@ -48,7 +48,8 @@
         <?= $this->form()->openTag($form); ?>
     
             <?= $this->formElement($csrf) ?>
-            <?= $this->formElementErrors($csrf) ?>
+            
+            <?= $this->formErrorList(); ?>
             
             <div class="emphasised option group">
                 <?= $this->formElement($type)?>
