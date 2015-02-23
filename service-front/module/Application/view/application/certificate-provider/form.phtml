@@ -37,11 +37,7 @@
     <?= $formLabel->openTag() . $title->getOption('label'); ?>
     
     <?= $this->formInput($title) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($title) ?>
-    </p>
-    
+    <?= $this->formElementErrors($title) ?>
     <?= $formLabel->closeTag() ?>
 
 </div>

@@ -74,22 +74,14 @@ $form->prepare();
         <h3>This LPA is being registered by</h3>
         
         <div class="emphasised option group">
-        
             <?= $this->formElement($whoIsRegistering)?>
-                
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($whoIsRegistering) ?>
-            </p>
-            
+            <?= $this->formElementErrors($whoIsRegistering) ?>
         </div>
         
         <?php if(isset($attorneyList)):?>
     		<div class="attorney-applicant">
                 <?= $this->formElement($attorneyList)?>
-                    
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($attorneyList) ?>
-                </p>
+                <?= $this->formElementErrors($attorneyList) ?>
             </div>
         <?php endif;?>
 
