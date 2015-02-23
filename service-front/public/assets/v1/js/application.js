@@ -3570,7 +3570,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   'use strict';
 
   moj.Modules.TitleSwitch = {
-    selector: '[name="title"]',
+    selector: '[name="name-title"]',
 
     options: {
       'Mr': 'Mr',
