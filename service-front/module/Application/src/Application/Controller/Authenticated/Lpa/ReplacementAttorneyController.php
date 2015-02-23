@@ -144,7 +144,7 @@ class ReplacementAttorneyController extends AbstractLpaController
             $viewModel->setTemplate('application/replacement-attorney/trust-form.phtml');
         }
         
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx'=>$attorneyIdx]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
