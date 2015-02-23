@@ -126,7 +126,7 @@ class PeopleToNotifyController extends AbstractLpaController
         }
         
         $form = new PeopleToNotifyForm();
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx'=>$personIdx]));
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

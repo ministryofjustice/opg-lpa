@@ -11,16 +11,7 @@
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
 
-    $title->setOptions( [
-            'label' => 'Title',
-            'empty_option' => 'Please choose your title',
-            'value_options' => [
-                    'Mr'   => 'Mr',
-                    'Mrs'  => 'Mrs',
-                    'Ms'   => 'Ms',
-                    'Miss' => 'Miss',
-                    'Sir'  => 'Sir'
-    ]] );
+    $title->setOptions( ['label' => 'Title'] );
     $firstname->setOptions( ['label' => 'First names'] );
     $lastname->setOptions( ['label' => 'Last names'] );
     $dob->setOptions( ['label' => 'Date of birth'] );
@@ -55,7 +46,7 @@
 
     <?= $formLabel->openTag() . $title->getOption('label'); ?>
     
-    <?= $this->formSelect($title) ?>
+    <?= $this->formInput($title) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($title) ?>
