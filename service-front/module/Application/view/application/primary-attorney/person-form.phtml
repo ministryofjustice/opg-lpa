@@ -27,19 +27,17 @@
     $form->prepare();
 ?>
 
-<?php if(isset($this->addTrustCorporationRoute )): ?>
-<p>
-    <a href="<?= $this->addTrustCorporationRoute ?>">Using a trust corporation?</a>
-</p>
-<?php endif;?>
-
 <h2 class="header">Edit attorney details</h2>
 <?= $this->form()->openTag($form); ?>
 
-<div class="<?= $this->elementGroupClass($csrf) ?>">
-    <?= $this->formElement($csrf) ?>
-    <?= $this->formElementErrors($csrf) ?>
-</div>
+<?php if(isset($this->addTrustCorporationRoute )): ?>
+<p class="role-select group">
+    <a class="js-form-popup" href="<?= $this->addTrustCorporationRoute ?>">Using a trust corporation?</a>
+</p>
+<?php endif;?>
+
+<?= $this->formElement($csrf) ?>
+<?= $this->formElementErrors($csrf) ?>
 
 <?= $this->formErrorList(); ?>
 

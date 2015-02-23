@@ -9,6 +9,8 @@
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
 
+    $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
+    
     $name->setOptions( ['label' => 'Company name'] );
     $companyNumber->setOptions( ['label' => 'Registration No.'] );
     $email->setOptions( ['label' => 'Email address'] );
@@ -24,126 +26,65 @@
     $form->prepare();
 ?>
 
-<p>
-    <a href="<?= $this->addAttorneyRoute ?>">Using an individual?</a>
-</p>
-
+<h2 class="header">Edit trust corporation details</h2>
 <?= $this->form()->openTag($form); ?>
 
-<div class="<?= $this->elementGroupClass($csrf) ?>">
-    <?= $this->formElement($csrf) ?>
-    <?= $this->formElementErrors($csrf) ?>
-</div>
+<p class="role-select group">
+    <a class="js-form-popup" href="<?= $this->addAttorneyRoute ?>">Using an individual?</a>
+</p>
+
+<?= $this->formElement($csrf) ?>
+<?= $this->formElementErrors($csrf) ?>
+
+<fieldset>
 
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $name->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $name->getOption('label') . $formLabel->closeTag() ?>
     <?= $this->formInput($name) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($name) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($name) ?>
 </div>
 
-
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $companyNumber->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $companyNumber->getOption('label') . $formLabel->closeTag() ?>
     <?= $this->formInput($companyNumber) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($companyNumber) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($companyNumber) ?>
 </div>
 
-
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $email->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag() ?>
     <?= $this->formInput($email) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($email) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($email) ?>
 </div>
 
-
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $address1->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag() ?>
     <?= $this->formInput($address1) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($address1) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($address1) ?>
 </div>
 
-
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $address2->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag() ?>
     <?= $this->formInput($address2) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($address2) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($address2) ?>
 </div>
 
-
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $address3->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
     <?= $this->formInput($address3) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($address3) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($address3) ?>
 </div>
 
-
 <div class="form_element">
-
-    <?= $formLabel->openTag() . $postcode->getOption('label'); ?>
-    
+    <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
     <?= $this->formInput($postcode) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($postcode) ?>
-    </p>
-    
-    <?= $formLabel->closeTag() ?>
-
+    <?= $this->formElementErrors($postcode) ?>
 </div>
 
+</fieldset>
 
-<div class="form_element">
-
-    <?= $this->formInput($submit) ?>
-
-</div>
+<p class="action group">
+<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<button name="cancel" id="form-cancel" type="button" class="button-secondary">Cancel</button>
+</p>
 
 <?= $this->form()->closeTag(); ?>

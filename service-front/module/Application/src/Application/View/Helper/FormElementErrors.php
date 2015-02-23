@@ -8,6 +8,7 @@ class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
     public function __invoke(ElementInterface $element = null, array $attributes = array())
     {
         echo '<p class="form-element-errors">';
+        
         $this->setMessageOpenFormat('<span class="validation-message">');
         $this->setMessageCloseString('</span>');
         $this->setMessageSeparatorString('<br>');
