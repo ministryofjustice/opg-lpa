@@ -29,7 +29,7 @@ class PostcodeController extends AbstractAuthenticatedController {
 
             return new JsonModel( [ 'isPostcodeValid'=>true, 'success'=> ( count($v1Format) > 0 ), 'addresses' => $v1Format ] );
 
-        }
+        } // if
 
         //-----------------------
         // Address lookup

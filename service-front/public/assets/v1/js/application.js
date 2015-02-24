@@ -3797,13 +3797,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // used to populate fields
       // key is the key name sent in response and value is name of app's field
       fieldMappings: {
-        lineOne: 'addr1',
-        lineTwo: 'addr2',
-        lineThree: 'addr3',
-        lineFour: 'addr4',
-        lineFive: 'addr5',
-        city: 'town',
-        county: 'county',
+        line1: 'address-address1',
+        line2: 'address-address2',
+        line3: 'address-address3',
         postcode: 'postcode'
       }
     },
