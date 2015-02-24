@@ -1,1 +1,250 @@
-about you
+<?php
+
+$form = $this->form;
+
+$title          = $form->get('name-title');
+$firstName      = $form->get('name-first');
+$lastName       = $form->get('name-last');
+$dayOfBirth     = $form->get('dob-date-day');
+$monthOfBirth   = $form->get('dob-date-month');
+$yearOfBirth    = $form->get('dob-date-year');
+$address1       = $form->get('address-address1');
+$address2       = $form->get('address-address2');
+$address3       = $form->get('address-address3');
+$postcode       = $form->get('address-postcode');
+
+
+$title->setAttributes([ 'id' => 'title' ])->setLabel('Title')->setLabelAttributes( ['id'=>'title-label'] );
+$firstName->setAttributes([ 'id' => 'firstname' ])->setLabel('First name');
+$lastName->setAttributes([ 'id' => 'surname' ])->setLabel('Last name');
+
+$dayOfBirth->setAttributes([ 'id' => 'dob-day' ])->setLabel('Day');
+$monthOfBirth->setAttributes([ 'id' => 'dob-month' ])->setLabel('Month');
+$yearOfBirth->setAttributes([ 'id' => 'dob-year' ])->setLabel('Year');
+
+$address1->setAttributes([ 'id' => 'addr1' ])->setLabel('Address line 1');
+$address2->setAttributes([ 'id' => 'addr2' ])->setLabel('Address line 2');
+$address3->setAttributes([ 'id' => 'addr3' ])->setLabel('Address line 3');
+$postcode->setAttributes([ 'id' => 'postcode' ])->setLabel('Postcode');
+
+$form->prepare();
+
+//---
+
+$formLabel = $this->plugin('formLabel');
+
+?>
+<p>First, please give us some information about yourself.</p>
+<p>You don't have to be the person the LPA is for – you might just be helping someone else make an LPA.</p>
+<p>You'll be able to use these details in any LPAs you make using this tool.</p>
+
+<div class="about-you-form">
+
+    <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
+
+        <div class="<?= $this->elementGroupClass($form->get('secret')) ?>">
+            <?= $this->formElement($form->get('secret')) ?>
+        </div>
+
+        <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
+            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+                <h1 id="error-heading">There was a problem submitting the form</h1>
+                <p>Because of the following problems:</p>
+                <ol>
+                    <?php
+                    $this->linkedErrorList($form);
+
+                    if (isset($this->error)) {
+                        echo '<li><a href="">';
+                        switch($this->error){
+                            default:
+                                echo $this->escapehtml( $this->error );
+                        }
+                        echo '</a></li>';
+                    }
+                    ?>
+                </ol>
+            </div>
+        <? } ?>
+
+        <fieldset>
+            <legend>Name</legend>
+
+            <? $element = $title; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $firstName; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $lastName; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                ?>
+            </div>
+
+        </fieldset>
+
+        <fieldset>
+            <div class="group">
+                <legend>Date of birth</legend>
+                <p>For example, 08 04 <?= date('Y')-18 ?></p>
+
+                <? $element = $dayOfBirth; ?>
+                <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-day">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+                <? $element = $monthOfBirth; ?>
+                <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-month">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+                <? $element = $yearOfBirth; ?>
+                <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-year">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+                <!--
+                <div class="form-group form-group-day"><label for="dob-day">Day</label><input type="text" name="dob[day]" id="dob-day" value=""></div>
+                <div class="form-group form-group-month"><label for="dob-month">Month</label><input type="text" name="dob[month]" id="dob-month" value=""></div>
+                <div class="form-group form-group-year"><label for="dob-year">Year</label><input type="text" name="dob[year]" id="dob-year" value=""></div>
+                -->
+
+            </div>
+        </fieldset>
+
+        <fieldset class="js-PostcodeLookup">
+            <legend>Address</legend>
+            <div class="js-PostcodeLookup__postal-add">
+
+                <!--
+                <div class="group ">
+                    <label for="addr1" id="addr1-label" class="required">Street</label>
+                    <input name="addr1" type="text" id="addr1" value="" autocomplete="off" maxlength="100">
+                </div>
+                <div class="group ">
+                    <label for="addr2" id="addr2-label" class="optional visuallyhidden">Address line 2</label>
+                    <input name="addr2" type="text" id="addr2" value="" autocomplete="off" maxlength="100">
+                </div>
+                <div class="group ">
+                    <label for="addr3" id="addr3-label" class="optional visuallyhidden">Address line 3</label>
+                    <input name="addr3" type="text" id="addr3" value="" autocomplete="off" maxlength="100">
+                </div>
+                <div class="group ">
+                    <label for="town" id="town-label" class="optional">Town</label>
+                    <input name="town" type="text" id="town" value="" autocomplete="off" maxlength="100">
+                </div>
+                <div class="group ">
+                    <label for="county" id="county-label" class="optional">County</label>
+                    <input name="county" type="text" id="county" value="" autocomplete="off" maxlength="100">
+                </div>
+                <div class="group ">
+                    <label for="postcode" id="postcode-label" class="optional">Postcode</label>
+                    <input name="postcode" type="text" id="postcode" value="" autocomplete="off" maxlength="9">
+                </div>
+                -->
+
+                <? $element = $address1; ?>
+                <div class="<?= $this->elementGroupClass($element); ?>">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+                <? $element = $address2; ?>
+                <div class="<?= $this->elementGroupClass($element); ?>">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+                <? $element = $address3; ?>
+                <div class="<?= $this->elementGroupClass($element); ?>">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+                <? $element = $postcode; ?>
+                <div class="<?= $this->elementGroupClass($element); ?>">
+                    <?=
+                    $this->formLabel($element).
+                    $formLabel->openTag().
+                    $element->getOption('label').
+                    $this->formElementErrors($element).
+                    $this->formInput($element).
+                    $formLabel->closeTag()
+                    ?>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <br>
+
+        <p class="action group">
+            <input type="submit" name="save" id="save" value="Save and continue" class="button aboutyou">
+        </p>
+
+    <?= $this->form()->closeTag(); ?>
+</div>
