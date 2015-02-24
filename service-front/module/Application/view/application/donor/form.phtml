@@ -33,9 +33,8 @@
 <h2 class="header">Edit the donor's details</h2>
 <?= $this->form()->openTag($form); ?>
 
-<div class="<?= $this->elementGroupClass($csrf) ?>">
-    <?= $this->formElement($csrf) ?>
-</div>
+<?= $this->formElement($csrf) ?>
+<?= $this->formElementErrors($csrf) ?>
 
 <?= $this->formErrorList(); ?>
         

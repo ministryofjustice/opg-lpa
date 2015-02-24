@@ -99,6 +99,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
+            
         }
         
         $viewModel->form = $form;
