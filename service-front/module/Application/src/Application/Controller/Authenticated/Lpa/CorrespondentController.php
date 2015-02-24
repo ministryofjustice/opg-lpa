@@ -118,7 +118,6 @@ class CorrespondentController extends AbstractLpaController
         else {
             $correspondent = $this->getLpa()->document->correspondent->flatten();
             $correspondentForm->bind($correspondent);
-            $switcherForm->bind(['switch-to-type'=>$this->getLpa()->document->correspondent->who]);
         }
         
         $viewModel->correspondentForm = $correspondentForm;
