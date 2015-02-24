@@ -9,6 +9,12 @@ return array(
         'cache' => ( !is_null($commit) ) ? abs( crc32( $commit ) ) : time(),
     ],
 
+    'terms' => [
+        // The date and time the terms were last updated.
+        // User who have not logged in since this date will see the 'T&Cs updated' page.
+        'lastUpdated' => '2015-02-17 14:00 UTC',
+    ],
+
     'redirects' => [
         'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
         'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
@@ -64,11 +70,10 @@ return array(
 
     ], // email
 
-    'postcode' => [
+    'address' => [
 
         'postcodeanywhere' => [
             'key' => null,
-            'code' => null,
         ],
 
     ], // postcode
