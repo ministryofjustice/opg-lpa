@@ -13,6 +13,7 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Application\Form\Lpa\PeopleToNotifyForm;
+use Zend\View\Model\JsonModel;
 
 class PeopleToNotifyController extends AbstractLpaController
 {
@@ -89,7 +90,7 @@ class PeopleToNotifyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -142,7 +143,7 @@ class PeopleToNotifyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -179,7 +180,7 @@ class PeopleToNotifyController extends AbstractLpaController
         }
         
         if ( $this->getRequest()->isXmlHttpRequest() ) {
-            return $this->response;
+            return new JsonModel(['success' => true]);
         }
         else {
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
