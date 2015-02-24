@@ -36,7 +36,7 @@
 
     <?= $formLabel->openTag() . $title->getOption('label'); ?>
     
-    <?= $this->formInput($title) ?>
+    <?= $this->formElement($title) ?>
     <?= $this->formElementErrors($title) ?>
     <?= $formLabel->closeTag() ?>
 
@@ -47,7 +47,7 @@
 
     <?= $formLabel->openTag() . $firstname->getOption('label'); ?>
     
-    <?= $this->formInput($firstname) ?>
+    <?= $this->formElement($firstname) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($firstname) ?>
@@ -62,7 +62,7 @@
 
     <?= $formLabel->openTag() . $lastname->getOption('label'); ?>
     
-    <?= $this->formInput($lastname) ?>
+    <?= $this->formElement($lastname) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($lastname) ?>
@@ -77,7 +77,7 @@
 
     <?= $formLabel->openTag() . $address1->getOption('label'); ?>
     
-    <?= $this->formInput($address1) ?>
+    <?= $this->formElement($address1) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($address1) ?>
@@ -92,7 +92,7 @@
 
     <?= $formLabel->openTag() . $address2->getOption('label'); ?>
     
-    <?= $this->formInput($address2) ?>
+    <?= $this->formElement($address2) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($address2) ?>
@@ -107,7 +107,7 @@
 
     <?= $formLabel->openTag() . $address3->getOption('label'); ?>
     
-    <?= $this->formInput($address3) ?>
+    <?= $this->formElement($address3) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($address3) ?>
@@ -122,7 +122,7 @@
 
     <?= $formLabel->openTag() . $postcode->getOption('label'); ?>
     
-    <?= $this->formInput($postcode) ?>
+    <?= $this->formElement($postcode) ?>
     
     <p class='form-element-errors'>
         <?= $this->formElementErrors($postcode) ?>
@@ -135,7 +135,7 @@
 
 <div class="form_element">
 
-    <?= $this->formInput($submit) ?>
+    <?= $this->formElement($submit) ?>
 
 </div>
 
