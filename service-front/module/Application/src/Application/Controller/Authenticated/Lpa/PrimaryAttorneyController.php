@@ -16,6 +16,7 @@ use Application\Form\Lpa\AttorneyForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Application\Form\Lpa\TrustCorporationForm;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Zend\View\Model\JsonModel;
 
 class PrimaryAttorneyController extends AbstractLpaController
 {
@@ -92,7 +93,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -163,7 +164,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -205,7 +206,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         }
         
         if ( $this->getRequest()->isXmlHttpRequest() ) {
-            return $this->response;
+            return new JsonModel(['success' => true]);
         }
         else {
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -245,7 +246,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
