@@ -19,14 +19,22 @@ class PostcodeController extends AbstractAuthenticatedController {
 
             $result = $service->lookupPostcode( $postcode );
 
-            return new JsonModel( $result );
+            // Map the result to match the format from v1.
+            $v1Format = array_map( function($addr){
+                return [
+                    'id' => $addr['Id'],
+                    'description' => $addr['StreetAddress'].' '.$addr['Place'],
+                ];
+            }, $result );
+
+            return new JsonModel( [ 'isPostcodeValid'=>true, 'success'=> ( count($v1Format) > 0 ), 'addresses' => $v1Format ] );
 
         }
 
         //-----------------------
         // Address lookup
 
-        $addressId = $this->params()->fromQuery('addressId');
+        $addressId = $this->params()->fromQuery('addressid');
 
         if( isset($addressId) ){
 

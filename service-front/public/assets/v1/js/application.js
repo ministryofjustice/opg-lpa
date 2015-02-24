@@ -3792,8 +3792,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
   PostcodeLookup.prototype = {
     settings: {
-      postcodeSearchUrl: '/postcode/lookup',
-      addressSearchUrl: '/address/lookup',
+      postcodeSearchUrl: '/address-lookup',
+      addressSearchUrl: '/address-lookup',
       // used to populate fields
       // key is the key name sent in response and value is name of app's field
       fieldMappings: {
