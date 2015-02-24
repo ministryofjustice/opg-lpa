@@ -13,6 +13,7 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Application\Form\Lpa\CertificateProviderForm;
+use Zend\View\Model\JsonModel;
 
 class CertificateProviderController extends AbstractLpaController
 {
@@ -72,7 +73,7 @@ class CertificateProviderController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -113,9 +114,8 @@ class CertificateProviderController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
-                }
-                else {
+                    return new JsonModel(['success' => true]);
+                } else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
