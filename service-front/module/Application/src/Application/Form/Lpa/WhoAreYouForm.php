@@ -2,10 +2,11 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 class WhoAreYouForm extends AbstractForm
 {
     protected $formElements = [
-            'when' => [
+            'who' => [
                     'type' => 'Zend\Form\Element\Radio',
                     'options' => [
                             'value_options' => [
@@ -18,26 +19,8 @@ class WhoAreYouForm extends AbstractForm
                                     'professional'   => [
                                             'value' => 'professional',
                                     ],
-                                    'solicitor'      => [
-                                            'value' => 'solicitor',
-                                    ],
-                                    'will-writer'      => [
-                                            'value' => 'will-writer',
-                                    ],
-                                    'other'      => [
-                                            'value' => 'other',
-                                    ],
                                     'digitalPartner'      => [
                                             'value' => 'digitalPartner',
-                                    ],
-                                    'Age-Uk'      => [
-                                            'value' => 'Age-Uk',
-                                    ],
-                                    'Alzheimer-Society'      => [
-                                            'value' => 'Alzheimer-Society',
-                                    ],
-                                    'Citizens-Advice-Bureau'      => [
-                                            'value' => 'Citizens-Advice-Bureau',
                                     ],
                                     'organisation'  => [
                                             'value' => 'organisation',
@@ -47,6 +30,44 @@ class WhoAreYouForm extends AbstractForm
                                     ],
                             ],
                     ],
+            ],
+            'professional' => [
+                    'type' => 'Zend\Form\Element\Radio',
+                    'options' => [
+                            'value_options' => [
+                                    'solicitor'      => [
+                                            'value' => 'solicitor',
+                                    ],
+                                    'will-writer'      => [
+                                            'value' => 'will-writer',
+                                    ],
+                                    'other'      => [
+                                            'value' => 'other',
+                                    ],
+                            ],
+                    ],
+            ],
+            'digitalPartner' => [
+                    'type' => 'Zend\Form\Element\Radio',
+                    'options' => [
+                            'value_options' => [
+                                    'Age-Uk'      => [
+                                            'value' => 'Age-Uk',
+                                    ],
+                                    'Alzheimer-Society'      => [
+                                            'value' => 'Alzheimer-Society',
+                                    ],
+                                    'Citizens-Advice-Bureau'      => [
+                                            'value' => 'Citizens-Advice-Bureau',
+                                    ],
+                            ],
+                    ],
+            ],
+            'professional-other' => [
+                    'type' => 'Text'
+            ],
+            'organisation' => [
+                    'type' => 'Text'
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
@@ -62,9 +83,9 @@ class WhoAreYouForm extends AbstractForm
     
     public function validateByModel()
     {
-        $decisions = new WhoAreYou($this->data);
+        $whoAreYou = new WhoAreYou($this->getModelizedData());
         
-        $validation = $decisions->validate();
+        $validation = $whoAreYou->validate();
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];
@@ -72,8 +93,83 @@ class WhoAreYouForm extends AbstractForm
         else {
             return [
                     'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
+                    'messages' => $this->modelValidationMessageConverter($validation, $this->getModelizedData()),
             ];
         }
+    }
+    
+    public function formDataModelization($formData)
+    {
+        $modelData = [];
+        if(array_key_exists($formData['who'], WhoAreYou::options())) {
+            $modelData['who'] = $formData['who'];
+            switch($formData['who']) {
+                case 'professional':
+                    $modelData['subquestion'] = $formData['professional'];
+                    if($formData['professional'] == 'other') {
+                        $modelData['qualifier'] = $formData['professional-other'];
+                    }
+                    else {
+                        $modelData['qualifier'] = null;
+                    }
+                    break;
+                case 'digitalPartner' :
+                    $modelData['subquestion'] = $formData['digitalPartner'];
+                    $modelData['qualifier'] = null;
+                    break;
+                case 'organisation' :
+                    $modelData['subquestion'] = null;
+                    $modelData['qualifier'] = $formData['organisation'];
+                    break;
+                default:
+                    $modelData['subquestion'] = null;
+                    $modelData['qualifier'] = null;
+            }
+        }
+        
+        return $modelData;
+    }
+    
+    protected function modelValidationMessageConverter(ValidatorResponse $validation, $context)
+    {
+        $messages = [];
+        $linkIdx = 1;
+        
+        // loop through all form elements.
+        foreach($validation as $validationErrorKey => $validationErrors) {
+            if($validationErrorKey == 'subquestion') {
+                switch($context['who']) {
+                    case 'professional':
+                        $fieldName = 'professional';
+                        break;
+                    case 'digitalPartner' :
+                        $fieldName = 'digitalPartner';
+                        break;
+                    case 'organisation' :
+                        break;
+                    default:
+                }
+                
+            }
+            elseif($validationErrorKey == 'qualifier') {
+                switch($context['who']) {
+                    case 'professional':
+                        $fieldName = 'professional-other';
+                        break;
+                    case 'organisation' :
+                        $fieldName = 'organisation';
+                        break;
+                    default:
+                }
+                
+            }
+            else {
+                $fieldName = $validationErrorKey;
+            }
+            
+            $messages[$fieldName] = $validationErrors['messages'];
+        }
+        
+        return $messages;
     }
 }

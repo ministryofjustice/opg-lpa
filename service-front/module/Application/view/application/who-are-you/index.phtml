@@ -1,80 +1,288 @@
+<?php 
+use Zend\Form\Element;
+use Zend\Form\Element\Hidden;
+if(isset($this->form)) {
+    $form           = $this->form;
+    $csrf           = $form->get('secret');
+    
+    $who            = $form->get('who');
+    
+    $professional   = $form->get('professional');
+    $digitalPartner = $form->get('digitalPartner');
+    
+    $defaultWho = new Hidden('who');
+    $defaultProfessional = new Hidden('professional');
+    $defaultDigitalPartner = new Hidden('digitalPartner');
+    
+    $professionalOther = $form->get('professional-other');
+    $professionalOther->setOptions(['label'=>"Please tell us your profession"]);
+    
+    $organisation = $form->get('organisation');
+    $organisation->setOptions(['label'=>'Which organisation helped?']);
+    
+    $submit      = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+    
+    $formLabel   = $this->plugin('formLabel');
+    $form->prepare();
+    
+    
+    $whoOptions = [];
+    $whoOptions['donor'] = new Element('who', [
+            'label' => "The donor used this online service with little or no help",
+    ]);
+    $whoOptions['donor']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-donor',
+            'value' => $who->getOptions()['value_options']['donor']['value'],
+            'checked' => (($who->getValue() == 'donor')? 'checked':null),
+    ]);
+    
+    $whoOptions['friend-or-family'] = new Element('who', [
+            'label' => "A friend or family member helped the donor get online, navigate or enter information",
+    ]);
+    $whoOptions['friend-or-family']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-friend-or-family',
+            'value' => $who->getOptions()['value_options']['friendOrFamily']['value'],
+            'checked' => (($who->getValue() == 'friendOrFamily')? 'checked':null),
+    ]);
+    
+    $whoOptions['professional'] = new Element('who', [
+            'label' => "A paid professional made the LPA on the donor's behalf",
+    ]);
+    $whoOptions['professional']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-professional',
+            'value' => $who->getOptions()['value_options']['professional']['value'],
+            'checked' => (($who->getValue() == 'professional')? 'checked':null),
+    ]);
+    
+    $whoOptions['digital-partner'] = new Element('who', [
+            'label' => "One of OPG's Assisted Digital Partners helped the donor",
+    ]);
+    $whoOptions['digital-partner']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-digital-partner',
+            'value' => $who->getOptions()['value_options']['digitalPartner']['value'],
+            'checked' => (($who->getValue() == 'digitalPartner')? 'checked':null),
+    ]);
+    
+    $whoOptions['organisation'] = new Element('who', [
+            'label' => "Another organisation, such as a charity, council or community group, helped the donor",
+    ]);
+    $whoOptions['organisation']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-organisation',
+            'value' => $who->getOptions()['value_options']['organisation']['value'],
+            'checked' => (($who->getValue() == 'organisation')? 'checked':null),
+    ]);
+    
+    $whoOptions['notSaid'] = new Element('who', [
+            'label' => "I'd prefer not to say",
+    ]);
+    $whoOptions['notSaid']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-notSaid',
+            'value' => $who->getOptions()['value_options']['notSaid']['value'],
+            'checked' => (($who->getValue() == 'notSaid')? 'checked':null),
+    ]);
+    
+    $professionalOptions = [];
+    $professionalOptions['solicitor'] = new Element('professional', [
+            'label' => "Solicitor",
+    ]);
+    $professionalOptions['solicitor']->setAttributes([
+            'type' => 'radio',
+            'id' => 'professional-solicitor',
+            'value' => $professional->getOptions()['value_options']['solicitor']['value'],
+            'checked' => (($professional->getValue() == 'solicitor')? 'checked':null),
+    ]);
+    
+    $professionalOptions['will-writer'] = new Element('professional', [
+            'label' => "Will-writer",
+    ]);
+    $professionalOptions['will-writer']->setAttributes([
+            'type' => 'radio',
+            'id' => 'professional-will-writer',
+            'value' => $professional->getOptions()['value_options']['will-writer']['value'],
+            'checked' => (($professional->getValue() == 'will-writer')? 'checked':null),
+    ]);
+    
+    $professionalOptions['other'] = new Element('professional', [
+            'label' => "Other",
+    ]);
+    $professionalOptions['other']->setAttributes([
+            'type' => 'radio',
+            'id' => 'professional-other',
+            'value' => $professional->getOptions()['value_options']['other']['value'],
+            'checked' => (($professional->getValue() == 'other')? 'checked':null),
+    ]);
+    
+    
+    $digitalPartnerOptions = [];
+    $digitalPartnerOptions['Age-Uk'] = new Element('digitalPartner', [
+            'label' => "Age Uk",
+    ]);
+    $digitalPartnerOptions['Age-Uk']->setAttributes([
+            'type' => 'radio',
+            'id' => 'partner-Age-Uk',
+            'value' => $digitalPartner->getOptions()['value_options']['Age-Uk']['value'],
+            'checked' => (($digitalPartner->getValue() == 'Age-Uk')? 'checked':null),
+    ]);
+    
+    $digitalPartnerOptions['Alzheimer-Society'] = new Element('digitalPartner', [
+            'label' => "Alzheimer's Society",
+    ]);
+    $digitalPartnerOptions['Alzheimer-Society']->setAttributes([
+            'type' => 'radio',
+            'id' => 'partner-Alzheimer-Society',
+            'value' => $digitalPartner->getOptions()['value_options']['Alzheimer-Society']['value'],
+            'checked' => (($digitalPartner->getValue() == 'Alzheimer-Society')? 'checked':null),
+    ]);
+    
+    $digitalPartnerOptions['Citizens-Advice-Bureau'] = new Element('digitalPartner', [
+            'label' => "Citizens Advice Bureau",
+    ]);
+    $digitalPartnerOptions['Citizens-Advice-Bureau']->setAttributes([
+            'type' => 'radio',
+            'id' => 'partner-Citizens-Advice-Bureau',
+            'value' => $digitalPartner->getOptions()['value_options']['Citizens-Advice-Bureau']['value'],
+            'checked' => (($digitalPartner->getValue() == 'Citizens-Advice-Bureau')? 'checked':null),
+    ]);
+}
+?>
+
 <section id="who-are-you" class="section current">
 	
 	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who was using the LPA tool?</h2>
 
     <div class="accordion-content">
-    
-		<div class="section-intro">
-			<p>We think we can make this service better by finding out how people use it.</p>
-			<p>To do this, we'd like to know who was using the digital LPA tool - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
-			<p>Your answer will be completely anonymous. It will not be linked to you, your LPA or your personal information.</p>
-		</div>
+        <?php if(!isset($this->form)):?>
+        
+        <div>
+                <p>Thanks, you have already answered this question.</p>
+                
+				<p>Your answer was saved separately from your LPA and is anonymous. This means that it can't now be linked to you and you can't change it.</p>
 
-			<form id="WhoAreYou" class="form" method="post" action="/register/who-are-you">
+				<p><a role="button" href="/register/fees" class="button">Continue</a></p>
 
+		</div>        
+        <?php else:?>
+        <div class="section-intro">
+        	<p>We think we can make this service better by finding out how people use it.</p>
+        	<p>To do this, we'd like to know who was using the digital LPA tool - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
+        	<p>Your answer will be completely anonymous. It will not be linked to you, your LPA or your personal information.</p>
+        </div>
 
-				<div class="emphasised option group">
+        <?= $this->form()->openTag($form); ?>
 
-					
-					<div class="set">
-						<label for="who-donor"><input type="radio" value="donor" id="who-donor" name="who">The donor used this online service with little or no help</label>
-					</div>
+        <div class="<?= $this->elementGroupClass($csrf) ?>">
+            <?= $this->formElement($csrf) ?>
+            <?= $this->formElementErrors($csrf) ?>
+        </div>
+        
+        <?= $this->formElement($defaultWho); ?>
+        <?= $this->formElement($defaultProfessional); ?>
+        <?= $this->formElement($defaultDigitalPartner); ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($digitalPartner) ?>
+            <?= $this->formElementErrors($professional) ?>
+            <?= $this->formElementErrors($organisation) ?>
+            <?= $this->formElementErrors($professionalOther) ?>
+            <?= $this->formElementErrors($who) ?>
+        </p>
+        
+        <div class="emphasised option group">
+            <div class="set">
+                <?= $formLabel->openTag($whoOptions['donor']); ?>
+                    <?= $this->formInput($whoOptions['donor'])  . $whoOptions['donor']->getOption('label'); ?>
+                <?= $formLabel->closeTag(); ?>
+            </div>
+            
+            <div class="set">
+                <?= $formLabel->openTag($whoOptions['friend-or-family']); ?>
+                    <?= $this->formInput($whoOptions['friend-or-family'])  . $whoOptions['friend-or-family']->getOption('label'); ?>
+                <?= $formLabel->closeTag(); ?>
+            </div>
+            
+            <div class="set">
+                <?= $formLabel->openTag($whoOptions['professional']); ?>
+                    <?= $this->formInput($whoOptions['professional'])  . $whoOptions['professional']->getOption('label'); ?>
+                <?= $formLabel->closeTag(); ?>
+                
+                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em;">
+                    <?= $formLabel->openTag($professionalOptions['solicitor']); ?>
+                        <?= $this->formInput($professionalOptions['solicitor'])  . $professionalOptions['solicitor']->getOption('label'); ?>
+                    <?= $formLabel->closeTag(); ?>
+                    
+                    <?= $formLabel->openTag($professionalOptions['will-writer']); ?>
+                        <?= $this->formInput($professionalOptions['will-writer'])  . $professionalOptions['will-writer']->getOption('label'); ?>
+                    <?= $formLabel->closeTag(); ?>
+                    
+                    <div class="set">
+                        <?= $formLabel->openTag($professionalOptions['other']); ?>
+                            <?= $this->formInput($professionalOptions['other'])  . $professionalOptions['other']->getOption('label'); ?>
+                        <?= $formLabel->closeTag(); ?>
+                        
+                        <div class="subquestion" style="display: block;">
+                            <?= $formLabel->openTag($professionalOther). $professionalOther->getOption('label').$formLabel->closeTag(); ?>
+                            <?= $this->formText($professionalOther) ?>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+            
+            <div class="set">
+                <?= $formLabel->openTag($whoOptions['digital-partner']); ?>
+                    <?= $this->formInput($whoOptions['digital-partner'])  . $whoOptions['digital-partner']->getOption('label'); ?>
+                <?= $formLabel->closeTag(); ?>
+                
+                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em;">
+                    <?= $formLabel->openTag($digitalPartnerOptions['Age-Uk']); ?>
+                        <?= $this->formInput($digitalPartnerOptions['Age-Uk'])  . $digitalPartnerOptions['Age-Uk']->getOption('label'); ?>
+                    <?= $formLabel->closeTag(); ?>
+                    
+                    <?= $formLabel->openTag($digitalPartnerOptions['Alzheimer-Society']); ?>
+                        <?= $this->formInput($digitalPartnerOptions['Alzheimer-Society'])  . $digitalPartnerOptions['Alzheimer-Society']->getOption('label'); ?>
+                    <?= $formLabel->closeTag(); ?>
+                    
+                    <?= $formLabel->openTag($digitalPartnerOptions['Citizens-Advice-Bureau']); ?>
+                        <?= $this->formInput($digitalPartnerOptions['Citizens-Advice-Bureau'])  . $digitalPartnerOptions['Citizens-Advice-Bureau']->getOption('label'); ?>
+                    <?= $formLabel->closeTag(); ?>
+                </div>
+            </div>
+            
+            <div class="set">
+                <?= $formLabel->openTag($whoOptions['organisation']); ?>
+                    <?= $this->formInput($whoOptions['organisation'])  . $whoOptions['organisation']->getOption('label'); ?>
+                <?= $formLabel->closeTag(); ?>
+                
+                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em;">
+                    <div>
+                        <?= $formLabel->openTag($organisation). $organisation->getOption('label').$formLabel->closeTag(); ?>
+                        <?= $this->formText($organisation) ?>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="set">
+                <?= $formLabel->openTag($whoOptions['notSaid']); ?>
+                    <?= $this->formInput($whoOptions['notSaid'])  . $whoOptions['notSaid']->getOption('label'); ?>
+                <?= $formLabel->closeTag(); ?>
+            </div>
+            
+        </div>
 
-					<div class="set">
-						<label for="who-friendOrFamily"><input type="radio" value="friendOrFamily" id="who-friendOrFamily" name="who">A friend or family member helped the donor get online, navigate or enter information</label>
-					</div>
-
-					<div class="set">
-						<label for="who-professional"><input type="radio" value="professional" id="who-professional" name="who">A paid professional made the LPA on the donor's behalf</label>
-						
-						<div class="indent subquestion" style="padding-left: 2em;padding-bottom: 1em;display:none;">
-							<label for="who-professional-solicitor"><input type="radio" value="solicitor" id="who-professional-solicitor" name="professional">Solicitor</label>
-							<label for="who-professional-will-writer"><input type="radio" value="will-writer" id="who-professional-will-writer" name="professional">Will-writer</label>
-							
-							<div class="set">
-								<label for="who-professional-other"><input type="radio" value="other" id="who-professional-other" name="professional">Other</label>
-								<div class="subquestion" style="display:none;">
-									<label for="who-professional-other-input" class="required">Please tell us your profession</label>
-									<input name="professional-other" id="who-professional-other-input" maxlength="75" type="text" style="margin-left:0.5em;min-width: 20em;">
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="set">
-						<label for="who-digitalPartner"><input type="radio" value="digitalPartner" id="who-digitalPartner" name="who">One of OPG's Assisted Digital Partners helped the donor</label>
-						
-						<div class="indent subquestion" style="padding-left: 2em;padding-bottom: 1em;display:none;">
-							<label for="who-digitalPartner-AgeUk"><input type="radio" value="Age-Uk" id="who-digitalPartner-AgeUk" name="digitalPartner">Age UK</label>
-							<label for="who-digitalPartner-AlzheimerSociety"><input type="radio" value="Alzheimer-Society" id="who-digitalPartner-AlzheimerSociety" name="digitalPartner">Alzheimer's Society</label>
-							<label for="who-digitalPartner-CitizensAdviceBureau"><input type="radio" value="Citizens-Advice-Bureau" id="who-digitalPartner-CitizensAdviceBureau" name="digitalPartner">Citizens Advice Bureau</label>
-						</div>
-					</div>
-
-					<div class="set">
-						<label for="who-organisation"><input type="radio" value="organisation" id="who-organisation" name="who">Another organisation, such as a charity, council or community group, helped the donor</label>
-						
-						<div class="indent subquestion" style="padding-left: 2em;padding-bottom: 1em;display:none;">
-							<div>
-								<label for="who-organisation-input" class="required">Which organisation helped?</label>
-								<input name="organisation" id="who-organisation-input" maxlength="75" type="text" style="margin-left:0.5em;min-width: 20em;">
-							</div>
-						</div>
-					</div>
-
-					<div class="set">
-						<label for="who-notSaid"><input type="radio" value="notSaid" id="who-notSaid" name="who">I'd prefer not to say</label>
-					</div>
-
-				</div>
-
-				<p>
-<input type="submit" name="save" id="go-to-next-part" value="Save and continue" class="button gotonextpart"></p>
-			</form>
-
-    
-    
-    
+        <div class="accordion-actions">
+        	<p>
+                <?= $this->formElement($submit) ?>
+            </p>
+        </div>
+        
+        <?= $this->form()->closeTag(); ?>
+        <?php endif;?>        
     </div>
     
 </section>
