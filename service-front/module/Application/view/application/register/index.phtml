@@ -54,7 +54,7 @@
             <p>Because of the following problems:</p>
             <ol>
                 <?php
-                $this->linkedErrorList($form);
+                $this->formLinkedErrorList($form);
 
                 if (isset($this->error)) {
                     echo '<li><a href="">';
@@ -81,7 +81,7 @@
             Email address
             <br>
             <?= $this->formElementErrors($email) ?>
-            <?= $this->formInput($email) ?>
+            <?= $this->formElement($email) ?>
             <?= $formLabel->closeTag() ?>
         </div>
 
@@ -90,7 +90,7 @@
             Confirm Email address
             <br>
             <?= $this->formElementErrors($email_confirm) ?>
-            <?= $this->formInput($email_confirm) ?>
+            <?= $this->formElement($email_confirm) ?>
             <?= $formLabel->closeTag() ?>
         </div>
 
@@ -105,7 +105,7 @@
             Password
             <br>
             <?= $this->formElementErrors($password) ?>
-            <?= $this->formInput($password) ?>
+            <?= $this->formElement($password) ?>
             <?= $formLabel->closeTag() ?>
         </div>
 
@@ -114,7 +114,7 @@
             Confirm Password
             <br>
             <?= $this->formElementErrors($password_confirm) ?>
-            <?= $this->formInput($password_confirm) ?>
+            <?= $this->formElement($password_confirm) ?>
             <?= $formLabel->closeTag() ?>
         </div>
 
