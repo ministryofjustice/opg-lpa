@@ -11,7 +11,7 @@ class SessionManager extends ZFSessionManager {
      */
     public function initialise(){
 
-        $container = new Container('initialised');
+        $container = new Container( 'initialised', $this );
 
         // If it's a new session, regenerate the id.
         if (!isset($container->init)) {
