@@ -612,7 +612,10 @@ class FormFlowChecker
     
     private function lpaHasCreated()
     {
-        return ($this->lpaHasCertificateProvider() && ($this->lpa->completedAt !== null));
+        return $this->lpaHasCertificateProvider() && ($this->lpa->document->instruction !== null);
+        
+        //@todo make decision on how to detect LPA creation has complete.
+        //return ($this->lpaHasCertificateProvider() && ($this->lpa->completedAt !== null));
     }
     
     private function lpaHasPeopleToNotify($index = null)
