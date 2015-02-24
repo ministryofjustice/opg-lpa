@@ -99,6 +99,18 @@ return array(
                 ],
             ],
 
+            'proxy-address' => [
+                'type' => 'Zend\Mvc\Router\Http\Regex',
+                'options' => [
+                    'regex'    => '^/address/lookup(.)*',
+                    'spec'     => '/address/lookup',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+
             'proxy-register' => [
                 'type' => 'Zend\Mvc\Router\Http\Regex',
                 'options' => [

@@ -107,6 +107,7 @@ class Module{
         return [
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
+                'AddressLookup' => 'PostcodeAnywhere',
                 'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
@@ -115,6 +116,7 @@ class Module{
                 'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
                 'Register'              => 'Application\Model\Service\User\Register',
                 'Payment'               => 'Application\Model\Service\Payment\Payment',
+                'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
             ],
             'factories' => [
                 'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',

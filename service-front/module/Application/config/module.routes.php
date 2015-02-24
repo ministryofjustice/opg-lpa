@@ -192,7 +192,7 @@ return [
             'postcode' => [
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/postcode',
+                    'route'    => '/address-lookup',
                     'defaults' => [
                         'controller' => 'Authenticated\PostcodeController',
                         'action'     => 'index',
