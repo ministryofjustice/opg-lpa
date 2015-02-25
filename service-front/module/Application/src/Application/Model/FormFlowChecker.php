@@ -98,6 +98,7 @@ class FormFlowChecker
             'lpa/correspondent'                             => 'lpa/who-are-you',
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
             'lpa/who-are-you'                               => 'lpa/fee',
+            'lpa/fee'                                       => 'lpa/complete',
     );
     
     public function __construct(Lpa $lpa = null)
