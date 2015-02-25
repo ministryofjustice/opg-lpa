@@ -40,8 +40,8 @@ class SetPassword extends AbstractForm {
                     'options' => array(
                         'encoding' => 'UTF-8',
                         'min'      => 8,
-                        'messageTemplates' => [
-                            Validator\StringLength::TOO_SHORT => 'Your password has to be at least %min% characters long.',
+                        'messages' => [
+                            Validator\StringLength::TOO_SHORT => 'must be at least %min% characters long',
                         ],
                     ),
                 ),
@@ -49,8 +49,8 @@ class SetPassword extends AbstractForm {
                     'name'    => 'Regex',
                     'options' => array(
                         'pattern' => '/.*[0-9].*/',
-                        'messageTemplates' => [
-                            Validator\Regex::NOT_MATCH => 'Your password must include a number.',
+                        'messages' => [
+                            Validator\Regex::NOT_MATCH => 'must include a number',
                         ],
                     ),
                 ),
@@ -58,8 +58,8 @@ class SetPassword extends AbstractForm {
                     'name'    => 'Regex',
                     'options' => array(
                         'pattern' => '/.*[a-z].*/',
-                        'messageTemplates' => [
-                            Validator\Regex::NOT_MATCH => 'Your password must include a lower-case letter.',
+                        'messages' => [
+                            Validator\Regex::NOT_MATCH => 'must include a lower-case letter',
                         ],
                     ),
                 ),
@@ -67,8 +67,8 @@ class SetPassword extends AbstractForm {
                     'name'    => 'Regex',
                     'options' => array(
                         'pattern' => '/.*[A-Z].*/',
-                        'messageTemplates' => [
-                            Validator\Regex::NOT_MATCH => 'Your password must include a capital letter.',
+                        'messages' => [
+                            Validator\Regex::NOT_MATCH => 'must include a capital letter',
                         ],
                     ),
                 ),
@@ -83,8 +83,8 @@ class SetPassword extends AbstractForm {
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'password',
-                        'messageTemplates' => [
-                            Validator\Identical::NOT_SAME => 'Your passwords did not match.',
+                        'messages' => [
+                            Validator\Identical::NOT_SAME => 'did not match.',
                         ],
                     ),
                 ),

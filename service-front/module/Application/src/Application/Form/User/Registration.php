@@ -56,8 +56,8 @@ class Registration extends SetPassword {
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
-                        'messageTemplates' => [
-                            Validator\Identical::NOT_SAME => 'Your email addresses did not match.',
+                        'messages' => [
+                            Validator\Identical::NOT_SAME => 'did not match',
                         ],
                     ),
                 ),
@@ -73,7 +73,7 @@ class Registration extends SetPassword {
                     'options' => array(
                         'token' => '1',
                         'literal' => true,
-                        'messageTemplates' => [
+                        'messages' => [
                             Validator\Identical::NOT_SAME => 'must be checked',
                         ],
                     ),
