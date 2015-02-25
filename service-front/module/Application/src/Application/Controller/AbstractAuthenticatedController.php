@@ -15,13 +15,14 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
     private $user;
 
     /**
-     * Ensure we have a valid user before executing the request.
+     * Ensure we have a valid user before dispatching the acton.
      *
      * @param  MvcEvent $e
      * @return mixed
      */
     public function onDispatch(MvcEvent $e){
 
+        // A user *must* have been set before we dispatch the request.
         if( !( $this->user instanceof Identity ) ){
             die('Not logged in / timed out! This will redirect to the login page.');
         }

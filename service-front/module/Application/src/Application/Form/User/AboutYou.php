@@ -71,6 +71,15 @@ class AboutYou extends AbstractForm {
             'name'     => 'name-title',
             'required' => false,
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 5,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                    ],
+                ],
+            ],
         ]);
 
         $inputFilter->add([
@@ -78,15 +87,31 @@ class AboutYou extends AbstractForm {
             'required' => true,
             'error_message' => 'must not be blank',
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                    ],
+                ],
+            ],
         ]);
-
-        //var_dump($inputFilter); exit();
 
         $inputFilter->add([
             'name'     => 'name-last',
             'required' => true,
             'error_message' => 'must not be blank',
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                    ],
+                ],
+            ],
         ]);
 
         //---
@@ -99,8 +124,7 @@ class AboutYou extends AbstractForm {
                 [
                     'name'    => 'Between',
                     'options' => [
-                        'min' => 1,
-                        'max' => 31,
+                        'min' => 1, 'max' => 31,
                         'messages' => [
                             Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
                         ],
@@ -117,8 +141,7 @@ class AboutYou extends AbstractForm {
                 [
                     'name'    => 'Between',
                     'options' => [
-                        'min' => 1,
-                        'max' => 12,
+                        'min' => 1, 'max' => 12,
                         'messages' => [
                             Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
                         ],
@@ -135,8 +158,7 @@ class AboutYou extends AbstractForm {
                 [
                     'name'    => 'Between',
                     'options' => [
-                        'min' => (int)date('Y') - 150,
-                        'max' => (int)date('Y'),
+                        'min' => (int)date('Y') - 150, 'max' => (int)date('Y'),
                         'messages' => [
                             Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
                         ],
@@ -151,24 +173,64 @@ class AboutYou extends AbstractForm {
             'name'     => 'address-address1',
             'required' => false,
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                    ],
+                ],
+            ],
         ]);
 
         $inputFilter->add([
             'name'     => 'address-address2',
             'required' => false,
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                    ],
+                ],
+            ],
         ]);
 
         $inputFilter->add([
             'name'     => 'address-address3',
             'required' => false,
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                    ],
+                ],
+            ],
         ]);
 
         $inputFilter->add([
             'name'     => 'address-postcode',
             'required' => false,
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
+            'validators' => [
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'min' => 5,
+                        'max' => 8,
+                        'messages' => [
+                            Validator\StringLength::TOO_SHORT => "must be at least %min% characters",
+                            Validator\StringLength::TOO_LONG => "must be %max% characters or fewer",
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
     } // function
