@@ -66,10 +66,9 @@ $form->prepare();
         
         <?= $this->form()->openTag($form); ?>
         
-        <div class="<?= $this->elementGroupClass($csrf) ?>">
-            <?= $this->formElement($csrf) ?>
-            <?= $this->formElementErrors($csrf) ?>
-        </div>
+        <?= $this->formElement($csrf) ?>
+
+        <?= $this->formErrorList(); ?>
         
         <h3>This LPA is being registered by</h3>
         
