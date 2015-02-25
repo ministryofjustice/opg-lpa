@@ -13,10 +13,9 @@ $address2       = $form->get('address-address2');
 $address3       = $form->get('address-address3');
 $postcode       = $form->get('address-postcode');
 
-
-$title->setAttributes([ 'id' => 'title' ])->setLabel('Title')->setLabelAttributes( ['id'=>'title-label'] );
-$firstName->setAttributes([ 'id' => 'firstname' ])->setLabel('First name');
-$lastName->setAttributes([ 'id' => 'surname' ])->setLabel('Last name');
+$title->setAttributes([ 'id' => 'title' ])->setOptions( ['label' => 'Title'] )->setLabelAttributes( ['id'=>'title-label'] );
+$firstName->setAttributes([ 'id' => 'firstname' ])->setOptions( ['label' => 'First names'] );
+$lastName->setAttributes([ 'id' => 'surname' ])->setOptions( ['label' => 'Last name'] );
 
 $dayOfBirth->setAttributes([ 'id' => 'dob-day' ])->setLabel('Day');
 $monthOfBirth->setAttributes([ 'id' => 'dob-month' ])->setLabel('Month');
@@ -42,9 +41,7 @@ $formLabel = $this->plugin('formLabel');
 
     <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
 
-        <div class="<?= $this->elementGroupClass($form->get('secret')) ?>">
-            <?= $this->formElement($form->get('secret')) ?>
-        </div>
+        <?= $this->formElement($form->get('secret')) ?>
 
         <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
@@ -71,41 +68,26 @@ $formLabel = $this->plugin('formLabel');
             <legend>Name</legend>
 
             <? $element = $title; ?>
-            <div class="<?= $this->elementGroupClass($element); ?>">
-                <?=
-                $this->formLabel($element).
-                $formLabel->openTag().
-                $element->getOption('label').
-                $this->formElementErrors($element).
-                $this->formInput($element).
-                $formLabel->closeTag()
-                ?>
+            <div class="group">
+                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
             </div>
 
             <? $element = $firstName; ?>
-            <div class="<?= $this->elementGroupClass($element); ?>">
-                <?=
-                $this->formLabel($element).
-                $formLabel->openTag().
-                $element->getOption('label').
-                $this->formElementErrors($element).
-                $this->formInput($element).
-                $formLabel->closeTag()
-                ?>
+            <div class="group">
+                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
             </div>
-
+              
             <? $element = $lastName; ?>
-            <div class="<?= $this->elementGroupClass($element); ?>">
-                <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                ?>
+            <div class="group">
+                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
             </div>
-
+            
         </fieldset>
 
         <fieldset>
