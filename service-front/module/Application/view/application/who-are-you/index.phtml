@@ -5,6 +5,8 @@ if(isset($this->form)) {
     $form           = $this->form;
     $csrf           = $form->get('secret');
     
+    $form->setAttribute('class', 'form');
+    
     $who            = $form->get('who');
     
     $professional   = $form->get('professional');
@@ -177,22 +179,19 @@ if(isset($this->form)) {
 
         <?= $this->form()->openTag($form); ?>
 
-        <div class="<?= $this->elementGroupClass($csrf) ?>">
-            <?= $this->formElement($csrf) ?>
-            <?= $this->formElementErrors($csrf) ?>
-        </div>
+        <?= $this->formElement($csrf) ?>
+        
+        <?= $this->formErrorList(); ?>
         
         <?= $this->formElement($defaultWho); ?>
         <?= $this->formElement($defaultProfessional); ?>
         <?= $this->formElement($defaultDigitalPartner); ?>
         
-        <p class='form-element-errors'>
-            <?= $this->formElementErrors($digitalPartner) ?>
-            <?= $this->formElementErrors($professional) ?>
-            <?= $this->formElementErrors($organisation) ?>
-            <?= $this->formElementErrors($professionalOther) ?>
-            <?= $this->formElementErrors($who) ?>
-        </p>
+        <?= $this->formElementErrors($digitalPartner) ?>
+        <?= $this->formElementErrors($professional) ?>
+        <?= $this->formElementErrors($organisation) ?>
+        <?= $this->formElementErrors($professionalOther) ?>
+        <?= $this->formElementErrors($who) ?>
         
         <div class="emphasised option group">
             <div class="set">

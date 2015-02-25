@@ -3,6 +3,8 @@ namespace Application\Controller;
 
 use RuntimeException;
 
+use Zend\Mvc\MvcEvent;
+
 use Application\Model\Service\Authentication\Identity\User as Identity;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
@@ -12,6 +14,21 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
      */
     private $user;
 
+    /**
+     * Ensure we have a valid user before dispatching the acton.
+     *
+     * @param  MvcEvent $e
+     * @return mixed
+     */
+    public function onDispatch(MvcEvent $e){
+
+        // A user *must* have been set before we dispatch the request.
+        if( !( $this->user instanceof Identity ) ){
+            die('Not logged in / timed out! This will redirect to the login page.');
+        }
+
+        return parent::onDispatch( $e );
+    }
 
     /**
      * Return the Identity of the current authenticated user.

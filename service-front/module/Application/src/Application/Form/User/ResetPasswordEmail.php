@@ -57,8 +57,8 @@ class ResetPasswordEmail extends AbstractForm {
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
-                        'messageTemplates' => [
-                            Validator\Identical::NOT_SAME => 'Your email addresses did not match.',
+                        'messages' => [
+                            Validator\Identical::NOT_SAME => 'did not match',
                         ],
                     ),
                 ),

@@ -12,7 +12,167 @@ class ClientSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
+    
+    function it_can_create_a_new_application()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $this->createApplication()->shouldBeAPositiveInteger();
+    }
+    
+    function it_can_be_constructed_from_an_auth_token_then_create_an_application()
+    {
+        $this->beConstructedWith(getTestUserToken());
+        $this->createApplication()->shouldBeAPositiveInteger();
+    }
+        
+    function it_will_delete_all_lpas_of_an_account()
+    {
+        $numApplications = 2;
+        
+        destroyAndRecreateTestUser();
+        
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+    
+        for ($i=0; $i<$numApplications; $i++) {
+            $this->createApplication();
+        }
+    
+        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
+    
+        $this->deleteAllLpas()->shouldBe(true);
+    
+        $this->getApplicationList()->shouldBe([]);
+        
+        destroyAndRecreateTestUser();
+    }
+    
+    function it_will_delete_an_account_and_all_lpas()
+    {
+        $numApplications = 2;
+    
+        destroyAndRecreateTestUser();
+        
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+    
+        for ($i=0; $i<$numApplications; $i++) {
+            $this->createApplication();
+        }
+    
+        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
+    
+        $this->deleteUserAndAllTheirLpas()->shouldBe(true);
+    
+        $this->getApplicationList()->shouldBe(false);
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(false);
+        
+        destroyAndRecreateTestUser();
+    }
+        
+    function it_can_get_a_list_of_applications()
+    {
+        $numApplications = 2;
+    
+        destroyAndRecreateTestUser();
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+    
+        for ($i=0; $i<$numApplications; $i++) {
+            $this->createApplication();
+        }
+    
+        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
+    }
+    
+    function it_will_return_an_empty_array_when_no_applications_exist()
+    {
+        $numApplications = 2;
+    
+        destroyAndRecreateTestUser();
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
 
+        $this->getApplicationList()->shouldBe([]);
+    }
+    
+    //--------------------------------------------------------------
+    // Replacement Attorneys
+    
+    function it_can_delete_a_replacement_attorney()
+    {
+        $replacementAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney3 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney2->name->first = 'Jane';
+        $replacementAttorney3->name->first = 'John';
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
+        $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
+        $this->addReplacementAttorney($lpaId, $replacementAttorney3)->shouldBe(true);
+    
+        $this->deleteReplacementAttorney($lpaId, 3)->shouldBe(true);
+        $this->deleteReplacementAttorney($lpaId, 1)->shouldBe(true);
+        $this->getReplacementAttorneys($lpaId)->shouldBeAnArrayOfAttorneys(1);
+        $this->getReplacementAttorneys($lpaId)[0]->name->first->shouldBe('Jane');
+    }
+    
+    function it_can_return_a_list_of_replacement_attorneys()
+    {
+        $replacementAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney2->name->first = 'Jane';
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
+        $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
+    
+        $this->getReplacementAttorneys($lpaId)->shouldBeAnArrayOfAttorneys(2);
+        $this->getReplacementAttorneys($lpaId)[0]->name->first->shouldBe('John');
+        $this->getReplacementAttorneys($lpaId)[1]->name->first->shouldBe('Jane');
+    }
+    
+    function it_will_return_an_empty_array_if_no_replacement_attorneys_have_been_set()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->getReplacementAttorneys($lpaId)->shouldBe([]);
+    }
+    
+    function it_can_add_and_update_a_replacement_attorney()
+    {
+        $replacementAttorney = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->addReplacementAttorney($lpaId, $replacementAttorney)->shouldBe(true);
+        $this->getReplacementAttorney($lpaId, 1)->name->first->shouldBe('John');
+        $replacementAttorney->name->first = 'Henry';
+        $this->setReplacementAttorney($lpaId, $replacementAttorney, 1)->shouldBe(true);
+        $this->getReplacementAttorney($lpaId, 1)->name->first->shouldBe('Henry');
+    }
+    
+    function it_can_add_and_update_multiple_replacement_attorneys()
+    {
+        $replacementAttorney1 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney2 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
+        $replacementAttorney2->name->first = 'Sally';
+    
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        $lpaId = $this->createApplication();
+        $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
+        $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
+        $this->getReplacementAttorney($lpaId, 1)->name->first->shouldBe('John');
+        $this->getReplacementAttorney($lpaId, 2)->name->first->shouldBe('Sally');
+        $replacementAttorney1->name->first = 'Henry';
+        $replacementAttorney2->name->first = 'Beth';
+        $this->setReplacementAttorney($lpaId, $replacementAttorney1, 1)->shouldBe(true);
+        $this->setReplacementAttorney($lpaId, $replacementAttorney2, 2)->shouldBe(true);
+        $this->getReplacementAttorney($lpaId, 1)->name->first->shouldBe('Henry');
+        $this->getReplacementAttorney($lpaId, 2)->name->first->shouldBe('Beth');
+    }
+    
     //--------------------------------------------------------------
     // Password Reset
 
@@ -718,35 +878,6 @@ class ClientSpec extends ObjectBehavior
         $this->getLastStatusCode()->shouldBe(404);
     }
     
-    function it_can_be_constructed_from_an_auth_token_then_create_an_application()
-    {
-        $this->beConstructedWith(getTestUserToken());
-        $this->createApplication()->shouldBeAPositiveInteger();
-    }
-
-    function it_can_be_constructed_from_an_auth_token_then_update_an_account_email_on_the_auth_server()
-    {
-        $this->beConstructedWith(getTestUserToken());
-        $newEmail = 'deleteme-' . uniqid() . '@example.com';
-    
-        $this->updateAuthEmail(
-            $newEmail
-        )->shouldBe(true);
-    
-        $this->authenticate($newEmail, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(true);
-        
-        /** Switch it back again **/
-        $this->updateAuthEmail(
-            TEST_AUTH_EMAIL
-        )->shouldBe(true);
-    }
-    
-    function it_can_create_a_new_application()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $this->createApplication()->shouldBeAPositiveInteger();
-    }
-    
     function it_can_retrieve_about_me_details()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
@@ -942,21 +1073,6 @@ class ClientSpec extends ObjectBehavior
         $this->getEmailFromToken($authToken)->shouldBe($email);
     }
     
-    function it_can_get_a_list_of_applications()
-    {
-        $numApplications = 2;
-        
-        destroyAndRecreateTestUser();
-    
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-    
-        for ($i=0; $i<$numApplications; $i++) {
-            $this->createApplication();
-        }
-    
-        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
-    }
-
     /**
      * This one takes a long time - re-instate it to test pagination
      * from the API - perhaps by changing the pagination in the API to
@@ -980,6 +1096,23 @@ class ClientSpec extends ObjectBehavior
         $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
     }
        
+    function it_can_be_constructed_from_an_auth_token_then_update_an_account_email_on_the_auth_server()
+    {
+        $this->beConstructedWith(getTestUserToken());
+        $newEmail = 'deleteme-' . uniqid() . '@example.com';
+    
+        $this->updateAuthEmail(
+            $newEmail
+        )->shouldBe(true);
+    
+        $this->authenticate($newEmail, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(true);
+    
+        /** Switch it back again **/
+        $this->updateAuthEmail(
+            TEST_AUTH_EMAIL
+        )->shouldBe(true);
+    }
+    
     public function getMatchers()
     {
         return [
@@ -1009,4 +1142,5 @@ class ClientSpec extends ObjectBehavior
             },
         ];
     }
+    
 }

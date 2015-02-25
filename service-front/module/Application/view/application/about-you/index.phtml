@@ -13,10 +13,9 @@ $address2       = $form->get('address-address2');
 $address3       = $form->get('address-address3');
 $postcode       = $form->get('address-postcode');
 
-
-$title->setAttributes([ 'id' => 'title' ])->setLabel('Title')->setLabelAttributes( ['id'=>'title-label'] );
-$firstName->setAttributes([ 'id' => 'firstname' ])->setLabel('First name');
-$lastName->setAttributes([ 'id' => 'surname' ])->setLabel('Last name');
+$title->setAttributes([ 'id' => 'title' ])->setOptions( ['label' => 'Title'] )->setLabelAttributes( ['id'=>'title-label'] );
+$firstName->setAttributes([ 'id' => 'firstname' ])->setOptions( ['label' => 'First names'] );
+$lastName->setAttributes([ 'id' => 'surname' ])->setOptions( ['label' => 'Last name'] );
 
 $dayOfBirth->setAttributes([ 'id' => 'dob-day' ])->setLabel('Day');
 $monthOfBirth->setAttributes([ 'id' => 'dob-month' ])->setLabel('Month');
@@ -42,9 +41,7 @@ $formLabel = $this->plugin('formLabel');
 
     <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
 
-        <div class="<?= $this->elementGroupClass($form->get('secret')) ?>">
-            <?= $this->formElement($form->get('secret')) ?>
-        </div>
+        <?= $this->formElement($form->get('secret')) ?>
 
         <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
@@ -52,7 +49,7 @@ $formLabel = $this->plugin('formLabel');
                 <p>Because of the following problems:</p>
                 <ol>
                     <?php
-                    $this->linkedErrorList($form);
+                    $this->formLinkedErrorList($form);
 
                     if (isset($this->error)) {
                         echo '<li><a href="">';
@@ -71,41 +68,26 @@ $formLabel = $this->plugin('formLabel');
             <legend>Name</legend>
 
             <? $element = $title; ?>
-            <div class="<?= $this->elementGroupClass($element); ?>">
-                <?=
-                $this->formLabel($element).
-                $formLabel->openTag().
-                $element->getOption('label').
-                $this->formElementErrors($element).
-                $this->formInput($element).
-                $formLabel->closeTag()
-                ?>
+            <div class="group">
+                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
             </div>
 
             <? $element = $firstName; ?>
-            <div class="<?= $this->elementGroupClass($element); ?>">
-                <?=
-                $this->formLabel($element).
-                $formLabel->openTag().
-                $element->getOption('label').
-                $this->formElementErrors($element).
-                $this->formInput($element).
-                $formLabel->closeTag()
-                ?>
+            <div class="group">
+                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
             </div>
-
+              
             <? $element = $lastName; ?>
-            <div class="<?= $this->elementGroupClass($element); ?>">
-                <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                ?>
+            <div class="group">
+                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
             </div>
-
+            
         </fieldset>
 
         <fieldset>
@@ -149,45 +131,12 @@ $formLabel = $this->plugin('formLabel');
                     ?>
                 </div>
 
-                <!--
-                <div class="form-group form-group-day"><label for="dob-day">Day</label><input type="text" name="dob[day]" id="dob-day" value=""></div>
-                <div class="form-group form-group-month"><label for="dob-month">Month</label><input type="text" name="dob[month]" id="dob-month" value=""></div>
-                <div class="form-group form-group-year"><label for="dob-year">Year</label><input type="text" name="dob[year]" id="dob-year" value=""></div>
-                -->
-
             </div>
         </fieldset>
 
         <fieldset class="js-PostcodeLookup">
             <legend>Address</legend>
             <div class="js-PostcodeLookup__postal-add">
-
-                <!--
-                <div class="group ">
-                    <label for="addr1" id="addr1-label" class="required">Street</label>
-                    <input name="addr1" type="text" id="addr1" value="" autocomplete="off" maxlength="100">
-                </div>
-                <div class="group ">
-                    <label for="addr2" id="addr2-label" class="optional visuallyhidden">Address line 2</label>
-                    <input name="addr2" type="text" id="addr2" value="" autocomplete="off" maxlength="100">
-                </div>
-                <div class="group ">
-                    <label for="addr3" id="addr3-label" class="optional visuallyhidden">Address line 3</label>
-                    <input name="addr3" type="text" id="addr3" value="" autocomplete="off" maxlength="100">
-                </div>
-                <div class="group ">
-                    <label for="town" id="town-label" class="optional">Town</label>
-                    <input name="town" type="text" id="town" value="" autocomplete="off" maxlength="100">
-                </div>
-                <div class="group ">
-                    <label for="county" id="county-label" class="optional">County</label>
-                    <input name="county" type="text" id="county" value="" autocomplete="off" maxlength="100">
-                </div>
-                <div class="group ">
-                    <label for="postcode" id="postcode-label" class="optional">Postcode</label>
-                    <input name="postcode" type="text" id="postcode" value="" autocomplete="off" maxlength="9">
-                </div>
-                -->
 
                 <? $element = $address1; ?>
                 <div class="<?= $this->elementGroupClass($element); ?>">
