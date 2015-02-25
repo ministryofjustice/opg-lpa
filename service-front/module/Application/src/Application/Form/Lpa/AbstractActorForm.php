@@ -11,13 +11,17 @@ abstract class AbstractActorForm extends AbstractForm
     public function validateByModel()
     {
         $modelizedData = $this->formDataModelization($this->data);
-    
+        
         if(array_key_exists('dob', $modelizedData) && ($modelizedData['dob']['date'] == "")) {
             $modelizedData['dob'] = null;
         }
     
         if(array_key_exists('email', $modelizedData) && ($modelizedData['email']['address'] == "")) {
             $modelizedData['email'] = null;
+        }
+        
+        if(array_key_exists('phone', $modelizedData) && ($modelizedData['phone']['number'] == "")) {
+            $modelizedData['phone'] = null;
         }
         
         $this->actor->populate($modelizedData);
@@ -33,6 +37,11 @@ abstract class AbstractActorForm extends AbstractForm
             unset($validation['email']);
         }
     
+        if(array_key_exists('phone', $modelizedData) && ($modelizedData['phone'] == null) && array_key_exists('phone', $validation)) {
+            $validation['phone-number'] = $validation['phone'];
+            unset($validation['phone']);
+        }
+        
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];
         }
@@ -55,7 +64,11 @@ abstract class AbstractActorForm extends AbstractForm
         if(array_key_exists('email', $modelizedData) && ($modelizedData['email']['address'] == "")) {
             $modelizedData['email'] = null;
         }
-    
+        
+        if(array_key_exists('phone', $modelizedData) && ($modelizedData['phone']['number'] == "")) {
+            $modelizedData['phone'] = null;
+        }
+        
         return $modelizedData;
     }
 }

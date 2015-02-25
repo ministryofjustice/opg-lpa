@@ -130,7 +130,7 @@ class WhoAreYouForm extends AbstractForm
         return $modelData;
     }
     
-    protected function modelValidationMessageConverter(ValidatorResponse $validation, $context)
+    protected function modelValidationMessageConverter(ValidatorResponse $validation, $context=null)
     {
         $messages = [];
         $linkIdx = 1;

@@ -561,7 +561,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/instructions', $this->checker->check('lpa/applicant'));
         
         $this->setLpaInstructons();
-        $this->assertEquals('lpa/created', $this->checker->check('lpa/applicant'));
+        $this->assertEquals('lpa/applicant', $this->checker->check('lpa/applicant'));
     }
     
     public function testRouteCorrespondent()
@@ -609,7 +609,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     public function testRouteFeeFallback()
     {
         $this->setLpaApplicant();
-        $this->assertEquals('lpa/what-is-my-role', $this->checker->check('lpa/fee'));
+        $this->assertEquals('lpa/who-are-you', $this->checker->check('lpa/fee'));
     }
     
     public function testRouteComplete()

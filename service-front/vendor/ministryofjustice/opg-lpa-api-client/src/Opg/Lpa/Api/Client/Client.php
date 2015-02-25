@@ -229,6 +229,10 @@ class Client
             }
             
             $json = $response->json();
+            
+            if ($json['count'] == 0) {
+                return [];
+            }
                         
             if (!isset($json['_links']) || !isset($json['_embedded']['applications'])) {
                 return $this->log($response, false);
@@ -410,16 +414,40 @@ class Client
     }
     
     /**
+     * Delete all the LPAs from an account
+     */
+    public function deleteAllLpas()
+    {
+        $response = $this->client()->delete( self::PATH_API . '/v1/users/' . $this->getUserId(), [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'X-AuthOne' => $this->getToken(),
+            ],
+        ]);
+        
+        if ($response->getStatusCode() != 204) {
+            return $this->log($response, false);
+        }
+        
+        return true;
+    }
+    
+    /**
      * Delete an account from the auth server, delete the user from
      * the account server and delete all the account's LPAs
      *
-     * @param $authToken
      * @return boolean
      */
-    public function deleteUserAndAllTheirLpas($authToken)
+    public function deleteUserAndAllTheirLpas()
     {
+        $success = $this->deleteAllLpas();
+        
+        if (!$success) {
+            return false;
+        }
+        
         $response = $this->client()->get( self::PATH_AUTH . '/deregister', [
-            'headers' => ['Token' => $authToken]
+            'headers' => ['Token' => $this->getToken()]
         ]);
         
         if ($response->getStatusCode() != 200) {
@@ -1218,6 +1246,84 @@ class Client
     {
         $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
         return $helper->deleteResource($primaryAttorneyId);
+    }
+    
+    /**
+     * Returns a list of all currently set replacement attorneys
+     *
+     * @param string $lpaId
+     * @return array
+     */
+    public function getReplacementAttorneys($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney');
+    }
+    
+    /**
+     * Adds a new replacement attorney
+     *
+     * @param string $lpaId
+     * @param ReplacementAttorney $replacementAttorney
+     * @return boolean
+     */
+    public function addReplacementAttorney(
+        $lpaId,
+        AbstractAttorney $replacementAttorney
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        return $helper->addResource($replacementAttorney->toJson());
+    }
+    
+    /**
+     * Returns the replacement attorney for the given replacement attorney id
+     *
+     * @param string $lpaId
+     * @param string $replacementAttorneyId
+     * @return \Opg\Lpa\DataModel\Lpa\Document\ReplacementAttorney
+     */
+    public function getReplacementAttorney(
+        $lpaId,
+        $replacementAttorneyId
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney', $replacementAttorneyId);
+    }
+    
+    /**
+     * Sets the replacement attorney for the given replacement attorney id
+     *
+     * @param string $lpaId
+     * @param AbstractAttorney $replacementAttorney
+     * @param string $replacementAttorneyId
+     * @return boolean
+     */
+    public function setReplacementAttorney(
+        $lpaId,
+        AbstractAttorney $replacementAttorney,
+        $replacementAttorneyId
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        return $helper->setResource($replacementAttorney->toJson(), $replacementAttorneyId);
+    }
+    
+    /**
+     * Deletes the person to notify for the given replacement attorney id
+     *
+     * @param string $lpaId
+     * @param string $replacementAttorneyId
+     * @return boolean
+     */
+    public function deleteReplacementAttorney(
+        $lpaId,
+        $replacementAttorneyId
+    )
+    {
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        return $helper->deleteResource($replacementAttorneyId);
     }
     
     /**

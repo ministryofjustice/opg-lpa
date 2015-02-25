@@ -21,6 +21,12 @@ class CorrespondentForm extends AbstractActorForm
             'company' => [
                     'type' => 'Text',
             ],
+            'email-address' => [
+                    'type' => 'Email',
+            ],
+            'phone-number' => [
+                    'type' => 'Text',
+            ],
             'address-address1' => [
                     'type' => 'Text',
             ],
@@ -32,7 +38,20 @@ class CorrespondentForm extends AbstractActorForm
             ],
             'address-postcode' => [
                     'type' => 'Text',
-                    
+            ],
+            'contactByPost' => [
+                    'type' => 'Checkbox',
+                    'options' => [
+                            'checked_value' => true,
+                            'unchecked_value' => false,
+                    ],
+            ],
+            'contactInWelsh' => [
+                    'type' => 'Checkbox',
+                    'options' => [
+                            'checked_value' => true,
+                            'unchecked_value' => false,
+                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',

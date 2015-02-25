@@ -170,7 +170,7 @@ abstract class AbstractForm extends Form
      * @param ValidatorResponse $validationResponse: e.g. {storage: ['address.address2/postcode'=>['value'=>'', 'messages'=>[0=>'cannot-be-null'],],]}
      * @return array: e.g. ['address-address2'=>'linked-1-cannot-be-null','address-postcode'=>'linked-1-cannot-be-null',]
      */
-    protected function modelValidationMessageConverter(ValidatorResponse $validationResponse)
+    protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, $context=null)
     {
         $messages = [];
         $linkIdx = 1;

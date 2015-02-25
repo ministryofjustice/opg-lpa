@@ -26,18 +26,30 @@
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
+    $company    = $form->get('company');
     $address1   = $form->get('address-address1');
     $address2   = $form->get('address-address2');
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
+    $email      = $form->get('email-address');
+    $phone      = $form->get('phone-number');
+    $contactByPost = $form->get('contactByPost');
+    $contactInWelsh = $form->get('contactInWelsh');
     
     $title->setOptions( ['label' => 'Title'] );
     $firstname->setOptions( ['label' => 'First names'] );
     $lastname->setOptions( ['label' => 'Last names'] );
+    $company->setOptions( ['label' => 'Company name'] );
     $address1->setOptions( ['label' => 'Address line 1'] );
     $address2->setOptions( ['label' => 'Address line 2'] );
     $address3->setOptions( ['label' => 'Address line 3'] );
     $postcode->setOptions( ['label' => 'Postcode'] );
+    $email->setOptions( ['label' => "Email (optional)"] );
+    $phone->setOptions( ['label' => "Daytime phone No."] );
+    $contactByPost->setOptions( ['label' => "I prefer to be contacted by post", 'use_hidden_element' => false] );
+    $contactByPost->setAttributes( ['id' => 'contactByPost'] );
+    $contactInWelsh->setOptions( ['label' => "I prefer to be contacted in Welsh", 'use_hidden_element' => false,] );
+    $contactInWelsh->setAttributes( ['id' => 'contactInWelsh'] );
     
     $submit     = $form->get('submit');
     $submit->setAttributes(['value'=>'Save and continue']);
@@ -45,10 +57,10 @@
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();
 ?>
-<h2 class="header">Edit the donor's details</h2>
+<h2 class="header">Edit the correspondent details</h2>
 
 
-<?php // switcher form ?>
+<?php ############################ switcher form ############################ ?>
 
 <?= $this->form()->openTag($switcherForm); ?>
 
@@ -77,7 +89,7 @@
 
 <?= $this->form()->closeTag(); ?>
 
-<?php // corespondent form ?>
+<?php ############################ corespondent form ############################ ?>
 
 <?= $this->form()->openTag($form); ?>
 
@@ -88,7 +100,7 @@
 
 <fieldset>
 
-<div class="group">
+<div class="form_element">
 
     <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
     
@@ -97,13 +109,11 @@
     <p class='form-element-errors'>
         <?= $this->formElementErrors($title) ?>
     </p>
-    
-    
 
 </div>
 
 
-<div class="group">
+<div class="form_element">
 
     <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
     
@@ -126,12 +136,22 @@
     <p class='form-element-errors'>
         <?= $this->formElementErrors($lastname) ?>
     </p>
-    
-    
 
 </div>
 
 </fieldset>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $company->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formElement($company) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($company) ?>
+    </p>
+
+</div>
 
 <div class="form_element">
 
@@ -143,8 +163,6 @@
         <?= $this->formElementErrors($address1) ?>
     </p>
     
-    
-
 </div>
 
 
@@ -158,8 +176,6 @@
         <?= $this->formElementErrors($address2) ?>
     </p>
     
-    
-
 </div>
 
 
@@ -173,8 +189,6 @@
         <?= $this->formElementErrors($address3) ?>
     </p>
     
-    
-
 </div>
 
 
@@ -188,7 +202,49 @@
         <?= $this->formElementErrors($postcode) ?>
     </p>
     
+</div>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
     
+    <?= $this->formElement($email) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($email) ?>
+    </p>
+
+</div>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag() . $phone->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <?= $this->formElement($phone) ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($phone) ?>
+    </p>
+
+</div>
+
+<div class="form_element">
+    
+    <?= $formLabel->openTag($contactByPost) . $this->formElement($contactByPost) . $contactByPost->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($contactByPost) ?>
+    </p>
+
+</div>
+
+<div class="form_element">
+
+    <?= $formLabel->openTag($contactInWelsh) . $this->formElement($contactInWelsh) . $contactInWelsh->getOption('label') . $formLabel->closeTag(); ?>
+    
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($contactInWelsh) ?>
+    </p>
 
 </div>
 
