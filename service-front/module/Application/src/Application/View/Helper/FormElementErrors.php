@@ -11,7 +11,10 @@ class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
         $this->setMessageCloseString('</span></div>');
         $this->setMessageSeparatorString('<br>');
         
-        return parent::__invoke($element, $attributes);
+        echo '<p class="form-element-errors">';
+        parent::__invoke($element, $attributes);
+        echo '</p>';
+        
     }
     
 }
