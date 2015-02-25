@@ -35,17 +35,11 @@ class Address extends AbstractData {
      */
     protected $postcode;
 
-    /**
-     * @var string ISO 3166-1 alpha-2 country code
-     */
-    protected $country;
-
     //------------------------------------------------
 
     public static function loadValidatorMetadata(ClassMetadata $metadata){
 
         $metadata->addPropertyConstraints('address1', [
-            new Assert\NotBlank,
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'max' => 50 ]),
         ]);
@@ -65,23 +59,6 @@ class Address extends AbstractData {
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'min' => 5, 'max' => 8 ]),
         ]);
-
-        $metadata->addPropertyConstraints('country', [
-            new Assert\NotBlank,
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Country(),
-        ]);
-
-        //---
-
-        // We required either address2 OR postcode to be set for an address to be considered valid.
-        $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
-
-            if( empty($object->address2) && empty($object->postcode) ){
-                $context->buildViolation( (new Assert\NotNull())->message )->atPath('address2/postcode')->addViolation();
-            }
-
-        }));
 
     } // function
 
