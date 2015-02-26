@@ -1,0 +1,92 @@
+    <div class='accordion-content'>
+    
+    <div class="section-intro">
+    
+    <h2>Thank you for your payment of &pound;<?= $this->paymentAmount ?></h2>
+    
+    <h3>Your payment reference number is: <?= $this->paymentReferenceNo ?></h3>
+    
+    <p>You're ready to register an LPA for <?= $this->donorName ?>.</p>
+
+    <h2>Next steps</h2>
+
+        <ol class="next steps">
+            <li>
+                <h3>Print and sign the registration documents</h3>
+                <p>Download the application to register 
+                    <?php if(isset($this->lpa120Url)):?> and fee remission forms <?php endif;?> 
+                    <?php if(isset($this->lp3Url)): ?> and notification letter <?php endif;?> below. 
+                    <br>The application must be signed by the donor - <?= $this->donorName ?>.
+                    The remission form must also be signed.</p>
+                <div class="form-download">
+                    <p><a class="pdf_dl_lnk" href="<?= $this->lp1Url ?>" target="_blank">Download the pre-filled registration form (PDF)</a></p>
+                    
+                    <?php if(isset($this->lpa120Url)):?> 
+                    <p><a class="pdf_dl_lnk" href="<?= $this->lpa120Url ?>" target="_blank">Download the fee remission form</a></p>
+                    <?php endif;?>
+                    
+                    <?php if(isset($this->lp3Url)): ?>
+                    <p><a class="pdf_dl_lnk" href="<?= $this->lp3Url ?>" target="_blank">Download the notification letter (PDF)</a></p>
+                    <?php endif;?>
+                </div>
+            </li>
+            <li>
+                <h3>Post all the documents</h3>
+
+                <p>You need to send us:</p>
+
+                      <ul>
+                        <li>Your lasting power of attorney </li>
+                        <li>The registration form (the <?= $this->formName ?>) </li>
+                      </ul>
+
+                    <p>If you're applying for a reduction in the fee, you should also send:</p>
+
+                       <ul>
+                        <li>The completed application form for your exemption (the LPA120A)</li>
+                        <li>The evidence to support this application</li>
+                      </ul>
+              
+                  <p>Post all the documents to this address:</p>                        
+                  
+                  <div class="address">
+                    <p><strong>
+                        Office of the Public Guardian<br>
+                        PO Box 16185<br>
+                        Birmingham<br>
+                        B2 2WH
+                    </strong></p>
+                </div>
+                
+                <?php if($this->hasRemission):?>
+                    <p>If you are applying for a remission, <strong>remember to include your supporting evidence</strong>.</p>
+                <?php endif;?>
+                
+                <?php if(isset($this->peopleToNotify)):?>                     
+                    <p>If you've not already done so, remember to send the notification letters to <?= $this->concatNames($this->peopleToNotify) ?> as well.</p>
+                <?php endif;?>
+            </li>
+        </ol>
+
+
+
+        <h2>What happens next?</h2>
+        <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application. This includes a waiting period in which anyone entitled to object to the registration of the LPA can lodge their objection. This waiting period is an important safeguard and is required by law.</p>    
+        <p>We'll send the registered LPA and any correspondence to <?= $this->correspondentName ?>.</p>
+
+        </div>
+        
+        <h2>Create another LPA?</h2>
+
+        <p><strong><a href="<?= $this->cloneUrl ?>" class="js-clonewarning">Make an LPA based on this one</a></strong> (you'll be able to add people in a single click).</p>
+
+        <p><a href="/user/dashboard/create">Make an LPA from scratch</a>.</p>
+    
+        <h2>Finished?</h2>
+        
+        <p><a href="/user/dashboard">View my LPAs</a>.</p>
+
+        <p><a href="/logout">Sign out of this service.</a></p>
+
+
+    </div>
