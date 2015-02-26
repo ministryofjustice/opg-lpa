@@ -43,6 +43,7 @@ class Module {
          * If a controller returns an array, by default put it into a JsonModel.
          * Needs to run before -80.
          */
+        /*
         $sharedEvents->attach( 'Zend\Stdlib\DispatchableInterface', MvcEvent::EVENT_DISPATCH, function(MvcEvent $e){
 
             $response = $e->getResult();
@@ -53,6 +54,7 @@ class Module {
             }
 
         }, -20); // attach
+        */
 
     } // function
 

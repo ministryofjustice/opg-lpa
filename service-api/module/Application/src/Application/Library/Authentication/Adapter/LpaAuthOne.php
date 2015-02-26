@@ -52,8 +52,8 @@ class LpaAuthOne implements AdapterInterface {
 
                 $data = $response->json();
 
-                if( isset( $data['user_id'] ) ){
-                    $result = new Result( Result::SUCCESS, new Identity\User( $data['user_id'] ) );
+                if( isset( $data['user_id'] ) && isset( $data['username'] ) ){
+                    $result = new Result( Result::SUCCESS, new Identity\User( $data['user_id'], $data['username'] ) );
                 }
 
             } // if

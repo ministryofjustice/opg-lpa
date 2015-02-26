@@ -13,14 +13,21 @@ class User extends AbstractIdentity {
 
     protected $id;
 
+    protected $email;
+
     //------
 
-    public function __construct( $userId ){
+    public function __construct( $userId, $email ){
         $this->id = $userId;
+        $this->email = $email;
     }
 
     public function id(){
         return $this->id;
+    }
+
+    public function email(){
+        return $this->email;
     }
 
     public function getRoles(){

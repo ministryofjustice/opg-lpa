@@ -19,7 +19,7 @@ class Resource extends AbstractResource {
     }
 
     /**
-     * Fetch a resource
+     * Fetch the user. If the user does not exist, create them.
      *
      * @param  mixed $id
      * @return Entity|ApiProblem
@@ -33,12 +33,22 @@ class Resource extends AbstractResource {
 
         $user = $this->getCollection( 'user' )->findOne( [ '_id' => $id ] );
 
-        // Ensure user is an array. The above may return null.
-        if( !is_array($user) ){ $user = array(); }
+        //------------------------
 
-        $user = [ 'id' => $id ] + $user;
+        // If the user doesn't exist, we create it.
+        // (the ID has already been validated with the authentication service)
+        if( !is_array($user) ){
 
-        $user = new User( $user );
+            // Create a new user...
+            $user = $this->save( $id );
+
+        } else {
+            $user = [ 'id' => $id ] + $user;
+            $user = new User( $user );
+        }
+
+        // The authentication service is the authoritative email address provider
+        $user->email = [ 'address'=>$this->getAuthorizationService()->getIdentity()->email() ];
 
         //------------------------
 
@@ -68,6 +78,64 @@ class Resource extends AbstractResource {
 
         //---
 
+        $user = $this->save( $id, $data );
+
+        // If it's not a user, it's a different kind of response, so return it.
+        if( !( $user instanceof User ) ){
+            return $user;
+        }
+
+        //---
+
+        $user = new Entity( $user );
+
+        // Set the user in the AbstractResource so it can be used for route generation.
+        $this->setRouteUser( $user );
+
+        //---
+
+        return $user;
+
+    } // function
+
+    /**
+     * Deletes the user AND all the user's LPAs!!!
+     *
+     * @param  mixed $id
+     * @return ApiProblem|bool
+     * @throw UnauthorizedException If the current user is not authorized.
+     */
+    public function delete($id){
+
+        $this->checkAccess( $id );
+
+        //------------------------
+
+        // Delete all applications for the user.
+        $this->getServiceLocator()->get('resource-applications')->deleteAll();
+
+        // Delete the user's About Me details.
+        $this->getCollection( 'user' )->remove( [ '_id' => $id ], [ 'justOne' => true ] );
+
+        return true;
+
+    } // function
+
+    //-----------------------------------------
+
+    /**
+     * Save the user to the database (or creates them if they don't exist)
+     *
+     * @param $id
+     * @param $data
+     * @return ValidationApiProblem|array|null|User
+     */
+    private function save( $id, $data = null ){
+
+        $this->checkAccess( $id );
+
+        //---
+
         $collection = $this->getCollection( 'user' );
 
         $user = $collection->findOne( [ '_id' => $id ] );
@@ -78,7 +146,7 @@ class Resource extends AbstractResource {
         if( !is_array($data) ){ $data = array(); }
 
         // Protect these values from the client setting them manually.
-        unset( $data['id'], $data['user'], $data['createdAt'], $data['updatedAt'] );
+        unset( $data['id'], $data['email'], $data['createdAt'], $data['updatedAt'] );
 
         //---
 
@@ -105,6 +173,9 @@ class Resource extends AbstractResource {
         //---
 
         $user = new User( $data );
+
+        // Keep email up to date with what's in the authentication service.
+        $user->email = [ 'address'=>$this->getAuthorizationService()->getIdentity()->email() ];
 
         //-----------------------------------------
 
@@ -145,37 +216,7 @@ class Resource extends AbstractResource {
 
         //------------------------
 
-        $user = new Entity( $user );
-
-        // Set the user in the AbstractResource so it can be used for route generation.
-        $this->setRouteUser( $user );
-
-        //---
-
         return $user;
-
-    } // function
-
-    /**
-     * Deletes the user AND all the user's LPAs!!!
-     *
-     * @param  mixed $id
-     * @return ApiProblem|bool
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function delete($id){
-
-        $this->checkAccess( $id );
-
-        //------------------------
-
-        // Delete all applications for the user.
-        $this->getServiceLocator()->get('resource-applications')->deleteAll();
-
-        // Delete the user's About Me details.
-        $this->getCollection( 'user' )->remove( [ '_id' => $id ], [ 'justOne' => true ] );
-
-        return true;
 
     } // function
 
