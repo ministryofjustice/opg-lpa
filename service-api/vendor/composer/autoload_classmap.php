@@ -1844,6 +1844,7 @@ return array(
     'Zend\\Filter\\Word\\SeparatorToCamelCase' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/SeparatorToCamelCase.php',
     'Zend\\Filter\\Word\\SeparatorToDash' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/SeparatorToDash.php',
     'Zend\\Filter\\Word\\SeparatorToSeparator' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/SeparatorToSeparator.php',
+    'Zend\\Filter\\Word\\Service\\SeparatorToSeparatorFactory' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/Service/SeparatorToSeparatorFactory.php',
     'Zend\\Filter\\Word\\UnderscoreToCamelCase' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/UnderscoreToCamelCase.php',
     'Zend\\Filter\\Word\\UnderscoreToDash' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/UnderscoreToDash.php',
     'Zend\\Filter\\Word\\UnderscoreToSeparator' => $vendorDir . '/zendframework/zendframework/library/Zend/Filter/Word/UnderscoreToSeparator.php',
