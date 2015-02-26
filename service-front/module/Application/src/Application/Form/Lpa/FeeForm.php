@@ -3,9 +3,15 @@ namespace Application\Form\Lpa;
 
 use Zend\Validator\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class FeeForm extends AbstractForm
 {
+    /**
+     * @var Lpa $lpa
+     */
+    private $lpa;
+    
     protected $formElements = [
             'repeatCaseNumber' => [
                     'type' => 'Text',
@@ -56,8 +62,10 @@ class FeeForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'type-form')
+    public function __construct (Lpa $lpa, $formName = 'type-form')
     {
+        $this->lpa = $lpa;
+        
         // The email value is only used for sending to payment gateway, therefore it is not validated by model.
         $this->formElements['email']['validators'] = [new EmailAddress()];
         
