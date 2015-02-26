@@ -115,6 +115,7 @@ class Module{
                 'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
                 'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
                 'Register'              => 'Application\Model\Service\User\Register',
+                'AboutYouDetails'       => 'Application\Model\Service\User\Details',
                 'Payment'               => 'Application\Model\Service\Payment\Payment',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
             ],
