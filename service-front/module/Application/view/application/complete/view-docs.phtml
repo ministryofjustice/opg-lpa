@@ -1,0 +1,26 @@
+<div class="accordion-content">
+
+<p>Created on <?= $this->completedAt ?> for <?= $this->donorName ?>.</p>
+
+<h2>Registration documents</h2>
+<p><a id="registration_fm_lnk" class="pdf_dl_lnk" href="<?= $this->lp1Url ?>" target="_blank">Download the pre-filled registration form (PDF)</a></p>
+
+<?php if(isset($this->lpa120Url)): ?>
+ 	<p><a id="notification_lnk" class="pdf_dl_lnk" href="<?= $this->lpa120Url ?>" target="_blank">Download the fee remission form (PDF)</a></p>
+<?php endif;?>
+
+<?php if(isset($this->lp3Url)): ?>
+  	<h2>Notification letters</h2>
+ 	<p><a id="notification_lnk" class="pdf_dl_lnk" href="<?= $this->lp3Url ?>" target="_blank">Download the notification letter (PDF)</a></p>
+<?php endif;?>
+
+<hr>
+
+    <h2>Create another LPA?</h2>
+
+    <p><a href="<?= $this->cloneUrl ?>" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click).</p>
+
+    <p><a href="/user/dashboard/create">Make an LPA from scratch</a>.</p>
+
+                        
+</div>
