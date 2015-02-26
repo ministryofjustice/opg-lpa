@@ -2216,17 +2216,17 @@
     },
     {
         "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "6d1a8924703b8f0ad1b2e462ced8cbd528f949b3"
+            "reference": "b0728bde0bba70a3508cba04b62aa0d9606686a8"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6d1a8924703b8f0ad1b2e462ced8cbd528f949b3",
-            "reference": "6d1a8924703b8f0ad1b2e462ced8cbd528f949b3",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/b0728bde0bba70a3508cba04b62aa0d9606686a8",
+            "reference": "b0728bde0bba70a3508cba04b62aa0d9606686a8",
             "shasum": ""
         },
         "require": {
@@ -2238,7 +2238,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-02-25 10:36:07",
+        "time": "2015-02-26 17:00:37",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2251,7 +2251,7 @@
         ],
         "description": "PHP data models that represent a Lasting Power of Attorney",
         "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
             "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
         }
     },
@@ -2262,24 +2262,24 @@
         "source": {
             "type": "git",
             "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "68402d165e13cf9e6bb60d2ffcf2f95cf88b3bfd"
+            "reference": "a5163ee6a69f65d16eb5fc38d92165d28251c84e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/68402d165e13cf9e6bb60d2ffcf2f95cf88b3bfd",
-            "reference": "68402d165e13cf9e6bb60d2ffcf2f95cf88b3bfd",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/a5163ee6a69f65d16eb5fc38d92165d28251c84e",
+            "reference": "a5163ee6a69f65d16eb5fc38d92165d28251c84e",
             "shasum": ""
         },
         "require": {
             "guzzlehttp/guzzle": "5.1.*",
-            "ministryofjustice/opg-lpa-datamodels": "dev-develop",
+            "ministryofjustice/opg-lpa-datamodels": "dev-master",
             "php": ">=5.4.0"
         },
         "require-dev": {
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-02-13 15:11:46",
+        "time": "2015-02-26 17:03:53",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
