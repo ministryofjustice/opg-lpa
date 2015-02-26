@@ -235,4 +235,46 @@ class AboutYou extends AbstractForm {
 
     } // function
 
+    public function setData( $data ){
+
+        if( isset($data['dob-date']) ){
+
+            $dob = new \DateTime( $data['dob-date'] );
+
+            $data['dob-date-day'] = $dob->format('j');
+            $data['dob-date-month'] = $dob->format('n');
+            $data['dob-date-year'] = $dob->format('Y');
+
+        }
+
+        parent::setData( $data );
+
+    }
+
+    /**
+     * We need to convert the DOB
+     *
+     * @return array|object
+     */
+    public function getDataForModel(){
+
+        $data = parent::getDataForModel();
+
+        if( $data['dob-date-day'] > 0 && $data['dob-date-month'] > 0 && $data['dob-date-year'] > 0 ){
+
+            $data['dob-date'] = "{$data['dob-date-year']}-{$data['dob-date-month']}-{$data['dob-date-day']}";
+
+        }
+
+        // Strip these working feilds out...
+        unset($data['dob-date-day'], $data['dob-date-month'], $data['dob-date-year']);
+
+        $data = array_filter( $data, function($v){
+            return !empty( $v );
+        });
+
+        return $data;
+
+    } // function
+
 } // class

@@ -560,12 +560,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "b0728bde0bba70a3508cba04b62aa0d9606686a8"
+                "reference": "6359d86673c54e4ef331a69fc3e289345f59e0d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/b0728bde0bba70a3508cba04b62aa0d9606686a8",
-                "reference": "b0728bde0bba70a3508cba04b62aa0d9606686a8",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6359d86673c54e4ef331a69fc3e289345f59e0d7",
+                "reference": "6359d86673c54e4ef331a69fc3e289345f59e0d7",
                 "shasum": ""
             },
             "require": {
@@ -591,7 +591,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-02-26 17:00:37"
+            "time": "2015-02-26 17:08:26"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
