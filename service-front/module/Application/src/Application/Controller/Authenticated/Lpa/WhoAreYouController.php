@@ -21,9 +21,9 @@ class WhoAreYouController extends AbstractLpaController
     
     public function indexAction()
     {
-//         if($this->getLpa()->whoAreYouAnswered == true) {
-//             return new ViewModel();
-//         }
+        if($this->getLpa()->whoAreYouAnswered == true) {
+            return new ViewModel();
+        }
         
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
