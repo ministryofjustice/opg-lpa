@@ -72,7 +72,7 @@ class FeeController extends AbstractLpaController
                     }
                 }
                 else {
-                    // if payment amount is not an integer, payment method can not be decided.
+                    // if payment amount is not an integer, payment method can not be decided or no need to pay.
                     $payment->method = null;
                     $payment->date = new \DateTime();
                 }
