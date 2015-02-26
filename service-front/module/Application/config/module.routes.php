@@ -753,6 +753,16 @@ return [
                             ],
                         ],
                     ],
+                    'view-docs' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/view-docs',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\CompleteController',
+                                'action'     => 'view-docs',
+                            ],
+                        ],
+                    ],
                     'who-are-you' => [
                         'type' => 'Literal',
                         'options' => [
