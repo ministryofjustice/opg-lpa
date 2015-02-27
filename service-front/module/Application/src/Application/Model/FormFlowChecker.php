@@ -462,6 +462,21 @@ class FormFlowChecker
         }
     }
     
+    private function isCertificateProviderAddAccessible()
+    {
+        return $this->isCertificateProviderAccessible();
+    }
+    
+    private function isCertificateProviderEditAccessible()
+    {
+        if($this->lpaHasCertificateProvider()) {
+            return true;
+        }
+        else {
+            return 'lpa/certificate-provider';
+        }
+    }
+    
     private function isPeopleToNotifyAccessible()
     {
         if($this->lpaHasCertificateProvider()) {
