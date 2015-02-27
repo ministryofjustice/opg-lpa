@@ -19,6 +19,7 @@ class FormFlowChecker
     private $lpa;
     
     static $checkerFunctionMap = array(
+            'lpa'                                           => 'isLpaAccessible',
             'lpa/form-type'                                 => 'isFormTypeAccessible',
             'lpa/donor'                                     => 'isDonorAccessible',
             'lpa/donor/add'                                 => 'isDonorAddAccessible',
@@ -161,6 +162,16 @@ class FormFlowChecker
     
     
 ###################  Private methods - accessible methods #################################################
+    
+    private function isLpaAccessible()
+    {
+        if($this->lpaHasDocument()) {
+            return true;
+        }
+        else {
+            return 'user/dashboard';
+        }
+    }
     
     private function isFormTypeAccessible()
     {
