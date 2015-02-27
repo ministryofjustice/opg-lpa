@@ -24,7 +24,7 @@ abstract class AbstractActorForm extends AbstractForm
             $modelizedData['phone'] = null;
         }
         
-        if(array_key_exists('name', $modelizedData) && ($modelizedData['name']['first'] == "") && ($modelizedData['name']['last'] == "")) {
+        if(array_key_exists('name', $modelizedData) && is_array($modelizedData['name']) && ($modelizedData['name']['first'] == "") && ($modelizedData['name']['last'] == "")) {
             $modelizedData['name'] = null;
         }
         
@@ -47,9 +47,11 @@ abstract class AbstractActorForm extends AbstractForm
         }
         
         if(array_key_exists('name', $modelizedData) && ($modelizedData['name'] == null) && array_key_exists('name', $validation)) {
-            $validation['name-first'] = $validation['name'];
-            $validation['name-last'] = $validation['name'];
-            unset($validation['name']);
+            if(array_key_exists('name-first', $this->data)) {
+                $validation['name-first'] = $validation['name'];
+                $validation['name-last']  = $validation['name'];
+                unset($validation['name']);
+            }
         }
         
         if(count($validation) == 0) {
@@ -79,7 +81,7 @@ abstract class AbstractActorForm extends AbstractForm
             $modelizedData['phone'] = null;
         }
         
-        if(array_key_exists('name', $modelizedData) && ($modelizedData['name']['first'] == "") && ($modelizedData['name']['last'] == "")) {
+        if(array_key_exists('name', $modelizedData) && is_array($modelizedData['name']) && ($modelizedData['name']['first'] == "") && ($modelizedData['name']['last'] == "")) {
             $modelizedData['name'] = null;
         }
         
