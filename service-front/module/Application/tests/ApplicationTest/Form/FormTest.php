@@ -15,7 +15,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
             if(strstr($pathInfo['filename'], 'Abstract')) continue;
             
             $class = "Application\\Form\\Lpa\\".$pathInfo['filename'];
-            if(in_array($pathInfo['filename'], ['ApplicantForm', 'ApplicantForm', 'CorrespondentSwitcherForm'])) {
+            if(in_array($pathInfo['filename'], ['ApplicantForm', 'ApplicantForm', 'CorrespondentSwitcherForm', 'FeeForm'])) {
                 $form = new $class($lpa);
             }
             else {

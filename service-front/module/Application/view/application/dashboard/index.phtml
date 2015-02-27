@@ -39,7 +39,7 @@
       <tr>
       <td><?php echo $lpa->id . ' v' . $lpa->version ?></td>
       <td><?php echo $lpa->donor; ?></td>
-      <td><?php echo ($lpa->type == 'property-and-financial') ? 'Property and financial affairs' : 'Health and welfare'; ?></td>
+      <td><?php echo ($lpa->type == 'property-and-financial') ? 'Property and financial affairs' : (($lpa->type == 'health-and-welfare')?'Health and welfare':'') ?></td>
       <td><?php echo $lpa->updatedAt->format('M jS, Y'); ?></td>
       <td>
         <div class="lpa-actions">
