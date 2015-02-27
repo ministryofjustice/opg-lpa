@@ -155,7 +155,12 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function whoAreYou()
     {
-        return "Who was using the LPA tool answered";
+        if($this->lpa->whoAreYouAnswered) {
+            return "Who was using the LPA tool answered";
+        }
+        else {
+            return 'Who was using the LPA tool?';
+        }
     }
     
     protected function fee()
