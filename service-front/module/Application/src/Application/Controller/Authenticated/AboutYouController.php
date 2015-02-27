@@ -10,7 +10,7 @@ use Application\Form\User\AboutYou as AboutYouForm;
 
 class AboutYouController extends AbstractAuthenticatedController {
 
-    public function indexAction(){
+    public function newAction(){
 
         $service = $this->getServiceLocator()->get('AboutYouDetails');
 

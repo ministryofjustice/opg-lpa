@@ -27,6 +27,8 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
             die('Not logged in / timed out! This will redirect to the login page.');
         }
 
+        // The user must also have set their About Me details
+
         return parent::onDispatch( $e );
     }
 
