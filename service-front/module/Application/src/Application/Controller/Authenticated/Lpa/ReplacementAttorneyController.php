@@ -95,7 +95,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -165,7 +165,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -207,7 +207,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         }
         
         if ( $this->getRequest()->isXmlHttpRequest() ) {
-            return $this->response;
+            return new JsonModel(['success' => true]);
         }
         else {
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -247,7 +247,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return $this->response;
+                    return new JsonModel(['success' => true]);
                 }
                 else {
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
