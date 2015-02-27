@@ -283,7 +283,7 @@ class FormFlowChecker
 
     private function isAttorneyAddTrustAccessible()
     {
-        if($this->isAttorneyAccessible() && (!$this->lpaHasTrustCorporation())) {
+        if($this->isAttorneyAccessible() && (!$this->lpaHasTrustCorporation('primary'))) {
             return true;
         }
         else {
@@ -366,7 +366,7 @@ class FormFlowChecker
 
     private function isReplacementAttorneyAddTrustAccessible()
     {
-        if($this->isReplacementAttorneyAccessible() && (!$this->lpaHasTrustCorporation())) {
+        if($this->isReplacementAttorneyAccessible() && (!$this->lpaHasTrustCorporation('replacement'))) {
             return true;
         }
         else {
@@ -810,7 +810,7 @@ class FormFlowChecker
         }
     }
     
-    private function lpaHasTrustCorporation($whichGroup)
+    private function lpaHasTrustCorporation($whichGroup=null)
     {
         if($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining()) {
             
