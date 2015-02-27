@@ -60,6 +60,7 @@ class FormFlowChecker
             'lpa/online-payment-success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/online-payment-unsuccessful'               => 'isOnlinePaymentUnsuccessfulAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
+            'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
     static $nextRouteMap = array(
@@ -117,6 +118,12 @@ class FormFlowChecker
     {
         if(!array_key_exists($currentRouteName, static::$checkerFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
+        }
+        
+        if($this->lpa->payment instanceof Payment) {
+            if($this->lpa->payment->date instanceof \DateTime) {
+                return 'lpa/view-docs';
+            }
         }
         
         $checkFunction = static::$checkerFunctionMap[$currentRouteName];
@@ -554,6 +561,11 @@ class FormFlowChecker
         else {
             return 'lpa/fee';
         }
+    }
+    
+    private function isViewDocsAccessible()
+    {
+        return $this->isCompleteAccessible();
     }
     
 ###################  Private methods - lpa property value check methods #################################################
