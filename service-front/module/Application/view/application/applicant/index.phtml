@@ -1,4 +1,5 @@
 <?php 
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 $form       = $this->form;
 $form->setAttributes(['class'=>'form']);
 $csrf       = $form->get('secret');
@@ -25,7 +26,7 @@ else {
         $whoIsRegisteringValueOptions['attorney']['label'] = "The attorneys - ". $this->concatNames($this->lpa->document->primaryAttorneys);
     }
     else {
-        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".$this->lpa->document->primaryAttorneys[0]->name->__toString();
+        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".(($this->lpa->document->primaryAttorneys[0] instanceof Human)? $this->lpa->document->primaryAttorneys[0]->name->__toString():$this->lpa->document->primaryAttorneys[0]->name);
     }
     
     $whoIsRegisteringValueOptions['attorney'] += [

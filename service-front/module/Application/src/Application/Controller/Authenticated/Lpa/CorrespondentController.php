@@ -14,6 +14,7 @@ use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Application\Form\Lpa\CorrespondentForm;
 use Application\Form\Lpa\CorrespondentSwitcherForm;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -32,7 +33,7 @@ class CorrespondentController extends AbstractLpaController
             
             return new ViewModel([
                     'correspondent'     => [
-                            'name'      => $correspondent->name->__toString(),
+                            'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->company),
                             'address'   => $correspondent->address->__toString(),
                     ],
                     'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] ),
