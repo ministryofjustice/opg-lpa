@@ -34,8 +34,8 @@ class PeopleToNotifyController extends AbstractLpaController
                                 'name'      => $peopleToNotify->name->__toString(),
                                 'address'   => $peopleToNotify->address->__toString()
                         ],
-                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $peopleToNotify->id ]),
-                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $peopleToNotify->id ]),
+                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
                 ];
             }
             
@@ -115,10 +115,8 @@ class PeopleToNotifyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        foreach($this->getLpa()->document->peopleToNotify as $peoplToNotify) {
-            if($peoplToNotify->id == $personIdx) {
-                $notifiedPerson = $peoplToNotify;
-            }
+        if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+            $notifiedPerson = $this->getLpa()->document->peopleToNotify[$personIdx];
         }
         
         // if notified person idx does not exist in lpa, return 404.
@@ -138,7 +136,7 @@ class PeopleToNotifyController extends AbstractLpaController
                 $notifiedPerson = new NotifiedPerson($form->getModelizedData());
                 
                 // update attorney
-                if(!$this->getLpaApplicationService()->setNotifiedPerson($lpaId, $notifiedPerson, $personIdx)) {
+                if(!$this->getLpaApplicationService()->setNotifiedPerson($lpaId, $notifiedPerson, $notifiedPerson->id)) {
                     throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
                 }
                 
@@ -165,13 +163,11 @@ class PeopleToNotifyController extends AbstractLpaController
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        foreach($this->getLpa()->document->peopleToNotify as $peopleToNotify) {
-            if($peopleToNotify->id == $personIdx) {
-                if(!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $personIdx)) {
-                    throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
-                }
-                $deletionFlag = true;
+        if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+            if(!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
+                throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }
+            $deletionFlag = true;
         }
         
         // if notified person idx does not exist in lpa, return 404.

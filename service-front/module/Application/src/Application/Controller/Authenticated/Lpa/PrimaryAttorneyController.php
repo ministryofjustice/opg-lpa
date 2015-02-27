@@ -36,8 +36,8 @@ class PrimaryAttorneyController extends AbstractLpaController
                         'attorney' => [
                                 'address'   => $attorney->address->__toString()
                         ],
-                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $attorney->id ]),
-                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $attorney->id ]),
+                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
                 ];
                 
                 if($attorney instanceof Human) {
@@ -124,10 +124,8 @@ class PrimaryAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        foreach($this->getLpa()->document->primaryAttorneys as $primaryAttorney) {
-            if($primaryAttorney->id == $attorneyIdx) {
-                $attorney = $primaryAttorney;
-            }
+        if(array_key_exists($attorneyIdx, $this->getLpa()->document->primaryAttorneys)) {
+            $attorney = $this->getLpa()->document->primaryAttorneys[$attorneyIdx];
         }
         
         // if attorney idx does not exist in lpa, return 404.
@@ -160,7 +158,7 @@ class PrimaryAttorneyController extends AbstractLpaController
                 }
                 
                 // update attorney
-                if(!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorneyIdx)) {
+                if(!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorney->id)) {
                     throw new \RuntimeException('API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
                 
@@ -192,13 +190,11 @@ class PrimaryAttorneyController extends AbstractLpaController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
-            if($attorney->id == $attorneyIdx) {
-                if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
-                }
-                $deletionFlag = true;
+        if(array_key_exists($attorneyIdx, $this->getLpa()->document->primaryAttorneys)) {
+            if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $this->getLpa()->document->primaryAttorneys[$attorneyIdx]->id)) {
+                throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }
+            $deletionFlag = true;
         }
         
         // if attorney idx does not exist in lpa, return 404.
