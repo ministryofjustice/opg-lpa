@@ -52,6 +52,7 @@ class FormFlowChecker
             'lpa/people-to-notify/delete'                   => 'isPeopleToNotifyDeleteAccessible',
             'lpa/instructions'                              => 'isInstructionsAccessible',
             'lpa/created'                                   => 'isCreatedAccessible',
+            'lpa/register'                                  => 'isCreatedAccessible',
             'lpa/download'                                  => 'isDownloadAccessible',
             'lpa/applicant'                                 => 'isApplicantAccessible',
             'lpa/correspondent'                             => 'isCorrespondentAccessible',
