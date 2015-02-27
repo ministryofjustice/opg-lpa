@@ -1,7 +1,7 @@
 <?php
     $form       = $this->form;
     $csrf       = $form->get('secret');
-    $form->setAttributes(['id'=>'step-in-form']);
+    $form->setAttributes(['id'=>'step-in-form', 'class'=>'form']);
     
     $when        = $form->get('when');
     $whenOptions = $when->getOptions()['value_options'];
