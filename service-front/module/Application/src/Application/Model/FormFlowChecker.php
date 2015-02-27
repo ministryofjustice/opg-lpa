@@ -123,9 +123,9 @@ class FormFlowChecker
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
         
-        // once payment date has been set, user will not be able to view any page other than lpa/view-docs.
-        if($this->lpa->payment instanceof Payment) {
-            if($this->lpa->payment->date instanceof \DateTime) {
+        // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
+        if(($this->lpa->payment instanceof Payment)  && ($this->lpa->payment->date instanceof \DateTime)) {
+            if($currentRouteName != 'lpa/complete') {
                 return 'lpa/view-docs';
             }
         }
