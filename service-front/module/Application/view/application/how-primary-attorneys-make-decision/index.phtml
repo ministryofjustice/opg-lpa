@@ -1,7 +1,7 @@
 <?php
     $form       = $this->form;
     $csrf       = $form->get('secret');
-    $form->setAttributes(['id'=>'decisions-form']);
+    $form->setAttributes(['id'=>'decisions-form', 'class' => 'form']);
     
     $how        = $form->get('how');
     $howValueOptions = $how->getOptions()['value_options'];
@@ -68,10 +68,8 @@
 		
         <?= $this->form()->openTag($form); ?>
     
-        <div class="<?= $this->elementGroupClass($csrf) ?>">
-            <?= $this->formElement($csrf) ?>
-            <?= $this->formElementErrors($csrf) ?>
-        </div>
+        <?= $this->formElement($csrf) ?>
+        <?= $this->formElementErrors($csrf) ?>
 
         <div class="emphasised option group">
             
