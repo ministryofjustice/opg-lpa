@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
@@ -149,7 +150,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function correspondent()
     {
-        return $this->lpa->document->correspondent->name->__toString();
+        return (($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->__toString():$this->lpa->document->correspondent->company);
     }
     
     protected function whoAreYou()
