@@ -31,14 +31,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         # inject lpa into layout.
         $this->layout()->lpa = $this->getLpa();
         
-        # @todo: remove the lines below to the return $view line once form data can persist.
-        $view = parent::onDispatch($e);
-        if($view instanceof ViewModel) {
-            $view->setVariable('lpa', $this->getLpa());
-        }
-        
-        return $view;
-        
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
          */   
@@ -48,7 +40,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $calculatedRoute = $this->getFlowChecker()->check($currentRoute, $personIndex);
         
         if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
-            return $this->redirect()->toRoute($calculatedRoute);
+            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id'=>$this->getLpa()->id]);
         }
         
         // inject lpa into view
