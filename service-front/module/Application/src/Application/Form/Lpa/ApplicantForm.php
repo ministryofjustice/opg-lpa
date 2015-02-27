@@ -3,6 +3,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 
 class ApplicantForm extends AbstractForm
 {
@@ -85,7 +86,7 @@ class ApplicantForm extends AbstractForm
         
         foreach($this->lpa->document->primaryAttorneys as $attorney) {
             $this->formElements['attorneyList']['options']['value_options'][$attorney->id] = [
-                    'label' => $attorney->name->__toString(),
+                    'label' => (($attorney instanceof Human)?$attorney->name->__toString():$attorney->name),
                     'value' => $attorney->id,
                     'label_attributes' => [
                             'for' => 'attorney-'.$attorney->id,

@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 class CorrespondentSwitcherForm extends AbstractForm
 {
     protected $formElements = [
@@ -27,7 +28,7 @@ class CorrespondentSwitcherForm extends AbstractForm
         ];
         
         foreach($lpa->document->primaryAttorneys as $attorney) {
-            $this->formElements['switch-to-type']['options']['value_options'][$attorney->id] = $attorney->name->__toString(). ' (Attorney)';
+            $this->formElements['switch-to-type']['options']['value_options'][$attorney->id] = (($attorney instanceof Human)?$attorney->name->__toString():$attorney->name). ' (Attorney)';
         }
         
         $this->formElements['switch-to-type']['options']['value_options']['other'] = 'Other';
