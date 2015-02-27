@@ -17,8 +17,9 @@ class ConcatNames extends AbstractHelper
             return null;
         }
         elseif($count == 1) {
-            if(is_string($nameList[0]->name)) return $nameList[0]->name;
-            else return $nameList[0]->name->__toString();
+            $actor = current($nameList);
+            if(is_string($actor->name)) return $actor->name;
+            else return $actor->name->__toString();
         }
        else {
            $lastItem = array_pop($nameList);
