@@ -117,10 +117,12 @@ class FormFlowChecker
     
     public function check($currentRouteName, $personIdex=null)
     {
+        // check if route exists
         if(!array_key_exists($currentRouteName, static::$checkerFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
         
+        // once payment date has been set, user will not be able to view any page other than lpa/view-docs.
         if($this->lpa->payment instanceof Payment) {
             if($this->lpa->payment->date instanceof \DateTime) {
                 return 'lpa/view-docs';
