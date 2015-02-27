@@ -102,7 +102,13 @@ class FeeController extends AbstractLpaController
             }
         }
         else {
-            $form->bind(['repeatCaseNumber'=>$this->getLpa()->repeatCaseNumber] + $this->getLpa()->payment->flatten());
+            $data = ['repeatCaseNumber'=>$this->getLpa()->repeatCaseNumber];
+            
+            if($this->getLpa()->payment instanceof Payment) {
+                $data +=  $this->getLpa()->payment->flatten();
+            }
+            
+            $form->bind($data);
         }
         
         return new ViewModel(['form'=>$form]);
