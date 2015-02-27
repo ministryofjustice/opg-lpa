@@ -6,6 +6,8 @@ use Zend\Session\Container as SessionContainer;
 
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class DashboardController extends AbstractAuthenticatedController
 {
@@ -106,7 +108,7 @@ class DashboardController extends AbstractAuthenticatedController
 
             $obj->version = 2;
 
-            $obj->donor = $lpa->document->donor->name->first . ' ' . $lpa->document->donor->name->last;
+            $obj->donor = ((($lpa->document->donor instanceof Donor) && ($lpa->document->donor->name instanceof Name))?$lpa->document->donor->name->__toString():'');
 
             $obj->type = $lpa->document->type;
 

@@ -1,12 +1,174 @@
+<?php
+    $form       = $this->form;
+    $csrf       = $form->get('secret');
+    
+    $email      = $form->get('email');
+    $email->setOptions(['label' => "Email address"]);
+    $email->setAttributes(['id' => 'email']);
+    
+    $paymentMethod     = $form->get('method');
+    $paymentMethod->setAttributes(['id' => 'method']);
+    $paymentMethod->setOptions([
+            'label' => 'I want to pay by cheque',
+    ]);
+    
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button', 'id'=>'form-submit', 'value'=>'Proceed to payment']);
+    
+    $repeatCaseNumber           = $form->get('repeatCaseNumber');
+    $repeatCaseNumber->setOptions(['label' => "If you are making a repeat application, please enter your case number:"]);
+    
+    $reducedFeeReceivesBenefits = $form->get('reducedFeeReceivesBenefits');
+    $reducedFeeReceivesBenefits->setAttributes([
+            'id' => 'reducedFeeReceivesBenefits',
+    ]);
+    $reducedFeeReceivesBenefits->setOptions([
+            'label'=>"The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>",
+    ]);
+    $reducedFeeReceivesBenefits->setLabelOptions(['disable_html_escape' => true]);
+    
+    $reducedFeeAwardedDamages   = $form->get('reducedFeeAwardedDamages');
+    $reducedFeeAwardedDamages->setAttributes([
+            'id' => 'reducedFeeAwardedDamages',
+    ]);
+    $reducedFeeAwardedDamages->setOptions(['label' => "The donor has not been awarded personal injury damages of more than £16,000"]);
+    
+    $reducedFeeLowIncome        = $form->get('reducedFeeLowIncome');
+    $reducedFeeLowIncome->setAttributes([
+            'id' => 'reducedFeeLowIncome',
+    ]);
+    $reducedFeeLowIncome->setOptions(['label' => "The donor currently has an income of less than £12,000 a year before tax"]);
+    
+    $reducedFeeUniversalCredit  = $form->get('reducedFeeUniversalCredit');
+    $reducedFeeUniversalCredit->setAttributes([
+            'id' => 'reducedFeeUniversalCredit',
+    ]);
+    $reducedFeeUniversalCredit->setOptions(['label' => "The donor receives Universal Credit"]);
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
 <section id="fee">
-	
-	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Payment</h2>
+    
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Payment</h2>
 
     <div class="accordion-content">
     
+    <?= $this->form()->openTag($form); ?>
     
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
     
+    <?= $this->formErrorList(); ?>
     
+        <div class="section-intro">
+
+            <h2>Application fee: £110</h2>
+
+            <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
+
+            <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
+            
+            <h2>Are you making a repeat application?</h2>
+            
+            <p>If you’ve already applied to register an LPA and the Office of the Public Guardian said that it was not possible to register it, you can apply again within 3 months and pay half the fee.</p>
+            
+            <p class="emphasised option group">
+                <?= $formLabel->openTag($repeatCaseNumber) . $repeatCaseNumber->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($repeatCaseNumber); ?>
+                <?= $this->formElementErrors($repeatCaseNumber) ?>
+            </p>
+            
+            <details>
+            
+                <summary data-journey-click="stageprompt.lpa:help.inline:register/fees:applying-for-a-reduction-of-the-fee" role="button" aria-expanded="false">Applying for a reduction of the fee</summary>
+
+                <p>If the donor has an income of less than £12,000 a year before tax or receives certain benefits, they might be eligible for a reduced fee, or no fee at all.</p>
+                
+                <p><a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
+
+                <p class="emphasised option group">
+                
+                    <?= $formLabel->openTag($reducedFeeReceivesBenefits) . $this->formElement($reducedFeeReceivesBenefits); ?>
+                    <?= $reducedFeeReceivesBenefits->getOption('label') . $formLabel->closeTag(); ?>
+                    <?= $this->formElementErrors($reducedFeeReceivesBenefits) ?>
+                    
+                </p>
+                <p class="emphasised option group">
+                
+                    <?= $formLabel->openTag($reducedFeeAwardedDamages) . $this->formElement($reducedFeeAwardedDamages); ?>
+                    <?= $reducedFeeAwardedDamages->getOption('label') . $formLabel->closeTag(); ?>
+                    <?= $this->formElementErrors($reducedFeeAwardedDamages) ?>
+                    
+                </p>
+                <p class="emphasised option group">
+                
+                    <?= $formLabel->openTag($reducedFeeUniversalCredit) . $this->formElement($reducedFeeUniversalCredit); ?>
+                    <?= $reducedFeeUniversalCredit->getOption('label') . $formLabel->closeTag(); ?>
+                    <?= $this->formElementErrors($reducedFeeUniversalCredit) ?>
+                    
+                </p>
+                <p class="emphasised option group">
+                
+                    <?= $formLabel->openTag($reducedFeeLowIncome) . $this->formElement($reducedFeeLowIncome); ?>
+                    <?= $reducedFeeLowIncome->getOption('label') . $formLabel->closeTag(); ?>
+                    <?= $this->formElementErrors($reducedFeeLowIncome) ?>
+                </p>
+                
+                <div class="revised-fee" id="revised-fee-uc" style="display: none;">
+                    <h2>We'll contact you about the fee</h2>
+                    <p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
+                    <p>This means <strong>the tool will not charge you for this LPA now.</strong></p>
+                    <p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
+                    <p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
+                </div>
+                
+                <div class="revised-fee" id="revised-fee-65" style="display: none;">
+                    <h2>Reduced fee: £55</h2>
+                    <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+                    <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
+                    <p>After you've paid, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
+                </div>
+        
+                <div class="revised-fee" id="revised-fee-0" style="display: none;">
+                    <h2>Reduced fee: £0</h2>
+                    <p>In order to apply for this exemption, you must enclose copies of letters from the DWP or your benefit provider confirming that the benefit is being paid at the time the LPA is sent to us for registration. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+                    <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
+                    <p>On the next page, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
+                </div>
+                
+            </details>
+            
+            <details id="pay-by-cheque">
+            
+                <summary data-journey-click="stageprompt.lpa:help.inline:register/fees:i-want-to-pay-by-cheque-or-bacs" role="button" aria-expanded="false">I want to pay by cheque</summary>
+                
+                <?= $formLabel->openTag($paymentMethod) . $this->formElement($paymentMethod); ?>
+                <?= $paymentMethod->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElementErrors($paymentMethod) ?>
+                
+
+            </details>
+            
+        </div>
+
+
+        <p>By clicking below I certify that the above information is correct and that to the best of my knowledge and belief, I have completed the application in accordance with the provisions of the Mental Capacity Act 2005 and all statutory instruments made under it.</p>
+
+        <div id="contact-email">
+            <p>Please enter a contact email for correspondence regarding this payment.</p>
+            <div class="group ">
+                <?= $formLabel->openTag($email) . $email->getOption('label') . $formLabel->closeTag(); ?> 
+                    <?= $this->formElement($email) ?>
+                <?= $this->formElementErrors($email) ?>
+            </div>
+        </div>
+
+        <div class="accordion-actions group">
+            <p><?= $this->formElement($submit) ?></p>
+        </div>
+        
+    <?= $this->form()->closeTag(); ?>
     
     </div>
     

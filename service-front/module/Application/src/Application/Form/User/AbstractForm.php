@@ -4,7 +4,9 @@ namespace Application\Form\User;
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
 
-abstract class AbstractForm extends Form {
+use Application\Model\Service\ServiceDataInputInterface;
+
+abstract class AbstractForm extends Form implements ServiceDataInputInterface {
 
     public function __construct( $formName ){
 
@@ -18,5 +20,14 @@ abstract class AbstractForm extends Form {
         ]));
 
     } // function
+
+    /**
+     * By default we simply return the data unchanged.
+     *
+     * @return array|object
+     */
+    public function getDataForModel(){
+        return $this->getData();
+    }
 
 } // abstract class

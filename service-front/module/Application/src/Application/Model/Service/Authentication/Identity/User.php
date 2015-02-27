@@ -43,6 +43,7 @@ class User {
 
     /**
      * @param string $userId The user's internal ID.
+     * @param string $email The user's email address.
      * @param string $token The user's authentication token.
      * @param int $expiresIn The number of seconds in which the token expires.
      * @param DateTime $lastLogin The DateTime the user las logged in.

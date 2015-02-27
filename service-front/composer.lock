@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "186b8712e46549d14141c05c07d4b16c",
+    "hash": "1f3a76302b1ea4fd1993e9e656d8ac99",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -521,17 +521,17 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "68402d165e13cf9e6bb60d2ffcf2f95cf88b3bfd"
+                "reference": "a5163ee6a69f65d16eb5fc38d92165d28251c84e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/68402d165e13cf9e6bb60d2ffcf2f95cf88b3bfd",
-                "reference": "68402d165e13cf9e6bb60d2ffcf2f95cf88b3bfd",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/a5163ee6a69f65d16eb5fc38d92165d28251c84e",
+                "reference": "a5163ee6a69f65d16eb5fc38d92165d28251c84e",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "5.1.*",
-                "ministryofjustice/opg-lpa-datamodels": "dev-develop",
+                "ministryofjustice/opg-lpa-datamodels": "dev-master",
                 "php": ">=5.4.0"
             },
             "require-dev": {
@@ -552,20 +552,20 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-02-13 15:11:46"
+            "time": "2015-02-26 17:03:53"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "dev-develop",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "6d1a8924703b8f0ad1b2e462ced8cbd528f949b3"
+                "reference": "6359d86673c54e4ef331a69fc3e289345f59e0d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6d1a8924703b8f0ad1b2e462ced8cbd528f949b3",
-                "reference": "6d1a8924703b8f0ad1b2e462ced8cbd528f949b3",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6359d86673c54e4ef331a69fc3e289345f59e0d7",
+                "reference": "6359d86673c54e4ef331a69fc3e289345f59e0d7",
                 "shasum": ""
             },
             "require": {
@@ -588,10 +588,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-02-25 10:36:07"
+            "time": "2015-02-26 17:08:26"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",

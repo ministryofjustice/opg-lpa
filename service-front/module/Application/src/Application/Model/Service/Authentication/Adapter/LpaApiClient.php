@@ -38,7 +38,7 @@ class LpaApiClient implements AdapterInterface {
      * @param $password
      */
     public function setCredentials( $email, $password ){
-        $this->email = strtolower($email);
+        $this->email = trim(strtolower($email));
         $this->password = $password;
     }
 

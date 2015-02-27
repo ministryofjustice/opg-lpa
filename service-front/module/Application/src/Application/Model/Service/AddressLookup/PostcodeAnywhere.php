@@ -102,7 +102,7 @@ class PostcodeAnywhere implements ServiceLocatorAwareInterface {
         // Convert address to 3 lines plus a postcode
 
         // Pull out the relevant keys...
-        $components = array_intersect_key( $address, array_flip([ 'Line1', 'Line2', 'Line3', 'Line4', 'Line5', 'PostTown', 'County', ]) );
+        $components = array_intersect_key( $address, array_flip([ 'Company', 'Line1', 'Line2', 'Line3', 'Line4', 'Line5', 'PostTown', 'County', ]) );
 
         // Strip out empty values...
         $components = array_values(array_filter($components, function($v){ return !empty($v); }));

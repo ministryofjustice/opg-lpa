@@ -382,7 +382,7 @@ class Client
 
         $response = $this->getTokenInfo( $token );
         
-        if( !isset($response['user_id']) ){
+        if( !isset($response['username']) ){
             return false;
         }
         

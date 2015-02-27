@@ -364,6 +364,35 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
         return $result;
     }
 
+    /**
+     * Recursively walks over a flat array (separated with dashes) and
+     * converts it to a multidimensional array.
+     *
+     * @param $array array Flat array.
+     * @return array Multidimensional array
+     */
+    private function unFlattenArray( $array ){
+
+        $result = array();
+
+        foreach( $array as $key => $value ){
+
+            $keys = explode( '-', $key );
+
+            $position = &$result;
+
+            foreach( $keys as $index ){
+                $position = &$position[$index];
+            }
+
+            $position = $value;
+
+        }
+
+        return $result;
+
+    } // function
+
     //-------------------
     // Hydrator methods
 
@@ -371,6 +400,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Populates the concrete class' properties with the array.
      *
      * @param array $data
+     * @return self
      */
     public function populate( Array $data ){
 
@@ -384,7 +414,25 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
 
         } // foreach
 
+        return $this;
+
     } // function
+
+    /**
+     * Populates the concrete class' properties with the passed flat array.
+     *
+     * @param array $data
+     * @return self
+     */
+    public function populateWithFlatArray( Array $data ){
+
+        $data = $this->unFlattenArray( $data );
+
+        return $this->populate( $data );
+
+    } // function
+
+    //-------------------
 
     /**
      * Basic mapper. This should be overridden in the concrete class if needed.

@@ -19,6 +19,7 @@ class FormFlowChecker
     private $lpa;
     
     static $checkerFunctionMap = array(
+            'lpa'                                           => 'isLpaAccessible',
             'lpa/form-type'                                 => 'isFormTypeAccessible',
             'lpa/donor'                                     => 'isDonorAccessible',
             'lpa/donor/add'                                 => 'isDonorAddAccessible',
@@ -60,6 +61,7 @@ class FormFlowChecker
             'lpa/online-payment-success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/online-payment-unsuccessful'               => 'isOnlinePaymentUnsuccessfulAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
+            'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
     static $nextRouteMap = array(
@@ -98,6 +100,7 @@ class FormFlowChecker
             'lpa/correspondent'                             => 'lpa/who-are-you',
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
             'lpa/who-are-you'                               => 'lpa/fee',
+            'lpa/fee'                                       => 'lpa/complete',
     );
     
     public function __construct(Lpa $lpa = null)
@@ -114,8 +117,16 @@ class FormFlowChecker
     
     public function check($currentRouteName, $personIdex=null)
     {
+        // check if route exists
         if(!array_key_exists($currentRouteName, static::$checkerFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
+        }
+        
+        // once payment date has been set, user will not be able to view any page other than lpa/view-docs.
+        if($this->lpa->payment instanceof Payment) {
+            if($this->lpa->payment->date instanceof \DateTime) {
+                return 'lpa/view-docs';
+            }
         }
         
         $checkFunction = static::$checkerFunctionMap[$currentRouteName];
@@ -153,6 +164,16 @@ class FormFlowChecker
     
     
 ###################  Private methods - accessible methods #################################################
+    
+    private function isLpaAccessible()
+    {
+        if($this->lpaHasDocument()) {
+            return true;
+        }
+        else {
+            return 'user/dashboard';
+        }
+    }
     
     private function isFormTypeAccessible()
     {
@@ -553,6 +574,11 @@ class FormFlowChecker
         else {
             return 'lpa/fee';
         }
+    }
+    
+    private function isViewDocsAccessible()
+    {
+        return $this->isCompleteAccessible();
     }
     
 ###################  Private methods - lpa property value check methods #################################################
