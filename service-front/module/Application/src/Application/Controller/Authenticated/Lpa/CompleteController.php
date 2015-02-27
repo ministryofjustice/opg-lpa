@@ -14,6 +14,7 @@ use Zend\View\Model\ViewModel;
 use Application\Model\Service\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
 
 class CompleteController extends AbstractLpaController
 {
@@ -58,7 +59,7 @@ class CompleteController extends AbstractLpaController
                 'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp1']),
                 'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$lpa->id]),
                 'formName'           => (($lpa->document->type==Document::LPA_TYPE_PF)?'LP1F':'LP1H'),
-                'correspondentName'  => $lpa->document->correspondent->name->__toString(),
+                'correspondentName'  => (($lpa->document->correspondent->name instanceof Name)?$lpa->document->correspondent->name->__toString():$lpa->document->correspondent->company),
                 'paymentAmount'      => $lpa->payment->amount,
                 'paymentReferenceNo' => $lpa->payment->reference,
                 'hasRemission'       => ($lpa->payment->amount != Calculator::STANDARD_FEE),
