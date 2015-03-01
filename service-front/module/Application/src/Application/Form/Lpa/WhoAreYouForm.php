@@ -83,7 +83,7 @@ class WhoAreYouForm extends AbstractForm
     
     public function validateByModel()
     {
-        $whoAreYou = new WhoAreYou($this->getModelizedData());
+        $whoAreYou = new WhoAreYou($this->formDataModelization($this->data));
         
         $validation = $whoAreYou->validate();
         

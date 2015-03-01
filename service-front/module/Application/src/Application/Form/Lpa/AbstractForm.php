@@ -9,6 +9,7 @@ use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
 use Zend\Form\Element\Radio;
+use Zend\InputFilter\Factory;
 
 abstract class AbstractForm extends Form
 {
@@ -25,6 +26,11 @@ abstract class AbstractForm extends Form
             'salt' => sha1('Application\Form\Lpa-Salt'),
         ]));
         
+        $filterFactory = new Factory();
+        
+        $filter = $this->getInputFilter();
+        
+        // add elements
         foreach($this->formElements as $name => $elm) {
             $params = [
                     'name' => $name,
@@ -34,13 +40,28 @@ abstract class AbstractForm extends Form
             if(array_key_exists('options', $elm)) {
                 $params['options'] = $elm['options'];
             }
-                    
+            
             if(array_key_exists('attributes', $elm)) {
                 $params['attributes'] = $elm['attributes'];
             }
             
             $this->add($params);
+
+            // add filters
+            $filterParams = [
+                    'name' => $name,
+                    'required' => (array_key_exists('required', $elm)?$elm['required']:false),
+                    'filters' => [
+                            ['name' => 'Zend\Filter\StripTags'],
+                            ['name' => 'Zend\Filter\StringTrim'],
+                    ],
+            ];
+            
+            $filter->add($filterFactory->createInput($filterParams));
         }
+        
+        $this->setInputFilter($filter);
+        
     }
     
     /**
@@ -114,52 +135,6 @@ abstract class AbstractForm extends Form
         return $result;
     }
     
-    /**
-     * (non-PHPdoc)
-     * 
-     * Setup common filters for all elements of a form.
-     * 
-     * @see \Zend\Form\Form::getInputFilter()
-     */
-    public function getInputFilter()
-    {
-        $inputFilter = parent::getInputFilter();
-
-        foreach($this->formElements as $name => $elm) {
-            $params = [
-                    'name' => $name,
-                    'required' => false,
-            ];
-            
-            if(array_key_exists('required', $elm)) {
-                $params['required'] = $elm['required'];
-            }
-            
-            // if 'filters' is not set in a form class, add the default filters - StripTags and StringTrim,
-            // if 'filters' is set in a form class and is not false, merge filters with the default ones.
-            // if 'filters; is set in a form class and is false, filtering is disabled.
-            if(!array_key_exists('filters', $elm)) {
-                $elm['filters']  = [
-                        ['name' => 'StripTags'],
-                        ['name' => 'StringTrim'],
-                ];
-            }
-            elseif($elm['filters'] !== false) {
-                $elm['filters']  = [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ];
-            
-                array_merge($params['filters'], $elm['filters']);
-            }
-            
-            $inputFilter->add($params);
-        }
-
-        $this->inputFilter = $inputFilter;
-    
-        return $this->inputFilter;
-    }
     
     /**
      * Convert model validation response to Zend Form validation messages format.
@@ -275,7 +250,7 @@ abstract class AbstractForm extends Form
     public function getModelizedData()
     {
         if($this->data != null) {
-            return $this->formDataModelization($this->data);
+            return $this->formDataModelization($this->getData());
         }
     }
     
