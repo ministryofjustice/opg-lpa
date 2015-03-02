@@ -7,13 +7,14 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
 {
     protected $formElements = [
             'when' => [
-                'type' => 'Zend\Form\Element\Radio',
-                'options' => [
+                'type'      => 'Zend\Form\Element\Radio',
+                'required'  => true,
+                'options'   => [
                     'value_options' => [
-                        'first' => [
+                        'first'  => [
                                 'value' => 'first',
                         ],
-                        'last' => [
+                        'last'   => [
                                 'value' => 'last',
                         ],
                         'depends' => [

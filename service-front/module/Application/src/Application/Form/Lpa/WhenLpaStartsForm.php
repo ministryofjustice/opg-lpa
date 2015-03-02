@@ -7,8 +7,9 @@ class WhenLpaStartsForm extends AbstractForm
 {
     protected $formElements = [
             'when' => [
-                    'type' => 'Zend\Form\Element\Radio',
-                    'options' => [
+                    'type'      => 'Zend\Form\Element\Radio',
+                    'required'  => true,
+                    'options'   => [
                             'value_options' => [
                                     'now' => [
                                             'value' => 'now',

@@ -93,7 +93,7 @@ class WhoAreYouForm extends AbstractForm
         else {
             return [
                     'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation, $this->getModelizedData()),
+                    'messages' => $this->modelValidationMessageConverter($validation, $this->data),
             ];
         }
     }

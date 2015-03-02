@@ -7,8 +7,9 @@ class LifeSustainingForm extends AbstractForm
 {
     protected $formElements = [
             'canSustainLife' => [
-                    'type' => 'Zend\Form\Element\Radio',
-                    'options' => [
+                    'type'      => 'Zend\Form\Element\Radio',
+                    'required'  => true,
+                    'options'   => [
                             'value_options' => [
                                     true => [
                                             'value' => true,

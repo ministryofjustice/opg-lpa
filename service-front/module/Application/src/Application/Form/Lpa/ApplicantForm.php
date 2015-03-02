@@ -48,15 +48,15 @@ class ApplicantForm extends AbstractForm
         $lpa = new Lpa();
         $lpa->document = clone $this->lpa->document;
         
-        if(isset($this->data['attorneyList'])) {
-            $lpa->document->whoIsRegistering = $this->data['attorneyList'];
+        if($this->data['whoIsRegistering'] == 'donor') {
+            $lpa->document->whoIsRegistering = $this->data['whoIsRegistering'];
         }
         else {
-            if($this->data['whoIsRegistering'] == 'donor') {
-                $lpa->document->whoIsRegistering = $this->data['whoIsRegistering'];
+            if(isset($this->data['attorneyList'])) {
+                $lpa->document->whoIsRegistering = $this->data['attorneyList'];
             }
             else {
-                $lpa->document->whoIsRegistering = explode(',', $this->data['whoIsRegistering']);
+                $lpa->document->whoIsRegistering = [];
             }
         }
         
