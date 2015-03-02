@@ -144,7 +144,7 @@ return [
             'resource-primary-attorney-decisions'       => 'Application\Model\Rest\AttorneyDecisionsPrimary\Resource',
             'resource-replacement-attorney-decisions'   => 'Application\Model\Rest\AttorneyDecisionsReplacement\Resource',
             'resource-donor'                            => 'Application\Model\Rest\Donor\Resource',
-            'resource-correspondent'                    => 'Application\Model\Rest\correspondent\Resource',
+            'resource-correspondent'                    => 'Application\Model\Rest\Correspondent\Resource',
             'resource-payment'                          => 'Application\Model\Rest\Payment\Resource',
             'resource-who-is-registering'               => 'Application\Model\Rest\WhoIsRegistering\Resource',
             'resource-who-are-you'                      => 'Application\Model\Rest\WhoAreYou\Resource',
