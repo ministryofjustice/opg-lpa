@@ -128,7 +128,7 @@ class Document extends AbstractData {
             //---
 
             // If it's an array, ensure the IDs are valid primary attorney IDs.
-            if( is_array($value) ){
+            if( is_array($value) && !empty($value) ){
 
                 foreach( $value as $attorneyId ){
                     if( !in_array( $attorneyId, $validAttorneyIds ) ){
