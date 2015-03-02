@@ -4,7 +4,7 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents an email address.
@@ -30,6 +30,13 @@ class EmailAddress extends AbstractData {
             new Assert\Email([ 'strict' => true ])
         ]);
 
+    }
+
+    /**
+     * @return string The email address.
+     */
+    public function __toString(){
+        return $this->address;
     }
 
 } // class

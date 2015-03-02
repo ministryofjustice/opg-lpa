@@ -4,10 +4,9 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a phone number.

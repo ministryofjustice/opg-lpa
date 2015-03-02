@@ -4,8 +4,8 @@ namespace Opg\Lpa\DataModel\User;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a postal address.
@@ -35,27 +35,16 @@ class Address extends AbstractData {
      */
     protected $postcode;
 
-    /**
-     * @var string ISO 3166-1 alpha-2 country code
-     */
-    protected $country;
-
     //------------------------------------------------
 
     public static function loadValidatorMetadata(ClassMetadata $metadata){
 
         $metadata->addPropertyConstraints('address1', [
-            new Assert\NotBlank,
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'max' => 50 ]),
         ]);
 
         $metadata->addPropertyConstraints('address2', [
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'max' => 50 ]),
-        ]);
-
-        $metadata->addPropertyConstraints('address3', [
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'max' => 50 ]),
         ]);
@@ -71,22 +60,24 @@ class Address extends AbstractData {
             new Assert\Length([ 'min' => 5, 'max' => 8 ]),
         ]);
 
-        $metadata->addPropertyConstraints('country', [
-            new Assert\NotBlank,
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Country(),
-        ]);
+    } // function
 
-        //---
+    /**
+     * Returns a comma separated string representation of the address.
+     *
+     * @return string
+     */
+    public function __toString(){
 
-        // We required either address2 OR postcode to be set for an address to be considered valid.
-        $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
+        $address  = "{$this->address1}, ";
+        $address .= ( !empty($this->address2) ) ? "{$this->address2}, " : '';
+        $address .= ( !empty($this->address3) ) ? "{$this->address3}, " : '';
+        $address .= ( !empty($this->postcode) ) ? "{$this->postcode}"   : '';
 
-            if( empty($object->address2) && empty($object->postcode) ){
-                $context->buildViolation('address2-or-postcode-required')->addViolation();
-            }
+        // Tidy the string up...
+        $address = rtrim( trim($address), ',' );
 
-        }));
+        return $address;
 
     } // function
 

@@ -6,9 +6,8 @@ use DateTime;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
-use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
 
 /**
  * Represents a user of the LPA platform.
@@ -64,12 +63,12 @@ class User extends AbstractData {
 
         $metadata->addPropertyConstraints('createdAt', [
             new Assert\NotBlank,
-            new DateTimeUTC,
+            new Assert\Custom\DateTimeUTC,
         ]);
 
         $metadata->addPropertyConstraints('updatedAt', [
             new Assert\NotBlank,
-            new DateTimeUTC,
+            new Assert\Custom\DateTimeUTC,
         ]);
 
         $metadata->addPropertyConstraints('name', [

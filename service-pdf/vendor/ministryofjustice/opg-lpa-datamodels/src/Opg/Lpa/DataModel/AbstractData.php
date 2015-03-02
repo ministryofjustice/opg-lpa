@@ -6,6 +6,7 @@ use DateTime, InvalidArgumentException, JsonSerializable;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * This class is extended by all entities that make up an LPA, including the LPA object itself.
@@ -20,7 +21,7 @@ use Symfony\Component\Validator\Validation;
  * Class AbstractData
  * @package Opg\Lpa\DataModel\Lpa
  */
-abstract class AbstractData implements AccessorInterface, ValidatableInterface, JsonSerializable {
+abstract class AbstractData implements AccessorInterface, JsonSerializable, Validator\ValidatableInterface {
 
     /**
      * Builds and populates $this chunk of the LPA.
@@ -34,17 +35,29 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      */
     public function __construct( $data = null ){
 
-        // If it's a string, assume it's JSON...
+        // If it's a string...
         if( is_string( $data ) ){
-            $data = json_decode( $data, true );
-        }
 
-        // If it's (now) an array...
+            // Assume it's JSON.
+            $data = json_decode( $data, true );
+
+            // Throw an exception if it turns out to not be JSON...
+            if( is_null($data) ){ throw new InvalidArgumentException('Invalid JSON passed to constructor'); }
+
+        } // if
+
+
+        // If it's [now] an array...
         if( is_array($data) ){
 
             $this->populate( $data );
 
-        } // if
+        } elseif( !is_null( $data ) ){
+
+            // else if it's not null (or array) now, it was an invalid data type...
+            throw new InvalidArgumentException('Invalid argument passed to constructor');
+
+        }
 
     } // function
 
@@ -136,17 +149,31 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
     /**
      * Validates the concrete class which this method is called on.
      *
+     * @param $properties Array An array of property names to check. An empty array means all properties.
      * @return ValidatorResponse
      * @throws InvalidArgumentException
      */
-    public function validate(){
+    public function validate( Array $properties = array() ){
 
         $validator = Validation::createValidatorBuilder()
             ->setApiVersion( Validation::API_VERSION_2_5 )
             ->addMethodMapping('loadValidatorMetadata')->getValidator();
 
-        // Perform the validation...
-        $violations = $validator->validate( $this );
+        if( !empty($properties) ){
+
+            // Validate the passed properties...
+
+            $violations = new ConstraintViolationList();
+
+            foreach( $properties as $property ){
+                $result = $validator->validateProperty( $this, $property );
+                $violations->addAll( $result );
+            }
+
+        } else {
+            // Validate all properties...
+            $violations = $validator->validate( $this );
+        }
 
         //---
 
@@ -229,10 +256,6 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         //---
 
         $values = get_object_vars( $this );
-
-        // We shouldn't include these...
-        unset( $values['typeMap'] );
-        unset( $values['validators'] );
 
         foreach( $values as $k=>$v ){
 
@@ -318,8 +341,8 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      *
      * @return array
      */
-    public function flatten(){
-        return $this->flattenArray( $this->toArray( 'string' ) );
+    public function flatten($prefix = ''){
+        return $this->flattenArray( $this->toArray( 'string' ), $prefix );
     }
 
     //-------------------
@@ -328,7 +351,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * Method for recursively walking over our array, flattening it.
      * To trigger it, call $this->flatten()
      */
-    private function flattenArray($array, $prefix = 'lpa-') {
+    private function flattenArray($array, $prefix) {
         $result = array();
         foreach($array as $key=>$value) {
             if(is_array($value)) {
@@ -341,6 +364,35 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
         return $result;
     }
 
+    /**
+     * Recursively walks over a flat array (separated with dashes) and
+     * converts it to a multidimensional array.
+     *
+     * @param $array array Flat array.
+     * @return array Multidimensional array
+     */
+    private function unFlattenArray( $array ){
+
+        $result = array();
+
+        foreach( $array as $key => $value ){
+
+            $keys = explode( '-', $key );
+
+            $position = &$result;
+
+            foreach( $keys as $index ){
+                $position = &$position[$index];
+            }
+
+            $position = $value;
+
+        }
+
+        return $result;
+
+    } // function
+
     //-------------------
     // Hydrator methods
 
@@ -348,6 +400,7 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
      * Populates the concrete class' properties with the array.
      *
      * @param array $data
+     * @return self
      */
     public function populate( Array $data ){
 
@@ -361,7 +414,25 @@ abstract class AbstractData implements AccessorInterface, ValidatableInterface, 
 
         } // foreach
 
+        return $this;
+
     } // function
+
+    /**
+     * Populates the concrete class' properties with the passed flat array.
+     *
+     * @param array $data
+     * @return self
+     */
+    public function populateWithFlatArray( Array $data ){
+
+        $data = $this->unFlattenArray( $data );
+
+        return $this->populate( $data );
+
+    } // function
+
+    //-------------------
 
     /**
      * Basic mapper. This should be overridden in the concrete class if needed.

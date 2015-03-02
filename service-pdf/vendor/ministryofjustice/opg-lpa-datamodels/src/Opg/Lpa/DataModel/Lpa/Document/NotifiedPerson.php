@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a person to be notified.
@@ -35,7 +35,7 @@ class NotifiedPerson extends AbstractData {
     public static function loadValidatorMetadata(ClassMetadata $metadata){
 
         $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank,
+            //new Assert\NotBlank,
             new Assert\Type([ 'type' => 'int' ]),
         ]);
 

@@ -4,7 +4,7 @@ namespace Opg\Lpa\DataModel\User;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a person's name.
@@ -50,6 +50,24 @@ class Name extends AbstractData {
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'max' => 50 ]),
         ]);
+
+    } // function
+
+    /**
+     * Returns a string representation of the name.
+     *
+     * @return string
+     */
+    public function __toString(){
+
+        $name  = ( !empty($this->title) ) ? "{$this->title} " : '';
+        $name .= ( !empty($this->first) ) ? "{$this->first} " : '';
+        $name .= ( !empty($this->last) )  ? "{$this->last}"    : '';
+
+        // Tidy the string up...
+        $name = trim($name);
+
+        return $name;
 
     } // function
 

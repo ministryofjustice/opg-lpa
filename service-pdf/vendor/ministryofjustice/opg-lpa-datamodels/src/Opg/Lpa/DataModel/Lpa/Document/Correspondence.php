@@ -5,8 +5,8 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents the person with whom Correspondence relating to the LPA should be sent.
@@ -88,11 +88,9 @@ class Correspondence extends AbstractData {
 
         // We required either a name OR company to be set for a Correspondent to be considered valid.
         $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
-
             if( empty($object->name) && empty($object->company) ){
-                $context->buildViolation('name-or-company-required')->atPath('name/company')->addViolation();
+                $context->buildViolation( (new Assert\NotNull())->message )->atPath('name/company')->addViolation();
             }
-
         }));
 
         $metadata->addPropertyConstraints('address', [
