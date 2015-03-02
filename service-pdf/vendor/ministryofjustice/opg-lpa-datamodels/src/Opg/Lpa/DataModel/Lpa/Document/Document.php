@@ -7,8 +7,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 class Document extends AbstractData {
 
@@ -31,7 +31,7 @@ class Document extends AbstractData {
 
     /**
      * If string, it's the donor who is registering.
-     * If array, it contains a reference to one or more attorneys.
+     * If array, it contains a reference to one or more primary attorneys.
      *
      * @var string|array
      */
@@ -114,12 +114,35 @@ class Document extends AbstractData {
             new Assert\Valid,
         ]);
 
-        // whoIsRegistering should (if set) be either an array, or the string 'donor'.
+
         $metadata->addPropertyConstraint('whoIsRegistering', new Assert\Callback(function ($value, ExecutionContextInterface $context){
 
-            if( empty($value) || is_array($value) || $value == 'donor' ){ return; }
+            if( is_null($value) || $value == 'donor' ){ return; }
 
-            $context->buildViolation( (new Assert\Choice())->message )->addViolation();
+            //---
+
+            $validAttorneyIds = array_map(function($v){
+                return $v->id;
+            }, $context->getObject()->primaryAttorneys);
+
+            //---
+
+            // If it's an array, ensure the IDs are valid primary attorney IDs.
+            if( is_array($value) ){
+
+                foreach( $value as $attorneyId ){
+                    if( !in_array( $attorneyId, $validAttorneyIds ) ){
+                        $context->buildViolation( 'allowed-values:'.implode(',', $validAttorneyIds) )
+                            ->setInvalidValue( implode(',', $value) )
+                            ->addViolation();
+                        return;
+                    }
+                }
+
+                return;
+            }
+
+            $context->buildViolation( 'allowed-values:donor,Array' )->addViolation();
 
         }));
 
@@ -138,13 +161,17 @@ class Document extends AbstractData {
             new Assert\Valid,
         ]);
 
-        $metadata->addPropertyConstraints('instruction', [
-            new Assert\Type([ 'type' => 'string' ]),
-        ]);
+        // instruction should be string or boolean false.
+        $metadata->addPropertyConstraint('instruction', new Assert\Callback(function ($value, ExecutionContextInterface $context){
+            if( is_null($value) || is_string($value) || $value === false ){ return; }
+            $context->buildViolation( 'expected-type:string-or-bool=false' )->addViolation();
+        }));
 
-        $metadata->addPropertyConstraints('preference', [
-            new Assert\Type([ 'type' => 'string' ]),
-        ]);
+        // preference should be string or boolean false.
+        $metadata->addPropertyConstraint('preference', new Assert\Callback(function ($value, ExecutionContextInterface $context){
+            if( is_null($value) || is_string($value) || $value === false ){ return; }
+            $context->buildViolation( 'expected-type:string-or-bool=false' )->addViolation();
+        }));
 
         $metadata->addPropertyConstraints('certificateProvider', [
             new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider' ]),
@@ -155,7 +182,6 @@ class Document extends AbstractData {
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
-                    //new Assert\Valid,
                 ]
             ])
         ]);
@@ -164,16 +190,33 @@ class Document extends AbstractData {
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
-                    //new Assert\Valid,
                 ]
             ])
         ]);
 
+        // Allow only N trust corporation(s) across primaryAttorneys and replacementAttorneys.
+        $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
+
+            $max = 1;
+            $attorneys = array_merge( $object->primaryAttorneys, $object->replacementAttorneys );
+
+            $attorneys = array_filter( $attorneys, function($attorney) {
+                return $attorney instanceof Attorneys\TrustCorporation;
+            });
+
+            if( count($attorneys) > $max ){
+                $context->buildViolation( "must-be-less-than-or-equal:{$max}" )
+                    ->setInvalidValue( count($attorneys) . " found" )
+                    ->atPath('primaryAttorneys/replacementAttorneys')->addViolation();
+            }
+
+        }));
+
         $metadata->addPropertyConstraints('peopleToNotify', [
+            new Assert\Count( [ 'max' => 5 ] ),
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson' ]),
-                    //new Assert\Valid,
                 ]
             ])
         ]);
@@ -208,10 +251,8 @@ class Document extends AbstractData {
                 return array_map( function($v){
                     if( $v instanceof Attorneys\AbstractAttorney){
                         return $v;
-                    } elseif( isset( $v['number'] ) ){
-                        return new Attorneys\TrustCorporation( $v );
                     } else {
-                        return new Attorneys\Human( $v );
+                        return Attorneys\AbstractAttorney::factory( $v );
                     }
                 }, $v );
 

@@ -7,8 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
-use Opg\Lpa\DataModel\Validator\Constraints\DateTimeUTC;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a full LPA document, plus associated metadata.
@@ -32,6 +31,16 @@ class Lpa extends AbstractData implements CompleteInterface {
      * @var \DateTime the LPA was last updated.
      */
     protected $updatedAt;
+
+    /**
+     * @var \DateTime|null When the LPA was last updated AND it's status (at the moment in time) was complete.
+     */
+    protected $completedAt;
+
+    /**
+     * @var \DateTime|null DateTime the LPA was locked.
+     */
+    protected $lockedAt;
 
     /**
      * @var string LPA's owner User identifier.
@@ -80,12 +89,20 @@ class Lpa extends AbstractData implements CompleteInterface {
 
         $metadata->addPropertyConstraints('createdAt', [
             new Assert\NotBlank,
-            new DateTimeUTC,
+            new Assert\Custom\DateTimeUTC,
         ]);
 
         $metadata->addPropertyConstraints('updatedAt', [
             new Assert\NotBlank,
-            new DateTimeUTC,
+            new Assert\Custom\DateTimeUTC,
+        ]);
+
+        $metadata->addPropertyConstraints('completedAt', [
+            new Assert\Custom\DateTimeUTC,
+        ]);
+
+        $metadata->addPropertyConstraints('lockedAt', [
+            new Assert\Custom\DateTimeUTC,
         ]);
 
         $metadata->addPropertyConstraints('user', [
@@ -139,6 +156,8 @@ class Lpa extends AbstractData implements CompleteInterface {
         switch( $property ){
             case 'updatedAt':
             case 'createdAt':
+            case 'completedAt':
+            case 'lockedAt':
                 return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
             case 'payment':
                 return ($v instanceof Payment || is_null($v)) ? $v : new Payment( $v );
@@ -177,6 +196,31 @@ class Lpa extends AbstractData implements CompleteInterface {
     public function isComplete(){
 
         return true;
+
+    } // function
+
+    //------------------------------------------------
+
+    /**
+     * Return an abbreviated (summary) version of the LPA.
+     *
+     * @return array
+     */
+    public function abbreviatedToArray(){
+
+        $data = $this->toArray();
+
+        // Include these top level fields...
+        $data = array_intersect_key( $data, array_flip([
+            'id', 'lockedAt', 'updatedAt', 'createdAt', 'user', 'locked', 'document'
+        ]));
+
+        // Include these document level fields...
+        $data['document'] = array_intersect_key( $data['document'], array_flip([
+            'donor', 'type'
+        ]));
+
+        return $data;
 
     } // function
 

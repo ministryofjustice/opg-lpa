@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\DataModel\Validator\Constraints;
+namespace Opg\Lpa\DataModel\Validator\Constraints\Custom;
 
 use DateTime;
 

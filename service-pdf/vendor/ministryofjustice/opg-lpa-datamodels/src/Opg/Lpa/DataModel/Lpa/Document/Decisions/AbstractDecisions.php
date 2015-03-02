@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 abstract class AbstractDecisions extends AbstractData {
 
@@ -36,7 +36,7 @@ abstract class AbstractDecisions extends AbstractData {
     public static function loadValidatorMetadata(ClassMetadata $metadata){
 
         $metadata->addPropertyConstraints('how', [
-            new Assert\NotBlank,
+            // Can be null
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Choice([ 'choices' => [
                 self::LPA_DECISION_HOW_DEPENDS,

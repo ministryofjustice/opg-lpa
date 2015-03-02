@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a person representing a Certificate Provider.

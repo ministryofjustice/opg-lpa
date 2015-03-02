@@ -4,8 +4,8 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a postal address.
@@ -55,11 +55,6 @@ class Address extends AbstractData {
             new Assert\Length([ 'max' => 50 ]),
         ]);
 
-        $metadata->addPropertyConstraints('address3', [
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'max' => 50 ]),
-        ]);
-
         // This could be improved, but we'd need to be very careful not to block valid postcodes.
         $metadata->addPropertyConstraints('postcode', [
             new Assert\Type([ 'type' => 'string' ]),
@@ -72,10 +67,29 @@ class Address extends AbstractData {
         $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
 
             if( empty($object->address2) && empty($object->postcode) ){
-                $context->buildViolation('address2-or-postcode-required')->atPath('address2/postcode')->addViolation();
+                $context->buildViolation( (new Assert\NotNull())->message )->atPath('address2/postcode')->addViolation();
             }
 
         }));
+
+    } // function
+
+    /**
+     * Returns a comma separated string representation of the address.
+     *
+     * @return string
+     */
+    public function __toString(){
+
+        $address  = "{$this->address1}, ";
+        $address .= ( !empty($this->address2) ) ? "{$this->address2}, " : '';
+        $address .= ( !empty($this->address3) ) ? "{$this->address3}, " : '';
+        $address .= ( !empty($this->postcode) ) ? "{$this->postcode}"   : '';
+
+        // Tidy the string up...
+        $address = rtrim( trim($address), ',' );
+
+        return $address;
 
     } // function
 

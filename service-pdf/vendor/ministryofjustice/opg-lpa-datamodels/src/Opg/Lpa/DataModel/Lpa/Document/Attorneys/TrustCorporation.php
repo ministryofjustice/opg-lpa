@@ -4,7 +4,7 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Elements;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a Trust Corporation Attorney.

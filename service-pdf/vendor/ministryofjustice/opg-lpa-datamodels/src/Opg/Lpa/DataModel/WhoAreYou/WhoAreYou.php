@@ -2,8 +2,10 @@
 namespace Opg\Lpa\DataModel\WhoAreYou;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Respect\Validation\Rules;
-use Opg\Lpa\DataModel\Validator\Validator;
+
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a response to the 'Who are you?' question.
@@ -28,68 +30,60 @@ class WhoAreYou extends AbstractData {
      */
     protected $qualifier;
 
-
     //------------------------------------------------
 
-    public function __construct( $data = null ){
+    public static function loadValidatorMetadata(ClassMetadata $metadata){
 
-        //-----------------------------------------------------
-        // Validators (wrapped in Closures for lazy loading)
+        $metadata->addPropertyConstraints('who', [
+            new Assert\NotBlank,
+            new Assert\Choice([ 'choices' => array_keys(self::options()) ]),
+        ]);
 
-        $this->validators['who'] = function(){
-            return (new Validator)->addRules([
-                new Rules\String,
-                new Rules\In( array_keys( self::options() ), true ),
-            ]);
-        };
+        $metadata->addPropertyConstraint('subquestion', new Assert\Callback(function ($value, ExecutionContextInterface $context){
 
-        /*
-         * Checks the the value matches one listed in options().
-         */
-        $this->validators['subquestion'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Callback(function($input) {
+            $object = $context->getObject();
 
-                    if( !is_string($this->who) ){ return false; }
+            $options = $object::options();
 
-                    $options = $this::options();
+            // Don't validate if 'who' isn't set...
+            if( !is_string( $object->who ) ){ return; }
 
-                    if( !isset($options[$this->who]) ){ return false; }
+            // Check this, but don't validate. It's validated above.
+            if( !isset($options[$object->who]) ){ return; }
 
-                    return in_array( $input, $options[$this->who]['subquestion'], true );
+            // Ensure the value is in the subquestion array...
+            if( !in_array( $value, $options[$object->who]['subquestion'], true ) ){
+                $context->buildViolation(
+                    'allowed-values:'.implode(',', $options[$object->who]['subquestion'])
+                )->addViolation();
+            }
 
-                })
-            ]);
-        };
+        }));
 
-        /*
-         * Checks options() to see if a qualifier is allowed.
-         */
-        $this->validators['qualifier'] = function(){
-            return (new Validator)->addRules([
-                new Rules\Callback(function($input) {
+        $metadata->addPropertyConstraint('qualifier', new Assert\Callback(function ($value, ExecutionContextInterface $context){
 
-                    if( !is_string($this->who) ){ return false; }
+            $object = $context->getObject();
 
-                    $options = $this::options();
+            $options = $object::options();
 
-                    if( !isset($options[$this->who]) ){ return false; }
+            // Don't validate if 'who' isn't set...
+            if( !is_string( $object->who ) ){ return; }
 
-                    // A qualifier is optional, so only invalid if a qualifier is not allowed, but one is set.
-                    if( $options[$this->who]['qualifier'] == false && !is_null($input) ){
-                        return false;
-                    }
+            // Check this, but don't validate. It's validated above.
+            if( !isset($options[$object->who]) ){ return; }
 
-                    return true;
-                })
-            ]);
-        };
+            // A qualifier is optional, so only invalid if a qualifier is not allowed, but one is set.
+            if( $options[$object->who]['qualifier'] == false && !is_null($value) ){
+                $context->buildViolation(
+                    (new Assert\Null)->message
+                )->addViolation();
+            }
 
-        //---
-
-        parent::__construct( $data );
+        }));
 
     } // function
+
+    //------------------------------------------------
 
     /**
      * @return array An array representing the valid option.
