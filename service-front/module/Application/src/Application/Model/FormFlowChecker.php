@@ -59,8 +59,11 @@ class FormFlowChecker
             'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
             'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/fee'                                       => 'isFeeAccessible',
-            'lpa/online-payment-success'                    => 'isOnlinePaymentSuccessAccessible',
-            'lpa/online-payment-unsuccessful'               => 'isOnlinePaymentUnsuccessfulAccessible',
+            'lpa/payment'                                   => 'isPaymentAccessible',
+            'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
+            'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
+            'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
+            'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
@@ -571,7 +574,7 @@ class FormFlowChecker
             return 'lpa/correspondent';
         }
     }
-    
+        
     private function isFeeAccessible()
     {
         if($this->isWhoAreYouAnswered()) {
@@ -579,6 +582,56 @@ class FormFlowChecker
         }
         else {
             return 'lpa/who-are-you';
+        }
+    }
+
+    private function isPaymentAccessible()
+    {
+        if($this->hasFeeCompleted()) {
+            return true;
+        }
+        else {
+            return 'lpa/who-are-you';
+        }
+    }
+    
+    private function isOnlinePaymentSuccessAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isOnlinePaymentFailureAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isOnlinePaymentCancelAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isOnlinePaymentPendingAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
     
@@ -602,31 +655,38 @@ class FormFlowChecker
     
     private function paymentResolved()
     {
+        if(!$this->hasFeeCompleted()) {
+            return false;
+        }
+        
+        if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+            if($this->lpa->payment->reference != null) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    
+    private function hasFeeCompleted()
+    {
         if(!$this->isWhoAreYouAnswered() || !($this->lpa->payment instanceof Payment)) {
             return false;
         }
         
-        if(($this->lpa->payment->reducedFeeUniversalCredit===true) || ($this->lpa->payment->amount === 0.0)) {
+        if($this->lpa->payment->reducedFeeUniversalCredit===true) {
             return true;
         }
-
         
-        if($this->lpa->payment->amount > 0.0 ) {
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                return true;
-            }
-            else { // pay by card
-                if($this->lpa->payment->reference != null) {
-                   return true; 
-                }
-                else {
-                    return false;
-                }
-            }
+        if($this->lpa->payment->amount !== null) {
+            return true;
         }
-        else {
-            return false;
-        }
+        
+        return false;
     }
     
     private function isWhoAreYouAnswered()
