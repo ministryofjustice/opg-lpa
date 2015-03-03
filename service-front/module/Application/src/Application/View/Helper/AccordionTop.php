@@ -28,20 +28,22 @@ class AccordionTop extends AbstractAccordion
         $flowChecker = new FormFlowChecker($lpa);
         $seq = 0;
         $barList = [];
-        foreach($barConfig as $barRouteName => $barDataValues) {
+        foreach($barConfig as $barRouteName => $barDataFuncName) {
             if($barRouteName == $flowChecker->check($barRouteName)) {
                 if($barRouteName == $routeName) {
                     break;
                 }
                 else {
-                    $barList[$seq++] = [
-                            'name'      => $this->getViewScriptName($barDataValues),
-                            'routeName' => $barRouteName,
-                            'lpaId'     => $lpa->id,
-                            'params'    => [
-                                'idx'    => $seq,
-                                'values'=> $this->$barDataValues()]
-                        ];
+                    if(method_exists($this, $barDataFuncName)) {
+                        $barList[$seq++] = [
+                                'name'      => $this->getViewScriptName($barDataFuncName),
+                                'routeName' => $barRouteName,
+                                'lpaId'     => $lpa->id,
+                                'params'    => [
+                                    'idx'    => $seq,
+                                    'values'=> $this->$barDataFuncName()]
+                            ];
+                    }
                 }
             }
         }

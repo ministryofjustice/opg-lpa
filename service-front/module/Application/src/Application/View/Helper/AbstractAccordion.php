@@ -33,6 +33,8 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/correspondent' => 'correspondent',
             'lpa/who-are-you' => 'whoAreYou',
             'lpa/fee' => 'fee',
+            'lpa/payment/return/failure' => null,
+            'lpa/payment/return/cancel' => null,
         ],
     ];
     
