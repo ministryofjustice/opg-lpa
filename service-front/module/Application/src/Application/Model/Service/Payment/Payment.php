@@ -6,6 +6,7 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Omnipay\Omnipay;
 use Omnipay\Common\CreditCard;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment as PaymentEntity;
+use Zend\Session\Container;
 
 class Payment implements ServiceLocatorAwareInterface {
 
@@ -24,10 +25,12 @@ class Payment implements ServiceLocatorAwareInterface {
         $prefix = $config['administration_code'] . '^' . $config['merchant_code'] . '^';
         
         $payment = $lpa->payment;
-        $payment->amount = intval($params['paymentAmount']);
         $payment->reference = str_replace($prefix, '', $params['orderKey']);
-        $payment->method = PaymentEntity::PAYMENT_TYPE_CARD;
         $payment->date = new \DateTime('today');
+        
+        //Payment amount and method has been set on fee page
+        //$payment->amount = intval($params['paymentAmount']);
+        //$payment->method = PaymentEntity::PAYMENT_TYPE_CARD;
         
         $result = $client->setPayment($lpa->id, $payment);
         
@@ -118,19 +121,19 @@ class Payment implements ServiceLocatorAwareInterface {
      */
     public function getOptions($lpa)
     {
-        $email = 'todo@example.com';
-    
         $config = $this->getServiceLocator()->get('config')['worldpay'];
+        
+        $container = new Container('paymentEmail');
     
         $donorName = $lpa->document->donor->name;
     
         $options = [
             'amount' => $lpa->payment->amount,
             'currency' => $config['currency'],
-            'description' => 'LPA for ' . $donorName->first . ' ' . $donorName->last,
+            'description' => 'LPA for ' . $donorName->__toString(),
             'transactionId' => $lpa->id . '-' . time(),
             'card' => new CreditCard([
-                'email' => $email,
+                'email' => $container->email,
             ]),
             'token' => $config['api_token_secret'],
         ];
