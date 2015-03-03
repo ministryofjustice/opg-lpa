@@ -14,6 +14,7 @@ use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Application\Form\Lpa\FeeForm;
 use Application\Model\Service\Payment\Calculator;
+use Zend\Session\Container;
 
 class FeeController extends AbstractLpaController
 {
@@ -91,9 +92,12 @@ class FeeController extends AbstractLpaController
                 
                 // redirect to payment gateway
                 if($this->request->getPost('method') == 'card') {
-                    // @todo initialize payment process and redirect
                     
+                    // set paymentEmail in session container.
+                    $container = new Container('paymentEmail');
+                    $container->email = $form->getData()['email'];
                     
+                    $this->redirect()->toRoute('lpa/payment', ['lpa-id' => $lpaId]);
                 }
                 else {
                     // to complete page
