@@ -3,6 +3,7 @@
      * Switcher form
      */
     $switcherForm   = $this->switcherForm;
+    $switcherForm->setAttribute('class', 'form js-PostcodeLookup');
     $sCsrf          = $switcherForm->get('secret');
     $switchTo = $switcherForm->get('switch-to-type');
     $switchTo->setOptions([
@@ -59,32 +60,20 @@
 ?>
 <h2 class="header">Edit the correspondent details</h2>
 
-
 <?php ############################ switcher form ############################ ?>
 
 <?= $this->form()->openTag($switcherForm); ?>
 
-<div class="<?= $this->elementGroupClass($sCsrf) ?>">
-    <?= $this->formElement($sCsrf) ?>
-    <?= $this->formElementErrors($sCsrf) ?>
-</div>
+<?= $this->formElement($sCsrf) ?>
+<?php if (count($switcherForm->getMessages()) > 0) $this->formElementErrors($sCsrf); ?>
 
-<div class="group">
+<?= $this->formErrorList($switcherForm); ?>
 
-    <?= $formLabel->openTag() . $switchTo->getOption('label') . $formLabel->closeTag(); ?>
-     
+<div class="role-select group">
+    <label for="switch-to-type" class="optional">Use these details</label>
     <?= $this->formSelect($switchTo) ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($switchTo) ?>
-    </p>
-    
-</div>
-
-<div class="form_element">
-
-    <?= $this->formElement($switchSubmit) ?>
-
+    <?= $this->formElementErrors($switchTo) ?>
+    <input type="submit" name="switcher-submit" value="Switch" class="button"> 
 </div>
 
 <?= $this->form()->closeTag(); ?>
@@ -248,12 +237,10 @@
 
 </div>
 
-
-<div class="form_element">
-
-    <?= $this->formElement($submit) ?>
-
-</div>
+<p class="action group">
+<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<button name="cancel" id="form-cancel" type="button" class="button-secondary">Cancel</button>
+</p>
 
 <?= $this->formhidden($who) ?>
 
