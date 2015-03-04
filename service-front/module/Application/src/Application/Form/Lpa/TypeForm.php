@@ -7,8 +7,9 @@ class TypeForm extends AbstractForm
 {
     protected $formElements = [
             'type' => [
-                    'type' => 'Zend\Form\Element\Radio',
-                    'options' => [
+                    'type'      => 'Zend\Form\Element\Radio',
+                    'required'  => true,
+                    'options'   => [
                             'value_options' => [
                                     'property-and-financial' => [
                                             'value' => 'property-and-financial',

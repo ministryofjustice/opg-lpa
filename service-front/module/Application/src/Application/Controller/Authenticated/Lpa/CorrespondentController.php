@@ -15,6 +15,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Application\Form\Lpa\CorrespondentForm;
 use Application\Form\Lpa\CorrespondentSwitcherForm;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -83,6 +85,9 @@ class CorrespondentController extends AbstractLpaController
                                 foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
                                     if($attorney->id == $postData['switch-to-type']) {
                                         $correspondent = $attorney->flatten();
+                                        if($attorney instanceof TrustCorporation) {
+                                            $correspondent['company'] = $attorney->name;
+                                        }
                                         $correspondent['who'] = 'attorney';
                                         $correspondentForm->bind($correspondent);
                                         break;

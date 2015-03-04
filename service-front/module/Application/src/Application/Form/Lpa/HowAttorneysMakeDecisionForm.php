@@ -8,6 +8,7 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
     protected $formElements = [
             'how' => [
                     'type' => 'Zend\Form\Element\Radio',
+                    'required' => true,
                     'options' => [
                             'value_options' => [
                                     'jointly-attorney-severally' => [

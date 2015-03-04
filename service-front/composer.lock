@@ -417,16 +417,16 @@
         },
         {
             "name": "guzzlehttp/ringphp",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/RingPHP.git",
-                "reference": "a903f51b692427318bc813217c0e6505287e79a4"
+                "reference": "f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/a903f51b692427318bc813217c0e6505287e79a4",
-                "reference": "a903f51b692427318bc813217c0e6505287e79a4",
+                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4",
+                "reference": "f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4",
                 "shasum": ""
             },
             "require": {
@@ -463,7 +463,8 @@
                     "homepage": "https://github.com/mtdowling"
                 }
             ],
-            "time": "2014-12-11 05:50:32"
+            "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
+            "time": "2015-02-26 20:43:09"
         },
         {
             "name": "guzzlehttp/streams",
@@ -560,12 +561,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "6359d86673c54e4ef331a69fc3e289345f59e0d7"
+                "reference": "cb47ad23d07b05d5092be479f42a391fe4957f86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6359d86673c54e4ef331a69fc3e289345f59e0d7",
-                "reference": "6359d86673c54e4ef331a69fc3e289345f59e0d7",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/cb47ad23d07b05d5092be479f42a391fe4957f86",
+                "reference": "cb47ad23d07b05d5092be479f42a391fe4957f86",
                 "shasum": ""
             },
             "require": {
@@ -591,7 +592,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-02-26 17:08:26"
+            "time": "2015-02-27 14:29:08"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",

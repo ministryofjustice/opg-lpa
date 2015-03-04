@@ -59,8 +59,11 @@ class FormFlowChecker
             'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
             'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/fee'                                       => 'isFeeAccessible',
-            'lpa/online-payment-success'                    => 'isOnlinePaymentSuccessAccessible',
-            'lpa/online-payment-unsuccessful'               => 'isOnlinePaymentUnsuccessfulAccessible',
+            'lpa/payment'                                   => 'isPaymentAccessible',
+            'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
+            'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
+            'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
+            'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
@@ -123,9 +126,9 @@ class FormFlowChecker
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
         
-        // once payment date has been set, user will not be able to view any page other than lpa/view-docs.
-        if($this->lpa->payment instanceof Payment) {
-            if($this->lpa->payment->date instanceof \DateTime) {
+        // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
+        if(($this->lpa->payment instanceof Payment)  && ($this->lpa->payment->date instanceof \DateTime)) {
+            if($currentRouteName != 'lpa/complete') {
                 return 'lpa/view-docs';
             }
         }
@@ -283,7 +286,7 @@ class FormFlowChecker
 
     private function isAttorneyAddTrustAccessible()
     {
-        if($this->isAttorneyAccessible() && (!$this->lpaHasTrustCorporation())) {
+        if($this->isAttorneyAccessible() && (!$this->lpaHasTrustCorporation('primary'))) {
             return true;
         }
         else {
@@ -366,7 +369,7 @@ class FormFlowChecker
 
     private function isReplacementAttorneyAddTrustAccessible()
     {
-        if($this->isReplacementAttorneyAccessible() && (!$this->lpaHasTrustCorporation())) {
+        if($this->isReplacementAttorneyAccessible() && (!$this->lpaHasTrustCorporation('replacement'))) {
             return true;
         }
         else {
@@ -459,6 +462,21 @@ class FormFlowChecker
             else{
                 return 'lpa/replacement-attorney';
             }
+        }
+    }
+    
+    private function isCertificateProviderAddAccessible()
+    {
+        return $this->isCertificateProviderAccessible();
+    }
+    
+    private function isCertificateProviderEditAccessible()
+    {
+        if($this->lpaHasCertificateProvider()) {
+            return true;
+        }
+        else {
+            return 'lpa/certificate-provider';
         }
     }
     
@@ -556,7 +574,7 @@ class FormFlowChecker
             return 'lpa/correspondent';
         }
     }
-    
+        
     private function isFeeAccessible()
     {
         if($this->isWhoAreYouAnswered()) {
@@ -564,6 +582,56 @@ class FormFlowChecker
         }
         else {
             return 'lpa/who-are-you';
+        }
+    }
+
+    private function isPaymentAccessible()
+    {
+        if($this->hasFeeCompleted()) {
+            return true;
+        }
+        else {
+            return 'lpa/who-are-you';
+        }
+    }
+    
+    private function isOnlinePaymentSuccessAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isOnlinePaymentFailureAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isOnlinePaymentCancelAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private function isOnlinePaymentPendingAccessible()
+    {
+        if($this->isPaymentAccessible()) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
     
@@ -587,31 +655,38 @@ class FormFlowChecker
     
     private function paymentResolved()
     {
+        if(!$this->hasFeeCompleted()) {
+            return false;
+        }
+        
+        if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+            if($this->lpa->payment->reference != null) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    
+    private function hasFeeCompleted()
+    {
         if(!$this->isWhoAreYouAnswered() || !($this->lpa->payment instanceof Payment)) {
             return false;
         }
         
-        if(($this->lpa->payment->reducedFeeUniversalCredit===true) || ($this->lpa->payment->amount === 0.0)) {
+        if($this->lpa->payment->reducedFeeUniversalCredit===true) {
             return true;
         }
-
         
-        if($this->lpa->payment->amount > 0.0 ) {
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                return true;
-            }
-            else { // pay by card
-                if($this->lpa->payment->reference != null) {
-                   return true; 
-                }
-                else {
-                    return false;
-                }
-            }
+        if($this->lpa->payment->amount !== null) {
+            return true;
         }
-        else {
-            return false;
-        }
+        
+        return false;
     }
     
     private function isWhoAreYouAnswered()
@@ -810,7 +885,7 @@ class FormFlowChecker
         }
     }
     
-    private function lpaHasTrustCorporation($whichGroup)
+    private function lpaHasTrustCorporation($whichGroup=null)
     {
         if($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining()) {
             

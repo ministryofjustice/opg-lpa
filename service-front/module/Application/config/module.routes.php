@@ -209,16 +209,38 @@ return [
                 ],
                 'may_terminate' => false,
                 'child_routes' => [
+
                     'about-you' => [
-                        'type'    => 'Literal',
+                        'type'    => 'Segment',
                         'options' => [
                             'route'    => '/about-you',
                             'defaults' => [
                                 'controller' => 'Authenticated\AboutYouController',
-                                'action'     => 'index',
                             ],
                         ],
-                    ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'new' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/new',
+                                    'defaults' => [
+                                        'action'     => 'new',
+                                    ],
+                                ],
+                            ],
+                            'update' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/update',
+                                    'defaults' => [
+                                        'action'     => 'update',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ], // about-you
+
                     'change-email-address' => [
                         'type'    => 'Literal',
                         'options' => [
@@ -228,7 +250,8 @@ return [
                                 'action'     => 'index',
                             ],
                         ],
-                    ],
+                    ], // change-email-address
+
                     'change-password' => [
                         'type'    => 'Literal',
                         'options' => [
@@ -238,7 +261,8 @@ return [
                                 'action'     => 'index',
                             ],
                         ],
-                    ],
+                    ], // change-password
+
                     'dashboard' => [
                         'type'    => 'Literal',
                         'options' => [
@@ -275,7 +299,8 @@ return [
                                 ],
                             ],
                         ],
-                    ],
+                    ], // dashboard
+
                     'delete' => [
                         'type'    => 'Literal',
                         'options' => [
@@ -285,7 +310,7 @@ return [
                                 'action'     => 'index',
                             ],
                         ],
-                    ],
+                    ], // delete
                 ],
             ], // user
 

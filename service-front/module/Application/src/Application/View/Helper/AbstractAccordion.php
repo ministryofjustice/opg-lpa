@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
@@ -32,6 +33,8 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/correspondent' => 'correspondent',
             'lpa/who-are-you' => 'whoAreYou',
             'lpa/fee' => 'fee',
+            'lpa/payment/return/failure' => null,
+            'lpa/payment/return/cancel' => null,
         ],
     ];
     
@@ -87,7 +90,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are ').$this->joinNames($this->lpa->document->primaryAttorneys);
+        return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are'). $this->getView()->concatNames($this->lpa->document->primaryAttorneys);
     }
     
     protected function howPrimaryAttorneysMakeDecision()
@@ -101,7 +104,7 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if(count($this->lpa->document->replacementAttorneys)==0) return '';
         
-        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').$this->joinNames($this->lpa->document->replacementAttorneys);
+        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').$this->getView()->concatNames($this->lpa->document->replacementAttorneys);
     }
     
     protected function whenReplacementAttorneyStepIn()
@@ -129,7 +132,7 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if(count($this->lpa->document->peopleToNotify)==0) return '';
         
-        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').$this->joinNames($this->lpa->document->peopleToNotify);
+        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').$this->getView()->concatNames($this->lpa->document->peopleToNotify);
     }
     
     protected function instructions()
@@ -143,18 +146,23 @@ abstract class AbstractAccordion extends AbstractHelper
             return ['who' => 'donor', 'name' => $this->lpa->document->donor->name->__toString()];
         }
         else {
-            return ['who'=>'attorney', 'name'=>$this->joinNames($this->lpa->document->primaryAttorneys)];
+            return ['who'=>'attorney', 'name'=>$this->getView()->concatNames($this->lpa->document->primaryAttorneys)];
         }
     }
     
     protected function correspondent()
     {
-        return $this->lpa->document->correspondent->name->__toString();
+        return (($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->__toString():$this->lpa->document->correspondent->company);
     }
     
     protected function whoAreYou()
     {
-        return "Who was using the LPA tool answered";
+        if($this->lpa->whoAreYouAnswered) {
+            return "Who was using the LPA tool answered";
+        }
+        else {
+            return 'Who was using the LPA tool?';
+        }
     }
     
     protected function fee()
@@ -165,22 +173,5 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function getViewScriptName($barDataFuncName)
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $barDataFuncName)).'.phtml';
-    }
-    
-    private function joinNames(array $nameList)
-    {
-        $count = count($nameList);
-        if($count == 0) {
-            return null;
-        }
-        elseif($count == 1) {
-            if(is_string($nameList[0]->name)) return $nameList[0]->name;
-            else return $nameList[0]->name->__toString();
-        }
-       else {
-           $lastItem = array_pop($nameList);
-           return implode(', ', array_map( function( $item ) { return (is_string($item->name)?$item->name:$item->name->__toString()); }, $nameList) )
-                  . ' and ' . (is_string($lastItem->name)?$lastItem->name:$lastItem->name->__toString());
-       }
     }
 }

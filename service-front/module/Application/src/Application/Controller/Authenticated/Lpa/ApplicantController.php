@@ -80,10 +80,7 @@ class ApplicantController extends AbstractLpaController
             }
         }
         else {
-            if(is_string($this->getLpa()->document->whoIsRegistering)) {
-                $form->bind( ['whoIsRegistering' => $this->getLpa()->document->whoIsRegistering] );
-            }
-            else {
+            if(is_array($this->getLpa()->document->whoIsRegistering)) {
                 if((count($this->getLpa()->document->primaryAttorneys) > 1) &&
                         ($this->getLpa()->document->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
                     $bindingData = [
@@ -97,7 +94,9 @@ class ApplicantController extends AbstractLpaController
                 
                 $form->bind( $bindingData );
             }
-            
+            else {
+                $form->bind( ['whoIsRegistering' => $this->getLpa()->document->whoIsRegistering] );
+            }
         }
         return new ViewModel(['form'=>$form]);
     }

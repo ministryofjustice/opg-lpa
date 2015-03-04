@@ -83,7 +83,7 @@ class WhoAreYouForm extends AbstractForm
     
     public function validateByModel()
     {
-        $whoAreYou = new WhoAreYou($this->getModelizedData());
+        $whoAreYou = new WhoAreYou($this->formDataModelization($this->data));
         
         $validation = $whoAreYou->validate();
         
@@ -93,7 +93,7 @@ class WhoAreYouForm extends AbstractForm
         else {
             return [
                     'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation, $this->getModelizedData()),
+                    'messages' => $this->modelValidationMessageConverter($validation, $this->data),
             ];
         }
     }

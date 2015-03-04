@@ -16,6 +16,7 @@ use Application\Form\Lpa\AttorneyForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Application\Form\Lpa\TrustCorporationForm;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Zend\View\Model\JsonModel;
 
 class ReplacementAttorneyController extends AbstractLpaController
 {
@@ -35,8 +36,8 @@ class ReplacementAttorneyController extends AbstractLpaController
                         'attorney' => [
                                 'address'   => $attorney->address->__toString()
                         ],
-                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $attorney->id ]),
-                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $attorney->id ]),
+                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
                 ];
                 
                 if($attorney instanceof Human) {
@@ -124,10 +125,8 @@ class ReplacementAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        foreach($this->getLpa()->document->replacementAttorneys as $replacementAttorney) {
-            if($replacementAttorney->id == $attorneyIdx) {
-                $attorney = $replacementAttorney;
-            }
+        if(array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+            $attorney = $this->getLpa()->document->replacementAttorneys[$attorneyIdx];
         }
         
         // if attorney idx does not exist in lpa, return 404.
@@ -160,8 +159,8 @@ class ReplacementAttorneyController extends AbstractLpaController
                 }
                 
                 // update attorney
-                if(!$this->getLpaApplicationService()->setReplacementAttorney($lpaId, $attorney, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to update replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                if(!$this->getLpaApplicationService()->setReplacementAttorney($lpaId, $attorney, $attorney->id)) {
+                    throw new \RuntimeException('API client failed to update replacement attorney ' . $attorney->id . ' for id: ' . $lpaId);
                 }
                 
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -192,13 +191,11 @@ class ReplacementAttorneyController extends AbstractLpaController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        foreach($this->getLpa()->document->replacementAttorneys as $attorney) {
-            if($attorney->id == $attorneyIdx) {
-                if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $attorneyIdx)) {
-                    throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
-                }
-                $deletionFlag = true;
+        if(array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+            if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
+                throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }
+            $deletionFlag = true;
         }
         
         // if attorney idx does not exist in lpa, return 404.
