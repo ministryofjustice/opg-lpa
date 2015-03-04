@@ -2,6 +2,8 @@
     $form       = $this->form;
     $csrf       = $form->get('secret');
     
+    $form->setAttributes(['class' => 'form']);
+    
     $email      = $form->get('email');
     $email->setOptions(['label' => "Email address"]);
     $email->setAttributes(['id' => 'email']);
@@ -143,9 +145,11 @@
             
                 <summary data-journey-click="stageprompt.lpa:help.inline:register/fees:i-want-to-pay-by-cheque-or-bacs" role="button" aria-expanded="false">I want to pay by cheque</summary>
                 
+                 <p class="emphasised option group">
                 <?= $formLabel->openTag($paymentMethod) . $this->formElement($paymentMethod); ?>
                 <?= $paymentMethod->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElementErrors($paymentMethod) ?>
+                </p>
                 
 
             </details>
@@ -157,7 +161,7 @@
 
         <div id="contact-email">
             <p>Please enter a contact email for correspondence regarding this payment.</p>
-            <div class="group ">
+            <div class="group">
                 <?= $formLabel->openTag($email) . $email->getOption('label') . $formLabel->closeTag(); ?> 
                     <?= $this->formElement($email) ?>
                 <?= $this->formElementErrors($email) ?>
