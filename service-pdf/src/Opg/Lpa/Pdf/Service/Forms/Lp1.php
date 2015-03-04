@@ -277,7 +277,6 @@ abstract class Lp1 extends AbstractForm
                 break;
         }
         
-        
         /**
          * Applicant (Section 12)
          */
@@ -288,16 +287,17 @@ abstract class Lp1 extends AbstractForm
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
             $this->flattenLpa['attorney-is-applicant'] = self::CHECK_BOX_ON;
             foreach($this->lpa->document->whoIsRegistering as $index=>$attorneyId) {
-                if($this->lpa->document->primaryAttorneys[$attorneyId] instanceof TrustCorporation) {
-                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name'];
+                $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
+                if($attorney instanceof TrustCorporation) {
+                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $attorney->name;
                 }
                 else {
-                    $this->flattenLpa['applicant-'.$index.'-name-title']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-title'];
-                    $this->flattenLpa['applicant-'.$index.'-name-first']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-first'];
-                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-last'];
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-day']   = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('d');
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('m');
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-year']  = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('Y');
+                    $this->flattenLpa['applicant-'.$index.'-name-title']     = $attorney->name->title;
+                    $this->flattenLpa['applicant-'.$index.'-name-first']     = $attorney->name->first;
+                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $attorney->name->last;
+                    $this->flattenLpa['applicant-'.$index.'-dob-date-day']   = $attorney->dob->date->format('d');
+                    $this->flattenLpa['applicant-'.$index.'-dob-date-month'] = $attorney->dob->date->format('m');
+                    $this->flattenLpa['applicant-'.$index.'-dob-date-year']  = $attorney->dob->date->format('Y');
                 }
             }
             
@@ -340,7 +340,7 @@ abstract class Lp1 extends AbstractForm
                 break;
         }
         
-        if(isset($this->flattenLpa['lpa-document-correspondent-contactByPost'])) {
+        if($this->flattenLpa['lpa-document-correspondent-contactByPost'] === true) {
             $this->flattenLpa['correspondent-contact-by-post'] = self::CHECK_BOX_ON;
         }
         
@@ -352,7 +352,7 @@ abstract class Lp1 extends AbstractForm
             $this->flattenLpa['correspondent-contact-by-email'] = self::CHECK_BOX_ON;
         }
         
-        if(isset($this->flattenLpa['lpa-document-correspondent-contactInWelsh'])) {
+        if($this->flattenLpa['lpa-document-correspondent-contactInWelsh'] === true) {
             $this->flattenLpa['correspondent-contact-in-welsh'] = self::CHECK_BOX_ON;
         }
         
