@@ -22,18 +22,18 @@ class Calculator
         }
         else {
             if(($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) {
-                $amount = 0;
+                $amount = (float) 0;
             }
             elseif($lpa->payment->reducedFeeLowIncome) {
-                $amount = self::STANDARD_FEE/2;
+                $amount = (float) self::STANDARD_FEE/2;
             }
             else {
-                $amount = self::STANDARD_FEE;
+                $amount = (float) self::STANDARD_FEE;
             }
-        }
-        
-        if($lpa->repeatCaseNumber != null) {
-            $amount = $amount/2;
+            
+            if($lpa->repeatCaseNumber != null) {
+                $amount = $amount/2;
+            }
         }
         
         $lpa->payment->amount = $amount;
