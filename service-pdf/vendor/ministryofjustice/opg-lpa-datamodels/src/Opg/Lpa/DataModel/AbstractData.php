@@ -400,7 +400,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Populates the concrete class' properties with the array.
      *
      * @param array $data
-     * @return self
      */
     public function populate( Array $data ){
 
@@ -414,21 +413,18 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
 
         } // foreach
 
-        return $this;
-
     } // function
 
     /**
      * Populates the concrete class' properties with the passed flat array.
      *
      * @param array $data
-     * @return self
      */
     public function populateWithFlatArray( Array $data ){
 
         $data = $this->unFlattenArray( $data );
 
-        return $this->populate( $data );
+        $this->populate( $data );
 
     } // function
 
