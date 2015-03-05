@@ -8,8 +8,6 @@ use Zend\Mvc\MvcEvent;
 use Zend\Session\Container as SessionContainer;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 
-use Application\Controller\Authenticated\AboutYouController;
-
 abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {
     /**

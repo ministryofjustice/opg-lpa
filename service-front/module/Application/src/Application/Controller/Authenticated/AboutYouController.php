@@ -2,7 +2,6 @@
 
 namespace Application\Controller\Authenticated;
 
-use Zend\Session\Container as SessionContainer;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
@@ -17,15 +16,52 @@ class AboutYouController extends AbstractAuthenticatedController {
      */
     protected $excludeFromAboutYouCheck = true;
 
-    
+
+    public function indexAction(){
+
+        $result = $this->process();
+
+        if( $result === true ){
+            return $this->redirect()->toRoute( 'user/dashboard' );
+        }
+
+        //---
+
+        $result['form']->setAttribute( 'action', $this->url()->fromRoute('user/about-you') );
+
+        return $result;
+
+    } // function
+
+    /**
+     * User to set the About Me details for a newly registered user.
+     *
+     * @return \Zend\Http\Response|ViewModel
+     */
     public function newAction(){
+
+        $result = $this->process();
+
+        if( $result === true ){
+            return $this->redirect()->toRoute( 'user/dashboard' );
+        }
+
+        //---
+
+        $result['form']->setAttribute( 'action', $this->url()->fromRoute('user/about-you/new') );
+
+        return $result;
+
+    } // function
+
+    private function process(){
 
         $service = $this->getServiceLocator()->get('AboutYouDetails');
 
         //---
 
         $form = new AboutYouForm();
-        $form->setAttribute( 'action', $this->url()->fromRoute('user/about-you/new') );
+        //$form->setAttribute( 'action', $this->url()->fromRoute('user/about-you/new') );
 
         $form->setData( $service->load()->flatten() );
 
@@ -39,15 +75,17 @@ class AboutYouController extends AbstractAuthenticatedController {
 
             $form->setData($request->getPost());
 
-
             if ($form->isValid()) {
 
-                $user = $service->updateAllDetails( $form, $this->getUser() );
+                $service->updateAllDetails( $form, $this->getUser() );
 
-                $this->clearUserFromSession();
+                // Clear the old details out the session.
+                // They will be reloaded the next time the the AbstractAuthenticatedController is called.
+                $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+                unset($detailsContainer->user);
 
-                // Direct them
-                return $this->redirect()->toRoute( 'user/dashboard' );
+                // Save successful
+                return true;
 
             } // if
 
@@ -57,20 +95,8 @@ class AboutYouController extends AbstractAuthenticatedController {
 
         $pageTitle = 'Your Details';
 
-        return new ViewModel( compact( 'form', 'error', 'pageTitle' ) );
+        return compact( 'form', 'error', 'pageTitle' ) ;
 
-    }
-
-    /**
-     * Clear the user details from the session.
-     * They will be reloaded the next time the the AbstractAuthenticatedController is called.
-     */
-    private function clearUserFromSession(){
-
-        // Store the details in the session...
-        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
-        unset($detailsContainer->user);
-
-    }
+    } // function
 
 } // class

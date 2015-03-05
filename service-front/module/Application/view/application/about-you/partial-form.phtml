@@ -1,0 +1,196 @@
+<?php
+
+$form = $this->form;
+
+$title          = $form->get('name-title');
+$firstName      = $form->get('name-first');
+$lastName       = $form->get('name-last');
+$dayOfBirth     = $form->get('dob-date-day');
+$monthOfBirth   = $form->get('dob-date-month');
+$yearOfBirth    = $form->get('dob-date-year');
+$address1       = $form->get('address-address1');
+$address2       = $form->get('address-address2');
+$address3       = $form->get('address-address3');
+$postcode       = $form->get('address-postcode');
+
+$title->setAttributes([ 'id' => 'title' ])->setOptions( ['label' => 'Title'] )->setLabelAttributes( ['id'=>'title-label'] );
+$firstName->setAttributes([ 'id' => 'firstname' ])->setOptions( ['label' => 'First names'] );
+$lastName->setAttributes([ 'id' => 'surname' ])->setOptions( ['label' => 'Last name'] );
+
+$dayOfBirth->setAttributes([ 'id' => 'dob-day' ])->setLabel('Day');
+$monthOfBirth->setAttributes([ 'id' => 'dob-month' ])->setLabel('Month');
+$yearOfBirth->setAttributes([ 'id' => 'dob-year' ])->setLabel('Year');
+
+$address1->setAttributes([ 'id' => 'addr1' ])->setLabel('Address line 1');
+$address2->setAttributes([ 'id' => 'addr2' ])->setLabel('Address line 2');
+$address3->setAttributes([ 'id' => 'addr3' ])->setLabel('Address line 3');
+$postcode->setAttributes([ 'id' => 'postcode' ])->setLabel('Postcode');
+
+$form->prepare();
+
+//---
+
+$formLabel = $this->plugin('formLabel');
+
+?>
+
+<div class="about-you-form">
+
+    <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
+
+    <?= $this->formElement($form->get('secret')) ?>
+
+    <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
+        <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+            <h1 id="error-heading">There was a problem submitting the form</h1>
+            <p>Because of the following problems:</p>
+            <ol>
+                <?php
+                $this->formLinkedErrorList($form);
+
+                if (isset($this->error)) {
+                    echo '<li><a href="">';
+                    switch($this->error){
+                        default:
+                            echo $this->escapehtml( $this->error );
+                    }
+                    echo '</a></li>';
+                }
+                ?>
+            </ol>
+        </div>
+    <? } ?>
+
+    <fieldset>
+        <legend>Name</legend>
+
+        <? $element = $title; ?>
+        <div class="group">
+            <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($element) ?>
+            <?= $this->formElementErrors($element) ?>
+        </div>
+
+        <? $element = $firstName; ?>
+        <div class="group">
+            <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($element) ?>
+            <?= $this->formElementErrors($element) ?>
+        </div>
+
+        <? $element = $lastName; ?>
+        <div class="group">
+            <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($element) ?>
+            <?= $this->formElementErrors($element) ?>
+        </div>
+
+    </fieldset>
+
+    <fieldset>
+        <div class="group">
+            <legend>Date of birth</legend>
+            <p>For example, 08 04 <?= date('Y')-18 ?></p>
+
+            <? $element = $dayOfBirth; ?>
+            <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-day">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $monthOfBirth; ?>
+            <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-month">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $yearOfBirth; ?>
+            <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-year">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+        </div>
+    </fieldset>
+
+    <fieldset class="js-PostcodeLookup">
+        <legend>Address</legend>
+        <div class="js-PostcodeLookup__postal-add">
+
+            <? $element = $address1; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $address2; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $address3; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+            <? $element = $postcode; ?>
+            <div class="<?= $this->elementGroupClass($element); ?>">
+                <?=
+                $this->formLabel($element).
+                $formLabel->openTag().
+                $element->getOption('label').
+                $this->formElementErrors($element).
+                $this->formInput($element).
+                $formLabel->closeTag()
+                ?>
+            </div>
+
+        </div>
+    </fieldset>
+
+    <br>
+
+    <p class="action group">
+        <input type="submit" name="save" id="save" value="Save and continue" class="button aboutyou">
+    </p>
+
+    <?= $this->form()->closeTag(); ?>
+</div>

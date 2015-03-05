@@ -89,6 +89,8 @@ class DashboardController extends AbstractAuthenticatedController
         $this->redirect()->toRoute('user/dashboard');
     }
 
+    //---
+
     /**
      * Displayed when the Terms and Conditions have changed since the user last logged in.
      */

@@ -216,6 +216,7 @@ return [
                             'route'    => '/about-you',
                             'defaults' => [
                                 'controller' => 'Authenticated\AboutYouController',
+                                'action'     => 'index',
                             ],
                         ],
                         'may_terminate' => true,
@@ -226,15 +227,6 @@ return [
                                     'route'    => '/new',
                                     'defaults' => [
                                         'action'     => 'new',
-                                    ],
-                                ],
-                            ],
-                            'update' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/update',
-                                    'defaults' => [
-                                        'action'     => 'update',
                                     ],
                                 ],
                             ],

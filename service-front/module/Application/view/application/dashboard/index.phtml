@@ -37,7 +37,7 @@
   <tbody>
   <?php foreach($this->lpas as $lpa): ?>
       <tr>
-      <td><?php echo $lpa->id . ' v' . $lpa->version ?></td>
+      <td><?php echo ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id ?></td>
       <td><?php echo $lpa->donor; ?></td>
       <td><?php echo ($lpa->type == 'property-and-financial') ? 'Property and financial affairs' : (($lpa->type == 'health-and-welfare')?'Health and welfare':'') ?></td>
       <td><?php echo $lpa->updatedAt->format('M jS, Y'); ?></td>
