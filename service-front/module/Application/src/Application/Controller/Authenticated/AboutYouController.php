@@ -68,7 +68,7 @@ class AboutYouController extends AbstractAuthenticatedController {
     private function clearUserFromSession(){
 
         // Store the details in the session...
-        $detailsContainer = new SessionContainer('UserDetails');
+        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
         unset($detailsContainer->user);
 
     }

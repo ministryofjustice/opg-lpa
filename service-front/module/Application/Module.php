@@ -137,6 +137,11 @@ class Module{
                     return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
                 },
 
+                // Generate the session container for a user's personal details
+                'UserDetailsSession' => function(){
+                    return new Container('UserDetails');
+                },
+
             ], // factories
         ];
 

@@ -77,7 +77,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         //----------------------------------------------------------------------
         // Load the user's details and ensure the required details are included
 
-        $detailsContainer = new SessionContainer('UserDetails');
+        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
 
         if( !isset($detailsContainer->user) || is_null($detailsContainer->user->name) ){
 
@@ -133,7 +133,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
      */
     public function getUserDetails(){
 
-        $detailsContainer = new SessionContainer('UserDetails');
+        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
 
         if( !isset($detailsContainer->user) ){
             return null;
