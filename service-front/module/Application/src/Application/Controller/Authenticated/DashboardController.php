@@ -13,6 +13,9 @@ class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
+
+        // If they have no LPAs, redirect them straight to create...
+
         return new ViewModel([
             'lpas' => $this->getLpaList(),
             'version' => [
@@ -75,6 +78,13 @@ class DashboardController extends AbstractAuthenticatedController
         }
         
         $this->redirect()->toRoute('user/dashboard');
+    }
+
+    /**
+     * Displayed when the Terms and Conditions have changed since the user last logged in.
+     */
+    public function termsAction(){
+        return new ViewModel();
     }
 
     //---

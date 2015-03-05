@@ -4,6 +4,7 @@ namespace Application\Controller\General;
 
 use DateTime;
 
+use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
@@ -64,17 +65,10 @@ class AuthController extends AbstractBaseController {
                 // Regenerate the session ID post authentication
                 $session->regenerateId(true);
 
-                /*
-                 * If T&Cs have changed, confirm T&Cs page.
-                 * If no About Me, About me page.
-                 * If no LPAs, create a new LPA and start them on it.
-                 * Otherwise, dashboard.
-                 */
-
                 // Send them to the dashboard...
                 return $this->redirect()->toRoute( 'user/dashboard' );
 
-            }
+            } // if
 
             // else authentication failed...
 
@@ -106,16 +100,6 @@ class AuthController extends AbstractBaseController {
 
     } // function
 
-    /**
-     * Redirect the user post authentication.
-     */
-    public function redirectAction()
-    {
-
-        $termsUpdated = new DateTime($this->config()['terms']['lastUpdated']);
-
-
-    }
 
     /**
      * Logs the user out by clearing the identity from the session.

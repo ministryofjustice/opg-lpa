@@ -298,6 +298,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'terms-changed' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/new-terms',
+                                    'defaults' => [
+                                        'action'     => 'terms',
+                                    ],
+                                ],
+                            ],
                         ],
                     ], // dashboard
 
