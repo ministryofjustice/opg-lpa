@@ -14,10 +14,19 @@ class DashboardController extends AbstractAuthenticatedController
     public function indexAction()
     {
 
-        // If they have no LPAs, redirect them straight to create...
+        $laps = $this->getLpaList();
+
+        //---
+
+        // If the user currently has no LPAs, redirect them to create one...
+        if( empty($laps) ){
+            return $this->createAction();
+        }
+
+        //---
 
         return new ViewModel([
-            'lpas' => $this->getLpaList(),
+            'lpas' => $laps,
             'version' => [
                 'commit' => $this->config()['version']['commit'],
                 'cache' => $this->config()['version']['cache'],
