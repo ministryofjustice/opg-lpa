@@ -132,11 +132,33 @@ class Randomizer
         return $date;
     }
     
-    protected function random($list)
+    /**
+     * Pick random item from an array
+     * @param array $list
+     * @param bool $randomList - when true, return random subset of the array. 
+     * @return single value|array
+     */
+    protected function random($list, $randomList=false)
     {
         if(!is_array($list) || empty($list)) return;
         
-        return $list[rand(0, count($list)-1)];
+        if(!$randomList) {
+            return $list[rand(0, count($list)-1)];
+        }
+        else {
+            $totalItems = count($list);
+            $totalPicks = rand(1, $totalItems);
+            $indexes = [];
+            do {
+                $indexes[rand(0, $totalItems-1)] = 1;
+            }while(count($indexes) < $totalPicks);
+            
+            $returnList = [];
+            foreach($indexes as $idx=>$v) {
+                $returnList[] = $list[$idx];
+            }
+            return $returnList;
+        }
     }
     
     protected function rString($length, $type=self::ALPHA_ONLY)
