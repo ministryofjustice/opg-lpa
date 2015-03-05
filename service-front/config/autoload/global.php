@@ -11,7 +11,7 @@ return array(
 
     'terms' => [
         // The date and time the terms were last updated.
-        // User who have not logged in since this date will see the 'T&Cs updated' page.
+        // Users who have not logged in since this date will see the 'T&Cs updated' page.
         'lastUpdated' => '2015-02-17 14:00 UTC',
     ],
 

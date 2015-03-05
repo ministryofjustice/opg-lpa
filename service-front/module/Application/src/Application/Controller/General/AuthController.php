@@ -70,6 +70,8 @@ class AuthController extends AbstractBaseController {
 
             } // if
 
+            //---
+
             // else authentication failed...
 
             $message = $result->getMessages();

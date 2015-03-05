@@ -6,6 +6,14 @@ use Application\Controller\AbstractAuthenticatedController;
 
 class PostcodeController extends AbstractAuthenticatedController {
 
+    /**
+     * Allow access to this controller before About You details are set.
+     *
+     * @var bool
+     */
+    protected $excludeFromAboutYouCheck = true;
+
+
     public function indexAction(){
 
         $service = $this->getServiceLocator()->get('AddressLookup');
