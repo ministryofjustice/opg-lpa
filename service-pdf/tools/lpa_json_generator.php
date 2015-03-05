@@ -90,6 +90,7 @@ class JsonGenerator extends Randomizer
                     3 => []
             ],
             'howPrimaryAttorneyAct' => [
+                    'single-attorney' => [],
                     'jointly' => [],
                     'jointly-attorney-severally' => [],
                     'depends' => [],
@@ -108,6 +109,8 @@ class JsonGenerator extends Randomizer
                     'no' => []
             ],
             'howReplacementAttorneyAct' => [
+                    null => [],
+                    'single-attorney' => [],
                     'jointly' => [],
                     'jointly-attorney-severally' => [],
                     'depends' => [],
@@ -183,7 +186,8 @@ class JsonGenerator extends Randomizer
                 "reducedFeeReceivesBenefits" => $this->random(array(true, false)),
                 "reducedFeeAwardedDamages" => $this->random(array(true, false)),
                 "reducedFeeLowIncome" => $this->random(array(true, false)),
-                "reducedFeeUniversalCredit" => $this->random(array(true, false))
+                "reducedFeeUniversalCredit" => $this->random(array(true, false)),
+                "date" => date('c', $updated),
         );
         
         if($this->lpa['payment']['reducedFeeReceivesBenefits']) {
@@ -328,31 +332,38 @@ class JsonGenerator extends Randomizer
     
     protected function applicant()
     {
+        // all attorney ids
+        $attorneyIds = [];
+        foreach($this->primaryAttorneys as $attorney) {
+            $attorneyIds[] = $attorney['id'];
+        }
+        
         // one attorney
-        $option1 = array(rand(0, count($this->primaryAttorneys)-1));
+        $option1 = [$this->random($attorneyIds)];
         
         if(count($this->primaryAttorneys) > 1) {
-            // some attorneys 
-            $numOfAttorneys = rand(2, count($this->primaryAttorneys)-1);
-            $option2 = array();
-            do {
-                $option2[rand(0, count($this->primaryAttorneys)-1)] = 1;
-            }while(count($option2) < $numOfAttorneys);
-            $option2 = array_keys($option2);
-            sort($option2);
+            
+            // random pick attorneys 
+            $option2 = $this->random($attorneyIds, true);
             
             // all attorneys
-            $option3 = range(0, count($this->primaryAttorneys)-1);
+            $option3 = $attorneyIds;
             
-            $attorneys = $this->random(array($option1, $option2, $option3));
-            
-            $this->applicant = $this->random(array(
-                    'donor', $attorneys, $attorneys, $attorneys
-            ));
+            if($this->primaryAttorneyDecisions['how'] == 'jointly') {
+                $this->applicant = $this->random(array(
+                        'donor', $option3
+                ));
+            }
+            else {
+                $attorneys = $this->random(array($option1, $option2, $option3));
+                $this->applicant = $this->random(array(
+                        'donor', $attorneys, $attorneys, $attorneys,
+                ));
+            }
         }
         else {
             $this->applicant = $this->random(array(
-                    'donor', array(0)
+                    'donor', $option1
             ));
         }
         
@@ -527,7 +538,7 @@ class JsonGenerator extends Randomizer
                 $type = 'human';
             }
             else {
-                $type = $this->random(array('human','human','human','human','human','trust'));
+                $type = $this->random(array('human','human','human','trust'));
                 if($type == 'trust') {
                     $this->hasTrust = 'replacement';
                 }
@@ -536,7 +547,6 @@ class JsonGenerator extends Randomizer
             $attorney = array(
                     "id"        => $this->rInt('seq', array('name'=>'replacement_attorney_id', 'start'=>0)),
                     "address"   => $this->rAddr(),
-                    "email"     => $this->random(array(null, array('address' => $this->rEmail()))),
                     'type'      => $type
             );
             
@@ -544,13 +554,13 @@ class JsonGenerator extends Randomizer
                 $attorney["name"] = array(
                         "title" => $this->rTitle(),
                         "first" => $this->rForename(),
-                        "last"  => $this->rSurname()
+                        "last"  => $this->rSurname(),
                 );
                 
                 $attorney["dob"] = array('date' => $this->rDob());
             }
             else {
-                $attorney["name"] = $this->rCompany();
+                $attorney["name"]   = $this->rCompany();
                 $attorney["number"] = strtoupper($this->rString(8, self::ALPHA_NUMBER));
             }
             
