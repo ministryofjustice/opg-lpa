@@ -6,22 +6,21 @@ use Michelf\Markdown;
 class Guidance
 {
     const GUIDANCE_MARKDOWN_FOLDER = 'public/guidance';
-    
-    public function generateHtmlFromMarkdown()
+    const SUPPORT_PHONE = '0300 456 0300';
+    const SUPPORT_EMAIL = 'customerservices@PublicGuardian.gsi.gov.uk';
+
+    /**
+     * Generate HTML from the guidance markdown files
+     * 
+     * @return string The generated HTML
+     */
+    function generateHtmlFromMarkdown()
     {
-        return $this->buildGuidance();
-    }
-    
-    function buildGuidance()
-    {
-        $navigationHtml = '
-      <nav class="help-navigation">
-        <div class="group">
-    	    <h2>Help topics</h2>
-    		  <ul class="help-topics">';
+        $navigationHtml = '<nav class="help-navigation"><div class="group"><h2>Help topics</h2><ul class="help-topics">';
     
         $sections = '';
         $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . '/order.md');
+        
         foreach ($lines as $line) {
             if (preg_match('/^\*\w*(.*)/', $line, $matches)) {
                 $sectionTitle = trim($matches[1]);
@@ -30,32 +29,30 @@ class Guidance
             if (preg_match('/^\s+\*\s*(.*\.md)/', $line, $matches)) {
                 $sectionFilename = trim($matches[1]);
                 $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitle)));
-                $sections.= $this->processSection($sectionFilename, $sectionId);
-                $navigationHtml .= '
-            <li><a class="js-guidance" href="/help/#topic-' . $sectionId . '" data-journey="stageprompt.lpa:help:' . $sectionId . '">' . $sectionTitle . '</a></li>' . PHP_EOL;
+                $sections .= $this->processSection($sectionFilename, $sectionId);
+                $url = '/help/#topic-' . $sectionId;
+                $dataJourney = 'stageprompt.lpa:help:' . $sectionId;
+                $navigationHtml .= '<li><a class="js-guidance" href="' . $url . '" data-journey="' . $dataJourney . '">' . $sectionTitle . '</a></li>';
             }
         }
     
-        $navigationHtml .= '
-          </ul>
-        </div>
-      </nav>';
+        $navigationHtml .= '</ul></div></nav>';
     
-        $html .= '
-    <section id="help-system">
-      <header>
-        <p>A guide to making your lasting power of attorney</p>
-      </header>' . $navigationHtml .
-    
-        '
-      <div class="content help-sections">' . $sections . 
-      '</div>
-      <div class="action group">
-        <p>Need help? Ring us on <strong>0300 456 0300</strong>. Alternatively, email us at <strong><a href="mailto:customerservices@PublicGuardian.gsi.gov.uk?subject=Digital%20LPA%20Enquiry">customerservices@PublicGuardian.gsi.gov.uk</a></strong>.</p>
-        <hr>
-        <a href="#" class="js-popup-close button-secondary">Close help</a>
-      </div>
-    </section>';
+        $html .= '<section id="help-system"><header><p>A guide to making your lasting power of attorney</p></header>';
+        $html .= $navigationHtml;
+        $html .= '<div class="content help-sections">';
+        $html .= $sections; 
+        $html .= '</div>';
+        $html .= '<div class="action group">';
+        $html .= '<p>';
+        $html .= 'Need help? Ring us on <strong>' . SUPPORT_PHONE . '</strong>. ';
+        $html .= 'Alternatively, email us at ';
+        $html .= '<strong><a href="mailto:' . SUPPORT_EMAIL . '?subject=Digital%20LPA%20Enquiry">' . SUPPORT_EMAIL . '</a></strong>';
+        $html .= '</p>';
+        $html .= '<hr>';
+        $html .= '<a href="#" class="js-popup-close button-secondary">Close help</a>';
+        $html .= '</div>';
+        $html .= '</section>';
     
         return $html;
     }
