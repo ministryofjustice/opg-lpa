@@ -9,6 +9,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 
 class Document extends AbstractData {
 
@@ -267,5 +268,42 @@ class Document extends AbstractData {
 
     } // function
 
-
+    /**
+     * Get primary attorney object by attorney id.
+     * 
+     * @param int $id
+     * @return NULL|AbstractAttorney
+     */
+    public function getPrimaryAttorneyById($id)
+    {
+        if($this->primaryAttorneys == null) return null;
+    
+        foreach($this->primaryAttorneys as $attorney) {
+            if($attorney->id == $id) {
+                return $attorney;
+            }
+        }
+    
+        return null;
+    } // function
+    
+    /**
+     * Get replacement attorney object by attorney id.
+     * 
+     * @param int $id
+     * @return NULL|AbstractAttorney
+     */
+    public function getReplacementAttorneyById($id)
+    {
+        if($this->replacementAttorneys == null) return null;
+    
+        foreach($this->replacementAttorneys as $attorney) {
+            if($attorney->id == $id) {
+                return $attorney;
+            }
+        }
+    
+        return null;
+    } // function
+    
 } // class

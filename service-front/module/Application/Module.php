@@ -117,6 +117,7 @@ class Module{
                 'Register'              => 'Application\Model\Service\User\Register',
                 'AboutYouDetails'       => 'Application\Model\Service\User\Details',
                 'Payment'               => 'Application\Model\Service\Payment\Payment',
+                'Guidance'              => 'Application\Model\Service\Guidance\Guidance',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
             ],
             'factories' => [

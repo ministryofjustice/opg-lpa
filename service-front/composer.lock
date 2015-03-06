@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1f3a76302b1ea4fd1993e9e656d8ac99",
+    "hash": "3db3507c3593d3fd575962f97eb8cc26",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -517,6 +517,57 @@
             "time": "2014-10-12 19:18:40"
         },
         {
+            "name": "michelf/php-markdown",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/michelf/php-markdown.git",
+                "reference": "e1aabe18173231ebcefc90e615565742fc1c7fd9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michelf/php-markdown/zipball/e1aabe18173231ebcefc90e615565742fc1c7fd9",
+                "reference": "e1aabe18173231ebcefc90e615565742fc1c7fd9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-lib": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Michelf": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "John Gruber",
+                    "homepage": "http://daringfireball.net/"
+                },
+                {
+                    "name": "Michel Fortin",
+                    "email": "michel.fortin@michelf.ca",
+                    "homepage": "https://michelf.ca/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Markdown",
+            "homepage": "https://michelf.ca/projects/php-markdown/",
+            "keywords": [
+                "markdown"
+            ],
+            "time": "2015-03-01 12:03:08"
+        },
+        {
             "name": "ministryofjustice/opg-lpa-api-client",
             "version": "dev-develop",
             "source": {
@@ -561,12 +612,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "cb47ad23d07b05d5092be479f42a391fe4957f86"
+                "reference": "67d93886d9e23b3565582ccedc9fd2ebc27a6cda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/cb47ad23d07b05d5092be479f42a391fe4957f86",
-                "reference": "cb47ad23d07b05d5092be479f42a391fe4957f86",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/67d93886d9e23b3565582ccedc9fd2ebc27a6cda",
+                "reference": "67d93886d9e23b3565582ccedc9fd2ebc27a6cda",
                 "shasum": ""
             },
             "require": {
@@ -589,10 +640,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-02-27 14:29:08"
+            "time": "2015-03-04 15:20:34"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
