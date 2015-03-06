@@ -6,18 +6,16 @@ use Michelf\Markdown;
 class Guidance
 {
     const GUIDANCE_MARKDOWN_FOLDER = 'public/guidance';
-    const SUPPORT_PHONE = '0300 456 0300';
-    const SUPPORT_EMAIL = 'customerservices@PublicGuardian.gsi.gov.uk';
 
     /**
-     * Generate HTML from the guidance markdown files
+     * Generate guidance sections and navigation from the guidance markdown files
      * 
      * @return string The generated HTML
      */
     function generateHtmlFromMarkdown()
     {
         $html = '';
-        $sections = '';
+        $sectionArray = [];
         $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . '/order.md');
         
         $navHtml = '';
@@ -28,29 +26,23 @@ class Guidance
     
             if (preg_match('/^\s+\*\s*(.*\.md)/', $line, $matches)) {
                 $sectionFilename = trim($matches[1]);
+                
                 $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitle)));
-                $sections .= $this->processSection($sectionFilename, $sectionId);
-                $url = '/help/#topic-' . $sectionId;
-                $dataJourney = 'stageprompt.lpa:help:' . $sectionId;
-                $navHtml .= '<li><a class="js-guidance" href="' . $url . '" data-journey="' . $dataJourney . '">' . $sectionTitle . '</a></li>';
+                
+                $sectionArray[] = [
+                    'id' => $sectionId,
+                    'title' => $sectionTitle,
+                    'html' => $this->processSection($sectionFilename, $sectionId),
+                    'url' => '/help/#topic-' . $sectionId,
+                    'dataJourney' => 'stageprompt.lpa:help:' . $sectionId,
+                ];
             }
         }
         
-        $html .= '<div class="action group">';
-        $html .= '<p>';
-        $html .= 'Need help? Ring us on <strong>' . SUPPORT_PHONE . '</strong>. ';
-        $html .= 'Alternatively, email us at ';
-        $html .= '<strong><a href="mailto:' . SUPPORT_EMAIL . '?subject=Digital%20LPA%20Enquiry">' . SUPPORT_EMAIL . '</a></strong>';
-        $html .= '</p>';
-        $html .= '<hr>';
-        $html .= '<a href="#" class="js-popup-close button-secondary">Close help</a>';
-        $html .= '</div>';
-        $html .= '</section>';
-    
         return [
             'navHtml' => $navHtml,
             'bodyHtml' => $html,
-            'sectionsHtml' => $sections,
+            'sections' => $sectionArray,
         ];
     }
     
