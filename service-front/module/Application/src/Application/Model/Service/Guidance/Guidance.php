@@ -16,11 +16,11 @@ class Guidance
      */
     function generateHtmlFromMarkdown()
     {
-        $navigationHtml = '<nav class="help-navigation"><div class="group"><h2>Help topics</h2><ul class="help-topics">';
-    
+        $html = '';
         $sections = '';
         $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . '/order.md');
         
+        $navHtml = '';
         foreach ($lines as $line) {
             if (preg_match('/^\*\w*(.*)/', $line, $matches)) {
                 $sectionTitle = trim($matches[1]);
@@ -32,17 +32,10 @@ class Guidance
                 $sections .= $this->processSection($sectionFilename, $sectionId);
                 $url = '/help/#topic-' . $sectionId;
                 $dataJourney = 'stageprompt.lpa:help:' . $sectionId;
-                $navigationHtml .= '<li><a class="js-guidance" href="' . $url . '" data-journey="' . $dataJourney . '">' . $sectionTitle . '</a></li>';
+                $navHtml .= '<li><a class="js-guidance" href="' . $url . '" data-journey="' . $dataJourney . '">' . $sectionTitle . '</a></li>';
             }
         }
-    
-        $navigationHtml .= '</ul></div></nav>';
-    
-        $html .= '<section id="help-system"><header><p>A guide to making your lasting power of attorney</p></header>';
-        $html .= $navigationHtml;
-        $html .= '<div class="content help-sections">';
-        $html .= $sections; 
-        $html .= '</div>';
+        
         $html .= '<div class="action group">';
         $html .= '<p>';
         $html .= 'Need help? Ring us on <strong>' . SUPPORT_PHONE . '</strong>. ';
@@ -54,9 +47,21 @@ class Guidance
         $html .= '</div>';
         $html .= '</section>';
     
-        return $html;
+        return [
+            'navHtml' => $navHtml,
+            'bodyHtml' => $html,
+            'sectionsHtml' => $sections,
+        ];
     }
     
+    /**
+     * Create HTML for a single section of guidance text
+     * 
+     * @param string $filename
+     * @param string $sectionId
+     * 
+     * @return string The generated HTML
+     */
     function processSection($filename, $sectionId)
     {
         $md = Markdown::defaultTransform(file_get_contents(self::GUIDANCE_MARKDOWN_FOLDER . '/' . $filename));

@@ -17,11 +17,8 @@ class GuidanceController extends AbstractBaseController
     public function indexAction()
     {
         $guidanceService = $this->getServiceLocator()->get('Guidance');
-        $html = $guidanceService->generateHtmlFromMarkdown();
         
-        $model = new ViewModel([
-            'html' => $html
-        ]);
+        $model = new ViewModel($guidanceService->generateHtmlFromMarkdown());
         
         $model->setTemplate('guidance/opg-help-system.phtml');
         

@@ -1,1 +1,12 @@
-<?= $this->html;
+<section id="help-system"><header><p>A guide to making your lasting power of attorney</p></header>
+<nav class="help-navigation"><div class="group"><h2>Help topics</h2><ul class="help-topics">
+
+<?= $this->navHtml; ?>
+
+</ul></div></nav>
+
+<div class="content help-sections">
+<?= $this->sectionsHtml; ?>
+</div>
+
+<?= $this->bodyHtml;
