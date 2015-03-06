@@ -31,7 +31,7 @@ class Randomizer
     
     protected function rTitle()
     {
-        $list = array(null, 'Ms','Miss','Mrs','Mr','Dr','Prof','Hon','Capt');
+        $list = array('Ms','Ms','Miss','Miss','Miss','Mrs','Mrs','Mrs','Mrs','Mrs','Mr','Mr','Mr','Mr','Mr','Mr','Dr','Prof','Hon','Capt', null);
         $idx = rand(0, count($list)-1);
         return $list[$idx];
     }
@@ -228,6 +228,29 @@ class Randomizer
         }
         
         return implode(' ', $chosenWords);
+    }
+    
+    protected function rFancyText($count)
+    {
+        //max: 46655
+        $loopCount = $count/4;
+        $wordLength = 3;
+        $text = '';
+        $breakCounter = 0;
+        for($i=0; $i<$loopCount; $i++) {
+            $text .= sprintf("%0".$wordLength."s ", strtoupper(base_convert("$i", 10, 36)));
+            
+            // add random new line
+            if($breakCounter&&(($breakCounter%rand(60,80)) == 0)) {
+                $text.="\r\n\r\n";
+                $breakCounter = 0;
+            }
+            $breakCounter++;
+        }
+        
+        $text.="\r\n\r\n";
+        
+        return $text;
     }
     
     protected function rText($count)
