@@ -96,7 +96,7 @@ abstract class AbstractForm
     public function __construct(Lpa $lpa)
     {
         $this->lpa = $lpa;
-        $this->flattenLpa = $lpa->flatten();
+        $this->flattenLpa = $lpa->flatten('lpa-');
         $config = Config::getInstance();
         $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
         $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
@@ -207,25 +207,25 @@ abstract class AbstractForm
      */
     protected function flattenTextContent($content)
     {
-        // strip space & new lines chars at both ends.
-        $content = trim(str_replace("\r", '', $content));
-    
-        $paragraphs = explode("\n", $content);
-        foreach($paragraphs as &$paragraph) {
-            $paragraph = trim($paragraph);
-            if(strlen($paragraph) == 0) {
-                $paragraph = str_repeat(" ", Lp1::BOX_CHARS_PER_ROW-1);
+        $content = $this->linewrap(trim($content), Lp1::BOX_CHARS_PER_ROW);
+        
+        $paragraphs = explode("\r\n", $content);
+        $lines = count($paragraphs);
+        for($i=0; $i<$lines; $i++) {
+            $paragraphs[$i] = trim($paragraphs[$i]);
+            if(strlen($paragraphs[$i]) == 0) {
+                unset($paragraphs[$i]);
             }
             else {
                 // calculate how many space chars to be appended to replace the new line in this paragraph.
-                $noOfSpaces = Lp1::BOX_CHARS_PER_ROW - strlen($paragraph) % Lp1::BOX_CHARS_PER_ROW;
+                $noOfSpaces = Lp1::BOX_CHARS_PER_ROW - strlen($paragraphs[$i]) % Lp1::BOX_CHARS_PER_ROW;
                 if($noOfSpaces > 0) {
-                    $paragraph .= str_repeat(" ", $noOfSpaces);
+                    $paragraphs[$i] .= str_repeat(" ", $noOfSpaces);
                 }
             }
         }
-    
-        return implode("\n", $paragraphs);
+        
+        return implode("\r\n", $paragraphs);
     } // function flattenBoxContent($content)
     
     protected function mergerIntermediateFilePaths($paths)
@@ -257,12 +257,12 @@ abstract class AbstractForm
         // return content for preference or instruction in section 7.
         if(($contentType==self::CONTENT_TYPE_INSTRUCTIONS) || ($contentType==self::CONTENT_TYPE_PREFERENCES)) {
             if($pageNo == 0) {
-                return "\n".substr($flattenContent, 0, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS);
+                return "\r\n".substr($flattenContent, 0, (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS);
             }
             else {
-                $chunks = str_split(substr($flattenContent, Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS), Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2);
+                $chunks = str_split(substr($flattenContent, (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS), (Lp1::BOX_CHARS_PER_ROW + 2) * Cs2::BOX_NO_OF_ROWS_CS2);
                 if(isset($chunks[$pageNo-1])) {
-                    return "\n".$chunks[$pageNo-1];
+                    return "\r\n".$chunks[$pageNo-1];
                 }
                 else {
                     return null;
@@ -270,9 +270,9 @@ abstract class AbstractForm
             }
         }
         else {
-            $chunks = str_split($flattenContent, Lp1::BOX_CHARS_PER_ROW * Cs2::BOX_NO_OF_ROWS_CS2);
+            $chunks = str_split($flattenContent, (Lp1::BOX_CHARS_PER_ROW + 2)* Cs2::BOX_NO_OF_ROWS_CS2);
             if(isset($chunks[$pageNo])) {
-                return "\n".$chunks[$pageNo];
+                return "\r\n".$chunks[$pageNo];
             }
             else {
                 return null;
@@ -288,7 +288,7 @@ abstract class AbstractForm
     protected function canFitIntoTextBox($content)
     {
         $flattenContent = $this->flattenTextContent($content);
-        return strlen($flattenContent) <= Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS;
+        return strlen($flattenContent) <= (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS;
     } // function canFitIntoTextBox()
     
     public function cleanup()
@@ -313,6 +313,17 @@ abstract class AbstractForm
             }
         }
         
+    }
+    
+    protected function linewrap($string, $width, $break="\r\n", $cut=false)
+    {
+        $array = explode("\r\n", $string);
+        $string = "";
+        foreach($array as $key => $val) {
+            $string .= wordwrap($val, $width, $break, $cut);
+            $string .= "\r\n";
+        }
+        return $string;
     }
     
     public function print_hex($text)
