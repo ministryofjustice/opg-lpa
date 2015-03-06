@@ -10,7 +10,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 abstract class Lp1 extends AbstractForm
 {
     const BOX_CHARS_PER_ROW = 84;
-    const BOX_NO_OF_ROWS = 11;
+    const BOX_NO_OF_ROWS = 6;
     
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
     const MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM = 2;
@@ -87,32 +87,26 @@ abstract class Lp1 extends AbstractForm
         if((count($this->lpa->document->replacementAttorneys) > 1) && 
             ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             
-            $how = "";
-            $when = "";
+            $content = "";
             switch($this->lpa->document->replacementAttorneyDecisions->how) {
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $how = "Replacement attorneys make decisions jointly and severally";
+                    $content = "Replacement attorneys make decisions jointly and severally\r\n";
                     break;
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $how = "Replacement attorneys make decisions depend on below";
+                    $content = "Replacement attorneys make decisions depend on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
             }
             
             switch($this->lpa->document->replacementAttorneyDecisions->when) {
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
-                    $when = "Replacement attorneys step in when the first attorney is unable to act";
+                    $content .= "Replacement attorneys step in when the first attorney is unable to act\r\n";
                     break;
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
-                    $when = "Replacement attorneys step in when the last attorney is unable to act";
+                    $content .= "Replacement attorneys step in when the last attorney is unable to act\r\n";
                     break;
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
-                    $when = "Replacement attorneys step in depends on below";
+                    $content .= "Replacement attorneys step in depends on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
                     break;
             }
-            
-            $content = (!empty($how)? $how."\n":"") .
-                       (!empty($when)? $when."\n":"") .
-                       $this->lpa->document->replacementAttorneyDecisions->howDetails . "\n" . 
-                       $this->lpa->document->replacementAttorneyDecisions->whenDetails;
             
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content))->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
@@ -232,17 +226,17 @@ abstract class Lp1 extends AbstractForm
          *  Preference and Instructions. (Section 7)
          */
         if(!empty($this->flattenLpa['lpa-document-preference'])) {
-            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
             if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-preference'])) {
                 $this->flattenLpa['has-more-preferences'] = self::CHECK_BOX_ON;
             }
+            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
         }
         
         if(!empty($this->flattenLpa['lpa-document-instruction'])) {
-            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
             if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-instruction'])) {
                 $this->flattenLpa['has-more-instructions'] = self::CHECK_BOX_ON;
             }
+            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
         }
         
         /**

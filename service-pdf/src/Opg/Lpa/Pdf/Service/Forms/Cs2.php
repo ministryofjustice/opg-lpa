@@ -8,7 +8,7 @@ class Cs2 extends AbstractForm
     private $contentType;
     private $content;
     
-    const BOX_NO_OF_ROWS_CS2 = 21;
+    const BOX_NO_OF_ROWS_CS2 = 14;
     
     /**
      * @param Lpa $lpa
@@ -32,11 +32,11 @@ class Cs2 extends AbstractForm
         $formatedContentLength = strlen($this->flattenTextContent($this->content));
         if(($this->contentType == self::CONTENT_TYPE_ATTORNEY_DECISIONS) || ($this->contentType == self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN)) {
             $contentLengthOnStandardForm = 0;
-            $totalAdditionalPages = ceil($formatedContentLength/(Lp1::BOX_CHARS_PER_ROW * self::BOX_NO_OF_ROWS_CS2));
+            $totalAdditionalPages = ceil($formatedContentLength/((Lp1::BOX_CHARS_PER_ROW + 2)* self::BOX_NO_OF_ROWS_CS2));
         }
         else {
-            $contentLengthOnStandardForm = Lp1::BOX_CHARS_PER_ROW * Lp1::BOX_NO_OF_ROWS;
-            $totalAdditionalPages = ceil(($formatedContentLength-$contentLengthOnStandardForm)/(Lp1::BOX_CHARS_PER_ROW * self::BOX_NO_OF_ROWS_CS2));
+            $contentLengthOnStandardForm = (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS;
+            $totalAdditionalPages = ceil(($formatedContentLength-$contentLengthOnStandardForm)/((Lp1::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2));
         }
         
         for($i=0; $i<$totalAdditionalPages; $i++) {
