@@ -15,8 +15,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Application\Form\Lpa\CorrespondentForm;
 use Application\Form\Lpa\CorrespondentSwitcherForm;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\User\Address;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -72,8 +72,23 @@ class CorrespondentController extends AbstractLpaController
                 if($switcherForm->isValid()) {
                     switch($postData['switch-to-type']) {
                         case 'me':
-                            // @todo $correspondentForm->bind($user->flatten());
-                            $correspondentForm->bind(['who'=>'other']);
+                            $userSession = $this->getServiceLocator()->get('UserDetailsSession');
+                            
+                            $params = [
+                                    'who'=>'other',
+                                    'name-title' => $userSession->user->name->title,
+                                    'name-first' => $userSession->user->name->first,
+                                    'name-last' => $userSession->user->name->last,
+                            ];
+                            if($userSession->user->address instanceof Address) {
+                                $params += [
+                                        'address-address1' => $userSession->user->address->address1,
+                                        'address-address2' => $userSession->user->address->address2,
+                                        'address-address3' => $userSession->user->address->address3,
+                                        'address-postcode' => $userSession->user->address->postcode,
+                                ];
+                            }
+                            $correspondentForm->bind($params);
                             break;
                         case 'donor':
                             $correspondent = $this->getLpa()->document->donor->flatten();
