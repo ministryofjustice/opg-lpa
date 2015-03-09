@@ -1,8 +1,6 @@
 <?php
 namespace Application\Model\Rest\NotifiedPeople;
 
-use RuntimeException;
-
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 
 use Application\Model\Rest\AbstractResource;
@@ -58,6 +56,13 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
+        $validation = $person->validateAllGroups();
+
+        if( $validation->hasErrors() ){
+            return new ValidationApiProblem( $validation );
+        }
+
+        //---
 
         $lpa->document->peopleToNotify[] = $person;
 
@@ -150,9 +155,17 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
                 $person = new NotifiedPerson( $data );
 
-                # TODO - validate!!!
-
                 $person->id = (int)$id;
+
+                //---
+
+                $validation = $person->validateAllGroups();
+
+                if( $validation->hasErrors() ){
+                    return new ValidationApiProblem( $validation );
+                }
+
+                //---
 
                 $document->peopleToNotify[$key] = $person;
 
@@ -192,24 +205,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
                 unset( $document->peopleToNotify[$key] );
 
                 //---
-
-                $validation = $document->validate();
-
-                if( $validation->hasErrors() ){
-                    return new ValidationApiProblem( $validation );
-                }
-
-                //---
-
-                if( $lpa->validate()->hasErrors() ){
-
-                    /*
-                     * This is not based on user input (we already validated the Document above),
-                     * thus if we have errors here it is our fault!
-                     */
-                    throw new RuntimeException('A malformed LPA object');
-
-                }
 
                 $this->updateLpa( $lpa );
 
