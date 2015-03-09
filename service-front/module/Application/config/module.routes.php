@@ -67,6 +67,17 @@ return [
                 ],
             ], // forgot-password
 
+            'send-feedback' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/send-feedback',
+                    'defaults' => [
+                        'controller' => 'General\FeedbackController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // send-feedback
+            
             'guidance' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
