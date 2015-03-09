@@ -69,6 +69,8 @@ return array(
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Currency' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Currency.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Custom\\DateTimeUTC' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Custom/DateTimeUTC.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Custom\\DateTimeUTCValidator' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Custom/DateTimeUTCValidator.php',
+    'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Custom\\UniqueIdInArray' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Custom/UniqueIdInArray.php',
+    'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Custom\\UniqueIdInArrayValidator' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Custom/UniqueIdInArrayValidator.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Date' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Date.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\DateTime' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/DateTime.php',
     'Opg\\Lpa\\DataModel\\Validator\\Constraints\\Email' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Validator/Constraints/Email.php',

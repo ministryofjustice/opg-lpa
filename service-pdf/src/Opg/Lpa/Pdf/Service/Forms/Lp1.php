@@ -10,7 +10,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 abstract class Lp1 extends AbstractForm
 {
     const BOX_CHARS_PER_ROW = 84;
-    const BOX_NO_OF_ROWS = 11;
+    const BOX_NO_OF_ROWS = 6;
     
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
     const MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM = 2;
@@ -87,32 +87,26 @@ abstract class Lp1 extends AbstractForm
         if((count($this->lpa->document->replacementAttorneys) > 1) && 
             ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             
-            $how = "";
-            $when = "";
+            $content = "";
             switch($this->lpa->document->replacementAttorneyDecisions->how) {
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $how = "Replacement attorneys make decisions jointly and severally";
+                    $content = "Replacement attorneys make decisions jointly and severally\r\n";
                     break;
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $how = "Replacement attorneys make decisions depend on below";
+                    $content = "Replacement attorneys make decisions depend on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
             }
             
             switch($this->lpa->document->replacementAttorneyDecisions->when) {
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
-                    $when = "Replacement attorneys step in when the first attorney is unable to act";
+                    $content .= "Replacement attorneys step in when the first attorney is unable to act\r\n";
                     break;
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
-                    $when = "Replacement attorneys step in when the last attorney is unable to act";
+                    $content .= "Replacement attorneys step in when the last attorney is unable to act\r\n";
                     break;
                 case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
-                    $when = "Replacement attorneys step in depends on below";
+                    $content .= "Replacement attorneys step in depends on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
                     break;
             }
-            
-            $content = (!empty($how)? $how."\n":"") .
-                       (!empty($when)? $when."\n":"") .
-                       $this->lpa->document->replacementAttorneyDecisions->howDetails . "\n" . 
-                       $this->lpa->document->replacementAttorneyDecisions->whenDetails;
             
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content))->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
@@ -232,17 +226,17 @@ abstract class Lp1 extends AbstractForm
          *  Preference and Instructions. (Section 7)
          */
         if(!empty($this->flattenLpa['lpa-document-preference'])) {
-            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
             if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-preference'])) {
                 $this->flattenLpa['has-more-preferences'] = self::CHECK_BOX_ON;
             }
+            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
         }
         
         if(!empty($this->flattenLpa['lpa-document-instruction'])) {
-            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
             if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-instruction'])) {
                 $this->flattenLpa['has-more-instructions'] = self::CHECK_BOX_ON;
             }
+            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
         }
         
         /**
@@ -277,7 +271,6 @@ abstract class Lp1 extends AbstractForm
                 break;
         }
         
-        
         /**
          * Applicant (Section 12)
          */
@@ -288,16 +281,17 @@ abstract class Lp1 extends AbstractForm
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
             $this->flattenLpa['attorney-is-applicant'] = self::CHECK_BOX_ON;
             foreach($this->lpa->document->whoIsRegistering as $index=>$attorneyId) {
-                if($this->lpa->document->primaryAttorneys[$attorneyId] instanceof TrustCorporation) {
-                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name'];
+                $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
+                if($attorney instanceof TrustCorporation) {
+                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $attorney->name;
                 }
                 else {
-                    $this->flattenLpa['applicant-'.$index.'-name-title']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-title'];
-                    $this->flattenLpa['applicant-'.$index.'-name-first']     = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-first'];
-                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $this->flattenLpa['lpa-document-primaryAttorneys-'.$attorneyId.'-name-last'];
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-day']   = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('d');
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('m');
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-year']  = $this->lpa->document->primaryAttorneys[$attorneyId]->dob->date->format('Y');
+                    $this->flattenLpa['applicant-'.$index.'-name-title']     = $attorney->name->title;
+                    $this->flattenLpa['applicant-'.$index.'-name-first']     = $attorney->name->first;
+                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $attorney->name->last;
+                    $this->flattenLpa['applicant-'.$index.'-dob-date-day']   = $attorney->dob->date->format('d');
+                    $this->flattenLpa['applicant-'.$index.'-dob-date-month'] = $attorney->dob->date->format('m');
+                    $this->flattenLpa['applicant-'.$index.'-dob-date-year']  = $attorney->dob->date->format('Y');
                 }
             }
             
@@ -340,7 +334,7 @@ abstract class Lp1 extends AbstractForm
                 break;
         }
         
-        if(isset($this->flattenLpa['lpa-document-correspondent-contactByPost'])) {
+        if($this->flattenLpa['lpa-document-correspondent-contactByPost'] === true) {
             $this->flattenLpa['correspondent-contact-by-post'] = self::CHECK_BOX_ON;
         }
         
@@ -352,7 +346,7 @@ abstract class Lp1 extends AbstractForm
             $this->flattenLpa['correspondent-contact-by-email'] = self::CHECK_BOX_ON;
         }
         
-        if(isset($this->flattenLpa['lpa-document-correspondent-contactInWelsh'])) {
+        if($this->flattenLpa['lpa-document-correspondent-contactInWelsh'] === true) {
             $this->flattenLpa['correspondent-contact-in-welsh'] = self::CHECK_BOX_ON;
         }
         

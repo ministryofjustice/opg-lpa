@@ -81,7 +81,7 @@ class Lpa120 extends AbstractForm
                 'correspondent-phone'       => ($this->lpa->document->correspondent->phone instanceof PhoneNumber)?$this->lpa->document->correspondent->phone->number:null,
                 'correspondent-name-email-address' => ($this->lpa->document->correspondent->email instanceof EmailAddress)?$this->lpa->document->correspondent->email->address:null,
                 'receive-benefits'          => $this->lpa->payment->reducedFeeReceivesBenefits?'yes':'no',
-                'damage-awarded'            => $this->lpa->payment->reducedFeeAwardedDamages?'yes':'no',
+                'damage-awarded'            => $this->lpa->payment->reducedFeeAwardedDamages?'no':'yes',
                 'low-income'                => $this->lpa->payment->reducedFeeLowIncome?'yes':'no',
                 'receive-universal-credit'  => $this->lpa->payment->reducedFeeUniversalCredit?'yes':'no'
         );

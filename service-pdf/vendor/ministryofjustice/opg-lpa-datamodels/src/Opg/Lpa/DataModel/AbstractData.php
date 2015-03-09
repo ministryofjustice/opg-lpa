@@ -150,14 +150,18 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Validates the concrete class which this method is called on.
      *
      * @param $properties Array An array of property names to check. An empty array means all properties.
+     * @param $groups Array An array of what validator groups to check (if any).
      * @return ValidatorResponse
      * @throws InvalidArgumentException
      */
-    public function validate( Array $properties = array() ){
+    public function validate( Array $properties = array(), Array $groups = array() ){
 
         $validator = Validation::createValidatorBuilder()
             ->setApiVersion( Validation::API_VERSION_2_5 )
             ->addMethodMapping('loadValidatorMetadata')->getValidator();
+
+        // Marge any other require groups in along with Default.
+        $groups = array_unique( array_merge( $groups, ['Default'] ) );
 
         if( !empty($properties) ){
 
@@ -166,13 +170,13 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             $violations = new ConstraintViolationList();
 
             foreach( $properties as $property ){
-                $result = $validator->validateProperty( $this, $property );
+                $result = $validator->validateProperty( $this, $property, $groups );
                 $violations->addAll( $result );
             }
 
         } else {
             // Validate all properties...
-            $violations = $validator->validate( $this );
+            $violations = $validator->validate( $this, null, $groups );
         }
 
         //---
