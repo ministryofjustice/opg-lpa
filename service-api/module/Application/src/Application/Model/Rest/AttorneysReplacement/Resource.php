@@ -68,6 +68,13 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
+        $validation = $attorney->validateAllGroups();
+
+        if( $validation->hasErrors() ){
+            return new ValidationApiProblem( $validation );
+        }
+
+        //---
 
         $lpa->document->replacementAttorneys[] = $attorney;
 
@@ -172,6 +179,16 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
                 $attorney->id = (int)$id;
 
+                //---
+
+                $validation = $attorney->validateAllGroups();
+
+                if( $validation->hasErrors() ){
+                    return new ValidationApiProblem( $validation );
+                }
+
+                //---
+
                 $document->replacementAttorneys[$key] = $attorney;
 
                 $this->updateLpa( $lpa );
@@ -210,24 +227,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
                 unset( $document->replacementAttorneys[$key] );
 
                 //---
-
-                $validation = $document->validate();
-
-                if( $validation->hasErrors() ){
-                    return new ValidationApiProblem( $validation );
-                }
-
-                //---
-
-                if( $lpa->validate()->hasErrors() ){
-
-                    /*
-                     * This is not based on user input (we already validated the Document above),
-                     * thus if we have errors here it is our fault!
-                     */
-                    throw new RuntimeException('A malformed LPA object');
-
-                }
 
                 $this->updateLpa( $lpa );
 
