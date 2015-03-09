@@ -16,7 +16,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/c335bc35558e0683f95c3fd5dd11a5817c0a761f",
+                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/a8322cd4e7aa32ec88d98aa4b0cb2c6251b08509",
                 "reference": "c335bc3",
                 "shasum": ""
             },
@@ -60,7 +60,7 @@
                 "redis",
                 "resque"
             ],
-            "time": "2014-09-25 02:24:50"
+            "time": "2015-02-04 18:56:54"
         },
         {
             "name": "colinmollenhour/credis",
@@ -328,12 +328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "cb47ad23d07b05d5092be479f42a391fe4957f86"
+                "reference": "27a2de9e86b67e661d0136dfe79e7204fa4589d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/cb47ad23d07b05d5092be479f42a391fe4957f86",
-                "reference": "cb47ad23d07b05d5092be479f42a391fe4957f86",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/27a2de9e86b67e661d0136dfe79e7204fa4589d5",
+                "reference": "27a2de9e86b67e661d0136dfe79e7204fa4589d5",
                 "shasum": ""
             },
             "require": {
@@ -359,7 +359,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-02-27 14:29:08"
+            "time": "2015-03-06 15:37:37"
         },
         {
             "name": "psr/log",

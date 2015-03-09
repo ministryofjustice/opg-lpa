@@ -129,7 +129,7 @@ class Document extends AbstractData {
             //---
 
             // If it's an array, ensure the IDs are valid primary attorney IDs.
-            if( is_array($value) ){
+            if( is_array($value) && !empty($value) ){
 
                 foreach( $value as $attorneyId ){
                     if( !in_array( $attorneyId, $validAttorneyIds ) ){
@@ -184,7 +184,8 @@ class Document extends AbstractData {
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
                 ]
-            ])
+            ]),
+            new Assert\Custom\UniqueIdInArray,
         ]);
 
         $metadata->addPropertyConstraints('replacementAttorneys', [
@@ -192,7 +193,8 @@ class Document extends AbstractData {
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
                 ]
-            ])
+            ]),
+            new Assert\Custom\UniqueIdInArray,
         ]);
 
         // Allow only N trust corporation(s) across primaryAttorneys and replacementAttorneys.
@@ -219,7 +221,8 @@ class Document extends AbstractData {
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson' ]),
                 ]
-            ])
+            ]),
+            new Assert\Custom\UniqueIdInArray,
         ]);
 
     } // function
