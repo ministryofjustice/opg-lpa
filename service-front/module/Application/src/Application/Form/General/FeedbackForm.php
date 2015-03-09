@@ -15,6 +15,40 @@ class FeedbackForm extends AbstractForm {
 
         //--- Form elements
 
+        $this->add(array(
+            'name' => 'how-would-you-rate',
+            'type' => 'Radio',
+            'options'   => [
+                'value_options' => [
+                    'very-satisfied' => [
+                            'value' => 'very-satisfied',
+                    ],
+                    'satisfied' => [
+                            'value' => 'satisfied',
+                    ],
+                    'neither-satisfied-or-dissatisfied' => [
+                        'value' => 'neither-satisfied-or-dissatisfied',
+                    ],
+                    'dissatisfied' => [
+                        'value' => 'dissatisfied',
+                    ],
+                    'very-dissatisfied' => [
+                        'value' => 'very-issatisfied',
+                    ],
+                ],
+            ],
+        ));
+        
+        $this->add(array(
+            'name' => 'details',
+            'type' => 'Textarea',
+        ));
+        
+        $this->add(array(
+            'name' => 'email',
+            'type' => 'Text',
+        ));
+        
         //--------------------------------
 
         $inputFilter = $this->getInputFilter();

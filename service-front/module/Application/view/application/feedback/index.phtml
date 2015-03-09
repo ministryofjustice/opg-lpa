@@ -1,7 +1,82 @@
 <?php
 $form        = $this->form;
 $csrf        = $form->get('secret');
+
+$type        = $form->get('how-would-you-rate');
+$typeValueOptions = $type->getOptions()['value_options'];
+
+$typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
+$typeValueOptions['satisfied']['label'] = 'Satisfied';
+$typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
+$typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
+$typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
+
+$details = $form->get('details');
+$details->setOptions(['label' => 'Please take a moment to tell us about your experience, what worked and what didn\'t']);
+
+$email = $form->get('email');
+$email->setOptions(['label' => 'Your email address (optional)']);
+
+$type->setOptions( ['value_options' => $typeValueOptions] );
+
+$formLabel   = $this->plugin('formLabel');
 ?>
 
+<?= $this->form()->openTag($form); ?>
+    
+            <?= $this->formElement($csrf) ?>
+            
+            <?= $this->formErrorList(); ?>
+            
+            <div class="emphasised option group">
+                <?= $this->formElement($type)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($type) ?>
+                </p>
+            </div>
+    
 
-Feedback Form
+ 
+             <div class="emphasised option group">
+                
+                <h3 id="instructions-label">
+                    <?= $formLabel->openTag($details) . $details->getOption('label'); ?>
+                    <?= $formLabel->closeTag() ?>
+                </h3>
+                
+                <p>
+                <?= $this->formElement($details)?>
+                </p>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($details) ?>
+                </p>
+                
+            </div>       
+        
+            <div class="emphasised option group">
+                
+                <h3 id="instructions-label">
+                    <?= $formLabel->openTag($email) . $details->getOption('label'); ?>
+                    <?= $formLabel->closeTag() ?>
+                </h3>
+                
+                <p>
+                <?= $this->formElement($email)?>
+                </p>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($email) ?>
+                </p>
+                
+            </div>
+            
+            <div class="accordion-actions">
+				<p>
+                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                </p>
+            </div>
+       <?= $this->form()->closeTag(); ?>
+            
+            
