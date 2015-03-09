@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Service\Payment;
+namespace Application\Model\Service\Feedback;
 
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;

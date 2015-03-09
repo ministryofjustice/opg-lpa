@@ -11,21 +11,19 @@ namespace Application\Controller\General;
 
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
+use Application\Form\General\FeedbackForm;
 
 class FeedbackController extends AbstractBaseController
 {
     public function indexAction()
     {
-        $guidanceService = $this->getServiceLocator()->get('Guidance');
+        $feedbackService = $this->getServiceLocator()->get('Feedback');
         
-        $model = new ViewModel($guidanceService->parseMarkdown());
+        $form = new FeedbackForm();
         
-        $model->setTemplate('guidance/opg-help-system.phtml');
+        $model = new ViewModel(['form'=>$form]);
         
-        if ($this->request->isXmlHttpRequest()) {
-            // if this is accessed via ajax request, disable layout, and return the core text content
-            $model->setTerminal(true);
-        }
+        $model->setTemplate('application/feedback/index.phtml');
         
         return $model;
     }
