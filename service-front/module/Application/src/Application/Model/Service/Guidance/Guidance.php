@@ -6,6 +6,7 @@ use Michelf\Markdown;
 class Guidance
 {
     const GUIDANCE_MARKDOWN_FOLDER = 'public/guidance';
+    const GUIDANCE_ROUTE = 'guide';
 
     /**
      * Generate guidance sections and navigation from the guidance markdown files
@@ -31,7 +32,7 @@ class Guidance
                     'id' => $sectionId,
                     'title' => $sectionTitle,
                     'html' => $this->processSection($sectionFilename, $sectionId),
-                    'url' => '/help/#topic-' . $sectionId,
+                    'url' => '/' . self::GUIDANCE_ROUTE . '#topic-' . $sectionId,
                     'dataJourney' => 'stageprompt.lpa:help:' . $sectionId,
                 ];
             }
@@ -58,7 +59,7 @@ class Guidance
         
         $html .= preg_replace(
                     '/<a href="\/help\/#topic-(.+)">(.+)<\/a>/',
-                    '<a href="/help/#topic-${1}" class="js-guidance" data-journey="stageprompt.lpa:help:${1}">${2}</a>',
+                    '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-journey="stageprompt.lpa:help:${1}">${2}</a>',
                     $md
                  );
                 
