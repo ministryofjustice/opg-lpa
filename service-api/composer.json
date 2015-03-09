@@ -22,9 +22,9 @@
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.1",
         "phly/phly-mongo": "1.0.0",
-        "guzzlehttp/guzzle": "5.1.0",
-        "colinmollenhour/credis": ">=1.2",
-        "ministryofjustice/opg-lpa-datamodels": "dev-develop",
+        "guzzlehttp/guzzle": "^5.1.0",
+        "colinmollenhour/credis": "^1.2",
+        "ministryofjustice/opg-lpa-datamodels": "dev-master",
         "ministryofjustice/opg-lpa-common": "dev-develop",
         "zf-commons/zfc-rbac": "~2.4"
     },
