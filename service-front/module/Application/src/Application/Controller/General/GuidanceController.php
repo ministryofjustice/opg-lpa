@@ -18,7 +18,7 @@ class GuidanceController extends AbstractBaseController
     {
         $guidanceService = $this->getServiceLocator()->get('Guidance');
         
-        $model = new ViewModel($guidanceService->generateHtmlFromMarkdown());
+        $model = new ViewModel($guidanceService->parseMarkdown());
         
         $model->setTemplate('guidance/opg-help-system.phtml');
         

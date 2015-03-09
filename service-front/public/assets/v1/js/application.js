@@ -3232,7 +3232,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
   HelpSystem.prototype = {
     defaults: {
-      guidancePath: 'help',
+      guidancePath: 'guidance/section',
       selector: 'a.js-guidance',
       overlayIdent: 'help-system',
       overlaySource: '#content',

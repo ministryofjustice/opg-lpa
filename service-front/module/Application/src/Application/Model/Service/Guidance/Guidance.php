@@ -10,9 +10,9 @@ class Guidance
     /**
      * Generate guidance sections and navigation from the guidance markdown files
      * 
-     * @return string The generated HTML
+     * @return array An array of guidance section details
      */
-    function generateHtmlFromMarkdown()
+    function parseMarkdown()
     {
         $sectionArray = [];
         $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . '/order.md');
