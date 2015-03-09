@@ -230,7 +230,7 @@ class Randomizer
         return implode(' ', $chosenWords);
     }
     
-    protected function rFancyText($count)
+    protected function sequentialText($count)
     {
         //max: 46655
         $loopCount = $count/4;
@@ -253,26 +253,38 @@ class Randomizer
         return $text;
     }
     
-    protected function rText($count)
+    protected function rText($min, $max)
     {
-        $str = str_replace("\r", "", $this->lorem());
+        // string approximate lenth of the return text.
+        $textStrlen = rand($min, $max-30);
         
-        $paragraphs = explode("\n\n", $str);
+        $paragraphs = explode("\r\n\r\n", $this->lorem());
         
-        foreach($paragraphs as &$para) {
-            $para = str_replace("\n", ' ', $para);
+        $numPara = count($paragraphs);
+        
+        $strlens = [];
+        foreach($paragraphs as $paragraph) {
+            $strlens[] = strlen(trim($paragraph));
         }
         
-        $str = implode("\n\n", $paragraphs);
+        $startPara = rand(0, 100);
+        $length = 0;
+        for($i=$startPara; $i<=$numPara; $i++) {
+            if($length + $strlens[$i] < $max) {
+                $length += $strlens[$i];
+            }
+            else {
+                $endPara = $i-1;
+                break;
+            }
+        }
         
-        do {
-            $startPara = rand(0, count($paragraphs)-1);
-            $start = strpos($str, $paragraphs[$startPara]);
-        }while($start + $count > strlen($str));
+        $text = '';
+        for($i=$startPara; $i<=$endPara; $i++) {
+            $text .= $paragraphs[$i]."\r\n";
+        }
         
-        $str = substr($str, $start, $count);
-        
-        return ltrim($str, ",.!? \n");
+        return $text;
     }
     
 
@@ -2964,1740 +2976,329 @@ class Randomizer
     protected function lorem()
     {
         return <<<EOD
-The Law of the Jungle lays down very clearly that any wolf
-may, when he marries, withdraw from the Pack he belongs to. But
-as soon as his cubs are old enough to stand on their feet he must
-bring them to the Pack Council, which is generally held once a
-month at full moon, in order that the other wolves may identify
-them. After that inspection the cubs are free to run where they
-please, and until they have killed their first buck no excuse is
-accepted if a grown wolf of the Pack kills one of them. The
-punishment is death where the murderer can be found; and if you
-think for a minute you will see that this must be so.
-
-Father Wolf waited till his cubs could run a little, and then
-on the night of the Pack Meeting took them and Mowgli and Mother
-Wolf to the Council Rock--a hilltop covered with stones and
-boulders where a hundred wolves could hide. Akela, the great gray
-Lone Wolf, who led all the Pack by strength and cunning, lay out
-at full length on his rock, and below him sat forty or more wolves
-of every size and color, from badger-colored veterans who could
-handle a buck alone to young black three-year-olds who thought
-they could. The Lone Wolf had led them for a year now. He had
-fallen twice into a wolf trap in his youth, and once he had been
-beaten and left for dead; so he knew the manners and customs of
-men. There was very little talking at the Rock. The cubs tumbled
-over each other in the center of the circle where their mothers
-and fathers sat, and now and again a senior wolf would go quietly
-up to a cub, look at him carefully, and return to his place on
-noiseless feet. Sometimes a mother would push her cub far out
-into the moonlight to be sure that he had not been overlooked.
-Akela from his rock would cry: "Ye know the Law--ye know the
-Law. Look well, O Wolves!" And the anxious mothers would take up
-the call: "Look--look well, O Wolves!"
-
-At last--and Mother Wolf's neck bristles lifted as the time
-came--Father Wolf pushed "Mowgli the Frog," as they called him,
-into the center, where he sat laughing and playing with some
-pebbles that glistened in the moonlight.
-
-Akela never raised his head from his paws, but went on with
-the monotonous cry: "Look well!" A muffled roar came up from
-behind the rocks--the voice of Shere Khan crying: "The cub is
-mine. Give him to me. What have the Free People to do with a
-man's cub?" Akela never even twitched his ears. All he said was:
-"Look well, O Wolves! What have the Free People to do with the
-orders of any save the Free People? Look well!"
-
-There was a chorus of deep growls, and a young wolf in his
-fourth year flung back Shere Khan's question to Akela: "What have
-the Free People to do with a man's cub?" Now, the Law of the
-Jungle lays down that if there is any dispute as to the right of a
-cub to be accepted by the Pack, he must be spoken for by at least
-two members of the Pack who are not his father and mother.
-
-"Who speaks for this cub?" said Akela. "Among the Free People
-who speaks?" There was no answer and Mother Wolf got ready for
-what she knew would be her last fight, if things came to fighting.
-
-Then the only other creature who is allowed at the Pack
-Council--Baloo, the sleepy brown bear who teaches the wolf cubs
-the Law of the Jungle: old Baloo, who can come and go where he
-pleases because he eats only nuts and roots and honey--rose upon
-his hind quarters and grunted.
-
-"The man's cub--the man's cub?" he said. "I speak for the
-man's cub. There is no harm in a man's cub. I have no gift of
-words, but I speak the truth. Let him run with the Pack, and be
-entered with the others. I myself will teach him."
-
-"We need yet another," said Akela. "Baloo has spoken, and he
-is our teacher for the young cubs. Who speaks besides Baloo?"
-
-A black shadow dropped down into the circle. It was Bagheera
-the Black Panther, inky black all over, but with the panther
-markings showing up in certain lights like the pattern of watered
-silk. Everybody knew Bagheera, and nobody cared to cross his
-path; for he was as cunning as Tabaqui, as bold as the wild
-buffalo, and as reckless as the wounded elephant. But he had a
-voice as soft as wild honey dripping from a tree, and a skin
-softer than down.
-
-"O Akela, and ye the Free People," he purred, "I have no right
-in your assembly, but the Law of the Jungle says that if there is
-a doubt which is not a killing matter in regard to a new cub, the
-life of that cub may be bought at a price. And the Law does not
-say who may or may not pay that price. Am I right?"
-
-"Good! Good!" said the young wolves, who are always hungry.
-"Listen to Bagheera. The cub can be bought for a price. It is
-the Law."
-
-"Knowing that I have no right to speak here, I ask your
-leave."
-
-"Speak then," cried twenty voices.
-
-"To kill a naked cub is shame. Besides, he may make better
-sport for you when he is grown. Baloo has spoken in his behalf.
-Now to Baloo's word I will add one bull, and a fat one, newly
-killed, not half a mile from here, if ye will accept the man's cub
-according to the Law. Is it difficult?"
-
-There was a clamor of scores of voices, saying: "What matter?
-He will die in the winter rains. He will scorch in the sun. What
-harm can a naked frog do us? Let him run with the Pack. Where is
-the bull, Bagheera? Let him be accepted." And then came Akela's
-deep bay, crying: "Look well--look well, O Wolves!"
-
-Mowgli was still deeply interested in the pebbles, and he did
-not notice when the wolves came and looked at him one by one. At
-last they all went down the hill for the dead bull, and only
-Akela, Bagheera, Baloo, and Mowgli's own wolves were left. Shere
-Khan roared still in the night, for he was very angry that Mowgli
-had not been handed over to him.
-
-"Ay, roar well," said Bagheera, under his whiskers, "for the
-time will come when this naked thing will make thee roar to
-another tune, or I know nothing of man."
-
-"It was well done," said Akela. "Men and their cubs are very
-wise. He may be a help in time."
-
-"Truly, a help in time of need; for none can hope to lead the
-Pack forever," said Bagheera.
-
-Akela said nothing. He was thinking of the time that comes to
-every leader of every pack when his strength goes from him and he
-gets feebler and feebler, till at last he is killed by the wolves
-and a new leader comes up--to be killed in his turn.
-
-"Take him away," he said to Father Wolf, "and train him as
-befits one of the Free People."
-
-And that is how Mowgli was entered into the Seeonee Wolf Pack
-for the price of a bull and on Baloo's good word.
-
-
-Now you must be content to skip ten or eleven whole years, and
-only guess at all the wonderful life that Mowgli led among the
-wolves, because if it were written out it would fill ever so many
-books. He grew up with the cubs, though they, of course, were
-grown wolves almost before he was a child. And Father Wolf taught
-him his business, and the meaning of things in the jungle, till
-every rustle in the grass, every breath of the warm night air,
-every note of the owls above his head, every scratch of a bat's
-claws as it roosted for a while in a tree, and every splash of
-every little fish jumping in a pool meant just as much to him as
-the work of his office means to a business man. When he was not
-learning he sat out in the sun and slept, and ate and went to
-sleep again. When he felt dirty or hot he swam in the forest
-pools; and when he wanted honey (Baloo told him that honey and
-nuts were just as pleasant to eat as raw meat) he climbed up for
-it, and that Bagheera showed him how to do. Bagheera would lie
-out on a branch and call, "Come along, Little Brother," and at
-first Mowgli would cling like the sloth, but afterward he would
-fling himself through the branches almost as boldly as the gray
-ape. He took his place at the Council Rock, too, when the Pack
-met, and there he discovered that if he stared hard at any wolf,
-the wolf would be forced to drop his eyes, and so he used to stare
-for fun. At other times he would pick the long thorns out of the
-pads of his friends, for wolves suffer terribly from thorns and
-burs in their coats. He would go down the hillside into the
-cultivated lands by night, and look very curiously at the
-villagers in their huts, but he had a mistrust of men because
-Bagheera showed him a square box with a drop gate so cunningly
-hidden in the jungle that he nearly walked into it, and told him
-that it was a trap. He loved better than anything else to go with
-Bagheera into the dark warm heart of the forest, to sleep all
-through the drowsy day, and at night see how Bagheera did his
-killing. Bagheera killed right and left as he felt hungry, and so
-did Mowgli--with one exception. As soon as he was old enough to
-understand things, Bagheera told him that he must never touch
-cattle because he had been bought into the Pack at the price of a
-bull's life. "All the jungle is thine," said Bagheera, "and thou
-canst kill everything that thou art strong enough to kill; but for
-the sake of the bull that bought thee thou must never kill or eat
-any cattle young or old. That is the Law of the Jungle." Mowgli
-obeyed faithfully.
-
-And he grew and grew strong as a boy must grow who does not
-know that he is learning any lessons, and who has nothing in the
-world to think of except things to eat.
-
-Mother Wolf told him once or twice that Shere Khan was not a
-creature to be trusted, and that some day he must kill Shere Khan.
-But though a young wolf would have remembered that advice every
-hour, Mowgli forgot it because he was only a boy--though he
-would have called himself a wolf if he had been able to speak in
-any human tongue.
-
-Shere Khan was always crossing his path in the jungle, for as
-Akela grew older and feebler the lame tiger had come to be great
-friends with the younger wolves of the Pack, who followed him for
-scraps, a thing Akela would never have allowed if he had dared to
-push his authority to the proper bounds. Then Shere Khan would
-flatter them and wonder that such fine young hunters were content
-to be led by a dying wolf and a man's cub. "They tell me," Shere
-Khan would say, "that at Council ye dare not look him between the
-eyes." And the young wolves would growl and bristle.
-
-Bagheera, who had eyes and ears everywhere, knew something of
-this, and once or twice he told Mowgli in so many words that Shere
-Khan would kill him some day. Mowgli would laugh and answer: "I
-have the Pack and I have thee; and Baloo, though he is so lazy,
-might strike a blow or two for my sake. Why should I be afraid?"
-
-
-It was one very warm day that a new notion came to Bagheera--
-born of something that he had heard. Perhaps Ikki the Porcupine
-had told him; but he said to Mowgli when they were deep in the
-jungle, as the boy lay with his head on Bagheera's beautiful black
-skin, "Little Brother, how often have I told thee that Shere Khan
-is thy enemy?"
-
-"As many times as there are nuts on that palm," said Mowgli,
-who, naturally, could not count. "What of it? I am sleepy,
-Bagheera, and Shere Khan is all long tail and loud talk--like
-Mao, the Peacock."
-
-"But this is no time for sleeping. Baloo knows it; I know it;
-the Pack know it; and even the foolish, foolish deer know.
-Tabaqui has told thee too."
-
-"Ho! ho!" said Mowgli. "Tabaqui came to me not long ago with
-some rude talk that I was a naked man's cub and not fit to dig
-pig-nuts. But I caught Tabaqui by the tail and swung him twice
-against a palm-tree to teach him better manners."
-
-"That was foolishness, for though Tabaqui is a mischief-maker,
-he would have told thee of something that concerned thee closely.
-Open those eyes, Little Brother. Shere Khan dare not kill thee in
-the jungle. But remember, Akela is very old, and soon the day
-comes when he cannot kill his buck, and then he will be leader no
-more. Many of the wolves that looked thee over when thou wast
-brought to the Council first are old too, and the young wolves
-believe, as Shere Khan has taught them, that a man-cub has no
-place with the Pack. In a little time thou wilt be a man."
-
-"And what is a man that he should not run with his brothers?"
-said Mowgli. "I was born in the jungle. I have obeyed the Law of
-the Jungle, and there is no wolf of ours from whose paws I have
-not pulled a thorn. Surely they are my brothers!"
-
-Bagheera stretched himself at full length and half shut his
-eyes. "Little Brother," said he, "feel under my jaw."
-
-Mowgli put up his strong brown hand, and just under Bagheera's
-silky chin, where the giant rolling muscles were all hid by the
-glossy hair, he came upon a little bald spot.
-
-"There is no one in the jungle that knows that I, Bagheera,
-carry that mark--the mark of the collar; and yet, Little
-Brother, I was born among men, and it was among men that my mother
-died--in the cages of the king's palace at Oodeypore. It was
-because of this that I paid the price for thee at the Council when
-thou wast a little naked cub. Yes, I too was born among men. I
-had never seen the jungle. They fed me behind bars from an iron
-pan till one night I felt that I was Bagheera--the Panther--
-and no man's plaything, and I broke the silly lock with one blow
-of my paw and came away. And because I had learned the ways of
-men, I became more terrible in the jungle than Shere Khan. Is it
-not so?"
-
-"Yes," said Mowgli, "all the jungle fear Bagheera--all
-except Mowgli."
-
-"Oh, thou art a man's cub," said the Black Panther very
-tenderly. "And even as I returned to my jungle, so thou must go
-back to men at last--to the men who are thy brothers--if thou
-art not killed in the Council."
-
-"But why--but why should any wish to kill me?" said Mowgli.
-
-"Look at me," said Bagheera. And Mowgli looked at him
-steadily between the eyes. The big panther turned his head away
-in half a minute.
-
-"That is why," he said, shifting his paw on the leaves. "Not
-even I can look thee between the eyes, and I was born among men,
-and I love thee, Little Brother. The others they hate thee
-because their eyes cannot meet thine; because thou art wise;
-because thou hast pulled out thorns from their feet--because
-thou art a man."
-
-"I did not know these things," said Mowgli sullenly, and he
-frowned under his heavy black eyebrows.
-
-"What is the Law of the Jungle? Strike first and then give
-tongue. By thy very carelessness they know that thou art a man.
-But be wise. It is in my heart that when Akela misses his next
-kill--and at each hunt it costs him more to pin the buck--the
-Pack will turn against him and against thee. They will hold a
-jungle Council at the Rock, and then--and then--I have it!"
-said Bagheera, leaping up. "Go thou down quickly to the men's
-huts in the valley, and take some of the Red Flower which they
-grow there, so that when the time comes thou mayest have even a
-stronger friend than I or Baloo or those of the Pack that love
-thee. Get the Red Flower."
-
-By Red Flower Bagheera meant fire, only no creature in the
-jungle will call fire by its proper name. Every beast lives in
-deadly fear of it, and invents a hundred ways of describing it.
-
-"The Red Flower?" said Mowgli. "That grows outside their huts
-in the twilight. I will get some."
-
-"There speaks the man's cub," said Bagheera proudly.
-"Remember that it grows in little pots. Get one swiftly, and keep
-it by thee for time of need."
-
-"Good!" said Mowgli. "I go. But art thou sure, O my
-Bagheera"--he slipped his arm around the splendid neck and
-looked deep into the big eyes--"art thou sure that all this is
-Shere Khan's doing?"
-
-"By the Broken Lock that freed me, I am sure, Little Brother."
-
-"Then, by the Bull that bought me, I will pay Shere Khan full
-tale for this, and it may be a little over," said Mowgli, and he
-bounded away.
-
-"That is a man. That is all a man," said Bagheera to himself,
-lying down again. "Oh, Shere Khan, never was a blacker hunting
-than that frog-hunt of thine ten years ago!"
-
-Mowgli was far and far through the forest, running hard, and
-his heart was hot in him. He came to the cave as the evening mist
-rose, and drew breath, and looked down the valley. The cubs were
-out, but Mother Wolf, at the back of the cave, knew by his
-breathing that something was troubling her frog.
-
-"What is it, Son?" she said.
-
-"Some bat's chatter of Shere Khan," he called back. "I hunt
-among the plowed fields tonight," and he plunged downward through
-the bushes, to the stream at the bottom of the valley. There he
-checked, for he heard the yell of the Pack hunting, heard the
-bellow of a hunted Sambhur, and the snort as the buck turned at
-bay. Then there were wicked, bitter howls from the young wolves:
-"Akela! Akela! Let the Lone Wolf show his strength. Room for
-the leader of the Pack! Spring, Akela!"
-
-The Lone Wolf must have sprung and missed his hold, for Mowgli
-heard the snap of his teeth and then a yelp as the Sambhur knocked
-him over with his forefoot.
-
-He did not wait for anything more, but dashed on; and the
-yells grew fainter behind him as he ran into the croplands where
-the villagers lived.
-
-"Bagheera spoke truth," he panted, as he nestled down in some
-cattle fodder by the window of a hut. "To-morrow is one day both
-for Akela and for me."
-
-Then he pressed his face close to the window and watched the
-fire on the hearth. He saw the husbandman's wife get up and feed
-it in the night with black lumps. And when the morning came and
-the mists were all white and cold, he saw the man's child pick up
-a wicker pot plastered inside with earth, fill it with lumps of
-red-hot charcoal, put it under his blanket, and go out to tend the
-cows in the byre.
-
-"Is that all?" said Mowgli. "If a cub can do it, there is
-nothing to fear." So he strode round the corner and met the boy,
-took the pot from his hand, and disappeared into the mist while
-the boy howled with fear.
-
-"They are very like me," said Mowgli, blowing into the pot as
-he had seen the woman do. "This thing will die if I do not give
-it things to eat"; and he dropped twigs and dried bark on the red
-stuff. Halfway up the hill he met Bagheera with the morning dew
-shining like moonstones on his coat.
-
-"Akela has missed," said the Panther. "They would have killed
-him last night, but they needed thee also. They were looking for
-thee on the hill."
-
-"I was among the plowed lands. I am ready. See!" Mowgli
-held up the fire-pot.
-
-"Good! Now, I have seen men thrust a dry branch into that
-stuff, and presently the Red Flower blossomed at the end of it.
-Art thou not afraid?"
-
-"No. Why should I fear? I remember now--if it is not a
-dream--how, before I was a Wolf, I lay beside the Red Flower,
-and it was warm and pleasant."
-
-All that day Mowgli sat in the cave tending his fire pot and
-dipping dry branches into it to see how they looked. He found a
-branch that satisfied him, and in the evening when Tabaqui came to
-the cave and told him rudely enough that he was wanted at the
-Council Rock, he laughed till Tabaqui ran away. Then Mowgli went
-to the Council, still laughing.
-
-Akela the Lone Wolf lay by the side of his rock as a sign that
-the leadership of the Pack was open, and Shere Khan with his
-following of scrap-fed wolves walked to and fro openly being
-flattered. Bagheera lay close to Mowgli, and the fire pot was
-between Mowgli's knees. When they were all gathered together,
-Shere Khan began to speak--a thing he would never have dared to
-do when Akela was in his prime.
-
-"He has no right," whispered Bagheera. "Say so. He is a
-dog's son. He will be frightened."
-
-Mowgli sprang to his feet. "Free People," he cried, "does
-Shere Khan lead the Pack? What has a tiger to do with our
-leadership?"
-
-"Seeing that the leadership is yet open, and being asked to
-speak--" Shere Khan began.
-
-"By whom?" said Mowgli. "Are we all jackals, to fawn on this
-cattle butcher? The leadership of the Pack is with the Pack
-alone."
-
-There were yells of "Silence, thou man's cub!" "Let him
-speak. He has kept our Law"; and at last the seniors of the Pack
-thundered: "Let the Dead Wolf speak." When a leader of the Pack
-has missed his kill, he is called the Dead Wolf as long as he
-lives, which is not long.
-
-Akela raised his old head wearily:--
-
-"Free People, and ye too, jackals of Shere Khan, for twelve
-seasons I have led ye to and from the kill, and in all that time
-not one has been trapped or maimed. Now I have missed my kill.
-Ye know how that plot was made. Ye know how ye brought me up to
-an untried buck to make my weakness known. It was cleverly done.
-Your right is to kill me here on the Council Rock, now.
-Therefore, I ask, who comes to make an end of the Lone Wolf? For
-it is my right, by the Law of the Jungle, that ye come one by
-one."
-
-There was a long hush, for no single wolf cared to fight Akela
-to the death. Then Shere Khan roared: "Bah! What have we to do
-with this toothless fool? He is doomed to die! It is the man-cub
-who has lived too long. Free People, he was my meat from the
-first. Give him to me. I am weary of this man-wolf folly. He
-has troubled the jungle for ten seasons. Give me the man-cub, or
-I will hunt here always, and not give you one bone. He is a man,
-a man's child, and from the marrow of my bones I hate him!"
-
-Then more than half the Pack yelled: "A man! A man! What has
-a man to do with us? Let him go to his own place."
-
-"And turn all the people of the villages against us?" clamored
-Shere Khan. "No, give him to me. He is a man, and none of us can
-look him between the eyes."
-
-Akela lifted his head again and said, "He has eaten our food.
-He has slept with us. He has driven game for us. He has broken
-no word of the Law of the Jungle."
-
-"Also, I paid for him with a bull when he was accepted. The
-worth of a bull is little, but Bagheera's honor is something that
-he will perhaps fight for," said Bagheera in his gentlest voice.
-
-"A bull paid ten years ago!" the Pack snarled. "What do we
-care for bones ten years old?"
-
-"Or for a pledge?" said Bagheera, his white teeth bared under
-his lip. "Well are ye called the Free People!"
-
-"No man's cub can run with the people of the jungle," howled
-Shere Khan. "Give him to me!"
-
-"He is our brother in all but blood," Akela went on, "and ye
-would kill him here! In truth, I have lived too long. Some of ye
-are eaters of cattle, and of others I have heard that, under Shere
-Khan's teaching, ye go by dark night and snatch children from the
-villager's doorstep. Therefore I know ye to be cowards, and it is
-to cowards I speak. It is certain that I must die, and my life is
-of no worth, or I would offer that in the man-cub's place. But
-for the sake of the Honor of the Pack,--a little matter that by
-being without a leader ye have forgotten,--I promise that if ye
-let the man-cub go to his own place, I will not, when my time
-comes to die, bare one tooth against ye. I will die without
-fighting. That will at least save the Pack three lives. More I
-cannot do; but if ye will, I can save ye the shame that comes of
-killing a brother against whom there is no fault--a brother
-spoken for and bought into the Pack according to the Law of the
-Jungle."
-
-"He is a man--a man--a man!" snarled the Pack. And most
-of the wolves began to gather round Shere Khan, whose tail was
-beginning to switch.
-
-"Now the business is in thy hands," said Bagheera to Mowgli.
-"We can do no more except fight."
-
-Mowgli stood upright--the fire pot in his hands. Then he
-stretched out his arms, and yawned in the face of the Council; but
-he was furious with rage and sorrow, for, wolflike, the wolves had
-never told him how they hated him. "Listen you!" he cried.
-"There is no need for this dog's jabber. Ye have told me so often
-tonight that I am a man (and indeed I would have been a wolf with
-you to my life's end) that I feel your words are true. So I do
-not call ye my brothers any more, but sag [dogs], as a man should.
-What ye will do, and what ye will not do, is not yours to say.
-That matter is with me; and that we may see the matter more
-plainly, I, the man, have brought here a little of the Red Flower
-which ye, dogs, fear."
-
-He flung the fire pot on the ground, and some of the red coals
-lit a tuft of dried moss that flared up, as all the Council drew
-back in terror before the leaping flames.
-
-Mowgli thrust his dead branch into the fire till the twigs lit
-and crackled, and whirled it above his head among the cowering
-wolves.
-
-"Thou art the master," said Bagheera in an undertone. "Save
-Akela from the death. He was ever thy friend."
-
-Akela, the grim old wolf who had never asked for mercy in his
-life, gave one piteous look at Mowgli as the boy stood all naked,
-his long black hair tossing over his shoulders in the light of the
-blazing branch that made the shadows jump and quiver.
-
-"Good!" said Mowgli, staring round slowly. "I see that ye are
-dogs. I go from you to my own people--if they be my own people.
-The jungle is shut to me, and I must forget your talk and your
-companionship. But I will be more merciful than ye are. Because
-I was all but your brother in blood, I promise that when I am a
-man among men I will not betray ye to men as ye have betrayed me."
-He kicked the fire with his foot, and the sparks flew up. "There
-shall be no war between any of us in the Pack. But here is a debt
-to pay before I go." He strode forward to where Shere Khan sat
-blinking stupidly at the flames, and caught him by the tuft on his
-chin. Bagheera followed in case of accidents. "Up, dog!" Mowgli
-cried. "Up, when a man speaks, or I will set that coat ablaze!"
-
-Shere Khan's ears lay flat back on his head, and he shut his
-eyes, for the blazing branch was very near.
-
-"This cattle-killer said he would kill me in the Council
-because he had not killed me when I was a cub. Thus and thus,
-then, do we beat dogs when we are men. Stir a whisker, Lungri,
-and I ram the Red Flower down thy gullet!" He beat Shere Khan
-over the head with the branch, and the tiger whimpered and whined
-in an agony of fear.
-
-"Pah! Singed jungle cat--go now! But remember when next I
-come to the Council Rock, as a man should come, it will be with
-Shere Khan's hide on my head. For the rest, Akela goes free to
-live as he pleases. Ye will not kill him, because that is not my
-will. Nor do I think that ye will sit here any longer, lolling
-out your tongues as though ye were somebodies, instead of dogs
-whom I drive out--thus! Go!" The fire was burning furiously at
-the end of the branch, and Mowgli struck right and left round the
-circle, and the wolves ran howling with the sparks burning their
-fur. At last there were only Akela, Bagheera, and perhaps ten
-wolves that had taken Mowgli's part. Then something began to hurt
-Mowgli inside him, as he had never been hurt in his life before,
-and he caught his breath and sobbed, and the tears ran down his
-face.
-
-"What is it? What is it?" he said. "I do not wish to leave
-the jungle, and I do not know what this is. Am I dying,
-Bagheera?"
-
-"No, Little Brother. That is only tears such as men use,"
-said Bagheera. "Now I know thou art a man, and a man's cub no
-longer. The jungle is shut indeed to thee henceforward. Let them
-fall, Mowgli. They are only tears." So Mowgli sat and cried as
-though his heart would break; and he had never cried in all his
-life before.
-
-"Now," he said, "I will go to men. But first I must say
-farewell to my mother." And he went to the cave where she lived
-with Father Wolf, and he cried on her coat, while the four cubs
-howled miserably.
-
-"Ye will not forget me?" said Mowgli.
-
-"Never while we can follow a trail," said the cubs. "Come to
-the foot of the hill when thou art a man, and we will talk to
-thee; and we will come into the croplands to play with thee by
-night."
-
-"Come soon!" said Father Wolf. "Oh, wise little frog, come
-again soon; for we be old, thy mother and I."
-
-"Come soon," said Mother Wolf, "little naked son of mine.
-For, listen, child of man, I loved thee more than ever I loved my
-cubs."
-
-"I will surely come," said Mowgli. "And when I come it will
-be to lay out Shere Khan's hide upon the Council Rock. Do not
-forget me! Tell them in the jungle never to forget me!"
-
-The dawn was beginning to break when Mowgli went down the
-hillside alone, to meet those mysterious things that are called
-men.
-
-
-Hunting-Song of the Seeonee Pack
-
-As the dawn was breaking the Sambhur belled
-Once, twice and again!
-And a doe leaped up, and a doe leaped up
-From the pond in the wood where the wild deer sup.
-This I, scouting alone, beheld,
-Once, twice and again!
-
-As the dawn was breaking the Sambhur belled
-Once, twice and again!
-And a wolf stole back, and a wolf stole back
-To carry the word to the waiting pack,
-And we sought and we found and we bayed on his track
-Once, twice and again!
-
-As the dawn was breaking the Wolf Pack yelled
-Once, twice and again!
-Feet in the jungle that leave no mark!
-
-Eyes that can see in the dark--the dark!
-Tongue--give tongue to it! Hark! O hark!
-Once, twice and again!
-
-
-Kaa's Hunting
-
-His spots are the joy of the Leopard: his horns are the
-Buffalo's pride.
-Be clean, for the strength of the hunter is known by the
-gloss of his hide.
-If ye find that the Bullock can toss you, or the heavy-browed
-Sambhur can gore;
-Ye need not stop work to inform us: we knew it ten seasons
-before.
-Oppress not the cubs of the stranger, but hail them as Sister
-and Brother,
-For though they are little and fubsy, it may be the Bear is
-their mother.
-"There is none like to me!" says the Cub in the pride of his
-earliest kill;
-But the jungle is large and the Cub he is small. Let him
-think and be still.
-Maxims of Baloo
-
-All that is told here happened some time before Mowgli was turned
-out of the Seeonee Wolf Pack, or revenged himself on Shere Khan
-the tiger. It was in the days when Baloo was teaching him the Law
-of the Jungle. The big, serious, old brown bear was delighted to
-have so quick a pupil, for the young wolves will only learn as
-much of the Law of the Jungle as applies to their own pack and
-tribe, and run away as soon as they can repeat the Hunting Verse
---"Feet that make no noise; eyes that can see in the dark; ears
-that can hear the winds in their lairs, and sharp white teeth, all
-these things are the marks of our brothers except Tabaqui the
-Jackal and the Hyaena whom we hate." But Mowgli, as a man-cub,
-had to learn a great deal more than this. Sometimes Bagheera the
-Black Panther would come lounging through the jungle to see how
-his pet was getting on, and would purr with his head against a
-tree while Mowgli recited the day's lesson to Baloo. The boy
-could climb almost as well as he could swim, and swim almost as
-well as he could run. So Baloo, the Teacher of the Law, taught
-him the Wood and Water Laws: how to tell a rotten branch from a
-sound one; how to speak politely to the wild bees when he came
-upon a hive of them fifty feet above ground; what to say to Mang
-the Bat when he disturbed him in the branches at midday; and how
-to warn the water-snakes in the pools before he splashed down
-among them. None of the Jungle People like being disturbed, and
-all are very ready to fly at an intruder. Then, too, Mowgli was
-taught the Strangers' Hunting Call, which must be repeated aloud
-till it is answered, whenever one of the Jungle-People hunts
-outside his own grounds. It means, translated, "Give me leave to
-hunt here because I am hungry." And the answer is, "Hunt then for
-food, but not for pleasure."
-
-All this will show you how much Mowgli had to learn by heart,
-and he grew very tired of saying the same thing over a hundred
-times. But, as Baloo said to Bagheera, one day when Mowgli had
-been cuffed and run off in a temper, "A man's cub is a man's cub,
-and he must learn all the Law of the Jungle."
-
-"But think how small he is," said the Black Panther, who would
-have spoiled Mowgli if he had had his own way. "How can his
-little head carry all thy long talk?"
-
-"Is there anything in the jungle too little to be killed? No.
-That is why I teach him these things, and that is why I hit him,
-very softly, when he forgets."
-
-"Softly! What dost thou know of softness, old Iron-feet?"
-Bagheera grunted. "His face is all bruised today by thy--
-softness. Ugh."
-
-"Better he should be bruised from head to foot by me who love
-him than that he should come to harm through ignorance," Baloo
-answered very earnestly. "I am now teaching him the Master Words
-of the Jungle that shall protect him with the birds and the Snake
-People, and all that hunt on four feet, except his own pack. He
-can now claim protection, if he will only remember the words, from
-all in the jungle. Is not that worth a little beating?"
-
-"Well, look to it then that thou dost not kill the man-cub.
-He is no tree trunk to sharpen thy blunt claws upon. But what are
-those Master Words? I am more likely to give help than to ask it"
---Bagheera stretched out one paw and admired the steel-blue,
-ripping-chisel talons at the end of it--"still I should like to
-know."
-
-"I will call Mowgli and he shall say them--if he will.
-Come, Little Brother!"
-
-"My head is ringing like a bee tree," said a sullen little
-voice over their heads, and Mowgli slid down a tree trunk very
-angry and indignant, adding as he reached the ground: "I come for
-Bagheera and not for thee, fat old Baloo!"
-
-"That is all one to me," said Baloo, though he was hurt and
-grieved. "Tell Bagheera, then, the Master Words of the Jungle
-that I have taught thee this day."
-
-"Master Words for which people?" said Mowgli, delighted to
-show off. "The jungle has many tongues. I know them all."
-
-"A little thou knowest, but not much. See, O Bagheera, they
-never thank their teacher. Not one small wolfling has ever come
-back to thank old Baloo for his teachings. Say the word for the
-Hunting-People, then--great scholar."
-
-"We be of one blood, ye and I," said Mowgli, giving the words
-the Bear accent which all the Hunting People use.
-
-"Good. Now for the birds."
-
-Mowgli repeated, with the Kite's whistle at the end of the
-sentence.
-
-"Now for the Snake-People," said Bagheera.
-
-The answer was a perfectly indescribable hiss, and Mowgli
-kicked up his feet behind, clapped his hands together to applaud
-himself, and jumped on to Bagheera's back, where he sat sideways,
-drumming with his heels on the glossy skin and making the worst
-faces he could think of at Baloo.
-
-"There--there! That was worth a little bruise," said the
-brown bear tenderly. "Some day thou wilt remember me." Then he
-turned aside to tell Bagheera how he had begged the Master Words
-from Hathi the Wild Elephant, who knows all about these things,
-and how Hathi had taken Mowgli down to a pool to get the Snake
-Word from a water-snake, because Baloo could not pronounce it, and
-how Mowgli was now reasonably safe against all accidents in the
-jungle, because neither snake, bird, nor beast would hurt him.
-
-"No one then is to be feared," Baloo wound up, patting his big
-furry stomach with pride.
-
-"Except his own tribe," said Bagheera, under his breath; and
-then aloud to Mowgli, "Have a care for my ribs, Little Brother!
-What is all this dancing up and down?"
-
-Mowgli had been trying to make himself heard by pulling at
-Bagheera's shoulder fur and kicking hard. When the two listened
-to him he was shouting at the top of his voice, "And so I shall
-have a tribe of my own, and lead them through the branches all day
-long."
-
-"What is this new folly, little dreamer of dreams?" said
-Bagheera.
-
-"Yes, and throw branches and dirt at old Baloo," Mowgli went
-on. "They have promised me this. Ah!"
-
-"Whoof!" Baloo's big paw scooped Mowgli off Bagheera's back,
-and as the boy lay between the big fore-paws he could see the Bear
-was angry.
-
-"Mowgli," said Baloo, "thou hast been talking with the
-Bandar-log--the Monkey People."
-
-Mowgli looked at Bagheera to see if the Panther was angry too,
-and Bagheera's eyes were as hard as jade stones.
-
-"Thou hast been with the Monkey People--the gray apes--the
-people without a law--the eaters of everything. That is great
-shame."
-
-"When Baloo hurt my head," said Mowgli (he was still on his
-back), "I went away, and the gray apes came down from the trees
-and had pity on me. No one else cared." He snuffled a little.
-
-"The pity of the Monkey People!" Baloo snorted. "The
-stillness of the mountain stream! The cool of the summer sun!
-And then, man-cub?"
-
-"And then, and then, they gave me nuts and pleasant things to
-eat, and they--they carried me in their arms up to the top of
-the trees and said I was their blood brother except that I had no
-tail, and should be their leader some day."
-
-"They have no leader," said Bagheera. "They lie. They have
-always lied."
-
-"They were very kind and bade me come again. Why have I never
-been taken among the Monkey People? They stand on their feet as I
-do. They do not hit me with their hard paws. They play all day.
-Let me get up! Bad Baloo, let me up! I will play with them
-again."
-
-"Listen, man-cub," said the Bear, and his voice rumbled like
-thunder on a hot night. "I have taught thee all the Law of the
-Jungle for all the peoples of the jungle--except the Monkey-Folk
-who live in the trees. They have no law. They are outcasts.
-They have no speech of their own, but use the stolen words which
-they overhear when they listen, and peep, and wait up above in
-the branches. Their way is not our way. They are without
-leaders. They have no remembrance. They boast and chatter and
-pretend that they are a great people about to do great affairs in
-the jungle, but the falling of a nut turns their minds to laughter
-and all is forgotten. We of the jungle have no dealings with
-them. We do not drink where the monkeys drink; we do not go where
-the monkeys go; we do not hunt where they hunt; we do not die
-where they die. Hast thou ever heard me speak of the Bandar-log
-till today?"
-
-"No," said Mowgli in a whisper, for the forest was very still
-now Baloo had finished.
-
-"The Jungle-People put them out of their mouths and out of
-their minds. They are very many, evil, dirty, shameless, and they
-desire, if they have any fixed desire, to be noticed by the Jungle
-People. But we do not notice them even when they throw nuts and
-filth on our heads."
-
-He had hardly spoken when a shower of nuts and twigs spattered
-down through the branches; and they could hear coughings and
-howlings and angry jumpings high up in the air among the thin
-branches.
-
-"The Monkey-People are forbidden," said Baloo, "forbidden to
-the Jungle-People. Remember."
-
-"Forbidden," said Bagheera, "but I still think Baloo should
-have warned thee against them."
-
-"I--I? How was I to guess he would play with such dirt.
-The Monkey People! Faugh!"
-
-A fresh shower came down on their heads and the two trotted
-away, taking Mowgli with them. What Baloo had said about the
-monkeys was perfectly true. They belonged to the tree-tops, and as
-beasts very seldom look up, there was no occasion for the monkeys
-and the Jungle-People to cross each other's path. But whenever
-they found a sick wolf, or a wounded tiger, or bear, the monkeys
-would torment him, and would throw sticks and nuts at any beast
-for fun and in the hope of being noticed. Then they would howl
-and shriek senseless songs, and invite the Jungle-People to climb
-up their trees and fight them, or would start furious battles over
-nothing among themselves, and leave the dead monkeys where the
-Jungle-People could see them. They were always just going to have
-a leader, and laws and customs of their own, but they never did,
-because their memories would not hold over from day to day, and so
-they compromised things by making up a saying, "What the
-Bandar-log think now the jungle will think later," and that
-comforted them a great deal. None of the beasts could reach them,
-but on the other hand none of the beasts would notice them, and
-that was why they were so pleased when Mowgli came to play with
-them, and they heard how angry Baloo was.
-
-They never meant to do any more--the Bandar-log never mean
-anything at all; but one of them invented what seemed to him a
-brilliant idea, and he told all the others that Mowgli would be a
-useful person to keep in the tribe, because he could weave sticks
-together for protection from the wind; so, if they caught him,
-they could make him teach them. Of course Mowgli, as a
-woodcutter's child, inherited all sorts of instincts, and used to
-make little huts of fallen branches without thinking how he came
-to do it. The Monkey-People, watching in the trees, considered
-his play most wonderful. This time, they said, they were really
-going to have a leader and become the wisest people in the jungle
---so wise that everyone else would notice and envy them.
-Therefore they followed Baloo and Bagheera and Mowgli through the
-jungle very quietly till it was time for the midday nap, and
-Mowgli, who was very much ashamed of himself, slept between the
-Panther and the Bear, resolving to have no more to do with the
-Monkey People.
-
-The next thing he remembered was feeling hands on his legs and
-arms--hard, strong, little hands--and then a swash of branches
-in his face, and then he was staring down through the swaying
-boughs as Baloo woke the jungle with his deep cries and Bagheera
-bounded up the trunk with every tooth bared. The Bandar-log
-howled with triumph and scuffled away to the upper branches where
-Bagheera dared not follow, shouting: "He has noticed us! Bagheera
-has noticed us. All the Jungle-People admire us for our skill and
-our cunning." Then they began their flight; and the flight of the
-Monkey-People through tree-land is one of the things nobody can
-describe. They have their regular roads and crossroads, up hills
-and down hills, all laid out from fifty to seventy or a hundred
-feet above ground, and by these they can travel even at night if
-necessary. Two of the strongest monkeys caught Mowgli under the
-arms and swung off with him through the treetops, twenty feet at a
-bound. Had they been alone they could have gone twice as fast,
-but the boy's weight held them back. Sick and giddy as Mowgli was
-he could not help enjoying the wild rush, though the glimpses of
-earth far down below frightened him, and the terrible check and
-jerk at the end of the swing over nothing but empty air brought
-his heart between his teeth. His escort would rush him up a tree
-till he felt the thinnest topmost branches crackle and bend under
-them, and then with a cough and a whoop would fling themselves
-into the air outward and downward, and bring up, hanging by their
-hands or their feet to the lower limbs of the next tree.
-Sometimes he could see for miles and miles across the still green
-jungle, as a man on the top of a mast can see for miles across the
-sea, and then the branches and leaves would lash him across the
-face, and he and his two guards would be almost down to earth
-again. So, bounding and crashing and whooping and yelling, the
-whole tribe of Bandar-log swept along the tree-roads with Mowgli
-their prisoner.
-
-For a time he was afraid of being dropped. Then he grew angry
-but knew better than to struggle, and then he began to think. The
-first thing was to send back word to Baloo and Bagheera, for, at
-the pace the monkeys were going, he knew his friends would be left
-far behind. It was useless to look down, for he could only see
-the topsides of the branches, so he stared upward and saw, far
-away in the blue, Rann the Kite balancing and wheeling as he kept
-watch over the jungle waiting for things to die. Rann saw that
-the monkeys were carrying something, and dropped a few hundred
-yards to find out whether their load was good to eat. He whistled
-with surprise when he saw Mowgli being dragged up to a treetop and
-heard him give the Kite call for--"We be of one blood, thou and
-I." The waves of the branches closed over the boy, but Chil
-balanced away to the next tree in time to see the little brown
-face come up again. "Mark my trail!" Mowgli shouted. "Tell
-Baloo of the Seeonee Pack and Bagheera of the Council Rock."
-
-"In whose name, Brother?" Rann had never seen Mowgli before,
-though of course he had heard of him.
-
-"Mowgli, the Frog. Man-cub they call me! Mark my tra-il!"
-
-The last words were shrieked as he was being swung through the
-air, but Rann nodded and rose up till he looked no bigger than a
-speck of dust, and there he hung, watching with his telescope eyes
-the swaying of the treetops as Mowgli's escort whirled along.
-
-"They never go far," he said with a chuckle. "They never do
-what they set out to do. Always pecking at new things are the
-Bandar-log. This time, if I have any eye-sight, they have pecked
-down trouble for themselves, for Baloo is no fledgling and
-Bagheera can, as I know, kill more than goats."
-
-So he rocked on his wings, his feet gathered up under him, and
-waited.
-
-Meantime, Baloo and Bagheera were furious with rage and grief.
-Bagheera climbed as he had never climbed before, but the thin
-branches broke beneath his weight, and he slipped down, his claws
-full of bark.
-
-"Why didst thou not warn the man-cub?" he roared to poor
-Baloo, who had set off at a clumsy trot in the hope of overtaking
-the monkeys. "What was the use of half slaying him with blows if
-thou didst not warn him?"
-
-"Haste! O haste! We--we may catch them yet!" Baloo
-panted.
-
-"At that speed! It would not tire a wounded cow. Teacher of
-the Law--cub-beater--a mile of that rolling to and fro would
-burst thee open. Sit still and think! Make a plan. This is no
-time for chasing. They may drop him if we follow too close."
-
-"Arrula! Whoo! They may have dropped him already, being
-tired of carrying him. Who can trust the Bandar-log? Put dead
-bats on my head! Give me black bones to eat! Roll me into the
-hives of the wild bees that I may be stung to death, and bury me
-with the Hyaena, for I am most miserable of bears! Arulala!
-Wahooa! O Mowgli, Mowgli! Why did I not warn thee against the
-Monkey-Folk instead of breaking thy head? Now perhaps I may have
-knocked the day's lesson out of his mind, and he will be alone in
-the jungle without the Master Words."
-
-Baloo clasped his paws over his ears and rolled to and fro
-moaning.
-
-"At least he gave me all the Words correctly a little time
-ago," said Bagheera impatiently. "Baloo, thou hast neither memory
-nor respect. What would the jungle think if I, the Black Panther,
-curled myself up like Ikki the Porcupine, and howled?"
-
-"What do I care what the jungle thinks? He may be dead by
-now."
-
-"Unless and until they drop him from the branches in sport, or
-kill him out of idleness, I have no fear for the man-cub. He is
-wise and well taught, and above all he has the eyes that make the
-Jungle-People afraid. But (and it is a great evil) he is in the
-power of the Bandar-log, and they, because they live in trees,
-have no fear of any of our people." Bagheera licked one forepaw
-thoughtfully.
-
-"Fool that I am! Oh, fat, brown, root-digging fool that I
-am," said Baloo, uncoiling himself with a jerk, "it is true what
-Hathi the Wild Elephant says: `To each his own fear'; and they,
-the Bandar-log, fear Kaa the Rock Snake. He can climb as well as
-they can. He steals the young monkeys in the night. The whisper
-of his name makes their wicked tails cold. Let us go to Kaa."
-
-"What will he do for us? He is not of our tribe, being
-footless--and with most evil eyes," said Bagheera.
-
-"He is very old and very cunning. Above all, he is always
-hungry," said Baloo hopefully. "Promise him many goats."
-
-"He sleeps for a full month after he has once eaten. He may
-be asleep now, and even were he awake what if he would rather kill
-his own goats?" Bagheera, who did not know much about Kaa, was
-naturally suspicious.
-
-"Then in that case, thou and I together, old hunter, might
-make him see reason." Here Baloo rubbed his faded brown shoulder
-against the Panther, and they went off to look for Kaa the Rock
-Python.
-
-They found him stretched out on a warm ledge in the afternoon
-sun, admiring his beautiful new coat, for he had been in
-retirement for the last ten days changing his skin, and now he was
-very splendid--darting his big blunt-nosed head along the
-ground, and twisting the thirty feet of his body into fantastic
-knots and curves, and licking his lips as he thought of his dinner
-to come.
-
-"He has not eaten," said Baloo, with a grunt of relief, as
-soon as he saw the beautifully mottled brown and yellow jacket.
-"Be careful, Bagheera! He is always a little blind after he has
-changed his skin, and very quick to strike."
-
-Kaa was not a poison snake--in fact he rather despised the
-poison snakes as cowards--but his strength lay in his hug, and
-when he had once lapped his huge coils round anybody there was no
-more to be said. "Good hunting!" cried Baloo, sitting up on his
-haunches. Like all snakes of his breed Kaa was rather deaf, and
-did not hear the call at first. Then he curled up ready for any
-accident, his head lowered.
-
-"Good hunting for us all," he answered. "Oho, Baloo, what
-dost thou do here? Good hunting, Bagheera. One of us at least
-needs food. Is there any news of game afoot? A doe now, or even
-a young buck? I am as empty as a dried well."
-
-"We are hunting," said Baloo carelessly. He knew that you
-must not hurry Kaa. He is too big.
-
-"Give me permission to come with you," said Kaa. "A blow more
-or less is nothing to thee, Bagheera or Baloo, but I--I have to
-wait and wait for days in a wood-path and climb half a night on
-the mere chance of a young ape. Psshaw! The branches are not
-what they were when I was young. Rotten twigs and dry boughs are
-they all."
-
-"Maybe thy great weight has something to do with the matter,"
-said Baloo.
-
-"I am a fair length--a fair length," said Kaa with a little
-pride. "But for all that, it is the fault of this new-grown
-timber. I came very near to falling on my last hunt--very near
-indeed--and the noise of my slipping, for my tail was not tight
-wrapped around the tree, waked the Bandar-log, and they called me
-most evil names."
-
-"Footless, yellow earth-worm," said Bagheera under his
-whiskers, as though he were trying to remember something.
-
-"Sssss! Have they ever called me that?" said Kaa.
-
-"Something of that kind it was that they shouted to us last
-moon, but we never noticed them. They will say anything--even
-that thou hast lost all thy teeth, and wilt not face anything
-bigger than a kid, because (they are indeed shameless, these
-Bandar-log)--because thou art afraid of the he-goat's horns,"
-Bagheera went on sweetly.
-
-Now a snake, especially a wary old python like Kaa, very
-seldom shows that he is angry, but Baloo and Bagheera could see
-the big swallowing muscles on either side of Kaa's throat ripple
-and bulge.
-
-"The Bandar-log have shifted their grounds," he said quietly.
-"When I came up into the sun today I heard them whooping among the
-tree-tops."
-
-"It--it is the Bandar-log that we follow now," said Baloo,
-but the words stuck in his throat, for that was the first time in
-his memory that one of the Jungle-People had owned to being
-interested in the doings of the monkeys.
-
-"Beyond doubt then it is no small thing that takes two such
-hunters--leaders in their own jungle I am certain--on the
-trail of the Bandar-log," Kaa replied courteously, as he swelled
-with curiosity.
-
-"Indeed," Baloo began, "I am no more than the old and
-sometimes very foolish Teacher of the Law to the Seeonee
-wolf-cubs, and Bagheera here--"
-
-"Is Bagheera," said the Black Panther, and his jaws shut with
-a snap, for he did not believe in being humble. "The trouble is
-this, Kaa. Those nut-stealers and pickers of palm leaves have
-stolen away our man-cub of whom thou hast perhaps heard."
-
-"I heard some news from Ikki (his quills make him
-presumptuous) of a man-thing that was entered into a wolf pack,
-but I did not believe. Ikki is full of stories half heard and
-very badly told."
-
-"But it is true. He is such a man-cub as never was," said
-Baloo. "The best and wisest and boldest of man-cubs--my own
-pupil, who shall make the name of Baloo famous through all the
-jungles; and besides, I--we--love him, Kaa."
-
-"Ts! Ts!" said Kaa, weaving his head to and fro. "I also
-have known what love is. There are tales I could tell that--"
-
-"That need a clear night when we are all well fed to praise
-properly," said Bagheera quickly. "Our man-cub is in the hands of
-the Bandar-log now, and we know that of all the Jungle-People they
-fear Kaa alone."
-
-"They fear me alone. They have good reason," said Kaa.
-"Chattering, foolish, vain--vain, foolish, and chattering, are
-the monkeys. But a man-thing in their hands is in no good luck.
-They grow tired of the nuts they pick, and throw them down. They
-carry a branch half a day, meaning to do great things with it, and
-then they snap it in two. That man-thing is not to be envied.
-They called me also--`yellow fish' was it not?"
-
-"Worm--worm--earth-worm," said Bagheera, "as well as other
-things which I cannot now say for shame."
-
-"We must remind them to speak well of their master. Aaa-ssp!
-We must help their wandering memories. Now, whither went they
-with the cub?"
-
-"The jungle alone knows. Toward the sunset, I believe," said
-Baloo. "We had thought that thou wouldst know, Kaa."
-
-"I? How? I take them when they come in my way, but I do not
-hunt the Bandar-log, or frogs--or green scum on a water-hole,
-for that matter."
-
-"Up, Up! Up, Up! Hillo! Illo! Illo, look up, Baloo of the
-Seeonee Wolf Pack!"
-
-Baloo looked up to see where the voice came from, and there
-was Rann the Kite, sweeping down with the sun shining on the
-upturned flanges of his wings. It was near Rann's bedtime, but he
-had ranged all over the jungle looking for the Bear and had missed
-him in the thick foliage.
-
-"What is it?" said Baloo.
-
-"I have seen Mowgli among the Bandar-log. He bade me tell
-you. I watched. The Bandar-log have taken him beyond the river
-to the monkey city--to the Cold Lairs. They may stay there for
-a night, or ten nights, or an hour. I have told the bats to watch
-through the dark time. That is my message. Good hunting, all you
-below!"
-
-"Full gorge and a deep sleep to you, Rann," cried Bagheera.
-"I will remember thee in my next kill, and put aside the head for
-thee alone, O best of kites!"
-
-"It is nothing. It is nothing. The boy held the Master Word.
-I could have done no less," and Rann circled up again to his
-roost.
-
-"He has not forgotten to use his tongue," said Baloo with a
-chuckle of pride. "To think of one so young remembering the
-Master Word for the birds too while he was being pulled across
-trees!"
-
-"It was most firmly driven into him," said Bagheera. "But I
-am proud of him, and now we must go to the Cold Lairs."
-
-They all knew where that place was, but few of the Jungle
-People ever went there, because what they called the Cold Lairs
-was an old deserted city, lost and buried in the jungle, and
-beasts seldom use a place that men have once used. The wild boar
-will, but the hunting tribes do not. Besides, the monkeys lived
-there as much as they could be said to live anywhere, and no
-self-respecting animal would come within eyeshot of it except in
-times of drought, when the half-ruined tanks and reservoirs held a
-little water.
-
-"It is half a night's journey--at full speed," said
-Bagheera, and Baloo looked very serious. "I will go as fast as I
-can," he said anxiously.
-
-"We dare not wait for thee. Follow, Baloo. We must go on the
-quick-foot--Kaa and I."
-
-"Feet or no feet, I can keep abreast of all thy four," said
-Kaa shortly. Baloo made one effort to hurry, but had to sit down
-panting, and so they left him to come on later, while Bagheera
-hurried forward, at the quick panther-canter. Kaa said nothing,
-but, strive as Bagheera might, the huge Rock-python held level
-with him. When they came to a hill stream, Bagheera gained,
-because he bounded across while Kaa swam, his head and two feet of
-his neck clearing the water, but on level ground Kaa made up the
-distance.
-
-"By the Broken Lock that freed me," said Bagheera, when
-twilight had fallen, "thou art no slow goer!"
-
-"I am hungry," said Kaa. "Besides, they called me speckled
-frog."
-
-"Worm--earth-worm, and yellow to boot."
-
-"All one. Let us go on," and Kaa seemed to pour himself along
-the ground, finding the shortest road with his steady eyes, and
-keeping to it.
-
-In the Cold Lairs the Monkey-People were not thinking of
-Mowgli's friends at all. They had brought the boy to the Lost
-City, and were very much pleased with themselves for the time.
-Mowgli had never seen an Indian city before, and though this was
-almost a heap of ruins it seemed very wonderful and splendid.
-Some king had built it long ago on a little hill. You could still
-trace the stone causeways that led up to the ruined gates where
-the last splinters of wood hung to the worn, rusted hinges. Trees
-had grown into and out of the walls; the battlements were tumbled
-down and decayed, and wild creepers hung out of the windows of the
-towers on the walls in bushy hanging clumps.
-
-A great roofless palace crowned the hill, and the marble of
-the courtyards and the fountains was split, and stained with red
-and green, and the very cobblestones in the courtyard where the
-king's elephants used to live had been thrust up and apart by
-grasses and young trees. From the palace you could see the rows
-and rows of roofless houses that made up the city looking like
-empty honeycombs filled with blackness; the shapeless block of
-stone that had been an idol in the square where four roads met;
-the pits and dimples at street corners where the public wells once
-stood, and the shattered domes of temples with wild figs sprouting
-on their sides. The monkeys called the place their city, and
-pretended to despise the Jungle-People because they lived in the
-forest. And yet they never knew what the buildings were made for
-nor how to use them. They would sit in circles on the hall of the
-king's council chamber, and scratch for fleas and pretend to be
-men; or they would run in and out of the roofless houses and
-collect pieces of plaster and old bricks in a corner, and forget
-where they had hidden them, and fight and cry in scuffling crowds,
-and then break off to play up and down the terraces of the king's
-garden, where they would shake the rose trees and the oranges in
-sport to see the fruit and flowers fall. They explored all the
-passages and dark tunnels in the palace and the hundreds of little
-dark rooms, but they never remembered what they had seen and what
-they had not; and so drifted about in ones and twos or crowds
-telling each other that they were doing as men did. They drank at
-the tanks and made the water all muddy, and then they fought over
-it, and then they would all rush together in mobs and shout:
-"There is no one in the jungle so wise and good and clever and
-strong and gentle as the Bandar-log." Then all would begin again
-till they grew tired of the city and went back to the tree-tops,
-hoping the Jungle-People would notice them.
-
-Mowgli, who had been trained under the Law of the Jungle, did
-not like or understand this kind of life. The monkeys dragged him
-into the Cold Lairs late in the afternoon, and instead of going to
-sleep, as Mowgli would have done after a long journey, they joined
-hands and danced about and sang their foolish songs. One of the
-monkeys made a speech and told his companions that Mowgli's
-capture marked a new thing in the history of the Bandar-log, for
-Mowgli was going to show them how to weave sticks and canes
-together as a protection against rain and cold. Mowgli picked up
-some creepers and began to work them in and out, and the monkeys
-tried to imitate; but in a very few minutes they lost interest and
-began to pull their friends' tails or jump up and down on all
-fours, coughing.
-
-"I wish to eat," said Mowgli. "I am a stranger in this part
-of the jungle. Bring me food, or give me leave to hunt here."
-
-Twenty or thirty monkeys bounded away to bring him nuts and
-wild pawpaws. But they fell to fighting on the road, and it was
-too much trouble to go back with what was left of the fruit.
-Mowgli was sore and angry as well as hungry, and he roamed through
-the empty city giving the Strangers' Hunting Call from time to
-time, but no one answered him, and Mowgli felt that he had reached
-a very bad place indeed. "All that Baloo has said about the
-Bandar-log is true," he thought to himself. "They have no Law, no
-Hunting Call, and no leaders--nothing but foolish words and
-little picking thievish hands. So if I am starved or killed here,
-it will be all my own fault. But I must try to return to my own
-jungle. Baloo will surely beat me, but that is better than
-chasing silly rose leaves with the Bandar-log."
-
-No sooner had he walked to the city wall than the monkeys
-pulled him back, telling him that he did not know how happy he
-was, and pinching him to make him grateful. He set his teeth and
-said nothing, but went with the shouting monkeys to a terrace
-above the red sandstone reservoirs that were half-full of rain
-water. There was a ruined summer-house of white marble in the
-center of the terrace, built for queens dead a hundred years ago.
-The domed roof had half fallen in and blocked up the underground
-passage from the palace by which the queens used to enter. But
-the walls were made of screens of marble tracery--beautiful
-milk-white fretwork, set with agates and cornelians and jasper and
-lapis lazuli, and as the moon came up behind the hill it shone
-through the open work, casting shadows on the ground like black
-velvet embroidery. Sore, sleepy, and hungry as he was, Mowgli
-could not help laughing when the Bandar-log began, twenty at a
-time, to tell him how great and wise and strong and gentle they
-were, and how foolish he was to wish to leave them. "We are
-great. We are free. We are wonderful. We are the most wonderful
-people in all the jungle! We all say so, and so it must be true,"
-they shouted. "Now as you are a new listener and can carry our
-words back to the Jungle-People so that they may notice us in
-future, we will tell you all about our most excellent selves."
-Mowgli made no objection, and the monkeys gathered by hundreds and
-hundreds on the terrace to listen to their own speakers singing
-the praises of the Bandar-log, and whenever a speaker stopped for
-want of breath they would all shout together: "This is true; we
-all say so." Mowgli nodded and blinked, and said "Yes" when they
-asked him a question, and his head spun with the noise. "Tabaqui
-the Jackal must have bitten all these people," he said to himself,
-"and now they have madness. Certainly this is dewanee, the
-madness. Do they never go to sleep? Now there is a cloud coming
-to cover that moon. If it were only a big enough cloud I might
-try to run away in the darkness. But I am tired."
-
-That same cloud was being watched by two good friends in the
-ruined ditch below the city wall, for Bagheera and Kaa, knowing
-well how dangerous the Monkey-People were in large numbers, did
-not wish to run any risks. The monkeys never fight unless they
-are a hundred to one, and few in the jungle care for those odds.
-
-"I will go to the west wall," Kaa whispered, "and come down
-swiftly with the slope of the ground in my favor. They will not
-throw themselves upon my back in their hundreds, but--"
-
-"I know it," said Bagheera. "Would that Baloo were here, but
-we must do what we can. When that cloud covers the moon I shall
-go to the terrace. They hold some sort of council there over the
-boy."
-
-"Good hunting," said Kaa grimly, and glided away to the west
-wall. That happened to be the least ruined of any, and the big
-snake was delayed awhile before he could find a way up the stones.
-The cloud hid the moon, and as Mowgli wondered what would come
-next he heard Bagheera's light feet on the terrace. The Black
-Panther had raced up the slope almost without a sound and was
-striking--he knew better than to waste time in biting--right
-and left among the monkeys, who were seated round Mowgli in
-circles fifty and sixty deep. There was a howl of fright and
-rage, and then as Bagheera tripped on the rolling kicking bodies
-beneath him, a monkey shouted: "There is only one here! Kill him!
-Kill." A scuffling mass of monkeys, biting, scratching, tearing,
-and pulling, closed over Bagheera, while five or six laid hold of
-Mowgli, dragged him up the wall of the summerhouse and pushed him
-through the hole of the broken dome. A man-trained boy would have
-been badly bruised, for the fall was a good fifteen feet, but
-Mowgli fell as Baloo had taught him to fall, and landed on his
-feet.
-
-"Stay there," shouted the monkeys, "till we have killed thy
-friends, and later we will play with thee--if the Poison-People
-leave thee alive."
-
-"We be of one blood, ye and I," said Mowgli, quickly giving
-the Snake's Call. He could hear rustling and hissing in the
-rubbish all round him and gave the Call a second time, to make
-sure.
-
-"Even ssso! Down hoods all!" said half a dozen low voices
-(every ruin in India becomes sooner or later a dwelling place of
-snakes, and the old summerhouse was alive with cobras). "Stand
-still, Little Brother, for thy feet may do us harm."
-
-Mowgli stood as quietly as he could, peering through the open
-work and listening to the furious din of the fight round the Black
-Panther--the yells and chatterings and scufflings, and
-Bagheera's deep, hoarse cough as he backed and bucked and twisted
-and plunged under the heaps of his enemies. For the first time
-since he was born, Bagheera was fighting for his life.
-
-"Baloo must be at hand; Bagheera would not have come alone,"
-Mowgli thought. And then he called aloud: "To the tank, Bagheera.
-Roll to the water tanks. Roll and plunge! Get to the water!"
-
-Bagheera heard, and the cry that told him Mowgli was safe gave
-him new courage. He worked his way desperately, inch by inch,
-straight for the reservoirs, halting in silence. Then from the
-ruined wall nearest the jungle rose up the rumbling war-shout of
-Baloo. The old Bear had done his best, but he could not come
-before. "Bagheera," he shouted, "I am here. I climb! I haste!
-Ahuwora! The stones slip under my feet! Wait my coming, O most
-infamous Bandar-log!" He panted up the terrace only to disappear
-to the head in a wave of monkeys, but he threw himself squarely on
-his haunches, and, spreading out his forepaws, hugged as many as
-he could hold, and then began to hit with a regular bat-bat-bat,
-like the flipping strokes of a paddle wheel. A crash and a splash
-told Mowgli that Bagheera had fought his way to the tank where the
-monkeys could not follow. The Panther lay gasping for breath, his
-head just out of the water, while the monkeys stood three deep on
-the red steps, dancing up and down with rage, ready to spring upon
-him from all sides if he came out to help Baloo. It was then that
-Bagheera lifted up his dripping chin, and in despair gave the
-Snake's Call for protection--"We be of one blood, ye and I"--
-for he believed that Kaa had turned tail at the last minute. Even
-Baloo, half smothered under the monkeys on the edge of the
-terrace, could not help chuckling as he heard the Black Panther
-asking for help.
-
-Kaa had only just worked his way over the west wall, landing
-with a wrench that dislodged a coping stone into the ditch. He
-had no intention of losing any advantage of the ground, and coiled
-and uncoiled himself once or twice, to be sure that every foot of
-his long body was in working order. All that while the fight with
-Baloo went on, and the monkeys yelled in the tank round Bagheera,
-and Mang the Bat, flying to and fro, carried the news of the great
-battle over the jungle, till even Hathi the Wild Elephant
-trumpeted, and, far away, scattered bands of the Monkey-Folk woke
-and came leaping along the tree-roads to help their comrades in
-the Cold Lairs, and the noise of the fight roused all the day
-birds for miles round. Then Kaa came straight, quickly, and
-anxious to kill. The fighting strength of a python is in the
-driving blow of his head backed by all the strength and weight of
-his body. If you can imagine a lance, or a battering ram, or a
-hammer weighing nearly half a ton driven by a cool, quiet mind
-living in the handle of it, you can roughly imagine what Kaa was
-like when he fought. A python four or five feet long can knock a
-man down if he hits him fairly in the chest, and Kaa was thirty
-feet long, as you know. His first stroke was delivered into the
-heart of the crowd round Baloo. It was sent home with shut mouth
-in silence, and there was no need of a second. The monkeys
-scattered with cries of--"Kaa! It is Kaa! Run! Run!"
-
-Generations of monkeys had been scared into good behavior by
-the stories their elders told them of Kaa, the night thief, who
-could slip along the branches as quietly as moss grows, and steal
-away the strongest monkey that ever lived; of old Kaa, who could
-make himself look so like a dead branch or a rotten stump that the
-wisest were deceived, till the branch caught them. Kaa was
-everything that the monkeys feared in the jungle, for none of them
-knew the limits of his power, none of them could look him in the
-face, and none had ever come alive out of his hug. And so they
-ran, stammering with terror, to the walls and the roofs of the
-houses, and Baloo drew a deep breath of relief. His fur was much
-thicker than Bagheera's, but he had suffered sorely in the fight.
-Then Kaa opened his mouth for the first time and spoke one long
-hissing word, and the far-away monkeys, hurrying to the defense of
-the Cold Lairs, stayed where they were, cowering, till the loaded
-branches bent and crackled under them. The monkeys on the walls
-and the empty houses stopped their cries, and in the stillness
-that fell upon the city Mowgli heard Bagheera shaking his wet
-sides as he came up from the tank. Then the clamor broke out
-again. The monkeys leaped higher up the walls. They clung around
-the necks of the big stone idols and shrieked as they skipped
-along the battlements, while Mowgli, dancing in the summerhouse,
-put his eye to the screenwork and hooted owl-fashion between his
-front teeth, to show his derision and contempt.
-
-"Get the man-cub out of that trap; I can do no more," Bagheera
-gasped. "Let us take the man-cub and go. They may attack again."
-
-"They will not move till I order them. Stay you sssso!" Kaa
-hissed, and the city was silent once more. "I could not come
-before, Brother, but I think I heard thee call"--this was to
-Bagheera.
-
-"I--I may have cried out in the battle," Bagheera answered.
-"Baloo, art thou hurt?
-
-"I am not sure that they did not pull me into a hundred little
-bearlings," said Baloo, gravely shaking one leg after the other.
-"Wow! I am sore. Kaa, we owe thee, I think, our lives--Bagheera
-and I."
-
-"No matter. Where is the manling?"
-
-"Here, in a trap. I cannot climb out," cried Mowgli. The
-curve of the broken dome was above his head.
-
-"Take him away. He dances like Mao the Peacock. He will
-crush our young," said the cobras inside.
-
-"Hah!" said Kaa with a chuckle, "he has friends everywhere,
-this manling. Stand back, manling. And hide you, O Poison
-People. I break down the wall."
-
-Kaa looked carefully till he found a discolored crack in the
-marble tracery showing a weak spot, made two or three light taps
-with his head to get the distance, and then lifting up six feet of
-his body clear of the ground, sent home half a dozen full-power
-smashing blows, nose-first. The screen-work broke and fell away
-in a cloud of dust and rubbish, and Mowgli leaped through the
-opening and flung himself between Baloo and Bagheera--an arm
-around each big neck.
-
-"Art thou hurt?" said Baloo, hugging him softly.
-
-"I am sore, hungry, and not a little bruised. But, oh, they
-have handled ye grievously, my Brothers! Ye bleed."
-
-"Others also," said Bagheera, licking his lips and looking at
-the monkey-dead on the terrace and round the tank.
-
-"It is nothing, it is nothing, if thou art safe, oh, my pride
-of all little frogs!" whimpered Baloo.
-
-"Of that we shall judge later," said Bagheera, in a dry voice
-that Mowgli did not at all like. "But here is Kaa to whom we owe
-the battle and thou owest thy life. Thank him according to our
-customs, Mowgli."
-
-Mowgli turned and saw the great Python's head swaying a foot
-above his own.
-
-"So this is the manling," said Kaa. "Very soft is his skin,
-and he is not unlike the Bandar-log. Have a care, manling, that I
-do not mistake thee for a monkey some twilight when I have newly
-changed my coat."
-
-"We be one blood, thou and I," Mowgli answered. "I take my
-life from thee tonight. My kill shall be thy kill if ever thou
-art hungry, O Kaa."
-
-"All thanks, Little Brother," said Kaa, though his eyes
-twinkled. "And what may so bold a hunter kill? I ask that I may
-follow when next he goes abroad."
-
-"I kill nothing,--I am too little,--but I drive goats
-toward such as can use them. When thou art empty come to me and
-see if I speak the truth. I have some skill in these [he held out
-his hands], and if ever thou art in a trap, I may pay the debt
-which I owe to thee, to Bagheera, and to Baloo, here. Good
-hunting to ye all, my masters."
-
-"Well said," growled Baloo, for Mowgli had returned thanks
-very prettily. The Python dropped his head lightly for a minute
-on Mowgli's shoulder. "A brave heart and a courteous tongue,"
-said he. "They shall carry thee far through the jungle, manling.
-But now go hence quickly with thy friends. Go and sleep, for the
-moon sets, and what follows it is not well that thou shouldst
-see."
-
-The moon was sinking behind the hills and the lines of
-trembling monkeys huddled together on the walls and battlements
-looked like ragged shaky fringes of things. Baloo went down to
-the tank for a drink and Bagheera began to put his fur in order,
-as Kaa glided out into the center of the terrace and brought his
-jaws together with a ringing snap that drew all the monkeys' eyes
-upon him.
-
-"The moon sets," he said. "Is there yet light enough to see?"
-
-From the walls came a moan like the wind in the tree-tops--
-"We see, O Kaa."
-
-"Good. Begins now the dance--the Dance of the Hunger of
-Kaa. Sit still and watch."
-
-He turned twice or thrice in a big circle, weaving his head
-from right to left. Then he began making loops and figures of
-eight with his body, and soft, oozy triangles that melted into
-squares and five-sided figures, and coiled mounds, never resting,
-never hurrying, and never stopping his low humming song. It grew
-darker and darker, till at last the dragging, shifting coils
-disappeared, but they could hear the rustle of the scales.
-
-Baloo and Bagheera stood still as stone, growling in their
-throats, their neck hair bristling, and Mowgli watched and
-wondered.
-
-"Bandar-log," said the voice of Kaa at last, "can ye stir foot
-or hand without my order? Speak!"
-
-"Without thy order we cannot stir foot or hand, O Kaa!"
-
-"Good! Come all one pace nearer to me."
-
-The lines of the monkeys swayed forward helplessly, and Baloo
-and Bagheera took one stiff step forward with them.
-
-"Nearer!" hissed Kaa, and they all moved again.
-
-Mowgli laid his hands on Baloo and Bagheera to get them away,
-and the two great beasts started as though they had been waked
-from a dream.
-
-"Keep thy hand on my shoulder," Bagheera whispered. "Keep it
-there, or I must go back--must go back to Kaa. Aah!"
-
-"It is only old Kaa making circles on the dust," said Mowgli.
-"Let us go." And the three slipped off through a gap in the walls
-to the jungle.
-
-"Whoof!" said Baloo, when he stood under the still trees
-again. "Never more will I make an ally of Kaa," and he shook
-himself all over.
-
-"He knows more than we," said Bagheera, trembling. "In a
-little time, had I stayed, I should have walked down his throat."
-
-"Many will walk by that road before the moon rises again,"
-said Baloo. "He will have good hunting--after his own fashion."
-
-"But what was the meaning of it all?" said Mowgli, who did not
-know anything of a python's powers of fascination. "I saw no more
-than a big snake making foolish circles till the dark came. And
-his nose was all sore. Ho! Ho!"
-
-"Mowgli," said Bagheera angrily, "his nose was sore on thy
-account, as my ears and sides and paws, and Baloo's neck and
-shoulders are bitten on thy account. Neither Baloo nor Bagheera
-will be able to hunt with pleasure for many days."
-
-"It is nothing," said Baloo; "we have the man-cub again."
-
-"True, but he has cost us heavily in time which might have
-been spent in good hunting, in wounds, in hair--I am half
-plucked along my back--and last of all, in honor. For,
-remember, Mowgli, I, who am the Black Panther, was forced to call
-upon Kaa for protection, and Baloo and I were both made stupid as
-little birds by the Hunger Dance. All this, man-cub, came of thy
-playing with the Bandar-log."
-
-"True, it is true," said Mowgli sorrowfully. "I am an evil
-man-cub, and my stomach is sad in me."
-
-"Mf! What says the Law of the Jungle, Baloo?"
-
-Baloo did not wish to bring Mowgli into any more trouble, but
-he could not tamper with the Law, so he mumbled: "Sorrow never
-stays punishment. But remember, Bagheera, he is very little."
-
-"I will remember. But he has done mischief, and blows must be
-dealt now. Mowgli, hast thou anything to say?"
-
-"Nothing. I did wrong. Baloo and thou are wounded. It is
-just."
-
-Bagheera gave him half a dozen love-taps from a panther's
-point of view (they would hardly have waked one of his own cubs),
-but for a seven-year-old boy they amounted to as severe a beating
-as you could wish to avoid. When it was all over Mowgli sneezed,
-and picked himself up without a word.
-
-"Now," said Bagheera, "jump on my back, Little Brother, and we
-will go home."
-
-One of the beauties of Jungle Law is that punishment settles
-all scores. There is no nagging afterward.
-
-Mowgli laid his head down on Bagheera's back and slept so
-deeply that he never waked when he was put down in the home-cave.
-
-
-Road-Song of the Bandar-Log
-
-Here we go in a flung festoon,
-Half-way up to the jealous moon!
-Don't you envy our pranceful bands?
-Don't you wish you had extra hands?
-Wouldn't you like if your tails were--so--
-Curved in the shape of a Cupid's bow?
-Now you're angry, but--never mind,
-Brother, thy tail hangs down behind!
-
-Here we sit in a branchy row,
-Thinking of beautiful things we know;
-Dreaming of deeds that we mean to do,
-All complete, in a minute or two--
-Something noble and wise and good,
-Done by merely wishing we could.
-We've forgotten, but--never mind,
-Brother, thy tail hangs down behind!
-
-All the talk we ever have heard
-Uttered by bat or beast or bird--
-Hide or fin or scale or feather--
-Jabber it quickly and all together!
-Excellent! Wonderful! Once again!
-
-Now we are talking just like men!
-Let's pretend we are ... never mind,
-Brother, thy tail hangs down behind!
-This is the way of the Monkey-kind.
-
-Then join our leaping lines that scumfish through the pines,
-That rocket by where, light and high, the wild grape swings.
-By the rubbish in our wake, and the noble noise we make,
-Be sure, be sure, we're going to do some splendid things!
-
-
-"Tiger! Tiger!"
-
-What of the hunting, hunter bold?
-Brother, the watch was long and cold.
-What of the quarry ye went to kill?
-Brother, he crops in the jungle still.
-Where is the power that made your pride?
-Brother, it ebbs from my flank and side.
-Where is the haste that ye hurry by?
-Brother, I go to my lair--to die.
-
-Now we must go back to the first tale. When Mowgli left the
-wolf's cave after the fight with the Pack at the Council Rock, he
-went down to the plowed lands where the villagers lived, but he
-would not stop there because it was too near to the jungle, and he
-knew that he had made at least one bad enemy at the Council. So
-he hurried on, keeping to the rough road that ran down the valley,
-and followed it at a steady jog-trot for nearly twenty miles, till
-he came to a country that he did not know. The valley opened out
-into a great plain dotted over with rocks and cut up by ravines.
-At one end stood a little village, and at the other the thick
-jungle came down in a sweep to the grazing-grounds, and stopped
-there as though it had been cut off with a hoe. All over the
-plain, cattle and buffaloes were grazing, and when the little boys
-in charge of the herds saw Mowgli they shouted and ran away, and
-the yellow pariah dogs that hang about every Indian village
-barked. Mowgli walked on, for he was feeling hungry, and when he
-came to the village gate he saw the big thorn-bush that was drawn
-up before the gate at twilight, pushed to one side.
-
-"Umph!" he said, for he had come across more than one such
-barricade in his night rambles after things to eat. "So men are
-afraid of the People of the Jungle here also." He sat down by the
-gate, and when a man came out he stood up, opened his mouth, and
-pointed down it to show that he wanted food. The man stared, and
-ran back up the one street of the village shouting for the priest,
-who was a big, fat man dressed in white, with a red and yellow
-mark on his forehead. The priest came to the gate, and with him
-at least a hundred people, who stared and talked and shouted and
-pointed at Mowgli.
+The first thing to do in making a garden is to spade up the soil to the depth of a foot.
+
+The second thing to do is to work this spaded-up soil over and over until it is thoroughly pulverized.
+
+The third thing to do is to add to it whatever fertilizer you decide on using. This may be old, well-rotted manure from the cow-yard, if you can get it, for it is the ideal fertilizer for nearly all kinds of plants. But if you live in city or village the probabilities are that you will be obliged to make use of a substitute. Bone meal—the finely ground article—is about as good as anything I know of for amateur use. The amount to use will depend on the condition of the soil to which you apply it. If of simply ordinary richness, I would advise a teacupful of the meal to a yard square of ground. If the soil happens to be poor, a large quantity should be used. It is not possible to say just how much or how little, because no two soils are exactly alike. One can decide about this when he sees the effect of what has been used on the plants whose cultivation he has undertaken. I speak of using it by measure rather than by weight because the gardener will find it easier to use a cup than a set of scales.
+
+When the soil has been thoroughly pulverized and the fertilizer has been well worked into it you are ready for sowing seed—that is, if the weather conditions are favorable. It is always advisable to wait until all danger from frost is over and the ground is warm enough to facilitate prompt germination. At the North the seed of our hardier plants can safely be put into the ground about the middle of May, but the tenderer kinds can well afford to wait until the first of June.
+
+In sowing seed don't follow the old way of making a furrow an inch deep in the soil, by drawing the hoe-handle along it, and then covering the seed deeply. Fine seed often fail to germinate when given this treatment. Simply scatter the seed on the surface, and then sift a little fine soil over it, or press the ground down firmly with a smooth board, thus imbedding the seed in the ground to a depth that is sufficient to insure enough moisture to facilitate the process of germination.
+
+Large seed, like that of the sweet-pea, nasturtium, mirabilis, and morning-glory can be covered with half an inch of soil.
+
+Weeding should begin as soon as you can tell the weeds and the flowering plants apart. It is absolutely necessary to keep the beds clean if you would have good flowers. Allow weeds to remain, and in an incredibly short time they will get such a start of the other plants in the bed that these will have received a check from which it will take them a long time to recover, when given an opportunity to do so by the removal of the enemy. There can be no compromise between weeds and flowering plants. One must give way to the other, and weeds will have it all their own way if given the ghost of a chance.
+
+Every gardener should be the owner of a wheelbarrow, a hoe, a spade, an iron rake, a watering-pot, and a weeding-hook. The last, which will cost ten or fifteen cents, will enable you to destroy as many weeds in half an hour as you could pull in half a day by hand, and it will leave the soil in as light and porous a condition as would result from going over it with rake or hoe.
+
+Most home-makers labor under the impression that it would be useless for them to undertake the making of a lawn, thinking it requires the knowledge and experience of the professional gardener to make such an undertaking successful. This is where they make a mistake. Anybody can make a lawn that will afford a great deal of pleasure if he sets about it, provided he is willing to do some hard work.
+
+The first thing to do is to make the surface of the ground level. This can be done by the use of spade and hoe. Take off the tops of the hillocks, if there happens to be any, and fill the hollows with the soil thus obtained.
+
+When you have a fairly even surface, go over it with an iron-toothed rake and make it fine and mellow. It is very important that all stones and rubbish of every kind should be removed if you want a good sward.
+
+After reducing the soil to the necessary degree of fineness, add whatever fertilizer to it you propose to make use of, and then go over the ground again with the rake and work this fertilizer in thoroughly. It is necessary to have it evenly distributed. If it is not, there will be patches where the grass will be thick and luxuriant, and others where it will be scanty and poor. Such a result should be guarded against by working the fertilizer into the soil so evenly that no part of it will be without its proper share.
+
+Then you are ready for sowing the seed.
+
+The seed to sow is the very best kind in the market. This will cost you a little more than the inferior kind that is offered each season, but it is worth a good deal more, and it is what you must have if you would make your lawn a thing of beauty. Procure it from some reliable dealer who makes a specialty of "lawn-grass mixtures."
+
+If you tell the dealer the size of your lawn and ask how much seed you will need, he will give you what he considers a fair estimate. I would advise you to double the amount, for this reason: a thickly seeded lawn will have the appearance, by the middle of the first season, of a lawn a year or two old. And because of the thickness of the grass it will be better able to stand the effect of drought and heat. You will find that the extra money invested in seed was a wise investment, and you will never have cause to regret making it.
+
+Sowing seems, to the amateur gardener, a matter of so little importance that it requires no special attention. All there is to do is to scatter the seed over the ground. But nine out of ten amateurs who do the work with this idea in mind will speedily discover their mistake. When the grass comes up thickly here and there, with vacant places between, they will come to the conclusion that sowing grass seed evenly isn't the easiest thing in the world, for the seed is so light that the slightest puff of air will blow it away, and some will settle where you want it to, and some will lodge where other seed has already lodged, and the result will be very unsatisfactory. In order to prevent such a condition of things as far as possible, I would advise sowing from north to south, and then from east to west. Do this on a still, damp day, if possible, and hold your hand close to the ground as you scatter the seed. Don't attempt to broadcast it, as you may have seen some gardener do, but be content to scatter it over a small portion of soil each time you sow a handful of it. By doing this you will prevent most of it from being blown away.
+
+The owner of a small lot is often puzzled to know what to do with it. Of course there must be flowers, but where shall they be put? As a general thing, they are set out here and there, indiscriminately, and the result of such haphazard planting is far from pleasing. There ought always to be at least a suggestion of system in all garden arrangements. To scatter shrubs all over the lawn breaks up the sense of breadth and dignity which should characterize it, however small it may be. This being the case, the best place for shrubs and perennials is at the sides of the lot, leaving the rear for the vegetable garden.
+
+A border extending along the sides of the lot will serve as a frame for the home picture, and will be found the most satisfactory arrangement possible for small places. It ought to be at least four feet wide—six or eight will be found much better if ground can be spared for it—and a pleasing effect can be secured by letting it increase in width as it approaches the rear of the lot. It will be far more attractive if its inner edge curves a little here and there than if it is confined to straight lines.
+
+I would advise a "mixed border." By that is meant one in which shrubs and perennials are grown together and where annuals and spring-flowering bulbs can be used effectively to "fill in."
+
+The soil for such a border must be made and kept quite rich, for almost always we put so many plants into it that great demands are made upon the nutriment contained in it, and in order to have fine plants they must get all the food they can make good use of. You can't grow plants to perfection unless you feed them well. Every season—preferably in spring—manure should be applied liberally.
+
+In setting out shrubs one should take a look ahead and endeavor to see, with the mind's eye, what they will be likely to be when fully developed. If this is not done we are pretty sure to plant them so close that by and by we have a thicket of them, in which none of them can properly display their charms.
+
+Between the shrubs plant perennials and such summer-flowering plants as dahlias and gladioli.
+
+Plant the taller perennials at the rear, and those of medium height in the center, of the row, with low-growing kinds in front. By doing this we secure a sort of banklike effect which will be very pleasing. In order to plant intelligently, study the catalogues of the florists, for most of them give the height of each plant listed in them.
+
+If I were asked to name the best shrubs for amateur use, I would choose these: spiræa (especially the Van Houttei variety), weigelia deutzia, lilacs in variety, flowering currant, and golden elder—the last a shrub with rich yellow foliage, capable of producing a most delightful effect when planted among richly colored flowering plants like the hollyhock and delphinium. From the perennial list I would select peonies, phlox, delphinium, iris, and hollyhocks.
+
+My selection would include the kinds named above because of their hardiness and ease of culture as well as their beauty. There are many other kinds which richly deserve a place in all gardens that are large enough to allow of free selection, but the owner of the average home lot will be obliged to draw a line somewhere, and he will be safe in confining his choice to the kinds I have mentioned. They are among the very best plants we have in their respective classes.
+
+The owner of a garden that is so small that but few plants can be grown in it naturally desires to confine her selection to such kinds as will be likely to give the greatest amount of bloom and require the least amount of care.
+
+At the head of the list it is quite safe to place the sweet-pea. This old and universal favorite blooms profusely and throughout the entire season if prevented from ripening seed. It is beautiful, wonderfully varied as to coloring, and so fragrant that it is almost a rival of the rose in this respect. It requires a treatment so unlike that of ordinary plants that it is really in a class by itself, if one would secure the best results from it. It likes to get a start early in the season and to have its roots deep in the soil, where they will be cool and moist when the hot, dry, midsummer season comes. To gratify this desire on the part of the plant we sow its seed in trenches four or five inches deep, about the middle of April, at the North, or as soon as the ground is free from frost. These trenches are V-shaped, and can easily be made by drawing the corner of a hoe through the soil. Sow the seed quite thickly, and cover with an inch of soil, trampling it down firmly. When the young plants are about three inches tall draw in about them some of the soil thrown out from the trench, and continue to do this from time to time as the plants reach up, until the trench is full. In this way we succeed in getting the roots of the plant deep enough to prevent them from drying out if the season happens to be one of drought. The best support for the sweet-pea is brush. The next best is woven-wire netting with a large mesh.
+
+Another plant that the amateur gardener cannot afford to overlook is the nasturtium. It is a most profuse and constant bloomer. Its colors run through all shades of yellow, orange, and red. It has a delicious spicy fragrance quite unlike that of any other flower I have any knowledge of. Fine for cutting.
+
+The aster must also be given a place in all gardens, large or small, because of its beauty, its wide range of color, and its ease of culture. There are several quite distinct varieties, all good, but none better than the long-stalked "branching" kind. This is the ideal sort for cutting. Its flowers rival those of the chrysanthemum in general effect and lasting quality.
+
+Phlox Drummondii is an old favorite that holds its own against any of the new-comers. So is the verbena, and the calliopsis, and the good old "bachelor's-button," which you will find masquerading in the florists' catalogues as centaurea. It must not be blamed for this, as it has no reason to be ashamed of its old-fashioned name. The seedsmen alone are responsible for the change in nomenclature.
+
+Other stand-bys among the annuals are poppies, larkspur, petunias, ten-week stock, marigolds, scabiosa, mignonette, eschscholtzia (better known as California poppy).
+
+Of course the list of really desirable kinds could be extended almost indefinitely, but I do not think it advisable to make mention of other kinds here, because it is not the part of wisdom for the amateur gardener to attempt growing "a little of everything." It is better to confine one's attention to a few of the kinds with which success is reasonably sure until experience justifies one in undertaking the culture of those which are not so self-reliant and unexacting as the kinds mentioned.
+
+If any one were to ask me to tell him what vine I considered best adapted to amateur culture in all respects, I would decide in favor of the ampelopsis—better known in many localities as Virginia creeper. My decision would be based on the beauty of the vine, its rapid growth, its hardiness, and its ability to furnish its own support on walls of wood, brick, or stone. Its foliage is very pleasing in summer, but it is doubly so in autumn, when its green gives place to a brilliant crimson and a rich maroon. At that season of the year all our flowering vines are eclipsed by its magnificent coloring. It grows well in all kinds of soil—better, of course, in a good one than a poor one—and it will go to the eaves of a three-story house if given an opportunity to do so, and cover every inch of the wall unless special efforts are made to prevent it from doing this. If you do not want your windows hidden under its luxuriance it will be necessary for you to cut away a good many of its branches during the summer.
+
+The Dorothy Perkins rose—one of the rambler class—is a most charming vine when in full bloom, and it has the merit of being quite attractive at other periods, as its foliage is a rich, dark, shining green—something that cannot truthfully be said of some of the other members of this class of roses. It is the only rambler I would advise for use about porches and verandas. It blooms in wonderful profusion. Its flowers are a soft pink, borne in large, loose clusters or sprays. The general habit of the plant is all that could be desired. It is the only member of the rambler class that is really vinelike.
+
+There are two varieties of clematis that I am always glad to speak a good word for. One is the native variety, catalogued as C. flammula. This is a very rampant grower, and well adapted for use wherever a dense shade is desired. It blooms in August. Its flowers are white. They are succeeded by seed with a feathery tail which makes the plant look as if covered with gray smoke. This variety is always greatly admired because of this peculiarity. The other variety that I have a special fondness for is C. paniculata. This is a late bloomer, being in the prime of its flowering period long after the plants in the garden have completed the work of the season. Its flowers are of the purest white. They are small, individually, but they are borne in such profusion that the upper portion of the vine will be completely covered with them. It will look as if a fall of snow had tried to hide it. I consider this one of our very best flowering vines. Unlike the hybrid members of the clematis family, with their enormous flowers of rich colors and scanty foliage, it is perfectly healthy, and it has ample foliage to make a charming background for its blossoms.
+
+The trumpet honeysuckle is a favorite wherever grown. It is one of our best vines for porch use, as it does not climb to a great height. It bears its scarlet-and-orange flowers throughout the entire season. It is an especial favorite because its foliage is always clean and seldom attacked by insects.
+
+The good old morning-glory is, all things considered, our best annual flowering vine. It grows rapidly, reaching to the windows of the second story by midsummer. It is a free and constant bloomer. It is excelled by no other vine in richness and variety of color—white, pink, purple, blue, violet, and crimson flowers will make a veritable "morning glory" of it. Care should be taken to provide it with stout cord to climb by. A light twine is not strong enough to support the weight of its heavy vines.
+
+Another good flowering vine is the hyacinth bean. Why it should be given this name I do not know, as there is nothing about it suggestive in the remotest degree of the hyacinth. Its flowers are a brilliant scarlet. It seldom grows to a greater height than seven or eight feet, and is therefore well adapted to use about porches where a rampant grower is not wanted.
+
+The wild cucumber, catalogued as echynocystis, is a good vine for covering tall buildings and screens. It will make a growth of twenty-five or thirty feet in a season. Its foliage is pretty, as are its white flowers, which make the vines look as if covered with foam. These give place to prickly fruit, somewhat resembling some varieties of cucumber, hence its popular name.
+
+The wild grape that is found growing along creeks and rivers in almost all parts of the country is a most excellent vine for covering summer-houses and for planting where it can have trees to clamber over. Its flowers are so small and so pale in color as to be scarcely distinguishable, but they are so delightfully fragrant that every one knows when the vine is in bloom without looking at it. Its fragrance has much of the pervading quality that characterizes mignonette, and is quite unlike that of any other plants I can call to mind. It seems to have the very spirit of the spring in it—vague, elusive, and sweet beyond description.
+
+I would not class the crimson-rambler rose among the vines, though the majority of our florists have done so. I treat it as a shrub, and find it most satisfactory when grown in that manner. I allow the young canes to reach a length of seven or eight feet. Then I nip off the tops of them. This causes side branches to develop. A central support is provided for these branches. In this way I succeed in getting flowers all over the plant—in other words, of making it a shrub instead of a vine. If it is used to cover summer-houses, the canes can be allowed to grow to suit themselves.
+
+Celastrus scandens, more commonly known as bittersweet, is a native vine that can easily be domesticated. It is well worth a place about every home. Its foliage is bright and clean, its flowers inconspicuous, but its fruit makes the vine a favorite wherever grown. This is a bright crimson, each berry being inclosed in an orange shell which splits apart in three pieces, revealing the fruit inside. As this fruit remains on the plant until late in the season, it makes the vine quite as attractive as if it were covered with flowers at a time of the year when bits of brightness are greatly appreciated in the garden.
+
+There will be a good deal of work to do in the garden, no matter how small it is.
+
+A good deal of this work will consist in cleaning up and removing rubbish, unless attention was given to this in the fall. The tops of last year's perennials should be cut away close to the ground, and dead annuals should be pulled up and added to the refuse-heap.
+
+If a covering was provided for your plants, it should be removed altogether or dug into the soil about the roots of the plants it protected. Never allow it to remain upon the ground about the plants unless it is of a kind that is not particularly noticeable.
+
+This should not be done, however, until the season is so far advanced that all danger of severe freezing is over. A plant that has had winter protection will not be in as good condition to resist the effect of severe cold as it would have been if that protection had not been given it. Therefore do not be in that haste which may result in waste. Rome wasn't built in a day, and spring isn't confined to a week. There will be plenty of time for uncovering plants when the weather will justify it.
+
+The bulb-bed should not have its covering taken off until you are quite sure that the weather will not be severe enough to injure the tender plants just peeping through the soil. Of course one cannot be quite sure when it is safe to do this, as our Northern seasons are subject to frequent and sometimes severe relapses. But if we keep an eye on the weather we can generally tell when uncovering is advisable. If, after the beds have been uncovered, a cold spell happens along and there seems to be danger in the air, spread blankets, old carpeting, or something of a similar nature over them. But before doing this drive pegs into the ground for the covering to rest on. Its weight should not be allowed to fall upon the young shoots, which will be so tender at this period as to be easily broken.
+
+Go through the garden with a view to finding what changes can be made advantageously. We often make sad mistakes in the location of our plants, and do not discover them until it is too late to unmake them that season. Sometimes a plant that has got into the wrong place so disappoints us that we think of throwing it out, but if we give it a place where its merits have an opportunity to assert themselves properly it turns out to be extremely satisfactory. The aim should be to get every plant into the place just suited to its peculiarities. It may take several seasons to bring about so desirable a result, but something along this line should be part of every season's work.
+
+Old clumps of perennials will be greatly benefited by a division of their roots about once in three years. Take them up, cut their roots apart, discard all but the youngest and strongest ones, and reset in a soil that has been made rich and mellow.
+
+Shrubs should be looked over with a view to doing whatever pruning may seem necessary. I do not advise much pruning, however. A shrub knows better than I do what shape to grow in to be most effective, and I prefer to let it train itself. About all the pruning I do is to cut away weak wood and to thin out the branches if there seems too many of them.
+
+Early-flowering shrubs should never be pruned until after their flowering period is over.
+
+Manure should be applied to all plants each spring. The older it is the better if you procure it from the barn-yard. On no account should fresh manure be used. Spread your fertilizer out about the plants, and then work it into the soil with spade or hoe.
+
+You will doubtless find many seedling plants in the beds where they germinated last fall. These should be transplanted to places where they are to bloom as early in the spring as possible. All perennials that got a start last year will bloom this season, but those grown from seed sown this spring will not bloom until next year. Therefore make liberal use of self-sown plants.
+
+We are generally in such a hurry to do garden work in spring that we begin it before the ground is in proper condition to make good work possible. If it is spaded up before the surplus water from early rains and melting snows has had a chance to drain out of it, no attempt should be made to pulverize it then. It simply will not pulverize, but the result of your attempt to make it do so will be a lot of lumps and chunks. But if left exposed to the disintegrating action of wind and sunshine and possible showers for a few days, it will be in a condition that will make it an easy matter to reduce it to fineness under the application of hoe or rake.
+
+We somehow get the impression that when our garden is made in spring that's about all there will be for us to do. Our share of the work has been done, and if Nature does her share, well and good. But in our endeavor to shirk further responsibility on to Nature we lose sight of the fact that gardening isn't a thing of periods. It is, on the contrary, a thing of one period, and that period covers the entire season.
+
+We soon discover that weeds will need attention every day. It really seems, sometimes, as if the pulling of one weed gave a score of others an opportunity to take its place, and that these were waiting impatiently to step into the shoes of their predecessors, if such a figure of speech is allowable in this connection. Neglect weeding for a week and you will be pretty sure to find that your seedlings of flowering plants are "out of sight" in more senses of the term than one.
+
+But weeding is not all that needs to be done. There will be more or less transplanting to do in the early part of the season. This should be done on a cloudy day, if possible. If no such day happens along at the time when it is absolutely necessary that this phase of gardening should be attended to, do it after sundown.
+
+Before lifting the young plants, water them well to make the soil adhere to their roots. As little exposure to the air as possible is desirable. Also have the ground in which they are to be set ready to receive them, that the work of transplanting may be completed with the least possible delay.
+
+Every gardener ought to provide herself with a little trowel that will enable her to lift a plant without breaking apart the soil about its roots.
+
+Drop the seedling into the place prepared for it, and press the soil about it firmly but gently. Then water well.
+
+If the next day is a warm and sunshiny one, some shade should be given the newly set plants. By tacking pieces of pasteboard six inches wide and eight or ten inches long to sticks a foot in length a very practical shade can easily be made. The stick to which the pasteboard is fastened by carpet-tacks is to be inserted in the ground by each plant. The pasteboard is to be bent over in such a manner as to prevent the sun's rays from striking the plant. By this method the plant gets all the protection it needs and the air is allowed free circulation about it.
+
+The hoe ought to be used daily in all gardens. If the season happens to be a dry one, don't forego its use under the impression that stirring the soil will result in its drying out. If you want to keep moisture out of the soil, there is no way of doing it more effectually than by allowing it to become crusted over. But if you want to get all possible moisture into it, keep it light and porous. Such a condition will make it possible for it to absorb whatever moisture there may be in the air.
+
+Make it a rule to go over your plants when they come into bloom and cut off every faded flower, to prevent the formation of seed. Most plants will give but one general flowering period if left to manage their own affairs. All their energies will be expended in the production of seed. As a natural consequence they will give you few or no flowers after the early part of summer. But, thwart them in their seed-producing intent and they will at once set about getting the start of you by making another effort to carry forward to completion their original plan. The result will be satisfactory to you, if it isn't to them.
+
+See that all plants needing support are provided with it. Never allow plants of slender habit to sprawl all over the ground. They give the garden an untidy, "mussy" look, and constantly accuse you of neglect. A bit of brush inserted by the side of such plants will furnish all the support required by them.
+
+In watering the garden in a dry season make the application after sundown. This will allow the plants to get the benefit of the water before the sun has a chance to draw the moisture out of the soil, as it will rapidly do if watering is done in the morning.
+
+What every gardener needs is a watering-pot with a long spout. This will make it an easy matter to apply the water close to the plant, where none will be wasted.
+
+Never use a nozzle on your pot when watering plants in the garden. That will scatter the water over a wide surface, and so thinly that but little good will result from the application.
+
+Blessed be window boxes! They are excellent substitutes, on a small scale, for a garden, and almost any woman can have them, while a real garden is out of the question for a majority of the women who love flowers. A garden on the ground is one of the impossibilities for most women in the city who could well afford one, so far as financial ability is concerned, but she can make her windows so attractive with flowers and "green things growing" that she will not greatly miss the garden in a crowded city whose every foot of land is worth thousands of dollars and therefore cannot be given up to anything as unprofitable, from a pecuniary standpoint, as flower-growing.
+
+The culture of plants in a window-box seems an easy thing to the person who sees plants growing luxuriantly in it. But it is not as easy as it looks, because the beginner in this phase of gardening seldom studies conditions before undertaking it. It generally takes one or two seasons of mistakes and consequent failures to make one a successful grower of plants in window-boxes. But after repeated failures the amateur generally discovers what was wrong in her treatment, and after that the probabilities of failure are slight.
+
+The cause of failure nine times out of ten is lack of sufficient moisture in the soil. A box exposed to air on all sides, as most window-boxes are, parts rapidly with the water that has been applied to it, and before one suspects the actual condition of things the soil in the box becomes so dry that the plants wilt. Then a little more water is applied, and the plants revive temporarily, but next day they wilt again, and shortly this alternation of a good deal of drought and a small amount of moisture results in the death of the plants.
+
+A box a foot wide and a foot deep and four or five feet long will require a large pailful of water daily. If you want to grow good plants in boxes don't form the habit which prevails to a great extent among amateur gardeners—that of applying a small quantity of water whenever you happen to think of it. A small amount makes the soil look wet on its surface and deceives one into thinking that because it looks wet there it must be in proper condition below. Examination will convince you of this mistake. Always apply enough water each time to saturate all the soil in the box, and make it a rule to do this every morning or evening. If you go on the "every-time-you-think-of-it" plan the chances are that you will not think of it at the right time or as frequently as you ought to. Be regular in caring for your plants.
+
+If those who complain of failure with window-boxes will use more water and use it frequently, they will have no trouble in growing plants in them, and growing them as well as they can be grown in pots. And they can grow almost any kind of plant. The soil used should be rich, to begin with, and later on in the season fertilizers should be applied to keep the plants well supplied with nutriment.
+
+The woman who takes pride in making the family table attractive at all times finds nothing quite so effective for this purpose as flowers, and these she cannot always afford.
+
+But she need not be without material for beautifying the home table if she has windows in which plants can be grown, for there are many plants that are quite as attractive as flowers. But a good many persons have not yet learned that they can be made satisfactory substitutes for cut flowers, because they have not taken the trouble to study the thing out. They have heretofore depended on cut flowers for table decoration, as have their friends, and it has not occurred to them to get out of the rut they are in and think out new ways and means for making home pleasant.
+
+A well-shaped, medium-sized plant with fine foliage will add quite as much to the appearance of any table as a vaseful of flowers that would cost several times as much. True, it may lack the brilliant coloring of the flowers whose place it takes, but that does not prevent it from being beautiful, and beauty is what we aim at when we supplement the attractions of fine table-linen, sparkling cut glass, silver, and dainty china of the well-arranged table with the added attraction of plants and flowers.
+
+One of the best plants for this purpose is the variety of asparagus catalogued as plumosus nanus. It is more commonly known as asparagus fern, though it is not even a most distant relative of the fern family. It has foliage so fine that it has all the delicacy of lace, and is more like a mist of green than like ordinary foliage. It sends up frondlike growth that spreads out symmetrically on all sides of the pot. Pruning is seldom required to bring it into or keep it in proper shape. A plant of it, with its pot hidden by a pretty jardinière or wrapped in tissue-paper will be in perfect harmony with any table fittings. If a bit of bright color is desired, three or four roses or half a dozen carnations with their stems thrust into the soil in the pot will furnish it. If the housewife provides herself with three or four plants of this asparagus, she will at all times have something at hand with which to make her table attractive. In this way she will become independent of the florist and his fancy prices. These plants are of the easiest culture, and succeed wherever geraniums can be grown.
+
+At holiday-time several plants that make excellent table decorations are on the market. One is ardisia, with rich, dark-green foliage, and scarlet berries that are quite as brilliant as flowers. Another is the Jerusalem cherry, with pretty foliage and a profusion of crimson fruit. These plants remain in attractive condition for weeks, and the woman who invests in them has something with which to make her table as attractive as it would be if two or three dollars had been expended in flowers that would last for only a few days. It will be seen that it is economy to buy plants of this kind. Where there are several there is opportunity for variety, thus ruling monotony out of the question.
+
+Cocos Weddelliana is a small-growing palm with delicate, feathery foliage. One might call it a "baby" palm because of its small size. A plant of it always adds distinction to the table on which it is used. This, like the asparagus, the ardisia, and the Jerusalem cherry, readily adapts itself to ordinary window culture.
+
+Begonia Gloire de Lorraine is a most beautiful flowering plant. It bears its dainty pink blossoms so profusely and in such wide-spreading panicles that the pot in which it grows is often entirely hidden by it. Its color is charming by daylight, and under artificial light it is lovely beyond description. I know of no other pink flower that is as satisfactory by lamplight. When an especially dainty and out-of-the-common decoration is wanted for the table, nothing superior to it can be found. This begonia can be obtained from most florists in fall. If care is taken to remove it from the table to the window after it has done decorative duty, it will remain in bloom during the greater part of winter. But it must not be left on the table long at a time. Neither should any of the other plants named, for they will suffer if kept away from good light very long.
+
+Primula obconica is a most satisfactory plant for table use when in full bloom. Its trusses of pale lilac, soft pink, or pure white have such a wild-woodsy air about them that they are always sure of such attention as American Beauties seldom get. The baby primrose is a miniature edition of P. obconica, and it is one of the most lovable flowers imaginable. Like its larger relative, it is a free and constant bloomer, and on this account will be found very useful as a table ornament.
+
+Small specimens of auricaria, with heavy, dark-green foliage much like that of our native hemlocks and balsam, make a novel decoration. This is the plant that the children delight in calling the Christmas-tree plant, because of its shape and its evergreen foliage.
+
+During fall and winter, when fruit and vegetables are plentiful, very pleasing table decorations can be made from them. On Thanksgiving Day such an arrangement will be found very appropriate.
+
+A friend of mine who has no windows at which flowers can be grown well, but who, in spite of that, is determined to make her table attractive, lays in a supply of bittersweet berries during the fall, and "everlasting flowers," like gomphrena, helichrysum, cockscomb, and others whose petals are strawlike in texture, and from these she contrives some really charming decorations for her table. Where there is a will there is always a way, you know.
+
+It will be seen from what I have said above that many plants can be grown in the windows of the living-room that can be used with fine effect in table decoration. I would advise making a collection of such varieties as I have named for this especial purpose. With such a collection to draw from no woman need be at loss for decorative material, and while her plants are not doing duty on the table they will be making her windows attractive, thus serving a double purpose.
+
+There are few homes nowadays in which at least one plant of ornamental foliage cannot be found. I know of many in which some have had place so long that they have come to be considered as members of the family. Especially is this true among German people, who have an especial fondness for bride's myrtle and English ivy. In many of these homes I have found finer plants than I have seen in any greenhouse. I am not sure that they do not get more care than the children of the family.
+
+The myrtle to which I refer has small, fine foliage, evergreen in character, of a rich, glossy green. It branches freely, and in two or three years becomes a good-sized shrub. It does not bloom very freely, but this does not detract much from the value of the plant, as its flowers are small and not at all showy, though really quite pretty in their snow-white purity. The real value of the plant is in its foliage. It can be kept growing the year round, or it can be wintered in the cellar. In summer a plant of this kind will be found very effective for porch decoration.
+
+The English ivy is our best evergreen vine. It is one of the few plants that can be grown successfully in rooms where there is not much direct light. Indeed, I have seen it trained across the ceiling, in German homes, where the light seemed insufficient to meet the requirements of any plant, and there its leaves were as dark in color as those of most other plants are when standing close to the glass, and seemed to be quite as healthy. Two or three times a year, the owners told me, the vine was taken down, coiled up for convenience in transit, and taken out of doors. There it was spread out upon the grass and left until the rain had washed it clean. Because of the thick, firm, leathery texture of its foliage it seemed immune from the bad effects of dust, hot, dry air, and the absence of direct light. When well grown it is a plant that any one might well be proud of. For training up about the ceiling of the bay-window it stands at the head of the list of vines adapted to house culture.
+
+Sometimes scale attacks both myrtle and ivy. When this happens heroic measures must be resorted to in order to head off permanent injury. In the chapter on "The Insect Enemies of Plants" a remedy is suggested that seldom fails to produce most satisfactory results.
+
+Palms are universal favorites. There are but three varieties that I feel justified in recommending for amateur culture. These are the arecas, especially A. lutescens, Latania borbonica, better known as the "fan palm," and the kentias, belmoreana and fosteriana.
+
+Of these three varieties I would advise the kentias for beginners in palm-culture, as they are more robust than any of the others and quite as ornamental. They are of somewhat coarser habit than Areca lutescens, which is an almost ideal sort for general use. Latania borbonica has large, almost circular leaves borne on short, stout stalks, thrown out from the center of the plants. It does not grow tall like the kentias or the arecas. It is the variety from which our palm-leaf fans are made. One who has never seen this plant can get a fairly good idea of the shape of its foliage by looking at one of these fans. The three varieties mentioned are all of comparatively easy culture. Give them a loamy soil, well drained, and enough water to keep the soil always moist. Keep them out of strong sunshine. Don't experiment with them, hoping to hasten development. As long as they keep on producing three or four new leaves during the year, let them alone. If they lift the crown of the plant out of or above the soil, and the roots give them the appearance of a plant on stilts, don't be frightened, and repot them, setting them low in the soil to cover the roots. It's natural for them to grow in that way. Wash the foliage at least once a week. Add a little sweet milk to the water. This will give a gloss to the foliage that will add much to its attractiveness.
+
+Next to the palm in popularity is the Boston fern. This is a favorite with every one who succeeds in growing it well, because of its great profusion of fronds, three or four feet long, which droop over the pot gracefully and make the plant a veritable fountain of foliage. Another reason for its great popularity is its ease of culture. Give it a light, spongy soil and a moderate amount of water and it will make quite a rapid growth. It is not an exacting plant in any respect, and will do well in almost any kind of soil except those which contain a large amount of clay. But it does best in a soil that is light and porous. Never give enough water to make the soil muddy.
+
+The third place on the list ought to be given to the ficus, more commonly known as rubber-plant. This is also of easy culture. It never fails to attract attention by its large, thick, glossy, dark-green foliage.
+
+The aspidistra ought not to be overlooked. Because it does not grow to a considerable height, like the ficus, it has not attained the popularity of that plant, as yet, but it will be a universal favorite as soon as its merits become fully known. Its great masses of dark-green foliage are extremely ornamental, and the fact that it is the one plant in the list of decorative plants suitable for amateur use that can be said to almost take care of itself will appeal to those who want something that can always be depended on to look well. Give it enough water to keep the soil in its pot moist at all times, and that is about all it will ask of you. It is not at all particular as to the soil given it, and it seems to care very little for direct light. It will stand more abuse and neglect, and flourish under it, than any other plant I have any knowledge of.
+
+The bulb-bed should be located in some part of the yard where there is good, natural drainage or where it will be an easy matter to secure an artificial one by excavating the soil to the depth of a foot and a half and filling the bottom of it with material that will not readily decay, such as broken brick, crockery, or crushed stone. The object is to provide escape for surplus water from the soil above in spring. No bulb can be grown successfully in a soil that is unduly retentive of water about its roots.
+
+In arranging for artificial drainage, after filling the bottom of the excavation with five or six inches of drainage material, the soil that was thrown out should be returned to it, working into it, as this is done, a liberal amount of good manure. The best of all fertilizers for all bulbs is old, well-rotted barn-yard soil. If this cannot be obtained make use of some good commercial fertilizer. As soils differ greatly, and not all commercial fertilizers are adapted to all soils, I would suggest that some person in the community who understands the nature of its soil and the kind of fertilizer which suits it best should be consulted, and that the maker of a bulb-bed should be governed by his advice as to what kind to make use of. It is not well to let guesswork govern in the matter.
+
+If possible, choose a location that slopes toward the south. This will give the bed the benefit of sun warmth early in the season, and the plants in it will be greatly helped by it.
+
+It is quite important that the soil for bulbs should be made fine and mellow and that whatever fertilizer is used should be thoroughly incorporated with it. While it is true that most bulbs will do fairly well in soils of only moderate richness, it is impossible for them to do themselves anything like justice in it. Keep this fact in mind, and be generous in your supply of plant food.
+
+The proper time to plant bulbs is in late September and early October. This enables them to make a strong root-growth before winter sets in. Such a growth puts them in proper condition for flowering in spring. Late planting does not admit of the completion of root-growth in fall, consequently some of it has to be made in spring. This obliges the plants to divide their work at that season between root-growth and flower production, and as these processes ought not to go on at the same time the result is an inferior crop of flowers and unsatisfactory bulb-development. I cannot urge too strongly the advantages of early planting.
+
+The best bulbs for the amateur gardener are Holland hyacinths, tulips, and the narcissus. These are very hardy and floriferous, and succeed in almost all soils. And they are so beautiful that they deserve a place in all collections. They should be set about four inches below the surface, and about that distance apart.
+
+Before winter sets in the bed should be covered with leaves, straw, or coarse litter from the barn-yard. Let the covering be about six inches deep. It will not prevent the ground from freezing, but it will prevent it from freezing and thawing alternately. If this takes place the bulbs are pretty sure to be torn from their places, and their tender, recently formed roots broken off.
+
+Of course there are other bulbs than those of which I have made mention that are well worth growing, but they are not as well adapted to amateur culture as those are, therefore I would advise the beginner in bulb-growing to confine her attention to the hardiest and least particular kinds until she feels that her success with them justifies her in "branching out" and making an attempt to grow those which require greater care and a good deal more of it.
+
+A supply of good potting-soil should be put into the cellar for use during the winter if needed. Often a plant will have outgrown its pot, thus making immediate repotting necessary in order to continue the healthy condition of it, but if there is no good soil at hand it will be obliged to do the best it can until spring comes, and by that time it will have received a check from which it will be a long time in recovering, and quite often it will die as the result of failure to give it proper attention when it was in most need of it. If you have a supply of potting-soil in stock there will be no excuse for not caring for your plants promptly when the advisability of repotting is indicated.
+
+A very satisfactory potting-soil is composed of garden loam, two parts; leaf-mold or its substitute, one part; and clean, coarse sand, one part. To this should be added some well-rotted cow manure, if obtainable. Work the compost over until all its ingredients are thoroughly mixed. The quantity of manure required to make the compost sufficiently rich to suit all kinds of plants will depend on the quality of the loam used. If that is quite rich, do not add much manure to it. If only of moderate richness, more can be used. This is a matter which will have to be decided largely by results. If the plants you put into the compost make a strong, healthy growth, the soil is rich enough. If the growth does not seem strong, more plant food is required.
+
+A good substitute for cow manure is fine bone-meal in the proportion of a pound to a bushel of soil. A good substitute for leaf-mold will be found in that portion of old sward from pasture or roadside which contains fine grass roots. Turn the sward over and cut away this part of it, to mix with the loam and sand. These roots will be found almost as rich in vegetable matter as pure leaf-mold.
+
+Some persons may wonder why I advise the liberal use of sand, which is not supposed to contain much nutriment. I do it because I have found from long experience in growing plants that sand not only facilitates good drainage, but enables air to get to the roots of the plants as it never can do when the soil is not light and porous. And sand is a sweetener of soil, as is charcoal. Of course not all plants are alike in their requirements. Roses, for instance, like a rather heavy, compact soil. In growing them use the loam without sand. If I had to choose between sand and manure in making potting-soil for nearly all plants adapted to window culture, I would take the sand.
+
+It is not too late to set out seedling plants of such perennials as phlox and hollyhock if care is taken to lift enough soil with them to insure against disturbance of their roots. Work of this kind can be done to better advantage now than in spring.
+
+Now is a good time to go over the shrubs and give such pruning as may seem necessary. As a general thing, the less pruning given a shrub the better, for if left to itself it will do a much better job of training than we are capable of doing for it. But it is advisable that all shrubs should have the old, weak wood cut away each season. This is pruning for health—not for symmetry. Nature has a keener eye for the symmetrical than we have, therefore we are justified in leaving the training of our shrubs to her, or to the shrubs, acting under her advice.
+
+Oleanders, fuchsias, hydrangeas, chrysanthemums—in fact, all hard-wooded plants that are summer and autumn bloomers—should be wintered in the cellar. Here, if the temperature is kept low, they will be practically dormant for several months, thus getting the same kind of a resting-spell that comes to deciduous plants out of doors during winter. Give just enough water to prevent the soil from becoming dust-dry. Do not be frightened if some of them shed their foliage while in cold storage; outdoor plants do that. If the place in which they are kept can be made dark, all the better.
+
+Dahlia roots should be spread out on swinging-shelves of wire netting when stored away. Never heap them together, and never put them on the cellar-bottom, for it is likely to be too damp there. Mold, which is largely the result of dampness, must be guarded against, hence the advantage of hanging-shelves which will allow a free circulation of air about the roots spread out on them. Look them over at least every week. If you find any that show signs of mold or decay, separate them immediately from the healthy ones. If allowed to remain, the diseased condition will surely be communicated to the entire mass of roots.
+
+All plants that seem to need repotting should be attended to before winter sets in. This will give them plenty of time to become thoroughly re-established before the winter campaign is on, and it will not be necessary to disturb them in the middle of the busy season.
+
+All the windows at which plants are kept should be looked over before cold weather comes, and made proof against cracks and crevices that will let in cold air. It is a good plan to provide these windows with storm-sash. If this is done, the plants can be allowed to stand with their leaves against the glass, as the air space between window and storm-sash will prevent frost from forming on the inner panes.
+
+Gladiolus roots should be stored in boxes of perfectly dry sawdust or buckwheat hulls and kept in a dry and rather cool place. Never put them in the cellar. Be careful to see that no frost gets to them. Or they can be wrapped in paper and put into paper bags and hung in a closet. If kept in a very warm place over winter they frequently become so dry that there is little vitality left in them by spring.
+
+Tuberous begonias and gloxinias will most likely have ended their flowering season by this time. Allow the soil in their pots to become dry. Then set them away in a dark closet without in any way disturbing the tubers. Treated in this manner, they winter much more satisfactorily than when the roots are taken out of the soil. In spring, when the plants are brought to the light and water is given, they will soon send up new sprouts. Then the roots should be shaken out of the old soil and supplied with fresh earth.
+
+In covering roses do not make use of leaves if there happens to be anything else at hand that will afford the necessary protection. Leaves would make an ideal covering were it not for the fact that it is almost impossible to keep mice from working in them. Last season I lost every rose-bush that was covered with leaves. The mice had gnawed all the bark from them. Covering the bushes with dry earth is preferable.
+
+Whenever any one writes me that she is fond of flowers, and would be delighted if she could have some in winter, but that she fails to get satisfaction from the ordinary house-plant, I always advise her to try bulbs. For I know that one is reasonably sure of getting fine flowers from this class of plants, provided we are willing to give them the right kind of treatment. One will get more flowers from them than she can expect from the ordinary collection found in the average window garden—we can have them through the entire winter if we plan for a succession—and we have few flowers that equal those of the bulbs in beauty. And, last but not least, they require really less care than is demanded by the majority of house-plants.
+
+Three things are essential to success in the culture of bulbs in the house:
+
+First—Good stock.
+
+Second—Good soil.
+
+Third—Root development before top growth takes place.
+
+The first essential is readily met if you order your bulbs from reliable dealers—dealers who have established a reputation for honesty and the handling of bulbs of the best quality only. Each season we see advertisements in which large collections of bulbs are offered at very low prices. Beware of them. As a general thing the wonderfully cheap ones are as cheap in quality as they are in price, and from such a grade of bulbs you cannot expect fine flowers. The best bulbs are imported ones, grown largely in Holland, where both soil and climate are admirably adapted to the production of first-class stock, and where the matter of bulb-growing has been reduced to almost a science. These will cost a little more than American-grown ones, but they are well worth the difference in price. Inferior stock will give inferior flowers every time, and what one wants in forcing bulbs in winter is the best flowers possible.
+
+The item of good soil is a most important one. Bulbs can be grown, after a fashion, in almost any kind of soil, but they can only be grown to perfection in a soil whose basis is a sandy loam made quite rich with some good fertilizer. Heavy soils can be made lighter by mixing sharp, coarse sand with them until the mixture, after being squeezed tightly in the hand, will readily fall apart after pressure is relaxed.
+
+The ideal fertilizer for all bulbs is old, thoroughly rotted cow manure. On no account should fresh manure of any kind be used. But it is not always possible to procure manure from the cow-yard, and those who are unable to do so will find fine bone meal a good substitute. Use this in the proportion of a pound to a half-bushel of soil. Whatever fertilizer is used should be thoroughly mixed with the soil. Be very sure that the latter is free from lumps.
+
+In potting bulbs for winter use I would advise putting several in the same pot. Fill the pot loosely with soil, then press such bulbs as those of the hyacinth, tulip, and narcissus down into it just their depth. As many can be used in a pot as can be set on the surface of the soil in it so that they just touch one another. Do not attempt to make the soil firm about them or beneath them. If this is done their tender roots will often fail to penetrate it, and the consequence will be that the bulbs are hoisted upward as the roots develop. This should be guarded against by having the soil so light that the young roots will find no difficulty in making their way into it. I advise the use of several bulbs in the same pot because it gives a greater amount of bloom in a limited space, and greatly economizes in soil, pots, and labor.
+
+When you have put your bulbs into the soil, water them well, and then set the pots away in a place that is cool and dark. Some persons consider this unnecessary, and put their plants in the window as soon as potted. This is all wrong. Storage in a cool, dark room until roots have formed is absolutely necessary to success. The reason for it is plain if we stop to think that the bulbs must have roots before they can make a satisfactory growth of top. Roots first, flowers afterward.
+
+As a general thing bulbs will have to remain in cold storage at least six weeks before it will be safe to bring them to the windows in which they are to bloom. But no definite time can be assigned. One must examine the plants from time to time, and on no account should they be taken to the light until the pot is filled with roots and indications of top growth are seen.
+
+It may sometimes be necessary to water them while in the dark room, but as a general thing one watering—the one given at potting-time—will be sufficient. Too much water while in the dark may cause serious trouble. But this, like the length of time allowed for root formation, is a matter that must be left largely to the good judgment of the grower.
+
+When plants have been brought from the cellar, or wherever they have been placed while roots were forming, they should not be put into very warm rooms. Too much heat, combined with the effects of light and water, will result in rapid growth, which is not a healthy one. In warm rooms the flowers will be short-lived.
+
+I have spoken of planting for a succession of bloom. This is important if you want flowers throughout the winter. Pot a few at intervals of ten days or two weeks, beginning the middle of September or first of October. If this is done it is an easy matter to keep the window supplied with flowers from the holidays to the advent of spring. A little calculation will enable one to plant enough to meet the demand and to regulate the planting intervals in such a manner as to bring about the succession necessary to cover the season.
+
+What has been said above may seem so elaborate to the person who has never grown bulbs for winter flowering that it may give the impression that what is really a simple matter is too difficult for the amateur. But if what I have written is read over carefully and given a little thought you will readily see, I think, that most of what I have said has been devoted to giving reasons for the treatment outlined, so that the "whys and wherefores" may be understood. And it will be seen that it all resolves itself into a very simple proposition—viz., good stock, good soil, and cold storage until roots have formed—the three essentials spoken of at the beginning of this chapter. Nothing is required that the beginner in floriculture is not equal to. Potting the bulbs is a much simpler matter than potting a plant, and the preparation of soil for them involves no more labor or skill than the preparation of a soil for a geranium to grow in.
+
+Now as to kinds to grow. I advise the Holland hyacinth, preferably the single varieties; the Roman hyacinth, the white variety only; early tulips; and five varieties of the narcissus—Van Sion, Horsfeildii, empress, trumpet-major, and paper-white—and the Bermuda, or, as it is more commonly called, Easter lily.
+
+The double Holland hyacinths are too double to be pleasing to a person who likes individuality in a flower. The Roman hyacinth is more graceful than any other member of the family. The early tulip is much surer to bloom well than any of the others described in the florist's catalogue.
+
+The Easter lily requires a treatment somewhat different from that advised for the other bulbs. It sends forth two sets of roots, one from the base of the bulb and one from the stalk sent up from the bulb. In order to give each set of roots a chance we have to set the bulb deep down in the soil. Let the pot be only half filled with earth when the lily is put into it, press it down as directed for the other bulbs, and add no more soil until growth begins. Then, as the stalk reaches up, put more soil into the pot, and continue to do this until it is full. In this way give the two sets of roots the support they need.
+
+If bone meal is used as a fertilizer, be sure to get the finely ground article. Coarse bone meal is not what you need, as it does not give an immediate effect.
+
+In fall, when we bring in the plants that have been growing out of doors during the summer, they usually look healthy, and we congratulate ourselves that we are likely to have a fine crop of flowers from them later on. But soon we see some of their leaves turning yellow and falling off, and though they may make considerable growth, it is unsatisfactory because it is spindling and weak. If buds form, they are pretty sure to blight before reaching maturity, and, instead of having the fine, floriferous plants we had counted on, we have a window-garden that is more noticeable for its discouraged look than for anything else.
+
+The owner of such a garden too often aims to remedy the unfavorable conditions which exist in it by applying some kind of fertilizer to her plants. By doing this she simply makes a bad matter worse, for the application of any kind of plant food to weak and debilitated plants is on a par with giving rich food to a person whose stomach is not in a condition to make proper use of it. No fertilizer should ever be given to a plant that is not in healthy condition; neither should it be given to dormant plants. When active growth begins, then, and then only, should they be stimulated to stronger growth by feeding them well. But care must be taken to not overfeed them. Give only enough to bring about a vigorous growth, but not a rapid one, for that is pretty sure to be a weak one from which there will be a reaction by and by, from which your over-stimulated plants will suffer severely. Most growers of house plants are too kind to them. In this respect they are like a good many mothers who injure their children by over-indulgence through mistaken ideas of kindness.
+
+In applying fertilizers, begin by giving them in small quantities. Watch their effect upon the plants. If their leaves increase in size and take on a rich color, be satisfied that you are feeding your plants quite enough for their good.
+
+The impression prevails to a considerable extent that by fertilizing plants we secure more flowers from them than we would be likely to do if no fertilizer was used. Such is not the case. Feed a plant rich food and it will be likely to make a vigorous growth of branches and foliage at the expense of flowers. The aim should be to simply keep the plants growing well. If this is done, whatever flowers they produce will share in the general benefit of the application, but they will not be increased in quantity by it.
+
+One reason why the plants in the winter window-garden fail at the time when we think they ought to be doing their best is lack of fresh air. If one stops to think about it one will not wonder that her plants have a sickly look. We keep our windows closed tightly, thus keeping out the air that the plants need, and we put storm-doors on every entrance. In fact, we do everything in our power, seemingly, to prevent fresh air from getting to them, and then we wonder why our plants do not flourish. We lose sight of the fact that plants breathe, the same as human beings do. A little intelligent consideration of the conditions under which we undertake to grow them ought to convince us of the mistake we make in expecting them to do well without a regular supply of fresh air. While it is well to make the windows at which plants are kept tight enough to prevent draughts of cold air from coming in upon them, it is not only advisable but absolutely necessary, if we would grow healthy plants, to give them a liberal supply of fresh air every day, and preferably several times a day. This can be done by opening a door or a window at some distance from them, and letting fresh, pure air rush into and fill the room. If possible, let down a window a few inches from the top on the side of the room opposite from where the air comes in, to allow the vitiated air of the room to readily escape before the onrush of outdoor air. In this way it is an easy matter to completely change the character of the air in a room in a few minutes, and in doing it we benefit the human occupants of the room quite as much as we do the plants in it. If the owner of every window-garden would make it a daily practice to give her plants an air-bath she would be surprised at the speedy improvement that would be noticeable in them.
+
+We weaken our plants, as we do ourselves, by keeping the temperature of our rooms too high. We are not satisfied with a comfortable warmth. We want heat enough to keep us constantly conscious of it by its intensity. This is all wrong from the health point of view. What ought to be done is to install a thermometer in every room, and so regulate the amount of heat that all are kept at summer warmth by arranging for a system of ventilation that will act automatically when the thermometer goes above a certain point. This system is speedily coming into general use, and gives most excellent satisfaction. Where it is not in use, the temperature can be kept somewhere near where it ought to be by opening doors or windows from time to time, as already spoken of. Keep in mind that too much heat and too little fresh air will kill almost any plant in time, and the two, working together, will, nine times out of ten, make any window-garden a comparative failure.
+
+Care must be taken in watering plants in winter. Those which are dormant, or are making but little growth, will require very little water. Those in active growth will need more. The only way to tell how much to give is to watch your plants closely, and observe the effect of the applications given. When the surface of the soil takes on a dry look it is safe to conclude that the roots of the plant in the pot have made use of most of the moisture in it, and that more water should be given. Then give enough to make the soil moist all through, and withhold further applications until the dry look appears again. Never form the habit of watering your plants every time you happen to think about it, and then apply just enough to make the soil look wet on its surface. If this is done you will never grow good plants, for only the surface roots will get the moisture they need. Have a stated time for watering, and let the appearance of the soil govern the amount used.
+
+Every woman who attempts to grow flowers in the house will sooner or later have to wage warfare against insects.
+
+Perhaps the first battle will have to be fought with the aphis, or plant-louse. This insect sucks the sap—the life-blood of the plant—from stalk and leaf, and soon, if let alone, it will exhaust the vitality of the plant to a degree that is wholly incompatible with health. In fact, if allowed to have its way, it will kill your plants, for it propagates its species with such rapidity that a plant will soon be literally covered with them. We used to kill off these insects by fumigating the plants infested with them with tobacco smoke, and in doing it we made ourselves about as sick as the insects were, and the nauseating fumes of it clung to everything in and about the house for days. Nowadays we make use of the nicotine principle of tobacco in our warfare against the aphis, but in a manner that leaves out the objectionable features of fumigation. Tobacco manufacturers have prepared an extract of the nicotine in the plant, and put it on the market under the name of nicoticide. All we have to do when we want to make use of it is to put a small quantity in water, and spray our plants with the mixture. Every aphis that it touches will die, and those that it fails to reach will take the hint that they are not wanted and that their presence will not long be tolerated, and the first you know they will have disappeared.
+
+Instead of waiting for the attack of the enemy I consider it good policy to anticipate it by frequent applications of the tobacco-bath. It will be found easier to keep the enemy away than to rout it after it has established itself on your plants.
+
+The red spider is another insect that does deadly work in the window-garden, especially in rooms where the temperature is high and there is little moisture in the air—a condition that generally prevails in the ordinary living-room. This pest is so small that its presence is seldom suspected until considerable injury has been done to the plants it works on. If you notice that leaves are turning yellow and dropping off, and that more and more of them fall each day, you had better look into the matter. Examine some of the fallen leaves. If you find tiny webs on the under side of them you may be quite sure that the spider is responsible for the condition your plants are in. Look at some of the leaves that are yellowing, but have not yet let go their hold, and you will be quite likely to find little red specks on them. These specks resemble grains of fine Cayenne pepper more than anything else. Watch them for a while and you will find that they are living organisms. It seems hardly possible that such tiny creatures can do much harm to a strong plant, but the fact is that there is no more voracious enemy of plant life in existence. Here the tobacco-bath does not come in play. Cold water is all the insecticide we need. Spray it over every portion of the infested plants daily, until they again take on a healthy look and begin to grow. The spider will not stay long in a moist atmosphere. Make it moist and keep it so by the liberal use of water sprayed upon your plants, and you will have very little trouble with this dangerous pest. But if you neglect to use water regularly and freely the probabilities are that your window-garden will look rather sickly by spring.
+
+Scale is an insect that often attacks plants having thick, firm-textured foliage, like the oleander, lemon, ivy, ficus, and palm. It is a flat creature, looking more like a fish-scale than anything else, hence its name. It attaches itself to the leaf and sucks the life out of it. The best weapon to fight this enemy with is an emulsion made as follows: shave thinly half a pound of white soap; pour a little water over it and set it on the stove to liquefy. When the soap is melted, add to it a pint of water and bring to a boil. When boiling, add a teacupful of kerosene and three tablespoonfuls of the tobacco extract. These ingredients, under the effect of heat, will form an emulsion that will unite readily with water. Use in the proportion of one part emulsion to fifteen parts water. Apply to the infested plants with a soft cloth or a camel's-hair brush. Be sure that some of it gets to all parts of the plant. Two or three applications may be necessary. Prepare a quantity of it and keep it on hand for use when needed.
+
+The emulsion spoken of above is an excellent remedy for the ills the rose is heir to during the early part of the season. If Paris green is sprayed onto the plants the foliage is frequently burned by it. If kerosene is mixed with water and applied, the oil will seldom emulsify perfectly with the water, and wherever a drop of it falls on leaf or bud it will do quite as much damage as would the bug or worm you are fighting. Hellebore is never to be depended on. The kerosene-tobacco-soap emulsion will be found safe and effective.
+
+Worms in the soil of pot plants can be got rid of by the use of lime-water. Put a piece of perfectly fresh lime as large as the ordinary coffee-cup in ten quarts of water. If fresh, as it must be to be of any benefit, the water will seem to boil for a little while. By and by a white sediment will settle to the bottom of the vessel, and the water above will be clear. Pour this off and apply enough of it to each plant to saturate all the soil in the pot. Plug up the drainage hole in the bottom of the pot before the application is made, that the water may be retained long enough to do its work. Repeat the application if necessary.
+
+If you want to keep children out of mischief give them a little garden. One that they can call their own will afford them far more pleasure than they get out of working in your garden. Of course they will not be expected to go ahead with garden work at first and make much success at it without assistance from some one, and by object-lessons, but they will soon master the fundamental points of it, and when they have done that they will surprise you by the facility with which they pick up the information that grows out of their early experience and the amount of work that they will accomplish all by themselves.
+
+And you will be pleased to see how interested they are in the new undertaking. It will not seem like work to them. It will be play, and play of such a healthy character that you can well afford to ignore soiled clothes, and hands that have caught the grime of the soil, and faces on which sweat and soil have met on common ground and formed an intimate partnership. The healthy color of the faces of the children who work out of doors, and the excellent appetites that they bring to the table, will convince you that gardening is the best of all tonics for them.
+
+And you will be gratified to know that they are learning more from the great book of Nature than they would ever learn in the schools. They are learning things at first hand, for Nature will take charge of the little pupils and not trust her kindergarten work to an assistant. Nine children out of ten who have a garden to work in will become more interested in it than in all the fairy-books that were ever written. For are not the processes of germination and growth going on before their eyes akin to magic? The miracle of life is being performed before them every day, and they are taking part in it. That is what will make it so delightful to them. They have formed a partnership with Nature in miracle-making.
+
+Parents who have only a hazy notion of garden-work may think themselves incompetent to teach their children. But if they set out to do so they will soon find that they are daily learning enough to make them safe teachers for the little folks. And the best of it will be that they themselves are getting quite as much good and pleasure out of it as the children are.
+
+Give the boys and girls good tools to work with. Never ask them to make use of those you have worn out or found worthless. Something quite as good as you would provide for yourself is what should be provided for them. They will appreciate a good thing, be very sure, and the fact that they have it will be one of the best possible incentives to work. Supply them with good seed. And do not fail to encourage them by giving all the credit justly due them for what they accomplish. Children like to know that their efforts are properly appreciated. We grownups and the children are very much alike in that respect.
+
+There are many ways in which work in the garden and about the home can be varied in such a manner as to give a variety of comparatively new and pleasing effects with so little trouble and expense that the amateur gardener and home-maker who would like "something new" will, I feel sure, be delighted to undertake some of them.
+
+One is a floral awning for the windows which are exposed to strong sunshine. A frame is made of lath, the width of the window and half its depth, by nailing four of the strips together in a square and then fastening other strips across it in a diamond or lattice fashion. Attach this frame to the top of the window-casing by door-butts. Then push the lower part of it away from the window until you have it at the angle at which a cloth awning would hang when dropped, and support it in that position by running strips of wood from each corner to the sides of the window-frame.
+
+If such vines as morning-glory, flowering bean, and cypress are trained up each side of the window until they reach these supports, it will be an easy matter to coax them up them and from them to the awning's framework, which they will soon cover with foliage and flowers. Such an awning will be found quite as satisfactory as one of cloth, so far as shade is concerned, and, as for beauty, there is no comparison between them, for the ordinary awning of striped cloth is never ornamental. A floral awning is to the upper part of the window what the window-box of plants is to the lower portion of it, and the two can be used in combination with most delightful results. Indeed, they belong together, and one without the other only half carries out the scheme of window decoration.
+
+Such awnings will be found as satisfactory for exposed doors as for windows. The boys of the family—or the women of it—can make them and put them in place, and the cost of them will be so small, compared with their ornamental and practical value, that one season's trial of them will make them permanent features of home-beautifying thereafter. I would advise planing the strips of lath and giving the frames a coat of green or white paint before putting them in place. Green paint will make them unobtrusive, and white will give a pleasing color contrast. If they are taken down in fall and stored in a dry place over winter they will last for a good many seasons.
+
+As a general thing the front gate, if there is one, is not particularly ornamental. But it can easily be made so by setting posts ten or twelve feet tall at either side, and attaching to the top of them a double awning-frame similar to that advised for windows. Let these frames meet at the top and slope outward and downward, roof fashion, and have supports running to each outer corner from the posts. When vines are trained up the posts and over the frames, and are allowed to droop in graceful festoons of foliage and flower from them, the effect will be charming. Here is where the wild cucumber—the most rapid climber of all our annuals—will be able to do most effective work. I would advise the use of hardy vines for positions of this kind, as they will be attractive from the beginning of the season, while an annual has to be given considerable time to grow before it becomes equal to the task assigned it.
+
+Garden-seats ought to be a feature of all home grounds large enough to admit of them. And these seats can be made as ornamental as the gateway just described by providing them with awnings large enough to afford complete shade. Of course, where there are trees to furnish shade such awnings will not be needed—and the logical place for a garden-seat is under a tree, if there is one—but on grounds where there are no trees to furnish shade, such protection from the heat of summer sunshine as these awnings will afford becomes more a necessity than a luxury. As it is, they are both ornamental and useful, and the ease and cheapness with which they are made commends them to all who believe in the value of "little things" in making home attractive and pleasant.
+
+Often it is desirable to furnish certain portions of the home grounds with screens large enough to shut off the public view. These should have frames of a size that guarantees strength. Lath put on in lattice fashion will make a good covering for them, but it will not be strong enough to insure durability in itself, hence the necessity of a more substantial framework. It is always advisable to paint them before covering them with vines. As screens of this kind are generally built with a view to permanence, I would advise covering them with hardy vines, like ampelopsis, Clematis flammula and C. paniculata, aristolochia, or trumpet honeysuckle.
+
+If low screens are wanted anywhere about the place, as a dividing factor between the flower and vegetable gardens, for instance, sweet-peas will make a charming covering for them.
+
+Large screens that are intended to separate the ornamental portions of the home grounds from the not generally attractive yards at the rear can be made extremely effective by training rambler roses over them.
+
+One of the most attractive features about the home of the author of this book is the fence which divides it from the property of his next-door neighbor. When the lawn was made, cedar posts were set along one side of it, and on these woven-wire netting was stretched. This netting was about four feet wide and of a rather heavy grade of wire. Small plants of ampelopsis were set out along it, about twenty feet apart. As fast as branches were thrown out they were trained out and in through the meshes of the netting. In one season the plants made enough growth to meet one another, and the second season the netting was completely covered. The result has been extremely satisfactory. Throughout the summer this fence has the appearance of a closely clipped hedge of luxuriant green. In fall it is a mass of scarlet and crimson, quite as brilliant as the bed of geraniums near by. It is vastly more ornamental than a fence of wood or iron, and makes an entirely satisfactory substitute for a hedge that it would take years to grow. In some respects it is more satisfactory than such a hedge would be, as it requires no annual shearing to keep it in proper shape and condition.
 EOD;
     }
 }

@@ -389,9 +389,9 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rFancyText(rand(300, 1764)),
-                    $this->rFancyText(rand(1765, 3528)),
-                    $this->rFancyText(rand(3529, 5292)),
+                    $this->rText(300, 1764),
+                    $this->rText(1765, 3528),
+                    $this->rText(3529, 5292),
             ));
         }
         
@@ -433,17 +433,17 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rFancyText(rand(300, 1764)),
-                    $this->rFancyText(rand(1765, 3528)),
-                    $this->rFancyText(rand(3529, 5292)),
+                    $this->rText(300, 1764),
+                    $this->rText(1765, 3528),
+                    $this->rText(3529, 5292),
             ));
         }
         
         if($decisions['when'] == 'depends') {
             $decisions['whenDetails'] = $this->random(array(
-                    $this->rFancyText(rand(300, 1764)),
-                    $this->rFancyText(rand(1765, 3528)),
-                    $this->rFancyText(rand(3529, 5292)),
+                    $this->rText(300, 1764),
+                    $this->rText(1765, 3528),
+                    $this->rText(3529, 5292),
             ));
         }
         
@@ -455,18 +455,18 @@ class JsonGenerator extends Randomizer
     protected function instruction()
     {
         return $this->random(array(
-                $this->rFancyText(rand(300, 924)),
-                $this->rFancyText(rand(925, 2706)),
-                $this->rFancyText(rand(2707, 4470)),
+                $this->rText(300, 924),
+                $this->rText(925, 2706),
+                $this->rText(2707, 4470),
         ));
     }
     
     protected function preference()
     {
         return $this->random(array(
-                $this->rFancyText(rand(300, 924)),
-                $this->rFancyText(rand(925, 2706)),
-                $this->rFancyText(rand(2707, 4470)),
+                $this->rText(300, 924),
+                $this->rText(925, 2706),
+                $this->rText(2707, 4470),
         ));
     }
     
