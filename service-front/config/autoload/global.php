@@ -87,5 +87,7 @@ return array(
         'log' => false,
 
     ], // worldpay
+    
+    'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gsi.gov.uk',
 
 );

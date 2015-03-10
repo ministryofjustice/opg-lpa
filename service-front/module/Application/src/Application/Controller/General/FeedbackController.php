@@ -40,14 +40,18 @@ class FeedbackController extends AbstractBaseController
                 $feedbackService = $this->getServiceLocator()->get('Feedback');
                 $data = $form->getData();
                 
-                $feedbackService->sendMail([
+                $result = $feedbackService->sendMail([
                     'rating' => $data['rating'],
                     'details' => $data['details'],
                     'email' => $data['email'],
                     'fromPage' => $container->feedbackLinkClickedFromPage,
                 ]);
                 
-                $model->setTemplate('application/feedback/thankyou.phtml');
+                if ($result === true) {
+                    $model->setTemplate('application/feedback/thankyou.phtml');
+                } else {
+                    throw new \Exception('Error sending feedback email');
+                }
             }
         } else {
             $container->setExpirationHops(1);
