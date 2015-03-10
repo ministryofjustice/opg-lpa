@@ -26,7 +26,8 @@ else {
         $whoIsRegisteringValueOptions['attorney']['label'] = "The attorneys - ". $this->concatNames($this->lpa->document->primaryAttorneys);
     }
     else {
-        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".(($this->lpa->document->primaryAttorneys[0] instanceof Human)? $this->lpa->document->primaryAttorneys[0]->name->__toString():$this->lpa->document->primaryAttorneys[0]->name);
+        $attorney = current($this->lpa->document->primaryAttorneys);
+        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".(($attorney instanceof Human)? $attorney->name->__toString():$attorney->name);
     }
     
     $whoIsRegisteringValueOptions['attorney'] += [
