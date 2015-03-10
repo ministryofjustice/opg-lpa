@@ -191,7 +191,25 @@ class PrimaryAttorneyController extends AbstractLpaController
         
         $deletionFlag = true;
         if(array_key_exists($attorneyIdx, $this->getLpa()->document->primaryAttorneys)) {
-            if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $this->getLpa()->document->primaryAttorneys[$attorneyIdx]->id)) {
+            $attorneyId = $this->getLpa()->document->primaryAttorneys[$attorneyIdx]->id;
+            
+            // check whoIsRegistering
+            if(is_array($this->getLpa()->document->whoIsRegistering)) {
+                foreach($this->getLpa()->document->whoIsRegistering as $idx=>$aid) {
+                    if($aid == $attorneyId) {
+                        unset($this->getLpa()->document->whoIsRegistering[$idx]);
+                        if(count($this->getLpa()->document->whoIsRegistering) == 0) {
+                            $this->getLpa()->document->whoIsRegistering = null;
+                        }
+                        
+                        $this->getLpaApplicationService()->setWhoIsRegistering($lpaId, $this->getLpa()->document->whoIsRegistering);
+                        break;
+                    }
+                }
+            }
+            
+            // delete attorney
+            if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyId)) {
                 throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }
             $deletionFlag = true;
