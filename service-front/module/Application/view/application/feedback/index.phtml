@@ -43,15 +43,15 @@ $formLabel = $this->plugin('formLabel');
 
 <div class="form_element">
     <?= $formLabel->openTag($type)?>
-    How would you rate your experience with this service?
+    <strong>How would you rate your experience with this service?</strong>
     <?= $formLabel->closeTag(); ?>
     <?= $this->formElementErrors($type)?>
     <?= $this->formElement($type)?>
 </div>
 
-<div class="form_element">
+<div class="group form_element">
     <?= $formLabel->openTag($details)?>
-    Please take a moment to tell us about your experience, what worked and what didn't.
+    <strong>Please take a moment to tell us about your experience, what worked and what didn't.</strong>
     <?= $formLabel->closeTag(); ?>
 
     <?= $this->formElementErrors($details)?>
@@ -66,7 +66,7 @@ $formLabel = $this->plugin('formLabel');
     <?= $formLabel->openTag($email)?>
     We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
     <br><br>
-    Your email address (optional)
+    <strong>Your email address (optional)</strong>
     <?= $formLabel->closeTag(); ?>
     <?= $this->formElementErrors($email)?>
     <p>
