@@ -52,7 +52,7 @@ $formLabel = $this->plugin('formLabel');
 
 <div class="form_element">
     <?= $formLabel->openTag($details)?>
-    Please take a moment to tell us about your experience, what worked and what didn't
+    Please take a moment to tell us about your experience, what worked and what didn't.
     <?= $formLabel->closeTag(); ?>
 
     
@@ -64,9 +64,10 @@ $formLabel = $this->plugin('formLabel');
 </div>
 
 <div class="form_element">
-                        We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
                 
-                                <?= $formLabel->openTag($email)?>
+                <?= $formLabel->openTag($email)?>
+                We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
+                <br><br>
                 Your email address (optional)
                 <?= $formLabel->closeTag(); ?>
                 
