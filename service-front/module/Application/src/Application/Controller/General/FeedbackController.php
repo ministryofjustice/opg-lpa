@@ -40,7 +40,8 @@ class FeedbackController extends AbstractBaseController
                 $feedbackService->sendMail([
                     'rating' => $data['rating'],
                     'details' => $data['details'],
-                    'email' => $data['email']
+                    'email' => $data['email'],
+                    'fromPage' => $this->getRequest()->getHeader('Referer')->uri()->getPath(),
                 ]);
                 
                 $model->setTemplate('application/feedback/thankyou.phtml');

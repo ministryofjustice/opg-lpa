@@ -18,7 +18,8 @@ $details = $form->get('details');
 $details->setAttributes([
     'id' => 'details',
     'rows' => 10,
-    'cols' => 67
+    'cols' => 67,
+    'maxlength' => 2000
 ]);
 
 $email = $form->get('email');
@@ -54,8 +55,10 @@ $formLabel = $this->plugin('formLabel');
     <?= $formLabel->closeTag(); ?>
 
     <?= $this->formElementErrors($details)?>
+    
     <p>
     <?= $this->formElement($details)?>
+    <div id="char-limit">2000 characters max</div>
     </p>
 </div>
 

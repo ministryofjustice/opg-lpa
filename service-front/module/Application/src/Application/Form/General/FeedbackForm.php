@@ -2,6 +2,7 @@
 namespace Application\Form\General;
 
 use Zend\Validator\NotEmpty;
+use Zend\Validator\StringLength;
 /**
  * To send feedback to the OPG
  *
@@ -10,6 +11,8 @@ use Zend\Validator\NotEmpty;
  */
 class FeedbackForm extends AbstractForm {
 
+    const MAX_FEEDBACK_LENGTH = 2000;
+    
     public function __construct( $formName = 'send-feedback' ){
 
         parent::__construct( $formName );
@@ -22,10 +25,10 @@ class FeedbackForm extends AbstractForm {
             'options'   => [
                 'value_options' => [
                     'very-satisfied' => [
-                            'value' => 'very-satisfied',
+                        'value' => 'very-satisfied',
                     ],
                     'satisfied' => [
-                            'value' => 'satisfied',
+                        'value' => 'satisfied',
                     ],
                     'neither-satisfied-or-dissatisfied' => [
                         'value' => 'neither-satisfied-or-dissatisfied',
@@ -34,7 +37,7 @@ class FeedbackForm extends AbstractForm {
                         'value' => 'dissatisfied',
                     ],
                     'very-dissatisfied' => [
-                        'value' => 'very-issatisfied',
+                        'value' => 'very-dissatisfied',
                     ],
                 ],
                 'disable_inarray_validator' => true,
@@ -76,14 +79,23 @@ class FeedbackForm extends AbstractForm {
                 array('name' => 'StringTrim'),
             ),
             'validators' => array(
-                array(
+                [
                     'name'    => 'NotEmpty',
                     'options' => [
                         'messages' => [
                             NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box.',
                         ],
                     ],
-                ),
+                ],
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => self::MAX_FEEDBACK_LENGTH,
+                        'messages' => [
+                             StringLength::TOO_LONG => 'Please limit your feedback to ' . self::MAX_FEEDBACK_LENGTH . ' chars.',
+                         ],
+                    ],
+                ],
             ),
         ]);
         
