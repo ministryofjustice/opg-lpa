@@ -12,11 +12,14 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 use Application\Form\General\FeedbackForm;
+use Zend\Session\Container;
 
 class FeedbackController extends AbstractBaseController
 {
     public function indexAction()
     {
+        $container = new Container('feedback');
+        
         $form = new FeedbackForm();
         
         $model = new ViewModel([
@@ -41,11 +44,14 @@ class FeedbackController extends AbstractBaseController
                     'rating' => $data['rating'],
                     'details' => $data['details'],
                     'email' => $data['email'],
-                    'fromPage' => $this->getRequest()->getHeader('Referer')->uri()->getPath(),
+                    'fromPage' => $container->feedbackLinkClickedFromPage,
                 ]);
                 
                 $model->setTemplate('application/feedback/thankyou.phtml');
             }
+        } else {
+            $container->setExpirationHops(1);
+            $container->feedbackLinkClickedFromPage = $this->getRequest()->getHeader('Referer')->uri()->getPath();
         }
         
         return $model;
