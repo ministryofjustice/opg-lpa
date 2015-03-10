@@ -56,7 +56,7 @@ class ApplicantForm extends AbstractForm
                 $lpa->document->whoIsRegistering = $this->data['attorneyList'];
             }
             else {
-                $lpa->document->whoIsRegistering = [];
+                $lpa->document->whoIsRegistering = explode(',', $this->data['whoIsRegistering']);
             }
         }
         
