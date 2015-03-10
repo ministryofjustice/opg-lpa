@@ -17,8 +17,6 @@ class FeedbackController extends AbstractBaseController
 {
     public function indexAction()
     {
-        $feedbackService = $this->getServiceLocator()->get('Feedback');
-        
         $form = new FeedbackForm();
         
         $model = new ViewModel([
@@ -27,6 +25,19 @@ class FeedbackController extends AbstractBaseController
         ]);
         
         $model->setTemplate('application/feedback/index.phtml');
+        
+        $feedbackService = $this->getServiceLocator()->get('Feedback');
+        
+        $request = $this->getRequest();
+        
+        if ($request->isPost()) {
+        
+            $form->setData($request->getPost());
+        
+            if ($form->isValid()) {
+                $model->setTemplate('application/feedback/thankyou.phtml');
+            }
+        }
         
         return $model;
     }

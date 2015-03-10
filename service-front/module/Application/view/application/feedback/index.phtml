@@ -4,7 +4,7 @@ $csrf = $form->get('secret');
 
 $form->setAttribute('class', 'form');
 
-$type = $form->get('how-would-you-rate');
+$type = $form->get('rating');
 $typeValueOptions = $type->getOptions()['value_options'];
 
 $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
@@ -52,7 +52,7 @@ $formLabel = $this->plugin('formLabel');
 
 <div class="form_element">
     <?= $formLabel->openTag($details)?>
-    Please take a moment to tell us about your experience, what worked and what didn\'t
+    Please take a moment to tell us about your experience, what worked and what didn't
     <?= $formLabel->closeTag(); ?>
 
     

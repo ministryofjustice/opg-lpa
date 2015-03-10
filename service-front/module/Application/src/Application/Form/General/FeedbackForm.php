@@ -1,6 +1,7 @@
 <?php
 namespace Application\Form\General;
 
+use Zend\Validator\NotEmpty;
 /**
  * To send feedback to the OPG
  *
@@ -16,7 +17,7 @@ class FeedbackForm extends AbstractForm {
         //--- Form elements
 
         $this->add(array(
-            'name' => 'how-would-you-rate',
+            'name' => 'rating',
             'type' => 'Radio',
             'options'   => [
                 'value_options' => [
@@ -53,6 +54,48 @@ class FeedbackForm extends AbstractForm {
 
         $inputFilter = $this->getInputFilter();
 
+        $inputFilter->add(array(
+            'name'     => 'rating',
+            'validators' => array(
+                array(
+                    'name'    => 'NotEmpty',
+                    'messages' => [
+                        NotEmpty::IS_EMPTY => 'Please rate this service.',
+                    ],
+                ),
+            ),
+        ));
+        
+        $inputFilter->add(array(
+            'name'     => 'details',
+            'filters'  => array(
+                array('name' => 'StripTags'),
+                array('name' => 'StringTrim'),
+            ),
+            'validators' => array(
+                array(
+                    'name'    => 'NotEmpty',
+                    'messages' => [
+                        NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box.',
+                    ],
+                ),
+            ),
+        ));
+        
+        $inputFilter->add(array(
+            'name'     => 'email',
+            'required' => false,
+            'filters'  => array(
+                array('name' => 'StripTags'),
+                array('name' => 'StringTrim'),
+            ),
+            'validators' => array(
+                array(
+                    'name'    => 'EmailAddress',
+                ),
+            ),
+        ));
+        
         $this->setInputFilter( $inputFilter );
 
     } // function
