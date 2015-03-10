@@ -8,7 +8,7 @@ class Feedback implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
     
-    public function sendMail($options) {
+    public function sendMail($data) {
         
     }
 }

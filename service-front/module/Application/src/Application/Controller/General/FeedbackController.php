@@ -12,6 +12,8 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 use Application\Form\General\FeedbackForm;
+use Zend\Log\Formatter\FormatterInterface;
+use Zend\Form\FormInterface;
 
 class FeedbackController extends AbstractBaseController
 {
@@ -26,8 +28,6 @@ class FeedbackController extends AbstractBaseController
         
         $model->setTemplate('application/feedback/index.phtml');
         
-        $feedbackService = $this->getServiceLocator()->get('Feedback');
-        
         $request = $this->getRequest();
         
         if ($request->isPost()) {
@@ -35,6 +35,16 @@ class FeedbackController extends AbstractBaseController
             $form->setData($request->getPost());
         
             if ($form->isValid()) {
+                
+                $feedbackService = $this->getServiceLocator()->get('Feedback');
+                $data = $form->getData();
+                
+                $feedbackService->sendMail([
+                    'rating' => $data['rating'],
+                    'details' => $data['details'],
+                    'email' => $data['email']
+                ]);
+                
                 $model->setTemplate('application/feedback/thankyou.phtml');
             }
         }
