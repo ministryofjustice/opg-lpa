@@ -1,8 +1,10 @@
 <?php
-$form        = $this->form;
-$csrf        = $form->get('secret');
+$form = $this->form;
+$csrf = $form->get('secret');
 
-$type        = $form->get('how-would-you-rate');
+$form->setAttribute('class', 'form');
+
+$type = $form->get('rating');
 $typeValueOptions = $type->getOptions()['value_options'];
 
 $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
@@ -12,71 +14,69 @@ $typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
 $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
 
 $details = $form->get('details');
-$details->setOptions(['label' => 'Please take a moment to tell us about your experience, what worked and what didn\'t']);
+
+$details->setAttributes([
+    'id' => 'details',
+    'rows' => 10,
+    'cols' => 67,
+    'maxlength' => 2000
+]);
 
 $email = $form->get('email');
-$email->setOptions(['label' => 'Your email address (optional)']);
 
-$type->setOptions( ['value_options' => $typeValueOptions] );
+$email->setAttributes([
+    'id' => 'email',
+    'type' => 'email',
+    'maxlength' => 100
+]);
 
-$formLabel   = $this->plugin('formLabel');
+$type->setOptions([
+    'value_options' => $typeValueOptions
+]);
+
+$formLabel = $this->plugin('formLabel');
 ?>
 
 <?= $this->form()->openTag($form); ?>
-    
-            <?= $this->formElement($csrf) ?>
-            
-            <?= $this->formErrorList(); ?>
-            
-            <div class="emphasised option group">
-                <?= $this->formElement($type)?>
-                
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($type) ?>
-                </p>
-            </div>
-    
+<?= $this->formElement($csrf)?>
+<?= $this->formErrorList(); ?>
 
- 
-             <div class="emphasised option group">
-                
-                <h3 id="instructions-label">
-                    <?= $formLabel->openTag($details) . $details->getOption('label'); ?>
-                    <?= $formLabel->closeTag() ?>
-                </h3>
-                
-                <p>
-                <?= $this->formElement($details)?>
-                </p>
-                
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($details) ?>
-                </p>
-                
-            </div>       
-        
-            <div class="emphasised option group">
-                
-                <h3 id="instructions-label">
-                    <?= $formLabel->openTag($email) . $details->getOption('label'); ?>
-                    <?= $formLabel->closeTag() ?>
-                </h3>
-                
-                <p>
-                <?= $this->formElement($email)?>
-                </p>
-                
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($email) ?>
-                </p>
-                
-            </div>
-            
-            <div class="accordion-actions">
-				<p>
-                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-                </p>
-            </div>
-       <?= $this->form()->closeTag(); ?>
+<div class="form_element">
+    <?= $formLabel->openTag($type)?>
+    <strong>How would you rate your experience with this service?</strong>
+    <?= $formLabel->closeTag(); ?>
+    <?= $this->formElementErrors($type)?>
+    <?= $this->formElement($type)?>
+</div>
+
+<div class="group form_element">
+    <?= $formLabel->openTag($details)?>
+    <strong>Please take a moment to tell us about your experience, what worked and what didn't.</strong>
+    <?= $formLabel->closeTag(); ?>
+
+    <?= $this->formElementErrors($details)?>
+    
+    <p>
+    <?= $this->formElement($details)?>
+    <div id="char-limit">2000 characters max</div>
+    </p>
+</div>
+
+<div class="form_element">
+    <?= $formLabel->openTag($email)?>
+    We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
+    <br><br>
+    <strong>Your email address (optional)</strong>
+    <?= $formLabel->closeTag(); ?>
+    <?= $this->formElementErrors($email)?>
+    <p>
+    <?= $this->formElement($email)?>
+    </p>
+</div>
+
+<p>
+	<input type="submit" name="send" id="send" value="Send" class="button">
+</p>
+<?= $this->form()->closeTag(); ?>
             
             
