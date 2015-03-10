@@ -2,6 +2,8 @@
 $form        = $this->form;
 $csrf        = $form->get('secret');
 
+$form->setAttribute('class', 'form');
+
 $type        = $form->get('how-would-you-rate');
 $typeValueOptions = $type->getOptions()['value_options'];
 
@@ -14,8 +16,20 @@ $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
 $details = $form->get('details');
 $details->setOptions(['label' => 'Please take a moment to tell us about your experience, what worked and what didn\'t']);
 
+$details->setAttributes([
+    'id' => 'details',
+    'rows' => 10,
+    'cols' => 67,
+]);
+
 $email = $form->get('email');
 $email->setOptions(['label' => 'Your email address (optional)']);
+
+$email->setAttributes([
+    'id' => 'email',
+    'type' => 'email',
+    'maxlength' => 100,
+]);
 
 $type->setOptions( ['value_options' => $typeValueOptions] );
 
@@ -36,9 +50,7 @@ $formLabel   = $this->plugin('formLabel');
                 </p>
             </div>
     
-
- 
-             <div class="emphasised option group">
+             <div class="group">
                 
                 <h3 id="instructions-label">
                     <?= $formLabel->openTag($details) . $details->getOption('label'); ?>
@@ -55,7 +67,7 @@ $formLabel   = $this->plugin('formLabel');
                 
             </div>       
         
-            <div class="emphasised option group">
+            <div class="group">
                 
                 <h3 id="instructions-label">
                     <?= $formLabel->openTag($email) . $details->getOption('label'); ?>
@@ -72,11 +84,9 @@ $formLabel   = $this->plugin('formLabel');
                 
             </div>
             
-            <div class="accordion-actions">
-				<p>
-                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-                </p>
-            </div>
+          		<p>
+            <input type="submit" name="send" id="send" value="Send" class="button">
+        </p>
        <?= $this->form()->closeTag(); ?>
             
             

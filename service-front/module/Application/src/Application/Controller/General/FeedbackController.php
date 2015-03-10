@@ -21,7 +21,10 @@ class FeedbackController extends AbstractBaseController
         
         $form = new FeedbackForm();
         
-        $model = new ViewModel(['form'=>$form]);
+        $model = new ViewModel([
+            'form'=>$form,
+            'pageTitle' => 'Send Feedback'
+        ]);
         
         $model->setTemplate('application/feedback/index.phtml');
         
