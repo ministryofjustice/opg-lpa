@@ -37,17 +37,15 @@ $formLabel = $this->plugin('formLabel');
 ?>
 
 <?= $this->form()->openTag($form); ?>
-    
 <?= $this->formElement($csrf)?>
-
 <?= $this->formErrorList(); ?>
 
 <div class="form_element">
     <?= $formLabel->openTag($type)?>
     How would you rate your experience with this service?
     <?= $formLabel->closeTag(); ?>
-    <?= $this->formElement($type)?>
     <?= $this->formElementErrors($type)?>
+    <?= $this->formElement($type)?>
 </div>
 
 <div class="form_element">
@@ -55,29 +53,23 @@ $formLabel = $this->plugin('formLabel');
     Please take a moment to tell us about your experience, what worked and what didn't.
     <?= $formLabel->closeTag(); ?>
 
-    
+    <?= $this->formElementErrors($details)?>
     <p>
     <?= $this->formElement($details)?>
     </p>
-    
-        <?= $this->formElementErrors($details)?>
 </div>
 
 <div class="form_element">
-                
-                <?= $formLabel->openTag($email)?>
-                We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
-                <br><br>
-                Your email address (optional)
-                <?= $formLabel->closeTag(); ?>
-                
-                <p>
-                <?= $this->formElement($email)?>
-                </p>
-                
-                    <?= $this->formElementErrors($email)?>
-                
-            </div>
+    <?= $formLabel->openTag($email)?>
+    We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
+    <br><br>
+    Your email address (optional)
+    <?= $formLabel->closeTag(); ?>
+    <?= $this->formElementErrors($email)?>
+    <p>
+    <?= $this->formElement($email)?>
+    </p>
+</div>
 
 <p>
 	<input type="submit" name="send" id="send" value="Send" class="button">

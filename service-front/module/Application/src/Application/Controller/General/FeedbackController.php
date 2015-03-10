@@ -12,8 +12,6 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 use Application\Form\General\FeedbackForm;
-use Zend\Log\Formatter\FormatterInterface;
-use Zend\Form\FormInterface;
 
 class FeedbackController extends AbstractBaseController
 {

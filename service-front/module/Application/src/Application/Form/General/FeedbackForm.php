@@ -37,6 +37,7 @@ class FeedbackForm extends AbstractForm {
                         'value' => 'very-issatisfied',
                     ],
                 ],
+                'disable_inarray_validator' => true,
             ],
         ));
         
@@ -54,19 +55,21 @@ class FeedbackForm extends AbstractForm {
 
         $inputFilter = $this->getInputFilter();
 
-        $inputFilter->add(array(
+        $inputFilter->add([
             'name'     => 'rating',
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'NotEmpty',
-                    'messages' => [
-                        NotEmpty::IS_EMPTY => 'Please rate this service.',
+                    'options' => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'Please rate this service.',
+                        ],
                     ],
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
         
-        $inputFilter->add(array(
+        $inputFilter->add([
             'name'     => 'details',
             'filters'  => array(
                 array('name' => 'StripTags'),
@@ -75,12 +78,14 @@ class FeedbackForm extends AbstractForm {
             'validators' => array(
                 array(
                     'name'    => 'NotEmpty',
-                    'messages' => [
-                        NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box.',
+                    'options' => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box.',
+                        ],
                     ],
                 ),
             ),
-        ));
+        ]);
         
         $inputFilter->add(array(
             'name'     => 'email',
