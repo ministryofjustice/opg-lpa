@@ -137,7 +137,7 @@ return [
         'invokables' => [
             'resource-users'                            => 'Application\Model\Rest\Users\Resource',
             'resource-applications'                     => 'Application\Model\Rest\Applications\Resource',
-            'resource-status'                           => 'Application\Model\Rest\xxx\Resource',
+            'resource-status'                           => 'Application\Model\Rest\Status\Resource',
             'resource-type'                             => 'Application\Model\Rest\Type\Resource',
             'resource-instruction'                      => 'Application\Model\Rest\Instruction\Resource',
             'resource-preference'                       => 'Application\Model\Rest\Preference\Resource',
@@ -154,6 +154,7 @@ return [
             'resource-primary-attorneys'                => 'Application\Model\Rest\AttorneysPrimary\Resource',
             'resource-replacement-attorneys'            => 'Application\Model\Rest\AttorneysReplacement\Resource',
             'resource-notified-people'                  => 'Application\Model\Rest\NotifiedPeople\Resource',
+            'resource-repeat-case-number'               => 'Application\Model\Rest\RepeatCaseNumber\Resource',
             'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
         ],
         'abstract_factories' => [
