@@ -389,9 +389,9 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rText(300, 1764),
-                    $this->rText(1765, 3528),
-                    $this->rText(3529, 5292),
+                    $this->rText(300, 1176),
+                    $this->rText(1207, 2352),
+                    $this->rText(2383, 3528),
             ));
         }
         
@@ -433,17 +433,17 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rText(300, 1764),
-                    $this->rText(1765, 3528),
-                    $this->rText(3529, 5292),
+                    $this->rText(300, 1176),
+                    $this->rText(1207, 2352),
+                    $this->rText(2383, 3528),
             ));
         }
         
         if($decisions['when'] == 'depends') {
             $decisions['whenDetails'] = $this->random(array(
-                    $this->rText(300, 1764),
-                    $this->rText(1765, 3528),
-                    $this->rText(3529, 5292),
+                    $this->rText(300, 1176),
+                    $this->rText(1177, 2352),
+                    $this->rText(2353, 3528),
             ));
         }
         
@@ -455,18 +455,18 @@ class JsonGenerator extends Randomizer
     protected function instruction()
     {
         return $this->random(array(
-                $this->rText(300, 924),
-                $this->rText(925, 2706),
-                $this->rText(2707, 4470),
+                $this->rText(300, 504),
+                $this->rText(535, 1680),
+                $this->rText(1711, 2856),
         ));
     }
     
     protected function preference()
     {
         return $this->random(array(
-                $this->rText(300, 924),
-                $this->rText(925, 2706),
-                $this->rText(2707, 4470),
+                $this->rText(300, 504),
+                $this->rText(505, 1680),
+                $this->rText(1681, 2856),
         ));
     }
     
