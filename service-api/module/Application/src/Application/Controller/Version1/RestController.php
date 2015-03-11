@@ -29,10 +29,18 @@ use ZfcRbac\Exception\UnauthorizedException;
 
 class RestController extends AbstractRestfulController {
 
+    /**
+     * @var ResourceInterface The resource model to use.
+     */
     private $resource;
 
     //---
 
+    /**
+     * Sets the Resource identified in the URL.
+     *
+     * @param ResourceInterface $resource
+     */
     public function setResource( ResourceInterface $resource ){
         $this->resource = $resource;
         $this->identifierName = $resource->getIdentifier();
@@ -60,9 +68,7 @@ class RestController extends AbstractRestfulController {
             $return = parent::onDispatch($event);
 
         } catch( UnauthorizedException $e ){
-            # TODO
-            //var_dump( $e->getMessage() ); exit();
-            die('UnauthorizedException');
+            $return = new ApiProblem(401, 'Access Denied');
         } catch ( LockedException $e ){
             $return = new ApiProblem( 403, 'LPA has been locked' );
         }
@@ -432,7 +438,14 @@ class RestController extends AbstractRestfulController {
 
     //-----------------------------------------
 
-    //public function generateRoute( $routeName, RouteProviderInterface $provider, $params = array() ){
+    /**
+     * This function is passed as a callback into anything that needs to be able to generate a route.
+     *
+     * @param $routeName
+     * @param RouteProviderInterface $provider
+     * @param array $params
+     * @return string
+     */
     public function generateRoute( $routeName, RouteProviderInterface $provider, $params = array() ){
 
         $original = $this->params()->fromQuery();

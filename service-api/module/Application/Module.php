@@ -6,7 +6,6 @@ use RuntimeException;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
-use Application\Library\View\Model\JsonModel;
 use Application\Controller\Version1\RestController;
 
 use Application\Library\Authentication\Adapter;
@@ -18,6 +17,10 @@ use Zend\Authentication\Storage\NonPersistent;
 
 use Application\Model\Rest\UserConsumerInterface;
 use Application\Model\Rest\LpaConsumerInterface;
+
+use Application\Library\ApiProblem\ApiProblemException;
+use Application\Library\ApiProblem\ApiProblemExceptionInterface;
+use ZF\ApiProblem\ApiProblemResponse;
 
 use PhlyMongo\MongoCollectionFactory;
 use PhlyMongo\MongoConnectionFactory;
@@ -32,7 +35,7 @@ class Module {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        $sharedEvents = $eventManager->getSharedManager();
+        //$sharedEvents = $eventManager->getSharedManager();
 
 
         // Setup authentication listener...
@@ -40,21 +43,27 @@ class Module {
 
 
         /**
-         * If a controller returns an array, by default put it into a JsonModel.
-         * Needs to run before -80.
+         * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
+         * TODO - move to its own listener class.
          */
-        /*
-        $sharedEvents->attach( 'Zend\Stdlib\DispatchableInterface', MvcEvent::EVENT_DISPATCH, function(MvcEvent $e){
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, function(MvcEvent $e){
 
-            $response = $e->getResult();
+            // Marshall an ApiProblem and view model based on the exception
+            $exception = $e->getParam('exception');
 
-            if( is_array($response) ){
-                throw new \RuntimeException('Deprecated - this should never be called.');
-                $e->setResult( new JsonModel($response) );
+            if ($exception instanceof ApiProblemExceptionInterface) {
+
+                $problem = new ApiProblem( $exception->getCode(), $exception->getMessage() );
+
+                $e->stopPropagation();
+                $response = new ApiProblemResponse($problem);
+                $e->setResponse($response);
+                return $response;
+
             }
 
-        }, -20); // attach
-        */
+        }, 200); // attach
+
 
     } // function
 
@@ -81,9 +90,7 @@ class Module {
 
                         // Check if the resource exists...
                         if( !$locator->has("resource-{$resource}") ){
-                            // Error
-                            // TODO
-                            throw new RuntimeException('Unknown resource type');
+                            throw new ApiProblemException('Unknown resource type', 404);
                         }
 
                         // Get the resource...
@@ -99,6 +106,12 @@ class Module {
 
     } // function
 
+    /*
+     * ------------------------------------------------------------------
+     * Setup the Service Manager
+     *
+     */
+
     public function getServiceConfig() {
         return [
             'initializers' => [
@@ -109,7 +122,7 @@ class Module {
                         $userId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
 
                         if( !isset($userId) ){
-                            throw new RuntimeException('No user ID in URL.');
+                            throw new ApiProblemException('User identifier missing from URL', 400);
                         }
 
                         $resource = $sm->get("resource-users");
@@ -125,7 +138,7 @@ class Module {
                         $lpaId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
 
                         if( !isset($lpaId) ){
-                            throw new RuntimeException('No LPA ID in URL.');
+                            throw new ApiProblemException('LPA identifier missing from URL', 400);
                         }
 
                         $resource = $sm->get("resource-applications");
@@ -153,6 +166,9 @@ class Module {
                     return new AuthenticationService( new NonPersistent() );
                 },
 
+                //---------------------
+
+                // Create an instance of the MongoClient...
                 'Mongo-Default' => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default'];
                     $factory = new MongoConnectionFactory(
@@ -162,6 +178,8 @@ class Module {
 
                     return $factory->createService($services);
                 },
+
+                // Connect the above MongoClient to a DB...
                 'MongoDB-Default' => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default']['options'];
 
@@ -169,12 +187,14 @@ class Module {
 
                     return $factory->createService($services);
                 },
+
+                // Access collections within the above DB...
                 'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
                 'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
                 'MongoDB-Default-stats-usage' => new MongoCollectionFactory('stats-usage', 'MongoDB-Default'),
                 'MongoDB-Default-stats-who' => new MongoCollectionFactory('stats-who', 'MongoDB-Default'),
 
-            ],
+            ], // factories
         ];
     } // function
 

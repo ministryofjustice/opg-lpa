@@ -13,7 +13,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
-use ZfcRbac\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 
 abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwareInterface {
