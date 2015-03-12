@@ -771,7 +771,6 @@ class JsonGenerator extends Randomizer
                 $summary[$subjectName][$key] = count($values);
             }
         }
-//         print_r($summary);
         
         return print_r($summary, true);
     }
