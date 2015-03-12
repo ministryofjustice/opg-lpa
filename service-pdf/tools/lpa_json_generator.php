@@ -184,46 +184,35 @@ class JsonGenerator extends Randomizer
         $this->lpa['repeatCaseNumber'] = $this->random(array(null, null, null, $this->rInt('random', array('min'=>10000000, 'max'=>99999999))));
         $this->lpa['payment'] = array (
                 "reducedFeeReceivesBenefits" => $this->random(array(true, false)),
-                "reducedFeeAwardedDamages" => $this->random(array(true, false)),
                 "reducedFeeLowIncome" => $this->random(array(true, false)),
                 "reducedFeeUniversalCredit" => $this->random(array(true, false)),
                 "date" => date('c', $updated),
         );
         
         if($this->lpa['payment']['reducedFeeReceivesBenefits']) {
-            if($this->lpa['payment']['reducedFeeAwardedDamages']) {
-                if($this->lpa['payment']['reducedFeeUniversalCredit']) {
-                    $this->lpa['payment']['amount'] = null;
-                }
-                else {
-                    if($this->lpa['payment']['reducedFeeLowIncome']) {
-                        $this->lpa['payment']['amount'] = 55;
-                    }
-                    else {
-                        $this->lpa['payment']['amount'] = 110;
-                    }
-                }
-            }
-            else {
-                $this->lpa['payment']['amount'] = 0;
-            }
+            $this->lpa['payment']['reducedFeeAwardedDamages'] = $this->random(array(true, false));
         }
         else {
-            if($this->lpa['payment']['reducedFeeUniversalCredit']) {
-                $this->lpa['payment']['amount'] = null;
-            }
-            else {
-                if($this->lpa['payment']['reducedFeeLowIncome']) {
-                    $this->lpa['payment']['amount'] = 55;
-                }
-                else {
-                    $this->lpa['payment']['amount'] = 110;
-                }
-            }
+            $this->lpa['payment']['reducedFeeAwardedDamages'] = null;
         }
         
-        if($this->lpa['repeatCaseNumber'] && $this->lpa['repeatCaseNumber'] && $this->lpa['payment']['amount']) {
-            $this->lpa['payment']['amount'] = $this->lpa['payment']['amount']/2;
+        if($this->lpa['payment']['reducedFeeUniversalCredit']) {
+            $this->lpa['payment']['amount'] = null;
+        }
+        else {
+            if(($this->lpa['payment']['reducedFeeReceivesBenefits']) && ($this->lpa['payment']['reducedFeeAwardedDamages'])) {
+                $this->lpa['payment']['amount'] = (float) 0;
+            }
+            elseif($this->lpa['payment']['reducedFeeLowIncome']) {
+                $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE/2;
+            }
+            else {
+                $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE;
+            }
+            
+            if($this->lpa['repeatCaseNumber'] != null) {
+                $this->lpa['payment']['amount'] = $this->lpa['payment']['amount']/2;
+            }
         }
         
         if($this->lpa['payment']['amount'] > 0) {
