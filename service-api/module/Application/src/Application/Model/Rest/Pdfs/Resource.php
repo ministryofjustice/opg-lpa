@@ -11,6 +11,9 @@ use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 
 use Application\Model\Rest\AbstractResource;
 
+use Zend\Crypt\BlockCipher;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+
 use Zend\Paginator\Adapter\Null as PaginatorNull;
 use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
 
@@ -312,10 +315,27 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
+        $config = $this->getServiceLocator()->get('config')['pdf']['encryption'];
+
+        if( !is_string($config['keys']['queue']) || strlen($config['keys']['queue']) != 32 ){
+            throw new CryptInvalidArgumentException('Invalid encryption key');
+        }
+
+        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+
+        // Set the secret key
+        $blockCipher->setKey( $config['keys']['queue'] );
+
+        // Encrypt the JSON...
+        $encryptedJson = $blockCipher->encrypt( $lpa->toJson( false ) );
+
+        //---
+
         $trackingId = Resque::enqueue('pdf-queue', '\Opg\Lpa\Pdf\Worker\ResqueWorker', [
             'docId' => $ident,
             'type' => strtoupper($type),
-            'lpa' => $lpa->toJson()
+            'lpa' => $encryptedJson
         ], true);
 
         //---
