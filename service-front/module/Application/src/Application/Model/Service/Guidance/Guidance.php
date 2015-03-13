@@ -5,7 +5,7 @@ use Michelf\Markdown;
 
 class Guidance
 {
-    const GUIDANCE_MARKDOWN_FOLDER = 'public/guidance';
+    const GUIDANCE_MARKDOWN_FOLDER = 'content/guidance';
     const GUIDANCE_ROUTE = 'guide';
 
     /**
