@@ -27,6 +27,7 @@ return array(
 
         ], // mongo
 
+        // Used to access generated PDFs.
         'redis' => [
 
             'default' => [
@@ -38,6 +39,7 @@ return array(
 
         ], // redis
 
+        // The queue for PDFs to be generated.
         'resque' => [
 
             'default' => [
@@ -48,6 +50,20 @@ return array(
             ],
 
         ], // resque
+
+        'pdf' => [
+            'encryption' => [
+                // Keys MUST be a 32 character ASCII string
+                'keys' => [
+                    'queue' => null,      // Key for JSON pushed onto the queue
+                    'document' => null,   // Key for generated PDFs in the file store
+                ],
+                'options' => [
+                    'algorithm' => 'aes',
+                    'mode' => 'cbc',
+                ],
+            ],
+        ], // pdf
 
     ],
 
