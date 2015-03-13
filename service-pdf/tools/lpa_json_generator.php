@@ -184,46 +184,35 @@ class JsonGenerator extends Randomizer
         $this->lpa['repeatCaseNumber'] = $this->random(array(null, null, null, $this->rInt('random', array('min'=>10000000, 'max'=>99999999))));
         $this->lpa['payment'] = array (
                 "reducedFeeReceivesBenefits" => $this->random(array(true, false)),
-                "reducedFeeAwardedDamages" => $this->random(array(true, false)),
                 "reducedFeeLowIncome" => $this->random(array(true, false)),
                 "reducedFeeUniversalCredit" => $this->random(array(true, false)),
                 "date" => date('c', $updated),
         );
         
         if($this->lpa['payment']['reducedFeeReceivesBenefits']) {
-            if($this->lpa['payment']['reducedFeeAwardedDamages']) {
-                if($this->lpa['payment']['reducedFeeUniversalCredit']) {
-                    $this->lpa['payment']['amount'] = null;
-                }
-                else {
-                    if($this->lpa['payment']['reducedFeeLowIncome']) {
-                        $this->lpa['payment']['amount'] = 55;
-                    }
-                    else {
-                        $this->lpa['payment']['amount'] = 110;
-                    }
-                }
-            }
-            else {
-                $this->lpa['payment']['amount'] = 0;
-            }
+            $this->lpa['payment']['reducedFeeAwardedDamages'] = $this->random(array(true, false));
         }
         else {
-            if($this->lpa['payment']['reducedFeeUniversalCredit']) {
-                $this->lpa['payment']['amount'] = null;
-            }
-            else {
-                if($this->lpa['payment']['reducedFeeLowIncome']) {
-                    $this->lpa['payment']['amount'] = 55;
-                }
-                else {
-                    $this->lpa['payment']['amount'] = 110;
-                }
-            }
+            $this->lpa['payment']['reducedFeeAwardedDamages'] = null;
         }
         
-        if($this->lpa['repeatCaseNumber'] && $this->lpa['repeatCaseNumber'] && $this->lpa['payment']['amount']) {
-            $this->lpa['payment']['amount'] = $this->lpa['payment']['amount']/2;
+        if($this->lpa['payment']['reducedFeeUniversalCredit']) {
+            $this->lpa['payment']['amount'] = null;
+        }
+        else {
+            if(($this->lpa['payment']['reducedFeeReceivesBenefits']) && ($this->lpa['payment']['reducedFeeAwardedDamages'])) {
+                $this->lpa['payment']['amount'] = (float) 0;
+            }
+            elseif($this->lpa['payment']['reducedFeeLowIncome']) {
+                $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE/2;
+            }
+            else {
+                $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE;
+            }
+            
+            if($this->lpa['repeatCaseNumber'] != null) {
+                $this->lpa['payment']['amount'] = $this->lpa['payment']['amount']/2;
+            }
         }
         
         if($this->lpa['payment']['amount'] > 0) {
@@ -389,9 +378,9 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rFancyText(rand(300, 1764)),
-                    $this->rFancyText(rand(1765, 3528)),
-                    $this->rFancyText(rand(3529, 5292)),
+                    $this->rText(300, 1176),
+                    $this->rText(1207, 2352),
+                    $this->rText(2383, 3528),
             ));
         }
         
@@ -433,17 +422,17 @@ class JsonGenerator extends Randomizer
         
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
-                    $this->rFancyText(rand(300, 1764)),
-                    $this->rFancyText(rand(1765, 3528)),
-                    $this->rFancyText(rand(3529, 5292)),
+                    $this->rText(300, 1176),
+                    $this->rText(1207, 2352),
+                    $this->rText(2383, 3528),
             ));
         }
         
         if($decisions['when'] == 'depends') {
             $decisions['whenDetails'] = $this->random(array(
-                    $this->rFancyText(rand(300, 1764)),
-                    $this->rFancyText(rand(1765, 3528)),
-                    $this->rFancyText(rand(3529, 5292)),
+                    $this->rText(300, 1176),
+                    $this->rText(1177, 2352),
+                    $this->rText(2353, 3528),
             ));
         }
         
@@ -455,18 +444,18 @@ class JsonGenerator extends Randomizer
     protected function instruction()
     {
         return $this->random(array(
-                $this->rFancyText(rand(300, 924)),
-                $this->rFancyText(rand(925, 2706)),
-                $this->rFancyText(rand(2707, 4470)),
+                $this->rText(300, 504),
+                $this->rText(535, 1680),
+                $this->rText(1711, 2856),
         ));
     }
     
     protected function preference()
     {
         return $this->random(array(
-                $this->rFancyText(rand(300, 924)),
-                $this->rFancyText(rand(925, 2706)),
-                $this->rFancyText(rand(2707, 4470)),
+                $this->rText(300, 504),
+                $this->rText(505, 1680),
+                $this->rText(1681, 2856),
         ));
     }
     
@@ -771,7 +760,6 @@ class JsonGenerator extends Randomizer
                 $summary[$subjectName][$key] = count($values);
             }
         }
-//         print_r($summary);
         
         return print_r($summary, true);
     }

@@ -218,9 +218,11 @@ abstract class AbstractForm
             }
             else {
                 // calculate how many space chars to be appended to replace the new line in this paragraph.
-                $noOfSpaces = Lp1::BOX_CHARS_PER_ROW - strlen($paragraphs[$i]) % Lp1::BOX_CHARS_PER_ROW;
-                if($noOfSpaces > 0) {
-                    $paragraphs[$i] .= str_repeat(" ", $noOfSpaces);
+                if(strlen($paragraphs[$i]) % Lp1::BOX_CHARS_PER_ROW) {
+                    $noOfSpaces = Lp1::BOX_CHARS_PER_ROW - strlen($paragraphs[$i]) % Lp1::BOX_CHARS_PER_ROW;
+                    if($noOfSpaces > 0) {
+                        $paragraphs[$i] .= str_repeat(" ", $noOfSpaces);
+                    }
                 }
             }
         }
