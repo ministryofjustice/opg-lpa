@@ -3,7 +3,7 @@ namespace Application\Model\Rest\Lock;
 
 use RuntimeException;
 
-use Opg\Lpa\DataModel\WHoAreYou\WhoAreYou;
+use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 
 use Application\Model\Rest\AbstractResource;
 

@@ -18,4 +18,18 @@ return array(
 
     ],
 
+    'pdf' => [
+        'encryption' => [
+            // Keys MUST be a 32 character ASCII string
+            'keys' => [
+                'queue'     => '{{pillar['pdf']['encryption']['key']['queue']}}',      // Key for JSON pushed onto the queue
+                'document'  => '{{pillar['pdf']['encryption']['key']['document']}}',   // Key for generated PDFs in the file store
+            ],
+            'options' => [
+                'algorithm' => 'aes',
+                'mode' => 'cbc',
+            ],
+        ],
+    ], // pdf
+
 );
