@@ -57,6 +57,8 @@ class FeedbackController extends AbstractBaseController
             $container->setExpirationHops(1);
             if( $this->getRequest()->getHeader('Referer')  != false ){
                 $container->feedbackLinkClickedFromPage = $this->getRequest()->getHeader('Referer')->uri()->getPath();
+            } else {
+                $container->feedbackLinkClickedFromPage = 'Unknown';
             }
         }
         
