@@ -7,17 +7,10 @@ interface AdapterInterface extends ZFAdapterInterface
 {
 
     /**
-     * Set the credentials to attempt authentication with.
-     *
-     * @param $email
-     * @param $password
-     */
-    public function setCredentials( $email, $password );
-
-    /**
      * Set the email address credential to attempt authentication with.
      *
      * @param $email
+     * @return $this
      */
     public function setEmail( $email );
 
@@ -25,6 +18,7 @@ interface AdapterInterface extends ZFAdapterInterface
      * Set the password credential to attempt authentication with.
      *
      * @param $password
+     * @return $this
      */
     public function setPassword( $password );
 

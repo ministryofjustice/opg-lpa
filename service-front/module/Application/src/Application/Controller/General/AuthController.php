@@ -53,7 +53,7 @@ class AuthController extends AbstractBaseController {
             $authenticationAdapter = $this->getServiceLocator()->get('AuthenticationAdapter');
 
             // Pass the user's email address and password...
-            $authenticationAdapter->setCredentials( $email, $password );
+            $authenticationAdapter->setEmail( $email )->setPassword( $password );
 
             // Perform the authentication..
             $result = $authenticationService->authenticate( $authenticationAdapter );

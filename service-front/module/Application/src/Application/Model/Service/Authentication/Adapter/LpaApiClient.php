@@ -36,29 +36,22 @@ class LpaApiClient implements AdapterInterface {
      * Set the email address credential to attempt authentication with.
      *
      * @param $email
+     * @return $this
      */
     public function setEmail( $email ){
         $this->email = trim(strtolower($email));
+        return $this;
     }
 
     /**
      * Set the password credential to attempt authentication with.
      *
      * @param $password
+     * @return $this
      */
     public function setPassword( $password ){
         $this->password = $password;
-    }
-
-    /**
-     * Set the credentials to attempt authentication with.
-     *
-     * @param $email
-     * @param $password
-     */
-    public function setCredentials( $email, $password ){
-        $this->setEmail($email);
-        $this->setPassword($password);
+        return $this;
     }
 
     //---
