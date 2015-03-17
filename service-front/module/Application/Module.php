@@ -112,7 +112,7 @@ class Module{
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'invokables' => [
-                'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
+                'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationService',
                 'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
                 'Register'              => 'Application\Model\Service\User\Register',
                 'AboutYouDetails'       => 'Application\Model\Service\User\Details',
