@@ -40,47 +40,51 @@
 
 <fieldset>
 
-<div class="form_element">
-    <?= $formLabel->openTag() . $name->getOption('label') . $formLabel->closeTag() ?>
-    <?= $this->formElement($name) ?>
-    <?= $this->formElementErrors($name) ?>
-</div>
+    <div class="form_element">
+        <?= $formLabel->openTag() . $name->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formElement($name) ?>
+        <?= $this->formElementErrors($name) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $companyNumber->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formElement($companyNumber) ?>
+        <?= $this->formElementErrors($companyNumber) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formElement($email) ?>
+        <?= $this->formElementErrors($email) ?>
+    </div>
 
-<div class="form_element">
-    <?= $formLabel->openTag() . $companyNumber->getOption('label') . $formLabel->closeTag() ?>
-    <?= $this->formElement($companyNumber) ?>
-    <?= $this->formElementErrors($companyNumber) ?>
-</div>
+</fieldset>
 
-<div class="form_element">
-    <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag() ?>
-    <?= $this->formElement($email) ?>
-    <?= $this->formElementErrors($email) ?>
-</div>
+<fieldset class="js-PostcodeLookup__postal-add">
 
-<div class="form_element">
-    <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag() ?>
-    <?= $this->formElement($address1) ?>
-    <?= $this->formElementErrors($address1) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag() ?>
-    <?= $this->formElement($address2) ?>
-    <?= $this->formElementErrors($address2) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($address3) ?>
-    <?= $this->formElementErrors($address3) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($postcode) ?>
-    <?= $this->formElementErrors($postcode) ?>
-</div>
+    <div class="form_element">
+        <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formElement($address1) ?>
+        <?= $this->formElementErrors($address1) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formElement($address2) ?>
+        <?= $this->formElementErrors($address2) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($address3) ?>
+        <?= $this->formElementErrors($address3) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($postcode) ?>
+        <?= $this->formElementErrors($postcode) ?>
+    </div>
 
 </fieldset>
 

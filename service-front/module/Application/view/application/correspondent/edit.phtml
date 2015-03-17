@@ -89,153 +89,161 @@
 
 <fieldset>
 
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
+    <div class="form_element">
     
-    <?= $this->formElement($title) ?>
+        <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($title) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($title) ?>
+        </p>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($title) ?>
-    </p>
-
-</div>
-
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
+    </div>
     
-     
-    <?= $this->formElement($firstname) ?>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($firstname) ?>
-    </p>
+    <div class="form_element">
     
-</div>
-
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
+        
+         
+        <?= $this->formElement($firstname) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($firstname) ?>
+        </p>
+        
+    </div>
     
-    <?= $this->formElement($lastname) ?>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($lastname) ?>
-    </p>
+    <div class="form_element">
+    
+        <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($lastname) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($lastname) ?>
+        </p>
+    
+    </div>
 
-</div>
+    <div class="form_element">
+    
+        <?= $formLabel->openTag() . $company->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($company) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($company) ?>
+        </p>
+    
+    </div>
 
 </fieldset>
 
-<div class="form_element">
+<fieldset class="js-PostcodeLookup__postal-add">
 
-    <?= $formLabel->openTag() . $company->getOption('label') . $formLabel->closeTag(); ?>
+    <div class="form_element">
     
-    <?= $this->formElement($company) ?>
+        <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($address1) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($address1) ?>
+        </p>
+        
+    </div>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($company) ?>
-    </p>
-
-</div>
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
     
-    <?= $this->formElement($address1) ?>
+    <div class="form_element">
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($address1) ?>
-    </p>
+        <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($address2) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($address2) ?>
+        </p>
+        
+    </div>
     
-</div>
-
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
     
-    <?= $this->formElement($address2) ?>
+    <div class="form_element">
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($address2) ?>
-    </p>
+        <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($address3) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($address3) ?>
+        </p>
+        
+    </div>
     
-</div>
-
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
     
-    <?= $this->formElement($address3) ?>
+    <div class="form_element">
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($address3) ?>
-    </p>
+        <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($postcode) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($postcode) ?>
+        </p>
+        
+    </div>
+
+</fieldset>
+
+<fieldset>
+
+    <div class="form_element">
     
-</div>
-
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($email) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($email) ?>
+        </p>
     
-    <?= $this->formElement($postcode) ?>
+    </div>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($postcode) ?>
-    </p>
+    <div class="form_element">
     
-</div>
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $formLabel->openTag() . $phone->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($phone) ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($phone) ?>
+        </p>
     
-    <?= $this->formElement($email) ?>
+    </div>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($email) ?>
-    </p>
-
-</div>
-
-<div class="form_element">
-
-    <?= $formLabel->openTag() . $phone->getOption('label') . $formLabel->closeTag(); ?>
+    <div class="option group">
+        
+        <?= $formLabel->openTag($contactByPost) . $this->formElement($contactByPost) . $contactByPost->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($contactByPost) ?>
+        </p>
     
-    <?= $this->formElement($phone) ?>
+    </div>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($phone) ?>
-    </p>
-
-</div>
-
-<div class="form_element">
+    <div class="option group">
     
-    <?= $formLabel->openTag($contactByPost) . $this->formElement($contactByPost) . $contactByPost->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $formLabel->openTag($contactInWelsh) . $this->formElement($contactInWelsh) . $contactInWelsh->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($contactInWelsh) ?>
+        </p>
     
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($contactByPost) ?>
-    </p>
+    </div>
 
-</div>
-
-<div class="form_element">
-
-    <?= $formLabel->openTag($contactInWelsh) . $this->formElement($contactInWelsh) . $contactInWelsh->getOption('label') . $formLabel->closeTag(); ?>
-    
-    <p class='form-element-errors'>
-        <?= $this->formElementErrors($contactInWelsh) ?>
-    </p>
-
-</div>
+</fieldset>
 
 <p class="action group">
 <input type="submit" name="submit" id="form-save" value="Save details" class="button"> 

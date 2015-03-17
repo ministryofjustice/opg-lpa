@@ -26,6 +26,7 @@
     $address3->setOptions( ['label' => 'Address line 3'] );
     $postcode->setOptions( ['label' => 'Postcode'] );
     $canSign->setOptions( ['label' => 'This person cannot physically sign the LPA'] );
+    $canSign->setAttribute('class', 'donor-cannot-sign');
     
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();
@@ -39,74 +40,80 @@
 <?= $this->formErrorList(); ?>
         
 <fieldset>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($title) ?>
+        <?= $this->formElementErrors($title) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($firstname) ?>
+        <?= $this->formElementErrors($firstname) ?>
+    </div>
+    
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($lastname) ?>
+        <?= $this->formElementErrors($lastname) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $otherNames->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($otherNames) ?>
+        <?= $this->formElementErrors($otherNames) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $dob->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formDate($dob) ?>
+        <?= $this->formElementErrors($dob) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($email) ?>
+        <?= $this->formElementErrors($email) ?>
+    </div>
 
-<div class="group">
-    <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($title) ?>
-    <?= $this->formElementErrors($title) ?>
-</div>
+</fieldset>
 
-<div class="group">
-    <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($firstname) ?>
-    <?= $this->formElementErrors($firstname) ?>
-</div>
+<fieldset class="js-PostcodeLookup__postal-add">
 
+        <div class="<?= $this->elementGroupClass($address1); ?>">
+            <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($address1) ?>
+            <?= $this->formElementErrors($address1) ?>
+        </div>
+        
+        <div class="<?= $this->elementGroupClass($address2); ?>">
+            <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($address2) ?>
+            <?= $this->formElementErrors($address2) ?>
+        </div>
+        
+        <div class="<?= $this->elementGroupClass($address3); ?>">
+            <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($address3) ?>
+            <?= $this->formElementErrors($address3) ?>
+        </div>
+        
+        <div class="<?= $this->elementGroupClass($postcode); ?>">
+            <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($postcode) ?>
+            <?= $this->formElementErrors($postcode) ?>
+        </div>
+</fieldset>
 
-<div class="form_element">
-    <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($lastname) ?>
-    <?= $this->formElementErrors($lastname) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $otherNames->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($otherNames) ?>
-    <?= $this->formElementErrors($otherNames) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $dob->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formDate($dob) ?>
-    <?= $this->formElementErrors($dob) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($email) ?>
-    <?= $this->formElementErrors($email) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($address1) ?>
-    <?= $this->formElementErrors($address1) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($address2) ?>
-    <?= $this->formElementErrors($address2) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($address3) ?>
-    <?= $this->formElementErrors($address3) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($postcode) ?>
-    <?= $this->formElementErrors($postcode) ?>
-</div>
-
-<div class="form_element">
-    <?= $formLabel->openTag() . $canSign->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formcheckbox($canSign) ?>
+<fieldset id="donor-sign">
+<div class="option group">
+    <?= $formLabel->openTag($canSign) . $this->formcheckbox($canSign); ?>
+    <?= $canSign->getOption('label'). $formLabel->closeTag(); ?>
+    <span class="hint">We'll include an extra signature sheet so someone can sign on their behalf</span>
     <?= $this->formElementErrors($canSign) ?>
 </div>
-
 </fieldset>
 
 <p class="action group">
