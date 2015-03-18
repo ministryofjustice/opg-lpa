@@ -251,7 +251,67 @@ class Client
         
         return $applicationList;
     }
+    
+    /**
+     * Get list of pdfs for the given LPA
+     * Combine pages, if necessary
+     *
+     * @param string $lpaId
+     * 
+     * @return array
+     */
+    public function getPdfList($lpaId)
+    {
+        $pdfList = array();
+    
+        $path = '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/pdfs';
+    
+        do {
+            $response = $this->client()->get( self::PATH_API . $path );
+    
+            if ($response->getStatusCode() != 200) {
+                return $this->log($response, false);
+            }
+    
+            $json = $response->json();
+    
+            if ($json['count'] == 0) {
+                return [];
+            }
+    
+            if (!isset($json['_links']) || !isset($json['_embedded']['pdfs'])) {
+                return $this->log($response, false);
+            }
+             
+            foreach ($json['_embedded']['pdfs'] as $pdf) {
+                $pdfList[] = $pdf;
+            }
+    
+            if (isset($json['_links']['next']['href'])) {
+                $path = $json['_links']['next']['href'];
+            } else {
+                $path = null;
+            }
+        } while (!is_null($path));
+    
+        return $pdfList;
+    }
 
+    /**
+     * Returns the PDF specified by name. If the required data is present
+     *
+     * @param string $lpaId
+     * @param string $pdfName
+     * @return string - The PDF stream
+     */
+    public function getPdf(
+        $lpaId,
+        $pdfName
+    )
+    {
+        return null;
+    }
+    
     /**
      * Activate an account from an activation token (generated at registration)
      *
@@ -510,7 +570,6 @@ class Client
         return $data['access_token'];
 
     }
-
     
     /**
      * Update auth email
@@ -634,6 +693,46 @@ class Client
     public function getStatus(Lpa $lpa)
     {
         return new LpaStatusResponse();
+    }
+    
+    /**
+     * Return the repeat case number
+     *
+     * If property not yet set, return null
+     * If error, return false
+     *
+     * @param string $lpaId
+     * @return boolean|null|string
+     */
+    public function getRepeatCaseNumber($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
+        return $helper->getSingleValueResource('repeatCaseNumber');
+    }
+    
+    /**
+     * Set the LPA type
+     *
+     * @param string $lpaId
+     * @param number $repeatCaseNumber
+     * @return boolean
+     */
+    public function setRepeatCaseNumber($lpaId, $repeatCaseNumber)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
+        return $helper->setResource(json_encode(['repeatCaseNumber' => $repeatCaseNumber]));
+    }
+    
+    /**
+     * Delete the type from the LPA
+     *
+     * @param string $lpaId
+     * @return boolean
+     */
+    public function deleteRepeatCaseNumber($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
+        return $helper->deleteResource();
     }
     
     /**
@@ -1419,31 +1518,6 @@ class Client
     }
     
     /**
-     * Returns a list of all currently available PDFs, with a href to download them
-     * 
-     * @return array
-     */
-    public function getPdfList()
-    {
-        return [];
-    }
-    
-    /**
-     * Returns the PDF specified by name. If the required data is present
-     * 
-     * @param string $lpaId
-     * @param string $pdfName
-     * @return string - The PDF stream
-     */
-    public function getPdf(
-        $lpaId,
-        $pdfName
-    )
-    {
-        return null;
-    }
-
-    /**
      * @return the $lastStatusCode
      */
     public function getLastStatusCode()
@@ -1554,6 +1628,10 @@ class Client
             $this->setLastContent($responseBody);
         }
 
+        // @todo - Log properly
+        if (!$isSuccess) { 
+        }
+        
         $this->setIsError(!$isSuccess);
 
         return $isSuccess;
