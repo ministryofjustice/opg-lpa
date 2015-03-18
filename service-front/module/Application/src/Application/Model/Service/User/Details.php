@@ -61,4 +61,20 @@ class Details implements ServiceLocatorAwareInterface {
 
     } // function
 
+    public function updatePassword( ServiceDataInputInterface $details ){
+
+        $client = $this->getServiceLocator()->get('ApiClient');
+
+        $result = $client->updateAuthEmail( $details->getDataForModel()['email'] );
+
+        //---
+
+        if( $result !== true ){
+
+        }
+
+        return true;
+
+    }
+
 } // class

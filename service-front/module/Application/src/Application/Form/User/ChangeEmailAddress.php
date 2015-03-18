@@ -3,13 +3,14 @@ namespace Application\Form\User;
 
 use Zend\Validator;
 
-use Zend\Authentication\Result;
-use Zend\Authentication\Adapter\Exception\InvalidArgumentException;
-use Application\Model\Service\Authentication\Adapter\AdapterInterface;
+use Application\Model\Service\Authentication\AuthenticationService;
+use Zend\Authentication\Exception\InvalidArgumentException;
 
 class ChangeEmailAddress extends AbstractForm {
 
-    private $authAdapter;
+    /**
+     * @var AuthenticationService
+     */
     private $authenticationService;
 
     //---
@@ -97,15 +98,13 @@ class ChangeEmailAddress extends AbstractForm {
 
 
     /**
-     * Set the Authentication Adapter used to validate the user's password.
+     * Set the Authentication Service used to validate the user's password.
      *
-     * @param AdapterInterface $authAdapter
+     * @param AuthenticationService $authenticationService
      */
-    public function setAuthAdapter( AdapterInterface $authAdapter, $authenticationService ){
-        $this->authAdapter = $authAdapter;
+    public function setAuthenticationService( AuthenticationService $authenticationService ){
         $this->authenticationService = $authenticationService;
     }
-
 
     /**
      * Validates if a given password is correct.
@@ -117,19 +116,14 @@ class ChangeEmailAddress extends AbstractForm {
      */
     public function validatePassword( $value ){
 
-        if( !( $this->authAdapter instanceof AdapterInterface ) ){
-            throw new InvalidArgumentException('AuthAdapter not set');
+        if( !( $this->authenticationService instanceof AuthenticationService ) ){
+            throw new InvalidArgumentException('AuthenticationService not set');
         }
 
-        $this->authAdapter->setPassword( $value );
+        // Set the password in teh adapter.
+        $this->authenticationService->getAdapter()->setPassword( $value );
 
-        $result = $this->authenticationService->authenticate( $this->authAdapter );
-
-        return $result->isValid();
-
-        //$result = $this->authAdapter->authenticate();
-
-        //return ($result->getCode() === Result::SUCCESS);
+        return $this->authenticationService->verify()->isValid();
 
     }
 
