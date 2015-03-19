@@ -70,7 +70,7 @@ class DonorController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // persist data
-                $donor = new Donor($form->getModelizedData());
+                $donor = new Donor($form->getModelDataFromValidatedForm());
                 if(!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
                     throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
                 }
@@ -113,7 +113,7 @@ class DonorController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // persist data
-                $donor = new Donor($form->getModelizedData());
+                $donor = new Donor($form->getModelDataFromValidatedForm());
                 
                 if(!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
                     throw new \RuntimeException('API client failed to update LPA donor for id: '.$lpaId);
@@ -129,7 +129,10 @@ class DonorController extends AbstractLpaController
         }
         else {
             $donor = $this->getLpa()->document->donor->flatten();
-            $donor['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
+            $dob = $this->getLpa()->document->donor->dob->date;
+            $donor['dob-date-day'] = $dob->format('d');
+            $donor['dob-date-month'] = $dob->format('m');
+            $donor['dob-date-year'] = $dob->format('Y');
             $form->bind($donor);
         }
         

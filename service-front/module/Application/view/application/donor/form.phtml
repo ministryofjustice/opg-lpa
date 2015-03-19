@@ -4,8 +4,10 @@
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
-    $otherNames   = $form->get('otherNames');
-    $dob        = $form->get('dob-date');
+    $otherNames = $form->get('otherNames');
+    $dobDay     = $form->get('dob-date-day');
+    $dobMonth   = $form->get('dob-date-month');
+    $dobYear    = $form->get('dob-date-year');
     $email      = $form->get('email-address');
     $address1   = $form->get('address-address1');
     $address2   = $form->get('address-address2');
@@ -15,17 +17,25 @@
     
     $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
 
-    $title->setOptions( ['label' => 'Title'] );
+    $title->setOptions(     ['label' => 'Title'] );
     $firstname->setOptions( ['label' => 'First names'] );
-    $lastname->setOptions( ['label' => 'Last names'] );
-    $otherNames->setOptions( ['label' => 'Other names'] );
-    $dob->setOptions( ['label' => 'Date of birth'] );
-    $email->setOptions( ['label' => 'Email address'] );
-    $address1->setOptions( ['label' => 'Address line 1'] );
-    $address2->setOptions( ['label' => 'Address line 2'] );
-    $address3->setOptions( ['label' => 'Address line 3'] );
-    $postcode->setOptions( ['label' => 'Postcode'] );
-    $canSign->setOptions( ['label' => 'This person cannot physically sign the LPA'] );
+    $lastname->setOptions(  ['label' => 'Last names'] );
+    $otherNames->setOptions(['label' => 'Other names'] );
+    
+    $dobDay->setOptions(    ['label' => 'Day'] );
+    $dobMonth->setOptions(  ['label' => 'Month'] );
+    $dobYear->setOptions(   ['label' => 'Year'] );
+    
+    $dobDay->setAttribute('id', 'dob-day');
+    $dobMonth->setAttribute('id', 'dob-month');
+    $dobYear->setAttribute('id', 'dob-year');
+    
+    $email->setOptions(     ['label' => 'Email address'] );
+    $address1->setOptions(  ['label' => 'Address line 1'] );
+    $address2->setOptions(  ['label' => 'Address line 2'] );
+    $address3->setOptions(  ['label' => 'Address line 3'] );
+    $postcode->setOptions(  ['label' => 'Postcode'] );
+    $canSign->setOptions(   ['label' => 'This person cannot physically sign the LPA'] );
     $canSign->setAttribute('class', 'donor-cannot-sign');
     
     $formLabel  = $this->plugin('formLabel');
@@ -60,16 +70,40 @@
         <?= $this->formElementErrors($lastname) ?>
     </div>
     
-    <div class="group">
-        <?= $formLabel->openTag() . $otherNames->getOption('label') . $formLabel->closeTag(); ?>
-        <?= $this->formElement($otherNames) ?>
-        <?= $this->formElementErrors($otherNames) ?>
-    </div>
+    <details>
+        <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
+        <div class="group">
+            <?= $formLabel->openTag() . $otherNames->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($otherNames) ?>
+            <?= $this->formElementErrors($otherNames) ?>
+        </div>
+    </details>
     
     <div class="group">
-        <?= $formLabel->openTag() . $dob->getOption('label') . $formLabel->closeTag(); ?>
-        <?= $this->formDate($dob) ?>
-        <?= $this->formElementErrors($dob) ?>
+        
+        <label for="dob" id="dob-label" class="required">Date of birth</label>
+        
+        <div class="dob-element">
+        
+            <div class="form-group form-group-day">
+                <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobDay) ?>
+            </div>
+            
+            <div class="form-group form-group-month">
+                <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobMonth) ?>
+            </div>
+            
+            <div class="form-group form-group-year">
+                <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobYear) ?>
+            </div>
+        </div>
+        
+    </div>
+    <div class="group">
+        <?= $this->formElementErrors($dobYear) ?>
     </div>
     
     <div class="group">
