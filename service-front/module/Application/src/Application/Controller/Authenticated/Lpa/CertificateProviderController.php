@@ -67,7 +67,7 @@ class CertificateProviderController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // persist data
-                $cp = new CertificateProvider($form->getModelizedData());
+                $cp = new CertificateProvider($form->getModelDataFromValidatedForm());
                 if(!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
                     throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
                 }
@@ -107,7 +107,7 @@ class CertificateProviderController extends AbstractLpaController
             
             if($form->isValid()) {
                 // persist data
-                $cp = new CertificateProvider($form->getModelizedData());
+                $cp = new CertificateProvider($form->getModelDataFromValidatedForm());
                 
                 if(!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
                     throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);

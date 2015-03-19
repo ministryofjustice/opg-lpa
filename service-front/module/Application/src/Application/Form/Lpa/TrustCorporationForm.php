@@ -40,7 +40,7 @@ class TrustCorporationForm extends AbstractActorForm
     
     public function validateByModel()
     {
-        $this->actor = new TrustCorporation();
+        $this->actorModel = new TrustCorporation();
         
         return parent::validateByModel();
     }

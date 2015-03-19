@@ -51,7 +51,7 @@ class AttorneyForm extends AbstractActorForm
     
     public function validateByModel()
     {
-        $this->actor = new Human();
+        $this->actorModel = new Human();
         
         return parent::validateByModel();
     }

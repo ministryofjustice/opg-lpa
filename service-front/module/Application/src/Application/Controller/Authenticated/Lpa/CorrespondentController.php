@@ -121,7 +121,7 @@ class CorrespondentController extends AbstractLpaController
                 if($correspondentForm->isValid()) {
                     
                     // persist data
-                    $correspondent = new Correspondence($correspondentForm->getModelizedData());
+                    $correspondent = new Correspondence($correspondentForm->getModelDataFromValidatedForm());
                     
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, $correspondent)) {
                         throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);

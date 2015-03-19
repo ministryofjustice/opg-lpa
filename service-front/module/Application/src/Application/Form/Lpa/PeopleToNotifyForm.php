@@ -40,7 +40,7 @@ class PeopleToNotifyForm extends AbstractActorForm
     
     public function validateByModel()
     {
-        $this->actor = new NotifiedPerson();
+        $this->actorModel = new NotifiedPerson();
         
         return parent::validateByModel();
     }

@@ -75,7 +75,7 @@ class FeeForm extends AbstractForm
     
     public function validateByModel()
     {
-        $payment = new Payment($this->formDataModelization($this->data));
+        $payment = new Payment($this->convertFormDataForModel($this->data));
         
         $validation = $payment->validate();
         

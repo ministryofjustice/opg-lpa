@@ -42,7 +42,7 @@ class WhoAreYouController extends AbstractLpaController
                 
                 // persist data
                 
-                $whoAreYou = new WhoAreYou( $form->formDataModelization($form->getData()) );
+                $whoAreYou = new WhoAreYou( $form->getModelDataFromValidatedForm() );
                 
                 if( !$this->getLpaApplicationService()->setWhoAreYou($lpaId, $whoAreYou) ) {
                     throw new \RuntimeException('API client failed to set Who Are You for id: '.$lpaId);

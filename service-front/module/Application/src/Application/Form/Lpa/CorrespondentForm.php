@@ -66,7 +66,7 @@ class CorrespondentForm extends AbstractActorForm
     
     public function validateByModel()
     {
-        $this->actor = new Correspondence();
+        $this->actorModel = new Correspondence();
         
         return parent::validateByModel();
     }

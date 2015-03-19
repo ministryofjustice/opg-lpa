@@ -84,7 +84,7 @@ class PeopleToNotifyController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // persist data
-                $np = new NotifiedPerson($form->getModelizedData());
+                $np = new NotifiedPerson($form->getModelDataFromValidatedForm());
                 if(!$this->getLpaApplicationService()->addNotifiedPerson($lpaId, $np)) {
                     throw new \RuntimeException('API client failed to add a notified person for id: '.$lpaId);
                 }
@@ -133,7 +133,7 @@ class PeopleToNotifyController extends AbstractLpaController
             
             if($form->isValid()) {
                 // persist data
-                $notifiedPerson = new NotifiedPerson($form->getModelizedData());
+                $notifiedPerson = new NotifiedPerson($form->getModelDataFromValidatedForm());
                 
                 // update attorney
                 if(!$this->getLpaApplicationService()->setNotifiedPerson($lpaId, $notifiedPerson, $notifiedPerson->id)) {

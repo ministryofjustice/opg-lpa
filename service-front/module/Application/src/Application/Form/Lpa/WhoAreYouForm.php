@@ -83,7 +83,7 @@ class WhoAreYouForm extends AbstractForm
     
     public function validateByModel()
     {
-        $whoAreYou = new WhoAreYou($this->formDataModelization($this->data));
+        $whoAreYou = new WhoAreYou($this->convertFormDataForModel($this->data));
         
         $validation = $whoAreYou->validate();
         
@@ -98,7 +98,7 @@ class WhoAreYouForm extends AbstractForm
         }
     }
     
-    public function formDataModelization($formData)
+    public function convertFormDataForModel($formData)
     {
         $modelData = [];
         if(array_key_exists($formData['who'], WhoAreYou::options())) {

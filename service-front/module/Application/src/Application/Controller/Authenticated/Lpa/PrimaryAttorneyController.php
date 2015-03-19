@@ -87,7 +87,7 @@ class PrimaryAttorneyController extends AbstractLpaController
             if($form->isValid()) {
             
                 // persist data
-                $attorney = new Human($form->getModelizedData());
+                $attorney = new Human($form->getModelDataFromValidatedForm());
                 if( !$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney) ) {
                     throw new \RuntimeException('API client failed to add a primary attorney for id: '.$lpaId);
                 }
@@ -151,10 +151,10 @@ class PrimaryAttorneyController extends AbstractLpaController
             if($form->isValid()) {
                 // persist data
                 if($attorney instanceof Human) {
-                    $attorney = new Human($form->getModelizedData());
+                    $attorney = new Human($form->getModelDataFromValidatedForm());
                 }
                 else {
-                    $attorney = new TrustCorporation($form->getModelizedData());
+                    $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
                 }
                 
                 // update attorney
@@ -255,7 +255,7 @@ class PrimaryAttorneyController extends AbstractLpaController
             if($form->isValid()) {
             
                 // persist data
-                $attorney = new TrustCorporation($form->getModelizedData());
+                $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
                 if( !$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney) ) {
                     throw new \RuntimeException('API client failed to add a trust corporation attorney for id: '.$lpaId);
                 }

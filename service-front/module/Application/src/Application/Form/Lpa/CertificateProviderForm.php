@@ -40,7 +40,7 @@ class CertificateProviderForm extends AbstractActorForm
     
     public function validateByModel()
     {
-        $this->actor = new CertificateProvider();
+        $this->actorModel = new CertificateProvider();
         
         return parent::validateByModel();
     }
