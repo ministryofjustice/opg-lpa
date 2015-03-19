@@ -9,7 +9,6 @@ use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
 use Zend\Form\Element\Radio;
-use Zend\InputFilter\Factory;
 
 abstract class AbstractForm extends Form
 {
@@ -25,8 +24,6 @@ abstract class AbstractForm extends Form
             'timeout' => null,
             'salt' => sha1('Application\Form\Lpa-Salt'),
         ]));
-        
-        $filterFactory = new Factory();
         
         $filter = $this->getInputFilter();
         
@@ -47,7 +44,7 @@ abstract class AbstractForm extends Form
             
             $this->add($params);
 
-            // add filters
+            // add default filters
             $filterParams = [
                     'name' => $name,
                     'required' => (array_key_exists('required', $elm)?$elm['required']:false),
@@ -57,7 +54,18 @@ abstract class AbstractForm extends Form
                     ],
             ];
             
-            $filter->add($filterFactory->createInput($filterParams));
+            // add additional filters if given
+            if(array_key_exists('filters', $elm)) {
+                $filterParams['filters'] += $elm['filters'];
+            }
+            
+            // add validators if given
+            if(array_key_exists('validators', $elm)) {
+                $filterParams['validators'] = $elm['validators'];
+            }
+            
+            $filter->add($filterParams);
+            
         }
         
         $this->setInputFilter($filter);
@@ -115,11 +123,15 @@ abstract class AbstractForm extends Form
             $filter->setValidationGroup($validationGroup);
         }
         
-        // validate data though model validators.
-        $modelValidationResult = $this->validateByModel();
+        // do validation through Zend Validator first 
+        $this->isValid = $result = (bool) $filter->isValid();
         
-        // take both Zend validation and model validation result into account 
-        $this->isValid = $result = (bool) ($filter->isValid() & $modelValidationResult['isValid']);
+        // if Zend validation was successful, do validation through model.
+        if($result) {
+            // validate data though model validators.
+            $modelValidationResult = $this->validateByModel();
+            $this->isValid = $result = (bool) ($result & $modelValidationResult['isValid']);
+        }
         
         $this->hasValidated = true;
         
@@ -128,8 +140,21 @@ abstract class AbstractForm extends Form
         }
 
         if (!$result) {
+            $messages = $filter->getMessages();
+            
+            // simplify zend email address validation error.
+            if(isset($messages['email-address'])) {
+                $messages['email-address'] = [
+                        \Zend\Validator\EmailAddress::INVALID_FORMAT => "Invalid email address.",
+                ];
+            }
+            
             // merge Zend and model validation errors.
-            $this->setMessages(array_merge($filter->getMessages(), $modelValidationResult['messages']));
+            if(isset($modelValidationResult) && isset($modelValidationResult['messages'])) {
+                $messages = array_merge($messages, $modelValidationResult['messages']);
+            }
+            
+            $this->setMessages($messages);
         }
 
         return $result;
@@ -204,7 +229,7 @@ abstract class AbstractForm extends Form
      * 
      * @return array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
-    protected function formDataModelization($formData)
+    protected function convertFormDataForModel($formData)
     {
         $modelData = [];
         foreach($formData as $key=>$value) {
@@ -243,14 +268,14 @@ abstract class AbstractForm extends Form
     }
     
     /**
-     * Convert form data to model-compatible input data format.
+     * get validated form data for creating model object.
      * 
-     * @return \Application\Form\Lpa\array.
+     * @return \Application\Form\Lpa\array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
-    public function getModelizedData()
+    public function getModelDataFromValidatedForm()
     {
         if($this->data != null) {
-            return $this->formDataModelization($this->getData());
+            return $this->convertFormDataForModel($this->getData());
         }
     }
     
