@@ -96,10 +96,10 @@ class FeeController extends AbstractLpaController
                 }
                 
                 // set repeatCaseNumber
-                if($this->request->getPost('repeatCaseNumber')) {
-                    //@todo set repeat number to the api.
-                    
-                    
+                if($form->get('repeatCaseNumber')->getValue()) {
+                    if(!$this->getLpaApplicationService()->setRepeatCaseNumber($lpa->id, $form->get('repeatCaseNumber')->getValue())) {
+                        throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpa->id);
+                    }
                 }
                 
                 // redirect to payment gateway
