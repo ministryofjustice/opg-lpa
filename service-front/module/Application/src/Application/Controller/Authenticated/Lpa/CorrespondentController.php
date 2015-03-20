@@ -17,6 +17,7 @@ use Application\Form\Lpa\CorrespondentSwitcherForm;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
+use Zend\View\Model\JsonModel;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -128,7 +129,7 @@ class CorrespondentController extends AbstractLpaController
                     }
                     
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
-                        return $this->response;
+                        return new JsonModel(['success' => true]);
                     }
                     else {
                         $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
