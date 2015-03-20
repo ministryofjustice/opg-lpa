@@ -36,6 +36,11 @@ class CorrespondentSwitcherForm extends AbstractForm
         parent::__construct($formName);
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         return ['isValid'=>true, 'messages' => []];

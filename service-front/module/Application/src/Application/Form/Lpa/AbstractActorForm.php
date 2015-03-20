@@ -9,6 +9,11 @@ abstract class AbstractActorForm extends AbstractForm
      */
     protected $actorModel;
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $dataForModel = $this->convertFormDataForModel($this->data);
@@ -56,11 +61,11 @@ abstract class AbstractActorForm extends AbstractForm
     }
     
     /**
-     * get validated form data for creating model object.
+     * Get validated form data for creating model object.
      * 
      * @see \Application\Form\Lpa\AbstractForm::getModelDataFromValidatedForm()
      * 
-     * return e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
+     * @return e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
     public function getModelDataFromValidatedForm()
     {

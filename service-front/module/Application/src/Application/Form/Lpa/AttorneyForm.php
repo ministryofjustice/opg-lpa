@@ -100,6 +100,11 @@ class AttorneyForm extends AbstractActorForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $this->actorModel = new Human();

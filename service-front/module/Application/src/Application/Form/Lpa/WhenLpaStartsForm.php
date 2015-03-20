@@ -32,6 +32,11 @@ class WhenLpaStartsForm extends AbstractForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $decisions = new PrimaryAttorneyDecisions($this->data);

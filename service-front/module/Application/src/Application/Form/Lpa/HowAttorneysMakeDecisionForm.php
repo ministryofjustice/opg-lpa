@@ -38,6 +38,11 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $decision = new PrimaryAttorneyDecisions($this->data);

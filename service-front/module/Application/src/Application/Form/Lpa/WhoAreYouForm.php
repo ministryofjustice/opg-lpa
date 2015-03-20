@@ -81,6 +81,11 @@ class WhoAreYouForm extends AbstractForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $whoAreYou = new WhoAreYou($this->convertFormDataForModel($this->data));
@@ -98,7 +103,14 @@ class WhoAreYouForm extends AbstractForm
         }
     }
     
-    public function convertFormDataForModel($formData)
+    /**
+     * Convert form data to model-compatible input data format.
+     * 
+     * @param array $formData. e.g. ['who'=>'professional','professional'=>'solicitor', 'professional-other'=>null, 'digitalPartner'=>null, 'orgaisation'=>null]
+     * 
+     * @return array. e.g. ['who'=>'prefessiona', 'subquestion'=>'solicitor', 'qualifier'=>null]
+     */
+    protected function convertFormDataForModel($formData)
     {
         $modelData = [];
         if(array_key_exists($formData['who'], WhoAreYou::options())) {
@@ -130,6 +142,9 @@ class WhoAreYouForm extends AbstractForm
         return $modelData;
     }
     
+    /**
+     * Convert model validation response to Zend Form validation messages format.
+     */
     protected function modelValidationMessageConverter(ValidatorResponse $validation, $context=null)
     {
         $messages = [];

@@ -32,6 +32,11 @@ class TypeForm extends AbstractForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $document = new Document($this->data);

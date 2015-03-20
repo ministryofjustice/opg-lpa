@@ -73,6 +73,11 @@ class FeeForm extends AbstractForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $payment = new Payment($this->convertFormDataForModel($this->data));

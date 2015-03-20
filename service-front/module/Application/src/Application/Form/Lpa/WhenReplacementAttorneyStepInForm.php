@@ -38,6 +38,11 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
         
     }
     
+   /**
+    * Validate form input data through model validators.
+    * 
+    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+    */
     public function validateByModel()
     {
         $document = new ReplacementAttorneyDecisions($this->data);
