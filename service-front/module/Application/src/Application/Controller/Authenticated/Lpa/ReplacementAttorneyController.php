@@ -89,7 +89,7 @@ class ReplacementAttorneyController extends AbstractLpaController
             
             if($form->isValid()) {
             
-                // persist data
+                // persist to the api
                 $attorney = new Human($form->getModelDataFromValidatedForm());
                 if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
                     throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
@@ -150,15 +150,15 @@ class ReplacementAttorneyController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                // persist data
+                // update with new details
                 if($attorney instanceof Human) {
-                    $attorney = new Human($form->getModelDataFromValidatedForm());
+                    $attorney->populate($form->getModelDataFromValidatedForm());
                 }
                 else {
-                    $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
+                    $attorney->populate($form->getModelDataFromValidatedForm());
                 }
                 
-                // update attorney
+                // persist to the api
                 if(!$this->getLpaApplicationService()->setReplacementAttorney($lpaId, $attorney, $attorney->id)) {
                     throw new \RuntimeException('API client failed to update replacement attorney ' . $attorney->id . ' for id: ' . $lpaId);
                 }
@@ -174,7 +174,10 @@ class ReplacementAttorneyController extends AbstractLpaController
         else {
             $flattenAttorneyData = $attorney->flatten();
             if($attorney instanceof Human) {
-                $flattenAttorneyData['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
+                $dob = $attorney->dob->date;
+                $flattenAttorneyData['dob-date-day'] = $dob->format('d');
+                $flattenAttorneyData['dob-date-month'] = $dob->format('m');
+                $flattenAttorneyData['dob-date-year'] = $dob->format('Y');
             }
             
             $form->bind($flattenAttorneyData);

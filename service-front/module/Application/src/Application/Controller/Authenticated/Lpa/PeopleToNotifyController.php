@@ -132,10 +132,10 @@ class PeopleToNotifyController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                // persist data
-                $notifiedPerson = new NotifiedPerson($form->getModelDataFromValidatedForm());
+                // update details
+                $notifiedPerson->populate($form->getModelDataFromValidatedForm());
                 
-                // update attorney
+                // persist to the api
                 if(!$this->getLpaApplicationService()->setNotifiedPerson($lpaId, $notifiedPerson, $notifiedPerson->id)) {
                     throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
                 }

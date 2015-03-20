@@ -149,15 +149,15 @@ class PrimaryAttorneyController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                // persist data
+                // update attorney with new details
                 if($attorney instanceof Human) {
-                    $attorney = new Human($form->getModelDataFromValidatedForm());
+                    $attorney->populate($form->getModelDataFromValidatedForm());
                 }
                 else {
-                    $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
+                    $attorney->populate($form->getModelDataFromValidatedForm());
                 }
                 
-                // update attorney
+                // persist to the api
                 if(!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorney->id)) {
                     throw new \RuntimeException('API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
@@ -173,7 +173,10 @@ class PrimaryAttorneyController extends AbstractLpaController
         else {
             $flattenAttorneyData = $attorney->flatten();
             if($attorney instanceof Human) {
-                $flattenAttorneyData['dob-date'] = $this->getLpa()->document->donor->dob->date->format('Y-m-d');
+                $dob = $attorney->dob->date;
+                $flattenAttorneyData['dob-date-day'] = $dob->format('d');
+                $flattenAttorneyData['dob-date-month'] = $dob->format('m');
+                $flattenAttorneyData['dob-date-year'] = $dob->format('Y');
             }
             
             $form->bind($flattenAttorneyData);
