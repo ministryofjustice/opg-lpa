@@ -4,7 +4,9 @@
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
-    $dob        = $form->get('dob-date');
+    $dobDay     = $form->get('dob-date-day');
+    $dobMonth   = $form->get('dob-date-month');
+    $dobYear    = $form->get('dob-date-year');
     $address1   = $form->get('address-address1');
     $address2   = $form->get('address-address2');
     $address3   = $form->get('address-address3');
@@ -15,7 +17,15 @@
     $title->setOptions( ['label' => 'Title'] );
     $firstname->setOptions( ['label' => 'First names'] );
     $lastname->setOptions( ['label' => 'Last names'] );
-    $dob->setOptions( ['label' => 'Date of birth'] );
+    
+    $dobDay->setOptions(    ['label' => 'Day'] );
+    $dobMonth->setOptions(  ['label' => 'Month'] );
+    $dobYear->setOptions(   ['label' => 'Year'] );
+    
+    $dobDay->setAttribute('id', 'dob-day');
+    $dobMonth->setAttribute('id', 'dob-month');
+    $dobYear->setAttribute('id', 'dob-year');
+    
     $address1->setOptions( ['label' => 'Address line 1'] );
     $address2->setOptions( ['label' => 'Address line 2'] );
     $address3->setOptions( ['label' => 'Address line 3'] );
@@ -46,53 +56,72 @@
 
 <fieldset>
 
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($title) ?>
         <?= $this->formElementErrors($title) ?>
     </div>
     
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($firstname) ?>
         <?= $this->formElementErrors($firstname) ?>
     </div>
     
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($lastname) ?>
         <?= $this->formElementErrors($lastname) ?>
     </div>
     
-    <div class="form_element">
-        <?= $formLabel->openTag() . $dob->getOption('label') . $formLabel->closeTag() ?>
-        <?= $this->formDate($dob) ?>
-        <?= $this->formElementErrors($dob) ?>
+    <div class="group">
+        <label for="dob" id="dob-label" class="required">Date of birth</label>
+        
+        <div class="dob-element">
+            <div class="form-group form-group-day">
+                <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobDay) ?>
+            </div>
+            
+            <div class="form-group form-group-month">
+                <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobMonth) ?>
+            </div>
+            
+            <div class="form-group form-group-year">
+                <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobYear) ?>
+            </div>
+        </div>
     </div>
-
+    
+    <div class="group">
+        <?= $this->formElementErrors($dobYear) ?>
+    </div>
+    
 </fieldset>
 
 <fieldset class="js-PostcodeLookup__postal-add">
     
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($address1) ?>
         <?= $this->formElementErrors($address1) ?>
     </div>
     
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($address2) ?>
         <?= $this->formElementErrors($address2) ?>
     </div>
     
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($address3) ?>
         <?= $this->formElementErrors($address3) ?>
     </div>
     
-    <div class="form_element">
+    <div class="group">
         <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formElement($postcode) ?>
         <?= $this->formElementErrors($postcode) ?>
