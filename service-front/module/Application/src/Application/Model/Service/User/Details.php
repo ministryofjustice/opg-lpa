@@ -61,7 +61,13 @@ class Details implements ServiceLocatorAwareInterface {
 
     } // function
 
-    public function updatePassword( ServiceDataInputInterface $details ){
+    /**
+     * Update the user's email address.
+     *
+     * @param ServiceDataInputInterface $details
+     * @return bool|string
+     */
+    public function updateEmailAddress( ServiceDataInputInterface $details ){
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
@@ -71,10 +77,20 @@ class Details implements ServiceLocatorAwareInterface {
 
         if( $result !== true ){
 
-        }
+            // There was an error...
+
+            $error = $client->getLastContent();
+
+            if( isset($error['error_description']) && $error['error_description'] == 'email address is already registered' ){
+                return 'address-already-registered';
+            } else {
+                return 'unknown-error';
+            }
+
+        } // if
 
         return true;
 
-    }
+    } // function
 
 } // class
