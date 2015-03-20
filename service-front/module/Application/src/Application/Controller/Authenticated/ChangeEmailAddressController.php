@@ -16,10 +16,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
         //----------------------
 
-
         $form = new ChangeEmailAddressForm();
-
-
         $form->setAttribute( 'action', $this->url()->fromRoute('user/change-email-address') );
 
         $error = null;
@@ -55,21 +52,23 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
-                $result = $service->updatePassword( $form );
-
-                // Clear the old details out the session.
-                // They will be reloaded the next time the the AbstractAuthenticatedController is called.
-                $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
-                unset($detailsContainer->user);
+                $result = $service->updateEmailAddress( $form );
 
                 //---
 
                 if( $result === true ){
 
+                    // Clear the old details out the session.
+                    // They will be reloaded the next time the the AbstractAuthenticatedController is called.
+                    $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+                    unset($detailsContainer->user);
+
                     $this->flashMessenger()->addSuccessMessage('Your new email address has been saved. Please remember to use this new email address to sign in from now on.');
 
                     return $this->redirect()->toRoute( 'user/about-you' );
 
+                } else {
+                    $error = $result;
                 }
 
             }
@@ -77,8 +76,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
         }
 
         //----------------------
-
-        $currentAddress = (string)$this->getUserDetails()->email;
 
         $pageTitle = 'Change your sign-in email address';
 
