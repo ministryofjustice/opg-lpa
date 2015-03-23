@@ -3,3 +3,4 @@
 /vendor/ministryofjustice/opg-lpa-datamodels/vendor/
 
 test-data/
+config/local.php
