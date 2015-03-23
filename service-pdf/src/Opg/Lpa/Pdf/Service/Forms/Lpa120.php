@@ -29,7 +29,8 @@ class Lpa120 extends AbstractForm
     public function generate()
     {
         // check eligibility for exemption or remission.
-        if(!$this->lpa->payment->reducedFeeLowIncome && 
+        if(!$this->lpa->repeatCaseNumber &&
+            !$this->lpa->payment->reducedFeeLowIncome && 
             !($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) &&
             !$this->lpa->payment->reducedFeeUniversalCredit) {
                 throw new \RuntimeException("LPA120 is not available for this LPA.");
