@@ -29,7 +29,7 @@ class CreatedController extends AbstractLpaController
                 'creationDate'  => $this->getLpa()->completedAt->format('d/m/Y'),
                 'editRoute'     => $this->url()->fromRoute('lpa/instructions', ['lpa-id'=>$lpaId]),
                 'deleteRoute'   => $this->url()->fromRoute('user/dashboard/delete-lpa', ['lpa-id'=>$lpaId]),
-                'downloadRoute' => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpaId, 'pdf-type'=>'LP1']),
+                'downloadRoute' => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpaId, 'pdf-type'=>'lp1']),
                 'nextRoute'     => $this->url()->fromRoute('lpa/register', ['lpa-id'=>$lpaId]),
         ]);
     }
