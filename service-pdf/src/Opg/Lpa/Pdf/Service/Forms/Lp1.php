@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -203,7 +204,7 @@ abstract class Lp1 extends AbstractForm
             $this->drawingTargets[4] = array('replacementAttorney-0', 'replacementAttorney-1');
         }
         
-        if(($noOfReplacementAttorneys > 1) &&
+        if(($noOfReplacementAttorneys > 1) && ($this->lpa->document->replacementAttorneyDecisions instanceof Decisions\ReplacementAttorneyDecisions) &&
             ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
                 $this->flattenLpa['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
         }
@@ -311,79 +312,81 @@ abstract class Lp1 extends AbstractForm
         /**
          * Correspondent (Section 13)
          */
-        switch($this->flattenLpa['lpa-document-correspondent-who']) {
-            case Correspondence::WHO_DONOR:
-                $this->flattenLpa['donor-is-correspondent'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-document-correspondent-name-title'] = null;
-                $this->flattenLpa['lpa-document-correspondent-name-first'] = null;
-                $this->flattenLpa['lpa-document-correspondent-name-last'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
-                break;
-            case Correspondence::WHO_ATTORNEY:
-                $this->flattenLpa['attorney-is-correspondent'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
-                $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
-                break;
-            case Correspondence::WHO_OTHER:
-                $this->flattenLpa['other-is-correspondent'] = self::CHECK_BOX_ON;
-                break;
+        if($this->lpa->document->correspondent instanceof Correspondence) {
+            switch($this->flattenLpa['lpa-document-correspondent-who']) {
+                case Correspondence::WHO_DONOR:
+                    $this->flattenLpa['donor-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->flattenLpa['lpa-document-correspondent-name-title'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-name-first'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-name-last'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
+                    break;
+                case Correspondence::WHO_ATTORNEY:
+                    $this->flattenLpa['attorney-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
+                    $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
+                    break;
+                case Correspondence::WHO_OTHER:
+                    $this->flattenLpa['other-is-correspondent'] = self::CHECK_BOX_ON;
+                    break;
+            }
+            
+            if($this->flattenLpa['lpa-document-correspondent-contactByPost'] === true) {
+                $this->flattenLpa['correspondent-contact-by-post'] = self::CHECK_BOX_ON;
+            }
+            
+            if(isset($this->flattenLpa['lpa-document-correspondent-phone-number'])) {
+                $this->flattenLpa['correspondent-contact-by-phone'] = self::CHECK_BOX_ON;
+            }
+            
+            if(isset($this->flattenLpa['lpa-document-correspondent-email-address'])) {
+                $this->flattenLpa['correspondent-contact-by-email'] = self::CHECK_BOX_ON;
+            }
+            
+            if($this->flattenLpa['lpa-document-correspondent-contactInWelsh'] === true) {
+                $this->flattenLpa['correspondent-contact-in-welsh'] = self::CHECK_BOX_ON;
+            }
         }
-        
-        if($this->flattenLpa['lpa-document-correspondent-contactByPost'] === true) {
-            $this->flattenLpa['correspondent-contact-by-post'] = self::CHECK_BOX_ON;
-        }
-        
-        if(isset($this->flattenLpa['lpa-document-correspondent-phone-number'])) {
-            $this->flattenLpa['correspondent-contact-by-phone'] = self::CHECK_BOX_ON;
-        }
-        
-        if(isset($this->flattenLpa['lpa-document-correspondent-email-address'])) {
-            $this->flattenLpa['correspondent-contact-by-email'] = self::CHECK_BOX_ON;
-        }
-        
-        if($this->flattenLpa['lpa-document-correspondent-contactInWelsh'] === true) {
-            $this->flattenLpa['correspondent-contact-in-welsh'] = self::CHECK_BOX_ON;
-        }
-        
         
         /**
          *  Payment section (section 14)
          */
-        // payment method
-        if($this->flattenLpa['lpa-payment-method'] == Payment::PAYMENT_TYPE_CARD) {
-            $this->flattenLpa['pay-by-card'] = self::CHECK_BOX_ON;
-            $this->flattenLpa['lpa-payment-phone-number'] = "NOT REQUIRED. PAYMENT MADE ONLINE.";
-            
-        }
-        elseif($this->flattenLpa['lpa-payment-method'] == Payment::PAYMENT_TYPE_CHEQUE) {
-            $this->flattenLpa['pay-by-cheque'] = self::CHECK_BOX_ON;
-        }
-        
-        
         // Fee reduction, repeat application
         if($this->lpa->repeatCaseNumber !== null) {
             $this->flattenLpa['is-repeat-application'] = self::CHECK_BOX_ON;
             $this->flattenLpa['repeat-application-case-number'] = $this->lpa->repeatCaseNumber;
         }
         
-        if($this->lpa->payment->reducedFeeLowIncome || 
-            ($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) ||
-            $this->lpa->payment->reducedFeeUniversalCredit) {
-            
-            $this->flattenLpa['apply-for-fee-reduction'] = self::CHECK_BOX_ON;
-        }
+        if($this->lpa->payment instanceof Payment) {
+            // payment method
+            if($this->flattenLpa['lpa-payment-method'] == Payment::PAYMENT_TYPE_CARD) {
+                $this->flattenLpa['pay-by-card'] = self::CHECK_BOX_ON;
+                $this->flattenLpa['lpa-payment-phone-number'] = "NOT REQUIRED. PAYMENT MADE ONLINE.";
+                
+            }
+            elseif($this->flattenLpa['lpa-payment-method'] == Payment::PAYMENT_TYPE_CHEQUE) {
+                $this->flattenLpa['pay-by-cheque'] = self::CHECK_BOX_ON;
+            }
         
-        // Online payment details
-        if(isset($this->flattenLpa['lpa-payment-reference'])) {
-            $this->flattenLpa['lpa-payment-amount'] = '£'.sprintf('%.2f', $this->flattenLpa['lpa-payment-amount']);
-            $this->flattenLpa['lpa-payment-date-day'] = $this->lpa->payment->date->format('d');
-            $this->flattenLpa['lpa-payment-date-month'] = $this->lpa->payment->date->format('m');
-            $this->flattenLpa['lpa-payment-date-year'] = $this->lpa->payment->date->format('Y');
+            if($this->lpa->payment->reducedFeeLowIncome || 
+                ($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) ||
+                $this->lpa->payment->reducedFeeUniversalCredit) {
+                
+                $this->flattenLpa['apply-for-fee-reduction'] = self::CHECK_BOX_ON;
+            }
+            
+            // Online payment details
+            if(isset($this->flattenLpa['lpa-payment-reference'])) {
+                $this->flattenLpa['lpa-payment-amount'] = '£'.sprintf('%.2f', $this->flattenLpa['lpa-payment-amount']);
+                $this->flattenLpa['lpa-payment-date-day'] = $this->lpa->payment->date->format('d');
+                $this->flattenLpa['lpa-payment-date-month'] = $this->lpa->payment->date->format('m');
+                $this->flattenLpa['lpa-payment-date-year'] = $this->lpa->payment->date->format('Y');
+            }
         }
         
         return $this->flattenLpa;
@@ -437,7 +440,7 @@ abstract class Lp1 extends AbstractForm
         }
         
         // Section 15 - additional applicants signature
-        if(($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
+        if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && ($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
                 (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
             $totalAdditionalApplicants = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
             $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
