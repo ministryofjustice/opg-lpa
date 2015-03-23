@@ -1,1 +1,89 @@
-change password
+<?php
+
+$form = $this->form;
+
+$password               = $form->get('password_current');
+$new_password           = $form->get('password');
+$new_password_confirm   = $form->get('password_confirm');
+
+$password->setAttributes([
+    'id' => 'password_current',
+    'autocomplete' => 'off'
+])->setOptions( ['label' => 'Your current password'] );
+
+$new_password->setAttributes([
+    'id' => 'email',
+    'autocomplete' => 'off'
+])->setOptions( ['label' => 'New password'] );
+
+$new_password_confirm->setAttributes([
+    'id' => 'email_confirm',
+    'autocomplete' => 'off'
+])->setOptions( ['label' => 'Re-enter new password'] );
+
+
+$form->prepare();
+
+//---
+
+$formLabel = $this->plugin('formLabel');
+
+?>
+<?= $this->form()->openTag( $form->setAttribute( 'class', 'account form' ) ); ?>
+
+<div class="<?= $this->elementGroupClass($form->get('secret')) ?>">
+    <?= $this->formElement($form->get('secret')) ?>
+</div>
+
+<? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
+    <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+        <h1 id="error-heading">There was a problem submitting the form</h1>
+        <p>Because of the following problems:</p>
+        <ol>
+            <?php
+            $this->formLinkedErrorList($form);
+
+            if (isset($this->error)) {
+                echo '<li><a href="">';
+                switch($this->error){
+                    default:
+                        echo $this->escapehtml( $this->error );
+                }
+                echo '</a></li>';
+            }
+            ?>
+        </ol>
+    </div>
+<? } ?>
+
+<fieldset>
+
+    <? $element = $password; ?>
+    <div class="group">
+        <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($element) ?>
+        <?= $this->formElementErrors($element) ?>
+    </div>
+
+    <? $element = $new_password; ?>
+    <div class="group">
+        <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($element) ?>
+        <?= $this->formElementErrors($element) ?>
+    </div>
+
+    <? $element = $new_password_confirm; ?>
+    <div class="group">
+        <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($element) ?>
+        <?= $this->formElementErrors($element) ?>
+    </div>
+
+</fieldset>
+
+
+<p class="action group">
+    <input type="submit" name="submit" id="signin-form-submit" value="Save new password" class="button">
+</p>
+
+<?= $this->form()->closeTag(); ?>
