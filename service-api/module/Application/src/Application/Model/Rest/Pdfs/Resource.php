@@ -360,9 +360,24 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
             return false;
         }
 
-        //---
+        //-------------------------------------
+        // Decrypt the PDF
 
-        # TODO - decrypt file.
+        $config = $this->getServiceLocator()->get('config')['pdf']['encryption'];
+
+        if( !is_string($config['keys']['document']) || strlen($config['keys']['document']) != 32 ){
+            throw new CryptInvalidArgumentException('Invalid encryption key');
+        }
+
+        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+
+        // Set the secret key
+        $blockCipher->setKey( $config['keys']['document'] );
+        $blockCipher->setBinaryOutput( true );
+
+        // Encrypt the JSON...
+        $file = $blockCipher->decrypt( $file );
 
         //---
 
