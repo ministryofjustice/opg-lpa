@@ -6,6 +6,9 @@ use SplFileInfo;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\ResponseInterface;
 
+use Zend\Crypt\BlockCipher;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+
 /**
  * Store the generated PDF into Redis.
  *
@@ -67,7 +70,21 @@ class RedisResponse implements ResponseInterface  {
         //-------------------------------------------
         // Secure data
 
-        # TODO - Encrypt $data...
+        $config = Config::getInstance()['pdf']['encryption'];
+
+        if( !is_string($config['keys']['document']) || strlen($config['keys']['document']) != 32 ){
+            throw new CryptInvalidArgumentException('Invalid encryption key');
+        }
+
+        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+
+        // Set the secret key
+        $blockCipher->setKey( $config['keys']['document'] );
+        $blockCipher->setBinaryOutput( true );
+
+        // Encrypt the JSON...
+        $encryptedData = $blockCipher->encrypt( $data );
 
         //-------------------------------------------
         // Save to Redis
@@ -78,7 +95,7 @@ class RedisResponse implements ResponseInterface  {
         $redis->lpush( self::REDIS_LIST , $this->docId);
 
         // Save the file into redis...
-        $redis->set( self::REDIS_FILE_PREFIX . $this->docId, $data );
+        $redis->set( self::REDIS_FILE_PREFIX . $this->docId, $encryptedData );
 
         //---
 
