@@ -7,7 +7,15 @@ use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Generator;
 
-class Worker {
+abstract class AbstractWorker {
+
+    /**
+     * Return the object for handling the response.
+     *
+     * @param $docId
+     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
+     */
+    abstract protected function getResponseObject( $docId );
 
     /**
      * @param string $docId Unique ID representing this job/document.
@@ -24,7 +32,7 @@ class Worker {
             $lpaObj = new Lpa( $lpa );
 
             // Create and config the $response object.
-            $response = new RedisResponse( $docId );
+            $response = $this->getResponseObject( $docId );
 
             // Create an instance of the PDF generator service.
             $generator = new Generator( $type, $lpaObj, $response );

@@ -6,7 +6,17 @@ use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgum
 
 use Opg\Lpa\Pdf\Config\Config;
 
-class ResqueWorker extends Worker {
+class ResqueWorker extends AbstractWorker {
+
+    /**
+     * Return the RedisResponse for handling the response.
+     *
+     * @param $docId
+     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
+     */
+    protected function getResponseObject( $docId ){
+        return new Response\RedisResponse( $docId );
+    }
 
     public function perform(){
 

@@ -1,166 +1,170 @@
 {
-    "id": 1234,
-    "createdAt": "2014-11-12T13:24:39+0000",
-    "updatedAt": "2014-11-12T13:24:39+0000",
-    "user": "ad353da6b73ceee2201cee2f9936c509",
-    "payment": {
-        "method": "card",
-        "phone": {
-            "number": "020 1234 5678"
-        },
-        "amount": 100,
-        "reference": "abc123",
-        "date": "2014-11-12T13:24:39+0000"
+  "id": 53183024330,
+  "createdAt": "2014-12-28T13:44:52+00:00",
+  "updatedAt": "2014-12-30T14:45:37+00:00",
+  "user": "36adb4a2d66570c1aaefe375fe657f8a",
+  "repeatCaseNumber": null,
+  "payment": {
+    "reducedFeeReceivesBenefits": true,
+    "reducedFeeAwardedDamages": true,
+    "reducedFeeLowIncome": true,
+    "reducedFeeUniversalCredit": true,
+    "amount": null,
+    "method": null
+  },
+  "whoAreYouAnswered": true,
+  "locked": true,
+  "seed": null,
+  "document": {
+    "type": "health-and-welfare",
+    "donor": {
+      "name": {
+        "title": "Miss",
+        "first": "Rylan",
+        "last": "Lang"
+      },
+      "otherNames": null,
+      "address": {
+        "address1": "30 Queensway",
+        "address2": "Lydd",
+        "address3": "Kent, England",
+        "postcode": "CA3 9GU"
+      },
+      "dob": {
+        "date": "1946-07-27T12:43:19+00:00"
+      },
+      "email": null,
+      "canSign": false
     },
-    "whoAreYouAnswered": false,
-    "locked": false,
-    "seed": null,
-    "document": {
-        "type": "property-and-financial",
-        "donor": {
-            "name": {
-                "title": "Mr",
-                "first": "Bob",
-                "last": "Sanders"
-            },
-            "otherNames": "Fred",
-            "address": {
-                "address1": "Line 1",
-                "address2": "Line 2",
-                "address3": "A new line",
-                "postcode": "SW1H 9AJ"
-            },
-            "dob": {
-                "date": "2010-12-17T00:00:00+0000"
-            },
-            "email": {
-                "address": "test@digital.justice.gov.uk"
-            },
-            "canSign": true
+    "primaryAttorneys": [
+      {
+        "address": {
+          "address1": "598 High Street",
+          "address2": "Forfar",
+          "address3": "Angus, Scotland",
+          "postcode": "WN1 4XK"
         },
-        "whoIsRegistering": [0,1],
-        "primaryAttorneyDecisions": {
-            "how": "depends",
-            "when": "no-capacity",
-            "canSustainLife": true,
-            "howDetails": "Extra details."
+        "email": null,
+        "type": "human",
+        "name": {
+          "title": "Miss",
+          "first": "Henri",
+          "last": "Moran"
         },
-        "replacementAttorneyDecisions": {
-            "how": "depends",
-            "when": "depends",
-            "howDetails": "How extra details.",
-            "whenDetails": "When extra details."
+        "dob": {
+          "date": "1991-04-30T02:57:54+00:00"
+        }
+      }
+    ],
+    "certificateProvider": {
+      "name": {
+        "title": "Mr",
+        "first": "Emmanuel",
+        "last": "Frederick"
+      },
+      "address": {
+        "address1": "604 Kingsway",
+        "address2": "Dalkeith",
+        "address3": "Lothian, Scotland",
+        "postcode": "SG7 9TX"
+      }
+    },
+    "peopleToNotify": [
+      {
+        "name": {
+          "title": "Capt",
+          "first": "Riya",
+          "last": "Contreras"
         },
-        "correspondent": {
-            "who": "other",
-            "name": {
-                "title": "Mr",
-                "first": "Bob",
-                "last": "Sanders"
-            },
-            "company": "My Company Limited",
-            "address": {
-                "address1": "Line 1",
-                "address2": "Line 2",
-                "address3": "A new line",
-                "postcode": "SW1H 9AJ"
-            },
-            "email": {
-                "address": "test@digital.justice.gov.uk"
-            },
-            "phone": {
-                "number": "020 1234 5678"
-            },
-            "contactByPost": true,
-            "contactInWelsh": true
+        "address": {
+          "address1": "225 West Street",
+          "address2": "Westhoughton",
+          "address3": "Greater Manchester, England",
+          "postcode": "SR82 5LW"
+        }
+      },
+      {
+        "name": {
+          "title": null,
+          "first": "Amaan",
+          "last": "Vega"
         },
-        "instruction": "Here are some instructions",
-        "preference": "Here are some preferences",
-        "certificateProvider": {
-            "name": {
-                "title": "Mr",
-                "first": "Bob",
-                "last": "Sanders"
-            },
-            "address": {
-                "address1": "Line 1",
-                "address2": "Line 2",
-                "address3": "A new line",
-                "postcode": "SW1H 9AJ"
-            }
+        "address": {
+          "address1": "230 Park Avenue",
+          "address2": "Y Felinheli",
+          "address3": "Gwynedd, Wales",
+          "postcode": "NP0K 8KV"
+        }
+      },
+      {
+        "name": {
+          "title": "Dr",
+          "first": "Zane",
+          "last": "Haley"
         },
-        "primaryAttorneys": [
-            {
-                "name": {
-                    "title": "Mr",
-                    "first": "Bob",
-                    "last": "Sanders"
-                },
-                "dob": {
-                    "date": "1980-12-17T00:00:00+0000"
-                },
-                "address": {
-                    "address1": "Line 1",
-                    "address2": "Line 2",
-                    "address3": "A new line",
-                    "postcode": "SW1H 9AJ"
-                },
-                "email": {
-                    "address": "test@digital.justice.gov.uk"
-                },
-                "type": "human"
-            },
-            {
-                "name": {
-                    "title": "Miss",
-                    "first": "Brenda",
-                    "last": "Smith"
-                },
-                "dob": {
-                    "date": "1980-12-17T00:00:00+0000"
-                },
-                "address": {
-                    "address1": "Line 1",
-                    "address2": "Line 2",
-                    "address3": "A new line",
-                    "postcode": "SW1H 9AJ"
-                },
-                "email": {
-                    "address": "test@digital.justice.gov.uk"
-                },
-                "type": "human"
-            }
-        ],
-        "replacementAttorneys": [
-            {
-                "name": "Corp Name Limited",
-                "number": "1234",
-                "address": {
-                    "address1": "Line 1",
-                    "address2": "Line 2",
-                    "address3": "A new line",
-                    "postcode": "SW1H 9AJ"
-                },
-                "email": {
-                    "address": "test@digital.justice.gov.uk"
-                },
-                "type": "trust"
-            }
-        ],
-        "peopleToNotify": [
-            {
-                "name": {
-                    "title": "Mr",
-                    "first": "Bob",
-                    "last": "Sanders"
-                },
-                "address": {
-                    "address1": "Line 1",
-                    "address2": "Line 2",
-                    "address3": "A new line",
-                    "postcode": "SW1H 9AJ"
-                }
-            }
-        ]
+        "address": {
+          "address1": "532 Park Avenue",
+          "address2": "New Milton",
+          "address3": "Hampshire, England",
+          "postcode": "SL9O 8RE"
+        }
+      },
+      {
+        "name": {
+          "title": "Mrs",
+          "first": "Seth",
+          "last": "Edwards"
+        },
+        "address": {
+          "address1": "382 Alexander Road",
+          "address2": "Wigston Magna",
+          "address3": "Leicestershire, England",
+          "postcode": "NW6F 0PP"
+        }
+      },
+      {
+        "name": {
+          "title": "Capt",
+          "first": "Charlie",
+          "last": "Briggs"
+        },
+        "address": {
+          "address1": "500 Queens Road",
+          "address2": "Seaford",
+          "address3": "East Sussex, England",
+          "postcode": "BA54 1II"
+        }
+      }
+    ],
+    "instruction": "\"At least he gave me all the Words correctly a little time\r\nago,\" said Bagheera impatiently. \"Baloo, thou hast neither memory\r\nnor respect. What would the jungle think if I, the Black Panther,\r\ncurled myself up like Ikki the Porcupine, and howled?\"\r\n\r\n\"What do I care what the jungle thinks? He may be dead by\r\nnow.\"\r\n\r\n\"Unless and until they drop him from the branches in sport, or\r\nkill him out of idleness, I have no fear for the man-cub. He is\r\nwise and well taught, and above all he has the eyes that make the\r\nJungle-People afraid. But (and it is a great evil) he is in the\r\npower of the Bandar-log, and they, because they live in trees,\r\nhave no fear of any of our people.\" Bagheera licked one forepaw\r\nthoughtfully.\r\n\r\n\"Fool that I am! Oh, fat, brown, root-digging fool that I\r\nam,\" said Baloo, uncoiling himself with a jerk, \"it is true what\r\nHathi the Wild Elephant says: `To each his own fear'; and they,\r\nthe Bandar-log, fear Kaa the Rock Snake. He can climb as well as\r\nthey can. He steals the young monkeys in the night. The whisper\r\nof his name makes their wicked tails cold. Let us go to Kaa.\"\r\n\r\n\"What will he do for us? He is not of our tribe, being\r\nfootless--and with most evil eyes,\" said Bagheera.\r\n\r\n\"He is very old and very cunning. Above all, he is always\r\nhungry,\" said Baloo hopefully. \"Promise him many goats.\"\r\n\r\n\"He sleeps for a full month after he has once eaten. He may\r\nbe asleep now, and even were he awake what if he would rather kill\r\nhis own goats?\" Bagheera, who did not know much about Kaa, was\r\nnaturally suspicious.\r\n\r\n\"Then in that case, thou and I together, old hunter, might\r\nmake him see reason.\" Here Baloo rubbed his faded brown shoulder\r\nagainst the Panther, and they went off to look for Kaa the Rock\r\nPython.\r\n\r\nThey found him stretched out on a warm ledge in the afternoon\r\nsun, admiring his beautiful new coat, for he had been in\r\nretirement for the last ten days changing his skin, and now he was\r\nvery splendid--darting his big blunt-nosed head along the\r\nground, and twisting the thirty feet of his body into fantastic\r\nknots and curves, and licking his lips as he thought of his dinner\r\nto come.\r\n\r\n\"He has not eaten,\" said Baloo, with a grunt of relief, as\r\nsoon as he saw the beautifully mottled brown and yellow jacket.\r\n\"Be careful, Bagheera! He is always a little blind after he has\r\nchanged his skin, and very quick to strike.\"\r\n\r\nKaa was not a poison snake--in fact he rather despised the\r\npoison snakes as cowards--but",
+    "preference": "A fresh shower came down on their heads and the two trotted\r\naway, taking Mowgli with them. What Baloo had said about the\r\nmonkeys was perfectly true. They belonged to the tree-tops, and as\r\nbeasts very seldom look up, there was no occasion for the monkeys\r\nand the Jungle-People to cross each other's path. But whenever\r\nthey found a sick wolf, or a wounded tiger, or bear, the monkeys\r\nwould torment him, and would throw sticks and nuts at any beast\r\nfor fun and in the hope of being noticed. Then they would howl\r\nand shriek senseless songs, and invite the Jungle-People to climb\r\nup their trees and fight them, or would start furious battles over\r\nnothing among themselves, and leave the dead monkeys where the\r\nJungle-People could see them. They were always just going to have\r\na leader, and laws and customs of their own, but they never did,\r\nbecause their memories would not hold over from day to day, and so\r\nthey compromised things by making up a saying, \"What the\r\nBandar-log think now the jungle will think later,\" and that\r\ncomforted them a great deal. None of the beasts could reach them,\r\nbut on the other hand none of the beasts would notice them, and\r\nthat was why they were so pleased when Mowgli came to play with\r\nthem, and they heard how angry Baloo was.\r\n\r\nThey never meant to do any more--the Bandar-log never mean\r\nanything at all; but one of them invented what seemed to him a\r\nbrilliant idea, and he told all the others that Mowgli would be a\r\nuseful person to keep in the tribe, because he could weave sticks\r\ntogether for protection from the wind; so, if they caught him,\r\nthey could make him teach them. Of course Mowgli, as a\r\nwoodcutter's child, inherited all sorts of instincts, and used to\r\nmake little huts of fallen branches without thinking how he came\r\nto do it. The Monkey-People, watching in the trees, considered\r\nhis play most wonderful. This time, they said, they were really\r\ngoing to have a leader and become the wisest people in the jungle\r\n--so wise that everyone else would notice and envy them.\r\nTherefore they followed Baloo and Bagheera and Mowgli through the\r\njungle very quietly till it was time for the midday nap, and\r\nMowgli, who was very much ashamed of himself, slept between the\r\nPanther and the Bear, resolving to have no more to do with the\r\nMonkey People.\r\n\r\nThe next thing he remembered was feeling hands on his legs and\r\narms--hard, strong, little hands--and then a swash of branches\r\nin his face, and then he was staring down through the swaying\r\nboughs as Baloo woke the jungle with his deep cries and Bagheera\r\nbounded up the trunk with every tooth bared. The Bandar-log\r\nhowled with triumph and scuffled away to the upper branches where\r\nBagheera dared not follow, shouting: \"He has noticed us! Bagheera\r\nhas noticed us. All the Jungle-People admire us for our skill and\r\nour cun",
+    "primaryAttorneyDecisions": {
+      "how": "single-attorney",
+      "canSustainLife": true
+    },
+    "replacementAttorneys": [
+
+    ],
+    "replacementAttorneyDecisions": null,
+    "whoIsRegistering": "donor",
+    "correspondent": {
+      "who": "donor",
+      "name": {
+        "title": "Miss",
+        "first": "Rylan",
+        "last": "Lang"
+      },
+      "company": null,
+      "address": {
+        "address1": "30 Queensway",
+        "address2": "Lydd",
+        "address3": "Kent, England",
+        "postcode": "CA3 9GU"
+      },
+      "email": null,
+      "phone": null,
+      "contactByPost": false,
+      "contactInWelsh": false
     }
+  }
 }

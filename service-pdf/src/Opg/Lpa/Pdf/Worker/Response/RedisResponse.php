@@ -1,5 +1,5 @@
 <?php
-namespace Opg\Lpa\Pdf\Worker;
+namespace Opg\Lpa\Pdf\Worker\Response;
 
 use SplFileInfo;
 

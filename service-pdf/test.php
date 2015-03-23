@@ -8,4 +8,4 @@ $id = (string)time();
 
 $data = file_get_contents( 'test-data/test-1.json' );
 
-\Opg\Lpa\Pdf\Worker\Worker::run( $id, 'LP1', $data );
+(new \Opg\Lpa\Pdf\Worker\TestWorker)->run( $id, 'LP1', $data );
