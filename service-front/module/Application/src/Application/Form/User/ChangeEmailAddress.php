@@ -22,7 +22,7 @@ class ChangeEmailAddress extends AbstractForm {
         //---
 
         $this->add(array(
-            'name' => 'password',
+            'name' => 'password_current',
             'type' => 'Password',
         ));
 
@@ -75,7 +75,7 @@ class ChangeEmailAddress extends AbstractForm {
         ));
 
         $inputFilter->add(array(
-            'name'     => 'password',
+            'name'     => 'password_current',
             'required' => true,
             'validators' => array(
                 array(

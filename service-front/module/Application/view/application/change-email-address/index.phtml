@@ -2,12 +2,12 @@
 
 $form = $this->form;
 
-$password       = $form->get('password');
+$password       = $form->get('password_current');
 $email          = $form->get('email');
 $email_confirm  = $form->get('email_confirm');
 
 $password->setAttributes([
-    'id' => 'password',
+    'id' => 'password_current',
     'autocomplete' => 'off'
 ])->setOptions( ['label' => 'Your account password'] );
 
