@@ -6,7 +6,7 @@ use Zend\Validator;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Zend\Authentication\Exception\InvalidArgumentException;
 
-class ChangeEmailAddress extends AbstractForm {
+class ChangePassword extends SetPassword {
 
     /**
      * @var AuthenticationService
@@ -15,7 +15,7 @@ class ChangeEmailAddress extends AbstractForm {
 
     //---
 
-    public function __construct( $formName = 'change-email-address' ){
+    public function __construct( $formName = 'change-password' ){
 
         parent::__construct($formName);
 
@@ -26,53 +26,11 @@ class ChangeEmailAddress extends AbstractForm {
             'type' => 'Password',
         ));
 
-        $this->add(array(
-            'name' => 'email',
-            'type' => 'Email',
-        ));
-
-        $this->add(array(
-            'name' => 'email_confirm',
-            'type' => 'Email',
-        ));
-
         //--------------------------------
 
         $inputFilter = $this->getInputFilter();
 
-        $inputFilter->add(array(
-            'name'     => 'email',
-            'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
-                    'name'    => 'EmailAddress',
-                ),
-            ),
-        ));
-
-        $inputFilter->add(array(
-            'name'     => 'email_confirm',
-            'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
-                    'name'    => 'Identical',
-                    'options' => array(
-                        'token' => 'email',
-                        'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
-                        ],
-                    ),
-                ),
-            ),
-        ));
+        //---
 
         $inputFilter->add(array(
             'name'     => 'password_current',

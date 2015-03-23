@@ -16,19 +16,16 @@ class Details implements ServiceLocatorAwareInterface {
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        //---
-
         return $client->getAboutMe();
 
     }
 
-    /*
-     * Input options:
-     *  An array
-     *  The strongly typed form object
-     *  An interface all forms implement
+    /**
+     * Update the user's basic details.
+     *
+     * @param ServiceDataInputInterface $details
+     * @return mixed
      */
-
     public function updateAllDetails( ServiceDataInputInterface $details ){
 
         $client = $this->getServiceLocator()->get('ApiClient');
@@ -86,6 +83,30 @@ class Details implements ServiceLocatorAwareInterface {
             } else {
                 return 'unknown-error';
             }
+
+        } // if
+
+        return true;
+
+    } // function
+
+    /**
+     * Update the user's password.
+     *
+     * @param ServiceDataInputInterface $details
+     * @return bool|string
+     */
+    public function updatePassword( ServiceDataInputInterface $details ){
+
+        $client = $this->getServiceLocator()->get('ApiClient');
+
+        $result = $client->updateAuthPassword( $details->getDataForModel()['password'] );
+
+        //---
+
+        if( $result !== true ){
+
+            return 'unknown-error';
 
         } // if
 
