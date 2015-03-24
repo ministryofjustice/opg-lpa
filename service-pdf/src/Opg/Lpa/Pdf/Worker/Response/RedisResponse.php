@@ -83,7 +83,7 @@ class RedisResponse implements ResponseInterface  {
         $blockCipher->setKey( $config['keys']['document'] );
         $blockCipher->setBinaryOutput( true );
 
-        // Encrypt the JSON...
+        // Encrypt the PDF...
         $encryptedData = $blockCipher->encrypt( $data );
 
         //-------------------------------------------
