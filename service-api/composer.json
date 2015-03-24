@@ -17,7 +17,7 @@
         "php": ">=5.4.0",
         "ext-redis": ">=2.2.4",
         "ext-mongo": ">=1.4.5",
-        "zendframework/zendframework": ">=2.3.2,<3.0.0",
+        "zendframework/zendframework": "2.3.*",
         "chrisboulton/php-resque": "dev-master#c335bc3",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.1",
@@ -25,7 +25,6 @@
         "guzzlehttp/guzzle": "^5.1.0",
         "colinmollenhour/credis": "^1.2",
         "ministryofjustice/opg-lpa-datamodels": "dev-master",
-        "ministryofjustice/opg-lpa-common": "dev-develop",
         "zf-commons/zfc-rbac": "~2.4"
     },
     "require-dev": {
