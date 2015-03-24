@@ -1,6 +1,8 @@
 <?php
 namespace Opg\Lpa\DataModel\Lpa;
 
+use InvalidArgumentException;
+
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
@@ -14,6 +16,13 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 
+/**
+ * Provides a library of methods for checking the state of
+ * an LPA object from a business domain perspective.
+ *
+ * Class StateChecker
+ * @package Opg\Lpa\DataModel\Lpa
+ */
 class StateChecker {
 
     /**
@@ -41,6 +50,102 @@ class StateChecker {
     public function setLpa(Lpa $lpa)
     {
         $this->lpa = $lpa;
+    }
+
+    /**
+     * Return the LPA.
+     *
+     * @return LPA
+     */
+    public function getLpa(){
+
+        if( !($this->lpa instanceof Lpa) ){
+            throw new InvalidArgumentException('No LPA has been set');
+        }
+
+        return $this->lpa;
+    }
+
+    //------------------------------------------------------------------------
+    // For Generation Checks
+
+    /**
+     * Can a LP1 currently be generated.
+     *
+     * @return bool
+     */
+    public function canGenerateLP1(){
+        return $this->isStateCreated();
+    }
+
+    /**
+     * Can a LP3 currently be generated.
+     *
+     * @return bool
+     */
+    public function canGenerateLP3(){
+        $lap = $this->getLpa();
+        return $this->isStateCreated() && !empty($lap->document->peopleToNotify);
+    }
+
+    /**
+     * Can a LPA120 currently be generated.
+     *
+     * @return bool
+     */
+    public function canGenerateLPA120(){
+
+        if( !$this->isStateCreated() ){
+            return false;
+        }
+
+        //---
+
+        $lap = $this->getLpa();
+
+        if( !($lap->payment instanceof Payment) ){
+            return false;
+        }
+
+        //---
+
+        $payment = $lap->payment;
+
+        // Return true if any of the following is true.
+        return $payment->reducedFeeReceivesBenefits || $payment->reducedFeeAwardedDamages
+                    || $payment->reducedFeeLowIncome || $payment->reducedFeeUniversalCredit;
+
+    } // function
+
+    //------------------------------------------------------------------------
+    // State Checks
+
+    /**
+     * Checks if the LPA has been started (from the perspective of the business)
+     *
+     * @return bool
+     */
+    public function isStateStarted(){
+        $lap = $this->getLpa();
+        return is_int( $this->id );
+    }
+
+    /**
+     * Checks if the LPA is Created (from the perspective of the business)
+     *
+     * @return bool
+     */
+    public function isStateCreated(){
+        return $this->isStateStarted() && $this->lpaHasCertificateProvider() && ($this->getLpa()->document->instruction !== null);
+    }
+
+    /**
+     * Checks if the LPA is Complete (from the perspective of the business)
+     *
+     * @return bool
+     */
+    public function isStateCompleted(){
+        return $this->isStateCreated() && $this->paymentResolved();
     }
 
     //------------------------------------------------------------------------
@@ -345,4 +450,4 @@ class StateChecker {
         return $this->lpa->document instanceof Document;
     }
 
-}// class
+} // class

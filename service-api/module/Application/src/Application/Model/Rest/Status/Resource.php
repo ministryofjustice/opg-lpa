@@ -6,6 +6,8 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
 
+use Application\Library\Lpa\StateChecker;
+
 /**
  * Status Resource
  *
@@ -37,11 +39,17 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        die('In progress.');
+        $state = new StateChecker( $lpa );
+
+        $result = array(
+            'started' => $state->isStateStarted(),
+            'created' => $state->isStateCreated(),
+            'completed' => $state->isStateCompleted(),
+        );
 
         //---
 
-        return new Entity( $lpa );
+        return new Entity( $result, $lpa );
 
     }
 

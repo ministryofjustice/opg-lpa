@@ -7,7 +7,7 @@ use Credis_Client;
 
 use Resque, Resque_Job_Status;
 
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use Application\Library\Lpa\StateChecker;
 
 use Application\Model\Rest\AbstractResource;
 
@@ -206,9 +206,20 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        # todo  - Check if the document is complete.
+        // Check if we can generate this document type.
 
-        $complete = true;
+        $state = new StateChecker( $lpa );
+
+        switch ($type){
+            case 'lp1':
+                $complete = $state->canGenerateLP1(); break;
+            case 'lp3':
+                $complete = $state->canGenerateLP3(); break;
+            case 'lpa120':
+                $complete = $state->canGenerateLPA120(); break;
+            default:
+                $complete = false;
+        }
 
         //---
 
