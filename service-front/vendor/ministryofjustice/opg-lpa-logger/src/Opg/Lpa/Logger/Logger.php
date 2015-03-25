@@ -28,10 +28,10 @@ class Logger extends ZendLogger
         );
     }
     
-    public function setSentryUri($sentryApiKey)
+    public function setSentryUri($sentryUri)
     {
         $this->addWriter(
-            new Sentry($sentryApiKey)
+            new Sentry($sentryUri)
         );
     }
     

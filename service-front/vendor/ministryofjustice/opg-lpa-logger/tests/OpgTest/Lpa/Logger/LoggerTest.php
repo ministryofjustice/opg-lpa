@@ -17,8 +17,12 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $logger = new Logger();
         $logger->setFileLogPath($filename);
         
-        // Add your sentryApiKey here to test Sentry - don't commit to repo
-        // $logger->setSentryUri($sentryApiKey);
+        // Create sentry.key file in /tests to test sending to Sentry
+        // It should be ignored by .gitignore
+        if (file_exists('sentry.key')) {
+            $sentryKey = file_get_contents('sentry.key');
+            $logger->setSentryUri($sentryKey);
+        }
         
         $logger->alert($message1);
         $logger->err($message2);

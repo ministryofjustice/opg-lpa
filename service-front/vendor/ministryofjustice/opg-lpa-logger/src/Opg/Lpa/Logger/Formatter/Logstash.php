@@ -3,7 +3,6 @@ namespace Opg\Lpa\Logger\Formatter;
 
 use Zend\Log\Formatter\FormatterInterface;
 use DateTime;
-use Zend\Escaper\Escaper;
 
 class Logstash implements FormatterInterface
 {
@@ -47,8 +46,6 @@ class Logstash implements FormatterInterface
     
         $dataToInsert = $event;
     
-        $escaper = $this->getEscaper();
-        
         $logstashArray = [
             '@version' => 1,
             '@timestamp' =>  $event['timestamp'],
@@ -93,33 +90,6 @@ class Logstash implements FormatterInterface
     {
         $this->encoding = (string) $value;
         return $this;
-    }
-    
-    /**
-     * Set Escaper instance
-     *
-     * @param  Escaper $escaper
-     * @return Xml
-     */
-    public function setEscaper(Escaper $escaper)
-    {
-        $this->escaper = $escaper;
-        return $this;
-    }
-    
-    /**
-     * Get Escaper instance
-     *
-     * Lazy-loads an instance with the current encoding if none registered.
-     *
-     * @return Escaper
-     */
-    public function getEscaper()
-    {
-        if (null === $this->escaper) {
-            $this->setEscaper(new Escaper($this->getEncoding()));
-        }
-        return $this->escaper;
     }
     
     /**

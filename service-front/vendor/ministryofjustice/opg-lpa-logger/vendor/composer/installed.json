@@ -1445,51 +1445,9 @@
         ]
     },
     {
-        "name": "zendframework/zend-escaper",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "target-dir": "Zend/Escaper",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/zendframework/Component_ZendEscaper.git",
-            "reference": "8b19a7f81fa0e56f6b8372442a06fb0a02c11864"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendEscaper/zipball/8b19a7f81fa0e56f6b8372442a06fb0a02c11864",
-            "reference": "8b19a7f81fa0e56f6b8372442a06fb0a02c11864",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2014-01-04 13:01:01",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.2-dev",
-                "dev-develop": "2.3-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Zend\\Escaper\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "keywords": [
-            "escaper",
-            "zf2"
-        ]
-    },
-    {
         "name": "raven/raven",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
+        "version": "0.11.0",
+        "version_normalized": "0.11.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/getsentry/raven-php.git",
