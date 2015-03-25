@@ -1,6 +1,7 @@
 <?php
-
 namespace Opg\Lpa\Pdf\Service;
+
+use RuntimeException;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
@@ -9,6 +10,8 @@ use Opg\Lpa\Pdf\Service\Forms\Lp1h;
 use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+
+use Opg\Lpa\DataModel\Lpa\StateChecker;
 
 
 class Generator implements GeneratorInterface {
@@ -46,19 +49,21 @@ class Generator implements GeneratorInterface {
 
         if( $this->lpa->validate()->hasErrors() ){
             // The LPA is invalid.
-            throw new \RuntimeException('LPA failed validation');
-        }
-
-        if( $this->lpa->isComplete() !== true ){
-            // The LPA is not complete.
-            throw new \RuntimeException('LPA is not complete');
+            throw new RuntimeException('LPA failed validation');
         }
         
         //---
+
+        $state = new StateChecker( $this->lpa );
         
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
         switch($this->formType) {
             case self::TYPE_FORM_LP1:
+
+                if( !$state->canGenerateLP1() ){
+                    throw new RuntimeException('LPA does not contain all the required data to generate a LP1');
+                }
+
                 switch($this->lpa->document->type) {
                     case Document::LPA_TYPE_PF:
                         $pdf = new Lp1f($this->lpa);
@@ -67,12 +72,25 @@ class Generator implements GeneratorInterface {
                         $pdf = new Lp1h($this->lpa);
                         break;
                 }
+
                 break;
             case self::TYPE_FORM_LP3:
+
+                if( !$state->canGenerateLP3() ){
+                    throw new RuntimeException('LPA does not contain all the required data to generate a LP3');
+                }
+
                 $pdf = new Lp3($this->lpa);
+
                 break;
             case self::TYPE_FORM_LPA120:
+
+                if( !$state->canGenerateLPA120() ){
+                    throw new RuntimeException('LPA does not contain all the required data to generate a LPA120');
+                }
+
                 $pdf = new Lpa120($this->lpa);
+
                 break;
             default:
                 throw new \UnexpectedValueException('Invalid form type: '.$this->formType);
