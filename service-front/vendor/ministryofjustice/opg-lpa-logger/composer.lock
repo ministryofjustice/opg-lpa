@@ -4,11 +4,11 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "59b5ef12d3c995dd25b7d4fb5041ce9f",
+    "hash": "cb6326017c8c552fede6cfb1132c4a7a",
     "packages": [
         {
             "name": "raven/raven",
-            "version": "dev-master",
+            "version": "0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/raven-php.git",
@@ -57,46 +57,6 @@
                 "logging"
             ],
             "time": "2015-03-24 23:17:13"
-        },
-        {
-            "name": "zendframework/zend-escaper",
-            "version": "dev-develop",
-            "target-dir": "Zend/Escaper",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendEscaper.git",
-                "reference": "8b19a7f81fa0e56f6b8372442a06fb0a02c11864"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendEscaper/zipball/8b19a7f81fa0e56f6b8372442a06fb0a02c11864",
-                "reference": "8b19a7f81fa0e56f6b8372442a06fb0a02c11864",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2-dev",
-                    "dev-develop": "2.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Zend\\Escaper\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "keywords": [
-                "escaper",
-                "zf2"
-            ],
-            "time": "2014-01-04 13:01:01"
         },
         {
             "name": "zendframework/zend-log",
@@ -1495,13 +1455,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
-        "zendframework/zend-log": 20,
-        "zendframework/zend-escaper": 20,
-        "raven/raven": 20
+        "zendframework/zend-log": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.4.0"

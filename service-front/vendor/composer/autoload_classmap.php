@@ -726,6 +726,7 @@ return array(
     'Raven_Client' => $vendorDir . '/raven/raven/lib/Raven/Client.php',
     'Raven_Compat' => $vendorDir . '/raven/raven/lib/Raven/Compat.php',
     'Raven_Context' => $vendorDir . '/raven/raven/lib/Raven/Context.php',
+    'Raven_CurlHandler' => $vendorDir . '/raven/raven/lib/Raven/CurlHandler.php',
     'Raven_ErrorHandler' => $vendorDir . '/raven/raven/lib/Raven/ErrorHandler.php',
     'Raven_Processor' => $vendorDir . '/raven/raven/lib/Raven/Processor.php',
     'Raven_SanitizeDataProcessor' => $vendorDir . '/raven/raven/lib/Raven/SanitizeDataProcessor.php',
