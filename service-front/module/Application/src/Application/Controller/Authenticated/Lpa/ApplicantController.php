@@ -38,10 +38,10 @@ class ApplicantController extends AbstractLpaController
                 else {
                     if((count($this->getLpa()->document->primaryAttorneys) > 1) &&
                             ($this->getLpa()->document->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
-                        $applicants = $postData['attorneyList'];
+                        $applicants = $form->getData()['attorneyList'];
                     }
                     else {
-                        $applicants = explode(',', $postData['whoIsRegistering']);
+                        $applicants = explode(',', $form->getData()['whoIsRegistering']);
                     }
                 }
                 
