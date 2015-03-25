@@ -75,7 +75,7 @@ If you cancel your LPA, your attorneys can no longer act on your behalf.
 
 ### Concerns about attorneys
 
-The Office of the Public Guardian (OPG) does not supervise attorneys. However, If someone believes your attorneys are not acting in your best interests, they can raise concerns with OPG. OPG or other organisations, such as the police or social services, may investigate.
+The Office of the Public Guardian (OPG) does not supervise attorneys. However, if someone believes your attorneys are not acting in your best interests, they can raise concerns with OPG. OPG or other organisations, such as the police or social services, may investigate.
 
 ### Questions to ask yourself
 
