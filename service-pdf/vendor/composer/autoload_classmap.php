@@ -1052,7 +1052,6 @@ return array(
     'ZendPdf\\Trailer\\AbstractTrailer' => $vendorDir . '/zendframework/zendpdf/library/ZendPdf/Trailer/AbstractTrailer.php',
     'ZendPdf\\Trailer\\Generated' => $vendorDir . '/zendframework/zendpdf/library/ZendPdf/Trailer/Generated.php',
     'ZendPdf\\Trailer\\Parsed' => $vendorDir . '/zendframework/zendpdf/library/ZendPdf/Trailer/Parsed.php',
-    'ZendPdf\\Util\\RecursivelyIterableObjectsContainer' => $vendorDir . '/zendframework/zendpdf/library/ZendPdf/Util/RecursivelyIterableObjectsContainer.php',
     'ZendPdf\\Util\\RecursivelyIteratableObjectsContainer' => $vendorDir . '/zendframework/zendpdf/library/ZendPdf/Util/RecursivelyIteratableObjectsContainer.php',
     'Zend\\Crypt\\BlockCipher' => $vendorDir . '/zendframework/zend-crypt/Zend/Crypt/BlockCipher.php',
     'Zend\\Crypt\\Exception\\ExceptionInterface' => $vendorDir . '/zendframework/zend-crypt/Zend/Crypt/Exception/ExceptionInterface.php',
