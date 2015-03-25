@@ -195,6 +195,8 @@ class Lpa extends AbstractData implements CompleteInterface {
      */
     public function isComplete(){
 
+        throw new \RuntimeException('isComplete() is deprecated. Use an instance of StateChecker instead.');
+
         return true;
 
     } // function

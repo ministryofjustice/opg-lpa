@@ -27,6 +27,11 @@ return array(
         ], //sendgrid
 
     ], // email
+    
+    'log' => [
+        'path' => '{{pillar['apps']['opg-lpa-front']['log-dir']}}/application.log',
+        'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
+    ],
 
     'worldpay' => [
         'merchant_code' => '{{pillar['payment']['worldpay']['merchant_code']}}',

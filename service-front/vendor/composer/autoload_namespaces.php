@@ -16,6 +16,7 @@ return array(
     'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
+    'Raven_' => array($vendorDir . '/raven/raven/lib'),
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
     'Omnipay\\Common\\' => array($vendorDir . '/omnipay/common/src'),
     'Michelf' => array($vendorDir . '/michelf/php-markdown'),

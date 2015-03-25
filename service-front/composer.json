@@ -34,6 +34,7 @@
         "sendgrid/sendgrid": "2.2.*",
         "ministryofjustice/opg-lpa-api-client": "dev-develop",
         "ministryofjustice/opg-lpa-datamodels": "dev-master",
+        "ministryofjustice/opg-lpa-logger": "dev-develop",
         "Netsensia/omnipay-worldpay-xml": "*",
         "michelf/php-markdown": "1.5.0"
     },

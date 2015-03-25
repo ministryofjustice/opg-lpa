@@ -13,6 +13,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClientAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Opg\Lpa\Logger\Logger;
 
 
 class Module{
@@ -23,6 +24,9 @@ class Module{
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+        
         //Only bootstrap the session if it's *not* PHPUnit.
         if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
             $this->bootstrapSession($e);
@@ -143,6 +147,18 @@ class Module{
                 'UserDetailsSession' => function(){
                     return new Container('UserDetails');
                 },
+                
+                // Logger
+                'Logger' => function ( ServiceLocatorInterface $sm ) {
+                    $logger = new Logger();
+                    $logConfig = $sm->get('config')['log'];
+                    
+                    $logger->setFileLogPath($logConfig['path']);
+                    $logger->setSentryUri($logConfig['sentry-uri']);
+                    
+                    return $logger;
+                    
+                },
 
             ], // factories
         ];
@@ -194,6 +210,22 @@ class Module{
 
         return $config;
 
+    }
+    
+    /**
+     * Use our logger to send this exception to its various destinations
+     * 
+     * @param MvcEvent $e
+     */
+    public function handleError(MvcEvent $e)
+    {
+        $exception = $e->getResult()->exception;
+        
+        if ($exception) {
+            $sm = $e->getApplication()->getServiceManager();
+            $logger = $e->getApplication()->getServiceManager()->get('Logger');
+            $logger->err($exception->getMessage());
+        }
     }
 
 } // class

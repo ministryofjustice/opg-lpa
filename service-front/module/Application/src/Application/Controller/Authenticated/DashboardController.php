@@ -2,8 +2,6 @@
 
 namespace Application\Controller\Authenticated;
 
-use Zend\Session\Container as SessionContainer;
-
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
@@ -13,20 +11,19 @@ class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-
-        $laps = $this->getLpaList();
+        $lpas = $this->getLpaList();
 
         //---
 
         // If the user currently has no LPAs, redirect them to create one...
-        if( empty($laps) ){
+        if( empty($lpas) ){
             return $this->createAction();
         }
 
         //---
 
         return new ViewModel([
-            'lpas' => $laps,
+            'lpas' => $lpas,
             'version' => [
                 'commit' => $this->config()['version']['commit'],
                 'cache' => $this->config()['version']['cache'],

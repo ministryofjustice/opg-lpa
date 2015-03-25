@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3db3507c3593d3fd575962f97eb8cc26",
+    "hash": "aa38f3956ff099fdf6e23f905314ca3f",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -573,12 +573,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "958a49522880662d6a46299b66dd6b6df512c31a"
+                "reference": "33d08392f358954f2e6c53cbf3d8384ea9bf5d58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/958a49522880662d6a46299b66dd6b6df512c31a",
-                "reference": "958a49522880662d6a46299b66dd6b6df512c31a",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/33d08392f358954f2e6c53cbf3d8384ea9bf5d58",
+                "reference": "33d08392f358954f2e6c53cbf3d8384ea9bf5d58",
                 "shasum": ""
             },
             "require": {
@@ -604,7 +604,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-03-18 11:46:36"
+            "time": "2015-03-25 11:31:21"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -612,12 +612,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "944202ce3dcd8af12bcec629cdd64a26803a9e80"
+                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/944202ce3dcd8af12bcec629cdd64a26803a9e80",
-                "reference": "944202ce3dcd8af12bcec629cdd64a26803a9e80",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0bcff5a05abebba345d82a47acdf0270a6155958",
+                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958",
                 "shasum": ""
             },
             "require": {
@@ -643,7 +643,47 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-03-18 11:53:01"
+            "time": "2015-03-25 10:43:54"
+        },
+        {
+            "name": "ministryofjustice/opg-lpa-logger",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
+                "reference": "9ae660aa8e28fe66a8faf05fd5b12667bc275d27"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/9ae660aa8e28fe66a8faf05fd5b12667bc275d27",
+                "reference": "9ae660aa8e28fe66a8faf05fd5b12667bc275d27",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "raven/raven": "0.8.*@dev",
+                "zendframework/zend-escaper": "2.3.*@dev",
+                "zendframework/zend-log": "2.3.*@dev"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "~2.0",
+                "phpunit/phpunit": "4.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Common logger component for OPG LPA modules",
+            "support": {
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/develop",
+                "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
+            },
+            "time": "2015-03-25 13:31:18"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
@@ -816,6 +856,58 @@
                 "purchase"
             ],
             "time": "2015-01-11 04:54:29"
+        },
+        {
+            "name": "raven/raven",
+            "version": "0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getsentry/raven-php.git",
+                "reference": "d4b741736125f2b892e07903cd40450b53479290"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getsentry/raven-php/zipball/d4b741736125f2b892e07903cd40450b53479290",
+                "reference": "d4b741736125f2b892e07903cd40450b53479290",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "bin": [
+                "bin/raven"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Raven_": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "David Cramer",
+                    "email": "dcramer@gmail.com"
+                }
+            ],
+            "description": "A PHP client for Sentry (http://getsentry.com)",
+            "homepage": "http://getsentry.com",
+            "keywords": [
+                "log",
+                "logging"
+            ],
+            "time": "2013-12-03 10:27:59"
         },
         {
             "name": "react/promise",
@@ -2290,7 +2382,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "ministryofjustice/opg-lpa-api-client": 20,
-        "ministryofjustice/opg-lpa-datamodels": 20
+        "ministryofjustice/opg-lpa-datamodels": 20,
+        "ministryofjustice/opg-lpa-logger": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
