@@ -8,6 +8,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
@@ -90,7 +91,9 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->getView()->concatNames($this->lpa->document->primaryAttorneys);
+        if(count($this->lpa->document->primaryAttorneys) > 0) {
+            return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->getView()->concatNames($this->lpa->document->primaryAttorneys);
+        }
     }
     
     protected function howPrimaryAttorneysMakeDecision()

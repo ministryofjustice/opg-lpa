@@ -18,7 +18,7 @@ class DownloadController extends AbstractLpaController
     {
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
         $this->layout('layout/download.phtml');
-        
+
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
         if ($details['status'] == 'in-queue') {
             return new ViewModel();
