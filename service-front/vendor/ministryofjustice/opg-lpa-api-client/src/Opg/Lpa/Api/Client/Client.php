@@ -1104,7 +1104,7 @@ class Client
     public function getSeedDetails($lpaId)
     {
         $helper = new ApplicationResourceService($lpaId, 'seed', $this);
-        return $helper->getSingleValueResource('seed');
+        return $helper->getRawJson();
     }
     
     /**

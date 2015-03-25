@@ -158,6 +158,31 @@ class ApplicationResourceService
     }
     
     /**
+     * Return the json response for an endpoint
+     *
+     * @param $key The JSON key of the value being retrieved
+     * @return boolean|null|mixed
+     */
+    public function getRawJson()
+    {
+        $response = $this->httpClient()->get( $this->endpoint, [
+            'headers' => ['Content-Type' => 'application/json']
+        ]);
+    
+        $code = $response->getStatusCode();
+    
+        if ($code == 204) {
+            return null; // not yet set
+        }
+    
+        if ($code != 200) {
+            return $this->log($response, false);
+        }
+        
+        return $response->json();
+    }
+    
+    /**
      * Return the processed response for setting a data model entity
      * (e.g., type or preferences, which are both simply strings rather than classes)
      *

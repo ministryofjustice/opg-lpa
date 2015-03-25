@@ -14,6 +14,20 @@ class ClientSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
     
+    function it_can_set_and_get_the_lpa_seed()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        
+        $lpaId = $this->createApplication();
+        $seed1 = $this->createApplication();
+        $seed2 = $this->createApplication();
+                
+        $this->setSeed($lpaId, $seed1)->shouldBe(true);
+        $this->getSeedDetails($lpaId)['seed']->shouldBe($seed1);
+        $this->setSeed($lpaId, $seed2)->shouldBe(true);
+        $this->getSeedDetails($lpaId)['seed']->shouldBe($seed2);
+    }
+    
     function it_will_eventually_find_a_pdf_ready_for_download()
     {
         $lpaId = getANewCompletedLpa($this);
@@ -502,18 +516,6 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->getSeedDetails($lpaId)->shouldBe(null);
-    }
-     
-    function skipped_it_can_set_and_get_the_lpa_seed()
-    {
-        $seed1 = uniqid();
-        $seed2 = uniqid();
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
-        $this->setSeed($lpaId, $seed1)->shouldBe(true);
-        $this->getSeedDetails($lpaId)->shouldBe($seed1);
-        $this->setSeed($lpaId, $seed2)->shouldBe(true);
-        $this->getSeedDetails($lpaId)->shouldBe($seed2);
     }
      
     function it_will_correctly_report_if_the_who_are_details_are_set()
