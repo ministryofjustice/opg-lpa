@@ -459,7 +459,7 @@ return [
                         'options' => [
                             'route'    => '/download/:pdf-type',
                             'constraints' => [
-                                'pdf_type' => 'lp1|lp3|lpa120',
+                                'pdf-type' => 'lp1|lp3|lpa120',
                             ],
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\DownloadController',

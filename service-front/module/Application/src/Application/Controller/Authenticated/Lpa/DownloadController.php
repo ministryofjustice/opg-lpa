@@ -16,6 +16,22 @@ class DownloadController extends AbstractLpaController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
+        $this->layout('layout/download.phtml');
+        
+        $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
+        if ($details['status'] == 'in-queue') {
+            return new ViewModel();
+        }
+        else {
+            header('Content-disposition: inline; filename="Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf"');
+            header('Content-Type: application/pdf');
+            
+            // These two headers are critically important for working around an IE7/8 bug regarding downloading files over SSL
+            header('Cache-control: private');
+            header('Pragma: public');
+            
+            echo $this->getLpaApplicationService()->getPdf($this->getLpa()->id, $pdfType);
+        }
     }
 }

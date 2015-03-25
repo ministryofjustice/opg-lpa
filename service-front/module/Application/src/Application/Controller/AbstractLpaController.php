@@ -35,11 +35,20 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
          * check the requested route and redirect user to the correct one if the requested route is not available.
          */   
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
-        $personIndex = $e->getRouteMatch()->getParam('idx');
         
-        $calculatedRoute = $this->getFlowChecker()->check($currentRoute, $personIndex);
+        if($currentRoute == 'lpa/download') {
+            $param = $e->getRouteMatch()->getParam('pdf-type');
+        }
+        else {
+            $param = $e->getRouteMatch()->getParam('idx');
+        }
         
-        if($calculatedRoute && ($calculatedRoute != $currentRoute)) {
+        $calculatedRoute = $this->getFlowChecker()->check($currentRoute, $param);
+        if($calculatedRoute === false) {
+            return $this->response;
+        }
+        
+        if($calculatedRoute != $currentRoute) {
             return $this->redirect()->toRoute($calculatedRoute, ['lpa-id'=>$this->getLpa()->id]);
         }
         

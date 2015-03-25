@@ -100,7 +100,7 @@ class FormFlowChecker extends StateChecker
             'lpa/fee'                                       => 'lpa/complete',
     );
 
-    public function check($currentRouteName, $personIdex=null)
+    public function check($currentRouteName, $param=null)
     {
         // check if route exists
         if(!array_key_exists($currentRouteName, static::$checkerFunctionMap)) {
@@ -109,13 +109,13 @@ class FormFlowChecker extends StateChecker
         
         // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
         if(($this->lpa->payment instanceof Payment)  && ($this->lpa->payment->date instanceof \DateTime)) {
-            if($currentRouteName != 'lpa/complete') {
+            if(($currentRouteName != 'lpa/complete') && ($currentRouteName != 'lpa/download')) {
                 return 'lpa/view-docs';
             }
         }
         
         $checkFunction = static::$checkerFunctionMap[$currentRouteName];
-        $checkValue = call_user_func(array($this, $checkFunction), $personIdex);
+        $checkValue = call_user_func(array($this, $checkFunction), $param);
         if($checkValue === true) {
             return $currentRouteName;
         }
@@ -267,7 +267,7 @@ class FormFlowChecker extends StateChecker
 
     private function isAttorneyAddTrustAccessible()
     {
-        if($this->isAttorneyAccessible() && (!$this->lpaHasTrustCorporation('primary'))) {
+        if(($this->isAttorneyAccessible()==true) && (!$this->lpaHasTrustCorporation('primary'))) {
             return true;
         }
         else {
@@ -350,7 +350,7 @@ class FormFlowChecker extends StateChecker
 
     private function isReplacementAttorneyAddTrustAccessible()
     {
-        if($this->isReplacementAttorneyAccessible() && (!$this->lpaHasTrustCorporation('replacement'))) {
+        if(($this->isReplacementAttorneyAccessible()===true) && (!$this->lpaHasTrustCorporation('replacement'))) {
             return true;
         }
         else {
@@ -516,6 +516,30 @@ class FormFlowChecker extends StateChecker
         }
     }
     
+    private function isDownloadAccessible($pdfType)
+    {
+        if(!in_array($pdfType, ['lp1', 'lp3', 'lpa120'])) {
+            return false;
+        }
+        
+        if($pdfType == 'lp1') {
+            if($this->isCreatedAccessible() === true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            if($this->isCompleteAccessible() === true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    
     private function isApplicantAccessible()
     {
         if($this->lpaHasCreated()) {
@@ -578,41 +602,41 @@ class FormFlowChecker extends StateChecker
     
     private function isOnlinePaymentSuccessAccessible()
     {
-        if($this->isPaymentAccessible()) {
+        if($this->isPaymentAccessible() === true) {
             return true;
         }
         else {
-            return false;
+            return 'lpa/fee';
         }
     }
     
     private function isOnlinePaymentFailureAccessible()
     {
-        if($this->isPaymentAccessible()) {
+        if($this->isPaymentAccessible() === true) {
             return true;
         }
         else {
-            return false;
+            return 'lpa/fee';
         }
     }
     
     private function isOnlinePaymentCancelAccessible()
     {
-        if($this->isPaymentAccessible()) {
+        if($this->isPaymentAccessible() === true) {
             return true;
         }
         else {
-            return false;
+            return 'lpa/fee';
         }
     }
     
     private function isOnlinePaymentPendingAccessible()
     {
-        if($this->isPaymentAccessible()) {
+        if($this->isPaymentAccessible() === true) {
             return true;
         }
         else {
-            return false;
+            return 'lpa/fee';
         }
     }
     

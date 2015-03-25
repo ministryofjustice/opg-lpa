@@ -90,7 +90,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are'). $this->getView()->concatNames($this->lpa->document->primaryAttorneys);
+        return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->getView()->concatNames($this->lpa->document->primaryAttorneys);
     }
     
     protected function howPrimaryAttorneysMakeDecision()
@@ -104,7 +104,7 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if(count($this->lpa->document->replacementAttorneys)==0) return '';
         
-        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').$this->getView()->concatNames($this->lpa->document->replacementAttorneys);
+        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->replacementAttorneys);
     }
     
     protected function whenReplacementAttorneyStepIn()
@@ -132,7 +132,7 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if(count($this->lpa->document->peopleToNotify)==0) return '';
         
-        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').$this->getView()->concatNames($this->lpa->document->peopleToNotify);
+        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->peopleToNotify);
     }
     
     protected function instructions()

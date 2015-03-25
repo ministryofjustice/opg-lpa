@@ -46,7 +46,7 @@ $form->prepare();
             <?= $this->formElementErrors($csrf) ?>
         </div>
 
-		<details>
+		<details<?= ((empty($instructions->getValue())&&empty($preferences->getValue()))?'':' open') ?>>
 		
     		<summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions for the attorneys?</summary>
 		    

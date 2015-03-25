@@ -12,10 +12,10 @@ class LifeSustainingForm extends AbstractForm
                     'options'   => [
                             'value_options' => [
                                     true => [
-                                            'value' => true,
+                                            'value' => '1',
                                     ],
                                     false => [
-                                            'value' => false,
+                                            'value' => '0',
                                     ],
                             ],
                     ],
