@@ -17,7 +17,7 @@ return array(
             'key' => "{{pillar['postcode']['license_key']}}",
         ],
 
-    ], // postcode
+    ], // address
 
     'email' => [
 
@@ -31,7 +31,7 @@ return array(
     'log' => [
         'path' => '{{pillar['apps']['opg-lpa-front']['log-dir']}}/application.log',
         'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
-    ],
+    ], // log
 
     'worldpay' => [
         'merchant_code' => '{{pillar['payment']['worldpay']['merchant_code']}}',

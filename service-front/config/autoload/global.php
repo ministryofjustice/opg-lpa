@@ -56,7 +56,7 @@ return array(
         'encryption' => [
             'enabled' => true,
             // Key MUST be a 32 character ASCII string
-            'key' => 'insecure-encryption-session-key!'
+            'key' => null
         ],
 
     ], // session
