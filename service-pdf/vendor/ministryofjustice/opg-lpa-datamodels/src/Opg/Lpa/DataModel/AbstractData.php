@@ -337,10 +337,15 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Returns $this as JSON, propagating to all properties that implement AccessorInterface.
      *
+     * @param bool $pretty
      * @return string
      */
-    public function toJson(){
-        return json_encode( $this, JSON_PRETTY_PRINT );
+    public function toJson( $pretty = true ){
+        if( $pretty ){
+            return json_encode( $this, JSON_PRETTY_PRINT );
+        } else {
+            return json_encode( $this );
+        }
     }
 
     /**
