@@ -5,6 +5,7 @@ include "spec/SpecHelper.php";
 
 use PhpSpec\ObjectBehavior;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use ZendPdf\PdfDocument;
 
 class ClientSpec extends ObjectBehavior
 {
@@ -13,6 +14,29 @@ class ClientSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
     
+    function it_will_eventually_find_a_pdf_ready_for_download()
+    {
+        $lpaId = getANewCompletedLpa($this);
+        
+        $pdfType = 'lpa120';
+    
+        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('in-queue');
+        
+        // now we simulate the polling mechanism
+        // frustratingly I can't make PHPSpec allow us to check
+        // the status, so I just wait for a while
+        $startTime = time();
+        do {
+            $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBeEitherReadyOrQueued();
+            $secondsElapsed = time() - $startTime;
+        } while ($secondsElapsed < 10);
+        
+        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('ready');
+        $this->getPdfDetails($lpaId, $pdfType)['type']->shouldBe($pdfType);
+        
+        $stream = $this->getPdf($lpaId, $pdfType)->shouldBeAPdfStream();
+    }
+
     function it_can_get_a_list_of_pdfs()
     {
         $numApplications = 3;
@@ -1187,6 +1211,21 @@ class ClientSpec extends ObjectBehavior
                     is_array($subject) &&
                     count($subject) == $count &&
                     $subject[0] instanceof \Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+            },
+            'beEitherReadyOrQueued' => function($subject) {
+                return $subject == 'in-queue' || $subject == 'ready';
+            },
+            'beAPdfStream' => function($subject) {
+            
+                if (strlen($subject) < 4) {
+                    return false;
+                }
+                
+                if (substr($subject, 0, 4) != '%PDF') {
+                    return false;
+                }
+            
+                return true;
             },
         ];
     }

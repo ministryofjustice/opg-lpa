@@ -573,12 +573,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "958a49522880662d6a46299b66dd6b6df512c31a"
+                "reference": "33d08392f358954f2e6c53cbf3d8384ea9bf5d58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/958a49522880662d6a46299b66dd6b6df512c31a",
-                "reference": "958a49522880662d6a46299b66dd6b6df512c31a",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/33d08392f358954f2e6c53cbf3d8384ea9bf5d58",
+                "reference": "33d08392f358954f2e6c53cbf3d8384ea9bf5d58",
                 "shasum": ""
             },
             "require": {
@@ -604,7 +604,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-03-18 11:46:36"
+            "time": "2015-03-25 11:31:21"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -612,12 +612,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "944202ce3dcd8af12bcec629cdd64a26803a9e80"
+                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/944202ce3dcd8af12bcec629cdd64a26803a9e80",
-                "reference": "944202ce3dcd8af12bcec629cdd64a26803a9e80",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0bcff5a05abebba345d82a47acdf0270a6155958",
+                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958",
                 "shasum": ""
             },
             "require": {
@@ -643,7 +643,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-03-18 11:53:01"
+            "time": "2015-03-25 10:43:54"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
