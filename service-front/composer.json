@@ -20,6 +20,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/Netsensia/omnipay-worldpay-xml"
         }
     ],
