@@ -244,10 +244,10 @@ abstract class AbstractForm extends Form
             
             if($this->has($key) && (($this->get($key) instanceof Checkbox)||($this->get($key) instanceof Radio))) {
                 // convert checkbox/radio value "" to false and "1" to true
-                if($value == '') {
+                if(empty($value)) {
                     $m = false;
                 }
-                elseif($value === '1') {
+                elseif($value) {
                     $m = true;
                 }
                 else {
