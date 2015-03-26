@@ -4,7 +4,7 @@
 
 	<form autcomplete="off" class="form" action="<?= $this->url('login') ?>" method="POST">
 	
-        <?php if (false /*$this->isTimedOut*/) : // << @todo ?>
+        <?php if ( $this->isTimeout ) : ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
               <h1 id="error-heading">Session timed out</h1>
               <p>Sorry, your session has timed out either due to inactivity or because you have signed in on another browser. Please log in again.</p>
