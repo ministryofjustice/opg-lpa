@@ -29,10 +29,11 @@ return [
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
-            'translator' => 'MvcTranslator',
+            //'translator' => 'MvcTranslator',
         ],
     ],
 
+    /*
     'translator' => [
         'locale' => 'en_US',
         'translation_file_patterns' => [
@@ -43,6 +44,7 @@ return [
             ],
         ],
     ],
+    */
 
     'view_manager' => [
         'display_not_found_reason' => true,

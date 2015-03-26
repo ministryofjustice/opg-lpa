@@ -102,9 +102,9 @@ return [
             ], // enable-cookie
 
             'login' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/login',
+                    'route'    => '/login[/:state]',
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action'     => 'index',

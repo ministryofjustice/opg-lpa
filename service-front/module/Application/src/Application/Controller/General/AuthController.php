@@ -29,20 +29,6 @@ class AuthController extends AbstractBaseController {
 
         //-----------------------
 
-        // This action can be called with a number of combinations of messages.
-        # TODO - how to deal with these?
-
-        switch( $this->params('state') ){
-            case 'pwrest':
-                // The user has just reset their password
-            case 'timeout':
-                // The user has timed out
-            case 'worldpay':
-                // The user needs to log back in to complete their payment
-        }
-
-        //-----------------------
-
         $authError = null;
 
         $email = $this->params()->fromPost('email');
@@ -98,7 +84,11 @@ class AuthController extends AbstractBaseController {
 
         //---
 
-        return new ViewModel( [ 'error'=>$authError, 'pageTitle' => 'Sign in' ] );
+        $isTimeout = ( $this->params('state') == 'timeout' );
+
+        //---
+
+        return new ViewModel( [ 'error'=>$authError, 'pageTitle' => 'Sign in', 'isTimeout'=>$isTimeout ] );
 
     } // function
 

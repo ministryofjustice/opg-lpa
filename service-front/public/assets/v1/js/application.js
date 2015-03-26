@@ -4197,7 +4197,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
       self.timeout = setTimeout(function () {
         // TODO: possibly redirect to a different 'timed out' page rather than standard logout?
-        window.location = '/user/timeout';
+        window.location = '/login/timeout';
       }, self.gracePeriod);
     },
 
@@ -4216,12 +4216,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
           } else {
             // redirect tp login if no longer logged in
-            window.location = '/user/timeout';
+            window.location = '/login/timeout';
           }
         },
         error: function () {
           // if any errors occur, attempt logout
-          window.location = '/user/timeout';
+          window.location = '/login/timeout';
         }
       });
     },
