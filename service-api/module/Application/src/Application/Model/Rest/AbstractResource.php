@@ -5,6 +5,8 @@ use RuntimeException;
 
 use Application\Library\DateTime;
 
+use Application\Library\Lpa\StateChecker;
+
 use Application\Model\Rest\Lock\LockedException;
 
 use Application\Model\Rest\Users\Entity as RouteUser;
@@ -126,6 +128,21 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         if( $locked === true ){
             throw new LockedException('LPA has already been locked.');
+        }
+
+        //-----------------------------------------
+        // If completed, record the date.
+
+        $isCompleted = (new StateChecker($lpa))->isStateCompleted();
+
+        if( $isCompleted ){
+
+            if( !($lpa->completedAt instanceof \DateTime) ){
+                $lpa->completedAt = new DateTime();
+            }
+
+        } else {
+            $lpa->completedAt = null;
         }
 
         //-----------------------------------------
