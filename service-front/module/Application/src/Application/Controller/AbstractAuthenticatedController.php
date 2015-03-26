@@ -37,7 +37,12 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         // Check we have a user set, thus ensuring an authenticated user
 
         if( !( $this->user instanceof Identity ) ){
-            die('Not logged in / timed out! This will redirect to the login page.');
+
+            $this->flashMessenger()->addWarningMessage('You need to sign in before continuing');
+
+            // Redirect to the About You page.
+            return $this->redirect()->toRoute( 'login' );
+
         }
 
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
