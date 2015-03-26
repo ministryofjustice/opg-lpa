@@ -23,6 +23,13 @@ class Lpa extends AbstractData implements CompleteInterface {
     protected $id;
 
     /**
+     * @var \DateTime the LPA was started.
+     */
+    protected $startedAt;
+
+    /**
+     * This means 'created' in the business sense, which means when the LPA instrument is finished.
+     *
      * @var \DateTime the LPA was created.
      */
     protected $createdAt;
@@ -87,8 +94,12 @@ class Lpa extends AbstractData implements CompleteInterface {
             new Assert\Range([ 'min' => 0, 'max' => 99999999999 ]),
         ]);
 
-        $metadata->addPropertyConstraints('createdAt', [
+        $metadata->addPropertyConstraints('startedAt', [
             new Assert\NotBlank,
+            new Assert\Custom\DateTimeUTC,
+        ]);
+
+        $metadata->addPropertyConstraints('createdAt', [
             new Assert\Custom\DateTimeUTC,
         ]);
 
@@ -154,6 +165,7 @@ class Lpa extends AbstractData implements CompleteInterface {
     protected function map( $property, $v ){
 
         switch( $property ){
+            case 'startedAt':
             case 'updatedAt':
             case 'createdAt':
             case 'completedAt':
@@ -214,7 +226,7 @@ class Lpa extends AbstractData implements CompleteInterface {
 
         // Include these top level fields...
         $data = array_intersect_key( $data, array_flip([
-            'id', 'lockedAt', 'updatedAt', 'createdAt', 'user', 'locked', 'document'
+            'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'user', 'locked', 'document'
         ]));
 
         // Include these document level fields...
