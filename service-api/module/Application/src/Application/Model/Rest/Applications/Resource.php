@@ -77,7 +77,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         $lpa = new Lpa([
             'id'                => $id,
-            'createdAt'         => new DateTime(),
+            'startedAt'         => new DateTime(),
             'updatedAt'         => new DateTime(),
             'user'              => $this->getRouteUser()->userId(),
             'locked'            => false,
@@ -177,7 +177,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
             function($offset, $itemCountPerPage) use ($cursor){
                 // getItems callback
 
-                $cursor->sort( [ 'createdAt' => -1 ] );
+                $cursor->sort( [ 'updatedAt' => -1 ] );
                 $cursor->skip( $offset );
                 $cursor->limit( $itemCountPerPage );
 
