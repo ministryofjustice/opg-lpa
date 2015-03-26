@@ -127,7 +127,7 @@ class StateChecker {
      */
     public function isStateStarted(){
         $lap = $this->getLpa();
-        return is_int( $this->id );
+        return is_int( $lap->id );
     }
 
     /**
