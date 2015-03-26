@@ -321,47 +321,6 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "0bcff5a05abebba345d82a47acdf0270a6155958"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0bcff5a05abebba345d82a47acdf0270a6155958",
-            "reference": "0bcff5a05abebba345d82a47acdf0270a6155958",
-            "shasum": ""
-        },
-        "require": {
-            "egulias/email-validator": "1.2.*",
-            "php": ">=5.5.9",
-            "symfony/intl": "2.6.*",
-            "symfony/validator": "2.6.*"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-03-25 10:43:54",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "PHP data models that represent a Lasting Power of Attorney",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
-        }
-    },
-    {
         "name": "react/promise",
         "version": "v2.2.0",
         "version_normalized": "2.2.0.0",
@@ -2456,6 +2415,47 @@
         "support": {
             "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
             "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
+        }
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-datamodels",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
+            "reference": "7821d6ac091308ff555a7eaa3e33f8da1770d308"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/7821d6ac091308ff555a7eaa3e33f8da1770d308",
+            "reference": "7821d6ac091308ff555a7eaa3e33f8da1770d308",
+            "shasum": ""
+        },
+        "require": {
+            "egulias/email-validator": "1.2.*",
+            "php": ">=5.5.9",
+            "symfony/intl": "2.6.*",
+            "symfony/validator": "2.6.*"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2015-03-26 16:05:59",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "PHP data models that represent a Lasting Power of Attorney",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
         }
     }
 ]
