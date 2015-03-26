@@ -131,6 +131,21 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         }
 
         //-----------------------------------------
+        // If instrument created, record the date.
+
+        $isCreated = (new StateChecker($lpa))->isStateCreated();
+
+        if( $isCreated ){
+
+            if( !($lpa->createdAt instanceof \DateTime) ){
+                $lpa->createdAt = new DateTime();
+            }
+
+        } else {
+            $lpa->createdAt = null;
+        }
+        
+        //-----------------------------------------
         // If completed, record the date.
 
         $isCompleted = (new StateChecker($lpa))->isStateCompleted();
