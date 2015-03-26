@@ -17,17 +17,9 @@ class AuthController extends AbstractBaseController {
 
         //-----------------------
 
-        $session = $this->getServiceLocator()->get('SessionManager');
-
-        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
-        $session->getStorage()->clear();
-        $session->initialise();
-
-        //---
-
         $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
 
-        //-----------------------
+        //---
 
         $authError = null;
 
@@ -35,6 +27,15 @@ class AuthController extends AbstractBaseController {
         $password = $this->params()->fromPost('password');
 
         if( !empty($email) && !empty($password) ){
+
+            // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
+
+            $session = $this->getServiceLocator()->get('SessionManager');
+
+            $session->getStorage()->clear();
+            $session->initialise();
+
+            //---
 
             $authenticationAdapter = $this->getServiceLocator()->get('AuthenticationAdapter');
 
