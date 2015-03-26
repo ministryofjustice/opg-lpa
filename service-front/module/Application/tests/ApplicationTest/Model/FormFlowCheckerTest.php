@@ -666,7 +666,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     private function setLpaCreated()
     {
         $this->setLpaInstructons();
-        $this->lpa->completedAt = new \DateTime();
+        $this->lpa->createdAt = new \DateTime();
     }
     
     private function setLpaInstructons()

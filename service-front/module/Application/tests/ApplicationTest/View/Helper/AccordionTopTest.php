@@ -871,7 +871,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->completedAt = new \DateTime();
+        $lpa->createdAt = new \DateTime();
         
         $helperReturns = $this->getAccordion('lpa/applicant')->__invoke($lpa);
         $this->assertEquals(array(), $helperReturns);
@@ -881,7 +881,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->completedAt = new \DateTime();
+        $lpa->createdAt = new \DateTime();
         
         $helperReturns = $this->getAccordion('lpa/correspondent')->__invoke(
                 $lpa);
