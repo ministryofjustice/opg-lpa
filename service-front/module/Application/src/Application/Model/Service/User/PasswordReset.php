@@ -82,8 +82,9 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         }
 
+        $this->getServiceLocator()->get('Logger')->info('Password reset email sent to ' . $email);
+        
         return true;
-
 
     } // function
 

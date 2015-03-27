@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Opg\Lpa\Logger\Logger;
 
 abstract class AbstractBaseController extends AbstractActionController {
 
@@ -80,6 +81,15 @@ abstract class AbstractBaseController extends AbstractActionController {
      */
     protected function config(){
         return $this->getServiceLocator()->get('Config');
+    }
+    
+    /**
+     * Returns the logger.
+     *
+     * @return Logger
+     */
+    protected function log(){
+        return $this->getServiceLocator()->get('Logger');
     }
 
 } // class
