@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "53bacfda1a28c11127e74affdf51a1f3",
+    "hash": "9e251f65539e43391b8f8c75b070fbed",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -16,7 +16,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/a8322cd4e7aa32ec88d98aa4b0cb2c6251b08509",
+                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/eb7ab0c81ada61f11f27d3069d48d7bb82ee4670",
                 "reference": "c335bc3",
                 "shasum": ""
             },
@@ -60,7 +60,7 @@
                 "redis",
                 "resque"
             ],
-            "time": "2015-02-04 18:56:54"
+            "time": "2015-03-12 11:06:59"
         },
         {
             "name": "colinmollenhour/credis",
@@ -328,12 +328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958"
+                "reference": "7821d6ac091308ff555a7eaa3e33f8da1770d308"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0bcff5a05abebba345d82a47acdf0270a6155958",
-                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/7821d6ac091308ff555a7eaa3e33f8da1770d308",
+                "reference": "7821d6ac091308ff555a7eaa3e33f8da1770d308",
                 "shasum": ""
             },
             "require": {
@@ -359,7 +359,46 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-03-25 10:43:54"
+            "time": "2015-03-26 16:05:59"
+        },
+        {
+            "name": "ministryofjustice/opg-lpa-logger",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
+                "reference": "c33bf01820387f2fb1e051c5f38b84570e03fce1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/c33bf01820387f2fb1e051c5f38b84570e03fce1",
+                "reference": "c33bf01820387f2fb1e051c5f38b84570e03fce1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "raven/raven": "0.11.0",
+                "zendframework/zend-log": "2.3.*@dev"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "~2.0",
+                "phpunit/phpunit": "4.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Common logger component for OPG LPA modules",
+            "support": {
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/develop",
+                "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
+            },
+            "time": "2015-03-25 15:48:31"
         },
         {
             "name": "psr/log",
@@ -398,6 +437,58 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "raven/raven",
+            "version": "0.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getsentry/raven-php.git",
+                "reference": "2b651d779cdbac8b6456b3b0f06c8c77e43f79dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getsentry/raven-php/zipball/2b651d779cdbac8b6456b3b0f06c8c77e43f79dd",
+                "reference": "2b651d779cdbac8b6456b3b0f06c8c77e43f79dd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "bin": [
+                "bin/raven"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Raven_": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "David Cramer",
+                    "email": "dcramer@gmail.com"
+                }
+            ],
+            "description": "A PHP client for Sentry (http://getsentry.com)",
+            "homepage": "http://getsentry.com",
+            "keywords": [
+                "log",
+                "logging"
+            ],
+            "time": "2015-03-24 23:17:13"
         },
         {
             "name": "symfony/intl",
@@ -649,6 +740,66 @@
             "homepage": "https://github.com/zendframework/zf2",
             "keywords": [
                 "crypt",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-log",
+            "version": "2.3.7",
+            "target-dir": "Zend/Log",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendLog.git",
+                "reference": "1cca36bb4a5732d8438cfc96deeafff4e1fdccdb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendLog/zipball/1cca36bb4a5732d8438cfc96deeafff4e1fdccdb",
+                "reference": "1cca36bb4a5732d8438cfc96deeafff4e1fdccdb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23",
+                "zendframework/zend-servicemanager": "self.version",
+                "zendframework/zend-stdlib": "self.version"
+            },
+            "require-dev": {
+                "zendframework/zend-console": "self.version",
+                "zendframework/zend-db": "self.version",
+                "zendframework/zend-escaper": "self.version",
+                "zendframework/zend-mail": "self.version",
+                "zendframework/zend-validator": "self.version"
+            },
+            "suggest": {
+                "ext-mongo": "*",
+                "zendframework/zend-console": "Zend\\Console component",
+                "zendframework/zend-db": "Zend\\Db component",
+                "zendframework/zend-escaper": "Zend\\Escaper component, for use in the XML formatter",
+                "zendframework/zend-mail": "Zend\\Mail component",
+                "zendframework/zend-validator": "Zend\\Validator component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "component for general purpose logging",
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "log",
+                "logging",
                 "zf2"
             ],
             "time": "2015-03-12 16:55:53"
@@ -1694,7 +1845,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "ministryofjustice/opg-lpa-datamodels": 20,
-        "chrisboulton/php-resque": 20
+        "chrisboulton/php-resque": 20,
+        "ministryofjustice/opg-lpa-logger": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

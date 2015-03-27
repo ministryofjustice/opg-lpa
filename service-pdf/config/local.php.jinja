@@ -35,6 +35,11 @@ return array(
 
     ),
 
+    'log' => [
+        'path' => '{{pillar['apps']['opg-lpa-pdf']['log-dir']}}/application.log',
+        'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
+    ], // log
+    
     'pdf' => [
         'encryption' => [
             // Keys MUST be a 32 character ASCII string
