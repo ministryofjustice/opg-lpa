@@ -24,10 +24,11 @@ class Module{
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
+        // Register error handler for dispatch and render errors
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         
-        //Only bootstrap the session if it's *not* PHPUnit.
+        // Only bootstrap the session if it's *not* PHPUnit.
         if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
             $this->bootstrapSession($e);
             $this->bootstrapIdentity($e);
