@@ -105,12 +105,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        if( !$lpa->isComplete() ){
-            die('LPA not complete!');
-        }
-
-        //---
-
         if( in_array( $id, $this->getPdfTypes() ) ){
 
             $details = $this->getPdfDetails( $id );
