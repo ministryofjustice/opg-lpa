@@ -7,8 +7,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 use Application\Form\User\ResetPasswordEmail as ResetPasswordEmailForm;
 use Application\Form\User\SetPassword as ResetPasswordPasswordForm;
+use Application\Controller\AbstractBaseController;
 
-class ForgotPasswordController extends AbstractActionController
+class ForgotPasswordController extends AbstractBaseController
 {
 
     /**
@@ -18,7 +19,7 @@ class ForgotPasswordController extends AbstractActionController
      * @return ViewModel
      */
     public function indexAction(){
-
+        
         $form = new ResetPasswordEmailForm();
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password') );
 
