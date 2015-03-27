@@ -222,7 +222,6 @@ class Module{
         $exception = $e->getResult()->exception;
         
         if ($exception) {
-            $sm = $e->getApplication()->getServiceManager();
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
             $logger->err($exception->getMessage());
         }
