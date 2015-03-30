@@ -50,6 +50,7 @@ return array(
     'Opg\\Lpa\\DataModel\\Lpa\\Elements\\PhoneNumber' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Elements/PhoneNumber.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Formatter' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Formatter.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Lpa' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Lpa.php',
+    'Opg\\Lpa\\DataModel\\Lpa\\Payment\\Calculator' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Payment/Calculator.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Payment\\Payment' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Payment/Payment.php',
     'Opg\\Lpa\\DataModel\\Lpa\\StateChecker' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/StateChecker.php',
     'Opg\\Lpa\\DataModel\\User\\Address' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/User/Address.php',
