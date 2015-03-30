@@ -13,7 +13,7 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Application\Form\Lpa\FeeForm;
-use Application\Model\Service\Payment\Calculator;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Zend\Session\Container;
 
 class FeeController extends AbstractLpaController

@@ -11,7 +11,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Model\Service\Payment\Calculator;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
