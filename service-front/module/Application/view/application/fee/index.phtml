@@ -24,6 +24,7 @@
     $reducedFeeReceivesBenefits->setAttributes([
             'id' => 'reducedFeeReceivesBenefits',
     ]);
+    
     $reducedFeeReceivesBenefits->setOptions([
             'label'=>"The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>",
     ]);
@@ -81,7 +82,7 @@
                 <?= $this->formElementErrors($repeatCaseNumber) ?>
             </p>
             
-            <details>
+            <details<?= ($reducedFeeAwardedDamages->getValue()||$reducedFeeLowIncome->getValue()||$reducedFeeReceivesBenefits->getValue()||$reducedFeeUniversalCredit->getValue())?' open':'' ?>>
             
                 <summary data-journey-click="stageprompt.lpa:help.inline:register/fees:applying-for-a-reduction-of-the-fee" role="button" aria-expanded="false">Applying for a reduction of the fee</summary>
 
@@ -141,7 +142,7 @@
                 
             </details>
             
-            <details id="pay-by-cheque">
+            <details id="pay-by-cheque"<?= ($paymentMethod->getValue()=='cheque')?' open':'' ?>>
             
                 <summary data-journey-click="stageprompt.lpa:help.inline:register/fees:i-want-to-pay-by-cheque-or-bacs" role="button" aria-expanded="false">I want to pay by cheque</summary>
                 
