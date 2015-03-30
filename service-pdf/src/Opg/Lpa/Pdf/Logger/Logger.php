@@ -8,6 +8,9 @@ class Logger extends LpaLogger
 {
     static $instance = null;
     
+    /**
+     * Construct this logger with values from config
+     */
     public function __construct()
     {
         parent::__construct();
@@ -18,6 +21,11 @@ class Logger extends LpaLogger
         $this->setSentryUri($logConfig['sentry-uri']);
     }
     
+    /**
+     * Singleton provider
+     * 
+     * @return \Opg\Lpa\Pdf\Logger\Logger
+     */
     static public function getInstance( )
     {
         if(self::$instance === null) {
