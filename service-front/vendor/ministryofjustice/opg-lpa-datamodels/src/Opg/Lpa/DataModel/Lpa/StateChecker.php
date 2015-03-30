@@ -14,6 +14,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 
 
 /**
@@ -84,8 +85,8 @@ class StateChecker {
      * @return bool
      */
     public function canGenerateLP3(){
-        $lap = $this->getLpa();
-        return $this->isStateCreated() && !empty($lap->document->peopleToNotify);
+        $lpa = $this->getLpa();
+        return $this->isStateCompleted() && is_array($lpa->document->peopleToNotify) && (count($lpa->document->peopleToNotify) > 0);
     }
 
     /**
@@ -95,25 +96,23 @@ class StateChecker {
      */
     public function canGenerateLPA120(){
 
-        if( !$this->isStateCreated() ){
+        if( !$this->isStateCompleted() ){
             return false;
         }
 
         //---
 
-        $lap = $this->getLpa();
+        $lpa = $this->getLpa();
 
-        if( !($lap->payment instanceof Payment) ){
+        //---
+        
+        $payment = Calculator::calculate($lpa);
+        
+        if( !($payment instanceof Payment) ){
             return false;
         }
 
-        //---
-
-        $payment = $lap->payment;
-
-        // Return true if any of the following is true.
-        return $payment->reducedFeeReceivesBenefits || $payment->reducedFeeAwardedDamages
-                    || $payment->reducedFeeLowIncome || $payment->reducedFeeUniversalCredit;
+        return ($payment->amount != Calculator::STANDARD_FEE);
 
     } // function
 
@@ -126,8 +125,8 @@ class StateChecker {
      * @return bool
      */
     public function isStateStarted(){
-        $lap = $this->getLpa();
-        return is_int( $lap->id );
+        $lpa = $this->getLpa();
+        return is_int( $lpa->id );
     }
 
     /**
