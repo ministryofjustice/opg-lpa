@@ -6,6 +6,7 @@ use Exception;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Generator;
+use Opg\Lpa\Pdf\Logger\Logger;
 
 abstract class AbstractWorker {
 
@@ -24,8 +25,8 @@ abstract class AbstractWorker {
      */
     public function run( $docId, $type, $lpa ){
 
-        echo "${docId}: Generating PDF\n";
-
+        Logger::getInstance()->info("${docId}: Generating PDF\n");
+        
         try {
 
             // Instantiate an LPA document from the JSON
