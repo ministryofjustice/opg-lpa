@@ -146,11 +146,7 @@ class Module {
                         $lpa = $resource->fetch( $lpaId );
                         
                         if ($lpa instanceof ApiProblem) {
-                            throw new \Exception(
-                                'Error fetching ' . get_class($resource) . 
-                                ' for LPA #' . $lpaId . PHP_EOL . 
-                                print_r($lpa->toArray(), true)
-                            );
+                            throw new ApiProblemException('LPA Not Found', 404);
                         }
                         
                         $object->setLpa( $lpa->getLpa() );
