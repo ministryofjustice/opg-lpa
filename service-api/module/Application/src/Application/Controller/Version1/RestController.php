@@ -270,6 +270,18 @@ class RestController extends AbstractRestfulController {
 
         $collections = $this->getResource()->fetchAll( $query );
 
+        //---
+
+        if( $collections instanceof ApiProblem ){
+
+            return $collections;
+
+        } elseif( $collections === null ) {
+
+            return new NoContentResponse();
+
+        }
+
         $collections->setCurrentPageNumber($page);
 
         //---

@@ -124,6 +124,10 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa = $this->getLpa();
 
+        if( !is_array( $lpa->document->replacementAttorneys ) ){
+            return null;
+        }
+
         $count = count($lpa->document->replacementAttorneys);
 
         // If there are no records, just return an empty paginator...
