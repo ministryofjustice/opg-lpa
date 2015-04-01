@@ -28,7 +28,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
              
-        if( count($this->getLpa()->document->replacementAttorneys) > 0 ) {
+        if(is_array($this->getLpa()->document->replacementAttorneys) && ( count($this->getLpa()->document->replacementAttorneys) > 0 )) {
             
             $attorneysParams = [];
             foreach($this->getLpa()->document->replacementAttorneys as $idx=>$attorney) {
@@ -125,7 +125,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        if(array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+        if(is_array($this->getLpa()->document->replacementAttorneys) && array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
             $attorney = $this->getLpa()->document->replacementAttorneys[$attorneyIdx];
         }
         
@@ -194,7 +194,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        if(array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+        if(is_array($this->getLpa()->document->replacementAttorneys) && array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
             if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }

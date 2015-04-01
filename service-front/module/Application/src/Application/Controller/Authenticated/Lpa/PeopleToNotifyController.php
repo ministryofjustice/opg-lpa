@@ -25,7 +25,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
         
-        if( count($this->getLpa()->document->peopleToNotify) > 0 ) {
+        if( is_array($this->getLpa()->document->peopleToNotify) && ( count($this->getLpa()->document->peopleToNotify) > 0 )) {
             
             $peopleToNotify = [];
             foreach($this->getLpa()->document->peopleToNotify as $idx=>$peopleToNotify) {
@@ -71,7 +71,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
-        if( count($this->getLpa()->document->peopleToNotify) >= 5 ) {
+        if(is_array($this->getLpa()->document->peopleToNotify) && ( count($this->getLpa()->document->peopleToNotify) >= 5 )) {
             $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
         }
         
@@ -115,7 +115,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+        if(is_array($this->getLpa()->document->peopleToNotify) && array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
             $notifiedPerson = $this->getLpa()->document->peopleToNotify[$personIdx];
         }
         
@@ -163,7 +163,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+        if(is_array($this->getLpa()->document->peopleToNotify) && array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
             if(!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }
