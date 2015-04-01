@@ -61,6 +61,7 @@ return array(
     'GuzzleHttp\\Exception\\XmlParseException' => $vendorDir . '/guzzlehttp/guzzle/src/Exception/XmlParseException.php',
     'GuzzleHttp\\HasDataTrait' => $vendorDir . '/guzzlehttp/guzzle/src/HasDataTrait.php',
     'GuzzleHttp\\Message\\AbstractMessage' => $vendorDir . '/guzzlehttp/guzzle/src/Message/AbstractMessage.php',
+    'GuzzleHttp\\Message\\AppliesHeadersInterface' => $vendorDir . '/guzzlehttp/guzzle/src/Message/AppliesHeadersInterface.php',
     'GuzzleHttp\\Message\\FutureResponse' => $vendorDir . '/guzzlehttp/guzzle/src/Message/FutureResponse.php',
     'GuzzleHttp\\Message\\MessageFactory' => $vendorDir . '/guzzlehttp/guzzle/src/Message/MessageFactory.php',
     'GuzzleHttp\\Message\\MessageFactoryInterface' => $vendorDir . '/guzzlehttp/guzzle/src/Message/MessageFactoryInterface.php',
