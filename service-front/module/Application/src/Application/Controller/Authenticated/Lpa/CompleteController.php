@@ -64,7 +64,8 @@ class CompleteController extends AbstractLpaController
                 'paymentReferenceNo' => $lpa->payment->reference,
                 'hasRemission'       => ($lpa->payment->amount != Calculator::STANDARD_FEE),
         ];
-        if(count($lpa->document->peopleToNotify) > 0) {
+        
+        if(is_array($lpa->document->peopleToNotify) && (count($lpa->document->peopleToNotify) > 0)) {
             $viewParams['lp3Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp3']);
             $viewParams['peopleToNotify'] = $lpa->document->peopleToNotify;
         }

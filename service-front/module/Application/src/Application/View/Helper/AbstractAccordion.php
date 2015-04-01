@@ -91,7 +91,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        if(count($this->lpa->document->primaryAttorneys) > 0) {
+        if(is_array($this->lpa->document->primaryAttorneys) && (count($this->lpa->document->primaryAttorneys) > 0)) {
             return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->getView()->concatNames($this->lpa->document->primaryAttorneys);
         }
     }
@@ -105,7 +105,11 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function replacementAttorney()
     {
-        if(count($this->lpa->document->replacementAttorneys)==0) return '';
+        if($this->lpa->document->replacementAttorneys === null) {
+            return;
+        }
+        
+        if(is_array($this->lpa->document->replacementAttorneys) && (count($this->lpa->document->replacementAttorneys)==0)) return '';
         
         return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->replacementAttorneys);
     }
@@ -133,7 +137,9 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function peopleToNotify()
     {
-        if(count($this->lpa->document->peopleToNotify)==0) return '';
+        if($this->lpa->document->peopleToNotify === null) return null;
+        
+        if(is_array($this->lpa->document->peopleToNotify) && (count($this->lpa->document->peopleToNotify)==0)) return '';
         
         return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->peopleToNotify);
     }
