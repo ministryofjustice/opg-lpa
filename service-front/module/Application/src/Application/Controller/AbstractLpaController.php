@@ -23,6 +23,16 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     
     public function onDispatch(MvcEvent $e)
     {
+
+        //----------------------------------------------------------------------
+        // Check we have a user set, thus ensuring an authenticated user
+
+        if( ($authenticated = $this->checkAuthenticated()) !== true ){
+            return $authenticated;
+        }
+
+        //---
+
         # load content header in the layout if controller has a $contentHeader
         if(isset($this->contentHeader)) {
             $this->layout()->contentHeader = $this->contentHeader;
