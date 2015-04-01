@@ -32,7 +32,7 @@ class Entity implements EntityInterface {
 
     public function toArray(){
 
-        if( is_string($this->preference) ){
+        if( is_string($this->preference) || $this->preference === false ){
             return [ 'preference' => $this->preference ];
         } else {
             return array();

@@ -31,7 +31,7 @@ class Entity implements EntityInterface {
 
     public function toArray(){
 
-        if( is_string($this->instruction) ){
+        if( is_string($this->instruction) || $this->instruction === false ){
             return [ 'instruction' => $this->instruction ];
         } else {
             return array();
