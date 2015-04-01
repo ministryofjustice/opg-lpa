@@ -53,7 +53,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             $param = $e->getRouteMatch()->getParam('idx');
         }
         
-        $calculatedRoute = $this->getFlowChecker()->check($currentRoute, $param);
+        $calculatedRoute = $this->getFlowChecker()->getLatestAccessibleRoute($currentRoute, $param);
         if($calculatedRoute === false) {
             return $this->response;
         }

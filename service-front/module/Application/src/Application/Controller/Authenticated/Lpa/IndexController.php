@@ -8,7 +8,7 @@ class IndexController extends AbstractLpaController
     
     public function indexAction()
     {
-        $destinationRoute = $this->getFlowChecker()->check('lpa/view-docs');
+        $destinationRoute = $this->getFlowChecker()->getLatestAccessibleRoute('lpa/view-docs');
         $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$this->getLpa()->id]);
     }
 }

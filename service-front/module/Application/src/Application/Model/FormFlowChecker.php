@@ -11,7 +11,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 class FormFlowChecker extends StateChecker
 {
 
-    static $checkerFunctionMap = array(
+    static $accessibleFunctionMap = array(
             'lpa'                                           => 'isLpaAccessible',
             'lpa/form-type'                                 => 'isFormTypeAccessible',
             'lpa/donor'                                     => 'isDonorAccessible',
@@ -100,10 +100,18 @@ class FormFlowChecker extends StateChecker
             'lpa/fee'                                       => 'lpa/complete',
     );
 
-    public function check($currentRouteName, $param=null)
+    /**
+     * For given route, work out the latest accessible route.
+     * 
+     * @param string $currentRouteName - a route name
+     * @param mixed $param - person-idx or pdf-type
+     * @throws \RuntimeException
+     * @return string - a route name
+     */
+    public function getLatestAccessibleRoute($currentRouteName, $param=null)
     {
         // check if route exists
-        if(!array_key_exists($currentRouteName, static::$checkerFunctionMap)) {
+        if(!array_key_exists($currentRouteName, static::$accessibleFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
         
@@ -114,14 +122,14 @@ class FormFlowChecker extends StateChecker
             }
         }
         
-        $checkFunction = static::$checkerFunctionMap[$currentRouteName];
+        $checkFunction = static::$accessibleFunctionMap[$currentRouteName];
         $checkValue = call_user_func(array($this, $checkFunction), $param);
         if($checkValue === true) {
             return $currentRouteName;
         }
         else {
-            if(array_key_exists($checkValue, static::$checkerFunctionMap)) {
-                return $this->check($checkValue);
+            if(array_key_exists($checkValue, static::$accessibleFunctionMap)) {
+                return $this->getLatestAccessibleRoute($checkValue);
             }
             else {
                 return $checkValue;
@@ -134,7 +142,7 @@ class FormFlowChecker extends StateChecker
         if(array_key_exists($currentRouteName, static::$nextRouteMap)) {
             if(is_array(static::$nextRouteMap[$currentRouteName])) {
                 foreach(static::$nextRouteMap[$currentRouteName] as $nextRoute) {
-                    if($this->check($nextRoute, $personIdex) == $nextRoute) {
+                    if($this->getLatestAccessibleRoute($nextRoute, $personIdex) == $nextRoute) {
                         return $nextRoute;
                     }
                 }
