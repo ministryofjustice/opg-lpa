@@ -97,6 +97,9 @@ class AccessController extends AbstractActionController {
             // otherwise assume GET. No others methods are allowed.
             $response = $client->get( 'http://front.local' . $path, $options );
 
+            if(preg_match("/^\/service\/delete/", $path)) {
+                $this->getServiceLocator()->get('ProxyDashboard')->clearLpaCacheForUser();
+            }
         }
 
         //------------------------------------
