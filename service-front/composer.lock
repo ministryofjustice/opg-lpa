@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "aa38f3956ff099fdf6e23f905314ca3f",
+    "hash": "ad645780e66391ccb7923eb9978fecac",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -364,16 +364,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "5.1.0",
+            "version": "5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f1085bb4e023766a66b7b051914ec73bdf7202b5"
+                "reference": "475b29ccd411f2fa8a408e64576418728c032cfa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f1085bb4e023766a66b7b051914ec73bdf7202b5",
-                "reference": "f1085bb4e023766a66b7b051914ec73bdf7202b5",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/475b29ccd411f2fa8a408e64576418728c032cfa",
+                "reference": "475b29ccd411f2fa8a408e64576418728c032cfa",
                 "shasum": ""
             },
             "require": {
@@ -418,20 +418,20 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-12-19 20:27:15"
+            "time": "2015-01-28 01:03:29"
         },
         {
             "name": "guzzlehttp/ringphp",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/RingPHP.git",
-                "reference": "f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4"
+                "reference": "52d868f13570a9a56e5fce6614e0ec75d0f13ac2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4",
-                "reference": "f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4",
+                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/52d868f13570a9a56e5fce6614e0ec75d0f13ac2",
+                "reference": "52d868f13570a9a56e5fce6614e0ec75d0f13ac2",
                 "shasum": ""
             },
             "require": {
@@ -469,7 +469,7 @@
                 }
             ],
             "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
-            "time": "2015-02-26 20:43:09"
+            "time": "2015-03-30 01:43:20"
         },
         {
             "name": "guzzlehttp/streams",
@@ -578,16 +578,16 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "9db70551f7228a05332e5be36b3e430432c9c11f"
+                "reference": "6075e6d2853e8f6b23ee659b42268d0e2cfc446b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/9db70551f7228a05332e5be36b3e430432c9c11f",
-                "reference": "9db70551f7228a05332e5be36b3e430432c9c11f",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/6075e6d2853e8f6b23ee659b42268d0e2cfc446b",
+                "reference": "6075e6d2853e8f6b23ee659b42268d0e2cfc446b",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "5.1.*",
+                "guzzlehttp/guzzle": "^5.1.0",
                 "ministryofjustice/opg-lpa-datamodels": "dev-master",
                 "php": ">=5.4.0"
             },
@@ -609,7 +609,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-03-25 16:35:57"
+            "time": "2015-04-01 12:54:54"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -617,12 +617,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958"
+                "reference": "552a1b50be4d74b0cd156719ff1b7487d419ce6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0bcff5a05abebba345d82a47acdf0270a6155958",
-                "reference": "0bcff5a05abebba345d82a47acdf0270a6155958",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/552a1b50be4d74b0cd156719ff1b7487d419ce6c",
+                "reference": "552a1b50be4d74b0cd156719ff1b7487d419ce6c",
                 "shasum": ""
             },
             "require": {
@@ -645,10 +645,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-03-25 10:43:54"
+            "time": "2015-04-01 10:00:10"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -1004,16 +1004,16 @@
         },
         {
             "name": "sendgrid/smtpapi",
-            "version": "0.2.0",
+            "version": "0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/smtpapi-php.git",
-                "reference": "125b6071fb1f339feff13459cbe7bf07466fd54a"
+                "reference": "81cac4dc99439cd057adae65c4c79698dc8b62ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/125b6071fb1f339feff13459cbe7bf07466fd54a",
-                "reference": "125b6071fb1f339feff13459cbe7bf07466fd54a",
+                "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/81cac4dc99439cd057adae65c4c79698dc8b62ee",
+                "reference": "81cac4dc99439cd057adae65c4c79698dc8b62ee",
                 "shasum": ""
             },
             "require": {
@@ -1048,7 +1048,7 @@
                 "smtpapi",
                 "xsmtp"
             ],
-            "time": "2015-01-24 04:19:15"
+            "time": "2015-03-27 18:45:51"
         },
         {
             "name": "symfony/event-dispatcher",
