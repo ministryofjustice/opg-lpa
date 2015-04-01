@@ -7,7 +7,6 @@ use Zend\View\Model\ViewModel;
 use Application\Form\Lpa\ApplicantForm;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class ApplicantController extends AbstractLpaController
