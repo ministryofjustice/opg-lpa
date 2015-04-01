@@ -2,9 +2,15 @@
 	"name": "ministryofjustice/opg-lpa-api-client",
     "description": "API Wrapper for opg-lpa-api",
     "license": "MIT",
+    "repositories": [
+      {
+        "type": "vcs",
+        "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+      }
+    ],
     "require": {
         "php": ">=5.4.0",
-        "guzzlehttp/guzzle": "5.1.*",
+        "guzzlehttp/guzzle": "^5.1.0",
         "ministryofjustice/opg-lpa-datamodels": "dev-master"
     },
     "require-dev": {

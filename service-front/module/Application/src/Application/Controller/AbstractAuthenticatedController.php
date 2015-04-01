@@ -36,17 +36,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         //----------------------------------------------------------------------
         // Check we have a user set, thus ensuring an authenticated user
 
-        if( !( $this->user instanceof Identity ) ){
-
-            $this->flashMessenger()->addWarningMessage('You need to sign in before continuing');
-
-            // Redirect to the About You page.
-            return $this->redirect()->toRoute( 'login' );
-
+        if( ($authenticated = $this->checkAuthenticated()) !== true ){
+            return $authenticated;
         }
 
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
-
 
         //----------------------------------------------------------------------
         // Check if they've singed in since the T&C's changed...
@@ -154,5 +148,26 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
     protected function getLpaApplicationService(){
         return $this->getServiceLocator()->get('LpaApplicationService');
     }
+
+
+    /**
+     * Check there is a user authenticated.
+     *
+     * @return bool|\Zend\Http\Response
+     */
+    protected function checkAuthenticated(){
+
+        if( !( $this->user instanceof Identity ) ){
+
+            $this->flashMessenger()->addWarningMessage('You need to sign in before continuing');
+
+            // Redirect to the About You page.
+            return $this->redirect()->toRoute( 'login' );
+
+        }
+
+        return true;
+
+    } // function
 
 } // class
