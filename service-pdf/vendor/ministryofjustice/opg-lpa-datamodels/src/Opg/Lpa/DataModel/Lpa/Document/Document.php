@@ -83,23 +83,23 @@ class Document extends AbstractData {
     /**
      * All of the primary Attorneys.
      *
-     * @var array containing instances of Attorney.
+     * @var null|array containing instances of Attorney.
      */
-    protected $primaryAttorneys = array();
+    protected $primaryAttorneys;
 
     /**
      * All of the replacement Attorneys.
      *
-     * @var array containing instances of Attorney.
+     * @var null|array containing instances of Attorney.
      */
-    protected $replacementAttorneys = array();
+    protected $replacementAttorneys;
 
     /**
      * All of the people to notify.
      *
-     * @var array containing instances of NotifiedPerson.
+     * @var null|array containing instances of NotifiedPerson.
      */
-    protected $peopleToNotify = array();
+    protected $peopleToNotify;
 
     //------------------------------------------------
 
@@ -180,6 +180,7 @@ class Document extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('primaryAttorneys', [
+            new Assert\Type([ 'type' => 'array' ]),
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
@@ -189,6 +190,7 @@ class Document extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('replacementAttorneys', [
+            new Assert\Type([ 'type' => 'array' ]),
             new Assert\All([
                 'constraints' => [
                     new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney' ]),
@@ -216,6 +218,7 @@ class Document extends AbstractData {
         }));
 
         $metadata->addPropertyConstraints('peopleToNotify', [
+            new Assert\Type([ 'type' => 'array' ]),
             new Assert\Count( [ 'max' => 5 ] ),
             new Assert\All([
                 'constraints' => [
@@ -252,6 +255,7 @@ class Document extends AbstractData {
 
             case 'primaryAttorneys':
             case 'replacementAttorneys':
+                if( !is_array($v) ){ return $v; }
                 return array_map( function($v){
                     if( $v instanceof Attorneys\AbstractAttorney){
                         return $v;
@@ -261,6 +265,7 @@ class Document extends AbstractData {
                 }, $v );
 
             case 'peopleToNotify':
+                if( !is_array($v) ){ return $v; }
                 return array_map( function($v){
                     return ($v instanceof NotifiedPerson) ? $v : new NotifiedPerson( $v );
                 }, $v );
