@@ -561,7 +561,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/instructions', $this->checker->getLatestAccessibleRoute('lpa/applicant'));
         
         $this->setLpaInstructons();
-        $this->assertEquals('lpa/applicant', $this->checker->getLatestAccessibleRoute('lpa/applicant'));
+        $this->assertEquals('lpa/created', $this->checker->getLatestAccessibleRoute('lpa/applicant'));
     }
     
     public function testRouteCorrespondent()
@@ -681,6 +681,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
             $this->addCertificateProvider();
         }
         
+        if($this->lpa->document->peopleToNotify === null) {
+            $this->lpa->document->peopleToNotify = [];
+        }
+        
         for($i=0; $i<$count; $i++) {
             $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
         }
@@ -694,6 +698,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     private function setReplacementAttorneysMakeDecisionJointlySeverally()
     {
+        if($this->lpa->document->replacementAttorneys === null) {
+            $this->lpa->document->replacementAttorneys = [];
+        }
+        
         if(count($this->lpa->document->replacementAttorneys) < 2) {
             $this->addReplacementAttorney(2-count($this->lpa->document->replacementAttorneys));
         }
@@ -705,6 +713,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     private function setReplacementAttorneysMakeDecisionJointly()
     {
+        if($this->lpa->document->replacementAttorneys === null) {
+            $this->lpa->document->replacementAttorneys = [];
+        }
+        
         if(count($this->lpa->document->replacementAttorneys) < 2) {
             $this->addReplacementAttorney(2-count($this->lpa->document->replacementAttorneys));
         }
@@ -716,6 +728,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     private function setReplacementAttorneysMakeDecisionDepends()
     {
+        if($this->lpa->document->replacementAttorneys === null) {
+            $this->lpa->document->replacementAttorneys = [];
+        }
+        
         if(count($this->lpa->document->replacementAttorneys) < 2) {
             $this->addReplacementAttorney(2-count($this->lpa->document->replacementAttorneys));
         }
@@ -757,8 +773,12 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     private function addReplacementAttorney($count=1)
     {
-        if($this->lpa->document->primaryAttorneys == null) {
+        if($this->lpa->document->primaryAttorneys === null) {
             $this->addPrimaryAttorney();
+        }
+        
+        if($this->lpa->document->replacementAttorneys === null) {
+            $this->lpa->document->replacementAttorneys = [];
         }
         
         for($i=0; $i<$count; $i++) {
@@ -768,6 +788,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     private function setPrimaryAttorneysMakeDecisionJointlySeverally()
     {
+        if($this->lpa->document->primaryAttorneys === null) {
+            $this->lpa->document->primaryAttorneys = [];
+        }
+        
         if(count($this->lpa->document->primaryAttorneys) < 2) {
             $this->addPrimaryAttorney(2-count($this->lpa->document->primaryAttorneys));
         }
@@ -779,6 +803,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     private function setPrimaryAttorneysMakeDecisionJointly()
     {
+        if($this->lpa->document->primaryAttorneys === null) {
+            $this->lpa->document->primaryAttorneys = [];
+        }
+        
         if(count($this->lpa->document->primaryAttorneys) < 2) {
             $this->addPrimaryAttorney(2-count($this->lpa->document->primaryAttorneys));
         }
@@ -790,6 +818,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     private function setPrimaryAttorneysMakeDecisionDepends()
     {
+        if($this->lpa->document->primaryAttorneys === null) {
+            $this->lpa->document->primaryAttorneys = [];
+        }
+        
         if(count($this->lpa->document->primaryAttorneys) < 2) {
             $this->addPrimaryAttorney(2-count($this->lpa->document->primaryAttorneys));
         }
@@ -802,6 +834,11 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     private function addPrimaryAttorney($count=1)
     {
         $this->setWhenLpaStarts();
+        
+        if($this->lpa->document->primaryAttorneys === null) {
+            $this->lpa->document->primaryAttorneys = [];
+        }
+        
         for($i=0; $i<$count; $i++) {
             $this->lpa->document->primaryAttorneys[] = new Human();
         }
@@ -884,7 +921,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->lpa = new Lpa([
         'id'                => rand(100000, 9999999999),
-        'createdAt'         => new \DateTime(),
+        'createdAt'         => null,
         'updatedAt'         => new \DateTime(),
         'user'              => rand(10000, 9999999),
         'locked'            => false,
