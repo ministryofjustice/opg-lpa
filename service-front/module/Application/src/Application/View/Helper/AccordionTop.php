@@ -29,7 +29,7 @@ class AccordionTop extends AbstractAccordion
         $seq = 0;
         $barList = [];
         foreach($barConfig as $barRouteName => $barDataFuncName) {
-            if($barRouteName == $flowChecker->check($barRouteName)) {
+            if($barRouteName == $flowChecker->getLatestAccessibleRoute($barRouteName)) {
                 if($barRouteName == $routeName) {
                     break;
                 }
