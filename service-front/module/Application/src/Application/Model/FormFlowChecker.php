@@ -61,6 +61,27 @@ class FormFlowChecker extends StateChecker
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
+    static $returnFunctionMap = array(
+            'lpa/form-type'                                 => 'returnToFormType',
+            'lpa/donor'                                     => 'returnToDonor',
+            'lpa/when-lpa-starts'                           => 'returnToWhenLpaStarts',
+            'lpa/life-sustaining'                           => 'returnToLifeSustaining',
+            'lpa/primary-attorney'                          => 'returnToPrimaryAttorney',
+            'lpa/how-primary-attorneys-make-decision'       => 'returnToHowPrimaryAttorneysMakeDecision',
+            'lpa/replacement-attorney'                      => 'returnToReplacementAttorney',
+            'lpa/when-replacement-attorney-step-in'         => 'returnToWhenReplacementAttorneyStepIn',
+            'lpa/how-replacement-attorneys-make-decision'   => 'returnToHowReplacementAttorneysMakeDecision',
+            'lpa/certificate-provider'                      => 'returnToCertificateProvider',
+            'lpa/people-to-notify'                          => 'returnToPeopleToNotify',
+            'lpa/instructions'                              => 'returnToInstructions',
+            'lpa/created'                                   => 'returnToCreateLpa',
+            'lpa/applicant'                                 => 'returnToApplicant',
+            'lpa/correspondent'                             => 'returnToCorrespondent',
+            'lpa/who-are-you'                               => 'returnToWhoAreYou',
+            'lpa/fee'                                       => 'returnToFee',
+            'lpa/view-docs'                                 => 'returnToViewDocs',
+    );
+    
     static $nextRouteMap = array(
             'lpa/form-type'                                 => 'lpa/donor',
             'lpa/donor'                                     => ['lpa/when-lpa-starts', 'lpa/life-sustaining'],
@@ -108,9 +129,9 @@ class FormFlowChecker extends StateChecker
      * @throws \RuntimeException
      * @return string - a route name
      */
-    public function getLatestAccessibleRoute($currentRouteName, $param=null)
+    public function getNearestAccessibleRoute($currentRouteName, $param=null)
     {
-        // check if route exists
+        // check if route exists in the mapping table.
         if(!array_key_exists($currentRouteName, static::$accessibleFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
@@ -129,7 +150,7 @@ class FormFlowChecker extends StateChecker
         }
         else {
             if(array_key_exists($checkValue, static::$accessibleFunctionMap)) {
-                return $this->getLatestAccessibleRoute($checkValue);
+                return $this->getNearestAccessibleRoute($checkValue);
             }
             else {
                 return $checkValue;
@@ -142,7 +163,7 @@ class FormFlowChecker extends StateChecker
         if(array_key_exists($currentRouteName, static::$nextRouteMap)) {
             if(is_array(static::$nextRouteMap[$currentRouteName])) {
                 foreach(static::$nextRouteMap[$currentRouteName] as $nextRoute) {
-                    if($this->getLatestAccessibleRoute($nextRoute, $personIdex) == $nextRoute) {
+                    if($this->getNearestAccessibleRoute($nextRoute, $personIdex) == $nextRoute) {
                         return $nextRoute;
                     }
                 }
@@ -661,6 +682,215 @@ class FormFlowChecker extends StateChecker
     private function isViewDocsAccessible()
     {
         return $this->isCompleteAccessible();
+    }
+
+    private function returnToFormType()
+    {
+        if($this->lpaHasType()) {
+            return 'lpa/form-type';
+        }
+        else {
+            return 'lpa/form-type';
+        }
+    }
+    
+    private function returnToDonor()
+    {
+        if($this->lpaHasDonor()) {
+            return 'lpa/donor';
+        }
+        else {
+            return 'lpa/form-type';
+        }
+    }
+    
+    
+    private function returnToLifeSustaining()
+    {
+        if($this->lpaHasLifeSustaining()) {
+            return 'lpa/life-sustaining';
+        }
+        else {
+            return 'lpa/donor';
+        }
+    }
+    
+    private function returnToWhenLpaStarts()
+    {
+        if($this->lpaHasWhenLpaStarts()) {
+            return 'lpa/when-lpa-starts';
+        }
+        else {
+            return 'lpa/donor';
+        }
+    }
+    
+    private function returnToPrimaryAttorney()
+    {
+        if($this->lpaHasPrimaryAttorney()) {
+            return 'lpa/primary-attorney';
+        }
+        else {
+            if($this->lpa->document->type == Document::LPA_TYPE_HW) {
+                return 'lpa/life-sustaining';
+            }
+            else {
+                return 'lpa/when-lpa-statrts';
+            }
+        }
+    }
+    
+    private function returnToHowPrimaryAttorneysMakeDecision()
+    {
+        if($this->lpaHowPrimaryAttorneysMakeDecisionHasValue()) {
+            return 'lpa/how-primary-attorneys-make-decision';
+        }
+        else {
+            return 'lpa/primary-attorney';
+        }
+    }
+    
+    private function returnToReplacementAttorney()
+    {
+        if($this->lpaHasReplacementAttorney() || is_array($this->lpa->document->replacementAttorneys)) {
+            return 'lpa/replacement-attorney';
+        }
+        else {
+            if($this->lpaHasMultiplePrimaryAttorneys()) {
+                if($this->lpaHowPrimaryAttorneysMakeDecisionHasValue()) {
+                    return 'lpa/how-primary-attorneys-make-decision';
+                }
+                else {
+                    return 'lpa/primary-attorney';
+                }
+            }
+            elseif($this->lpaHasPrimaryAttorney()) {
+                return 'lpa/primary-attorney';
+            }
+        }
+    }
+    
+    private function returnToWhenReplacementAttorneyStepIn()
+    {
+        if($this->lpaWhenReplacementAttorneyStepInHasValue()) {
+            return 'lpa/when-replacement-attorney-step-in';
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
+    }
+    
+    private function returnToHowReplacementAttorneysMakeDecision()
+    {
+        if($this->lpaHowReplacementAttorneysMakeDecisionHasValue()) {
+            return 'lpa/how-replacement-attorneys-make-decision';
+        }
+        else {
+            if($this->lpaWhenReplacementAttorneyStepInHasValue()) {
+                return 'lpa/when-replacement-attorney-ste-in';
+            }
+            else {
+                return 'lpa/replacement-attorney';
+            }
+        }
+    }
+    
+    private function returnToCertificateProvider()
+    {
+        if($this->lpaHasCertificateProvider()) {
+            return 'lpa/certificate-provider';
+        }
+        else {
+            if($this->lpaHowReplacementAttorneysMakeDecisionHasValue()) {
+                return 'lpa/how-replacement-attorneys-make-decision';
+            }
+            elseif($this->lpaWhenReplacementAttorneyStepInHasValue()) {
+                return 'lpa/when-replacement-attorney-step-in';
+            }
+            else {
+                return 'lpa/replacement-attorney';
+            }
+        }
+    }
+    
+    private function returnToPeopleToNotify()
+    {
+        if($this->lpaHasPeopleToNotify() || is_array($this->lpa->document->peopleToNotify)) {
+            return 'lpa/people-to-notify';
+        }
+        else {
+            return 'lpa/certificat-provider';
+        }
+    }
+    
+    private function returnToInstructions()
+    {
+        if(($this->lpa->document->instructions !== null) || ($this->lpa->document->preferences !== null)) {
+            return 'lpa/instructions';
+        }
+        else {
+            return 'lpa/peopleToNotify';
+        }
+    }
+    
+    private function returnToCreateLpa()
+    {
+        if($this->lpa->createdAt !== null) {
+            return 'lpa/created';
+        }
+        else {
+            return 'lpa/instructions';
+        }
+    }
+    
+    private function returnToApplicant()
+    {
+        if($this->lpaHasApplicant()) {
+            return 'lpa/applicant';
+        }
+        else {
+            return 'lpa/created';
+        }
+    }
+    
+    private function returnToCorrespondent()
+    {
+        if($this->lpaHasCorrespondent()) {
+            return 'lpa/correspondent';
+        }
+        else {
+            return 'lpa/applicant';
+        }
+    }
+    
+    private function returnToWhoAreYou()
+    {
+        if($this->isWhoAreYouAnswered()) {
+            return 'lpa/who-are-you';
+        }
+        else {
+            return 'lpa/correspondent';
+        }
+    }
+    
+    private function returnToFee()
+    {
+        if($this->hasFeeCompleted()) {
+            return 'lpa/fee';
+        }
+        else {
+            return 'lpa/who-are-you';
+        }
+    }
+    
+    private function returnToViewDocs()
+    {
+        if($this->paymentResolved()) {
+            return 'lpa/view-docs';
+        }
+        else {
+            return 'lpa/fee';
+        }
     }
 
 } // class
