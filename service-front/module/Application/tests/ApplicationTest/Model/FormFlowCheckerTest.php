@@ -66,219 +66,219 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteFormType()
     {
-        $this->assertEquals('lpa/form-type', $this->checker->getLatestAccessibleRoute('lpa/form-type'));
+        $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/form-type'));
     }
     
     public function testRouteFormTypeFallback()
     {
         $this->lpa->document = null;
-        $this->assertEquals('user/dashboard', $this->checker->getLatestAccessibleRoute('lpa/form-type'));
+        $this->assertEquals('user/dashboard', $this->checker->getNearestAccessibleRoute('lpa/form-type'));
     }
     
     public function testRouteDonor()
     {
         $this->setLpaTypePF();
-        $this->assertEquals('lpa/donor', $this->checker->getLatestAccessibleRoute('lpa/donor'));
+        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/donor'));
     }
     
     public function testRouteDonorFallback()
     {
-        $this->assertEquals('lpa/form-type', $this->checker->getLatestAccessibleRoute('lpa/donor'));
+        $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/donor'));
     }
     
     public function testRouteDonorAdd()
     {
         $this->setLpaTypePF();
-        $this->assertEquals('lpa/donor/add', $this->checker->getLatestAccessibleRoute('lpa/donor/add'));
+        $this->assertEquals('lpa/donor/add', $this->checker->getNearestAccessibleRoute('lpa/donor/add'));
     }
     
     public function testRouteDonorEdit()
     {
         $this->setLpaDonor();
-        $this->assertEquals('lpa/donor/edit', $this->checker->getLatestAccessibleRoute('lpa/donor/edit'));
+        $this->assertEquals('lpa/donor/edit', $this->checker->getNearestAccessibleRoute('lpa/donor/edit'));
     }
     
     public function testRouteWhenLpaStarts()
     {
         $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getLatestAccessibleRoute('lpa/when-lpa-starts'));
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/when-lpa-starts'));
     }
     
     public function testRouteWhenLpaStartsOnHwTypeLpa()
     {
         $this->formType = document::LPA_TYPE_HW;
         $this->setLpaDonor();
-        $this->assertEquals('lpa/donor', $this->checker->getLatestAccessibleRoute('lpa/when-lpa-starts'));
+        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/when-lpa-starts'));
     }
     
     public function testRouteLifeSustaining()
     {
         $this->formType = document::LPA_TYPE_HW;
         $this->setLpaDonor();
-        $this->assertEquals('lpa/life-sustaining', $this->checker->getLatestAccessibleRoute('lpa/life-sustaining'));
+        $this->assertEquals('lpa/life-sustaining', $this->checker->getNearestAccessibleRoute('lpa/life-sustaining'));
     }
     
     public function testRouteLifeSustainingWithPfTypeLpa()
     {
         $this->setLpaDonor();
-        $this->assertEquals('lpa/donor', $this->checker->getLatestAccessibleRoute('lpa/life-sustaining'));
+        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/life-sustaining'));
     }
     
     public function testRouteAttorneyWithPfTypeLpa()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
     }
     
     public function testRouteAttorneyWithHwTypeLpa()
     {
         $this->setLifeSustaining();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
     }
     
     public function testRouteAttorneyFallback()
     {
-        $this->assertEquals('lpa/form-type', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney'));
+        $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
         
         $this->setLpaTypePF();
-        $this->assertEquals('lpa/donor', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney'));
+        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
         
         $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney'));
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
     }
     
     public function testRouteAttorneyAdd()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney/add', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/add'));
+        $this->assertEquals('lpa/primary-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add'));
     }
     
     public function testRouteAttorneyAddFallback()
     {
         $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/add'));
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add'));
     }
 
     public function testRouteAttorneyEdit()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney/edit', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/edit', 0));
+        $this->assertEquals('lpa/primary-attorney/edit', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 0));
     }
 
     public function testRouteAttorneyEditFallback()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/edit', 0));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 0));
         
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/edit', 1));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 1));
     }
     
     public function testRouteAttorneyDelete()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney/delete', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/delete', 0));
+        $this->assertEquals('lpa/primary-attorney/delete', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 0));
     }
 
     public function testRouteAttorneyDeleteFallback()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/delete', 0));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 0));
         
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/primary-attorney/delete', 1));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 1));
     }
     
     public function testRouteHowPrimaryAttorneysMakeDecision()
     {
         $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
     }
     
     public function testRouteHowPrimaryAttorneysMakeDecisionFallback()
     {
         $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getLatestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
         
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
         
         $this->addPrimaryAttorney(1);
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
     }
     
     public function testRouteReplacementAttorney()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
         
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
     }
 
     public function testRouteReplacementAttorneyFallback()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
         
         $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney'));
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
     }
     
     public function testRouteReplacementAttorneyAdd()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney/add', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/add'));
+        $this->assertEquals('lpa/replacement-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
     
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/replacement-attorney/add', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/add'));
+        $this->assertEquals('lpa/replacement-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
     }
 
     public function testRouteReplacementAttorneyAddFallback()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/add'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
         
         $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/add'));
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
     }
 
     public function testRouteReplacementAttorneyEdit()
     {
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney/edit', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/edit', 0));
+        $this->assertEquals('lpa/replacement-attorney/edit', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 0));
     }
 
     public function testRouteReplacementAttorneyEditFallback()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/edit', 0));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 0));
         
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/edit', 0));
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 0));
         
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/edit', 1));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 1));
     }
 
     public function testRouteReplacementAttorneyDelete()
     {
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney/delete', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/delete', 0));
+        $this->assertEquals('lpa/replacement-attorney/delete', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 0));
     }
     
     public function testRouteReplacementAttorneyDeleteFallback()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/delete', 0));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 0));
     
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/delete', 0));
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 0));
     
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/replacement-attorney/delete', 1));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 1));
     }
     
     public function testRouteWhenReplacementAttorneyStepIn()
@@ -286,69 +286,69 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->addPrimaryAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getLatestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
     }
 
     public function testRouteWhenReplacementAttorneyStepInFallback()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
         
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
         
         $this->setPrimaryAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
         
         $this->setPrimaryAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
     }
     
     public function testRouteHowReplacementAttorneysMakeDecision()
     {
         $this->addReplacementAttorney(2);
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
         
         $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
     }
 
     public function testRouteHowReplacementAttorneysMakeDecisionFallback()
     {
         $this->setPrimaryAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
         
         $this->setReplacementAttorneysStepInWhenFirstPrimaryUnableAct();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getLatestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
         
         $this->addPrimaryAttorney(2);
         $this->addReplacementAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getLatestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
     }
     
     public function testRouteCertificateProvider1()
     {
         $this->addPrimaryAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
     
     public function testRouteCertificateProvider2()
     {
         $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProvider3()
     {
         $this->addPrimaryAttorney();
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProvider4()
@@ -356,7 +356,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->addPrimaryAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionJointly();
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProvider5()
@@ -364,13 +364,13 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->addPrimaryAttorney();
         $this->addReplacementAttorney(2);
         $this->setReplacementAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->setReplacementAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProvider6()
@@ -379,26 +379,26 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->setPrimaryAttorneysMakeDecisionJointly();
         $this->addReplacementAttorney(2);
         $this->setReplacementAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->setReplacementAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProvider7()
     {
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->setReplacementAttorneysStepInWhenFirstPrimaryUnableAct();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->lpa->document->replacementAttorneyDecisions->when = ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST;
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->lpa->document->replacementAttorneyDecisions->when = ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS;
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProvider8()
@@ -407,10 +407,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney(2);
         $this->setReplacementAttorneysStepInWhenFirstPrimaryUnableAct();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     
         $this->setReplacementAttorneysStepInDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
     
     public function testRouteCertificateProvider9()
@@ -420,20 +420,20 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->addReplacementAttorney(2);
         $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
         $this->setReplacementAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->setReplacementAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
     
     public function testRouteCertificateProviderFallback1()
     {
         $this->addPrimaryAttorney();
         $this->addReplacementAttorney(2);
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProviderFallback2()
@@ -441,7 +441,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->addPrimaryAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionJointly();
         $this->addReplacementAttorney(2);
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProviderFallback3()
@@ -450,7 +450,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney(2);
         $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProviderFallback4()
@@ -458,158 +458,158 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->addPrimaryAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
 
     public function testRouteCertificateProviderFallback5()
     {
         $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getLatestAccessibleRoute('lpa/certificate-provider'));
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
     
     public function testRoutePeopleToNotify()
     {
         $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify'));
+        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify'));
     }
     
     public function testRoutePeopleToNotifyFallback()
     {
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify'));
     }
     
     public function testRoutePeopleToNotifyAdd()
     {
         $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify/add', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify/add'));
+        $this->assertEquals('lpa/people-to-notify/add', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
     }
     
     public function testRoutePeopleToNotifyAddFallback()
     {
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify/add'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
     }
 
     public function testRoutePeopleToNotifyEdit()
     {
         $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify/edit', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify/edit', 0));
+        $this->assertEquals('lpa/people-to-notify/edit', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
     }
     
     public function testRoutePeopleToNotifyEditFallback()
     {
         $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify/edit', 0));
+        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
     }
 
     public function testRoutePeopleToNotifyDelete()
     {
         $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify/delete', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify/delete', 0));
+        $this->assertEquals('lpa/people-to-notify/delete', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
     }
     
     public function testRoutePeopleToNotifyDeleteFallback()
     {
         $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getLatestAccessibleRoute('lpa/people-to-notify/delete', 0));
+        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
     }
     
     public function testRouteInstructions()
     {
         $this->addCertificateProvider();
-        $this->assertEquals('lpa/instructions', $this->checker->getLatestAccessibleRoute('lpa/instructions'));
+        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
         
         $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->getLatestAccessibleRoute('lpa/instructions'));
+        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
     }
     
     public function testRouteInstructionsFallback()
     {
         $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getLatestAccessibleRoute('lpa/instructions'));
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
     }
     
     public function testRouteCreated()
     {
         $this->addPeopleToNotify();
         $this->lpa->document->instruction = '...instructions...';
-        $this->assertEquals('lpa/created', $this->checker->getLatestAccessibleRoute('lpa/created'));
+        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/created'));
         
         $this->lpa->document->instruction = false;
-        $this->assertEquals('lpa/created', $this->checker->getLatestAccessibleRoute('lpa/created'));
+        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/created'));
     }
 
     public function testRouteCreatedFallback()
     {
         $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->getLatestAccessibleRoute('lpa/created'));
+        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/created'));
     }
     
     public function testRouteApplicant()
     {
         $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getLatestAccessibleRoute('lpa/applicant'));
+        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
     }
     
     public function testRouteApplicantFallback()
     {
         $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->getLatestAccessibleRoute('lpa/applicant'));
+        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
         
         $this->setLpaInstructons();
-        $this->assertEquals('lpa/created', $this->checker->getLatestAccessibleRoute('lpa/applicant'));
+        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
     }
     
     public function testRouteCorrespondent()
     {
         $this->setLpaApplicant();
-        $this->assertEquals('lpa/correspondent', $this->checker->getLatestAccessibleRoute('lpa/correspondent'));
+        $this->assertEquals('lpa/correspondent', $this->checker->getNearestAccessibleRoute('lpa/correspondent'));
     }
     
     public function testRouteCorrespondentFallback()
     {
         $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getLatestAccessibleRoute('lpa/correspondent'));
+        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent'));
     }
 
     public function testRouteCorrespondentEdit()
     {
         $this->setLpaApplicant();
-        $this->assertEquals('lpa/correspondent/edit', $this->checker->getLatestAccessibleRoute('lpa/correspondent/edit'));
+        $this->assertEquals('lpa/correspondent/edit', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
     public function testRouteCorrespondentEditFallback()
     {
         $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getLatestAccessibleRoute('lpa/correspondent/edit'));
+        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
     public function testRouteWhoAreYou()
     {
         $this->setLpaApplicant();
-        $this->assertEquals('lpa/who-are-you', $this->checker->getLatestAccessibleRoute('lpa/who-are-you'));
+        $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
 
     public function testRouteWhoAreYouFallback()
     {
         $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getLatestAccessibleRoute('lpa/who-are-you'));
+        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
     
     public function testRouteFee()
     {
         $this->setWhoAreYouAnswered();
-        $this->assertEquals('lpa/fee', $this->checker->getLatestAccessibleRoute('lpa/fee'));
+        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/fee'));
     }
     
     public function testRouteFeeFallback()
     {
         $this->setLpaApplicant();
-        $this->assertEquals('lpa/who-are-you', $this->checker->getLatestAccessibleRoute('lpa/fee'));
+        $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/fee'));
     }
     
     public function testRouteComplete()
@@ -619,20 +619,20 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         
         $this->lpa->payment->amount = null;
         $this->lpa->payment->reducedFeeUniversalCredit = true;
-        $this->assertEquals('lpa/complete', $this->checker->getLatestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
         $this->lpa->payment->amount = 0.0;
         $this->lpa->payment->reducedFeeUniversalCredit = null;
-        $this->assertEquals('lpa/complete', $this->checker->getLatestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
         $this->lpa->payment->amount = 100;
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
-        $this->assertEquals('lpa/complete', $this->checker->getLatestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
         $this->lpa->payment->amount = 100;
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $this->lpa->payment->reference = "PAYMENT RECEIVED";
-        $this->assertEquals('lpa/complete', $this->checker->getLatestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
     }
     
@@ -640,11 +640,11 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->setWhoAreYouAnswered();
         $this->lpa->payment = new Payment();
-        $this->assertEquals('lpa/fee', $this->checker->getLatestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
         $this->lpa->payment->amount = 100;
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-        $this->assertEquals('lpa/fee', $this->checker->getLatestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/complete'));
     }
 
     

@@ -46,6 +46,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
          */   
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
         
+        // get extra input query param from the request url.
         if($currentRoute == 'lpa/download') {
             $param = $e->getRouteMatch()->getParam('pdf-type');
         }
@@ -53,11 +54,15 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             $param = $e->getRouteMatch()->getParam('idx');
         }
         
-        $calculatedRoute = $this->getFlowChecker()->getLatestAccessibleRoute($currentRoute, $param);
+        // call flow checker to get the nearest accessible route.
+        $calculatedRoute = $this->getFlowChecker()->getNearestAccessibleRoute($currentRoute, $param);
+        
+        // if false, do not run action method.
         if($calculatedRoute === false) {
             return $this->response;
         }
         
+        // redirect to the calculated route if it is not equal to the current route
         if($calculatedRoute != $currentRoute) {
             return $this->redirect()->toRoute($calculatedRoute, ['lpa-id'=>$this->getLpa()->id]);
         }

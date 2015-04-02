@@ -32,7 +32,7 @@ class AccordionBottom extends AbstractAccordion
         
         $skip = true;
         foreach($barConfig as $barRouteName => $barDataFuncName) {
-            if($barRouteName == $flowChecker->getLatestAccessibleRoute($barRouteName)) {
+            if($barRouteName == $flowChecker->getNearestAccessibleRoute($barRouteName)) {
                 if($barRouteName == $routeName) {
                     $seq++;
                     $skip = false;
