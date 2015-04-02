@@ -741,26 +741,26 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     public function testRouteCorrespondentEdit()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->assertEquals('lpa/correspondent/edit', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
     public function testRouteCorrespondentEditFallback()
     {
-        $this->setLpaCreated();
+        $this->setLpaApplicant();
         $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
     public function testRouteWhoAreYou()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
 
     public function testRouteWhoAreYouFallback()
     {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/correspondent', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
     
     public function testRouteFee()
@@ -771,7 +771,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteFeeFallback()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/fee'));
     }
     
@@ -823,6 +823,118 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
     }
     
+    public function testReturnToFormType()
+    {
+        $this->setLpaTypePF();
+        $this->assertEquals('lpa/form-type', $this->checker->backToForm());
+    }
+    
+    public function testReturnToDonor()
+    {
+        $this->setLpaDonor();
+        $this->assertEquals('lpa/donor', $this->checker->backToForm());
+    }
+    
+    public function testReturnToLifeSustaining()
+    {
+        $this->setLifeSustaining();
+        $this->assertEquals('lpa/life-sustaining', $this->checker->backToForm());
+    }
+    
+    public function testReturnToWhenLpaStarts()
+    {
+        $this->setWhenLpaStarts();
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->backToForm());
+    }
+    
+    public function testReturnToPrimaryAttorney()
+    {
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->backToForm());
+    }
+
+    public function testReturnToHowPrimaryAttorneysMakeDecision()
+    {
+        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->backToForm());
+    }
+
+    public function testReturnToReplacementAttorney()
+    {
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+    }
+
+    public function testReturnToWhenReplacementAttorneyStepIn()
+    {
+        $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+    }
+
+    public function testReturnToHowReplacementAttorneysMakeDecision()
+    {
+        $this->setReplacementAttorneysMakeDecisionJointly();
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
+    }
+
+    public function testReturnToCertificateProvider()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
+    }
+
+    public function testReturnToPeopleToNotify()
+    {
+        $this->addPeopleToNotify();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
+    }
+
+    public function testReturnToInstructions()
+    {
+        $this->setLpaInstructons();
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+        
+        $this->lpa->document->instruction = false;
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+    }
+
+    public function testReturnToCreateLpa()
+    {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/created', $this->checker->backToForm());
+    }
+
+    public function testReturnToApplicant()
+    {
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
+    }
+
+    public function testReturnToCorrespondent()
+    {
+        $this->setLpaCorrespondent();
+        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
+    }
+
+    public function testReturnToWhoAreYou()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
+    }
+
+    public function testReturnToFee()
+    {
+        $this->setPayment();
+        $this->assertEquals('lpa/fee', $this->checker->backToForm());
+    }
+
+    public function testReturnToViewDocs()
+    {
+        $this->setPayment();
+        $this->lpa->completedAt = new \DateTime();
+        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
+    }
+
     
 ############################## Private methods ###########################################################################
 
@@ -836,7 +948,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     }
     private function setWhoAreYouAnswered()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->lpa->whoAreYouAnswered = true;
     }
     
@@ -844,6 +956,11 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->setLpaCreated();
         $this->lpa->document->whoIsRegistering = 'donor';
+    }
+    
+    private function setLpaCorrespondent()
+    {
+        $this->setLpaApplicant();
         $this->lpa->document->correspondent = new Correspondence();
     }
     
