@@ -121,6 +121,7 @@ class Module{
                 'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
                 'Register'              => 'Application\Model\Service\User\Register',
                 'AboutYouDetails'       => 'Application\Model\Service\User\Details',
+                'DeleteUser'            => 'Application\Model\Service\User\Delete',
                 'Payment'               => 'Application\Model\Service\Payment\Payment',
                 'Feedback'              => 'Application\Model\Service\Feedback\Feedback',
                 'Guidance'              => 'Application\Model\Service\Guidance\Guidance',
