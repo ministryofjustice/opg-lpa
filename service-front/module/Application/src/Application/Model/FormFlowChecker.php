@@ -176,7 +176,7 @@ class FormFlowChecker extends StateChecker
         return $currentRouteName;
     }
     
-    public function backToForm($requestRoute = '')
+    public function backToForm($requestRoute = 'lpa/view-docs')
     {
         $checkFunction = static::$returnFunctionMap[$requestRoute];
         $calculatedRoute = call_user_func(array($this, $checkFunction));
@@ -751,7 +751,7 @@ class FormFlowChecker extends StateChecker
                 return 'lpa/life-sustaining';
             }
             else {
-                return 'lpa/when-lpa-statrts';
+                return 'lpa/when-lpa-starts';
             }
         }
     }
@@ -780,7 +780,7 @@ class FormFlowChecker extends StateChecker
                     return 'lpa/primary-attorney';
                 }
             }
-            elseif($this->lpaHasPrimaryAttorney()) {
+            else {
                 return 'lpa/primary-attorney';
             }
         }
@@ -835,17 +835,17 @@ class FormFlowChecker extends StateChecker
             return 'lpa/people-to-notify';
         }
         else {
-            return 'lpa/certificat-provider';
+            return 'lpa/certificate-provider';
         }
     }
     
     private function returnToInstructions()
     {
-        if(($this->lpa->document->instructions !== null) || ($this->lpa->document->preferences !== null)) {
+        if(($this->lpa->document->instruction !== null) || ($this->lpa->document->preference !== null)) {
             return 'lpa/instructions';
         }
         else {
-            return 'lpa/peopleToNotify';
+            return 'lpa/people-to-notify';
         }
     }
     
@@ -901,7 +901,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToViewDocs()
     {
-        if($this->paymentResolved()) {
+        if($this->paymentResolved() && ($this->lpa->completedAt !== null)) {
             return 'lpa/view-docs';
         }
         else {
