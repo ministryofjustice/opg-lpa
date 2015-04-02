@@ -176,6 +176,17 @@ class FormFlowChecker extends StateChecker
         return $currentRouteName;
     }
     
+    public function backToForm($requestRoute = '')
+    {
+        $checkFunction = static::$returnFunctionMap[$requestRoute];
+        $calculatedRoute = call_user_func(array($this, $checkFunction));
+        if($calculatedRoute == $requestRoute) {
+            return $requestRoute;
+        }
+        else {
+            return $this->backToForm($calculatedRoute);
+        }
+    }
     
 ###################  Private methods - accessible methods #################################################
     
@@ -296,7 +307,7 @@ class FormFlowChecker extends StateChecker
 
     private function isAttorneyAddTrustAccessible()
     {
-        if(($this->isAttorneyAccessible()==true) && (!$this->lpaHasTrustCorporation('primary'))) {
+        if(($this->isAttorneyAccessible()===true) && (!$this->lpaHasTrustCorporation('primary'))) {
             return true;
         }
         else {
@@ -527,7 +538,7 @@ class FormFlowChecker extends StateChecker
     
     private function isInstructionsAccessible()
     {
-        if($this->lpaHasCertificateProvider()) {
+        if($this->lpaHasCertificateProvider() && is_array($this->lpa->document->peopleToNotify)) {
             return true;
         }
         else {
@@ -537,7 +548,7 @@ class FormFlowChecker extends StateChecker
     
     private function isCreatedAccessible()
     {
-        if($this->lpaHasCertificateProvider() && ($this->lpa->document->instruction !== null)) {
+        if($this->lpaHasFinishedCreation()) {
             return true;
         }
         else {
@@ -681,7 +692,12 @@ class FormFlowChecker extends StateChecker
     
     private function isViewDocsAccessible()
     {
-        return $this->isCompleteAccessible();
+        if($this->paymentResolved() && ($this->lpa->completedAt !== null)) {
+            return true;
+        }
+        else {
+            return 'lpa/created';
+        }
     }
 
     private function returnToFormType()
