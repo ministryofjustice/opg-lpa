@@ -46,7 +46,7 @@ class PeopleToNotifyController extends AbstractLpaController
                 if($this->getLpa()->document->peopleToNotify === null) {
                     // @todo to be completed after datamodel updated
                     if( !$this->getLpaApplicationService()->setNotifiedPersons($lpaId, []) ) {
-                       throw new \RuntimeException('API client failed to add a epopel to notify for id: '.$lpaId);
+                       throw new \RuntimeException('API client failed to add a people to notify for id: '.$lpaId);
                     }
                 }
                 
