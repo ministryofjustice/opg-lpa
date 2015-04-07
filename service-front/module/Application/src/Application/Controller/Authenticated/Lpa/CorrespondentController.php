@@ -18,6 +18,8 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
+use Zend\Form\Form;
+use Zend\Form\Element\Csrf;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -31,21 +33,82 @@ class CorrespondentController extends AbstractLpaController
         
         $lpaId = $this->getLpa()->id;
         
-        $correspondent = $this->getLpa()->document->correspondent;
-        if( $correspondent instanceof Correspondence ) {
-            
-            return new ViewModel([
-                    'correspondent'     => [
-                            'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->company),
-                            'address'   => $correspondent->address->__toString(),
-                    ],
-                    'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] ),
-                    'nextRoute'     => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
-            ]);
+        if($this->getLpa()->document->correspondent === null) {
+            if($this->getLpa()->document->whoIsRegistering == 'donor') {
+                $correspondent = $this->getLpa()->document->donor;
+            }
+            else {
+                $firstAttorneyId = array_values($this->getLpa()->document->whoIsRegistering)[0];
+                foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
+                    if($attorney->id == $firstAttorneyId) {
+                        $correspondent = $attorney;
+                        break;
+                    }
+                }
+            }
         }
         else {
-            throw new \RuntimeException('LPA Correspondent should not be null.');
+            $correspondent = $this->getLpa()->document->correspondent;
         }
+        
+        // set hidden form for saving applicant as the default correspondent
+        $form = new Form();
+        $form->setAttribute('method', 'post');
+        
+        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
+                'timeout' => null,
+                'salt' => sha1('Application\Form\Lpa-Salt'),
+        ]));
+        
+        if($this->request->isPost()) {
+            
+            $form->setData($this->request->getPost());
+            
+            if($form->isValid()) {
+                
+                // save default correspondent if it has not been set
+                if($this->getLpa()->document->correspondent === null) {
+                
+                    $applicants = $this->getLpa()->document->whoIsRegistering;
+                
+                    // work out the default correspondent - donor or an attorney.
+                    if($applicants == 'donor') {
+                        $correspondent = $this->getLpa()->document->donor;
+                    }
+                    else {
+                        $firstAttorneyId = array_values($applicants)[0];
+                        foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
+                            if($attorney->id == $firstAttorneyId) {
+                                $correspondent = $attorney;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // save correspondent via api
+                    if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence([
+                            'who'       => $this->getLpa()->document->whoIsRegistering,
+                            'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
+                            'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
+                            'address'   => $correspondent->address,
+                            'email'     => $correspondent->email,
+                    ]))) {
+                        throw new \RuntimeException('API client failed to set correspondent for id: '.$lpaId);
+                    }
+                }
+                
+                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            }
+        }
+        
+        return new ViewModel([
+                'form'              => $form,
+                'correspondent'     => [
+                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->company),
+                        'address'   => $correspondent->address->__toString(),
+                ],
+                'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
+        ]);
     }
     
     public function editAction()
@@ -138,7 +201,25 @@ class CorrespondentController extends AbstractLpaController
             }
         }
         else {
-            $correspondent = $this->getLpa()->document->correspondent->flatten();
+            if($this->getLpa()->document->correspondent === null) {
+                if($this->getLpa()->document->whoIsRegistering == 'donor') {
+                    $correspondent = $this->getLpa()->document->donor;
+                }
+                else {
+                    $firstAttorneyId = array_values($this->getLpa()->document->whoIsRegistering)[0];
+                    foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
+                        if($attorney->id == $firstAttorneyId) {
+                            $correspondent = $attorney;
+                            break;
+                        }
+                    }
+                }
+            }
+            else {
+                $correspondent = $this->getLpa()->document->correspondent;
+            }
+        
+            $correspondent = $correspondent->flatten();
             $correspondentForm->bind($correspondent);
         }
         
