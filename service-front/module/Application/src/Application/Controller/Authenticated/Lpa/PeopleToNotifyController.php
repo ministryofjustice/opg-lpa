@@ -14,6 +14,8 @@ use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Application\Form\Lpa\PeopleToNotifyForm;
 use Zend\View\Model\JsonModel;
+use Zend\Form\Form;
+use Zend\Form\Element\Csrf;
 
 class PeopleToNotifyController extends AbstractLpaController
 {
@@ -24,6 +26,33 @@ class PeopleToNotifyController extends AbstractLpaController
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
+        
+        // set hidden form for saving empty array to peopleToNotify.
+        $form = new Form();
+        $form->setAttribute('method', 'post');
+        
+        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
+                'timeout' => null,
+                'salt' => sha1('Application\Form\Lpa-Salt'),
+        ]));
+        
+        if($this->request->isPost()) {
+        
+            $form->setData($this->request->getPost());
+        
+            if($form->isValid()) {
+                
+                // check if peopleToNotify is empty. If yes, save an empty array to LPA peopleToNotify property, so we know user has no peopleToNotify to be added into LPA.
+                if($this->getLpa()->document->peopleToNotify === null) {
+                    // @todo to be completed after datamodel updated
+                    if( !$this->getLpaApplicationService()->setNotifiedPersons($lpaId, []) ) {
+                       throw new \RuntimeException('API client failed to add a epopel to notify for id: '.$lpaId);
+                    }
+                }
+                
+               $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            }
+        }
         
         if( is_array($this->getLpa()->document->peopleToNotify) && ( count($this->getLpa()->document->peopleToNotify) > 0 )) {
             
@@ -40,8 +69,8 @@ class PeopleToNotifyController extends AbstractLpaController
             }
             
             $view = new ViewModel([
-                    'peopleToNotify' => $peopleToNotifyParams,
-                    'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
+                    'form'           => $form,
+                    'peopleToNotify' => $peopleToNotifyParams
             ]);
             
             if( count($this->getLpa()->document->peopleToNotify) < 5) {
@@ -53,7 +82,8 @@ class PeopleToNotifyController extends AbstractLpaController
         else {
             
             return new ViewModel([
-                    'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
+                    'form'      => $form,
+                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
                     'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] ),
             ]);
             
