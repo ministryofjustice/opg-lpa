@@ -123,6 +123,17 @@ return [
                 ],
             ], // logout
 
+            'deleted' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/deleted',
+                    'defaults' => [
+                        'controller' => 'General\AuthController',
+                        'action'     => 'deleted',
+                    ],
+                ],
+            ], // deleted
+
             'register' => [
                 'type' => 'Segment',
                 'options' => [
