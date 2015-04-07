@@ -14,6 +14,7 @@ use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 /**
  * FormFlowChecker test case.
@@ -62,6 +63,17 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
         
         $this->checker = new FormFlowChecker($this->lpa);
+    }
+    
+    public function testRouteLpa()
+    {
+        $this->assertEquals('lpa', $this->checker->getNearestAccessibleRoute('lpa'));
+    }
+
+    public function testRouteLpaFallback()
+    {
+        $this->lpa->document = null;
+        $this->assertEquals('user/dashboard', $this->checker->getNearestAccessibleRoute('lpa'));
     }
     
     public function testRouteFormType()
@@ -124,19 +136,19 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/life-sustaining'));
     }
     
-    public function testRouteAttorneyWithPfTypeLpa()
+    public function testRoutePrimaryAttorneyWithPfTypeLpa()
     {
         $this->setWhenLpaStarts();
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
     }
     
-    public function testRouteAttorneyWithHwTypeLpa()
+    public function testRoutePrimaryAttorneyWithHwTypeLpa()
     {
         $this->setLifeSustaining();
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
     }
     
-    public function testRouteAttorneyFallback()
+    public function testRoutePrimaryAttorneyFallback()
     {
         $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
         
@@ -147,25 +159,25 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
     }
     
-    public function testRouteAttorneyAdd()
+    public function testRoutePrimaryAttorneyAdd()
     {
         $this->setWhenLpaStarts();
         $this->assertEquals('lpa/primary-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add'));
     }
     
-    public function testRouteAttorneyAddFallback()
+    public function testRoutePrimaryAttorneyAddFallback()
     {
         $this->setLpaDonor();
         $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add'));
     }
 
-    public function testRouteAttorneyEdit()
+    public function testRoutePrimaryAttorneyEdit()
     {
         $this->addPrimaryAttorney();
         $this->assertEquals('lpa/primary-attorney/edit', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 0));
     }
 
-    public function testRouteAttorneyEditFallback()
+    public function testRoutePrimaryAttorneyEditFallback()
     {
         $this->setWhenLpaStarts();
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 0));
@@ -174,19 +186,61 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 1));
     }
     
-    public function testRouteAttorneyDelete()
+    public function testRoutePrimaryAttorneyDelete()
     {
         $this->addPrimaryAttorney();
         $this->assertEquals('lpa/primary-attorney/delete', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 0));
     }
 
-    public function testRouteAttorneyDeleteFallback()
+    public function testRoutePrimaryAttorneyDeleteFallback()
     {
         $this->setWhenLpaStarts();
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 0));
         
         $this->addPrimaryAttorney();
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 1));
+    }
+    
+    public function testRoutePrimaryAttorneyAddTrust()
+    {
+        $this->setWhenLpaStarts();
+        $this->assertEquals('lpa/primary-attorney/add-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
+    }
+    
+    public function testRoutePrimaryAttorneyAddTrustFallback()
+    {
+        $this->setLpaDonor();
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
+    }
+    
+    public function testRoutePrimaryAttorneyEditTrust()
+    {
+        $this->addPrimaryAttorneyTrust();
+        $this->assertEquals('lpa/primary-attorney/edit-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
+    }
+    
+    public function testRoutePrimaryAttorneyEditTrustFallback()
+    {
+        $this->setWhenLpaStarts();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
+    
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
+    }
+    
+    public function testRoutePrimaryAttorneyDeleteTrust()
+    {
+        $this->addPrimaryAttorneyTrust();
+        $this->assertEquals('lpa/primary-attorney/delete-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
+    }
+    
+    public function testRoutePrimaryAttorneyDeleteTrustFallback()
+    {
+        $this->setWhenLpaStarts();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
+    
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
     }
     
     public function testRouteHowPrimaryAttorneysMakeDecision()
@@ -279,6 +333,62 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->addReplacementAttorney();
         $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 1));
+    }
+    
+    public function testRouteReplacementAttorneyAddTrust()
+    {
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/replacement-attorney/add-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
+    
+        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/replacement-attorney/add-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
+    }
+    
+    public function testRouteReplacementAttorneyAddTrustFallback()
+    {
+        $this->setWhenLpaStarts();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
+    
+        $this->addPrimaryAttorney(2);
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
+    }
+    
+    public function testRouteReplacementAttorneyEditTrust()
+    {
+        $this->addReplacementAttorneyTrust();
+        $this->assertEquals('lpa/replacement-attorney/edit-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
+    }
+    
+    public function testRouteReplacementAttorneyEditTrustFallback()
+    {
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
+    
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
+    
+        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
+    }
+    
+    public function testRouteReplacementAttorneyDeleteTrust()
+    {
+        $this->addReplacementAttorneyTrust();
+        $this->assertEquals('lpa/replacement-attorney/delete-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
+    }
+    
+    public function testRouteReplacementAttorneyDeleteTrustFallback()
+    {
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
+    
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
+    
+        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
     }
     
     public function testRouteWhenReplacementAttorneyStepIn()
@@ -470,6 +580,42 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
     }
     
+    public function testRouteCertificateProviderAdd()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify/add', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
+    }
+    
+    public function testRouteCertificateProviderAddFallback()
+    {
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
+    }
+    
+    public function testRouteCertificateProviderEdit()
+    {
+        $this->addPeopleToNotify();
+        $this->assertEquals('lpa/people-to-notify/edit', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
+    }
+    
+    public function testRouteCertificateProviderEditFallback()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
+    }
+    
+    public function testRouteCertificateProviderDelete()
+    {
+        $this->addPeopleToNotify();
+        $this->assertEquals('lpa/people-to-notify/delete', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
+    }
+    
+    public function testRouteCertificateProviderDeleteFallback()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
+    }
+    
     public function testRoutePeopleToNotify()
     {
         $this->addCertificateProvider();
@@ -521,6 +667,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     public function testRouteInstructions()
     {
         $this->addCertificateProvider();
+        $this->lpa->document->peopleToNotify = [];
         $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
         
         $this->addPeopleToNotify();
@@ -531,15 +678,19 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->addReplacementAttorney();
         $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
+        
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
     }
     
     public function testRouteCreated()
     {
         $this->addPeopleToNotify();
-        $this->lpa->document->instruction = '...instructions...';
+        $this->setLpaInstructons();
         $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/created'));
         
-        $this->lpa->document->instruction = false;
+        $this->lpa->document->instruction = null;
+        $this->lpa->document->preference = false;
         $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/created'));
     }
 
@@ -547,6 +698,18 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->addPeopleToNotify();
         $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/created'));
+    }
+    
+    public function testRouteDownload()
+    {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/download', $this->checker->getNearestAccessibleRoute('lpa/download', 'lp1'));
+    }
+    
+    public function testRouteRegister()
+    {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/register', $this->checker->getNearestAccessibleRoute('lpa/register'));
     }
     
     public function testRouteApplicant()
@@ -578,26 +741,26 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     public function testRouteCorrespondentEdit()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->assertEquals('lpa/correspondent/edit', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
     public function testRouteCorrespondentEditFallback()
     {
-        $this->setLpaCreated();
+        $this->setLpaApplicant();
         $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
     public function testRouteWhoAreYou()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
 
     public function testRouteWhoAreYouFallback()
     {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/correspondent', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
     
     public function testRouteFee()
@@ -608,7 +771,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteFeeFallback()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/fee'));
     }
     
@@ -646,13 +809,146 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/complete'));
     }
+    
+    public function testRouteViewDocs()
+    {
+        $this->setPayment();
+        $this->lpa->completedAt = new \DateTime();
+        $this->assertEquals('lpa/view-docs', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
+    }
+
+    public function testRouteViewDocsFallback()
+    {
+        $this->setPayment();
+        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
+    }
+    
+    public function testReturnToFormType()
+    {
+        $this->setLpaTypePF();
+        $this->assertEquals('lpa/form-type', $this->checker->backToForm());
+    }
+    
+    public function testReturnToDonor()
+    {
+        $this->setLpaDonor();
+        $this->assertEquals('lpa/donor', $this->checker->backToForm());
+    }
+    
+    public function testReturnToLifeSustaining()
+    {
+        $this->setLifeSustaining();
+        $this->assertEquals('lpa/life-sustaining', $this->checker->backToForm());
+    }
+    
+    public function testReturnToWhenLpaStarts()
+    {
+        $this->setWhenLpaStarts();
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->backToForm());
+    }
+    
+    public function testReturnToPrimaryAttorney()
+    {
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->backToForm());
+    }
+
+    public function testReturnToHowPrimaryAttorneysMakeDecision()
+    {
+        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->backToForm());
+    }
+
+    public function testReturnToReplacementAttorney()
+    {
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+    }
+
+    public function testReturnToWhenReplacementAttorneyStepIn()
+    {
+        $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+    }
+
+    public function testReturnToHowReplacementAttorneysMakeDecision()
+    {
+        $this->setReplacementAttorneysMakeDecisionJointly();
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
+    }
+
+    public function testReturnToCertificateProvider()
+    {
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
+    }
+
+    public function testReturnToPeopleToNotify()
+    {
+        $this->addPeopleToNotify();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
+    }
+
+    public function testReturnToInstructions()
+    {
+        $this->setLpaInstructons();
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+        
+        $this->lpa->document->instruction = false;
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+    }
+
+    public function testReturnToCreateLpa()
+    {
+        $this->setLpaCreated();
+        $this->assertEquals('lpa/created', $this->checker->backToForm());
+    }
+
+    public function testReturnToApplicant()
+    {
+        $this->setLpaApplicant();
+        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
+    }
+
+    public function testReturnToCorrespondent()
+    {
+        $this->setLpaCorrespondent();
+        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
+    }
+
+    public function testReturnToWhoAreYou()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
+    }
+
+    public function testReturnToFee()
+    {
+        $this->setPayment();
+        $this->assertEquals('lpa/fee', $this->checker->backToForm());
+    }
+
+    public function testReturnToViewDocs()
+    {
+        $this->setPayment();
+        $this->lpa->completedAt = new \DateTime();
+        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
+    }
 
     
 ############################## Private methods ###########################################################################
 
+    private function setPayment()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->lpa->payment = new Payment();
+        $this->lpa->payment->amount = 100;
+        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+        $this->lpa->payment->reference = "PAYMENT RECEIVED";
+    }
     private function setWhoAreYouAnswered()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCorrespondent();
         $this->lpa->whoAreYouAnswered = true;
     }
     
@@ -660,6 +956,11 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->setLpaCreated();
         $this->lpa->document->whoIsRegistering = 'donor';
+    }
+    
+    private function setLpaCorrespondent()
+    {
+        $this->setLpaApplicant();
         $this->lpa->document->correspondent = new Correspondence();
     }
     
@@ -771,6 +1072,19 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         ]);
     }
     
+    private function addReplacementAttorneyTrust()
+    {
+        if($this->lpa->document->primaryAttorneys === null) {
+            $this->addPrimaryAttorney();
+        }
+        
+        if($this->lpa->document->replacementAttorneys === null) {
+            $this->lpa->document->replacementAttorneys = [];
+        }
+    
+        $this->lpa->document->replacementAttorneys[] = new TrustCorporation();
+    }
+    
     private function addReplacementAttorney($count=1)
     {
         if($this->lpa->document->primaryAttorneys === null) {
@@ -829,6 +1143,17 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->lpa->document->primaryAttorneyDecisions = $this->setPrimaryAttorneyDecisions([
             'how'   => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
         ]);
+    }
+
+    private function addPrimaryAttorneyTrust()
+    {
+        $this->setWhenLpaStarts();
+    
+        if($this->lpa->document->primaryAttorneys === null) {
+            $this->lpa->document->primaryAttorneys = [];
+        }
+    
+        $this->lpa->document->primaryAttorneys[] = new TrustCorporation();
     }
     
     private function addPrimaryAttorney($count=1)

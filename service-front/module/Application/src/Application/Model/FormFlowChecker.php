@@ -176,6 +176,17 @@ class FormFlowChecker extends StateChecker
         return $currentRouteName;
     }
     
+    public function backToForm($requestRoute = 'lpa/view-docs')
+    {
+        $checkFunction = static::$returnFunctionMap[$requestRoute];
+        $calculatedRoute = call_user_func(array($this, $checkFunction));
+        if($calculatedRoute == $requestRoute) {
+            return $requestRoute;
+        }
+        else {
+            return $this->backToForm($calculatedRoute);
+        }
+    }
     
 ###################  Private methods - accessible methods #################################################
     
@@ -296,7 +307,7 @@ class FormFlowChecker extends StateChecker
 
     private function isAttorneyAddTrustAccessible()
     {
-        if(($this->isAttorneyAccessible()==true) && (!$this->lpaHasTrustCorporation('primary'))) {
+        if(($this->isAttorneyAccessible()===true) && (!$this->lpaHasTrustCorporation('primary'))) {
             return true;
         }
         else {
@@ -527,7 +538,7 @@ class FormFlowChecker extends StateChecker
     
     private function isInstructionsAccessible()
     {
-        if($this->lpaHasCertificateProvider()) {
+        if($this->lpaHasCertificateProvider() && is_array($this->lpa->document->peopleToNotify)) {
             return true;
         }
         else {
@@ -537,7 +548,7 @@ class FormFlowChecker extends StateChecker
     
     private function isCreatedAccessible()
     {
-        if($this->lpaHasCertificateProvider() && ($this->lpa->document->instruction !== null)) {
+        if($this->lpaHasFinishedCreation()) {
             return true;
         }
         else {
@@ -681,7 +692,12 @@ class FormFlowChecker extends StateChecker
     
     private function isViewDocsAccessible()
     {
-        return $this->isCompleteAccessible();
+        if($this->paymentResolved() && ($this->lpa->completedAt !== null)) {
+            return true;
+        }
+        else {
+            return 'lpa/created';
+        }
     }
 
     private function returnToFormType()
@@ -735,7 +751,7 @@ class FormFlowChecker extends StateChecker
                 return 'lpa/life-sustaining';
             }
             else {
-                return 'lpa/when-lpa-statrts';
+                return 'lpa/when-lpa-starts';
             }
         }
     }
@@ -764,7 +780,7 @@ class FormFlowChecker extends StateChecker
                     return 'lpa/primary-attorney';
                 }
             }
-            elseif($this->lpaHasPrimaryAttorney()) {
+            else {
                 return 'lpa/primary-attorney';
             }
         }
@@ -819,17 +835,17 @@ class FormFlowChecker extends StateChecker
             return 'lpa/people-to-notify';
         }
         else {
-            return 'lpa/certificat-provider';
+            return 'lpa/certificate-provider';
         }
     }
     
     private function returnToInstructions()
     {
-        if(($this->lpa->document->instructions !== null) || ($this->lpa->document->preferences !== null)) {
+        if(($this->lpa->document->instruction !== null) || ($this->lpa->document->preference !== null)) {
             return 'lpa/instructions';
         }
         else {
-            return 'lpa/peopleToNotify';
+            return 'lpa/people-to-notify';
         }
     }
     
@@ -885,7 +901,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToViewDocs()
     {
-        if($this->paymentResolved()) {
+        if($this->paymentResolved() && ($this->lpa->completedAt !== null)) {
             return 'lpa/view-docs';
         }
         else {
