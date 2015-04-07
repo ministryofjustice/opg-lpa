@@ -1,0 +1,33 @@
+<?php
+    $form       = $this->form;
+    $csrf       = $form->get('secret');
+    
+    $form->setAttributes(['class' => 'form']);
+    
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button', 'id'=>'form-submit', 'value'=>'Check dates']);
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+<section id="fee" class="section current">
+    
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Check Dates</h2>
+
+    <div class="accordion-content">
+    
+    <?= $this->form()->openTag($form); ?>
+    
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
+    
+    <?= $this->formErrorList(); ?>
+        <div class="accordion-actions group">
+            <p><?= $this->formElement($submit) ?></p>
+        </div>
+        
+    <?= $this->form()->closeTag(); ?>
+    
+    </div>
+    
+</section>
