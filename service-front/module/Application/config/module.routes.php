@@ -434,6 +434,16 @@ return [
                             ],
                         ],
                     ],
+                    'date-check' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/date-check',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\DateCheckController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                     'donor' => [
                         'type' => 'Literal',
                         'options' => [
