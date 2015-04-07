@@ -311,9 +311,9 @@ return [
                     ], // dashboard
 
                     'delete' => [
-                        'type'    => 'Literal',
+                        'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/delete',
+                            'route'    => '/delete[/:action]',
                             'defaults' => [
                                 'controller' => 'Authenticated\DeleteController',
                                 'action'     => 'index',
