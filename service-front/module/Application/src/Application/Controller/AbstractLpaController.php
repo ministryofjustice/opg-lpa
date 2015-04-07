@@ -8,6 +8,7 @@ use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Zend\Session\Container;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
@@ -113,7 +114,11 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         return $this->flowChecker;
     }
 
-    
+    /**
+     * Check if LPA has a trust corporation attorney in either primary or replacement attorneys
+     * 
+     * @return boolean
+     */
     protected function hasTrust()
     {
         $hasTrust = false;
@@ -134,5 +139,31 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             }
         }
         return false;
+    }
+    
+    /**
+     * Return clone source LPA details from session container, or from the api 
+     * if not found in the session container. 
+     * 
+     * @return Array|Null;
+     */
+    protected function getSeedDetails()
+    {
+        if(!($this->lpa instanceof Lpa) || ($this->lpa->seed === null)) return null;
+        
+        $seedId = $this->lpa->seed;
+        $cloneContainer = new Container('clone');
+        
+        if(!$cloneContainer->offsetExists($seedId)) {
+            $seedDetails = $this->getLpaApplicationService()->getSeedDetails($this->lpa->id);
+            if($seedDetails) {
+                $cloneContainer->$seedId = $seedDetails;
+            }
+            else {
+                return null;
+            }
+        }
+        
+        return $cloneContainer->$seedId;
     }
 }
