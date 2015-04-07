@@ -101,12 +101,34 @@ class AuthController extends AbstractBaseController {
      */
     public function logoutAction(){
 
-        $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
-        $this->getServiceLocator()->get('SessionManager')->destroy([ 'clear_storage'=>true ]);
-
-        //---
+        $this->clearSession();
 
         return $this->redirect()->toUrl( $this->config()['redirects']['logout'] );
+
+    } // function
+
+
+    /**
+     * Wipes all session details post-account deletion.
+     *
+     * @return ViewModel
+     */
+    public function deletedAction(){
+
+        $this->clearSession();
+
+        return new ViewModel();
+
+    } // function
+
+
+    /**
+     * Destroys the current session.
+     */
+    private function clearSession(){
+
+        $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+        $this->getServiceLocator()->get('SessionManager')->destroy([ 'clear_storage'=>true ]);
 
     } // function
 
