@@ -52,6 +52,7 @@ class FormFlowChecker extends StateChecker
             'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
             'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/fee'                                       => 'isFeeAccessible',
+            'lpa/date-check'                                => 'isPaymentAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',

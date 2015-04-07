@@ -21,10 +21,6 @@ class DeleteController extends AbstractAuthenticatedController {
 
     public function confirmAction(){
 
-        // Delete all v2 LPAs, their v2 Personal details, and their Auth account.
-        $this->getServiceLocator()->get('DeleteUser')->delete();
-
-
         // If we are still using a v1 proxy...
         if( $this->getServiceLocator()->has('ProxyDashboard') ){
 
@@ -32,8 +28,11 @@ class DeleteController extends AbstractAuthenticatedController {
             $this->getServiceLocator()->get('ProxyDashboard')->deleteAllLpasAndAccount();
         }
 
+        // Delete all v2 LPAs, their v2 Personal details, and their Auth account.
+        $this->getServiceLocator()->get('DeleteUser')->delete();
 
-        return $this->redirect()->toRoute( 'logout' );
+        // Redirect them to the deleted page.
+        return $this->redirect()->toRoute( 'deleted' );
 
     } // function
 

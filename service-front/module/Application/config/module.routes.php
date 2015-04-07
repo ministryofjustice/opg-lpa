@@ -123,6 +123,17 @@ return [
                 ],
             ], // logout
 
+            'deleted' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/deleted',
+                    'defaults' => [
+                        'controller' => 'General\AuthController',
+                        'action'     => 'deleted',
+                    ],
+                ],
+            ], // deleted
+
             'register' => [
                 'type' => 'Segment',
                 'options' => [
@@ -419,6 +430,16 @@ return [
                             'route'    => '/created',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\CreatedController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'date-check' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/date-check',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\DateCheckController',
                                 'action'     => 'index',
                             ],
                         ],

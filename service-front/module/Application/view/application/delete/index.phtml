@@ -1,1 +1,5 @@
-delete user
+<p>You are about to delete your account, including all your LPAs. Are you sure?</p>
+
+<p><a href="<?= $this->url('user/delete', ['action'=>'confirm']) ?>">Continue deleting account</a></p>
+
+<p><a href="<?= $this->url( 'user/dashboard' ) ?>">Back to dashboard</a></p>
