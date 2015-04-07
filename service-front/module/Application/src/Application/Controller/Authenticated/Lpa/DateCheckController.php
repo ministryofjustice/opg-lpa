@@ -43,6 +43,10 @@ class DateCheckController extends AbstractLpaController
          
         }
         
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel([
+            'donorName' => $lpa->get('document')->get('donor')->get('name'),
+            'certificateProviderName' => $lpa->get('document')->get('certificateProvider')->get('name'),
+            'form'=>$form
+        ]);
     }
 }
