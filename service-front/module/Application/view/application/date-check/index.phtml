@@ -10,24 +10,80 @@
     $formLabel  = $this->plugin('formLabel');
     $form->prepare();
 ?>
-<section id="fee" class="section current">
-    
-    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Check Dates</h2>
 
-    <div class="accordion-content">
-    
-    <?= $this->form()->openTag($form); ?>
+<section id="signature-dates" class='section current'>
+	<h2 class='accordion-header'>3.  When was the LPA signed?</h2>
+	<div class='accordion-content'>
+	
+		<div class="section-intro">
+
+<p>Please give the date each person below signed the LPA.</p>
+
+<p>This is so we can check that the signatures were <a href="/help/#topic-signing-the-lpa" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">made in the right order</a>.</p>
+
+<div class="application-notice info-notice">
+  <p>After you click ‘continue’, below, you will
+no longer be able to edit any information in this LPA. If the
+donor wishes to edit any details, <a href="/create/review/">they should do so now</a>, then print it again and get it
+signed again.</p>
+</div>
+
+
+    </div>
+
+
+	<?= $this->form()->openTag($form); ?>
     
     <?= $this->formElement($csrf) ?>
     <?= $this->formElementErrors($csrf) ?>
     
     <?= $this->formErrorList(); ?>
-        <div class="accordion-actions group">
+    
+<div class="person-summary group">
+<div class="person">
+	<h3>Mr Chris Moreton (the donor)</h3>
+	<p class="date-field">
+		<label for="donor">
+							This person signed part A of the LPA on
+						
+<input type="text" name="donor" id="donor" value="" placeholder="DD/MM/YYYY">		</label>
+	</p>
+		<div class="application-notice help-notice">
+  		<p class="hint">Remember, if any continuation sheets were used they must also<br> have been signed at the same time as or before the donor signed part A.</p>
+	</div>
+</div>
+</div>
+<div class="person-summary group">
+  <div class="person">
+      <h3>Mr Jeffrey Jingles (certificate provider)</h3>
+      <p class="date-field">
+      	<label for="certificateProvider_0">This person signed part B of the LPA on
+      	
+<input type="text" name="certificateProvider_0" id="certificateProvider_0" value="" placeholder="DD/MM/YYYY"></label>
+      </p>
+  </div>
+</div>
+
+<div class="person-summary group">
+  <div class="person">
+  								<h3>Mr Sally Bread (attorney)</h3>
+				<p class="date-field">
+			<label for="attorney_0">This person signed part C of the LPA on
+			
+<input type="text" name="attorney_0" id="attorney_0" value="" placeholder="DD/MM/YYYY"></label>
+		</p>
+	  </div>
+</div>
+
+		<div class="accordion-actions group">
+			        <div class="accordion-actions group">
             <p><?= $this->formElement($submit) ?></p>
         </div>
         
+		</div>
+
+
     <?= $this->form()->closeTag(); ?>
-    
-    </div>
-    
+
+	</div>
 </section>
