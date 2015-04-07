@@ -140,7 +140,7 @@ class DashboardController extends AbstractAuthenticatedController
         //---
         # Sort the list
 
-        // Sort by updatedAt into decending order
+        // Sort by updatedAt into descending order
         usort($lpas, function($a, $b){
             if ($a->updatedAt == $b->updatedAt) { return 0; }
             return ($a->updatedAt > $b->updatedAt) ? -1 : 1;

@@ -16,7 +16,56 @@ class Dashboard implements ServiceLocatorAwareInterface {
      */
     const USER_HAS_NO_V1_LAPS = 'no-laps:';
 
-    public function getLpas(){
+    //---
+
+
+    public function deleteAllLpasAndAccount(){
+
+        $lpas = $this->getLpas( false );
+
+        //---
+
+        $client = $this->getServiceLocator()->get('ProxyOldApiClient');
+
+        // Delete each LPA...
+        foreach( $lpas as $lpa ){
+
+            // Zero-pad the id...
+            $id = sprintf("%010d", $lpa->id);
+
+            $client->delete( "http://api.local/applications/{$id}" );
+
+        }
+
+        //----------------------------------------------------
+        // Delete the user form the account server.
+
+        // Get the user's email address...
+        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+        $emailAddress = (string)$detailsContainer->user->email;
+
+
+        // Find their account service ID...
+        $response = $client->get( "http://accounts.local/query?email=".$emailAddress );
+        $response = $response->json();
+
+        // If we have the id...
+        if( isset($response['id']) ){
+
+            $client->delete( "http://accounts.local/account/".$response['id'] );
+
+        }
+
+        return true;
+
+    } // function
+
+    /**
+     * Return a list of laps
+     *
+     * @return array|mixed
+     */
+    public function getLpas( $useCache = true ){
 
         $config = $this->getServiceLocator()->get('Config')['v1proxy'];
 
@@ -30,14 +79,14 @@ class Dashboard implements ServiceLocatorAwareInterface {
         $cache = $this->getServiceLocator()->get('ProxyCache');
 
         // If we've cached that the user has no v1 LPAs...
-        if( (bool)$cache->getItem( self::USER_HAS_NO_V1_LAPS . $hashedUserId ) === true ){
+        if( $useCache && (bool)$cache->getItem( self::USER_HAS_NO_V1_LAPS . $hashedUserId ) === true ){
             return array();
         }
 
         //--------------------------------------------------------------
         // Check if we've cached a list of v1 LPAs
 
-        if( isset($session->lpas) && is_array($session->lpas) ){
+        if( $useCache && isset($session->lpas) && is_array($session->lpas) ){
             return $session->lpas;
         }
 
