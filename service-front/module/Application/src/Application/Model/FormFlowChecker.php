@@ -602,7 +602,7 @@ class FormFlowChecker extends StateChecker
 
     private function isCorrespondentEditAccessible()
     {
-        if($this->lpaHasCorrespondent()) {
+        if($this->lpaHasApplicant()) {
             return true;
         }
         else {
