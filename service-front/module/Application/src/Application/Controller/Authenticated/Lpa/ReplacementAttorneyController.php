@@ -17,6 +17,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Application\Form\Lpa\TrustCorporationForm;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
+use Zend\Form\Form;
+use Zend\Form\Element\Csrf;
 
 class ReplacementAttorneyController extends AbstractLpaController
 {
@@ -27,7 +29,34 @@ class ReplacementAttorneyController extends AbstractLpaController
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
-             
+        
+        // set hidden form for saving empty array to replacement attorneys.
+        $form = new Form();
+        $form->setAttribute('method', 'post');
+        
+        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
+                'timeout' => null,
+                'salt' => sha1('Application\Form\Lpa-Salt'),
+        ]));
+        
+        if($this->request->isPost()) {
+        
+            $form->setData($this->request->getPost());
+        
+            if($form->isValid()) {
+        
+                // check if replacementAttorneys is empty. If yes, save an empty array to LPA replacementAttorneys property, so we know user has no replacementAttorneys to be added into LPA.
+                if($this->getLpa()->document->replacementAttorneys === null) {
+                    // @todo to be completed after datamodel updated
+                    if( !$this->getLpaApplicationService()->setReplacementAttorneys($lpaId, []) ) {
+                        throw new \RuntimeException('API client failed to add a replacement attorneys for id: '.$lpaId);
+                    }
+                }
+        
+                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            }
+        }
+        
         if(is_array($this->getLpa()->document->replacementAttorneys) && ( count($this->getLpa()->document->replacementAttorneys) > 0 )) {
             
             $attorneysParams = [];
@@ -51,19 +80,19 @@ class ReplacementAttorneyController extends AbstractLpaController
             }
             
             return new ViewModel([
-                    'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
+                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
                     'lpaId'     => $lpaId,
                     'attorneys' => $attorneysParams,
-                    'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
+                    'form'      => $form,
             ]);
             
         }
         else {
             
             return new ViewModel([
-                    'addRoute'    => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
+                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
                     'lpaId'     => $lpaId,
-                    'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] ),
+                    'form'      => $form,
             ]);
             
         }
