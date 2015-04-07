@@ -11,6 +11,12 @@ class DateCheckForm extends AbstractForm
     private $lpa;
     
     protected $formElements = [
+        'sign-date-donor' => [
+            'type' => 'Zend\Form\Element'
+        ],
+        'sign-date-certificate-provider' => [
+            'type' => 'Zend\Form\Element'
+        ],
         'submit' => [
             'type' => 'Zend\Form\Element\Submit',
         ],

@@ -1,5 +1,13 @@
 <?php
     $form       = $this->form;
+    
+    
+    $donor = $form->get('sign-date-donor');
+    $donor->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    
+    $certificateProvider = $form->get('sign-date-certificate-provider');
+    $certificateProvider->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    
     $csrf       = $form->get('secret');
     
     $form->setAttributes(['class' => 'form']);
@@ -41,12 +49,15 @@ signed again.</p>
     
 <div class="person-summary group">
 <div class="person">
-	<h3>Mr Chris Moreton (the donor)</h3>
+	<h3><?= $this->donorName ?> (the donor)</h3>
 	<p class="date-field">
 		<label for="donor">
-							This person signed part A of the LPA on
-						
-<input type="text" name="donor" id="donor" value="" placeholder="DD/MM/YYYY">		</label>
+			This person signed part A of the LPA on
+			
+			<?= $this->formElement($donor) ?>
+            <?= $this->formElementErrors($donor) ?>
+            
+        </label>
 	</p>
 		<div class="application-notice help-notice">
   		<p class="hint">Remember, if any continuation sheets were used they must also<br> have been signed at the same time as or before the donor signed part A.</p>
@@ -55,11 +66,14 @@ signed again.</p>
 </div>
 <div class="person-summary group">
   <div class="person">
-      <h3>Mr Jeffrey Jingles (certificate provider)</h3>
+      <h3><?= $this->certificateProviderName ?> (certificate provider)</h3>
       <p class="date-field">
       	<label for="certificateProvider_0">This person signed part B of the LPA on
       	
-<input type="text" name="certificateProvider_0" id="certificateProvider_0" value="" placeholder="DD/MM/YYYY"></label>
+            <?= $this->formElement($certificateProvider) ?>
+            <?= $this->formElementErrors($certificateProvider) ?>
+            
+            </label>
       </p>
   </div>
 </div>
