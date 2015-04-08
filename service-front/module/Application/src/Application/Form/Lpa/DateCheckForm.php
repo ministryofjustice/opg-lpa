@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Validator\NotEmpty;
 
 class DateCheckForm extends AbstractForm
 {
@@ -22,13 +23,6 @@ class DateCheckForm extends AbstractForm
         ],
     ];
     
-    protected $dateValidator = [
-        'name' => 'Date',
-        'options' => [
-            'format' => 'd/m/Y',
-        ],
-    ];
-    
     public function __construct (Lpa $lpa, $formName = 'type-form')
     {
         $this->lpa = $lpa;
@@ -40,9 +34,28 @@ class DateCheckForm extends AbstractForm
             ];
         }
         
+        $dateValidator = [
+            'name' => 'Date',
+            'options' => [
+                'format' => 'd/m/Y',
+            ],
+        ];
+        
+        $notEmptyValidator = [
+            'name'    => 'NotEmpty',
+            'options' => [
+                'messages' => [
+                    NotEmpty::IS_EMPTY => 'Please enter dates for all the people on the form.',
+                ],
+            ],
+        ];
+        
         foreach ($this->formElements as $key => &$element) {
             if ($key != 'submit') {
-                $element['validators'] = [$this->dateValidator];
+                $element['validators'] = [
+                    $dateValidator,
+                    $notEmptyValidator
+                ];
             }
         }
         

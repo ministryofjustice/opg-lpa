@@ -13,6 +13,7 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Application\Form\Lpa\DateCheckForm;
 use Application\Model\Service\Signatures\DateCheck;
+use Zend\Stdlib\Parameters;
 
 class DateCheckController extends AbstractLpaController
 {
@@ -42,8 +43,20 @@ class DateCheckController extends AbstractLpaController
             
             $form->setData($post);
             
+            $postArray = $post->toArray();
+
             if($form->isValid()) {
-                $viewParams['datesAreOk'] = DateCheck::checkDates($lpa);
+                $attorneyNumber = 0;
+                $attorneySignatureDates = [];
+                while (isset($postArray['sign-date-attorney-' . $attorneyNumber])) {
+                    $attorneySignatureDates[] = $postArray['sign-date-attorney-' . $attorneyNumber];
+                    $attorneyNumber++;
+                }
+                $viewParams['datesAreOk'] = DateCheck::checkDates([
+                    'donor' => $postArray['sign-date-donor'],
+                    'certificate-provider' => $postArray['sign-date-certificate-provider'],
+                    'attorneys' => $attorneySignatureDates,
+                ]);
             }
         }
                 
