@@ -19,6 +19,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
+use Application\Form\Lpa\SeedDetailsPickerForm;
 
 class ReplacementAttorneyController extends AbstractLpaController
 {
@@ -112,23 +113,49 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = new AttorneyForm('replacement-attorney');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
+        if(($seedDetails = $this->getSeedDetails()) != null) {
+            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
+        }
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
-            $form->setData($postData);
             
-            if($form->isValid()) {
-            
-                // persist to the api
-                $attorney = new Human($form->getModelDataFromValidatedForm());
-                if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
-                    throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
+            if($postData->offsetExists('pick-details')) {
+                // load seed data into the form or return form data in json format if request is an ajax
+                $seedDetailsPickerForm->setData($this->request->getPost());
+                if($seedDetailsPickerForm->isValid()) {
+                    $pickIdx = $this->request->getPost('pick-details');
+                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
+                        $actorData = $seedDetails[$pickIdx]['data'];
+                        $formData = $this->flattenData($actorData);
+                        if ( $this->getRequest()->isXmlHttpRequest() ) {
+                            return new JsonModel($formData);
+                        }
+                        else {
+                            $form->bind($formData);
+                        }
+                    }
                 }
+            }
+            else {
+                // handle replacement attorney form submission
+                $form->setData($postData);
+                if($form->isValid()) {
                 
-                if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return new JsonModel(['success' => true]);
-                }
-                else {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    // persist to the api
+                    $attorney = new Human($form->getModelDataFromValidatedForm());
+                    if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
+                        throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
+                    }
+                    
+                    if ( $this->getRequest()->isXmlHttpRequest() ) {
+                        return new JsonModel(['success' => true]);
+                    }
+                    else {
+                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    }
                 }
             }
         }
@@ -263,23 +290,49 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = new TrustCorporationForm();
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
+        if(($seedDetails = $this->getSeedDetails()) != null) {
+            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
+        }
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
-            $form->setData($postData);
             
-            if($form->isValid()) {
-            
-                // persist data
-                $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
-                if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
-                    throw new \RuntimeException('API client failed to add trust corporation replacement attorney for id: '.$lpaId);
+            if($postData->offsetExists('pick-details')) {
+                // load seed data into the form or return form data in json format if request is an ajax
+                $seedDetailsPickerForm->setData($this->request->getPost());
+                if($seedDetailsPickerForm->isValid()) {
+                    $pickIdx = $this->request->getPost('pick-details');
+                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
+                        $actorData = $seedDetails[$pickIdx]['data'];
+                        $formData = $this->flattenData($actorData);
+                        if ( $this->getRequest()->isXmlHttpRequest() ) {
+                            return new JsonModel($formData);
+                        }
+                        else {
+                            $form->bind($formData);
+                        }
+                    }
                 }
+            }
+            else {
+                // handle trust corp form submission
+                $form->setData($postData);
+                if($form->isValid()) {
                 
-                if ( $this->getRequest()->isXmlHttpRequest() ) {
-                    return new JsonModel(['success' => true]);
-                }
-                else {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    // persist data
+                    $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
+                    if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
+                        throw new \RuntimeException('API client failed to add trust corporation replacement attorney for id: '.$lpaId);
+                    }
+                    
+                    if ( $this->getRequest()->isXmlHttpRequest() ) {
+                        return new JsonModel(['success' => true]);
+                    }
+                    else {
+                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    }
                 }
             }
         }
