@@ -155,7 +155,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         
         $seedId = $this->lpa->seed;
         $cloneContainer = new Container('clone');
-        unset($cloneContainer->$seedId);
+        
         if(!$cloneContainer->offsetExists($seedId)) {
             
             // get seed data from the API
