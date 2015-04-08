@@ -1,4 +1,28 @@
 <?php
+    /**
+     * Picker form
+     */
+    if(isset($this->seedDetailsPickerForm)) {
+        $pickerForm   = $this->seedDetailsPickerForm;
+        $pickerForm->setAttribute('class', 'form');
+        $pickerCsrf   = $pickerForm->get('secret');
+        
+        $picker = $pickerForm->get('pick-details');
+        $picker->setAttributes(['id'=>'pick-details', 'class'=>'js-reusable']);
+        $picker->setOptions([
+                'label' => 'Use these details',
+                'empty_option' => 'Choose a person',
+        ]);
+        
+        $pickerSubmit     = $pickerForm->get('submit');
+        $pickerSubmit->setAttributes(['value'=>'Use details', 'class'=>'button']);
+        $pickerFormLabel  = $this->plugin('formLabel');
+        $pickerForm->prepare();
+    }
+    
+    /**
+     * attorney form
+     */
     $form       = $this->form;
     $csrf       = $form->get('secret');
     $title      = $form->get('name-title');
@@ -38,6 +62,27 @@
 ?>
 
 <h2 class="header">Edit attorney details</h2>
+
+<?php ############################ picker form ############################ ?>
+
+<?php if(isset($pickerForm)):?>
+    <?= $this->form()->openTag($pickerForm); ?>
+    
+    <?= $this->formElement($pickerCsrf) ?>
+    <?= $this->formErrorList($pickerForm); ?>
+    
+    <div class="role-select group">
+        <?= $formLabel->openTag($picker) . $picker->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formSelect($picker) ?>
+        <?= $this->formElementErrors($picker) ?>
+        <?= $this->formsubmit($pickerSubmit) ?> 
+    </div>
+    
+    <?= $this->form()->closeTag(); ?>
+<?php endif;?>
+
+<?php ############################ attorney form ############################ ?>
+
 <?= $this->form()->openTag($form); ?>
 
 <?php if(isset($this->addTrustCorporationRoute )): ?>
