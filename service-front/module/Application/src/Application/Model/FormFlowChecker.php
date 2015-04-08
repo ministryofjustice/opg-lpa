@@ -52,13 +52,13 @@ class FormFlowChecker extends StateChecker
             'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
             'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/fee'                                       => 'isFeeAccessible',
-            'lpa/date-check'                                => 'isPaymentAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
             'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
             'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
+            'lpa/date-check'                                => 'isViewDocsAccessible',
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
@@ -137,9 +137,13 @@ class FormFlowChecker extends StateChecker
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
         
+        
         // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
         if(($this->lpa->payment instanceof Payment)  && ($this->lpa->payment->date instanceof \DateTime)) {
-            if(($currentRouteName != 'lpa/complete') && ($currentRouteName != 'lpa/download')) {
+            if(($currentRouteName != 'lpa/complete') && 
+               ($currentRouteName != 'lpa/date-check') && 
+                ($currentRouteName != 'lpa/download')
+            ) {
                 return 'lpa/view-docs';
             }
         }
