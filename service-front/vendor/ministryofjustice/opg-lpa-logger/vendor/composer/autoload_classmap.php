@@ -600,6 +600,7 @@ return array(
     'Prophecy\\Exception\\Doubler\\DoublerException' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/Doubler/DoublerException.php',
     'Prophecy\\Exception\\Doubler\\InterfaceNotFoundException' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/Doubler/InterfaceNotFoundException.php',
     'Prophecy\\Exception\\Doubler\\MethodNotFoundException' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/Doubler/MethodNotFoundException.php',
+    'Prophecy\\Exception\\Doubler\\ReturnByReferenceException' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/Doubler/ReturnByReferenceException.php',
     'Prophecy\\Exception\\Exception' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/Exception.php',
     'Prophecy\\Exception\\InvalidArgumentException' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/InvalidArgumentException.php',
     'Prophecy\\Exception\\Prediction\\AggregateException' => $vendorDir . '/phpspec/prophecy/src/Prophecy/Exception/Prediction/AggregateException.php',
