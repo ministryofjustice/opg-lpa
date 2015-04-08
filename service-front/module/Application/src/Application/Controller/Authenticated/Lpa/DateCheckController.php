@@ -43,9 +43,15 @@ class DateCheckController extends AbstractLpaController
          
         }
         
+        $attorneyNames = [];
+        foreach ($lpa->get('document')->get('primaryAttorneys') as $attorney) {
+            $attorneyNames[] = $attorney->get('name');
+        }
+        
         return new ViewModel([
             'donorName' => $lpa->get('document')->get('donor')->get('name'),
             'certificateProviderName' => $lpa->get('document')->get('certificateProvider')->get('name'),
+            'attorneyNames' => $attorneyNames,
             'form'=>$form
         ]);
     }
