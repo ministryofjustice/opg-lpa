@@ -113,7 +113,7 @@ abstract class AbstractForm extends Form
                 __METHOD__
             ));
         }
-
+        
         $filter->setData($this->data);
         $filter->setValidationGroup(InputFilterInterface::VALIDATE_ALL);
 
@@ -156,7 +156,7 @@ abstract class AbstractForm extends Form
             
             $this->setMessages($messages);
         }
-
+        
         return $result;
     }
     

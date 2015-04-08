@@ -11,15 +11,11 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Application\Form\Lpa\FeeForm;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
-use Zend\Session\Container;
 use Application\Form\Lpa\DateCheckForm;
+use Application\Model\Service\Signatures\DateCheck;
 
 class DateCheckController extends AbstractLpaController
 {
-   
     protected $contentHeader = 'registration-partial.phtml';
     
     public function indexAction()
@@ -27,30 +23,32 @@ class DateCheckController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new DateCheckForm($lpa);
-        
-        if($this->request->isPost()) {
-            $post = $this->request->getPost();
-            
-            // set data for validation
-            $form->setData($post);
-            
-            if($form->isValid()) {
-                
-            } else {
-            }
-        }
-        
         $attorneyNames = [];
         foreach ($lpa->get('document')->get('primaryAttorneys') as $attorney) {
             $attorneyNames[] = $attorney->get('name');
         }
+
+        $form = new DateCheckForm($lpa);
         
-        return new ViewModel([
+        $viewParams = [
             'donorName' => $lpa->get('document')->get('donor')->get('name'),
             'certificateProviderName' => $lpa->get('document')->get('certificateProvider')->get('name'),
             'attorneyNames' => $attorneyNames,
-            'form'=>$form
-        ]);
+        ];
+        
+        if($this->request->isPost()) {
+            
+            $post = $this->request->getPost();
+            
+            $form->setData($post);
+            
+            if($form->isValid()) {
+                $viewParams['datesAreOk'] = DateCheck::checkDates($lpa);
+            }
+        }
+                
+        $viewParams['form'] = $form;
+        
+        return new ViewModel($viewParams);
     }
 }

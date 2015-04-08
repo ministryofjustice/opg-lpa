@@ -55,7 +55,7 @@ class DateCheckForm extends AbstractForm
     */
     public function validateByModel()
     {
-        
+        return ['isValid' => true];
     }
 
 }
