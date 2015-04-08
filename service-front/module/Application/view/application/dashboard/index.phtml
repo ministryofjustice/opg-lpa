@@ -44,7 +44,7 @@
       <td>
         <div class="lpa-actions">
         <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) ?>">Continue</a>
-        <?= ($lpa->version == 2) ? '<a class="button" href="/lpa/' . $lpa->id . '/date-check">Check Dates</a>' : '' ?>
+        <?= ($lpa->version == 2) ? '<a class="button" href="/lpa/' . $lpa->id . '/date-check">Dates</a>' : '' ?>
         <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) ?>">Delete</a>
         </div>
       </td>
