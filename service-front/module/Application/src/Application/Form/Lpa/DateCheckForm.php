@@ -22,6 +22,13 @@ class DateCheckForm extends AbstractForm
         ],
     ];
     
+    protected $dateValidator = [
+        'name' => 'Date',
+        'options' => [
+            'format' => 'd/m/Y',
+        ],
+    ];
+    
     public function __construct (Lpa $lpa, $formName = 'type-form')
     {
         $this->lpa = $lpa;
@@ -31,6 +38,12 @@ class DateCheckForm extends AbstractForm
             $this->formElements['sign-date-attorney-' . $i] = [
                 'type' => 'Zend\Form\Element'
             ];
+        }
+        
+        foreach ($this->formElements as $key => &$element) {
+            if ($key != 'submit') {
+                $element['validators'] = [$this->dateValidator];
+            }
         }
         
         parent::__construct($formName);

@@ -39,8 +39,6 @@ class DateCheckController extends AbstractLpaController
                 
             } else {
             }
-        } else {
-         
         }
         
         $attorneyNames = [];
