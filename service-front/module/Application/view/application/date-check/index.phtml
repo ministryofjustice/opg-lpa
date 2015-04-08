@@ -29,9 +29,13 @@
 	<h2 class='accordion-header'>When was the LPA signed?</h2>
 	<?php if (isset($this->datesAreOk)): ?>
     	<?php if ($this->datesAreOk) : ?>
-    	Dates are ok
+    	<div style="border:2px solid green; margin-top:1em; padding:1em; color:#ffffff; font-size:1.5em; background-color:#00bb00">
+    	The LPA was signed in the correct order.
+    	</div>
     	<?php else: ?>
-    	Dates are not ok
+    	<div style="border:2px solid red; margin-top:1em; padding:1em; color:#ffffff; font-size:1.5em; background-color:#bb0000">
+    	There was a problem with the order in which the LPA was signed. Please see the <a href="/help/#topic-signing-the-lpa" style="color:#ffffff" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">guidance</a> on signing and, if necessary, reprint and resign your LPA.
+    	</div>
     	<?php endif; ?>
     <?php endif; ?>
 	<div class='accordion-content'>

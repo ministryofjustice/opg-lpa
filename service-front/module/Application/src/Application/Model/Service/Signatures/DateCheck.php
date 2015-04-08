@@ -18,7 +18,7 @@ class DateCheck implements ServiceLocatorAwareInterface
      */
     public static function checkDates($lpa)
     {
-        return true;
+        return false;
     }
     
 }
