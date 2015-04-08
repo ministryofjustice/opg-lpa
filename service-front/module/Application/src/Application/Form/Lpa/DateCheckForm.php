@@ -26,6 +26,13 @@ class DateCheckForm extends AbstractForm
     {
         $this->lpa = $lpa;
         
+        $numAttorneys = count($lpa->get('document')->get('primaryAttorneys'));
+        for ($i=0; $i<$numAttorneys; $i++) {
+            $this->formElements['sign-date-attorney-' . $i] = [
+                'type' => 'Zend\Form\Element'
+            ];
+        }
+        
         parent::__construct($formName);
         
     }

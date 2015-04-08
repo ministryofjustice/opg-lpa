@@ -1,12 +1,18 @@
 <?php
     $form       = $this->form;
     
-    
     $donor = $form->get('sign-date-donor');
     $donor->setAttributes(['placeholder' => 'DD/MM/YYYY']);
     
     $certificateProvider = $form->get('sign-date-certificate-provider');
     $certificateProvider->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    
+    $numAttorneys = count($this->attorneyNames);
+    $attorney = [];
+    for ($i=0; $i<$numAttorneys; $i++) {
+        $attorney[$i] = $form->get('sign-date-attorney-' . $i);
+        $attorney[$i]->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    }
     
     $csrf       = $form->get('secret');
     
@@ -73,21 +79,26 @@ signed again.</p>
             <?= $this->formElement($certificateProvider) ?>
             <?= $this->formElementErrors($certificateProvider) ?>
             
-            </label>
+        </label>
       </p>
   </div>
 </div>
 
-<div class="person-summary group">
-  <div class="person">
-  								<h3>Mr Sally Bread (attorney)</h3>
+<?php for ($i=0; $i<$numAttorneys; $i++) : ?>
+
+    <div class="person-summary group">
+        <div class="person">
+  			<h3><?= $this->attorneyNames[$i]; ?> (attorney)</h3>
 				<p class="date-field">
 			<label for="attorney_0">This person signed part C of the LPA on
-			
-<input type="text" name="attorney_0" id="attorney_0" value="" placeholder="DD/MM/YYYY"></label>
+			     <?= $this->formElement($attorney[$i]) ?>
+                 <?= $this->formElementErrors($attorney[$i]) ?>
+            </label>
 		</p>
 	  </div>
 </div>
+
+<?php endfor; ?>
 
 		<div class="accordion-actions group">
 			        <div class="accordion-actions group">
