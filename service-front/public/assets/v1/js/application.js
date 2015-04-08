@@ -3495,6 +3495,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('PersonForm.render', {wrap: '#popup'});
         }
       });
+      
+      // hide use button and switch button
+      $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
+
     },
 
     submitForm: function (e) {
@@ -3674,7 +3678,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 (function () {
   'use strict';
-
+  var selected;
   moj.Modules.Reusables = {
     selector: '.js-reusable',
     message: 'This will replace the information which you have already entered, are you sure?',
@@ -3683,7 +3687,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       _.bindAll(this, 'linkClicked', 'selectChanged');
       this.bindEvents();
     },
-
+    
     bindEvents: function () {
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
@@ -3712,13 +3716,29 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     selectChanged: function (e, params) {
       var $el = $(e.target),
           $form = $el.closest('form'),
-          url = $el.val(),
-          proceed = this.isFormClean($form) ? true : confirm(this.message),
+          url = $form.attr('action'),
+          postData,
           _this = this;
-
+      
+      if(($el.val()=='')||($el.val()==selected)) {
+    	  return;
+      }
+      
+      var proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
+      
       if (proceed) {
         $el.spinner();
-        $.get(url, function (data) {
+        
+        selected = $el.val();
+        
+        if($form.find('[name=switch-to-type]').length == 0) {
+        	postData = {'secret':$form.find('[name=secret]').val(), 'pick-details':$form.find('[name=pick-details]').val()};
+        }
+        else {
+        	postData = {'secret':$form.find('[name=secret]').val(), 'switch-to-type':$form.find('[name=switch-to-type]').val(), 'switcher-submit':$form.find('[name=switcher-submit]').val()};
+        }
+        
+        $.post(url, postData, function (data) {
           $el.spinner('off');
           if (proceed) {
             _this.populateForm(data);
@@ -3741,7 +3761,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // loop over data and change values
       _(data).each(function (value, key) {
         // set el
-        $el = $('#' + key);
+        $el = $('[name=' + key+']');
         // if value is null, set to empty string
         value = (value === null) ? '' : value;
         // make sure the element exists && that new value doesn't match current value
@@ -3752,7 +3772,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $el.val(value).change();
           // if first element changed, save the el
           if (i === 1) {
-            $focus = $('[name*="' + key + '"]');
+            $focus = $('[name="' + key + '"]');
           }
         }
       });
@@ -3766,8 +3786,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     isFormClean: function (form) {
       var clean = true;
-      $('input[type="text"], select:not([name*="country"], .js-reusable), textarea', form).each(function () {
-        if ($(this).val() !== '' && $(this).filter('[name*="title"]').val() !== 'Mr') {
+      $('input[type="text"], select:not(.js-reusable), textarea', form).each(function () {
+        if ($(this).val() !== '' && $(this).filter('[name*="name-title"]').val() !== 'Mr') {
           clean = false;
         }
       });
@@ -4587,41 +4607,6 @@ $(document).ready(function () {
     var url=$(this).attr('href');
     if(confirm("Do you want to remove this person?")) {
       window.location.href=url;
-    }
-  });
-
-
-  // Correspondents list
-
-  body.on('change', 'select#correspondentList', function () {
-    var url = $(this).val();
-    if(url == '') {
-      $(this).closest('form').find(':text').val('');
-    }
-    else {
-      $(this).closest('form').find(':text, #email').each(function(){
-    	  $(this).val('');
-      });
-
-      $.ajax({
-        url: url,
-        dataType:'json',
-        success: function(resp) {
-
-          for(var elmId in resp) {
-            var field = $('#' + elmId),
-                value = resp[elmId];
-
-            // Insert each returned value into matching fields
-            if (elmId === 'title') {
-              lpa.updateSelectbox(field, value);
-            } else {
-              field.val(value).change();
-            }
-          }
-        }
-
-      });
     }
   });
 
