@@ -65,8 +65,6 @@
 <?= $this->form()->openTag($switcherForm); ?>
 
 <?= $this->formElement($sCsrf) ?>
-<?php if (count($switcherForm->getMessages()) > 0) $this->formElementErrors($sCsrf); ?>
-
 <?= $this->formErrorList($switcherForm); ?>
 
 <div class="role-select group">
