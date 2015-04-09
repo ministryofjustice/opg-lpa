@@ -34,11 +34,11 @@ class InstructionsController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // persist data
-                if(!$this->getLpaApplicationService()->setInstructions($lpaId, $form->get('instruction')->getValue())) {
+                if(!$this->getLpaApplicationService()->setInstructions($lpaId, $form->getData()['instruction'])) {
                     throw new \RuntimeException('API client failed to set LPA instructions for id: '.$lpaId);
                 }
                 
-                if(!$this->getLpaApplicationService()->setPreferences($lpaId, $form->get('preference')->getValue())) {
+                if(!$this->getLpaApplicationService()->setPreferences($lpaId, $form->getData()['preference'])) {
                     throw new \RuntimeException('API client failed to set LPA preferences for id: '.$lpaId);
                 }
                 
