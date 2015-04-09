@@ -3720,7 +3720,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           postData,
           _this = this;
       
-      if(($el.val()=='')||($el.val()==selected)) {
+      if(($el.val()==='')||($el.val()===selected)) {
     	  return;
       }
       
