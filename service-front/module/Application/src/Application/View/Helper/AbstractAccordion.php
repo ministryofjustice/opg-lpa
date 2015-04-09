@@ -8,12 +8,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
     protected $lpa;
     
+    // map route name to method name
     private $bars = [
         'creation' => [
             'lpa/form-type' => 'type',
@@ -146,6 +146,8 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function instructions()
     {
+        if(($this->lpa->document->instruction === null)&&($this->lpa->document->preference === null)) return null;
+        
         return "Review";
     }
     
