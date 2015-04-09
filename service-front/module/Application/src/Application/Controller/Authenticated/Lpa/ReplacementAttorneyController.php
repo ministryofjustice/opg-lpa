@@ -290,7 +290,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = new TrustCorporationForm();
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        if(($seedDetails = $this->getSeedDetails()) != null) {
+        if(($seedDetails = $this->getSeedDetails(true)) != null) {
             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
