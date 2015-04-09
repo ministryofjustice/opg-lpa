@@ -178,6 +178,8 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function fee()
     {
+        if($this->lpa->payment === null) return null;
+        
         return "Payment";
     }
     
