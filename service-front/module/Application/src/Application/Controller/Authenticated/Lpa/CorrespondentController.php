@@ -87,7 +87,7 @@ class CorrespondentController extends AbstractLpaController
                     
                     // save correspondent via api
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence([
-                            'who'       => $this->getLpa()->document->whoIsRegistering,
+                            'who'       => (($this->getLpa()->document->whoIsRegistering=='donor')?'donor':'attorney'),
                             'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'address'   => $correspondent->address,
@@ -104,7 +104,7 @@ class CorrespondentController extends AbstractLpaController
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->company),
+                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->name),
                         'address'   => $correspondent->address->__toString(),
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
