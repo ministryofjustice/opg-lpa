@@ -109,18 +109,18 @@
     },
     {
         "name": "symfony/intl",
-        "version": "v2.6.5",
-        "version_normalized": "2.6.5.0",
+        "version": "v2.6.6",
+        "version_normalized": "2.6.6.0",
         "target-dir": "Symfony/Component/Intl",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/Intl.git",
-            "reference": "dc086c64847765835d6ceda9113436684f55b53a"
+            "reference": "f6bc51bcce44aadcfa5c3eaaf2e0402ed33b63b1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Intl/zipball/dc086c64847765835d6ceda9113436684f55b53a",
-            "reference": "dc086c64847765835d6ceda9113436684f55b53a",
+            "url": "https://api.github.com/repos/symfony/Intl/zipball/f6bc51bcce44aadcfa5c3eaaf2e0402ed33b63b1",
+            "reference": "f6bc51bcce44aadcfa5c3eaaf2e0402ed33b63b1",
             "shasum": ""
         },
         "require": {
@@ -133,7 +133,7 @@
         "suggest": {
             "ext-intl": "to use the component with locales other than \"en\""
         },
-        "time": "2015-02-24 11:52:21",
+        "time": "2015-03-30 15:54:10",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -187,18 +187,18 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v2.6.5",
-        "version_normalized": "2.6.5.0",
+        "version": "v2.6.6",
+        "version_normalized": "2.6.6.0",
         "target-dir": "Symfony/Component/Translation",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/Translation.git",
-            "reference": "043db5f1eef9598d1bc1d75b93304984c003d7d9"
+            "reference": "bd939f05cdaca128f4ddbae1b447d6f0203b60af"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Translation/zipball/043db5f1eef9598d1bc1d75b93304984c003d7d9",
-            "reference": "043db5f1eef9598d1bc1d75b93304984c003d7d9",
+            "url": "https://api.github.com/repos/symfony/Translation/zipball/bd939f05cdaca128f4ddbae1b447d6f0203b60af",
+            "reference": "bd939f05cdaca128f4ddbae1b447d6f0203b60af",
             "shasum": ""
         },
         "require": {
@@ -216,7 +216,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2015-03-14 11:42:25",
+        "time": "2015-03-30 15:54:10",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -248,18 +248,18 @@
     },
     {
         "name": "symfony/validator",
-        "version": "v2.6.5",
-        "version_normalized": "2.6.5.0",
+        "version": "v2.6.6",
+        "version_normalized": "2.6.6.0",
         "target-dir": "Symfony/Component/Validator",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/Validator.git",
-            "reference": "90d8a2196635fc8e107510f8575a01ef29d459a2"
+            "reference": "85d9b42fe71bf88e7a1e5dec2094605dc9fbff28"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Validator/zipball/90d8a2196635fc8e107510f8575a01ef29d459a2",
-            "reference": "90d8a2196635fc8e107510f8575a01ef29d459a2",
+            "url": "https://api.github.com/repos/symfony/Validator/zipball/85d9b42fe71bf88e7a1e5dec2094605dc9fbff28",
+            "reference": "85d9b42fe71bf88e7a1e5dec2094605dc9fbff28",
             "shasum": ""
         },
         "require": {
@@ -290,7 +290,7 @@
             "symfony/property-access": "For using the 2.4 Validator API",
             "symfony/yaml": ""
         },
-        "time": "2015-03-13 17:37:22",
+        "time": "2015-03-30 15:54:10",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -319,6 +319,47 @@
         ],
         "description": "Symfony Validator Component",
         "homepage": "http://symfony.com"
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-datamodels",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
+            "reference": "0cb59092843d51fa73b769d7b962792ebe459e59"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0cb59092843d51fa73b769d7b962792ebe459e59",
+            "reference": "0cb59092843d51fa73b769d7b962792ebe459e59",
+            "shasum": ""
+        },
+        "require": {
+            "egulias/email-validator": "1.2.*",
+            "php": ">=5.5.9",
+            "symfony/intl": "2.6.*",
+            "symfony/validator": "2.6.*"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2015-04-02 20:34:54",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "PHP data models that represent a Lasting Power of Attorney",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
+        }
     },
     {
         "name": "colinmollenhour/credis",
@@ -584,18 +625,17 @@
     },
     {
         "name": "zendframework/zend-stdlib",
-        "version": "2.3.7",
-        "version_normalized": "2.3.7.0",
-        "target-dir": "Zend/Stdlib",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/Component_ZendStdlib.git",
-            "reference": "3f6e2416183d4879a983680e1165f14164b262f4"
+            "reference": "eab586f4c18af3fa63c977611939f1f4a3cf1030"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/3f6e2416183d4879a983680e1165f14164b262f4",
-            "reference": "3f6e2416183d4879a983680e1165f14164b262f4",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/eab586f4c18af3fa63c977611939f1f4a3cf1030",
+            "reference": "eab586f4c18af3fa63c977611939f1f4a3cf1030",
             "shasum": ""
         },
         "require": {
@@ -613,7 +653,7 @@
             "zendframework/zend-serializer": "Zend\\Serializer component",
             "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
         },
-        "time": "2015-03-12 16:55:53",
+        "time": "2015-04-01 18:09:29",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -623,7 +663,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Zend\\Stdlib\\": ""
             }
         },
@@ -639,18 +679,17 @@
     },
     {
         "name": "zendframework/zend-memory",
-        "version": "2.3.7",
-        "version_normalized": "2.3.7.0",
-        "target-dir": "Zend/Memory",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/Component_ZendMemory.git",
-            "reference": "7965bf2af530d9b21dd80259092bcd3dbfc1785c"
+            "reference": "3153bac4d685eece09fbc7a92cc4d5f3d7fc8e6d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendMemory/zipball/7965bf2af530d9b21dd80259092bcd3dbfc1785c",
-            "reference": "7965bf2af530d9b21dd80259092bcd3dbfc1785c",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendMemory/zipball/3153bac4d685eece09fbc7a92cc4d5f3d7fc8e6d",
+            "reference": "3153bac4d685eece09fbc7a92cc4d5f3d7fc8e6d",
             "shasum": ""
         },
         "require": {
@@ -662,7 +701,7 @@
         "suggest": {
             "zendframework/zend-cache": "To support swap the memory objects"
         },
-        "time": "2015-03-12 16:55:53",
+        "time": "2015-04-01 18:09:27",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -672,7 +711,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Zend\\Memory\\": ""
             }
         },
@@ -786,18 +825,17 @@
     },
     {
         "name": "zendframework/zend-servicemanager",
-        "version": "2.3.7",
-        "version_normalized": "2.3.7.0",
-        "target-dir": "Zend/ServiceManager",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/Component_ZendServiceManager.git",
-            "reference": "10c7dfcd3b0e5856a53663c0971159573ec37ffa"
+            "reference": "d3c27c708a148a30608f313a5b7a61a531bd9cb9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendServiceManager/zipball/10c7dfcd3b0e5856a53663c0971159573ec37ffa",
-            "reference": "10c7dfcd3b0e5856a53663c0971159573ec37ffa",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendServiceManager/zipball/d3c27c708a148a30608f313a5b7a61a531bd9cb9",
+            "reference": "d3c27c708a148a30608f313a5b7a61a531bd9cb9",
             "shasum": ""
         },
         "require": {
@@ -810,7 +848,7 @@
             "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
             "zendframework/zend-di": "Zend\\Di component"
         },
-        "time": "2015-03-12 16:55:53",
+        "time": "2015-04-01 18:09:28",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -820,7 +858,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Zend\\ServiceManager\\": ""
             }
         },
@@ -836,18 +874,17 @@
     },
     {
         "name": "zendframework/zend-log",
-        "version": "2.3.7",
-        "version_normalized": "2.3.7.0",
-        "target-dir": "Zend/Log",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/Component_ZendLog.git",
-            "reference": "1cca36bb4a5732d8438cfc96deeafff4e1fdccdb"
+            "reference": "2d5d20fd45470506bdaff727c46dc25fe953146e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendLog/zipball/1cca36bb4a5732d8438cfc96deeafff4e1fdccdb",
-            "reference": "1cca36bb4a5732d8438cfc96deeafff4e1fdccdb",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendLog/zipball/2d5d20fd45470506bdaff727c46dc25fe953146e",
+            "reference": "2d5d20fd45470506bdaff727c46dc25fe953146e",
             "shasum": ""
         },
         "require": {
@@ -870,7 +907,7 @@
             "zendframework/zend-mail": "Zend\\Mail component",
             "zendframework/zend-validator": "Zend\\Validator component"
         },
-        "time": "2015-03-12 16:55:53",
+        "time": "2015-04-01 18:09:26",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -880,7 +917,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Zend\\Log\\": ""
             }
         },
@@ -903,24 +940,24 @@
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-            "reference": "c33bf01820387f2fb1e051c5f38b84570e03fce1"
+            "reference": "1a93da11f5dd9d607504a520bb2187fa9f335826"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/c33bf01820387f2fb1e051c5f38b84570e03fce1",
-            "reference": "c33bf01820387f2fb1e051c5f38b84570e03fce1",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/1a93da11f5dd9d607504a520bb2187fa9f335826",
+            "reference": "1a93da11f5dd9d607504a520bb2187fa9f335826",
             "shasum": ""
         },
         "require": {
             "php": ">=5.4.0",
             "raven/raven": "0.11.0",
-            "zendframework/zend-log": "2.3.*@dev"
+            "zendframework/zend-log": "^2.3.7"
         },
         "require-dev": {
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-03-25 15:48:31",
+        "time": "2015-04-01 13:24:45",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -939,18 +976,17 @@
     },
     {
         "name": "zendframework/zend-math",
-        "version": "2.3.7",
-        "version_normalized": "2.3.7.0",
-        "target-dir": "Zend/Math",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/Component_ZendMath.git",
-            "reference": "b54a187942d331244aa5b69bd32afa21428f9785"
+            "reference": "634123f83ca90b6613f132d0d100e6b5e9890a29"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendMath/zipball/b54a187942d331244aa5b69bd32afa21428f9785",
-            "reference": "b54a187942d331244aa5b69bd32afa21428f9785",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendMath/zipball/634123f83ca90b6613f132d0d100e6b5e9890a29",
+            "reference": "634123f83ca90b6613f132d0d100e6b5e9890a29",
             "shasum": ""
         },
         "require": {
@@ -962,7 +998,7 @@
             "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
             "zendframework/zend-servicemanager": ">= current version, if using the BigInteger::factory functionality"
         },
-        "time": "2015-03-12 16:55:53",
+        "time": "2015-04-01 18:09:27",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -972,7 +1008,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Zend\\Math\\": ""
             }
         },
@@ -988,18 +1024,17 @@
     },
     {
         "name": "zendframework/zend-crypt",
-        "version": "2.3.7",
-        "version_normalized": "2.3.7.0",
-        "target-dir": "Zend/Crypt",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/Component_ZendCrypt.git",
-            "reference": "6e885dcc6177e266c19febe0b5e979b7a3e4e8b1"
+            "reference": "819541a9b03658e301e079f06ef883126d2fd21e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendCrypt/zipball/6e885dcc6177e266c19febe0b5e979b7a3e4e8b1",
-            "reference": "6e885dcc6177e266c19febe0b5e979b7a3e4e8b1",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendCrypt/zipball/819541a9b03658e301e079f06ef883126d2fd21e",
+            "reference": "819541a9b03658e301e079f06ef883126d2fd21e",
             "shasum": ""
         },
         "require": {
@@ -1011,7 +1046,7 @@
         "suggest": {
             "ext-mcrypt": "Required for most features of Zend\\Crypt"
         },
-        "time": "2015-03-12 16:55:53",
+        "time": "2015-04-01 18:00:26",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1021,7 +1056,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Zend\\Crypt\\": ""
             }
         },
@@ -1037,20 +1072,20 @@
     },
     {
         "name": "sebastian/version",
-        "version": "1.0.4",
-        "version_normalized": "1.0.4.0",
+        "version": "1.0.5",
+        "version_normalized": "1.0.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/version.git",
-            "reference": "a77d9123f8e809db3fbdea15038c27a95da4058b"
+            "reference": "ab931d46cd0d3204a91e1b9a40c4bc13032b58e4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/version/zipball/a77d9123f8e809db3fbdea15038c27a95da4058b",
-            "reference": "a77d9123f8e809db3fbdea15038c27a95da4058b",
+            "url": "https://api.github.com/repos/sebastianbergmann/version/zipball/ab931d46cd0d3204a91e1b9a40c4bc13032b58e4",
+            "reference": "ab931d46cd0d3204a91e1b9a40c4bc13032b58e4",
             "shasum": ""
         },
-        "time": "2014-12-15 14:25:24",
+        "time": "2015-02-24 06:35:25",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1197,30 +1232,30 @@
     },
     {
         "name": "sebastian/environment",
-        "version": "1.2.1",
-        "version_normalized": "1.2.1.0",
+        "version": "1.2.2",
+        "version_normalized": "1.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/environment.git",
-            "reference": "6e6c71d918088c251b181ba8b3088af4ac336dd7"
+            "reference": "5a8c7d31914337b69923db26c4221b81ff5a196e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6e6c71d918088c251b181ba8b3088af4ac336dd7",
-            "reference": "6e6c71d918088c251b181ba8b3088af4ac336dd7",
+            "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/5a8c7d31914337b69923db26c4221b81ff5a196e",
+            "reference": "5a8c7d31914337b69923db26c4221b81ff5a196e",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
-            "phpunit/phpunit": "~4.3"
+            "phpunit/phpunit": "~4.4"
         },
-        "time": "2014-10-25 08:00:45",
+        "time": "2015-01-01 10:01:08",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.2.x-dev"
+                "dev-master": "1.3.x-dev"
             }
         },
         "installation-source": "dist",
@@ -1249,17 +1284,17 @@
     },
     {
         "name": "sebastian/diff",
-        "version": "1.2.0",
-        "version_normalized": "1.2.0.0",
+        "version": "1.3.0",
+        "version_normalized": "1.3.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/diff.git",
-            "reference": "5843509fed39dee4b356a306401e9dd1a931fec7"
+            "reference": "863df9687835c62aa423a22412d26fa2ebde3fd3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/5843509fed39dee4b356a306401e9dd1a931fec7",
-            "reference": "5843509fed39dee4b356a306401e9dd1a931fec7",
+            "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/863df9687835c62aa423a22412d26fa2ebde3fd3",
+            "reference": "863df9687835c62aa423a22412d26fa2ebde3fd3",
             "shasum": ""
         },
         "require": {
@@ -1268,11 +1303,11 @@
         "require-dev": {
             "phpunit/phpunit": "~4.2"
         },
-        "time": "2014-08-15 10:29:00",
+        "time": "2015-02-22 15:13:53",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.2-dev"
+                "dev-master": "1.3-dev"
             }
         },
         "installation-source": "dist",
@@ -1369,18 +1404,18 @@
     },
     {
         "name": "symfony/yaml",
-        "version": "v2.6.5",
-        "version_normalized": "2.6.5.0",
+        "version": "v2.6.6",
+        "version_normalized": "2.6.6.0",
         "target-dir": "Symfony/Component/Yaml",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/Yaml.git",
-            "reference": "0cd8e72071e46e15fc072270ae39ea1b66b10a9d"
+            "reference": "174f009ed36379a801109955fc5a71a49fe62dd4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Yaml/zipball/0cd8e72071e46e15fc072270ae39ea1b66b10a9d",
-            "reference": "0cd8e72071e46e15fc072270ae39ea1b66b10a9d",
+            "url": "https://api.github.com/repos/symfony/Yaml/zipball/174f009ed36379a801109955fc5a71a49fe62dd4",
+            "reference": "174f009ed36379a801109955fc5a71a49fe62dd4",
             "shasum": ""
         },
         "require": {
@@ -1389,7 +1424,7 @@
         "require-dev": {
             "symfony/phpunit-bridge": "~2.7"
         },
-        "time": "2015-03-12 10:28:44",
+        "time": "2015-03-30 15:54:10",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1523,31 +1558,31 @@
     },
     {
         "name": "phpunit/phpunit-mock-objects",
-        "version": "2.3.0",
-        "version_normalized": "2.3.0.0",
+        "version": "2.3.1",
+        "version_normalized": "2.3.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-            "reference": "c63d2367247365f688544f0d500af90a11a44c65"
+            "reference": "74ffb87f527f24616f72460e54b595f508dccb5c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/c63d2367247365f688544f0d500af90a11a44c65",
-            "reference": "c63d2367247365f688544f0d500af90a11a44c65",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/74ffb87f527f24616f72460e54b595f508dccb5c",
+            "reference": "74ffb87f527f24616f72460e54b595f508dccb5c",
             "shasum": ""
         },
         "require": {
-            "doctrine/instantiator": "~1.0,>=1.0.1",
+            "doctrine/instantiator": "~1.0,>=1.0.2",
             "php": ">=5.3.3",
             "phpunit/php-text-template": "~1.2"
         },
         "require-dev": {
-            "phpunit/phpunit": "~4.3"
+            "phpunit/phpunit": "~4.4"
         },
         "suggest": {
             "ext-soap": "*"
         },
-        "time": "2014-10-03 05:12:11",
+        "time": "2015-04-02 05:36:41",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1673,17 +1708,17 @@
     },
     {
         "name": "phpunit/php-token-stream",
-        "version": "1.4.0",
-        "version_normalized": "1.4.0.0",
+        "version": "1.4.1",
+        "version_normalized": "1.4.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-            "reference": "db32c18eba00b121c145575fcbcd4d4d24e6db74"
+            "reference": "eab81d02569310739373308137284e0158424330"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/db32c18eba00b121c145575fcbcd4d4d24e6db74",
-            "reference": "db32c18eba00b121c145575fcbcd4d4d24e6db74",
+            "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/eab81d02569310739373308137284e0158424330",
+            "reference": "eab81d02569310739373308137284e0158424330",
             "shasum": ""
         },
         "require": {
@@ -1693,7 +1728,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.2"
         },
-        "time": "2015-01-17 09:51:32",
+        "time": "2015-04-08 04:46:07",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1861,46 +1896,5 @@
             "testing",
             "xunit"
         ]
-    },
-    {
-        "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "552a1b50be4d74b0cd156719ff1b7487d419ce6c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/552a1b50be4d74b0cd156719ff1b7487d419ce6c",
-            "reference": "552a1b50be4d74b0cd156719ff1b7487d419ce6c",
-            "shasum": ""
-        },
-        "require": {
-            "egulias/email-validator": "1.2.*",
-            "php": ">=5.5.9",
-            "symfony/intl": "2.6.*",
-            "symfony/validator": "2.6.*"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-04-01 10:00:10",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "PHP data models that represent a Lasting Power of Attorney",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/develop",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
-        }
     }
 ]
