@@ -1263,8 +1263,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     protected function tearDown ()
     {
         $this->FormFlowChecker = null;
-        
-        parent::tearDown();
     }
 }
 
