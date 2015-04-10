@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Zend\\' => array($vendorDir . '/zendframework/zendframework/library/Zend'),
     'ZF\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/src'),
     'ZFTest\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/test'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
