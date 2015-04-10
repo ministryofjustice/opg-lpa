@@ -13,6 +13,15 @@ class DateCheck implements ServiceLocatorAwareInterface
      * Check that the donor, certificate provider, and attorneys
      * signed the LPA in the correct order
      * 
+     * Expects and array [
+     *  'donor' => 'dd/mm/yyyy',
+     *  'certificate-provider' => 'dd/mm/yyyy',
+     *    'attorneys' => [
+     *      'dd/mm/yyyy',
+     *      'dd/mm/yyyy', // 1 or more attorney dates
+     *    ]
+     *  ];
+     * 
      * @param Lpa $lpa
      * @return array List of errors, or empty array if no errors
      */
@@ -47,16 +56,26 @@ class DateCheck implements ServiceLocatorAwareInterface
      * 
      * strtotime documentation:
      * 
-     * Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator
+     * "Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator
      * between the various components: if the separator is a slash (/), then the 
      * American m/d/y is assumed; whereas if the separator is a dash (-) or a dot (.), 
-     * then the European d-m-y format is assumed.
+     * then the European d-m-y format is assumed."
+     * 
+     * We expect a UK date in the format dd/mm/yyyy so we need to convert this to dd-mm-yyyy
      * 
      * @param string $ukDateString
      * @return number A unix timestamp value
      */
-    public function convertUkDateToTimestamp($ukDateString)
+    public static function convertUkDateToTimestamp($ukDateString)
     {
+        $parts = explode('/', $ukDateString, 3);
+
+        $validFormat = count($parts) == 3 && checkdate($parts[1], $parts[0], $parts[2]);
+        
+        if (!$validFormat) {
+            throw new \Exception('Date not in dd/mm/yyyy format ' . $ukDateString);
+        }
+        
         $date = str_replace('/', '-', $ukDateString);
         $YmdDate = date('Y-m-d', strtotime($date));
         

@@ -1,0 +1,136 @@
+<?php
+namespace ApplicationTest\Model;
+
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Application\Model\Service\Signatures\DateCheck;
+
+/**
+ * FormFlowChecker test case.
+ */
+class DateCheckTest extends AbstractHttpControllerTestCase
+{
+
+    /**
+     * Prepares the environment before running a test.
+     */
+    protected function setUp ()
+    {
+        parent::setUp();
+    }
+    
+    public function testAllSignedInCorrectOrder()
+    {
+        $dates = [
+            'donor' => '14/01/2015',
+            'certificate-provider' => '16/01/2015',
+            'attorneys' => [
+                '18/01/2015',
+                '16/01/2015',
+                '17/01/2015',
+            ],
+        ];
+        
+        $this->assertTrue(DateCheck::checkDates($dates));
+    }
+    
+    public function testDonorSignsAfterCertificateProvider()
+    {
+        $dates = [
+            'donor' => '14/01/2015',
+            'certificate-provider' => '12/01/2015',
+            'attorneys' => [
+                '16/01/2015',
+                '17/01/2015',
+            ],
+        ];
+    
+        $this->assertFalse(DateCheck::checkDates($dates));
+    }
+    
+    public function testCertificateProviderSignsAfterOneOfTheAttorneys()
+    {
+        $dates = [
+            'donor' => '14/01/2015',
+            'certificate-provider' => '17/01/2015',
+            'attorneys' => [
+                '16/01/2015',
+                '18/01/2015',
+            ],
+        ];
+    
+        $this->assertFalse(DateCheck::checkDates($dates));
+    }
+    
+    public function testDonorSignsAfterEveryoneElse()
+    {
+        $dates = [
+            'donor' => '14/02/2015',
+            'certificate-provider' => '17/01/2015',
+            'attorneys' => [
+                '16/01/2015',
+                '18/01/2015',
+            ],
+        ];
+    
+        $this->assertFalse(DateCheck::checkDates($dates));
+    }
+    
+    public function testOneAttorneySignsBeforeEveryoneElse()
+    {
+        $dates = [
+            'donor' => '14/02/2015',
+            'certificate-provider' => '17/01/2015',
+            'attorneys' => [
+                '06/01/2015',
+                '18/01/2015',
+            ],
+        ];
+    
+        $this->assertFalse(DateCheck::checkDates($dates));
+    }
+    
+    public function testExceptionNotThrownWhenCorrectFormatPassed()
+    {
+        $exceptionCaught = false;
+        try {
+            DateCheck::convertUkDateToTimestamp('14/02/2015');
+        } catch (\Exception $e) {
+            $exceptionCaught = true;
+        }
+    
+        $this->assertFalse($exceptionCaught);
+    }
+    
+    public function testExceptionThrownWhenWrongFormatPassed()
+    {
+        $exceptionCaught = false;
+        try {
+            DateCheck::convertUkDateToTimestamp('14-02-2015');
+        } catch (\Exception $e) {
+            $exceptionCaught = true;
+        }
+        
+        $this->assertTrue($exceptionCaught);
+    }
+    
+    public function testExceptionThrownWhenGarbagePassed()
+    {
+        $exceptionCaught = false;
+        try {
+            DateCheck::convertUkDateToTimestamp('asd0asd');
+        } catch (\Exception $e) {
+            $exceptionCaught = true;
+        }
+    
+        $this->assertTrue($exceptionCaught);
+    }
+    
+    /**
+     * Cleans up the environment after running a test.
+     */
+    protected function tearDown ()
+    {
+        parent::tearDown();
+    }
+}
+
