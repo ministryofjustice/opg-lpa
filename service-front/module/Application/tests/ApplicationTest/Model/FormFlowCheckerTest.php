@@ -820,7 +820,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     public function testRouteViewDocsFallback()
     {
         $this->setPayment();
-        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
+        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
     }
     
     public function testReturnToFormType()
@@ -1263,8 +1263,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     protected function tearDown ()
     {
         $this->FormFlowChecker = null;
-        
-        parent::tearDown();
     }
 }
 

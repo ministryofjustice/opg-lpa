@@ -21,12 +21,12 @@ class WhoAreYouController extends AbstractLpaController
     
     public function indexAction()
     {
-        if($this->getLpa()->whoAreYouAnswered == true) {
-            return new ViewModel();
-        }
-        
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
+        if($this->getLpa()->whoAreYouAnswered == true) {
+            return new ViewModel( ['nextRoute'=>$this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )] );
+        }
         
         $form = new WhoAreYouForm();
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));

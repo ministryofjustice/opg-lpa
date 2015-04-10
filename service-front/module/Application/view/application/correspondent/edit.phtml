@@ -6,6 +6,7 @@
     $switcherForm->setAttribute('class', 'form');
     $sCsrf          = $switcherForm->get('secret');
     $switchTo = $switcherForm->get('switch-to-type');
+    $switchTo->setAttributes(['id'=>'switch-to-type', 'class'=>'js-reusable']);
     $switchTo->setOptions([
             'label' => 'Use these details',
             'empty_option' => 'Choose a person',
@@ -65,8 +66,6 @@
 <?= $this->form()->openTag($switcherForm); ?>
 
 <?= $this->formElement($sCsrf) ?>
-<?php if (count($switcherForm->getMessages()) > 0) $this->formElementErrors($sCsrf); ?>
-
 <?= $this->formErrorList($switcherForm); ?>
 
 <div class="role-select group">

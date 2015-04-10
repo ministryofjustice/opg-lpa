@@ -1,8 +1,35 @@
+<?php
+
+$form = $this->form;
+$form->setAttribute('class', 'form');
+
+$email              = $form->get('email');
+$password           = $form->get('password');
+
+$email->setAttributes([
+    'id' => 'email',
+    'autocomplete' => 'off'
+])->setOptions( ['label' => 'Email address'] );
+
+$password->setAttributes([
+    'id' => 'password_current',
+    'autocomplete' => 'off'
+])->setOptions( ['label' => 'Password'] );
+
+$form->prepare();
+
+//---
+
+$formLabel = $this->plugin('formLabel');
+
+?>
 <p>Sign in or <a href="<?= $this->url('register') ?>">create an account</a> to get started.</p>
 
 <div class="account form">
 
-	<form autcomplete="off" class="form" action="<?= $this->url('login') ?>" method="POST">
+    <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
+
+        <?= $this->formElement($form->get('secret')) ?>
 	
         <?php if ( $this->isTimeout ) : ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
@@ -11,29 +38,48 @@
             </div>
         <?php endif; // timed out ?>
         
-        <? if (!empty($error)):  ?>
+        <? if ( !empty($authError)):  ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
               <h1 id="error-heading">Login error</h1>
-              <p><?= $this->escapeHtml($error) ?></p>
+              <p><?= $this->escapeHtml($authError) ?></p>
             </div>
         <? endif; // error ?>
-	
-    	<div class="group ">
-            <label for="signin-email" id="signin-email-label" class="required">Email address</label>
-            <input name="email" type="email" id="signin-email" value="" autocomplete="off">
-        </div>
-        
+
+        <? if ( count($form->getMessages()) > 0) { ?>
+            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
+                <h1 id="error-heading">There was a problem submitting the form</h1>
+                <p>Because of the following problems:</p>
+                <ol>
+                    <?php
+                    $this->formLinkedErrorList($form);
+                    ?>
+                </ol>
+            </div>
+        <? } ?>
+
+        <? $element = $email; ?>
         <div class="group">
-            <label for="signin-password" id="signin-password-label" class="required">Password</label>
-            <input name="password" type="password" id="signin-password" value="" autocomplete="off">
+            <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($element) ?>
+            <?= $this->formElementErrors($element) ?>
         </div>
+
+
+        <? $element = $password; ?>
+        <div class="group">
+            <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($element) ?>
+            <?= $this->formElementErrors($element) ?>
+        </div>
+
     	<p class="action group">
     	  <p class="action group">
              <input type="submit" name="submit" id="signin-form-submit" value="Sign in" class="button">
           </p>
         </p>
-	
-   </form>
+
+    <?= $this->form()->closeTag(); ?>
+
 	<p class="action group">
         <a href="<?php echo $this->url('forgot-password'); ?>" type="submit" name="forgotpw" id="forgotpw-submit" class="link-style">Forgotten your password?</a>
     </p>

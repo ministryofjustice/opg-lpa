@@ -8,12 +8,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
     protected $lpa;
     
+    // map route name to method name
     private $bars = [
         'creation' => [
             'lpa/form-type' => 'type',
@@ -146,11 +146,15 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function instructions()
     {
+        if(($this->lpa->document->instruction === null)&&($this->lpa->document->preference === null)) return null;
+        
         return "Review";
     }
     
     protected function applicant()
     {
+        if($this->lpa->document->whoIsRegistering === null) return null;
+        
         if($this->lpa->document->whoIsRegistering == 'donor') {
             return ['who' => 'donor', 'name' => $this->lpa->document->donor->name->__toString()];
         }
@@ -161,6 +165,8 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function correspondent()
     {
+        if($this->lpa->document->correspondent === null) return null;
+        
         return (($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->__toString():$this->lpa->document->correspondent->company);
     }
     
@@ -170,12 +176,14 @@ abstract class AbstractAccordion extends AbstractHelper
             return "Who was using the LPA tool answered";
         }
         else {
-            return 'Who was using the LPA tool?';
+            return null;
         }
     }
     
     protected function fee()
     {
+        if($this->lpa->payment === null) return null;
+        
         return "Payment";
     }
     

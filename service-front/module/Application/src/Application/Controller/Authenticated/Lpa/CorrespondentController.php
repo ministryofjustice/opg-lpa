@@ -87,7 +87,7 @@ class CorrespondentController extends AbstractLpaController
                     
                     // save correspondent via api
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence([
-                            'who'       => $this->getLpa()->document->whoIsRegistering,
+                            'who'       => (($this->getLpa()->document->whoIsRegistering=='donor')?'donor':'attorney'),
                             'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'address'   => $correspondent->address,
@@ -104,7 +104,7 @@ class CorrespondentController extends AbstractLpaController
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->company),
+                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->name),
                         'address'   => $correspondent->address->__toString(),
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
@@ -138,49 +138,54 @@ class CorrespondentController extends AbstractLpaController
                         case 'me':
                             $userSession = $this->getServiceLocator()->get('UserDetailsSession');
                             
-                            $params = [
+                            $formData = [
                                     'who'=>'other',
                                     'name-title' => $userSession->user->name->title,
                                     'name-first' => $userSession->user->name->first,
                                     'name-last' => $userSession->user->name->last,
                             ];
                             if($userSession->user->address instanceof Address) {
-                                $params += [
+                                $formData += [
                                         'address-address1' => $userSession->user->address->address1,
                                         'address-address2' => $userSession->user->address->address2,
                                         'address-address3' => $userSession->user->address->address3,
                                         'address-postcode' => $userSession->user->address->postcode,
                                 ];
                             }
-                            $correspondentForm->bind($params);
                             break;
                         case 'donor':
-                            $correspondent = $this->getLpa()->document->donor->flatten();
-                            $correspondent['who'] = 'donor';
-                            $correspondentForm->bind($correspondent);
+                            $formData = $this->getLpa()->document->donor->flatten();
+                            $formData['who'] = 'donor';
                             break;
                         default:
                             if(is_numeric($postData['switch-to-type'])) {
                                 foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
                                     if($attorney->id == $postData['switch-to-type']) {
-                                        $correspondent = $attorney->flatten();
+                                        $formData = $attorney->flatten();
                                         if($attorney instanceof TrustCorporation) {
-                                            $correspondent['company'] = $attorney->name;
+                                            $formData['company'] = $attorney->name;
                                         }
-                                        $correspondent['who'] = 'attorney';
-                                        $correspondentForm->bind($correspondent);
+                                        $formData['who'] = 'attorney';
                                         break;
                                     }
                                 }
                             }
                             else {
-                                $correspondentForm->bind(['who'=>'other']);
+                                $formData = ['who'=>'other'];
                             }
                             break;
+                    }
+                    
+                    if ( $this->getRequest()->isXmlHttpRequest() ) {
+                        return new JsonModel($formData);
+                    }
+                    else {
+                        $correspondentForm->bind($formData);
                     }
                 }
             }
             else {
+                // handle correspondent form submission
                 $correspondentForm->setData($postData);
                 if($correspondentForm->isValid()) {
                     
