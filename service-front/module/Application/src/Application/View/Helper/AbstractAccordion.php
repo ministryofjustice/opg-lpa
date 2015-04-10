@@ -153,6 +153,8 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function applicant()
     {
+        if($this->lpa->document->whoIsRegistering === null) return null;
+        
         if($this->lpa->document->whoIsRegistering == 'donor') {
             return ['who' => 'donor', 'name' => $this->lpa->document->donor->name->__toString()];
         }
@@ -163,6 +165,8 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function correspondent()
     {
+        if($this->lpa->document->correspondent === null) return null;
+        
         return (($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->__toString():$this->lpa->document->correspondent->company);
     }
     
@@ -172,7 +176,7 @@ abstract class AbstractAccordion extends AbstractHelper
             return "Who was using the LPA tool answered";
         }
         else {
-            return 'Who was using the LPA tool?';
+            return null;
         }
     }
     
