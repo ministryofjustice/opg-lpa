@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Zend\\' => array($vendorDir . '/zendframework/zendframework/library/Zend'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'Opg\\Lpa\\Logger\\' => array($vendorDir . '/ministryofjustice/opg-lpa-logger/src/Opg/Lpa/Logger'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
