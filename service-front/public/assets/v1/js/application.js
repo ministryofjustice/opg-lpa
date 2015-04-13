@@ -4377,15 +4377,6 @@ $(document).ready(function () {
   $('details').details();
 
   // ====================================================================================
-  // Register - view docs page
-
-  $('.js-clonewarning').click(function () {
-    alert("You've chosen to make an LPA based on a previous LPA.\n\n" +
-      "When you come to enter personal details for the donor, attorney and other roles, there'll be a drop-down menu at the top of each form. You can select any name from this menu and their information will be filled in automatically.\n\n" +
-      "Please note: If you close the browser window or log out while making the new LPA, you won't be able to use this feature when you return. You can still finish making the new LPA, but the drop-down menus won't appear.")
-  });
-
-  // ====================================================================================
   // FORM VALIDATION
 
   body.on('click', 'form [role="alert"] a', function() {
