@@ -211,13 +211,13 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
     /**
      * Clears any cached LPA details for the current user.
-     * This should be called when any amends are made to any v1 LAP.
+     * This should be called when any amends are made to any v1 LPA.
      */
     public function clearLpaCacheForUser(){
 
         $session = $this->getSession();
 
-        unset($session->laps);
+        unset($session->lpas);
 
     }
 
