@@ -3769,7 +3769,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           // increment counter
           i += 1;
           // change the value of the element
-          $el.val(value).change();
+          if(key=='canSign') {
+        	  //for donor canSign checkbox
+        	  if((value === false)) {
+        		  $el.filter('[type=checkbox]').attr('checked', 'checked');
+        	  }
+          }
+          else {
+        	  $el.val(value).change();
+          }
           // if first element changed, save the el
           if (i === 1) {
             $focus = $('[name="' + key + '"]');
