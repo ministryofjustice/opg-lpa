@@ -97,10 +97,12 @@ class AccessController extends AbstractActionController {
             // otherwise assume GET. No others methods are allowed.
             $response = $client->get( 'http://front.local' . $path, $options );
 
+            // If we're deleting an LPA, clear the cache.
             if(preg_match("/^\/service\/delete/", $path)) {
                 $this->getServiceLocator()->get('ProxyDashboard')->clearLpaCacheForUser();
             }
-        }
+
+        } // if
 
         //------------------------------------
         // Build our response from v1's
