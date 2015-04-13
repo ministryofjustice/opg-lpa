@@ -36,6 +36,7 @@ class Registration extends SetPassword {
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
+                array('name' => 'StringToLower'),
             ),
             'validators' => array(
                 array(
