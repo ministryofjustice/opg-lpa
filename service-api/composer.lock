@@ -370,12 +370,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "0cb59092843d51fa73b769d7b962792ebe459e59"
+                "reference": "9a757e4d0f01a1e822e01674fd65f95fceb284e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0cb59092843d51fa73b769d7b962792ebe459e59",
-                "reference": "0cb59092843d51fa73b769d7b962792ebe459e59",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/9a757e4d0f01a1e822e01674fd65f95fceb284e2",
+                "reference": "9a757e4d0f01a1e822e01674fd65f95fceb284e2",
                 "shasum": ""
             },
             "require": {
@@ -401,7 +401,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-04-02 20:34:54"
+            "time": "2015-04-14 10:52:31"
         },
         {
             "name": "nocarrier/hal",
@@ -1210,16 +1210,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.0.15",
+            "version": "2.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67"
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/34cc484af1ca149188d0d9e91412191e398e0b67",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/934fd03eb6840508231a7f73eb8940cf32c3b66c",
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c",
                 "shasum": ""
             },
             "require": {
@@ -1268,7 +1268,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-01-24 10:06:35"
+            "time": "2015-04-11 04:35:00"
         },
         {
             "name": "phpunit/php-file-iterator",

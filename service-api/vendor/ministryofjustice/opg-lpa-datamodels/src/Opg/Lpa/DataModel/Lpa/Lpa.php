@@ -226,7 +226,7 @@ class Lpa extends AbstractData implements CompleteInterface {
 
         // Include these top level fields...
         $data = array_intersect_key( $data, array_flip([
-            'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'user', 'locked', 'document'
+            'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'completedAt', 'user', 'locked', 'document'
         ]));
 
         // Include these document level fields...
