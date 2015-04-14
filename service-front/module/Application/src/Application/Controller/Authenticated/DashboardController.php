@@ -6,6 +6,7 @@ use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
+use Zend\Session\Container;
 
 class DashboardController extends AbstractAuthenticatedController
 {
@@ -62,6 +63,8 @@ class DashboardController extends AbstractAuthenticatedController
         if( ($seedId = $this->params()->fromRoute('lpa-id')) != null ){
 
             $result = $this->getLpaApplicationService()->setSeed( $newLpaId, (int)$seedId );
+            
+            $this->resetSessionCloneData($seedId);
 
             if( $result !== true ){
                 $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');

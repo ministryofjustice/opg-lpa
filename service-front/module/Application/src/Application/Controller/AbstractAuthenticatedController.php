@@ -7,6 +7,7 @@ use RuntimeException;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container as SessionContainer;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Zend\Session\Container;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {
@@ -169,5 +170,19 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         return true;
 
     } // function
+    
+    /**
+     * delete cloned data for this seed id from session container if it exists. 
+     * to make sure clone data will be loaded freshly when actor form is rendered.
+     * 
+     * @param int $seedId
+     */
+    protected function resetSessionCloneData($seedId)
+    {
+        $cloneContainer = new Container('clone');
+        if($cloneContainer->offsetExists($seedId)) {
+            unset($cloneContainer->$seedId);
+        }
+    }
 
 } // class
