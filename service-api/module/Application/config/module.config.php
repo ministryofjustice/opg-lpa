@@ -156,6 +156,7 @@ return [
             'resource-notified-people'                  => 'Application\Model\Rest\NotifiedPeople\Resource',
             'resource-repeat-case-number'               => 'Application\Model\Rest\RepeatCaseNumber\Resource',
             'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
+            'resource-metadata'                         => 'Application\Model\Rest\Metadata\Resource',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
