@@ -27,9 +27,10 @@
   <table id="savedforms" class="lpa-list">
   <thead>
   <tr>
-    <th>ID/Version</th>
+    <th>ID</th>
     <th>Donor</th>
-    <th>LPA</th>
+    <th>Type</th>
+    <th>Progress</th>
     <th>Last saved on</th>
     <th>&nbsp;</th>
   </tr>
@@ -37,10 +38,11 @@
   <tbody>
   <?php foreach($this->lpas as $lpa): ?>
       <tr>
-      <td><?php echo ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id ?></td>
-      <td><?php echo $lpa->donor; ?></td>
-      <td><?php echo ($lpa->type == 'property-and-financial') ? 'Property and financial affairs' : (($lpa->type == 'health-and-welfare')?'Health and welfare':'') ?></td>
-      <td><?php echo $lpa->updatedAt->format('M jS, Y'); ?></td>
+      <td><?= ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id ?></td>
+      <td><?= $lpa->donor; ?></td>
+      <td><?= ($lpa->type == 'property-and-financial') ? 'PF' : (($lpa->type == 'health-and-welfare')?'HW':'') ?></td>
+      <td><?= $lpa->progress ?></td>
+      <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
         <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) ?>">Continue</a>
