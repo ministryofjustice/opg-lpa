@@ -135,7 +135,7 @@ class DashboardController extends AbstractAuthenticatedController
 
             $obj->updatedAt = $lpa->updatedAt;
 
-            $obj->status = 'Started';
+            $obj->progress = ($lpa->completedAt instanceof \DateTime)?'Completed':(($lpa->createdAt instanceof \DateTime)?'Created':'Started');
 
             $lpas[] = $obj;
         }
