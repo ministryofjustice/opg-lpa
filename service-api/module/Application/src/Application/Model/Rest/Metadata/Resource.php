@@ -68,7 +68,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $this->updateLpa( $lpa );
 
-        return new Entity( $lpa->document->metadata, $lpa );
+        return new Entity( $lpa->metadata, $lpa );
 
     } // function
 
@@ -91,7 +91,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $validation = $document->validate();
+        $validation = $lpa->validate();
 
         if( $validation->hasErrors() ){
             return new ValidationApiProblem( $validation );
