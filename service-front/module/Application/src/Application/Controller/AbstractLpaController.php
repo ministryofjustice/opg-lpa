@@ -160,6 +160,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             
             // get seed data from the API
             $seedData = $this->getLpaApplicationService()->getSeedDetails($this->lpa->id);
+            
             if(!$seedData) {
                 return null;
             }
@@ -171,7 +172,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         
         $seedData = $cloneContainer->$seedId;
         
-        // ordering the data
+        // ordering and filtering the data 
         $seedDetails = [];
         foreach($seedData as $type => $actorData) {
             if($trustOnly) {
@@ -181,7 +182,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                             if($singleActorData['type'] == 'trust') {
                                 $seedDetails[] = [
                                         'label' => $singleActorData['name'] . ' (was a Primary Attorney)',
-                                        'data' => $singleActorData,
+                                        'data' => $this->seedDataFilter($singleActorData),
                                 ];
                                 
                                 // only one trust can be in an LPA
@@ -194,7 +195,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                             if($singleActorData['type'] == 'trust') {
                                 $seedDetails[] = [
                                         'label' => $singleActorData['name'] . ' (was a Replacement Attorney)',
-                                        'data' => $singleActorData,
+                                        'data' => $this->seedDataFilter($singleActorData),
                                 ];
                                 
                                 // only one trust can be in an LPA
@@ -209,21 +210,21 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                     case 'donor':
                         $seedDetails[] = [
                         'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Donor)',
-                        'data' => $actorData,
+                        'data' => $this->seedDataFilter($actorData),
                         ];
                         break;
                     case 'correspondent':
                         if($actorData['who'] == 'other') {
                             $seedDetails[] = [
                             'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Correspondent)',
-                            'data' => $actorData,
+                            'data' => $this->seedDataFilter($actorData),
                             ];
                         }
                         break;
                     case 'certificateProvider':
                         $seedDetails[] = [
                         'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Certificate Provider)',
-                        'data' => $actorData,
+                        'data' => $this->seedDataFilter($actorData),
                         ];
                         break;
                     case 'primaryAttorneys':
@@ -231,7 +232,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                             if($singleActorData['type'] == 'trust') continue;
                             $seedDetails[] = [
                                     'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a Primary Attorney)',
-                                    'data' => $singleActorData,
+                                    'data' => $this->seedDataFilter($singleActorData),
                             ];
                         }
                         break;
@@ -240,7 +241,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                             if($singleActorData['type'] == 'trust') continue;
                             $seedDetails[] = [
                                     'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a Replacement Attorney)',
-                                    'data' => $singleActorData,
+                                    'data' => $this->seedDataFilter($singleActorData),
                             ];
                         }
                         break;
@@ -248,7 +249,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                         foreach($actorData as $singleActorData) {
                             $seedDetails[] = [
                                     'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a person to be notified)',
-                                    'data' => $singleActorData,
+                                    'data' => $this->seedDataFilter($singleActorData),
                             ];
                         }
                         break;
@@ -258,6 +259,33 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         }
         
         return $seedDetails;
+    }
+    
+    /**
+     * Filtering seed details
+     * 
+     * @param array $seedData
+     * @return array
+     */
+    private function seedDataFilter($seedData)
+    {
+        $filteredData = [];
+        foreach($seedData as $name => $value) {
+            switch($name) {
+                case "name":
+                case "otherNames":
+                case "address":
+                case "dob":
+                case "email":
+                case "phone":
+                    $filteredData[$name] = $value;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        return $filteredData;
     }
     
     /**
