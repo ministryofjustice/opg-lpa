@@ -13,7 +13,6 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Application\Form\Lpa\DateCheckForm;
 use Application\Model\Service\Signatures\DateCheck;
-use Zend\Stdlib\Parameters;
 
 class DateCheckController extends AbstractLpaController
 {
@@ -28,14 +27,15 @@ class DateCheckController extends AbstractLpaController
         foreach ($lpa->get('document')->get('primaryAttorneys') as $attorney) {
             $attorneyNames[] = $attorney->get('name');
         }
-
+        
+        $replacemntAttorneyNames = [];
+        foreach ($lpa->get('document')->get('replacementAttorneys') as $ra) {
+            $replacemntAttorneyNames[] = $ra->get('name');
+        }
+        
         $form = new DateCheckForm($lpa);
         
-        $viewParams = [
-            'donorName' => $lpa->get('document')->get('donor')->get('name'),
-            'certificateProviderName' => $lpa->get('document')->get('certificateProvider')->get('name'),
-            'attorneyNames' => $attorneyNames,
-        ];
+        $viewParams = [];
         
         if($this->request->isPost()) {
             
@@ -46,12 +46,13 @@ class DateCheckController extends AbstractLpaController
             $postArray = $post->toArray();
 
             if($form->isValid()) {
-                $attorneyNumber = 0;
                 $attorneySignatureDates = [];
-                while (isset($postArray['sign-date-attorney-' . $attorneyNumber])) {
-                    $attorneySignatureDates[] = $postArray['sign-date-attorney-' . $attorneyNumber];
-                    $attorneyNumber++;
+                foreach($postArray as $name => $date) {
+                    if(preg_match('/sign-date-(attorney|replacement-attorney)-\d/', $name)) {
+                        $attorneySignatureDates[] = $date;
+                    }
                 }
+                
                 $viewParams['datesAreOk'] = DateCheck::checkDates([
                     'donor' => $postArray['sign-date-donor'],
                     'certificate-provider' => $postArray['sign-date-certificate-provider'],

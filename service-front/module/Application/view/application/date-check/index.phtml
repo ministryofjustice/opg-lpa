@@ -1,17 +1,23 @@
 <?php
+    use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
     $form       = $this->form;
     
-    $donor = $form->get('sign-date-donor');
-    $donor->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    $donorElement = $form->get('sign-date-donor');
+    $donorElement->setAttributes(['placeholder' => 'DD/MM/YYYY']);
     
-    $certificateProvider = $form->get('sign-date-certificate-provider');
-    $certificateProvider->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    $certificateProviderElement = $form->get('sign-date-certificate-provider');
+    $certificateProviderElement->setAttributes(['placeholder' => 'DD/MM/YYYY']);
     
-    $numAttorneys = count($this->attorneyNames);
-    $attorney = [];
-    for ($i=0; $i<$numAttorneys; $i++) {
-        $attorney[$i] = $form->get('sign-date-attorney-' . $i);
-        $attorney[$i]->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    $primaryAttorneyElements = [];
+    foreach ($this->lpa->document->primaryAttorneys as $idx => $attorney) {
+        $primaryAttorneyElements[$idx] = $form->get('sign-date-attorney-' . $idx);
+        $primaryAttorneyElements[$idx]->setAttributes(['placeholder' => 'DD/MM/YYYY']);
+    }
+    
+    $replacementAttorneyElements = [];
+    foreach ($this->lpa->document->replacementAttorneys as $idx => $attorney) {
+        $replacementAttorneyElements[$idx] = $form->get('sign-date-replacement-attorney-' . $idx);
+        $replacementAttorneyElements[$idx]->setAttributes(['placeholder' => 'DD/MM/YYYY']);
     }
     
     $csrf       = $form->get('secret');
@@ -56,52 +62,70 @@
     
 <div class="person-summary group">
 <div class="person">
-	<h3><?= $this->donorName ?> (the donor)</h3>
+	<h3><?= $this->lpa->document->donor->name ?> (the donor)</h3>
 	<p class="date-field">
 		<label for="donor">
-			This person signed part A of the LPA on
+			This person signed Section 9 of the LPA on
 			
-			<?= $this->formElement($donor) ?>
-            <?= $this->formElementErrors($donor) ?>
+			<?= $this->formElement($donorElement) ?>
+            <?= $this->formElementErrors($donorElement) ?>
             
         </label>
 	</p>
 		<div class="application-notice help-notice">
-  		<p class="hint">Remember, if any continuation sheets were used they must also<br> have been signed at the same time as or before the donor signed part A.</p>
+  		<p class="hint">Remember, if any continuation sheets 1 or 2 were used they must also<br> have been signed by the donor at the same time as or before the donor signed Section 9.</p>
 	</div>
 </div>
 </div>
 <div class="person-summary group">
   <div class="person">
-      <h3><?= $this->certificateProviderName ?> (certificate provider)</h3>
+      <h3><?= $this->lpa->document->certificateProvider->name ?> (certificate provider)</h3>
       <p class="date-field">
-      	<label for="certificateProvider_0">This person signed part B of the LPA on
+      	<label for="certificateProvider_0">This person signed Section 10 of the LPA on
       	
-            <?= $this->formElement($certificateProvider) ?>
-            <?= $this->formElementErrors($certificateProvider) ?>
+            <?= $this->formElement($certificateProviderElement) ?>
+            <?= $this->formElementErrors($certificateProviderElement) ?>
             
         </label>
       </p>
   </div>
 </div>
 
-<?php for ($i=0; $i<$numAttorneys; $i++) : ?>
+<?php foreach ($this->lpa->document->primaryAttorneys as $idx => $attorney) : ?>
 
     <div class="person-summary group">
         <div class="person">
-  			<h3><?= $this->attorneyNames[$i]; ?> (attorney)</h3>
+  			<h3><?= $attorney->name ?> (attorney)</h3>
 				<p class="date-field">
-			<label for="attorney_0">This person signed part C of the LPA on
-			     <?= $this->formElement($attorney[$i]) ?>
-                 <?= $this->formElementErrors($attorney[$i]) ?>
+			<label for="attorney_0">
+			     <?php if($attorney instanceof Human): ?> This person signed Section 11 of the LPA on <?php else:?>This corporation signed Continuation Sheet 4 of the LPA on<?php endif;?>
+			     <?= $this->formElement($primaryAttorneyElements[$idx]) ?>
+                 <?= $this->formElementErrors($primaryAttorneyElements[$idx]) ?>
             </label>
 		</p>
 	  </div>
 </div>
 
-<?php endfor; ?>
+<?php endforeach; ?>
 
-		<div class="accordion-actions group">
+<?php foreach ($this->lpa->document->replacementAttorneys as $idx => $attorney) : ?>
+
+    <div class="person-summary group">
+        <div class="person">
+  			<h3><?= $attorney->name ?> (replacement attorney)</h3>
+				<p class="date-field">
+			<label for="attorney_0">
+			     <?php if($attorney instanceof Human): ?> This person signed Section 11 of the LPA on <?php else:?>This corporation signed Continuation Sheet 4 of the LPA on<?php endif;?> 
+			     <?= $this->formElement($replacementAttorneyElements[$idx]) ?>
+                 <?= $this->formElementErrors($replacementAttorneyElements[$idx]) ?>
+            </label>
+		</p>
+	  </div>
+</div>
+
+<?php endforeach; ?>
+
+<div class="accordion-actions group">
             <p><?= $this->formElement($submit) ?></p>
         </div>
         
