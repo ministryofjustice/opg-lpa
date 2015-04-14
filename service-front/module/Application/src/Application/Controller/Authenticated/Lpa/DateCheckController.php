@@ -23,16 +23,6 @@ class DateCheckController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $attorneyNames = [];
-        foreach ($lpa->get('document')->get('primaryAttorneys') as $attorney) {
-            $attorneyNames[] = $attorney->get('name');
-        }
-        
-        $replacemntAttorneyNames = [];
-        foreach ($lpa->get('document')->get('replacementAttorneys') as $ra) {
-            $replacemntAttorneyNames[] = $ra->get('name');
-        }
-        
         $form = new DateCheckForm($lpa);
         
         $viewParams = [];
