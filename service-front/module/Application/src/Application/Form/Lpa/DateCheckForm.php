@@ -2,8 +2,6 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
 
 class DateCheckForm extends AbstractForm
 {
@@ -34,12 +32,14 @@ class DateCheckForm extends AbstractForm
     
     public function __construct (Lpa $lpa, $formName = 'type-form')
     {
-        $numAttorneys = count($lpa->get('document')->get('primaryAttorneys'));
-        
-        for ($i=0; $i<$numAttorneys; $i++) {
-            $this->formElements['sign-date-attorney-' . $i] = [];
+        foreach($lpa->document->primaryAttorneys as $idx => $attorney) {
+            $this->formElements['sign-date-attorney-' . $idx] = [];
         }
-
+        
+        foreach($lpa->document->replacementAttorneys as $idx => $attorney) {
+            $this->formElements['sign-date-replacement-attorney-' . $idx] = [];
+        }
+        
         foreach ($this->formElements as $key => &$element) {
             if ($key != 'submit') {
                 $element['type'] = 'Zend\Form\Element';
