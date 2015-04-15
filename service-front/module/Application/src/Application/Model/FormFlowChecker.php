@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Application\Model\Service\Lpa\Metadata;
 
 class FormFlowChecker extends StateChecker
 {
@@ -462,7 +463,7 @@ class FormFlowChecker extends StateChecker
     {
         if($this->lpaHasPrimaryAttorney() && (
             ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends())
-            || ((count($this->lpa->document->replacementAttorneys) == 0) && is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-replacement-attorneys', $this->lpa->metadata) && ($this->lpa->metadata['lpa-has-no-replacement-attorneys']==true))
+            || ((count($this->lpa->document->replacementAttorneys) == 0) && is_array($this->lpa->metadata) && array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->lpa->metadata) && ($this->lpa->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]==true))
             || ((count($this->lpa->document->replacementAttorneys) == 1) && (count($this->lpa->document->primaryAttorneys) == 1))
             || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly())
             || ($this->lpaHasMultipleReplacementAttorneys() && (count($this->lpa->document->primaryAttorneys) == 1) && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())

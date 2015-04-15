@@ -15,6 +15,7 @@ use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Application\Model\Service\Lpa\Metadata;
 
 /**
  * FormFlowChecker test case.
@@ -669,7 +670,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->addCertificateProvider();
         $this->lpa->document->peopleToNotify = [];
-        $this->lpa->metadata['lpa-has-no-people-to-notify'] = true;
+        $this->lpa->metadata[Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY] = true;
         $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
         
         $this->addPeopleToNotify();
