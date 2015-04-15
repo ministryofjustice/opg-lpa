@@ -127,6 +127,7 @@ class Module{
                 'Signatures'            => 'Application\Model\Service\Feedback\Signatures',
                 'Guidance'              => 'Application\Model\Service\Guidance\Guidance',
                 'ApplicationList'       => 'Application\Model\Service\Lpa\ApplicationList',
+                'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
             ],
             'factories' => [
