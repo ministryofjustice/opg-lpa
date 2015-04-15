@@ -1633,6 +1633,45 @@ class Client
     {
         $this->userId = $userId;
     }
+    
+    /**
+     * Returns metadata of for give LPA id. 
+     *
+     * @param string $lpaId
+     * @return array
+     */
+    public function getMetaData($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'metadata', $this);
+        return $helper->getRawJson();
+    }
+    
+    /**
+     * Sets metadata for give LPA id
+     *
+     * @param string $lpaId
+     * @param array $metadata
+     * @return boolean
+     */
+    public function setMetaData($lpaId, $metadata)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'metadata', $this);
+        return $helper->setResource(json_encode($metadata));
+    }
+    
+    /**
+     * Deletes metadata for given LPA id
+     *
+     * @param string $lpaId
+     * @return boolean
+     */
+    public function deleteMetaData($lpaId)
+    {
+        $helper = new ApplicationResourceService($lpaId, 'metadata', $this);
+        return $helper->deleteResource();
+    }
+    
+    
 
     /**
      * Log the response of the API call and set some internal member vars

@@ -14,6 +14,18 @@ class ClientSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
     
+    function it_can_set_and_get_and_delete_metadata()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        
+        $lpaId = $this->createApplication();
+        
+        $this->setMetaData($lpaId, ['test-meta' => 'data'])->shouldBe(true);
+        $this->getMetaData($lpaId)['test-meta']->shouldBe('data');
+        $this->deleteMetaData($lpaId)->shouldBe(true);
+        $this->getMetaData($lpaId)->shouldBe(null);
+    }
+    
     function it_can_set_and_get_the_lpa_seed()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);

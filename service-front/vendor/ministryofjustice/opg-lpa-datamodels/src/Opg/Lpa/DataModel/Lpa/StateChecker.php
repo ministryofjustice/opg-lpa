@@ -86,7 +86,7 @@ class StateChecker {
      */
     public function canGenerateLP3(){
         $lpa = $this->getLpa();
-        return $this->isStateCompleted() && is_array($lpa->document->peopleToNotify) && (count($lpa->document->peopleToNotify) > 0);
+        return $this->isStateCompleted() && (count($lpa->document->peopleToNotify) > 0);
     }
 
     /**
@@ -217,7 +217,7 @@ class StateChecker {
     protected function lpaHasFinishedCreation()
     {
         return ($this->lpaHasCertificateProvider() &&
-                is_array($this->lpa->document->peopleToNotify) && 
+                $this->routePeopleToNotifyHasBeenAccessed() && 
                 (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)));
     }
     
@@ -233,19 +233,17 @@ class StateChecker {
     
     protected function routePeopleToNotifyHasBeenAccessed()
     {
-        return ($this->lpa->document->peopleToNotify !== null);
+        return (count($this->lpa->document->peopleToNotify) > 0) || (is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-people-to-notify', $this->lpa->metadata) && ($this->lpa->metadata['lpa-has-no-people-to-notify'] == true));
     }
     
     protected function lpaHasPeopleToNotify($index = null)
     {
         if($index === null) {
             return ($this->lpaHasCertificateProvider()
-                && is_array($this->lpa->document->peopleToNotify)
                 && ( count( $this->lpa->document->peopleToNotify ) > 0 ) );
         }
         else {
             return ($this->lpaHasCertificateProvider()
-                && is_array($this->lpa->document->peopleToNotify)
                 && array_key_exists($index, $this->lpa->document->peopleToNotify)
                 && ($this->lpa->document->peopleToNotify[$index] instanceof NotifiedPerson));
         }
@@ -258,7 +256,7 @@ class StateChecker {
 
     protected function routeReplacementAttorneyHasBeenAccessed()
     {
-        return ($this->lpa->document->replacementAttorneys !== null);
+        return (count($this->lpa->document->replacementAttorneys) > 0) || (is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-replacement-attorneys', $this->lpa->metadata) && ($this->lpa->metadata['lpa-has-no-replacement-attorneys'] == true));
     }
 
     protected function lpaHowReplacementAttorneysMakeDecisionHasValue()
@@ -393,11 +391,10 @@ class StateChecker {
     {
         if($index === null) {
             return (($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining())
-                && is_array($this->lpa->document->primaryAttorneys) && (count( $this->lpa->document->primaryAttorneys ) > 0 ) );
+                && (count( $this->lpa->document->primaryAttorneys ) > 0 ) );
         }
         else {
             return (($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining())
-                && is_array($this->lpa->document->primaryAttorneys) 
                 && array_key_exists($index, $this->lpa->document->primaryAttorneys)
                 && ($this->lpa->document->primaryAttorneys[$index] instanceof AbstractAttorney));
         }
@@ -408,37 +405,29 @@ class StateChecker {
         if($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining()) {
 
             if($whichGroup == 'primary') {
-                if(is_array($this->lpa->document->primaryAttorneys)) {
-                    foreach($this->lpa->document->primaryAttorneys as $attorney) {
-                        if($attorney instanceof TrustCorporation) {
-                            return true;
-                        }
+                foreach($this->lpa->document->primaryAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
                     }
                 }
             }
             elseif($whichGroup == 'replacement') {
-                if(is_array($this->lpa->document->replacementAttorneys)) {
-                    foreach($this->lpa->document->replacementAttorneys as $attorney) {
-                        if($attorney instanceof TrustCorporation) {
-                            return true;
-                        }
+                foreach($this->lpa->document->replacementAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
                     }
                 }
             }
             else {
-                if(is_array($this->lpa->document->primaryAttorneys)) {
-                    foreach($this->lpa->document->primaryAttorneys as $attorney) {
-                        if($attorney instanceof TrustCorporation) {
-                            return true;
-                        }
+                foreach($this->lpa->document->primaryAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
                     }
                 }
                 
-                if(is_array($this->lpa->document->replacementAttorneys)) {
-                    foreach($this->lpa->document->replacementAttorneys as $attorney) {
-                        if($attorney instanceof TrustCorporation) {
-                            return true;
-                        }
+                foreach($this->lpa->document->replacementAttorneys as $attorney) {
+                    if($attorney instanceof TrustCorporation) {
+                        return true;
                     }
                 }
             }

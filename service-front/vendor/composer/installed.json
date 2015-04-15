@@ -321,47 +321,6 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "0cb59092843d51fa73b769d7b962792ebe459e59"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0cb59092843d51fa73b769d7b962792ebe459e59",
-            "reference": "0cb59092843d51fa73b769d7b962792ebe459e59",
-            "shasum": ""
-        },
-        "require": {
-            "egulias/email-validator": "1.2.*",
-            "php": ">=5.5.9",
-            "symfony/intl": "2.6.*",
-            "symfony/validator": "2.6.*"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-04-02 20:34:54",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "PHP data models that represent a Lasting Power of Attorney",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
-        }
-    },
-    {
         "name": "react/promise",
         "version": "v2.2.0",
         "version_normalized": "2.2.0.0",
@@ -579,12 +538,12 @@
         "source": {
             "type": "git",
             "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "6075e6d2853e8f6b23ee659b42268d0e2cfc446b"
+            "reference": "47da6076c8723789ec8ce71e55bc0c755dc334dc"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/6075e6d2853e8f6b23ee659b42268d0e2cfc446b",
-            "reference": "6075e6d2853e8f6b23ee659b42268d0e2cfc446b",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/47da6076c8723789ec8ce71e55bc0c755dc334dc",
+            "reference": "47da6076c8723789ec8ce71e55bc0c755dc334dc",
             "shasum": ""
         },
         "require": {
@@ -596,9 +555,9 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-04-01 12:54:54",
+        "time": "2015-04-14 16:05:49",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
@@ -715,6 +674,125 @@
         ]
     },
     {
+        "name": "zendframework/zendframework",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/zf2.git",
+            "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/zf2/zipball/628b809fcadcd326f2074a9815e5b1fce57077ef",
+            "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.23",
+            "zendframework/zendxml": "~1.0-dev"
+        },
+        "replace": {
+            "zendframework/zend-authentication": "self.version",
+            "zendframework/zend-barcode": "self.version",
+            "zendframework/zend-cache": "self.version",
+            "zendframework/zend-captcha": "self.version",
+            "zendframework/zend-code": "self.version",
+            "zendframework/zend-config": "self.version",
+            "zendframework/zend-console": "self.version",
+            "zendframework/zend-crypt": "self.version",
+            "zendframework/zend-db": "self.version",
+            "zendframework/zend-debug": "self.version",
+            "zendframework/zend-di": "self.version",
+            "zendframework/zend-dom": "self.version",
+            "zendframework/zend-escaper": "self.version",
+            "zendframework/zend-eventmanager": "self.version",
+            "zendframework/zend-feed": "self.version",
+            "zendframework/zend-file": "self.version",
+            "zendframework/zend-filter": "self.version",
+            "zendframework/zend-form": "self.version",
+            "zendframework/zend-http": "self.version",
+            "zendframework/zend-i18n": "self.version",
+            "zendframework/zend-inputfilter": "self.version",
+            "zendframework/zend-json": "self.version",
+            "zendframework/zend-ldap": "self.version",
+            "zendframework/zend-loader": "self.version",
+            "zendframework/zend-log": "self.version",
+            "zendframework/zend-mail": "self.version",
+            "zendframework/zend-math": "self.version",
+            "zendframework/zend-memory": "self.version",
+            "zendframework/zend-mime": "self.version",
+            "zendframework/zend-modulemanager": "self.version",
+            "zendframework/zend-mvc": "self.version",
+            "zendframework/zend-navigation": "self.version",
+            "zendframework/zend-paginator": "self.version",
+            "zendframework/zend-permissions-acl": "self.version",
+            "zendframework/zend-permissions-rbac": "self.version",
+            "zendframework/zend-progressbar": "self.version",
+            "zendframework/zend-resources": "self.version",
+            "zendframework/zend-serializer": "self.version",
+            "zendframework/zend-server": "self.version",
+            "zendframework/zend-servicemanager": "self.version",
+            "zendframework/zend-session": "self.version",
+            "zendframework/zend-soap": "self.version",
+            "zendframework/zend-stdlib": "self.version",
+            "zendframework/zend-tag": "self.version",
+            "zendframework/zend-test": "self.version",
+            "zendframework/zend-text": "self.version",
+            "zendframework/zend-uri": "self.version",
+            "zendframework/zend-validator": "self.version",
+            "zendframework/zend-version": "self.version",
+            "zendframework/zend-view": "self.version",
+            "zendframework/zend-xmlrpc": "self.version"
+        },
+        "require-dev": {
+            "doctrine/annotations": "~1.0",
+            "fabpot/php-cs-fixer": "~1.0",
+            "ircmaxell/random-lib": "~1.1",
+            "mikey179/vfsstream": "~1.2",
+            "phpunit/phpcov": "~2.0",
+            "phpunit/phpunit": "~4.0",
+            "satooshi/php-coveralls": "dev-master"
+        },
+        "suggest": {
+            "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
+            "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
+            "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
+            "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
+            "zendframework/zendpdf": "ZendPdf for creating PDF representations of barcodes",
+            "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
+        },
+        "time": "2015-03-31 15:39:14",
+        "bin": [
+            "bin/classmap_generator.php",
+            "bin/pluginmap_generator.php",
+            "bin/templatemap_generator.php"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.3-dev",
+                "dev-develop": "2.4-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Zend\\": "library/Zend/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "Zend Framework 2",
+        "homepage": "http://framework.zend.com/",
+        "keywords": [
+            "framework",
+            "zf2"
+        ]
+    },
+    {
         "name": "ministryofjustice/opg-lpa-logger",
         "version": "dev-develop",
         "version_normalized": "dev-develop",
@@ -740,7 +818,7 @@
         },
         "time": "2015-04-01 13:24:45",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"
@@ -810,17 +888,17 @@
     },
     {
         "name": "sendgrid/smtpapi",
-        "version": "0.4.0",
-        "version_normalized": "0.4.0.0",
+        "version": "0.5.0",
+        "version_normalized": "0.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sendgrid/smtpapi-php.git",
-            "reference": "81cac4dc99439cd057adae65c4c79698dc8b62ee"
+            "reference": "05ccf57bad5d1524e479b6dc0a2dfade88b3fbe5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/81cac4dc99439cd057adae65c4c79698dc8b62ee",
-            "reference": "81cac4dc99439cd057adae65c4c79698dc8b62ee",
+            "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/05ccf57bad5d1524e479b6dc0a2dfade88b3fbe5",
+            "reference": "05ccf57bad5d1524e479b6dc0a2dfade88b3fbe5",
             "shasum": ""
         },
         "require": {
@@ -832,7 +910,7 @@
         "require-dev": {
             "phpunit/phpunit": "3.7.*"
         },
-        "time": "2015-03-27 18:45:51",
+        "time": "2015-04-14 02:37:45",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2202,17 +2280,17 @@
     },
     {
         "name": "phpunit/php-code-coverage",
-        "version": "2.0.15",
-        "version_normalized": "2.0.15.0",
+        "version": "2.0.16",
+        "version_normalized": "2.0.16.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-            "reference": "34cc484af1ca149188d0d9e91412191e398e0b67"
+            "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/34cc484af1ca149188d0d9e91412191e398e0b67",
-            "reference": "34cc484af1ca149188d0d9e91412191e398e0b67",
+            "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/934fd03eb6840508231a7f73eb8940cf32c3b66c",
+            "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c",
             "shasum": ""
         },
         "require": {
@@ -2232,7 +2310,7 @@
             "ext-xdebug": ">=2.2.1",
             "ext-xmlwriter": "*"
         },
-        "time": "2015-01-24 10:06:35",
+        "time": "2015-04-11 04:35:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2339,122 +2417,44 @@
         ]
     },
     {
-        "name": "zendframework/zendframework",
-        "version": "2.4.0",
-        "version_normalized": "2.4.0.0",
+        "name": "ministryofjustice/opg-lpa-datamodels",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "https://github.com/zendframework/zf2.git",
-            "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef"
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
+            "reference": "2bfcc464bf68db45a789cbc86c2c87c97af30e6b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zf2/zipball/628b809fcadcd326f2074a9815e5b1fce57077ef",
-            "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/2bfcc464bf68db45a789cbc86c2c87c97af30e6b",
+            "reference": "2bfcc464bf68db45a789cbc86c2c87c97af30e6b",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.23",
-            "zendframework/zendxml": "~1.0-dev"
-        },
-        "replace": {
-            "zendframework/zend-authentication": "self.version",
-            "zendframework/zend-barcode": "self.version",
-            "zendframework/zend-cache": "self.version",
-            "zendframework/zend-captcha": "self.version",
-            "zendframework/zend-code": "self.version",
-            "zendframework/zend-config": "self.version",
-            "zendframework/zend-console": "self.version",
-            "zendframework/zend-crypt": "self.version",
-            "zendframework/zend-db": "self.version",
-            "zendframework/zend-debug": "self.version",
-            "zendframework/zend-di": "self.version",
-            "zendframework/zend-dom": "self.version",
-            "zendframework/zend-escaper": "self.version",
-            "zendframework/zend-eventmanager": "self.version",
-            "zendframework/zend-feed": "self.version",
-            "zendframework/zend-file": "self.version",
-            "zendframework/zend-filter": "self.version",
-            "zendframework/zend-form": "self.version",
-            "zendframework/zend-http": "self.version",
-            "zendframework/zend-i18n": "self.version",
-            "zendframework/zend-inputfilter": "self.version",
-            "zendframework/zend-json": "self.version",
-            "zendframework/zend-ldap": "self.version",
-            "zendframework/zend-loader": "self.version",
-            "zendframework/zend-log": "self.version",
-            "zendframework/zend-mail": "self.version",
-            "zendframework/zend-math": "self.version",
-            "zendframework/zend-memory": "self.version",
-            "zendframework/zend-mime": "self.version",
-            "zendframework/zend-modulemanager": "self.version",
-            "zendframework/zend-mvc": "self.version",
-            "zendframework/zend-navigation": "self.version",
-            "zendframework/zend-paginator": "self.version",
-            "zendframework/zend-permissions-acl": "self.version",
-            "zendframework/zend-permissions-rbac": "self.version",
-            "zendframework/zend-progressbar": "self.version",
-            "zendframework/zend-resources": "self.version",
-            "zendframework/zend-serializer": "self.version",
-            "zendframework/zend-server": "self.version",
-            "zendframework/zend-servicemanager": "self.version",
-            "zendframework/zend-session": "self.version",
-            "zendframework/zend-soap": "self.version",
-            "zendframework/zend-stdlib": "self.version",
-            "zendframework/zend-tag": "self.version",
-            "zendframework/zend-test": "self.version",
-            "zendframework/zend-text": "self.version",
-            "zendframework/zend-uri": "self.version",
-            "zendframework/zend-validator": "self.version",
-            "zendframework/zend-version": "self.version",
-            "zendframework/zend-view": "self.version",
-            "zendframework/zend-xmlrpc": "self.version"
+            "egulias/email-validator": "1.2.*",
+            "php": ">=5.5.9",
+            "symfony/intl": "2.6.*",
+            "symfony/validator": "2.6.*"
         },
         "require-dev": {
-            "doctrine/annotations": "~1.0",
-            "fabpot/php-cs-fixer": "~1.0",
-            "ircmaxell/random-lib": "~1.1",
-            "mikey179/vfsstream": "~1.2",
-            "phpunit/phpcov": "~2.0",
-            "phpunit/phpunit": "~4.0",
-            "satooshi/php-coveralls": "dev-master"
+            "phpunit/phpunit": "4.3.*"
         },
-        "suggest": {
-            "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
-            "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
-            "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-            "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
-            "zendframework/zendpdf": "ZendPdf for creating PDF representations of barcodes",
-            "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
-        },
-        "time": "2015-03-31 15:39:14",
-        "bin": [
-            "bin/classmap_generator.php",
-            "bin/pluginmap_generator.php",
-            "bin/templatemap_generator.php"
-        ],
+        "time": "2015-04-15 10:41:16",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.3-dev",
-                "dev-develop": "2.4-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Zend\\": "library/Zend/"
+                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "BSD-3-Clause"
+            "MIT"
         ],
-        "description": "Zend Framework 2",
-        "homepage": "http://framework.zend.com/",
-        "keywords": [
-            "framework",
-            "zf2"
-        ]
+        "description": "PHP data models that represent a Lasting Power of Attorney",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
+        }
     }
 ]

@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  */
 class Count extends SymfonyConstraints\Count
 {
+    use ValidatorPathTrait;
 
     const TOO_FEW_ERROR = 1;
     const TOO_MANY_ERROR = 2;

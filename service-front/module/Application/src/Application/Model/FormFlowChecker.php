@@ -462,7 +462,7 @@ class FormFlowChecker extends StateChecker
     {
         if($this->lpaHasPrimaryAttorney() && (
             ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends())
-            || (count($this->lpa->document->replacementAttorneys) == 0)
+            || ((count($this->lpa->document->replacementAttorneys) == 0) && is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-replacement-attorneys', $this->lpa->metadata) && ($this->lpa->metadata['lpa-has-no-replacement-attorneys']==true))
             || ((count($this->lpa->document->replacementAttorneys) == 1) && (count($this->lpa->document->primaryAttorneys) == 1))
             || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly())
             || ($this->lpaHasMultipleReplacementAttorneys() && (count($this->lpa->document->primaryAttorneys) == 1) && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
@@ -544,7 +544,7 @@ class FormFlowChecker extends StateChecker
     
     private function isInstructionsAccessible()
     {
-        if($this->lpaHasCertificateProvider() && is_array($this->lpa->document->peopleToNotify)) {
+        if($this->lpaHasCertificateProvider() && $this->routePeopleToNotifyHasBeenAccessed()) {
             return true;
         }
         else {
@@ -774,7 +774,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToReplacementAttorney()
     {
-        if($this->lpaHasReplacementAttorney() || is_array($this->lpa->document->replacementAttorneys)) {
+        if($this->routeReplacementAttorneyHasBeenAccessed()) {
             return 'lpa/replacement-attorney';
         }
         else {
@@ -837,7 +837,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToPeopleToNotify()
     {
-        if($this->lpaHasPeopleToNotify() || is_array($this->lpa->document->peopleToNotify)) {
+        if($this->routePeopleToNotifyHasBeenAccessed()) {
             return 'lpa/people-to-notify';
         }
         else {
