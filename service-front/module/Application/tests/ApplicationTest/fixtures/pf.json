@@ -212,5 +212,8 @@
             "contactByPost": false,
             "contactInWelsh": true
         }
+    },
+    "metadata": {
+        "lpa-has-no-people-to-notify": true
     }
 }
