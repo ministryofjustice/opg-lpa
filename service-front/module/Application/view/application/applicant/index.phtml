@@ -6,7 +6,7 @@ $csrf       = $form->get('secret');
 
 $whoIsRegistering = $form->get('whoIsRegistering');
 $whoIsRegisteringValueOptions = $whoIsRegistering->getOptions()['value_options'];
-$whoIsRegisteringValueOptions['donor']['label'] = "The donor - ".$this->lpa->document->donor->name->__toString();
+$whoIsRegisteringValueOptions['donor']['label'] = "The donor - ".(string)$this->lpa->document->donor->name;
 
 $whoIsRegisteringValueOptions['donor'] += [
         'label_attributes' => [
@@ -27,7 +27,7 @@ else {
     }
     else {
         $attorney = current($this->lpa->document->primaryAttorneys);
-        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".(($attorney instanceof Human)? $attorney->name->__toString():$attorney->name);
+        $whoIsRegisteringValueOptions['attorney']['label'] = "The attorney - ".(($attorney instanceof Human)? (string)$attorney->name:$attorney->name);
     }
     
     $whoIsRegisteringValueOptions['attorney'] += [

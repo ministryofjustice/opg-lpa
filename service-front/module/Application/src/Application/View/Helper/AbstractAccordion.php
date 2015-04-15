@@ -71,7 +71,7 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function donor()
     {
         if($this->lpa->document->donor instanceof Donor) {
-            return $this->lpa->document->donor->name->__toString();
+            return $this->lpa->document->donor->name;
         }
     }
     
@@ -136,7 +136,7 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function certificateProvider()
     {
         if($this->lpa->document->certificateProvider instanceof CertificateProvider) {
-            return $this->lpa->document->certificateProvider->name->__toString();
+            return $this->lpa->document->certificateProvider->name;
         }
     }
     
@@ -168,7 +168,7 @@ abstract class AbstractAccordion extends AbstractHelper
         if($this->lpa->document->whoIsRegistering === null) return null;
         
         if($this->lpa->document->whoIsRegistering == 'donor') {
-            return ['who' => 'donor', 'name' => $this->lpa->document->donor->name->__toString()];
+            return ['who' => 'donor', 'name' => (string)$this->lpa->document->donor->name];
         }
         else {
             return ['who'=>'attorney', 'name'=>$this->getView()->concatNames($this->lpa->document->primaryAttorneys)];
@@ -179,7 +179,7 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if($this->lpa->document->correspondent === null) return null;
         
-        return (($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->__toString():$this->lpa->document->correspondent->company);
+        return (($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name:$this->lpa->document->correspondent->company);
     }
     
     protected function whoAreYou()

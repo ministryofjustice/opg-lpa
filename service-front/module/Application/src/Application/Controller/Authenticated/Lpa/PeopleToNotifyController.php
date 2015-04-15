@@ -61,8 +61,8 @@ class PeopleToNotifyController extends AbstractLpaController
         foreach($this->getLpa()->document->peopleToNotify as $idx=>$peopleToNotify) {
             $peopleToNotifyParams[] = [
                     'notifiedPerson' => [
-                            'name'      => $peopleToNotify->name->__toString(),
-                            'address'   => $peopleToNotify->address->__toString()
+                            'name'      => $peopleToNotify->name,
+                            'address'   => $peopleToNotify->address
                     ],
                     'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
                     'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),

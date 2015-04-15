@@ -31,8 +31,8 @@ class CertificateProviderController extends AbstractLpaController
             
             return new ViewModel([
                     'certificateProvider' => [
-                            'name' => $cp->name->__toString(),
-                            'address' => $cp->address->__toString(),
+                            'name' => $cp->name,
+                            'address' => $cp->address,
                     ],
                     'editRoute'  => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] ),
                     'nextRoute'     => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
