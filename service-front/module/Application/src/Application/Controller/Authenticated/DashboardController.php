@@ -4,27 +4,32 @@ namespace Application\Controller\Authenticated;
 
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Zend\Session\Container;
+
+use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
 
 class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        $lpas = $this->getLpaList();
+        $paginator = $this->getLpaList();
+
+        $paginator->setItemCountPerPage(5);
+
+        $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
 
         //---
 
         // If the user currently has no LPAs, redirect them to create one...
-        if( empty($lpas) ){
+        if( $paginator->getTotalItemCount() == 0 ){
             return $this->createAction();
         }
 
         //---
 
         return new ViewModel([
-            'lpas' => $lpas,
+            'lpas' => $paginator,
             'version' => [
                 'commit' => $this->config()['version']['commit'],
                 'cache' => $this->config()['version']['cache'],
@@ -100,50 +105,37 @@ class DashboardController extends AbstractAuthenticatedController
 
     //---
 
+    /**
+     * Returns a Paginator for all the user's LPAs.
+     *
+     * @return Paginator
+     */
     private function getLpaList(){
 
-        $lpas = array();
+        // Return all of the (v2) LPAs.
+        $lpas = $this->getServiceLocator()->get('ApplicationList')->getAllALpaSummaries();
+
+        //---
 
         /**
          * This should be the only point at which we touch the V1Proxy module!
          * When the time comes to deprecated v1, we should just be able to remove the below if statement.
+         * #v1Code
          */
         if( $this->getServiceLocator()->has('ProxyDashboard') ){
 
             // This will return an empty array if the user has no v1 LPAs.
-            $lpas = $this->getServiceLocator()->get('ProxyDashboard')->getLpas();
+            $v1Lpas = $this->getServiceLocator()->get('ProxyDashboard')->getLpas();
 
-        }
+            // Merge the v1 LPAs into the v2 list.
+            $lpas = array_merge($lpas, $v1Lpas);
 
-        //----
-
-        # TODO - Move this to the service level.
-
-        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList();
-
-        foreach($v2Apis as $lpa){
-
-            $obj = new \stdClass();
-
-            $obj->id = $lpa->id;
-
-            $obj->version = 2;
-
-            $obj->donor = ((($lpa->document->donor instanceof Donor) && ($lpa->document->donor->name instanceof Name))?$lpa->document->donor->name->__toString():'');
-
-            $obj->type = $lpa->document->type;
-
-            $obj->updatedAt = $lpa->updatedAt;
-
-            $obj->progress = ($lpa->completedAt instanceof \DateTime)?'Completed':(($lpa->createdAt instanceof \DateTime)?'Created':'Started');
-
-            $lpas[] = $obj;
         }
 
         //---
-        # Sort the list
 
         // Sort by updatedAt into descending order
+        // Once we remove #v1Code, perhaps we can assume they're pre-sorted from the API/DB?
         usort($lpas, function($a, $b){
             if ($a->updatedAt == $b->updatedAt) { return 0; }
             return ($a->updatedAt > $b->updatedAt) ? -1 : 1;
@@ -151,8 +143,8 @@ class DashboardController extends AbstractAuthenticatedController
 
         //---
 
-        return $lpas;
+        return new Paginator(new PaginatorArrayAdapter($lpas));
 
     } // function
 
-}
+} // class

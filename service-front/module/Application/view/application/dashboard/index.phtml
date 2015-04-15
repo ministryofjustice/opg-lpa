@@ -5,7 +5,7 @@
 <?php if($this->message):?>
 <h3><?php echo $this->message?></h3>
 <?php else:?>
-    <?php if(empty($this->lpas)): ?>
+    <?php if( $this->lpas->getTotalItemCount() == 0 ): ?>
     <p>You haven't created any LPAs yet.</p>
     <?php else: ?>
     <p>These are all the LPAs that you've created.</p>
@@ -23,7 +23,7 @@
     </div>
   </div>
   
-  <?php if (!empty($this->lpas)) : ?>
+  <?php if ( $this->lpas->getTotalItemCount() > 0 ) : ?>
   <table id="savedforms" class="lpa-list">
   <thead>
   <tr>
@@ -38,17 +38,17 @@
   <tbody>
   <?php foreach($this->lpas as $lpa): ?>
       <tr>
-      <td><?= ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id ?></td>
+      <td><?= ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id #v1Code ?></td>
       <td><?= $lpa->donor; ?></td>
       <td><?= ($lpa->type == 'property-and-financial') ? 'PF' : (($lpa->type == 'health-and-welfare')?'HW':'') ?></td>
       <td><?= $lpa->progress ?></td>
       <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
-        <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) ?>">Continue</a>
-        <?= ($lpa->version == 2) ? '<a class="button" href="/lpa/' . $lpa->id . '/date-check">Dates</a>' : '' ?>
-        <?= ($lpa->version == 2) ? '<a class="button" href="'.$this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] ).'">Clone</a>' : '' ?>
-        <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) ?>">Delete</a>
+        <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) #v1Code ?>">Continue</a>
+        <?= ($lpa->version == 2) ? '<a class="button" href="/lpa/' . $lpa->id . '/date-check">Dates</a>' : '' #v1Code ?>
+        <?= ($lpa->version == 2) ? '<a class="button" href="'.$this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] ).'">Clone</a>' : '' #v1Code ?>
+        <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) #v1Code ?>">Delete</a>
         </div>
       </td>
       </tr>
@@ -56,6 +56,10 @@
   
   </tbody>
   </table>
+
+  <? /* Pagination HTML is in pagination.phtml */ ?>
+  <?= $this->paginationControl($this->lpas, 'Sliding',  'pagination', ['route' => 'user/dashboard'] ); ?>
+
   <p>
 <?php endif; ?>
   
