@@ -17,6 +17,7 @@ use Zend\View\Model\JsonModel;
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
 use Application\Form\Lpa\SeedDetailsPickerForm;
+use Application\Model\Service\Lpa\Metadata;
 
 class PeopleToNotifyController extends AbstractLpaController
 {
@@ -43,14 +44,9 @@ class PeopleToNotifyController extends AbstractLpaController
         
             if($form->isValid()) {
                 
-                // check if peopleToNotify is empty. If yes, save an empty array to LPA peopleToNotify property, so we know user has no peopleToNotify to be added into LPA.
+                // check if peopleToNotify is empty. If yes, set a flag in metadata, so we know user has no peopleToNotify to be added into LPA.
                 if(count($this->getLpa()->document->peopleToNotify) == 0) {
-                    $metaData = $this->getLpaApplicationService()->getMetaData($lpaId);
-                    $metaData['lpa-has-no-people-to-notify'] = true;
-                    
-                    if( !$this->getLpaApplicationService()->setMetaData($lpaId, $metaData) ) {
-                        throw new \RuntimeException('API client failed to set metadata for id: '.$lpaId);
-                    }
+                    $this->getServiceLocator()->get('Metadata')->setLpaHasNoPeopleToNotify($this->getLpa());
                 }
                 
                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -133,6 +129,13 @@ class PeopleToNotifyController extends AbstractLpaController
                         throw new \RuntimeException('API client failed to add a notified person for id: '.$lpaId);
                     }
                     
+                    // remove metadata flag value if exists
+                    if(!is_array($this->getLpa()->metadata) ||
+                        !array_key_exists(Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY, $this->getLpa->metadata) ||
+                        ($this->getLpa()->metadata[Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY]!==true)) {
+                            $this->getServiceLocator()->get('Metadata')->unsetLpaHasNoPeopleToNotify($this->getLpa());
+                    }
+                    
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }
@@ -212,6 +215,12 @@ class PeopleToNotifyController extends AbstractLpaController
             if(!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }
+                    
+            // check if the deleted notified person is the last one in peopleToNotify. If yes, set a flag in metadata, so we know user has no people to notify to be added into LPA.
+            if(count($this->getLpa()->document->peopleToNotify) == 1) {
+                $this->getServiceLocator()->get('Metadata')->setLpaHasNoPeopleToNotify($this->getLpa());
+            }
+            
             $deletionFlag = true;
         }
         
