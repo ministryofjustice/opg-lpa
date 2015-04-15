@@ -26,7 +26,7 @@ class Metadata implements ServiceLocatorAwareInterface {
             $lpa->metadata[self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS] = true;
 
             if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id);
+                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in setLpaHasNoReplacementAttorneys()');
             }
             
             return true;
@@ -42,8 +42,15 @@ class Metadata implements ServiceLocatorAwareInterface {
             
             unset($lpa->metadata[self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]);
             
-            if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id);
+            if(count($lpa->metadata) > 0) {
+                if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
+                    throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in unsetLpaHasNoReplacementAttorneys()');
+                }
+            }
+            else {
+                if( !$this->getServiceLocator()->get('LpaApplicationService')->deleteMetaData($lpa->id) ) {
+                    throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in unsetLpaHasNoReplacementAttorneys()');
+                }
             }
             
             return true;
@@ -57,17 +64,10 @@ class Metadata implements ServiceLocatorAwareInterface {
         if(!array_key_exists(self::LPA_HAS_NO_PEOPLE_TO_NOTIFY, $lpa->metadata) ||
                 ($lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] !== true)) {
                 
-            $metaData = $lpa->metadata;
-            $metaData[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] = true;
-
-            if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $metaData) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id);
-            }
-            
             $lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] = true;
 
             if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id);
+                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in setLpaHasNoPeopleToNotify()');
             }
             
             return true;
@@ -82,9 +82,16 @@ class Metadata implements ServiceLocatorAwareInterface {
             ($lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] === true)) {
 
             unset($lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY]);
-
-            if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id);
+            
+            if(count($lpa->metadata) > 0) {
+                if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
+                    throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in unsetLpaHasNoPeopleToNotify()');
+                }
+            }
+            else {
+                if( !$this->getServiceLocator()->get('LpaApplicationService')->deleteMetaData($lpa->id) ) {
+                    throw new \RuntimeException('API client failed to delete metadata for id: '.$lpa->id.' in unsetLpaHasNoPeopleToNotify()');
+                }
             }
 
             return true;
