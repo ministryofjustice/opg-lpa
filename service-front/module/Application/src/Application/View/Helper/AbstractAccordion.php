@@ -91,7 +91,7 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        if(is_array($this->lpa->document->primaryAttorneys) && (count($this->lpa->document->primaryAttorneys) > 0)) {
+        if(count($this->lpa->document->primaryAttorneys) > 0) {
             return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->getView()->concatNames($this->lpa->document->primaryAttorneys);
         }
     }
@@ -105,11 +105,16 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function replacementAttorney()
     {
-        if($this->lpa->document->replacementAttorneys === null) {
-            return;
+        if(count($this->lpa->document->replacementAttorneys) == 0) {
+            // user has confirmed no replacement attorneys
+            if(is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-replacement-attorneys', $this->lpa->metadata) && $this->lpa->metadata['lpa-has-no-replacement-attorneys']) {
+                return '';
+            }
+            else {
+                // user has NOT confirmed no replacement attorneys 
+                return null;
+            }
         }
-        
-        if(is_array($this->lpa->document->replacementAttorneys) && (count($this->lpa->document->replacementAttorneys)==0)) return '';
         
         return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->replacementAttorneys);
     }
@@ -137,9 +142,16 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function peopleToNotify()
     {
-        if($this->lpa->document->peopleToNotify === null) return null;
-        
-        if(is_array($this->lpa->document->peopleToNotify) && (count($this->lpa->document->peopleToNotify)==0)) return '';
+        if(count($this->lpa->document->peopleToNotify)==0) {
+            // user has confirmed no people to notify
+            if(is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-people-to-notify', $this->lpa->metadata) && $this->lpa->metadata['lpa-has-no-people-to-notify']) {
+                return '';
+            }
+            else {
+                // user has NOT confirmed no people to notify 
+                return null;
+            }
+        }
         
         return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->peopleToNotify);
     }

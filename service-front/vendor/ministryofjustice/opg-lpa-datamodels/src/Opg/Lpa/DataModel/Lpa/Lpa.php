@@ -84,6 +84,11 @@ class Lpa extends AbstractData implements CompleteInterface {
      */
     protected $document;
 
+    /**
+     * @var array Metadata relating to the LPA. Clients can use this value however they wish.
+     */
+    protected $metadata = array();
+
     //------------------------------------------------
 
     public static function loadValidatorMetadata(ClassMetadata $metadata){
@@ -149,6 +154,11 @@ class Lpa extends AbstractData implements CompleteInterface {
         $metadata->addPropertyConstraints('document', [
             new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Document' ]),
             new Assert\Valid,
+        ]);
+
+        $metadata->addPropertyConstraints('metadata', [
+            new Assert\NotNull,
+            new Assert\Type([ 'type' => 'array' ]),
         ]);
 
     } // function
@@ -226,7 +236,7 @@ class Lpa extends AbstractData implements CompleteInterface {
 
         // Include these top level fields...
         $data = array_intersect_key( $data, array_flip([
-            'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'user', 'locked', 'document'
+            'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'completedAt', 'user', 'locked', 'document', 'metadata'
         ]));
 
         // Include these document level fields...

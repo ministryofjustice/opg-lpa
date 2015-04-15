@@ -47,10 +47,13 @@ class ReplacementAttorneyController extends AbstractLpaController
             if($form->isValid()) {
         
                 // check if replacementAttorneys is empty. If yes, save an empty array to LPA replacementAttorneys property, so we know user has no replacementAttorneys to be added into LPA.
-                if($this->getLpa()->document->replacementAttorneys === null) {
-                    // @todo to be completed after datamodel updated
-                    if( !$this->getLpaApplicationService()->setReplacementAttorneys($lpaId, []) ) {
-                        throw new \RuntimeException('API client failed to add a replacement attorneys for id: '.$lpaId);
+                if(count($this->getLpa()->document->replacementAttorneys) == 0) {
+                    
+                    $metaData = $this->getLpaApplicationService()->getMetaData($lpaId);
+                    $metaData['lpa-has-no-replacement-attorneys'] = true;
+                    
+                    if( !$this->getLpaApplicationService()->setMetaData($lpaId, $metaData) ) {
+                        throw new \RuntimeException('API client failed to set metadata for id: '.$lpaId);
                     }
                 }
         
@@ -58,45 +61,35 @@ class ReplacementAttorneyController extends AbstractLpaController
             }
         }
         
-        if(is_array($this->getLpa()->document->replacementAttorneys) && ( count($this->getLpa()->document->replacementAttorneys) > 0 )) {
+        $attorneysParams = [];
+        foreach($this->getLpa()->document->replacementAttorneys as $idx=>$attorney) {
+            $params = [
+                    'attorney' => [
+                            'address'   => $attorney->address->__toString()
+                    ],
+                    'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+                    'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+            ];
             
-            $attorneysParams = [];
-            foreach($this->getLpa()->document->replacementAttorneys as $idx=>$attorney) {
-                $params = [
-                        'attorney' => [
-                                'address'   => $attorney->address->__toString()
-                        ],
-                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
-                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
-                ];
-                
-                if($attorney instanceof Human) {
-                    $params['attorney']['name'] = $attorney->name->__toString();
-                }
-                else {
-                    $params['attorney']['name'] = $attorney->name;
-                }
-                
-                $attorneysParams[] = $params;
+            if($attorney instanceof Human) {
+                $params['attorney']['name'] = $attorney->name->__toString();
+            }
+            else {
+                $params['attorney']['name'] = $attorney->name;
             }
             
-            return new ViewModel([
+            $attorneysParams[] = $params;
+        }
+        
+        $viewModelParams = [
                     'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
                     'lpaId'     => $lpaId,
                     'attorneys' => $attorneysParams,
                     'form'      => $form,
-            ]);
-            
-        }
-        else {
-            
-            return new ViewModel([
-                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
-                    'lpaId'     => $lpaId,
-                    'form'      => $form,
-            ]);
-            
-        }
+        ];
+        
+        return new ViewModel($viewModelParams);
+        
     }
     
     public function addAction()
@@ -181,7 +174,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        if(is_array($this->getLpa()->document->replacementAttorneys) && array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+        if( array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys) ) {
             $attorney = $this->getLpa()->document->replacementAttorneys[$attorneyIdx];
         }
         
@@ -250,7 +243,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        if(is_array($this->getLpa()->document->replacementAttorneys) && array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+        if( array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys) ) {
             if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }

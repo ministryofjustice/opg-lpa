@@ -578,12 +578,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "6075e6d2853e8f6b23ee659b42268d0e2cfc446b"
+                "reference": "47da6076c8723789ec8ce71e55bc0c755dc334dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/6075e6d2853e8f6b23ee659b42268d0e2cfc446b",
-                "reference": "6075e6d2853e8f6b23ee659b42268d0e2cfc446b",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/47da6076c8723789ec8ce71e55bc0c755dc334dc",
+                "reference": "47da6076c8723789ec8ce71e55bc0c755dc334dc",
                 "shasum": ""
             },
             "require": {
@@ -609,7 +609,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-04-01 12:54:54"
+            "time": "2015-04-14 16:05:49"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -617,12 +617,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "0cb59092843d51fa73b769d7b962792ebe459e59"
+                "reference": "2bfcc464bf68db45a789cbc86c2c87c97af30e6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0cb59092843d51fa73b769d7b962792ebe459e59",
-                "reference": "0cb59092843d51fa73b769d7b962792ebe459e59",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/2bfcc464bf68db45a789cbc86c2c87c97af30e6b",
+                "reference": "2bfcc464bf68db45a789cbc86c2c87c97af30e6b",
                 "shasum": ""
             },
             "require": {
@@ -648,7 +648,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-04-02 20:34:54"
+            "time": "2015-04-15 10:41:16"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -1004,16 +1004,16 @@
         },
         {
             "name": "sendgrid/smtpapi",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/smtpapi-php.git",
-                "reference": "81cac4dc99439cd057adae65c4c79698dc8b62ee"
+                "reference": "05ccf57bad5d1524e479b6dc0a2dfade88b3fbe5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/81cac4dc99439cd057adae65c4c79698dc8b62ee",
-                "reference": "81cac4dc99439cd057adae65c4c79698dc8b62ee",
+                "url": "https://api.github.com/repos/sendgrid/smtpapi-php/zipball/05ccf57bad5d1524e479b6dc0a2dfade88b3fbe5",
+                "reference": "05ccf57bad5d1524e479b6dc0a2dfade88b3fbe5",
                 "shasum": ""
             },
             "require": {
@@ -1048,7 +1048,7 @@
                 "smtpapi",
                 "xsmtp"
             ],
-            "time": "2015-03-27 18:45:51"
+            "time": "2015-04-14 02:37:45"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1590,16 +1590,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.0.15",
+            "version": "2.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67"
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/34cc484af1ca149188d0d9e91412191e398e0b67",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/934fd03eb6840508231a7f73eb8940cf32c3b66c",
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c",
                 "shasum": ""
             },
             "require": {
@@ -1648,7 +1648,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-01-24 10:06:35"
+            "time": "2015-04-11 04:35:00"
         },
         {
             "name": "phpunit/php-file-iterator",

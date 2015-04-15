@@ -19,7 +19,7 @@ $form->prepare();
 		<p><a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
 	</div>
 	
-    <?php if(isset($this->attorneys)): ?>
+    <?php if(count($this->attorneys) > 0): ?>
     
         <?= $this->partialloop('application/replacement-attorney/partials/attorney.phtml', $this->attorneys)?>
 

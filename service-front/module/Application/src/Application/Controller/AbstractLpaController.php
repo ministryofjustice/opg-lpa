@@ -123,17 +123,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     {
         $hasTrust = false;
         
-        $primaryAttorneys = $this->getLpa()->document->primaryAttorneys;
-        if(!is_array($primaryAttorneys)) {
-            $primaryAttorneys = [];
-        }
-        
-        $replacementAttorneys = $this->getLpa()->document->replacementAttorneys;
-        if(!is_array($replacementAttorneys)) {
-            $replacementAttorneys = [];
-        }
-        
-        foreach(array_merge($primaryAttorneys, $replacementAttorneys) as $attorney) {
+        foreach(array_merge($this->getLpa()->document->primaryAttorneys, $this->getLpa()->document->replacementAttorneys) as $attorney) {
             if($attorney instanceof TrustCorporation) {
                 return true;
             }

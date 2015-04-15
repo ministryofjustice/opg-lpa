@@ -44,10 +44,12 @@ class PeopleToNotifyController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // check if peopleToNotify is empty. If yes, save an empty array to LPA peopleToNotify property, so we know user has no peopleToNotify to be added into LPA.
-                if($this->getLpa()->document->peopleToNotify === null) {
-                    // @todo to be completed after datamodel updated
-                    if( !$this->getLpaApplicationService()->setNotifiedPersons($lpaId, []) ) {
-                       throw new \RuntimeException('API client failed to add a people to notify for id: '.$lpaId);
+                if(count($this->getLpa()->document->peopleToNotify) == 0) {
+                    $metaData = $this->getLpaApplicationService()->getMetaData($lpaId);
+                    $metaData['lpa-has-no-people-to-notify'] = true;
+                    
+                    if( !$this->getLpaApplicationService()->setMetaData($lpaId, $metaData) ) {
+                        throw new \RuntimeException('API client failed to set metadata for id: '.$lpaId);
                     }
                 }
                 
@@ -55,40 +57,25 @@ class PeopleToNotifyController extends AbstractLpaController
             }
         }
         
-        if( is_array($this->getLpa()->document->peopleToNotify) && ( count($this->getLpa()->document->peopleToNotify) > 0 )) {
-            
-            $peopleToNotify = [];
-            foreach($this->getLpa()->document->peopleToNotify as $idx=>$peopleToNotify) {
-                $peopleToNotifyParams[] = [
-                        'notifiedPerson' => [
-                                'name'      => $peopleToNotify->name->__toString(),
-                                'address'   => $peopleToNotify->address->__toString()
-                        ],
-                        'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
-                        'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
-                ];
-            }
-            
-            $view = new ViewModel([
-                    'form'           => $form,
-                    'peopleToNotify' => $peopleToNotifyParams
-            ]);
-            
-            if( count($this->getLpa()->document->peopleToNotify) < 5) {
-                $view->addRoute  = $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id' => $lpaId] );
-            }
-            
-            return $view;
+        $peopleToNotify = [];
+        foreach($this->getLpa()->document->peopleToNotify as $idx=>$peopleToNotify) {
+            $peopleToNotifyParams[] = [
+                    'notifiedPerson' => [
+                            'name'      => $peopleToNotify->name->__toString(),
+                            'address'   => $peopleToNotify->address->__toString()
+                    ],
+                    'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+                    'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
+            ];
         }
-        else {
-            
-            return new ViewModel([
-                    'form'      => $form,
-                    'addRoute'  => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ),
-                    'nextRoute' => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] ),
-            ]);
-            
+        
+        $view = new ViewModel(['form' => $form, 'peopleToNotify' => $peopleToNotifyParams]);
+        
+        if( count($this->getLpa()->document->peopleToNotify) < 5) {
+            $view->addRoute  = $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id' => $lpaId] );
         }
+        
+        return $view;
     }
     
     public function addAction()
@@ -102,7 +89,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
-        if(is_array($this->getLpa()->document->peopleToNotify) && ( count($this->getLpa()->document->peopleToNotify) >= 5 )) {
+        if(count($this->getLpa()->document->peopleToNotify) >= 5 ) {
             $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
         }
         
@@ -173,7 +160,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-        if(is_array($this->getLpa()->document->peopleToNotify) && array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+        if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
             $notifiedPerson = $this->getLpa()->document->peopleToNotify[$personIdx];
         }
         
@@ -221,7 +208,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        if(is_array($this->getLpa()->document->peopleToNotify) && array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+        if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
             if(!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }

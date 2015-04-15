@@ -19,7 +19,7 @@ $form->prepare();
 			<p><a class="js-guidance" href="/help/#topic-people-to-be-told" data-journey-click="stageprompt.lpa:help:people-to-be-told">Find out more about 'people to be told'</a></p>
 		</div>
 		
-        <?php if(isset($this->peopleToNotify)):?>
+        <?php if(count($this->peopleToNotify) > 0):?>
             
             <?= $this->partialloop('application/people-to-notify/partials/people-to-notify.phtml', $this->peopleToNotify)?>
             
