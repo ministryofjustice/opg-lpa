@@ -130,7 +130,6 @@ class DateCheckTest extends AbstractHttpControllerTestCase
      */
     protected function tearDown ()
     {
-        parent::tearDown();
     }
 }
 
