@@ -19,12 +19,12 @@ class ConcatNames extends AbstractHelper
         elseif($count == 1) {
             $actor = current($nameList);
             if(is_string($actor->name)) return $actor->name;
-            else return $actor->name->__toString();
+            else return (string)$actor->name;
         }
        else {
            $lastItem = array_pop($nameList);
-           return implode(', ', array_map( function( $item ) { return (is_string($item->name)?$item->name:$item->name->__toString()); }, $nameList) )
-                  . ' and ' . (is_string($lastItem->name)?$lastItem->name:$lastItem->name->__toString());
+           return implode(', ', array_map( function( $item ) { return (string)$item->name; }, $nameList) )
+                  . ' and ' . (string)$lastItem->name;
        }
     }
 }

@@ -65,14 +65,14 @@ class ReplacementAttorneyController extends AbstractLpaController
         foreach($this->getLpa()->document->replacementAttorneys as $idx=>$attorney) {
             $params = [
                     'attorney' => [
-                            'address'   => $attorney->address->__toString()
+                            'address'   => $attorney->address
                     ],
                     'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id' => $lpaId, 'idx' => $idx ]),
                     'deleteRoute'   => $this->url()->fromRoute( $currentRouteName.'/delete', ['lpa-id' => $lpaId, 'idx' => $idx ]),
             ];
             
             if($attorney instanceof Human) {
-                $params['attorney']['name'] = $attorney->name->__toString();
+                $params['attorney']['name'] = $attorney->name;
             }
             else {
                 $params['attorney']['name'] = $attorney->name;

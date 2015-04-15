@@ -104,8 +104,8 @@ class CorrespondentController extends AbstractLpaController
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name->__toString():$correspondent->name),
-                        'address'   => $correspondent->address->__toString(),
+                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name:$correspondent->name),
+                        'address'   => $correspondent->address,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
         ]);

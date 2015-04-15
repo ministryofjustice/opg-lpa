@@ -125,12 +125,12 @@ class Payment implements ServiceLocatorAwareInterface {
         
         $container = new Container('paymentEmail');
     
-        $donorName = $lpa->document->donor->name;
+        $donorName = (string)$lpa->document->donor->name;
     
         $options = [
             'amount' => $lpa->payment->amount,
             'currency' => $config['currency'],
-            'description' => 'LPA for ' . $donorName->__toString(),
+            'description' => 'LPA for ' . $donorName,
             'transactionId' => $lpa->id . '-' . time(),
             'card' => new CreditCard([
                 'email' => $container->email,

@@ -55,11 +55,11 @@ class CompleteController extends AbstractLpaController
         
         $viewParams = [
                 'completedAt'        => $lpa->payment->date->format('d/m/Y'),
-                'donorName'          => $lpa->document->donor->name->__toString(),
+                'donorName'          => $lpa->document->donor->name,
                 'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp1']),
                 'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$lpa->id]),
                 'formName'           => (($lpa->document->type==Document::LPA_TYPE_PF)?'LP1F':'LP1H'),
-                'correspondentName'  => (($lpa->document->correspondent->name instanceof Name)?$lpa->document->correspondent->name->__toString():$lpa->document->correspondent->company),
+                'correspondentName'  => (($lpa->document->correspondent->name instanceof Name)?$lpa->document->correspondent->name:$lpa->document->correspondent->company),
                 'paymentAmount'      => $lpa->payment->amount,
                 'paymentReferenceNo' => $lpa->payment->reference,
                 'hasRemission'       => ($lpa->payment->amount != Calculator::STANDARD_FEE),

@@ -95,7 +95,7 @@ class ApplicantForm extends AbstractForm
         
         foreach($this->lpa->document->primaryAttorneys as $attorney) {
             $this->formElements['attorneyList']['options']['value_options'][$attorney->id] = [
-                    'label' => (($attorney instanceof Human)?$attorney->name->__toString():$attorney->name),
+                    'label' => (($attorney instanceof Human)?(string)$attorney->name:$attorney->name),
                     'value' => $attorney->id,
                     'label_attributes' => [
                             'for' => 'attorney-'.$attorney->id,

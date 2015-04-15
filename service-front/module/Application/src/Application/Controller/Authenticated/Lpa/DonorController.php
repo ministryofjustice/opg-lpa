@@ -33,8 +33,8 @@ class DonorController extends AbstractLpaController
             
             return new ViewModel([
                     'donor'         => [
-                            'name'  => $donor->name->__toString(),
-                            'address' => $donor->address->__toString(),
+                            'name'  => $donor->name,
+                            'address' => $donor->address,
                     ],
                     'editDonorUrl'  => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] ),
                     'nextRoute'     => $this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )
