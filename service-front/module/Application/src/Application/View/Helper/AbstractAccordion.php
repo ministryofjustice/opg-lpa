@@ -8,9 +8,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Application\View\Helper\Traits\ConcatNames;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
+    use ConcatNames;
+    
     protected $lpa;
     
     // map route name to method name
@@ -92,7 +95,7 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function primaryAttorney()
     {
         if(count($this->lpa->document->primaryAttorneys) > 0) {
-            return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->getView()->concatNames($this->lpa->document->primaryAttorneys);
+            return ((count($this->lpa->document->primaryAttorneys)==1)? 'is ':'are').' '.$this->concatNames($this->lpa->document->primaryAttorneys);
         }
     }
     
@@ -116,7 +119,7 @@ abstract class AbstractAccordion extends AbstractHelper
             }
         }
         
-        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->replacementAttorneys);
+        return ((count($this->lpa->document->replacementAttorneys)==1)? 'is ':'are ').' '.$this->concatNames($this->lpa->document->replacementAttorneys);
     }
     
     protected function whenReplacementAttorneyStepIn()
@@ -153,7 +156,7 @@ abstract class AbstractAccordion extends AbstractHelper
             }
         }
         
-        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').' '.$this->getView()->concatNames($this->lpa->document->peopleToNotify);
+        return ((count($this->lpa->document->peopleToNotify)==1)? 'is ':'are ').' '.$this->concatNames($this->lpa->document->peopleToNotify);
     }
     
     protected function instructions()
@@ -171,7 +174,7 @@ abstract class AbstractAccordion extends AbstractHelper
             return ['who' => 'donor', 'name' => (string)$this->lpa->document->donor->name];
         }
         else {
-            return ['who'=>'attorney', 'name'=>$this->getView()->concatNames($this->lpa->document->primaryAttorneys)];
+            return ['who'=>'attorney', 'name'=>$this->concatNames($this->lpa->document->primaryAttorneys)];
         }
     }
     

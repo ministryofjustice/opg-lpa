@@ -2,9 +2,12 @@
 namespace Application\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
+use Application\View\Helper\Traits\ConcatNames;
 
 class ConcatNames extends AbstractHelper
 {
+    use ConcatNames;
+    
     /**
      * 
      * @param array $nameList[AbstractData, ]
@@ -12,19 +15,6 @@ class ConcatNames extends AbstractHelper
      */
     public function __invoke(array $nameList)
     {
-        $count = count($nameList);
-        if($count == 0) {
-            return null;
-        }
-        elseif($count == 1) {
-            $actor = current($nameList);
-            if(is_string($actor->name)) return $actor->name;
-            else return (string)$actor->name;
-        }
-       else {
-           $lastItem = array_pop($nameList);
-           return implode(', ', array_map( function( $item ) { return (string)$item->name; }, $nameList) )
-                  . ' and ' . (string)$lastItem->name;
-       }
+        return $this->concatNames($nameList);
     }
 }
