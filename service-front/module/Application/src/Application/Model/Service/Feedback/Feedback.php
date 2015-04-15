@@ -19,7 +19,7 @@ class Feedback implements ServiceLocatorAwareInterface
         
         $message = new MailMessage();
         
-        $message->addFrom('opg@lastingpowerofattorney.service.gov.uk', 'Office of the Public Guardian');
+        $message->addFrom('opg@lastingpowerofattorney.service.gov.uk', 'User Feedback');
         
         $message->addTo( 
             $this->getServiceLocator()->get('Config')['sendFeedbackEmailTo']

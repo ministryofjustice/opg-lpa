@@ -126,6 +126,7 @@ class Module{
                 'Feedback'              => 'Application\Model\Service\Feedback\Feedback',
                 'Signatures'            => 'Application\Model\Service\Feedback\Signatures',
                 'Guidance'              => 'Application\Model\Service\Guidance\Guidance',
+                'ApplicationList'       => 'Application\Model\Service\Lpa\ApplicationList',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
             ],
             'factories' => [

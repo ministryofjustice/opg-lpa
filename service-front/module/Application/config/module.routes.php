@@ -275,12 +275,16 @@ return [
                     ], // change-password
 
                     'dashboard' => [
-                        'type'    => 'Literal',
+                        'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/dashboard',
+                            'route'    => '/dashboard[/page/:page]',
                             'defaults' => [
                                 'controller' => 'Authenticated\DashboardController',
                                 'action'     => 'index',
+                                'page'       => 1
+                            ],
+                            'constraints' => [
+                                'page' => '[0-9]+',
                             ],
                         ],
                         'may_terminate' => true,
