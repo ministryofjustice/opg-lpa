@@ -20,6 +20,7 @@ use Zend\View\Model\JsonModel;
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
 use Application\Form\Lpa\SeedDetailsPickerForm;
+use Application\Model\Service\Lpa\Metadata;
 
 class ReplacementAttorneyController extends AbstractLpaController
 {
@@ -46,17 +47,11 @@ class ReplacementAttorneyController extends AbstractLpaController
         
             if($form->isValid()) {
         
-                // check if replacementAttorneys is empty. If yes, save an empty array to LPA replacementAttorneys property, so we know user has no replacementAttorneys to be added into LPA.
-                if(count($this->getLpa()->document->replacementAttorneys) == 0) {
-                    
-                    $metaData = $this->getLpaApplicationService()->getMetaData($lpaId);
-                    $metaData['lpa-has-no-replacement-attorneys'] = true;
-                    
-                    if( !$this->getLpaApplicationService()->setMetaData($lpaId, $metaData) ) {
-                        throw new \RuntimeException('API client failed to set metadata for id: '.$lpaId);
-                    }
+                // check if replacementAttorneys is empty. If yes, set a flag in metadata, so we know user has no replacementAttorneys to be added into LPA.
+                if(count($this->getLpa()->document->replacementAttorneys) == 0) { 
+                    $this->getServiceLocator()->get('Metadata')->setLpaHasNoReplacementAttorneys($this->getLpa());
                 }
-        
+                
                 $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
@@ -141,6 +136,13 @@ class ReplacementAttorneyController extends AbstractLpaController
                     $attorney = new Human($form->getModelDataFromValidatedForm());
                     if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
                         throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
+                    }
+                    
+                    // remove metadata flag value if exists
+                    if(!is_array($this->getLpa()->metadata) ||
+                        !array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->getLpa->metadata) ||
+                        ($this->getLpa()->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]!==true)) {
+                            $this->getServiceLocator()->get('Metadata')->unsetLpaHasNoReplacementAttorneys($this->getLpa());
                     }
                     
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -247,6 +249,12 @@ class ReplacementAttorneyController extends AbstractLpaController
             if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }
+            
+            // check if the deleted replacement attorney is the last one in replacementAttorneys. If yes, set a flag in metadata, so we know user has no replacementAttorneys to be added into LPA.
+            if(count($this->getLpa()->document->replacementAttorneys) == 1) {
+                $this->getServiceLocator()->get('Metadata')->setLpaHasNoReplacementAttorneys($this->getLpa());
+            }
+            
             $deletionFlag = true;
         }
         
@@ -318,6 +326,13 @@ class ReplacementAttorneyController extends AbstractLpaController
                     $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
                     if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
                         throw new \RuntimeException('API client failed to add trust corporation replacement attorney for id: '.$lpaId);
+                    }
+                    
+                    // remove metadata flag value if exists
+                    if(!is_array($this->getLpa()->metadata) ||
+                        !array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->getLpa->metadata) ||
+                        ($this->getLpa()->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]!==true)) {
+                            $this->getServiceLocator()->get('Metadata')->unsetLpaHasNoReplacementAttorneys($this->getLpa());
                     }
                     
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
