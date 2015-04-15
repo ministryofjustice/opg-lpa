@@ -9,6 +9,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Application\View\Helper\Traits\ConcatNames;
+use Application\Model\Service\Lpa\Metadata;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
@@ -110,7 +111,9 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if(count($this->lpa->document->replacementAttorneys) == 0) {
             // user has confirmed no replacement attorneys
-            if(is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-replacement-attorneys', $this->lpa->metadata) && $this->lpa->metadata['lpa-has-no-replacement-attorneys']) {
+            if(is_array($this->lpa->metadata) && 
+                array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->lpa->metadata) &&
+                ($this->lpa->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS] === true)) {
                 return '';
             }
             else {
@@ -147,8 +150,10 @@ abstract class AbstractAccordion extends AbstractHelper
     {
         if(count($this->lpa->document->peopleToNotify)==0) {
             // user has confirmed no people to notify
-            if(is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-people-to-notify', $this->lpa->metadata) && $this->lpa->metadata['lpa-has-no-people-to-notify']) {
-                return '';
+            if(is_array($this->lpa->metadata) &&
+                array_key_exists(Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY, $this->lpa->metadata) &&
+                ($this->lpa->metadata[Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY]===true)) {
+                    return '';
             }
             else {
                 // user has NOT confirmed no people to notify 
