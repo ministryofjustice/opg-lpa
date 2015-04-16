@@ -13,58 +13,28 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
  */
 class Metadata implements ServiceLocatorAwareInterface {
 
-    const LPA_HAS_NO_PEOPLE_TO_NOTIFY = 'lpa-has-no-people-to-notify';
-    const LPA_HAS_NO_REPLACEMENT_ATTORNEYS = 'lpa-has-no-replacement-attorneys';
+    const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
+    const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
     
     use ServiceLocatorAwareTrait;
     
-    public function setLpaHasNoReplacementAttorneys(Lpa $lpa)
+    public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
-        if(!array_key_exists(self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $lpa->metadata) ||
-            ($lpa->metadata[self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS] !== true)) {
-                
-            $lpa->metadata[self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS] = true;
-
+        if(!array_key_exists(self::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
+            
+            $lpa->metadata[self::REPLACEMENT_ATTORNEYS_CONFIRMED] = true;
+            
             if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
                 throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in setLpaHasNoReplacementAttorneys()');
             }
-            
-            return true;
         }
-        
-        return false;
     }
     
-    public function unsetLpaHasNoReplacementAttorneys(Lpa $lpa)
+    public function setPeopleToNotifyConfirmed(Lpa $lpa)
     {
-        if(array_key_exists(self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $lpa->metadata) &&
-            ($lpa->metadata[self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS] === true)) {
-            
-            unset($lpa->metadata[self::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]);
-            
-            if(count($lpa->metadata) > 0) {
-                if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                    throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in unsetLpaHasNoReplacementAttorneys()');
-                }
-            }
-            else {
-                if( !$this->getServiceLocator()->get('LpaApplicationService')->deleteMetaData($lpa->id) ) {
-                    throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in unsetLpaHasNoReplacementAttorneys()');
-                }
-            }
-            
-            return true;
-        }
-        
-        return false;
-    }
-    
-    public function setLpaHasNoPeopleToNotify(Lpa $lpa)
-    {
-        if(!array_key_exists(self::LPA_HAS_NO_PEOPLE_TO_NOTIFY, $lpa->metadata) ||
-                ($lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] !== true)) {
+        if(!array_key_exists(self::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
                 
-            $lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] = true;
+            $lpa->metadata[self::PEOPLE_TO_NOTIFY_CONFIRMED] = true;
 
             if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
                 throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in setLpaHasNoPeopleToNotify()');
@@ -73,30 +43,6 @@ class Metadata implements ServiceLocatorAwareInterface {
             return true;
         }
         
-        return false;
-    }
-
-    public function unsetLpaHasNoPeopleToNotify(Lpa $lpa)
-    {
-        if(array_key_exists(self::LPA_HAS_NO_PEOPLE_TO_NOTIFY, $lpa->metadata) &&
-            ($lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY] === true)) {
-
-            unset($lpa->metadata[self::LPA_HAS_NO_PEOPLE_TO_NOTIFY]);
-            
-            if(count($lpa->metadata) > 0) {
-                if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                    throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in unsetLpaHasNoPeopleToNotify()');
-                }
-            }
-            else {
-                if( !$this->getServiceLocator()->get('LpaApplicationService')->deleteMetaData($lpa->id) ) {
-                    throw new \RuntimeException('API client failed to delete metadata for id: '.$lpa->id.' in unsetLpaHasNoPeopleToNotify()');
-                }
-            }
-
-            return true;
-        }
-
         return false;
     }
     

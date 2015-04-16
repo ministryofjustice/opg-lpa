@@ -44,15 +44,16 @@ class PeopleToNotifyController extends AbstractLpaController
         
             if($form->isValid()) {
                 
-                // check if peopleToNotify is empty. If yes, set a flag in metadata, so we know user has no peopleToNotify to be added into LPA.
-                if(count($this->getLpa()->document->peopleToNotify) == 0) {
-                    $this->getServiceLocator()->get('Metadata')->setLpaHasNoPeopleToNotify($this->getLpa());
+                // set user has confirmed if there are people to notify
+                if(!array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $this->getLpa()->metadata)) {
+                    $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
                 }
                 
-               $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         
+        // list notified persons on the landing page if they've been added.
         $peopleToNotify = [];
         foreach($this->getLpa()->document->peopleToNotify as $idx=>$peopleToNotify) {
             $peopleToNotifyParams[] = [
@@ -92,7 +93,10 @@ class PeopleToNotifyController extends AbstractLpaController
         $form = new PeopleToNotifyForm();
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
+        // check if there's a seed number in this LPA and get seed data if it exists.
         if(($seedDetails = $this->getSeedDetails()) != null) {
+            
+            // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
@@ -101,14 +105,22 @@ class PeopleToNotifyController extends AbstractLpaController
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
+            // received a POST from the picker form
             if($postData->offsetExists('pick-details')) {
+                
                 // load seed data into the form or return form data in json format if request is an ajax
                 $seedDetailsPickerForm->setData($this->request->getPost());
                 if($seedDetailsPickerForm->isValid()) {
+                    
                     $pickIdx = $this->request->getPost('pick-details');
+                    
                     if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
+                        
+                        // prepare data of the chosen actor for populating into the form
                         $actorData = $seedDetails[$pickIdx]['data'];
                         $formData = $this->flattenData($actorData);
+                        
+                        // bind data to the form or return json to ajax call
                         if ( $this->getRequest()->isXmlHttpRequest() ) {
                             return new JsonModel($formData);
                         }
@@ -130,12 +142,11 @@ class PeopleToNotifyController extends AbstractLpaController
                     }
                     
                     // remove metadata flag value if exists
-                    if(!is_array($this->getLpa()->metadata) ||
-                        !array_key_exists(Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY, $this->getLpa->metadata) ||
-                        ($this->getLpa()->metadata[Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY]!==true)) {
-                            $this->getServiceLocator()->get('Metadata')->unsetLpaHasNoPeopleToNotify($this->getLpa());
+                    if(!array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $this->getLpa()->metadata)) {
+                            $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
                     }
                     
+                    // redirect to next page for non-js, or return a json to ajax call.
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }
@@ -188,6 +199,7 @@ class PeopleToNotifyController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
                 }
                 
+                // redirect to next page for non-js, or return a json to ajax call.
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
                     return new JsonModel(['success' => true]);
                 }
@@ -210,22 +222,16 @@ class PeopleToNotifyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
-        $deletionFlag = true;
         if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+            
+            // persist data to the api
             if(!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }
-                    
-            // check if the deleted notified person is the last one in peopleToNotify. If yes, set a flag in metadata, so we know user has no people to notify to be added into LPA.
-            if(count($this->getLpa()->document->peopleToNotify) == 1) {
-                $this->getServiceLocator()->get('Metadata')->setLpaHasNoPeopleToNotify($this->getLpa());
-            }
             
-            $deletionFlag = true;
         }
-        
-        // if notified person idx does not exist in lpa, return 404.
-        if(!$deletionFlag) {
+        else {
+            // if notified person idx does not exist in lpa, return 404.
             return $this->notFoundAction();
         }
         
