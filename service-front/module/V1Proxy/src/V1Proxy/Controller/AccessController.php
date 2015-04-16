@@ -133,7 +133,14 @@ class AccessController extends AbstractActionController {
         // Add the headers will relaying across...
         foreach( $headers as $k => $v ){
             $this->getResponse()->getHeaders()->addHeaderLine("{$k}: $v");
-        }
+
+            // If v1 returns this, then it has timed out...
+            if( $k == 'Location' && $v == '/user/login' ){
+                // So redirect to our timeout page.
+                return $this->redirect()->toRoute('login', ['state'=>'timeout']);
+            }
+
+        } // foreach
 
         // Bring the response code across...
         $this->getResponse()->setStatusCode( $response->getStatusCode() );
