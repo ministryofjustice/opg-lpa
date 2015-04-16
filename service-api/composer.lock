@@ -370,12 +370,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "b1a293c6de3c1adba1ecbc8df56e63194f5116e8"
+                "reference": "6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/b1a293c6de3c1adba1ecbc8df56e63194f5116e8",
-                "reference": "b1a293c6de3c1adba1ecbc8df56e63194f5116e8",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c",
+                "reference": "6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c",
                 "shasum": ""
             },
             "require": {
@@ -401,7 +401,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-04-14 13:14:06"
+            "time": "2015-04-16 10:02:17"
         },
         {
             "name": "nocarrier/hal",
