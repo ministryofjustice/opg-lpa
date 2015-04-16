@@ -707,6 +707,20 @@ class FormFlowChecker extends StateChecker
         }
     }
     
+    private function peopleToNotifyHasBeenConfirmed()
+    {
+        return ($this->lpaHasCertificateProvider() &&
+                (count($this->lpa->document->peopleToNotify) > 0) || array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $this->lpa->metadata));
+    }
+
+    protected function replacementAttorneyHasBeenConfirmed()
+    {
+        return ($this->lpaHasPrimaryAttorney() &&
+                (count($this->lpa->document->replacementAttorneys) > 0) || array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata));
+    }
+    
+######################## return functions #####################    
+    
     private function returnToFormType()
     {
         if($this->lpaHasType()) {
