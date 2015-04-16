@@ -54,7 +54,7 @@ class PeopleToNotifyController extends AbstractLpaController
         }
         
         // list notified persons on the landing page if they've been added.
-        $peopleToNotify = [];
+        $peopleToNotifyParams = [];
         foreach($this->getLpa()->document->peopleToNotify as $idx=>$peopleToNotify) {
             $peopleToNotifyParams[] = [
                     'notifiedPerson' => [
