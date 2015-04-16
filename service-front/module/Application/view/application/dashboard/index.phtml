@@ -41,7 +41,7 @@
       <td><?= ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id #v1Code ?></td>
       <td><?= $lpa->donor; ?></td>
       <td><?= ($lpa->type == 'property-and-financial') ? 'PF' : (($lpa->type == 'health-and-welfare')?'HW':'') ?></td>
-      <td><?= $lpa->progress ?></td>
+      <td><?= ( $lpa->version == 2 )?$lpa->progress:$lpa->status ?></td>
       <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
