@@ -4,19 +4,7 @@
     "updatedAt": "2015-01-12T10:40:26+00:00",
     "user": "406240e23bf93ef86ea3840602462b96",
     "repeatCaseNumber": 77340357,
-    "payment": {
-        "reducedFeeReceivesBenefits": false,
-        "reducedFeeAwardedDamages": true,
-        "reducedFeeLowIncome": false,
-        "reducedFeeUniversalCredit": false,
-        "amount": 55,
-        "method": "card",
-        "phone": {
-            "number": "+245 270 182657"
-        },
-        "reference": "3rd2arzyyi8zx947oaw9pn9bp9uvi32b",
-        "date": "2015-01-12T10:40:26+00:00"
-    },
+    "payment": null,
     "whoAreYouAnswered": true,
     "locked": true,
     "seed": null,
