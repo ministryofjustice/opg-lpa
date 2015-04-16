@@ -532,47 +532,6 @@
         ]
     },
     {
-        "name": "ministryofjustice/opg-lpa-api-client",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "47da6076c8723789ec8ce71e55bc0c755dc334dc"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/47da6076c8723789ec8ce71e55bc0c755dc334dc",
-            "reference": "47da6076c8723789ec8ce71e55bc0c755dc334dc",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "^5.1.0",
-            "ministryofjustice/opg-lpa-datamodels": "dev-master",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-04-14 16:05:49",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "API Wrapper for opg-lpa-api",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
-        }
-    },
-    {
         "name": "raven/raven",
         "version": "0.11.0",
         "version_normalized": "0.11.0.0",
@@ -2417,18 +2376,59 @@
         ]
     },
     {
+        "name": "ministryofjustice/opg-lpa-api-client",
+        "version": "dev-develop",
+        "version_normalized": "dev-develop",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
+            "reference": "0dfa72906fc176a3cb425139309a502fabbbb2d4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/0dfa72906fc176a3cb425139309a502fabbbb2d4",
+            "reference": "0dfa72906fc176a3cb425139309a502fabbbb2d4",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^5.1.0",
+            "ministryofjustice/opg-lpa-datamodels": "dev-master",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2015-04-16 08:45:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "API Wrapper for opg-lpa-api",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
+        }
+    },
+    {
         "name": "ministryofjustice/opg-lpa-datamodels",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "2bfcc464bf68db45a789cbc86c2c87c97af30e6b"
+            "reference": "6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/2bfcc464bf68db45a789cbc86c2c87c97af30e6b",
-            "reference": "2bfcc464bf68db45a789cbc86c2c87c97af30e6b",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c",
+            "reference": "6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c",
             "shasum": ""
         },
         "require": {
@@ -2440,7 +2440,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-04-15 10:41:16",
+        "time": "2015-04-16 10:02:17",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

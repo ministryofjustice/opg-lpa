@@ -26,6 +26,9 @@ use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
  */
 class StateChecker {
 
+    const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
+    const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
+    
     /**
      * LPA instance to apply checks to.
      *
@@ -217,7 +220,7 @@ class StateChecker {
     protected function lpaHasFinishedCreation()
     {
         return ($this->lpaHasCertificateProvider() &&
-                $this->routePeopleToNotifyHasBeenAccessed() && 
+                $this->peopleToNotifyHasBeenConfirmed() && 
                 (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)));
     }
     
@@ -231,9 +234,10 @@ class StateChecker {
         return ($this->lpaHasFinishedCreation() && ($this->lpa->createdAt!==null));
     }
     
-    protected function routePeopleToNotifyHasBeenAccessed()
+    protected function peopleToNotifyHasBeenConfirmed()
     {
-        return (count($this->lpa->document->peopleToNotify) > 0) || (is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-people-to-notify', $this->lpa->metadata) && ($this->lpa->metadata['lpa-has-no-people-to-notify'] == true));
+        return ($this->lpaHasCertificateProvider() && 
+                (count($this->lpa->document->peopleToNotify) > 0) || array_key_exists(self::PEOPLE_TO_NOTIFY_CONFIRMED, $this->lpa->metadata));
     }
     
     protected function lpaHasPeopleToNotify($index = null)
@@ -254,9 +258,10 @@ class StateChecker {
         return ($this->lpaHasPrimaryAttorney() && ($this->lpa->document->certificateProvider instanceof CertificateProvider));
     }
 
-    protected function routeReplacementAttorneyHasBeenAccessed()
+    protected function replacementAttorneyHasBeenConfirmed()
     {
-        return (count($this->lpa->document->replacementAttorneys) > 0) || (is_array($this->lpa->metadata) && array_key_exists('lpa-has-no-replacement-attorneys', $this->lpa->metadata) && ($this->lpa->metadata['lpa-has-no-replacement-attorneys'] == true));
+        return ($this->lpaHasPrimaryAttorney() &&
+                (count($this->lpa->document->replacementAttorneys) > 0) || array_key_exists(self::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata));
     }
 
     protected function lpaHowReplacementAttorneysMakeDecisionHasValue()
