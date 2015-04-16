@@ -463,7 +463,7 @@ class FormFlowChecker extends StateChecker
     {
         if($this->lpaHasPrimaryAttorney() && (
             ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends())
-            || ((count($this->lpa->document->replacementAttorneys) == 0) && is_array($this->lpa->metadata) && array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->lpa->metadata) && ($this->lpa->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]==true))
+            || ((count($this->lpa->document->replacementAttorneys) == 0) && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
             || ((count($this->lpa->document->replacementAttorneys) == 1) && (count($this->lpa->document->primaryAttorneys) == 1))
             || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly())
             || ($this->lpaHasMultipleReplacementAttorneys() && (count($this->lpa->document->primaryAttorneys) == 1) && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
@@ -545,7 +545,7 @@ class FormFlowChecker extends StateChecker
     
     private function isInstructionsAccessible()
     {
-        if($this->lpaHasCertificateProvider() && $this->routePeopleToNotifyHasBeenAccessed()) {
+        if($this->lpaHasCertificateProvider() && $this->peopleToNotifyHasBeenConfirmed()) {
             return true;
         }
         else {
@@ -775,7 +775,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToReplacementAttorney()
     {
-        if($this->routeReplacementAttorneyHasBeenAccessed()) {
+        if($this->replacementAttorneyHasBeenConfirmed()) {
             return 'lpa/replacement-attorney';
         }
         else {
@@ -838,7 +838,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToPeopleToNotify()
     {
-        if($this->routePeopleToNotifyHasBeenAccessed()) {
+        if($this->peopleToNotifyHasBeenConfirmed()) {
             return 'lpa/people-to-notify';
         }
         else {

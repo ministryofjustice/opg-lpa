@@ -47,15 +47,16 @@ class ReplacementAttorneyController extends AbstractLpaController
         
             if($form->isValid()) {
         
-                // check if replacementAttorneys is empty. If yes, set a flag in metadata, so we know user has no replacementAttorneys to be added into LPA.
-                if(count($this->getLpa()->document->replacementAttorneys) == 0) { 
-                    $this->getServiceLocator()->get('Metadata')->setLpaHasNoReplacementAttorneys($this->getLpa());
+                // set user has confirmed if there are replacement attorneys  
+                if(!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
+                    $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                 }
                 
                 $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         
+        // list replacement attorneys on the landing page if they've been added.
         $attorneysParams = [];
         foreach($this->getLpa()->document->replacementAttorneys as $idx=>$attorney) {
             $params = [
@@ -101,7 +102,10 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = new AttorneyForm('replacement-attorney');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
+        // check if there's a seed number in this LPA and get seed data if it exists.
         if(($seedDetails = $this->getSeedDetails()) != null) {
+            
+            // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
@@ -110,14 +114,22 @@ class ReplacementAttorneyController extends AbstractLpaController
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
+            // received a POST from the picker form
             if($postData->offsetExists('pick-details')) {
+                
                 // load seed data into the form or return form data in json format if request is an ajax
                 $seedDetailsPickerForm->setData($this->request->getPost());
                 if($seedDetailsPickerForm->isValid()) {
+                    
                     $pickIdx = $this->request->getPost('pick-details');
+                    
                     if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
+                        
+                        // prepare data of the chosen actor for populating into the form
                         $actorData = $seedDetails[$pickIdx]['data'];
                         $formData = $this->flattenData($actorData);
+                        
+                        // bind data to the form or return json to ajax call
                         if ( $this->getRequest()->isXmlHttpRequest() ) {
                             return new JsonModel($formData);
                         }
@@ -127,6 +139,7 @@ class ReplacementAttorneyController extends AbstractLpaController
                     }
                 }
             }
+            // received POST from the AttorneyForm
             else {
                 // handle replacement attorney form submission
                 $form->setData($postData);
@@ -138,13 +151,12 @@ class ReplacementAttorneyController extends AbstractLpaController
                         throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
                     }
                     
-                    // remove metadata flag value if exists
-                    if(!is_array($this->getLpa()->metadata) ||
-                        !array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->getLpa->metadata) ||
-                        ($this->getLpa()->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]!==true)) {
-                            $this->getServiceLocator()->get('Metadata')->unsetLpaHasNoReplacementAttorneys($this->getLpa());
+                    // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
+                    if(!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
+                            $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                     }
                     
+                    // redirect to next page for non-js, or return a json to ajax call.
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }
@@ -244,22 +256,16 @@ class ReplacementAttorneyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
-        $deletionFlag = true;
         if( array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys) ) {
+            
+            // persist data to the api
             if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }
             
-            // check if the deleted replacement attorney is the last one in replacementAttorneys. If yes, set a flag in metadata, so we know user has no replacementAttorneys to be added into LPA.
-            if(count($this->getLpa()->document->replacementAttorneys) == 1) {
-                $this->getServiceLocator()->get('Metadata')->setLpaHasNoReplacementAttorneys($this->getLpa());
-            }
-            
-            $deletionFlag = true;
         }
-        
-        // if attorney idx does not exist in lpa, return 404.
-        if(!$deletionFlag) {
+        else {
+            // if attorney idx does not exist in lpa, return 404.
             return $this->notFoundAction();
         }
         
@@ -291,7 +297,10 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = new TrustCorporationForm();
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
+        // check if there's a seed number in this LPA and get seed data if it exists.
         if(($seedDetails = $this->getSeedDetails(true)) != null) {
+            
+            // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
@@ -300,14 +309,22 @@ class ReplacementAttorneyController extends AbstractLpaController
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
+            // received a POST from the picker form
             if($postData->offsetExists('pick-details')) {
+                
                 // load seed data into the form or return form data in json format if request is an ajax
                 $seedDetailsPickerForm->setData($this->request->getPost());
                 if($seedDetailsPickerForm->isValid()) {
+                    
                     $pickIdx = $this->request->getPost('pick-details');
+                    
                     if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
+                        
+                        // prepare data of the chosen actor for populating into the form
                         $actorData = $seedDetails[$pickIdx]['data'];
                         $formData = $this->flattenData($actorData);
+                        
+                        // bind data to the form or return json to ajax call
                         if ( $this->getRequest()->isXmlHttpRequest() ) {
                             return new JsonModel($formData);
                         }
@@ -317,24 +334,24 @@ class ReplacementAttorneyController extends AbstractLpaController
                     }
                 }
             }
+            // received POST from the TrustCorporationForm
             else {
                 // handle trust corp form submission
                 $form->setData($postData);
                 if($form->isValid()) {
                 
-                    // persist data
+                    // persist data to the api
                     $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
                     if( !$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney) ) {
                         throw new \RuntimeException('API client failed to add trust corporation replacement attorney for id: '.$lpaId);
                     }
                     
-                    // remove metadata flag value if exists
-                    if(!is_array($this->getLpa()->metadata) ||
-                        !array_key_exists(Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS, $this->getLpa->metadata) ||
-                        ($this->getLpa()->metadata[Metadata::LPA_HAS_NO_REPLACEMENT_ATTORNEYS]!==true)) {
-                            $this->getServiceLocator()->get('Metadata')->unsetLpaHasNoReplacementAttorneys($this->getLpa());
+                    // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
+                    if(!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
+                        $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                     }
                     
+                    // redirect to next page for non-js, or return a json to ajax call.
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }

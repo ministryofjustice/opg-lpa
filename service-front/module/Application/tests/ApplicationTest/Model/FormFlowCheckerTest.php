@@ -670,7 +670,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->addCertificateProvider();
         $this->lpa->document->peopleToNotify = [];
-        $this->lpa->metadata[Metadata::LPA_HAS_NO_PEOPLE_TO_NOTIFY] = true;
+        $this->lpa->metadata[Metadata::PEOPLE_TO_NOTIFY_CONFIRMED] = true;
         $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
         
         $this->addPeopleToNotify();
