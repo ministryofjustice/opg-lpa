@@ -235,7 +235,7 @@ class ApplicationResourceService
             'headers' => ['Content-Type' => 'application/json']
         ]);
         
-        if ($response->getStatusCode() != 200) {
+        if (($response->getStatusCode() != 200) && ($response->getStatusCode() != 204)) {
             return $this->log($response, false);
         }
     
