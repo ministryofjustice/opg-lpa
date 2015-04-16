@@ -45,10 +45,10 @@
       <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
-        <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".$lpa->id) #v1Code ?>">Continue</a>
+        <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".sprintf("%010d", $lpa->id)) #v1Code ?>">Continue</a>
         <?= ($lpa->version == 2) ? '<a class="button" href="/lpa/' . $lpa->id . '/date-check">Dates</a>' : '' #v1Code ?>
         <?= ($lpa->version == 2) ? '<a class="button" href="'.$this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] ).'">Clone</a>' : '' #v1Code ?>
-        <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".$lpa->id) #v1Code ?>">Delete</a>
+        <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".sprintf("%010d", $lpa->id)) #v1Code ?>">Delete</a>
         </div>
       </td>
       </tr>
