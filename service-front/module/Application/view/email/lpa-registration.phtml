@@ -1,0 +1,25 @@
+<html>
+<head></head>
+<body>
+	<p>
+		Thank you for completing the online part of the registration process for <strong><?= $this->lpa->document->donor->name ?>'s
+		lasting power of attorney (LPA) for <?= (($this->lpa->document->type==Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF)?"property and financial affairs":"health and welfare") ?></strong>.
+	</p>
+	
+	<p>Reference number <?= $this->cellStyles(\Opg\Lpa\DataModel\Lpa\Formatter::id($this->lpa->id)) ?></p>
+
+	<p>The registration form must be printed and signed.  The registration form cover sheet explains what you need to do.</p>
+
+	<div style='width:500px;margin-left:40px'>
+		<strong><a href="<?=$this->completedUrl ?>">Sign in to download the registration form</a></strong>
+	</div>
+	
+	<p>If the donor is applying for an exemption or reduction of the fee, you'll need to download and sign the fee remission form too. </p>
+	
+	<p><strong>Remember, an LPA must be registered before it can be used.</strong></p>
+	
+<p>This is an automatic email - please don't reply to this address. If you need to contact us you can:</p> 
+
+<?php echo $this->partial('email/partials/signoff.phtml'); ?>	
+</body>
+</html>
