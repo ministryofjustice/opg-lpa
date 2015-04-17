@@ -74,17 +74,18 @@ return [
     
     'view_helpers' => [
         'invokables' => [
-            'accordionTop'      => 'Application\View\Helper\AccordionTop',
-            'accordionBottom'   => 'Application\View\Helper\AccordionBottom',
-            'accordionIdx'      => 'Application\View\Helper\AccordionIdx',
-            'accountInfo'       => 'Application\View\Helper\AccountInfo',
-            'pageHeaders'       => 'Application\View\Helper\PageHeaders',
-            'elementGroupClass' => 'Application\View\Helper\ElementGroupClass',
-            'routeName'         => 'Application\View\Helper\RouteName',
-            'formElementErrors' => 'Application\View\Helper\FormElementErrors',
-            'formErrorList'     => 'Application\View\Helper\FormErrorList',
+            'accordionTop'          => 'Application\View\Helper\AccordionTop',
+            'accordionBottom'       => 'Application\View\Helper\AccordionBottom',
+            'accordionIdx'          => 'Application\View\Helper\AccordionIdx',
+            'accountInfo'           => 'Application\View\Helper\AccountInfo',
+            'pageHeaders'           => 'Application\View\Helper\PageHeaders',
+            'elementGroupClass'     => 'Application\View\Helper\ElementGroupClass',
+            'routeName'             => 'Application\View\Helper\RouteName',
+            'formElementErrors'     => 'Application\View\Helper\FormElementErrors',
+            'formErrorList'         => 'Application\View\Helper\FormErrorList',
             'formLinkedErrorList'   => 'Application\View\Helper\FormLinkedErrorList',
-            'concatNames'       => 'Application\View\Helper\ConcatNames',
+            'concatNames'           => 'Application\View\Helper\ConcatNames',
+            'cellStyles'             => 'Application\View\Helper\CellStyles',
         ],
     ],
 
