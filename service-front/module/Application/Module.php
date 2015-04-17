@@ -128,6 +128,7 @@ class Module{
                 'Guidance'              => 'Application\Model\Service\Guidance\Guidance',
                 'ApplicationList'       => 'Application\Model\Service\Lpa\ApplicationList',
                 'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
+                'Communication'         => 'Application\Model\Service\Lpa\Communication',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
             ],
             'factories' => [
