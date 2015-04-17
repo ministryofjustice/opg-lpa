@@ -1,0 +1,29 @@
+<html>
+<head></head>
+<body>
+	<p>
+		Thank you for completing a lasting power of attorney (LPA) for 
+		<?= $this->lpa->document->donor->name ?>'s <?= (($this->lpa->document->type==Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF)?"property and financial affairs":"health and welfare") ?>.
+	</p>
+	<p>Reference number <?= $this->cellStyles(\Opg\Lpa\DataModel\Lpa\Formatter::id($this->lpa->id)) ?></p>
+
+	<p>The LPA document must be printed and signed, along with any continuation sheets. The LPA cover sheet explains what you need to do.</p>
+
+	<div style='width:500px;margin-left:40px'>
+		<strong><a href="<?=$this->signinUrl ?>">Sign in to download the LPA document or to register your LPA</a></strong>
+	</div>
+	
+	<p><strong>Remember, an LPA must be registered before it can be used.</strong></p>
+	
+	<p>When you're ready, you should sign back into the tool to generate a registration form and pay the application fee. Send the LPA and registration form to us at the Office of the Public Guardian.</p>
+	
+	<p>You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html">http://www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.</p>
+	
+	<p><strong>Don't send the LPA to us without a registration form.</strong></p>
+	
+<p>This is an automatic email, please don't reply to this address. If you need to contact us you can:</p> 
+
+<?php echo $this->partial('email/partials/signoff.phtml'); ?>
+	
+</body>
+</html>
