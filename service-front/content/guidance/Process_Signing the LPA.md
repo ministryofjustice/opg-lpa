@@ -6,11 +6,11 @@ The people involved in the LPA must sign it in the correct order. If they don't,
 
 The LPA must be signed in this order:
 
-1. Donor.
-2. Donor's witness.
-3. Certificate provider(s).
-4. Attorney(s) and any replacement attorney(s).
-5. Attorneys' witness(es).
+1. Donor
+2. Donor's witness
+3. Certificate provider(s)
+4. Attorney(s) and any replacement attorney(s)
+5. Attorneys' witness(es)
 
 ### Donor
 
@@ -48,11 +48,11 @@ Witnesses are impartial people aged at least 18 years who watch you and your att
 
 Your (the donor's) witness can't be:
 
-* 1 of your attorneys
-* 1 of your replacement attorneys
+* one of your attorneys
+* one of your replacement attorneys
 * an employee of a trust corporation that you've named as an attorney or replacement attorney
 
-The same person can witness both donor and attorney signatures, so long as they are not 1 of your attorneys. But you don’t have to use the same witness for all signatures.
+The same person can witness both donor and attorney signatures, so long as they are not one of your attorneys. But you don’t have to use the same witness for all signatures.
 
 ### Confirming the dates
 You'll need to confirm the order of signing when you apply to register the LPA using this digital tool. It will ask for the dates that the donor, certificate providers and attorneys signed the LPA document.
