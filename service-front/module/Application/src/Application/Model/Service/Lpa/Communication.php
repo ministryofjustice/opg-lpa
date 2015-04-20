@@ -10,6 +10,12 @@ use Zend\Mime\Part as MimePart;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
+/**
+ * A model service class for sending emails on LPA creation and completion.
+ * 
+ * Class Communication
+ * @package Application\Model\Service\Lpa
+ */
 class Communication implements ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
