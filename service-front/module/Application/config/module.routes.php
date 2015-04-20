@@ -277,18 +277,26 @@ return [
                     'dashboard' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/dashboard[/page/:page]',
+                            'route'    => '/dashboard',
                             'defaults' => [
                                 'controller' => 'Authenticated\DashboardController',
                                 'action'     => 'index',
-                                'page'       => 1
-                            ],
-                            'constraints' => [
-                                'page' => '[0-9]+',
                             ],
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'pagination' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/page/:page',
+                                    'constraints' => [
+                                        'page' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                            'page' => 1
+                                    ],
+                                ],
+                            ],
                             'create-lpa' => [
                                 'type'    => 'Segment',
                                 'options' => [
