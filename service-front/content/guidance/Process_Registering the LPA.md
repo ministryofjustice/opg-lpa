@@ -35,7 +35,7 @@ If you no longer have mental capacity, your attorneys can apply to register your
 
 This registration tool will ask you:
 
-* who is applying to register the LPA – this will be you (the donor) or at least 1 of the attorneys
+* who is applying to register the LPA – this will be you (the donor) or at least one of the attorneys
 * the correspondence address – give details of where OPG should write or phone while your application is processed
 * the dates the LPA was signed – give the dates when you, the certificate provider(s) and attorneys signed the printed LPA document
 * the dates you notified your 'people to be told' – if you named 'people to be told' when making your LPA, then you must send them the notification forms before you apply to register
@@ -47,7 +47,7 @@ The rest of the details will be completed automatically for you.
 
 Once you've filled everything in, print out the registration form and sign it.
 
-You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">http://www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.
+You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.
 
 Send the following documents to OPG:
 
