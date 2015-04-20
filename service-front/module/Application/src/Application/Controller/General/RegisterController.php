@@ -15,6 +15,11 @@ class RegisterController extends AbstractBaseController {
      */
     public function indexAction(){
 
+        $check = $this->preventAuthenticatedUser();
+        if( $check !== true ){ return $check; }
+
+        //---
+
         $form = new RegistrationForm();
         $form->setAttribute( 'action', $this->url()->fromRoute('register') );
 
