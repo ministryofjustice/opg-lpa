@@ -119,7 +119,8 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'dob-date-day',
             'required' => false,
-            'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'], ['name' => 'Int'] ],
+            'allowEmpty' => true,
+            'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
                     'name'    => 'Between',
@@ -136,7 +137,8 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'dob-date-month',
             'required' => false,
-            'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'], ['name' => 'Int'] ],
+            'allowEmpty' => true,
+            'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
                     'name'    => 'Between',
@@ -153,7 +155,8 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'dob-date-year',
             'required' => false,
-            'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'], ['name' => 'Int'] ],
+            'allowEmpty' => true,
+            'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
                     'name'    => 'Between',
@@ -252,7 +255,7 @@ class AboutYou extends AbstractForm {
     }
 
     /**
-     * We need to convert the DOB
+     * We need to convert the DOB for the Model.
      *
      * @return array|object
      */
@@ -266,7 +269,7 @@ class AboutYou extends AbstractForm {
 
         }
 
-        // Strip these working feilds out...
+        // Strip these working fields out...
         unset($data['dob-date-day'], $data['dob-date-month'], $data['dob-date-year']);
 
         $data = array_filter( $data, function($v){
