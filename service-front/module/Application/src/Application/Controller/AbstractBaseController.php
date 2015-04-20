@@ -75,6 +75,27 @@ abstract class AbstractBaseController extends AbstractActionController {
     } // function
 
     /**
+     * Checks if a user is logged in and redirects them to the dashboard if they are.
+     *
+     * This is used to prevent signed in users accessing pages they should not.
+     *
+     * e.g. login, register, etc.
+     *
+     * @return bool|\Zend\Http\Response
+     */
+    protected function preventAuthenticatedUser(){
+
+        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+
+        if( !is_null($identity) ){
+            return $this->redirect()->toRoute( 'user/dashboard' );
+        }
+
+        return true;
+
+    } // function
+
+    /**
      * Returns the global config.
      *
      * @return array

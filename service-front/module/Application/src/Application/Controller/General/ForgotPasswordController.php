@@ -19,6 +19,11 @@ class ForgotPasswordController extends AbstractBaseController
      * @return ViewModel
      */
     public function indexAction(){
+
+        $check = $this->preventAuthenticatedUser();
+        if( $check !== true ){ return $check; }
+
+        //---
         
         $form = new ResetPasswordEmailForm();
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password') );

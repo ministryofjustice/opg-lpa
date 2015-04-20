@@ -11,6 +11,11 @@ class AuthController extends AbstractBaseController {
 
     public function indexAction(){
 
+        $check = $this->preventAuthenticatedUser();
+        if( $check !== true ){ return $check; }
+
+        //---
+
         $check = $this->checkCookie( 'login' );
         if( $check !== true ){ return $check; }
 
