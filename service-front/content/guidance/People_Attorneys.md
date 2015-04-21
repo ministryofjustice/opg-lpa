@@ -1,9 +1,9 @@
 # Attorneys
 Attorneys are people you trust and appoint under your LPA to make decisions on your behalf when you don't have mental capacity.
 
-You must have at least 1 attorney. There's no upper limit but too many attorneys could make things difficult, as they'll need to work together.
+You must have at least one attorney. There's no upper limit but too many attorneys could make things difficult, as they'll need to work together.
 
-You should think about replacement attorneys – people who step in if 1 of your original attorneys can no longer act. See [Replacement attorneys](/help/#topic-replacement-attorneys) for more information.
+You should think about replacement attorneys – people who step in if one of your original attorneys can no longer act. See [Replacement attorneys](/help/#topic-replacement-attorneys) for more information.
 
 ## Who can be an attorney
 
@@ -38,7 +38,7 @@ A trust corporation can be an attorney for a property and financial affairs LPA.
 
 If your finances are complex or you don't have anyone you want to appoint, you might choose a trust corporation. If you're considering this, you should get legal or financial advice.
 
-If you appoint a trust corporation, make sure you use the exact name they operate under in your LPA. You can't appoint more than 1 trust corporation in your LPA.
+If you appoint a trust corporation, make sure you use the exact name they operate under in your LPA. You can't appoint more than one trust corporation in your LPA.
 
 ### Health and welfare LPA attorneys
 
@@ -69,7 +69,7 @@ An attorney can no longer act on your behalf if they:
 * were your wife, husband or civil partner but your relationship has legally ended and you've not stated in your LPA restrictions that they can continue
 * become bankrupt or subject to a debt relief order and were an attorney for a property and financial affairs LPA
 
-If you've said that your attorneys must act together for some or all decisions, they will not be able to make those decisions if 1 dies or can no longer act for you for another reason. To protect your LPA, you should consider appointing replacement attorneys.
+If you've said that your attorneys must act together for some or all decisions, they will not be able to make those decisions if one dies or can no longer act for you for another reason. To protect your LPA, you should consider appointing replacement attorneys.
 
 If you cancel your LPA, your attorneys can no longer act on your behalf.
 
