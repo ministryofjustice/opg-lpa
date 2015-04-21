@@ -1,6 +1,6 @@
 # The 2 types of LPA
 
-There are 2 types of LPA. Some people make 1, while others make both.
+There are 2 types of LPA. Some people make one, while others make both.
 
 ## Property and financial affairs LPA
 
@@ -11,7 +11,7 @@ You choose people you trust to make decisions on your behalf about money and fin
 * paying household and other bills
 * buying and selling your house and other property
 
-The people you choose to make decisions are known as 'attorneys'. You can have 1 attorney or more.
+The people you choose to make decisions are known as 'attorneys'. You can have one attorney or more.
 
 You don't have to own your own home or have a lot of money to make a property and financial affairs LPA. For example, if it's hard to manage your bank account or bills alone, you may want someone to help.
 
@@ -28,7 +28,7 @@ You choose people you trust to make decisions on your behalf about things such a
 * whether you move into residential care and finding a good care home
 * day-to-day matters such as your diet, dress or daily routine
 
-The people you choose to make decisions are known as 'attorneys'. You can have 1 attorney or more.
+The people you choose to make decisions are known as 'attorneys'. You can have one attorney or more.
 
 You must also choose whether your attorneys or your doctors will make decisions if you ever need treatment to stay alive and you aren't capable of deciding.
 
