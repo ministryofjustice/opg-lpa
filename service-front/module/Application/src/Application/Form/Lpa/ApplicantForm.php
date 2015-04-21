@@ -27,7 +27,7 @@ class ApplicantForm extends AbstractForm
             ],
     ];
     
-    public function __construct (Lpa $lpa, $formName = 'applicant')
+    public function __construct (Lpa $lpa)
     {
         $this->lpa = $lpa;
         
@@ -41,7 +41,7 @@ class ApplicantForm extends AbstractForm
             $this->setAttorneyList();
         }
         
-        parent::__construct($formName);
+        parent::__construct('applicant');
         
     }
     

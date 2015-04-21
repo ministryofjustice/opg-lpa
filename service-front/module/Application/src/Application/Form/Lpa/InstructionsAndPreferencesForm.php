@@ -16,10 +16,10 @@ class InstructionsAndPreferencesForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'instructions-and-preferences')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('instructions-and-preferences');
         
     }
     

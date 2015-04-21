@@ -25,10 +25,10 @@ class TypeForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'type-form')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('type');
         
     }
     

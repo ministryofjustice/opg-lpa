@@ -58,9 +58,9 @@ class CorrespondentForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ($formName = 'correspondent')
+    public function __construct ()
     {
-        parent::__construct($formName);
+        parent::__construct('correspondent');
         
     }
     
