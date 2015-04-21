@@ -13,12 +13,12 @@ An LPA is a legal document that allows you (the donor) to choose people – know
 Only you can give others the power to make decisions on your behalf. This applies whether you get help making your LPA or not.
 
 ## Who can be a donor
-An LPA is for 1 person only. You can make an LPA if:
+An LPA is for one person only. You can make an LPA if:
 
 * you are at least 18 years old
 * you have the mental capacity to do so
 
-It's fine to get help when making your LPA. Many people talk to family, friends or a legal advisor. But you alone must make the decisions about your LPA. For example, no one else should choose your attorneys for you.
+It's fine to get help when making your LPA. Many people talk to family, friends or a legal adviser. But you alone must make the decisions about your LPA. For example, no one else should choose your attorneys for you.
 
 Most people can make an LPA. However, there could be complications because of:
 
