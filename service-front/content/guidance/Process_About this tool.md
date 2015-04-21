@@ -1,11 +1,11 @@
-# About this tool
-This digital LPA tool helps you make your lasting power of attorney (LPA).
+# About this digital service
+This digital LPA service helps you make your lasting power of attorney (LPA) online.
 
 You'll be asked some questions. For each question, you'll need to give some information or make choices. You'll also find links to detailed guidance.
 
 You can stop at any time and save the information you've entered. You may want to do this if you need to think about a decision or discuss your LPA with someone. Sign back in when you're ready to continue.
 
-With this digital tool:
+With this digital service:
 
 * you can't complete the whole process online – you need to print and sign your LPA and send it to the Office of the Public Guardian (OPG) to be registered
 * you can only make an LPA for England and Wales – your LPA may not be recognised in other countries
@@ -25,7 +25,7 @@ Apply to register your LPA sooner rather than later, in case there are any probl
 
 ## Fees
 
-It costs £110 to register an LPA. Some people qualify for a reduced fee or can pay no fee.
+It currently costs £110 to register an LPA. Some people qualify for a reduced fee or can pay no fee.
 
 See [Fees and reductions](/help/#topic-fees-and-discounts)
 
@@ -47,7 +47,7 @@ You need to make quite a few decisions when you make your LPA. You should think 
 * Do you want any conditions or restrictions on the way your attorneys make decisions?
 * Do you want to give any guidance to your attorneys about how to make decisions?
 * Who's the independent person – the certificate provider – who can sign your LPA to confirm that you understand it and no one is forcing you to make it? This person is a safeguard who can raise concerns when you make your LPA.
-* Are there any 'people to be told' about your LPA when it is about to be registered? These people are a safeguard who can raise concerns about your LPA before it can be used.
+* Are there any 'people to be told' about your LPA when it is about to be registered? These people are an optional safeguard who can raise concerns about your LPA before it can be used.
 
 
 ### Related help topics
