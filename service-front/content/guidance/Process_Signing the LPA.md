@@ -55,7 +55,7 @@ Your (the donor's) witness can't be:
 The same person can witness both donor and attorney signatures, so long as they are not one of your attorneys. But you don’t have to use the same witness for all signatures.
 
 ### Confirming the dates
-You'll need to confirm the order of signing when you apply to register the LPA using this digital tool. It will ask for the dates that the donor, certificate providers and attorneys signed the LPA document.
+You'll need to confirm the order of signing when you apply to register the LPA using this digital service. It will ask for the dates that the donor, certificate providers and attorneys signed the LPA document.
 
 If you notice that the dates are not in the correct order, then you must print the document again and have the relevant people sign it in the correct order before you attempt to register the LPA.
 
