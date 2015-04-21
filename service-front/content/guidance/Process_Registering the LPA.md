@@ -6,7 +6,7 @@ To apply to register the LPA:
 
 1. Using this tool, complete a registration form (this form, the LPA002, is different from the LPA itself).
 2. Pay the application fee online or by cheque.
-3. Print and sign the form.
+3. Print and sign the registration form.
 4. Send it to the Office of the Public Guardian (OPG) with the signed LPA document.
 
 Don't make any changes to the LPA document after you've signed it. That could make it invalid, so you'd have to print it again and get everyone to sign it again.
@@ -38,7 +38,7 @@ This registration tool will ask you:
 * who is applying to register the LPA – this will be you (the donor) or at least one of the attorneys
 * the correspondence address – give details of where OPG should write or phone while your application is processed
 * the dates the LPA was signed – give the dates when you, the certificate provider(s) and attorneys signed the printed LPA document
-* the dates you notified your 'people to be told' – if you named 'people to be told' when making your LPA, then you must send them the notification forms before you apply to register
+* the dates you notified any 'people to be told' – if you named 'people to be told' when making your LPA, then you must send them the notification forms before you apply to register
 * other powers of attorney – give details of any enduring power of attorney (EPA) or registered LPA that you've made as a donor
 
 The rest of the details will be completed automatically for you.
