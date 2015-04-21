@@ -4,16 +4,16 @@ Here are words you'll see when you're making your lasting power of attorney (LPA
 
 
 **Applicant** 
-> The applicant is the person who applies to register the LPA – that can be you (the donor) or 1 or more of your attorneys. The Office of the Public Guardian (OPG) usually sends the registered and stamped LPA to the applicant. However, if you tell OPG to correspond with a legal professional about your LPA application, OPG will send the registered LPA to that person.
+> The applicant is the person who applies to register the LPA – that can be you (the donor) or one or more of your attorneys. The Office of the Public Guardian (OPG) usually sends the registered and stamped LPA to the applicant. However, if you tell OPG to correspond with a legal professional about your LPA application, OPG will send the registered LPA to that person.
 
 **Attorney**
-> Attorneys are the people you choose to make decisions for you. You know them well and trust them to respect your views and act in your best interests. Attorneys don't need to be lawyers. Many people choose their wife, husband, civil partner, partner, children, other relatives or close friends. Attorneys must be at least 18 years' old.
+> Attorneys are the people you choose to make decisions for you. You know them well and trust them to respect your views and act in your best interests. Attorneys don't need to be lawyers. Many people choose their wife, husband, civil partner, partner, children, other relatives or close friends. Attorneys must be at least 18 years old.
 
 **Certificate provider** 
-> Certificate providers are impartial people who confirm that you understand what you are doing and that nobody is forcing you to make the LPA. If you name any 'people to be told' in your LPA, you need 1 certificate provider. If you haven't, you need 2 certificate providers. Also see 'People to be told'.
+> Certificate providers are impartial people who confirm that you understand what you are doing and that nobody is forcing you to make the LPA. You need at least one certificate provider to make your LPA valid.
 
 **Donor**
-> You are the donor. The donor is the person making the LPA and choosing other people to make decisions on their behalf. Only the donor can make decisions about their LPA, such as choosing their attorneys. A donor must be at least 18 years' old and have mental capacity when they make their LPA.
+> You are the donor. The donor is the person making the LPA and choosing other people to make decisions on their behalf. Only the donor can make decisions about their LPA, such as choosing their attorneys. A donor must be at least 18 years old and have mental capacity when they make their LPA.
 
 **Exemption**
 > If you, the donor, get certain means-tested benefits, you will not have to pay to apply to register your LPA. This is known as an 'exemption'. Also see 'Remission'. 
@@ -22,13 +22,13 @@ Here are words you'll see when you're making your lasting power of attorney (LPA
 > You can include guidance in your LPA. Guidance is what you'd like your attorneys to think about when making decisions for you. Attorneys should take guidance into account but don't have to follow it. Also see 'Restrictions'.
 
 **Jointly**
-> 'Jointly' means that your attorneys must unanimously agree on every decision they make for you. If attorneys can't agree, they can't make a decision. If 1 attorney can no longer act on your behalf, the others won't be able to make these decisions either.
+> 'Jointly' means that your attorneys must unanimously agree on every decision they make for you. If attorneys can't agree, they can't make a decision. If one attorney can no longer act on your behalf, the others won't be able to make these decisions either.
 
 **Jointly and severally**
 > 'Jointly and severally' means that each attorney can make any decision on their own or they can decide together if they prefer. This is the most practical option as decisions won't be delayed, or not made, because attorneys can't meet or agree.
 
 **Jointly for some decisions, and jointly and severally for other decisions**
-> 'Jointly for some decisions, and jointly and severally for other decisions' means that your attorneys must unanimously agree on some specific decisions but can make others on their own. Donors who pick this option must clearly state all the decisions that must be agreed unanimously. If 1 attorney can no longer act on your behalf, the others won't be able to make these decisions either. But they can continue to make other decisions.
+> 'Jointly for some decisions, and jointly and severally for other decisions' means that your attorneys must unanimously agree on some specific decisions but can make others on their own. Donors who pick this option must clearly state all the decisions that must be agreed unanimously. If one attorney can no longer act on your behalf, the others won't be able to make these decisions either. But they can continue to make other decisions.
 
 **Lasting power of attorney (LPA)**
 > An LPA is a legal document that allows you to choose other people to make decisions for you. There are 2 types of LPA: 
@@ -57,13 +57,13 @@ Here are words you'll see when you're making your lasting power of attorney (LPA
 > If you (the donor) have an income of less than £12,000 a year before tax, you pay less to apply to register your LPA. This is known as a 'remission'. Also see 'Exemption'.
 
 **Replacement attorneys**
-> Replacement attorneys are people you choose to step in if 1 or more of your attorneys can no longer act or decide for you.
+> Replacement attorneys are people you choose to step in if one or more of your attorneys can no longer act or decide for you.
 
 **Restrictions and conditions**
 > You can specify restrictions and conditions in your LPA. These tell your attorneys things that they must and must not do when making decisions and acting for you. Many donors don't add restrictions and conditions as they trust their attorneys to make the decisions they would make themselves. Also see 'Guidance'.
 
 **Trust corporation**
-> A trust corporation can only be an attorney for a property and financial affairs LPA. A trust corporation manages your funds, including savings, pensions or investments. A trust corporation is usually run by a commercial bank or firm of solicitors. You can't appoint more than 1 trust corporation in your LPA.
+> A trust corporation can only be an attorney for a property and financial affairs LPA. A trust corporation manages your funds, including savings, pensions or investments. A trust corporation is usually run by a commercial bank or firm of solicitors. You can't appoint more than one trust corporation in your LPA.
 
 **Witness**
 > Witnesses are impartial people who watch you and your attorneys, including any replacement attorneys, sign your LPA. They must also sign the LPA to say they've seen you and your attorneys sign.
