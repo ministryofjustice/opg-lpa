@@ -6,7 +6,7 @@ The Office of the Public Guardian (OPG) will contact the person named in the cor
 
 The correspondent can be:
 
-* the applicant (either you or 1 of your attorneys)
+* the applicant (either you or one of your attorneys)
 * a solicitor or other legal professional
 * someone else you'd prefer to receive OPG correspondence
 
