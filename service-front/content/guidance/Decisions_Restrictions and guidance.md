@@ -92,14 +92,14 @@ The last of these only applies if you allow your attorneys to decide about life-
 There are things you can't make your attorneys do. If you would like your attorneys to do something that you are not allowed to include as a restriction, you may be able to include it as guidance instead.
 
 ### Contradictions
-Don't appoint attorneys to make decisions in 1 way, then include a restriction that makes them act differently.
+Don't appoint attorneys to make decisions in one way, then include a restriction that makes them act differently.
 
-If you have stated that your attorneys should act jointly – so they must agree unanimously on every decision – you can't add that if 1 dies, the others can continue to act.
+If you have stated that your attorneys should act jointly – so they must agree unanimously on every decision – you can't add that, if one dies, the others can continue to act.
 
 If you have stated that your attorneys must act jointly and severally – so they can make any decision on your behalf on their own or together – you must not add these sort of restrictions and conditions:
 
-* that 1 attorney has to do what another attorney says
-* that 1 attorney must deal with your business and another with your private affairs
+* that one attorney has to do what another attorney says
+* that one attorney must deal with your business and another with your private affairs
 * that where attorneys disagree, the majority should decide
 * that they must make some decisions together – you should appoint them to act 'jointly for some decisions, and jointly and severally for other decisions' instead if this is what you want
 
