@@ -8,7 +8,7 @@ Letting people know about your LPA when it's about to be registered provides ext
 
 This safeguard is especially important if there's a long time between making your LPA and registering it.
 
-However, you don't have to choose 'people to be told'. If you don't, you'll need 2 people – known as certificate providers – instead of 1, to confirm that you've made the LPA of your own free will. See [Certificate providers](/help/#topic-certificate-providers) for more information.
+However, you don't have to choose any 'people to be told' to make your LPA valid – it's an optional extra precaution.  
 
 ## Choose 'people to be told'
 
@@ -58,7 +58,7 @@ A 'person to be told' can object to an LPA's registration if:
 
 ### Questions to ask yourself
 
-* Do you want anyone to be told when you or your attorneys apply to register my LPA?
+* Do you want anyone to be told when you or your attorneys apply to register your LPA?
 * Have you discussed what's involved with your 'people to be told'?
 * Do they understand why you want to name them and what will happen if an application to register your LPA is made?
 * Are they happy to be named in your LPA?
