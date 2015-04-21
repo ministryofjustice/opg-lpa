@@ -1,6 +1,6 @@
 # How attorneys make decisions
 
-If you have more than 1 attorney, you must decide whether you want them to make some or all decisions on their own or whether they should agree some or all decisions unanimously. The legal terms are 'severally' and 'jointly'.
+If you have more than one attorney, you must decide whether you want them to make some or all decisions on their own or whether they should agree some or all decisions unanimously. The legal terms are 'severally' and 'jointly'.
 
 Your options are:
 
@@ -25,11 +25,11 @@ Most people choose this option because:
 *	attorneys can make simple or urgent decisions quickly and easily
 *	if an attorney can no longer act, the LPA won't be cancelled
 
-It is possible for 1 attorney to make decisions for you without asking your other attorneys.
+It is possible for one attorney to make decisions for you without asking your other attorneys.
 
 If you choose this option, you must not say anywhere else in the LPA that certain decisions must be made by:
 
-*	1 particular attorney
+*	one particular attorney
 *	some or all of your attorneys
 *	a minimum number of attorneys
 
@@ -47,9 +47,9 @@ With this option:
 
 *	if your attorneys can’t all agree on a decision, it can’t be made
 *	if your attorneys can’t work together, your LPA won’t work
-*	if 1 attorney can no longer act or dies, your LPA will stop working, unless you’ve appointed replacements
+*	if one attorney can no longer act or dies, your LPA will stop working, unless you’ve appointed replacements
 
-If you have appointed replacement attorneys, they all take over if 1 of your original attorneys can no longer act – your original attorneys stop acting for you. This is because the law treats attorneys who act jointly as a single unit.
+If you have appointed replacement attorneys, they all take over if one of your original attorneys can no longer act – your original attorneys stop acting for you. This is because the law treats attorneys who act jointly as a single unit.
 
 ## Jointly for some decisions, and jointly and severally for other decisions
 
@@ -62,9 +62,9 @@ Some people pick this option because they don’t mind their attorneys taking ev
 With this option:
 
 *	if your attorneys can’t agree on a joint decision, it can’t be made
-*	if 1 attorney can no longer act or dies, your remaining attorneys won't be able to make any of the joint decisions, unless you’ve appointed replacements
+*	if one attorney can no longer act or dies, your remaining attorneys won't be able to make any of the joint decisions, unless you’ve appointed replacements
 
-If 1 attorney can no longer act and you’ve appointed replacements:
+If one attorney can no longer act and you’ve appointed replacements:
 
 *	the replacement attorneys take over making all joint decisions from your original attorneys
 *	the replacement and remaining original attorneys can make any decisions they’re allowed to make individually
@@ -96,7 +96,7 @@ In both examples, 'everything else' means all decisions about your day-to-day ca
 * Do you want your attorneys or replacement attorneys to make all their decisions together and agree everything unanimously?
 * Are you happy for your attorneys to choose whether they make decisions together or individually?
 * Do your attorneys understand how you would like them to make decisions?
-* Do you know what will happen if 1 attorney can't act any more?
+* Do you know what will happen if one attorney can't act any more?
 * Do you want replacement attorneys? They're an important backup if your attorneys have to make some or all decisions together.
 
 ### Related help topics
