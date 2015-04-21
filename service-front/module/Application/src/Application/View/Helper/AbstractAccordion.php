@@ -8,12 +8,12 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Application\View\Helper\Traits\ConcatNames;
+use Application\View\Helper\Traits\ConcatNamesTrait;
 use Application\Model\Service\Lpa\Metadata;
 
 abstract class AbstractAccordion extends AbstractHelper
 {
-    use ConcatNames;
+    use ConcatNamesTrait;
     
     protected $lpa;
     

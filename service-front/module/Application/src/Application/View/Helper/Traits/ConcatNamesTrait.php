@@ -1,7 +1,7 @@
 <?php
 namespace Application\View\Helper\Traits;
 
-trait ConcatNames
+trait ConcatNamesTrait
 {
     function concatNames($nameList)
     {

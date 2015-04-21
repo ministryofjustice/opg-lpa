@@ -2,11 +2,11 @@
 namespace Application\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
-use Application\View\Helper\Traits\ConcatNames;
+use Application\View\Helper\Traits\ConcatNamesTrait;
 
 class ConcatNames extends AbstractHelper
 {
-    use ConcatNames;
+    use ConcatNamesTrait;
     
     /**
      * 
