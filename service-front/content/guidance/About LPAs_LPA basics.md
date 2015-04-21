@@ -54,7 +54,7 @@ Attorneys must follow the <a href="https://www.gov.uk/government/publications/me
 
 4. Your attorneys must act and make decisions in your best interests when you are unable to make a decision.
 
-5. Before your attorneys make a decision or act for you, they must consider whether they can achieve the same result without restricting your rights so much.
+5. Before your attorneys make a decision or act for you, they must consider whether they can achieve the same result without restricting your rights and freedoms so much.
 
 ## Safeguards
 
