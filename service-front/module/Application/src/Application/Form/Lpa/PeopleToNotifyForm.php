@@ -31,10 +31,10 @@ class PeopleToNotifyForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ($formName = 'people-to-notify')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('people-to-notify');
         
     }
     

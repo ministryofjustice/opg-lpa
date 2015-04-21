@@ -62,14 +62,14 @@ class FeeForm extends AbstractForm
             ],
     ];
     
-    public function __construct (Lpa $lpa, $formName = 'type-form')
+    public function __construct (Lpa $lpa)
     {
         $this->lpa = $lpa;
         
         // The email value is only used for sending to payment gateway, therefore it is not validated by model.
         $this->formElements['email']['validators'] = [new EmailAddress()];
         
-        parent::__construct($formName);
+        parent::__construct('fee');
         
     }
     

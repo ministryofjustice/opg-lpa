@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+
 class CertificateProviderForm extends AbstractActorForm
 {
     protected $formElements = [
@@ -31,10 +32,10 @@ class CertificateProviderForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ($formName = 'certificate-provider')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('certificate-provider');
         
     }
     

@@ -74,10 +74,10 @@ class WhoAreYouForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'who-are-you')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('who-are-you');
         
     }
     

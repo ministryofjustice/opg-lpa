@@ -18,7 +18,7 @@ class CorrespondentSwitcherForm extends AbstractForm
             ],
     ];
     
-    public function __construct (Lpa $lpa, $formName = 'correspondent-selector')
+    public function __construct (Lpa $lpa)
     {
         $this->lpa = $lpa;
         
@@ -33,7 +33,7 @@ class CorrespondentSwitcherForm extends AbstractForm
         
         $this->formElements['switch-to-type']['options']['value_options']['other'] = 'Other';
         
-        parent::__construct($formName);
+        parent::__construct('correspondent-selector');
     }
     
    /**

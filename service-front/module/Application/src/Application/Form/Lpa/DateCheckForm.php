@@ -48,7 +48,7 @@ class DateCheckForm extends AbstractForm
             }
         }
         
-        parent::__construct('date-check-form');
+        parent::__construct('date-checker');
         
     }
     

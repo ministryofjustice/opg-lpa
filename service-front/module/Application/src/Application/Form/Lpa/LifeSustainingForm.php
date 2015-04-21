@@ -29,10 +29,10 @@ class LifeSustainingForm extends AbstractForm
             ],
     ];
         
-    public function __construct ($formName = 'lifeSustaining')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('life-sustaining');
         
     }
     
