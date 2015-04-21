@@ -1,7 +1,7 @@
 # Replacement attorneys
-Replacement attorneys are people you choose to step in if 1 of your original attorneys can no longer make decisions on your behalf.
+Replacement attorneys are people you choose to step in if one of your original attorneys can no longer make decisions on your behalf.
 
-A replacement attorney will step in if 1 of your attorneys:
+A replacement attorney will step in if one of your attorneys:
 
 * dies
 * loses mental capacity
@@ -23,22 +23,22 @@ Having replacement attorneys means that your LPA should still work if an origina
 
 Without replacements:
 
-* if you have only 1 attorney and that attorney can no longer act for you, your LPA will no longer work
+* if you have only one attorney and that attorney can no longer act for you, your LPA will no longer work
 * if you have attorneys who must make all or some decisions together ('jointly') and 1 attorney can no longer act, the rest will not be able to make those joint decisions
 
 If your LPA can't be used and you don't have mental capacity, someone you know will have to apply to the Court of Protection to get the power to act on your behalf – this can be expensive and take a long time.
 
 ## When a replacement attorney steps in
-A replacement attorney can only act if the original attorney they're replacing is permanently unable to make decisions for 1 of the reasons above.
+A replacement attorney can only act if the original attorney they're replacing is permanently unable to make decisions for one of the reasons above.
 
 A replacement attorney:
 
 * can't temporarily stand in for an attorney who is still able to act (for example, while the first attorney is on holiday)
 * can't replace a replacement attorney
 
-If your attorneys have to make all or some decisions jointly and 1 can no longer act, your replacement attorneys make those joint decisions instead. Both your remaining original attorneys and your replacements can make any decisions that don't have to be made jointly.
+If your attorneys have to make all or some decisions jointly and one can no longer act, your replacement attorneys make those joint decisions instead. Both your remaining original attorneys and your replacements can make any decisions that don't have to be made jointly.
 
-Replacement attorneys usually step in as soon as 1 of your original attorneys stops acting for you. If you include more than 1 replacement attorney in your LPA, they all start at the same time, unless you've:
+Replacement attorneys usually step in as soon as one of your original attorneys stops acting for you. If you include more than one replacement attorney in your LPA, they all start at the same time, unless you've:
 
 1. Appointed your attorneys to act jointly and severally.
 2. Stated the order in which your original attorneys will be replaced.
@@ -58,15 +58,15 @@ You can only state an order if your attorneys act jointly and severally. You can
 
 > You choose your husband as your attorney. You appoint your best friend as a replacement attorney in case your husband dies before you or can no longer act for another reason.
 
-> You choose 2 attorneys. You appoint a replacement who can step in and work with 1 of the attorneys if the other can no longer act. (If your attorneys must make any or all decisions jointly, the remaining original attorney won't be able to make those decisions. The replacement will replace both original attorneys for the joint decisions.)
+> You choose 2 attorneys. You appoint a replacement who can step in and work with one of the attorneys if the other can no longer act. (If your attorneys must make any or all decisions jointly, the remaining original attorney won't be able to make those decisions. The replacement will replace both original attorneys for the joint decisions.)
 
-> You choose your wife and adult son as attorneys. You appoint your 3 grandchildren, who are all over 18, as replacement attorneys. You don't state an order, so all 3 will step in if 1 of your original attorneys can no longer act.
+> You choose your wife and adult son as attorneys. You appoint your 3 grandchildren, who are all over 18, as replacement attorneys. You don't state an order, so all 3 will step in if one of your original attorneys can no longer act.
 
 
 ## Questions to ask yourself
 
 * Do you want replacement attorneys in case your original attorneys can no longer act? How many?
-* Would it be better to choose several attorneys to act jointly and severally instead of just 1 attorney?
+* Would it be better to choose several attorneys to act jointly and severally instead of just one attorney?
 * Do the people you're considering as replacement attorneys understand that it may be years before they'll need to act for you, if at all?
 * Would you want new attorneys to replace original ones in a particular order? (This is only possible if you have said that attorneys should make decisions jointly and severally.)
 
