@@ -9,9 +9,9 @@ The Office of the Public Guardian (OPG) needs to know who is applying to registe
 If the applicant has named a correspondent, they will receive the registered LPA instead of the applicant.
 
 ## Who can apply to register an LPA
-Either you (the donor) or 1 or more of your attorneys, can apply to register your LPA. A donor and attorney can't apply to register an LPA together.
+Either you (the donor) or one or more of your attorneys, can apply to register your LPA. A donor and attorney can't apply to register an LPA together.
 
-### If you have more than 1 attorney
+### If you have more than one attorney
 If any of your attorneys want to register your LPA, the rules about who can apply depend on how you've said your attorneys must make decisions.
 
 If all decisions are to be made jointly:
@@ -24,7 +24,7 @@ If you've said some or all decisions can be made jointly and severally:
 * any of the attorneys can apply to register the LPA
 * those who apply must sign the application form (LPA002)
 
-If more than 1 attorney applies to register your LPA, OPG will send the registered and stamped LPA to the attorney whose name appears first on the application.
+If more than one attorney applies to register your LPA, OPG will send the registered and stamped LPA to the attorney whose name appears first on the application.
 
 ### Related help topics
 * [Correspondence address](/help/#topic-correspondence-address)
