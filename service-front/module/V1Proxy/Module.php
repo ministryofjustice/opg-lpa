@@ -15,6 +15,7 @@ class Module {
     public function getServiceConfig() {
         return [
             'invokables' => [
+                'ProxyAboutYou' => 'V1Proxy\Model\AboutYou',
                 'ProxyDashboard' => 'V1Proxy\Model\Dashboard',
             ],
             'factories' => [
