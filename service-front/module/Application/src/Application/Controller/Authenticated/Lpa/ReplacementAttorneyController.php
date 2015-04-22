@@ -104,8 +104,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         if(($seedDetails = $this->getSeedDetails()) != null) {
             
             // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -300,7 +299,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         if(($seedDetails = $this->getSeedDetails(true)) != null) {
             
             // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails, $this->getServiceLocator());
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }

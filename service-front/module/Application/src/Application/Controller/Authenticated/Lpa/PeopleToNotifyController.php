@@ -95,8 +95,7 @@ class PeopleToNotifyController extends AbstractLpaController
         if(($seedDetails = $this->getSeedDetails()) != null) {
             
             // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
-//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }

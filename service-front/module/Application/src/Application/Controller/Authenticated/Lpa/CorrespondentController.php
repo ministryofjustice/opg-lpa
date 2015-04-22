@@ -123,8 +123,7 @@ class CorrespondentController extends AbstractLpaController
         $correspondentForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
         $correspondentForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-//         $switcherForm = new CorrespondentSwitcherForm($this->getLpa());
-        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm');
+        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa()]);
         $switcherForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {

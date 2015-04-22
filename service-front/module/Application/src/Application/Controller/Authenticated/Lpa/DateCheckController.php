@@ -22,8 +22,7 @@ class DateCheckController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-//         $form = new DateCheckForm($lpa);
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', ['lpa'=>$lpa]);
         
         $viewParams = [];
         

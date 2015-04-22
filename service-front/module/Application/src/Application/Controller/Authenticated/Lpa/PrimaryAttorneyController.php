@@ -79,8 +79,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if(($seedDetails = $this->getSeedDetails()) != null) {
-//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -276,8 +275,7 @@ class PrimaryAttorneyController extends AbstractLpaController
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
 
         if(($seedDetails = $this->getSeedDetails(true)) != null) {
-//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }

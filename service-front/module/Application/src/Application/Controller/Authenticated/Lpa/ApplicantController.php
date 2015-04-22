@@ -13,7 +13,7 @@ class ApplicantController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\ApplicantForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\ApplicantForm', ['lpa'=>$this->getLpa()]);
         
         if($this->request->isPost()) {
             
