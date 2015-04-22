@@ -41,6 +41,8 @@ class PaymentController extends AbstractLpaController
         $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
         
         $this->redirect()->toUrl($redirectUrl);
+        
+        return $this->getResponse();
     }
     
     public function successAction()
@@ -61,6 +63,8 @@ class PaymentController extends AbstractLpaController
         $communicationService->sendInstrumentCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
         
         $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
+        
+        return $this->getResponse();
     }
     
     /**
@@ -120,6 +124,8 @@ class PaymentController extends AbstractLpaController
         //@todo:  set flash message before redirecting
         
         $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
+        
+        return $this->getResponse();
     }
     
     /**
