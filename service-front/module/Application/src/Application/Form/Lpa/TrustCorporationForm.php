@@ -31,10 +31,10 @@ class TrustCorporationForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ($formName = 'donor')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('trust-corporation');
         
     }
     

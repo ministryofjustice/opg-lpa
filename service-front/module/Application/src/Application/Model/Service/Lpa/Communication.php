@@ -30,7 +30,7 @@ class Communication implements ServiceLocatorAwareInterface {
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl)
     {
         
-        $this->sendEmail('email/lpa-instrument.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
     }
     
     private function sendEmail($emailTemplate, Lpa $lpa, $signinUrl, $subject, $category)

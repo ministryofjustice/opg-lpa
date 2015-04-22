@@ -31,10 +31,10 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($formName = 'primary-attorney-decisions')
+    public function __construct ()
     {
         
-        parent::__construct($formName);
+        parent::__construct('primary-attorney-decisions');
         
     }
     

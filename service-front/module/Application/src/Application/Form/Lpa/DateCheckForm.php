@@ -30,7 +30,7 @@ class DateCheckForm extends AbstractForm
         ]
     ];
     
-    public function __construct (Lpa $lpa, $formName = 'type-form')
+    public function __construct (Lpa $lpa)
     {
         foreach($lpa->document->primaryAttorneys as $idx => $attorney) {
             $this->formElements['sign-date-attorney-' . $idx] = [];
@@ -48,7 +48,7 @@ class DateCheckForm extends AbstractForm
             }
         }
         
-        parent::__construct($formName);
+        parent::__construct('date-checker');
         
     }
     

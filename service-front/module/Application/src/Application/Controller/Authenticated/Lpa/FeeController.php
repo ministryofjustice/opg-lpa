@@ -114,7 +114,7 @@ class FeeController extends AbstractLpaController
                 else {
                     // send email
                     $communicationService = $this->getServiceLocator()->get('Communication');
-                    $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id]));
+                    $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
                 
                     // to complete page
                     $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
