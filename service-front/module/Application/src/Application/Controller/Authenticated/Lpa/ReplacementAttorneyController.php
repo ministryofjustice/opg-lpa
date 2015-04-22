@@ -15,9 +15,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
-use Zend\Form\Form;
-use Zend\Form\Element\Csrf;
-use Application\Form\Lpa\SeedDetailsPickerForm;
 use Application\Model\Service\Lpa\Metadata;
 
 class ReplacementAttorneyController extends AbstractLpaController
@@ -31,13 +28,7 @@ class ReplacementAttorneyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         
         // set hidden form for saving empty array to replacement attorneys.
-        $form = new Form();
-        $form->setAttribute('method', 'post');
-        
-        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
-                'timeout' => null,
-                'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
         
         if($this->request->isPost()) {
         

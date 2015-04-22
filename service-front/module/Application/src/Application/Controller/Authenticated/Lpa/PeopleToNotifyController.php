@@ -13,8 +13,6 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Zend\View\Model\JsonModel;
-use Zend\Form\Form;
-use Zend\Form\Element\Csrf;
 use Application\Model\Service\Lpa\Metadata;
 
 class PeopleToNotifyController extends AbstractLpaController
@@ -28,13 +26,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         
         // set hidden form for saving empty array to peopleToNotify.
-        $form = new Form();
-        $form->setAttribute('method', 'post');
-        
-        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
-                'timeout' => null,
-                'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
         
         if($this->request->isPost()) {
         

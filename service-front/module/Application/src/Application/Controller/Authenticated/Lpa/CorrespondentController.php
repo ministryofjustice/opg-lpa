@@ -16,8 +16,6 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
-use Zend\Form\Form;
-use Zend\Form\Element\Csrf;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -50,13 +48,7 @@ class CorrespondentController extends AbstractLpaController
         }
         
         // set hidden form for saving applicant as the default correspondent
-        $form = new Form();
-        $form->setAttribute('method', 'post');
-        
-        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
-                'timeout' => null,
-                'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
         
         if($this->request->isPost()) {
             
