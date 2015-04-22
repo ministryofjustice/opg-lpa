@@ -14,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 {
-    protected $inputFilter, $serviceLocator, $logger, $formName;
+    protected $inputFilter, $serviceLocator, $logger;
     
     public function init()
     {
@@ -75,7 +75,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         
         //@todo: to be removed - logging form CSRF element value
         if($this->getLogger() !== null) {
-            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", Form:". $this->formName .', Csrf: '.$this->get('secret')->getValue());
+            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", FormName: ". $this->getName() .', Csrf: '.$this->get('secret')->getValue());
         }
     }
     
@@ -159,6 +159,10 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
             // @todo: to be removed - capture CSRF error
             if(($this->getLogger() !== null) && isset($messages['secret']) && isset($messages['secret']['notSame'])) {
                 $this->getLogger()->crit($messages['secret']['notSame']);
+                
+                // logging session container contents
+                $csrfSsession = new \Zend\Session\Container($this->get('secret')->getCsrfValidator()->getSessionName());
+                $this->getLogger()->info($csrfSsession->tokenList);
             }
             
             // merge Zend and model validation errors.
