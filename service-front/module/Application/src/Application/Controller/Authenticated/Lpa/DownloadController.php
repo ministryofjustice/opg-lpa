@@ -10,7 +10,6 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 
 class DownloadController extends AbstractLpaController
 {
@@ -21,7 +20,7 @@ class DownloadController extends AbstractLpaController
 
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
         if ($details['status'] == 'in-queue') {
-            return new ViewModel();
+            return false;
         }
         else {
             header('Content-disposition: inline; filename="Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf"');
@@ -33,5 +32,7 @@ class DownloadController extends AbstractLpaController
             
             echo $this->getLpaApplicationService()->getPdf($this->getLpa()->id, $pdfType);
         }
+        
+        return $this->getResponse();
     }
 }
