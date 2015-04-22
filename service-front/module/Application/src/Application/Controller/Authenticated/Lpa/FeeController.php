@@ -26,7 +26,7 @@ class FeeController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new FeeForm($lpa);
+        $form = new FeeForm();
         
         if($this->request->isPost()) {
             $post = $this->request->getPost();
