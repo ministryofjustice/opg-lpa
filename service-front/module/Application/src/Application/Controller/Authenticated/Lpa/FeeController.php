@@ -12,7 +12,6 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Application\Form\Lpa\FeeForm;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Zend\Session\Container;
 
@@ -26,7 +25,7 @@ class FeeController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new FeeForm($lpa);
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeForm');
         
         if($this->request->isPost()) {
             $post = $this->request->getPost();

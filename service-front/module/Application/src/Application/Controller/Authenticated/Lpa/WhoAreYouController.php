@@ -11,7 +11,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\WhoAreYouForm;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 
 class WhoAreYouController extends AbstractLpaController
@@ -28,7 +27,7 @@ class WhoAreYouController extends AbstractLpaController
             return new ViewModel( ['nextRoute'=>$this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )] );
         }
         
-        $form = new WhoAreYouForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhoAreYouForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {

@@ -12,9 +12,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Application\Form\Lpa\AttorneyForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Application\Form\Lpa\TrustCorporationForm;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
 use Zend\Form\Form;
@@ -99,14 +97,15 @@ class ReplacementAttorneyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new AttorneyForm('replacement-attorney');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         // check if there's a seed number in this LPA and get seed data if it exists.
         if(($seedDetails = $this->getSeedDetails()) != null) {
             
             // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -198,11 +197,11 @@ class ReplacementAttorneyController extends AbstractLpaController
         }
         
         if($attorney instanceof Human) {
-            $form = new AttorneyForm();
+            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
             $viewModel->setTemplate('application/replacement-attorney/person-form.phtml');
         }
         else {
-            $form = new TrustCorporationForm();
+            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
             $viewModel->setTemplate('application/replacement-attorney/trust-form.phtml');
         }
         
@@ -294,14 +293,14 @@ class ReplacementAttorneyController extends AbstractLpaController
             $this->redirect()->toRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]);
         }
         
-        $form = new TrustCorporationForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         // check if there's a seed number in this LPA and get seed data if it exists.
         if(($seedDetails = $this->getSeedDetails(true)) != null) {
             
             // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails, $this->getServiceLocator());
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }

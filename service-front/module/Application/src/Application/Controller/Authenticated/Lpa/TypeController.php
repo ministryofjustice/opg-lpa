@@ -10,7 +10,6 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Form\Lpa\TypeForm;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
@@ -21,7 +20,7 @@ class TypeController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = new TypeForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TypeForm');
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

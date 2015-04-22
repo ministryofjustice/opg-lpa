@@ -12,12 +12,9 @@ namespace Application\Controller\Authenticated\Lpa;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Application\Controller\AbstractLpaController;
-use Application\Form\Lpa\AttorneyForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Application\Form\Lpa\TrustCorporationForm;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
-use Application\Form\Lpa\SeedDetailsPickerForm;
 
 class PrimaryAttorneyController extends AbstractLpaController
 {
@@ -78,11 +75,12 @@ class PrimaryAttorneyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new AttorneyForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if(($seedDetails = $this->getSeedDetails()) != null) {
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -160,11 +158,11 @@ class PrimaryAttorneyController extends AbstractLpaController
         }
         
         if($attorney instanceof Human) {
-            $form = new AttorneyForm();
+            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
             $viewModel->setTemplate('application/primary-attorney/person-form.phtml');
         }
         else {
-            $form = new TrustCorporationForm();
+            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
             $viewModel->setTemplate('application/primary-attorney/trust-form.phtml');
         }
         
@@ -274,11 +272,12 @@ class PrimaryAttorneyController extends AbstractLpaController
             $this->redirect()->toRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]);
         }
         
-        $form = new TrustCorporationForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
 
         if(($seedDetails = $this->getSeedDetails(true)) != null) {
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+//             $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm');
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }

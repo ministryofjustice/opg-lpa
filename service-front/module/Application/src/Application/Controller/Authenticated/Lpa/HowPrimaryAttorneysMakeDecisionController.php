@@ -11,7 +11,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\HowAttorneysMakeDecisionForm;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
@@ -21,7 +20,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = new HowAttorneysMakeDecisionForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

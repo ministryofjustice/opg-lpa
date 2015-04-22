@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+
 class PeopleToNotifyForm extends AbstractActorForm
 {
     protected $formElements = [
@@ -31,11 +32,11 @@ class PeopleToNotifyForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('people-to-notify');
         
-        parent::__construct('people-to-notify');
-        
+        parent::init();
     }
     
    /**

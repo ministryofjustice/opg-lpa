@@ -6,8 +6,9 @@ use Zend\Validator;
 
 class AttorneyForm extends AbstractActorForm
 {
-    protected $formElements;    
-    public function __construct ()
+    protected $formElements;
+        
+    public function init ()
     {
         $this->formElements  = [
             'name-title' => [
@@ -94,10 +95,11 @@ class AttorneyForm extends AbstractActorForm
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
             ],
-    ];
+        ];
     
-        parent::__construct('attorney');
+        $this->setName('attorney');
         
+        parent::init();
     }
     
    /**

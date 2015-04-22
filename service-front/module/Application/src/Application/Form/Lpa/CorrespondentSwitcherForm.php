@@ -3,6 +3,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+
 class CorrespondentSwitcherForm extends AbstractForm
 {
     protected $formElements = [
@@ -18,7 +19,7 @@ class CorrespondentSwitcherForm extends AbstractForm
             ],
     ];
     
-    public function __construct (Lpa $lpa)
+    public function init (Lpa $lpa)
     {
         $this->lpa = $lpa;
         
@@ -33,7 +34,9 @@ class CorrespondentSwitcherForm extends AbstractForm
         
         $this->formElements['switch-to-type']['options']['value_options']['other'] = 'Other';
         
-        parent::__construct('correspondent-selector');
+        $this->setName('correspondent-selector');
+        
+        parent::init();
     }
     
    /**

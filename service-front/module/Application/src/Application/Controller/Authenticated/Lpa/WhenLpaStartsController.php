@@ -10,7 +10,6 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Form\Lpa\WhenLpaStartsForm;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
@@ -21,7 +20,7 @@ class WhenLpaStartsController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = new WhenLpaStartsForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhenLpaStartsForm');
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

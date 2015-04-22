@@ -27,7 +27,7 @@ class ApplicantForm extends AbstractForm
             ],
     ];
     
-    public function __construct (Lpa $lpa)
+    public function init (Lpa $lpa)
     {
         $this->lpa = $lpa;
         
@@ -41,8 +41,9 @@ class ApplicantForm extends AbstractForm
             $this->setAttorneyList();
         }
         
-        parent::__construct('applicant');
+        $this->setName('applicant');
         
+        parent::init();
     }
     
     public function validateByModel()

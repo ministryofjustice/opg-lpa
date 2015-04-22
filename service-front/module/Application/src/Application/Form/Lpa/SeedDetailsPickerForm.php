@@ -16,13 +16,15 @@ class SeedDetailsPickerForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($seedDetails)
+    public function init ($seedDetails)
     {
         foreach($seedDetails as $idx=>$actor) {
             $this->formElements['pick-details']['options']['value_options'][$idx] = $actor['label'];
         }
         
-        parent::__construct('seed-details-picker');
+        $this->setName('seed-details-picker');
+        
+        parent::init();
     }
     
    /**

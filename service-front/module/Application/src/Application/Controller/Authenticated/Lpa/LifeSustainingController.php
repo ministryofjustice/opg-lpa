@@ -10,7 +10,6 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Form\Lpa\LifeSustainingForm;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
@@ -21,7 +20,7 @@ class LifeSustainingController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = new LifeSustainingForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\LifeSustainingForm');
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

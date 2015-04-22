@@ -31,11 +31,11 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('primary-attorney-decisions');
         
-        parent::__construct('primary-attorney-decisions');
-        
+        parent::init();
     }
     
    /**

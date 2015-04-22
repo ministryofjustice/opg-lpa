@@ -29,11 +29,11 @@ class LifeSustainingForm extends AbstractForm
             ],
     ];
         
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('life-sustaining');
         
-        parent::__construct('life-sustaining');
-        
+        parent::init();
     }
     
    /**

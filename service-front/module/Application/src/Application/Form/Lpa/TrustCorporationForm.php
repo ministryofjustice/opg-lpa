@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+
 class TrustCorporationForm extends AbstractActorForm
 {
     protected $formElements = [
@@ -31,11 +32,11 @@ class TrustCorporationForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('trust-corporation');
         
-        parent::__construct('trust-corporation');
-        
+        parent::init();
     }
     
    /**
