@@ -252,16 +252,16 @@
         },
         {
             "name": "mikehaertl/php-shellcommand",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikehaertl/php-shellcommand.git",
-                "reference": "8f85b119472c98c539c7ac5f4302643ff20df220"
+                "reference": "48c0435d283c89bf595b2ac58d5cf7dea2a02c1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-shellcommand/zipball/8f85b119472c98c539c7ac5f4302643ff20df220",
-                "reference": "8f85b119472c98c539c7ac5f4302643ff20df220",
+                "url": "https://api.github.com/repos/mikehaertl/php-shellcommand/zipball/48c0435d283c89bf595b2ac58d5cf7dea2a02c1c",
+                "reference": "48c0435d283c89bf595b2ac58d5cf7dea2a02c1c",
                 "shasum": ""
             },
             "type": "library",
@@ -284,20 +284,20 @@
             "keywords": [
                 "shell"
             ],
-            "time": "2014-11-03 09:44:24"
+            "time": "2015-04-15 17:09:44"
         },
         {
             "name": "mikehaertl/php-tmpfile",
-            "version": "1.0.0",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikehaertl/php-tmpfile.git",
-                "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687"
+                "reference": "1defd205b56853ea55bf51881a483fd2c566e305"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/e34d43fa546d09f434b59ea8c05d4e4d55d55687",
-                "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687",
+                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/1defd205b56853ea55bf51881a483fd2c566e305",
+                "reference": "1defd205b56853ea55bf51881a483fd2c566e305",
                 "shasum": ""
             },
             "type": "library",
@@ -312,7 +312,7 @@
             ],
             "authors": [
                 {
-                    "name": "Michael Haertl",
+                    "name": "Michael Härtl",
                     "email": "haertl.mike@gmail.com"
                 }
             ],
@@ -320,7 +320,7 @@
             "keywords": [
                 "files"
             ],
-            "time": "2014-07-09 11:08:51"
+            "time": "2015-03-25 07:34:27"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -328,12 +328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "0cb59092843d51fa73b769d7b962792ebe459e59"
+                "reference": "9dff12d65c12ff3a273877dbc605d373503e3caa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0cb59092843d51fa73b769d7b962792ebe459e59",
-                "reference": "0cb59092843d51fa73b769d7b962792ebe459e59",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/9dff12d65c12ff3a273877dbc605d373503e3caa",
+                "reference": "9dff12d65c12ff3a273877dbc605d373503e3caa",
                 "shasum": ""
             },
             "require": {
@@ -359,7 +359,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-04-02 20:34:54"
+            "time": "2015-04-16 14:59:20"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -1093,16 +1093,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.0.15",
+            "version": "2.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67"
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/34cc484af1ca149188d0d9e91412191e398e0b67",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/934fd03eb6840508231a7f73eb8940cf32c3b66c",
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c",
                 "shasum": ""
             },
             "require": {
@@ -1151,7 +1151,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-01-24 10:06:35"
+            "time": "2015-04-11 04:35:00"
         },
         {
             "name": "phpunit/php-file-iterator",

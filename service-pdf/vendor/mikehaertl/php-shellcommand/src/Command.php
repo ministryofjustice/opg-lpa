@@ -7,7 +7,7 @@ namespace mikehaertl\shellcommand;
  * This class represents a shell command.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.0.4
+ * @version 1.0.5
  * @license http://www.opensource.org/licenses/MIT
  */
 class Command
@@ -31,6 +31,13 @@ class Command
      * variables to the command if this is enabled. Default is false.
      */
     public $useExec = false;
+
+    /**
+     * @var bool whether to capture stderr (2>&1) when `useExec` is true. This will try to redirect the
+     * stderr to stdout and provide the complete output of both in `getStdErr()` and `getError()`.
+     * Default is `true`.
+     */
+    public $captureStdErr = true;
 
     /**
      * @var string|null the initial working dir for proc_open(). Default is null for current PHP working dir.
@@ -265,16 +272,18 @@ class Command
         }
 
         if ($this->useExec) {
-            exec($command, $output, $this->_exitCode);
+            $execCommand = $this->captureStdErr ? "$command 2>&1" : $command;
+            exec($execCommand, $output, $this->_exitCode);
             $this->_stdOut = trim(implode("\n", $output));
             if ($this->_exitCode!==0) {
-                $this->_error = 'Command failed';
+                $this->_stdErr = $this->_stdOut;
+                $this->_error = empty($this->_stdErr) ? 'Command failed' : $this->_stdErr;
                 return false;
             }
         } else {
             $descriptors = array(
                 1   => array('pipe','w'),
-                2   => array('pipe','w'),
+                2   => array('pipe','a'),
             );
             $process = proc_open($command, $descriptors, $pipes, $this->procCwd, $this->procEnv, $this->procOptions);
 
