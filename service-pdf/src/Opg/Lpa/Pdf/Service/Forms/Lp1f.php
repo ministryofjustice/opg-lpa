@@ -53,7 +53,7 @@ class Lp1f extends Lp1
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $primaryAttorneys[$i]->address->postcode;
             
             if($primaryAttorneys[$i]->email instanceof EmailAddress) {
-                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-email-address'] = $primaryAttorneys[$i]->email->address;
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-email-address'] = "\n".$primaryAttorneys[$i]->email->address;
             }
             
             if($i==3) break;

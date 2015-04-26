@@ -60,7 +60,7 @@ class Lpa120 extends AbstractForm
     {
         $mappings = array(
                 'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
-                'donor-address'     => implode(', ', array(
+                'donor-address'     => "\n".implode(', ', array(
                         $this->lpa->document->donor->address->address1,
                         $this->lpa->document->donor->address->address2,
                         $this->lpa->document->donor->address->address3,
@@ -68,19 +68,20 @@ class Lpa120 extends AbstractForm
                 )),
                 'lpa-type-property-and-financial-affairs' => ($this->lpa->document->type==Document::LPA_TYPE_PF)?self::CHECK_BOX_ON:null,
                 'lpa-type-health-and-welfare'             => ($this->lpa->document->type==Document::LPA_TYPE_HW)?self::CHECK_BOX_ON:null,
-                'is-repeat-application'     => ($this->lpa->repeatCaseNumber==null)?null:self::CHECK_BOX_ON,
-                'correspondent'             => $this->lpa->document->correspondent->who,
+                'is-repeat-application'     => ($this->lpa->repeatCaseNumber===null)?null:self::CHECK_BOX_ON,
+                'correspondent-type'             => $this->lpa->document->correspondent->who,
+                'correspondent-type-other-details' => null,
                 'correspondent-name-title'  => ($this->lpa->document->correspondent->name instanceof Name)?strtolower($this->lpa->document->correspondent->name->title):null,
                 'correspondent-name-first'  => ($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->first:null,
                 'correspondent-name-last'   => ($this->lpa->document->correspondent->name instanceof Name)?$this->lpa->document->correspondent->name->last:$this->lpa->document->correspondent->name,
-                'correspondent-address'     => implode(', ', array(
+                'correspondent-address'     => "\n".implode(', ', array(
                         $this->lpa->document->correspondent->address->address1,
                         $this->lpa->document->correspondent->address->address2,
                         $this->lpa->document->correspondent->address->address3,
                         $this->lpa->document->correspondent->address->postcode
                 )),
                 'correspondent-phone'       => ($this->lpa->document->correspondent->phone instanceof PhoneNumber)?$this->lpa->document->correspondent->phone->number:null,
-                'correspondent-name-email-address' => ($this->lpa->document->correspondent->email instanceof EmailAddress)?$this->lpa->document->correspondent->email->address:null,
+                'correspondent-email-address' => ($this->lpa->document->correspondent->email instanceof EmailAddress)?$this->lpa->document->correspondent->email->address:null,
                 'receive-benefits'          => $this->lpa->payment->reducedFeeReceivesBenefits?'yes':'no',
                 'damage-awarded'            => $this->lpa->payment->reducedFeeAwardedDamages?'no':'yes',
                 'low-income'                => $this->lpa->payment->reducedFeeLowIncome?'yes':'no',

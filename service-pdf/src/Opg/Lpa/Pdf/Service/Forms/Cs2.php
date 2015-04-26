@@ -52,7 +52,7 @@ class Cs2 extends AbstractForm
             $cs2 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
             $cs2->fillForm(array(
                     $this->contentType  => self::CHECK_BOX_ON,
-                    'cs-2-content'      => $this->getContentForBox($pageNo, $this->content, $this->contentType),
+                    'cs2-content'       => $this->getContentForBox($pageNo, $this->content, $this->contentType),
                     'donor-full-name'   => $this->fullName($this->lpa->document->donor->name)
             ))
             ->flatten()

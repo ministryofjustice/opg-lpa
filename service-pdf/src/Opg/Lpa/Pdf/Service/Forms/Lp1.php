@@ -214,7 +214,7 @@ abstract class Lp1 extends AbstractForm
          */
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
-            $this->flattenLpa['has-more-than-5-notified-people'] = self::CHECK_BOX_ON;
+            $this->flattenLpa['has-more-than-4-notified-people'] = self::CHECK_BOX_ON;
         }
         elseif($noOfPeopleToNotify < self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
             $this->drawingTargets[6] = array();

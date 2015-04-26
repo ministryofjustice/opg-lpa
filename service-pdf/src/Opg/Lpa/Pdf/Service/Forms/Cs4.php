@@ -21,7 +21,7 @@ class Cs4 extends AbstractForm
         
         $cs2->fillForm(
             array(
-                    'cs-4-trust-corporation-company-registration-number' => $this->companyNumber
+                    'cs4-trust-corporation-company-registration-number' => $this->companyNumber
             ))
         ->saveAs($filePath);
         

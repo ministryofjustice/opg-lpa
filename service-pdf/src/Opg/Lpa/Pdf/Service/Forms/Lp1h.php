@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 
 class Lp1h extends Lp1
 {
@@ -27,6 +28,9 @@ class Lp1h extends Lp1
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-day'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('d');
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-month'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('m');
             $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-dob-date-year'] = $this->lpa->document->primaryAttorneys[$i]->dob->date->format('Y');
+            if($this->lpa->document->primaryAttorneys[$i]->email instanceof EmailAddress) {
+                $this->flattenLpa['lpa-document-primaryAttorneys-'.$i.'-email-address'] = "\n".$this->lpa->document->primaryAttorneys[$i]->email->address;
+            }
             if($i==3) break;
         }
         
