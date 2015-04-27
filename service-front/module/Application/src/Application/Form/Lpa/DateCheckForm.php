@@ -1,10 +1,10 @@
 <?php
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class DateCheckForm extends AbstractForm
 {
+    protected $lpa;
     
     protected $formElements = [
         'sign-date-donor' => [],
@@ -29,14 +29,24 @@ class DateCheckForm extends AbstractForm
             ],
         ]
     ];
-    
-    public function __construct (Lpa $lpa)
+
+    public function __construct($name, $options)
     {
-        foreach($lpa->document->primaryAttorneys as $idx => $attorney) {
+        if(array_key_exists('lpa', $options)) {
+            $this->lpa = $options['lpa'];
+            unset($options['lpa']);
+        }
+    
+        parent::__construct($name, $options);
+    }
+    
+    public function init ()
+    {
+        foreach($this->lpa->document->primaryAttorneys as $idx => $attorney) {
             $this->formElements['sign-date-attorney-' . $idx] = [];
         }
         
-        foreach($lpa->document->replacementAttorneys as $idx => $attorney) {
+        foreach($this->lpa->document->replacementAttorneys as $idx => $attorney) {
             $this->formElements['sign-date-replacement-attorney-' . $idx] = [];
         }
         
@@ -48,7 +58,9 @@ class DateCheckForm extends AbstractForm
             }
         }
         
-        parent::__construct('date-checker');
+        $this->setName('date-checker');
+        
+        parent::init();
         
     }
     

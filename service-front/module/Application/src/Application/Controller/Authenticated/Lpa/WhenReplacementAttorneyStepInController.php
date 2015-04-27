@@ -11,7 +11,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\WhenReplacementAttorneyStepInForm;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class WhenReplacementAttorneyStepInController extends AbstractLpaController
@@ -21,7 +20,7 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = new WhenReplacementAttorneyStepInForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhenReplacementAttorneyStepInForm');
         
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();

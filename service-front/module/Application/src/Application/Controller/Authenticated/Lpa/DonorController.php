@@ -11,10 +11,8 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\DonorForm;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Zend\View\Model\JsonModel;
-use Application\Form\Lpa\SeedDetailsPickerForm;
 
 class DonorController extends AbstractLpaController
 {
@@ -61,11 +59,11 @@ class DonorController extends AbstractLpaController
             $viewModel->setTerminal(true);
         }
         
-        $form = new DonorForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if(($seedDetails = $this->getSeedDetails()) != null) {
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -128,7 +126,7 @@ class DonorController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new DonorForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {

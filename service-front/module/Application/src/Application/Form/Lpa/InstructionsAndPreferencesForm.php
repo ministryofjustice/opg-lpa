@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+
 class InstructionsAndPreferencesForm extends AbstractForm
 {
     protected $formElements = [
@@ -16,11 +17,11 @@ class InstructionsAndPreferencesForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('instructions-and-preferences');
         
-        parent::__construct('instructions-and-preferences');
-        
+        parent::init();
     }
     
    /**

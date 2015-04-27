@@ -25,11 +25,11 @@ class WhenLpaStartsForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('when-lpa-starts');
         
-        parent::__construct('when-lpa-starts');
-        
+        parent::init();
     }
     
    /**

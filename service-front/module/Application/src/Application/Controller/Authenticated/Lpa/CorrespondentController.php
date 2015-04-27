@@ -12,14 +12,10 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Application\Form\Lpa\CorrespondentForm;
-use Application\Form\Lpa\CorrespondentSwitcherForm;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
-use Zend\Form\Form;
-use Zend\Form\Element\Csrf;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -52,13 +48,7 @@ class CorrespondentController extends AbstractLpaController
         }
         
         // set hidden form for saving applicant as the default correspondent
-        $form = new Form();
-        $form->setAttribute('method', 'post');
-        
-        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
-                'timeout' => null,
-                'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
         
         if($this->request->isPost()) {
             
@@ -122,10 +112,10 @@ class CorrespondentController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $correspondentForm = new CorrespondentForm();
+        $correspondentForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
         $correspondentForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        $switcherForm = new CorrespondentSwitcherForm($this->getLpa());
+        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa()]);
         $switcherForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {

@@ -6,7 +6,6 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 class FeeForm extends AbstractForm
 {
-    
     protected $formElements = [
             'repeatCaseNumber' => [
                     'type' => 'Text',
@@ -57,13 +56,14 @@ class FeeForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
         // The email value is only used for sending to payment gateway, therefore it is not validated by model.
         $this->formElements['email']['validators'] = [new EmailAddress()];
         
-        parent::__construct('fee');
+        $this->setName('fee');
         
+        parent::init();
     }
     
    /**

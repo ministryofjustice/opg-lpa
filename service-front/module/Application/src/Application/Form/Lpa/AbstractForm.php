@@ -9,15 +9,16 @@ use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
 use Zend\Form\Element\Radio;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-abstract class AbstractForm extends Form
+abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 {
-    protected $inputFilter;
+    protected $inputFilter, $serviceLocator, $logger;
     
-    public function __construct($formName)
+    public function init()
     {
-        parent::__construct($formName);
-        
+        parent::init();
         $this->setAttribute('method', 'post');
 
         $this->add( (new Csrf('secret'))->setCsrfValidatorOptions([
@@ -70,6 +71,12 @@ abstract class AbstractForm extends Form
         
         $this->setInputFilter($filter);
         
+        $this->prepare();
+        
+        //@todo: to be removed - logging form CSRF element value
+        if($this->getLogger() !== null) {
+            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", FormName: ". $this->getName() .', Csrf: '.$this->get('secret')->getValue());
+        }
     }
     
     /**
@@ -149,12 +156,26 @@ abstract class AbstractForm extends Form
                 ];
             }
             
+            // @todo: to be removed - capture CSRF error
+            if(($this->getLogger() !== null) && isset($messages['secret']) && isset($messages['secret']['notSame'])) {
+                $this->getLogger()->err($messages['secret']['notSame'].". Received CSRF: ".$this->data['secret']);
+                
+                // logging session container contents
+                $csrfSsession = new \Zend\Session\Container($this->get('secret')->getCsrfValidator()->getSessionName());
+                $this->getLogger()->debug($csrfSsession->tokenList);
+            }
+            
             // merge Zend and model validation errors.
             if(isset($modelValidationResult) && isset($modelValidationResult['messages'])) {
                 $messages = array_merge($messages, $modelValidationResult['messages']);
             }
             
             $this->setMessages($messages);
+        }
+        
+        //@todo: to be removed - logging received CSRF
+        if($this->getLogger() !== null) {
+            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", Received CSRF: ".$this->data['secret']);
         }
         
         return $result;
@@ -277,6 +298,21 @@ abstract class AbstractForm extends Form
         if($this->data != null) {
             return $this->convertFormDataForModel($this->getData());
         }
+    }
+    
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->serviceLocator = $serviceLocator;
+    }
+    
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
+    }
+    
+    public function getLogger()
+    {
+        return $this->getServiceLocator()->getServiceLocator()->get('Logger');
     }
     
     abstract protected function validateByModel();

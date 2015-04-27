@@ -11,7 +11,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\DateCheckForm;
 use Application\Model\Service\Signatures\DateCheck;
 
 class DateCheckController extends AbstractLpaController
@@ -23,7 +22,7 @@ class DateCheckController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new DateCheckForm($lpa);
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', ['lpa'=>$lpa]);
         
         $viewParams = [];
         

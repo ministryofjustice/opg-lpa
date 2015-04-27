@@ -26,23 +26,32 @@ class ApplicantForm extends AbstractForm
                     'type' => 'Zend\Form\Element\Submit',
             ],
     ];
-    
-    public function __construct (Lpa $lpa)
+
+    public function __construct($name, $options)
     {
-        $this->lpa = $lpa;
+        if(array_key_exists('lpa', $options)) {
+            $this->lpa = $options['lpa'];
+            unset($options['lpa']);
+        }
         
+        parent::__construct($name, $options);
+    }
+    
+    public function init ()
+    {
         // for attorney option, the value is comma delimited attorney ids.
         $this->formElements['whoIsRegistering']['options']['value_options']['attorney']['value'] = implode(',', array_map(function($attorney){
             return $attorney->id;
-        }, $lpa->document->primaryAttorneys));
+        }, $this->lpa->document->primaryAttorneys));
         
         // if number of attorneys are more than 1, and how they make decisions is NOT jointly, user must select which attorney(s) are(is) applicants.  
-        if((count($lpa->document->primaryAttorneys) > 1) && ($lpa->document->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
+        if((count($this->lpa->document->primaryAttorneys) > 1) && ($this->lpa->document->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             $this->setAttorneyList();
         }
         
-        parent::__construct('applicant');
+        $this->setName('applicant');
         
+        parent::init();
     }
     
     public function validateByModel()

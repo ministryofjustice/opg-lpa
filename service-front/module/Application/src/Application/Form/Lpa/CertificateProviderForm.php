@@ -32,11 +32,11 @@ class CertificateProviderForm extends AbstractActorForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('certificate-provider');
         
-        parent::__construct('certificate-provider');
-        
+        parent::init();
     }
     
    /**

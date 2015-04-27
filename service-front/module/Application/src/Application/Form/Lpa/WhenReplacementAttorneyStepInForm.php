@@ -31,11 +31,11 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('when-replacement-attonrey-step-in');
         
-        parent::__construct('when-replacement-attonrey-step-in');
-        
+        parent::init();
     }
     
    /**

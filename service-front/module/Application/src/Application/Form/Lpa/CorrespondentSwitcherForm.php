@@ -1,10 +1,12 @@
 <?php
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+
 class CorrespondentSwitcherForm extends AbstractForm
 {
+    protected $lpa;
+    
     protected $formElements = [
             'switch-to-type' => [
                     'type' => 'Zend\Form\Element\Select',
@@ -17,23 +19,33 @@ class CorrespondentSwitcherForm extends AbstractForm
                     'type' => 'Zend\Form\Element\Submit',
             ],
     ];
-    
-    public function __construct (Lpa $lpa)
+
+    public function __construct($name, $options)
     {
-        $this->lpa = $lpa;
-        
+        if(array_key_exists('lpa', $options)) {
+            $this->lpa = $options['lpa'];
+            unset($options['lpa']);
+        }
+    
+        parent::__construct($name, $options);
+    }
+    
+    public function init ()
+    {
         $this->formElements['switch-to-type']['options']['value_options'] = [
                 'me'    => 'Myself',
-                'donor' => (string)$lpa->document->donor->name . ' (The donor)',
+                'donor' => (string)$this->lpa->document->donor->name . ' (The donor)',
         ];
         
-        foreach($lpa->document->primaryAttorneys as $attorney) {
+        foreach($this->lpa->document->primaryAttorneys as $attorney) {
             $this->formElements['switch-to-type']['options']['value_options'][$attorney->id] = (($attorney instanceof Human)?(string)$attorney->name:$attorney->name). ' (Attorney)';
         }
         
         $this->formElements['switch-to-type']['options']['value_options']['other'] = 'Other';
         
-        parent::__construct('correspondent-selector');
+        $this->setName('correspondent-selector');
+        
+        parent::init();
     }
     
    /**

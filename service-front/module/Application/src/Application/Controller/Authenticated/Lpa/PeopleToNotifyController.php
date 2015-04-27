@@ -12,11 +12,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Application\Form\Lpa\PeopleToNotifyForm;
 use Zend\View\Model\JsonModel;
-use Zend\Form\Form;
-use Zend\Form\Element\Csrf;
-use Application\Form\Lpa\SeedDetailsPickerForm;
 use Application\Model\Service\Lpa\Metadata;
 
 class PeopleToNotifyController extends AbstractLpaController
@@ -30,13 +26,7 @@ class PeopleToNotifyController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         
         // set hidden form for saving empty array to peopleToNotify.
-        $form = new Form();
-        $form->setAttribute('method', 'post');
-        
-        $form->add( (new Csrf('secret'))->setCsrfValidatorOptions([
-                'timeout' => null,
-                'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
         
         if($this->request->isPost()) {
         
@@ -90,14 +80,14 @@ class PeopleToNotifyController extends AbstractLpaController
             $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
         }
         
-        $form = new PeopleToNotifyForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         // check if there's a seed number in this LPA and get seed data if it exists.
         if(($seedDetails = $this->getSeedDetails()) != null) {
             
             // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -183,7 +173,7 @@ class PeopleToNotifyController extends AbstractLpaController
             return $this->notFoundAction();
         }
         
-        $form = new PeopleToNotifyForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx'=>$personIdx]));
         
         if($this->request->isPost()) {

@@ -8,7 +8,7 @@ class DonorForm extends AbstractActorForm
 {
     protected $formElements;
     
-    public function __construct ()
+    public function init ()
     {
         $this->formElements = [
             'name-title' => [
@@ -111,8 +111,9 @@ class DonorForm extends AbstractActorForm
             ],
         ];
         
-        parent::__construct('donor');
+        $this->setName('donor');
         
+        parent::init();
     }
     
    /**

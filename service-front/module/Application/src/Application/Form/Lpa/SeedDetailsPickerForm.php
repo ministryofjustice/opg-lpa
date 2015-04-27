@@ -3,6 +3,8 @@ namespace Application\Form\Lpa;
 
 class SeedDetailsPickerForm extends AbstractForm
 {
+    private $seedDetails;
+    
     protected $formElements = [
             'pick-details' => [
                     'type' => 'Zend\Form\Element\Select',
@@ -16,13 +18,25 @@ class SeedDetailsPickerForm extends AbstractForm
             ],
     ];
     
-    public function __construct ($seedDetails)
+    public function __construct($name, $options)
     {
-        foreach($seedDetails as $idx=>$actor) {
+        if(array_key_exists('seedDetails', $options)) {
+            $this->seedDetails = $options['seedDetails'];
+            unset($options['seedDetails']);
+        }
+        
+        parent::__construct($name, $options);
+    }
+    
+    public function init ()
+    {
+        foreach($this->seedDetails as $idx=>$actor) {
             $this->formElements['pick-details']['options']['value_options'][$idx] = $actor['label'];
         }
         
-        parent::__construct('seed-details-picker');
+        $this->setName('seed-details-picker');
+        
+        parent::init();
     }
     
    /**

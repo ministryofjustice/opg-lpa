@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\ApplicantForm;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 class ApplicantController extends AbstractLpaController
@@ -14,7 +13,7 @@ class ApplicantController extends AbstractLpaController
     
     public function indexAction()
     {
-        $form = new ApplicantForm($this->getLpa());
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\ApplicantForm', ['lpa'=>$this->getLpa()]);
         
         if($this->request->isPost()) {
             

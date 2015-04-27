@@ -25,11 +25,10 @@ class TypeForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init()
     {
-        
-        parent::__construct('type');
-        
+        $this->setName('type');
+        parent::init();
     }
     
    /**

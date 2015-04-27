@@ -11,7 +11,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Application\Form\Lpa\InstructionsAndPreferencesForm;
 
 class InstructionsController extends AbstractLpaController
 {
@@ -23,7 +22,7 @@ class InstructionsController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new InstructionsAndPreferencesForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\InstructionsAndPreferencesForm');
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

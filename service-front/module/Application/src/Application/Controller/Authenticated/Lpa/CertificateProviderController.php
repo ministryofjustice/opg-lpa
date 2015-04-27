@@ -12,9 +12,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
-use Application\Form\Lpa\CertificateProviderForm;
 use Zend\View\Model\JsonModel;
-use Application\Form\Lpa\SeedDetailsPickerForm;
 
 class CertificateProviderController extends AbstractLpaController
 {
@@ -58,11 +56,12 @@ class CertificateProviderController extends AbstractLpaController
             $viewModel->setTerminal(true);
         }
         
-        $form = new CertificateProviderForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
+        
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if(($seedDetails = $this->getSeedDetails()) != null) {
-            $seedDetailsPickerForm = new SeedDetailsPickerForm($seedDetails);
+            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
             $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
@@ -124,7 +123,7 @@ class CertificateProviderController extends AbstractLpaController
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = new CertificateProviderForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {

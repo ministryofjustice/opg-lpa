@@ -3,6 +3,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
+
 class WhoAreYouForm extends AbstractForm
 {
     protected $formElements = [
@@ -74,11 +75,11 @@ class WhoAreYouForm extends AbstractForm
             ],
     ];
     
-    public function __construct ()
+    public function init ()
     {
+        $this->setName('who-are-you');
         
-        parent::__construct('who-are-you');
-        
+        parent::init();
     }
     
    /**
