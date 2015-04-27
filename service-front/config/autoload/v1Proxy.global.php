@@ -20,7 +20,7 @@ return array(
                 'host' => 'redisfront.local',
                 'port' => 6379
             ],
-            'database' => 1, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
+            'database' => 2, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
         ],
 
     ],
