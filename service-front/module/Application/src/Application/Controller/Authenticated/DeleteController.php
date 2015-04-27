@@ -38,7 +38,7 @@ class DeleteController extends AbstractAuthenticatedController {
 
 
     /**
-     * Check there is a user authenticated.
+     * This is overridden to prevent people being (accidently?) directed to this controller post-auth.
      *
      * @return bool|\Zend\Http\Response
      */

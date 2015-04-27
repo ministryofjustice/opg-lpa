@@ -162,4 +162,15 @@ class DashboardController extends AbstractAuthenticatedController
 
     } // function
 
+    /**
+     * This is overridden to prevent people being (accidently?) directed to this controller post-auth.
+     *
+     * @return bool|\Zend\Http\Response
+     */
+    protected function checkAuthenticated(){
+
+        return parent::checkAuthenticated( false );
+
+    } // function
+
 } // class
