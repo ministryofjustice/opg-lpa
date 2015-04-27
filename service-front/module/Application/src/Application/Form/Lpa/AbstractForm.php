@@ -312,11 +312,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
     
     public function getLogger()
     {
-        if(!$this->logger) {
-            $this->logger = $this->getServiceLocator()->getServiceLocator()->get('Logger');
-        }
-        
-        return $this->logger;
+        return $this->getServiceLocator()->getServiceLocator()->get('Logger');
     }
     
     abstract protected function validateByModel();
