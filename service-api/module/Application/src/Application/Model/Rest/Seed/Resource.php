@@ -49,7 +49,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $lpaEntity  = $resource->fetch( $lpa->seed );
 
         if( !($lpaEntity instanceof ApplicationEntity) ){
-            return new ApiProblem( 400, 'Invalid LPA identifier to seed from' );
+            return new ApiProblem( 404, 'Invalid LPA identifier to seed from' );
         }
 
         //---
