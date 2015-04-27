@@ -27,6 +27,13 @@
     
     $type->setOptions( ['value_options' => $typeValueOptions] );
     
+    $isChangeAllowed = true;
+    if(($this->lpa->document instanceof Opg\Lpa\DataModel\Lpa\Document\Document) && (
+            $this->lpa->document->donor instanceof Opg\Lpa\DataModel\Lpa\Document\Donor)) {
+        $type->setAttributes(['disabled'=>'disabled']);
+        $isChangeAllowed = false;
+    }
+    
     $submit      = $form->get('submit');
     $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
     
@@ -57,6 +64,9 @@
                 <p class='form-element-errors'>
                     <?= $this->formElementErrors($type) ?>
                 </p>
+                <?php if($isChangeAllowed == false): ?>
+                <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a <?= ($this->lpa->document->type == Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW)?'Property  and financial affairs':'Health and welfare' ?> LPA based on the current one, click <a href="<?= $this->cloneUrl ?>">here</a>.</p>
+                <?php endif;?>
             </div>
     
     		<details>
@@ -68,7 +78,11 @@
     
             <div class="accordion-actions">
 				<p>
+				<?php if($isChangeAllowed == true): ?>
                     <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                <?php else:?>
+                    <a href='<?=$this->nextUrl ?>' class="button gotonextpart">Continue</a>
+                <?php endif;?>
                 </p>
             </div>
         

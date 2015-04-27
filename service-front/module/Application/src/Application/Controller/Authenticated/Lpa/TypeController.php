@@ -46,6 +46,11 @@ class TypeController extends AbstractLpaController
                 $form->bind($this->getLpa()->document->flatten());
             }
         }
-        return new ViewModel(['form'=>$form]);
+        
+        return new ViewModel([
+                'form'=>$form, 
+                'cloneUrl'=>$this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$this->getLpa()->id]),
+                'nextUrl'=>$this->url()->fromRoute('lpa/donor', ['lpa-id'=>$this->getLpa()->id]),
+        ]);
     }
 }
