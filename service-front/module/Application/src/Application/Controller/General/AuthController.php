@@ -6,6 +6,7 @@ use Application\Form\User\Login as LoginForm;
 
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
+use Zend\Session\Container;
 
 class AuthController extends AbstractBaseController {
 
@@ -43,6 +44,15 @@ class AuthController extends AbstractBaseController {
             // If the form is valid...
             if ($form->isValid()) {
 
+                // Check if we're going to redirect to a deep(er) link (before we kill the session)
+                $preAuthRequest = new Container('PreAuthRequest');
+
+                if( $preAuthRequest->url ){
+                    $nextUrl = $preAuthRequest->url;
+                }
+
+                //---
+
                 // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
 
                 $session = $this->getServiceLocator()->get('SessionManager');
@@ -70,7 +80,13 @@ class AuthController extends AbstractBaseController {
                     // Regenerate the session ID post authentication
                     $session->regenerateId(true);
 
-                    // Send them to the dashboard...
+                    //---
+
+                    if( isset($nextUrl) ){
+                        return $this->redirect()->toUrl( $nextUrl );
+                    }
+
+                    // Else Send them to the dashboard...
                     return $this->redirect()->toRoute( 'user/dashboard' );
 
                 } // if

@@ -36,4 +36,16 @@ class DeleteController extends AbstractAuthenticatedController {
 
     } // function
 
+
+    /**
+     * Check there is a user authenticated.
+     *
+     * @return bool|\Zend\Http\Response
+     */
+    protected function checkAuthenticated(){
+
+        return parent::checkAuthenticated( false );
+
+    } // function
+
 } // class

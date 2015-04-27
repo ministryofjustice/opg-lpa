@@ -156,16 +156,28 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
      *
      * @return bool|\Zend\Http\Response
      */
-    protected function checkAuthenticated(){
+    protected function checkAuthenticated( $allowRedirect = true ){
 
         if( !( $this->user instanceof Identity ) ){
 
             $this->flashMessenger()->addWarningMessage('You need to sign in before continuing');
 
+            //---
+
+            if( $allowRedirect ){
+
+                $preAuthRequest = new Container('PreAuthRequest');
+
+                $preAuthRequest->url = (string)$this->getRequest()->getUri();
+
+            }
+
+            //---
+
             // Redirect to the About You page.
             return $this->redirect()->toRoute( 'login' );
 
-        }
+        } // if
 
         return true;
 
