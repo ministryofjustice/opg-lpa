@@ -1,5 +1,7 @@
 <?php
 
+// This whole file is #v1Code
+
 return array(
 
     'v1proxy' => [
