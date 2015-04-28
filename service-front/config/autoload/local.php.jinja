@@ -42,7 +42,6 @@ return array(
         'api_token_secret' => '{{pillar['payment']['worldpay']['api_token_secret']}}',
     ], // worldpay
     
-    
     'admin' => [
         'accounts' => [
 {% for name, admin_email_address in pillar['admin_accounts'].iteritems() %}
