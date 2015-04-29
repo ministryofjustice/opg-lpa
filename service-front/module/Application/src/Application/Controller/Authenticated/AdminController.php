@@ -20,16 +20,9 @@ class AdminController extends AbstractAuthenticatedController
         
         $adminAccounts = $this->getServiceLocator()->get('config')['admin']['accounts'];
         
-        $isAdmin = false;
-        foreach ($adminAccounts as $authorisedEmail) {
-            if ($authorisedEmail == $userEmail) {
-                $isAdmin = true;
-                break;
-            }
-        }
+        $isAdmin = in_array($userEmail, $adminAccounts);
         
         if (!$isAdmin) {
-            $this->getResponse()->setStatusCode(401);
             $this->redirect()->toRoute('home');
         }
         
