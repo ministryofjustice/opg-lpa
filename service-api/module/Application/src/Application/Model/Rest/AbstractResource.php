@@ -110,18 +110,18 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         // Should already have been checked, but no harm checking again.
         $this->checkAccess();
 
-        //-----------------------------------------
+        //--------------------------------------------------------
 
         // Check LPA is (still) valid.
         if( $lpa->validateAllGroups()->hasErrors() ){
             throw new RuntimeException('A malformed LPA object');
         }
 
-        //-----------------------------------------
+        //--------------------------------------------------------
 
         $collection = $this->getCollection('lpa');
 
-        //-----------------------------------------
+        //--------------------------------------------------------
         // Check LPA in database isn't locked...
 
         $locked = (bool)$collection->find( [ '_id'=>$lpa->id, 'locked'=>true ], [ '_id'=>true ] )->limit(1)->count( true );
@@ -130,7 +130,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
             throw new LockedException('LPA has already been locked.');
         }
 
-        //-----------------------------------------
+        //--------------------------------------------------------
         // If instrument created, record the date.
 
         $isCreated = (new StateChecker($lpa))->isStateCreated();
@@ -144,8 +144,8 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         } else {
             $lpa->createdAt = null;
         }
-        
-        //-----------------------------------------
+
+        //--------------------------------------------------------
         // If completed, record the date.
 
         $isCompleted = (new StateChecker($lpa))->isStateCompleted();
@@ -160,7 +160,16 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
             $lpa->completedAt = null;
         }
 
-        //-----------------------------------------
+        //--------------------------------------------------------
+        // If there's a donor, populate the free text search field
+
+        $searchField = null;
+
+        if( $lpa->document->donor != null ){
+            $searchField = (string)$lpa->document->donor->name;
+        }
+
+        //--------------------------------------------------------
 
         $lastUpdated = new \MongoDate( $lpa->updatedAt->getTimestamp(), (int)$lpa->updatedAt->format('u') );
 
@@ -171,7 +180,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         // if the Document has changed since this process loaded it.
         $result = $collection->update(
             [ '_id'=>$lpa->id, 'updatedAt'=>$lastUpdated ],
-            $lpa->toMongoArray(),
+            array_merge( $lpa->toMongoArray(), [ 'search' => $searchField ] ),
             [ 'upsert'=>false, 'multiple'=>false ]
         );
 
