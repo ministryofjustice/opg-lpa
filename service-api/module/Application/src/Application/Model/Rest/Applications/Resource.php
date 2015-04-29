@@ -160,6 +160,39 @@ class Resource extends AbstractResource implements UserConsumerInterface {
             $query = array_merge( $params, $query );
         }
 
+        //---
+
+        // If we have a search query...
+        if( isset($params['search']) && strlen(trim($params['search'])) > 0 ) {
+
+            $search = trim($params['search']);
+
+            // If the string is numeric, assume it's an LPA id.
+            if( is_numeric($search) ) {
+
+                $query['_id'] = (int)$search;
+
+            } else {
+
+                // If it starts with an A and everything that follows after is numeric...
+                if( substr(strtoupper($search),0,1) == 'A' && is_numeric( $ident = preg_replace('/\s+/', '', substr($search, 1)) ) ) {
+
+                    // Assume it's an LPA id.
+                    $query['_id'] = (int)$ident;
+
+                } else {
+
+                    // Otherwise assume it's a name.
+                    $query[ '$text' ] = [ '$search' => '"'.trim($params['search']).'"' ];
+
+                } // if
+
+            } // if
+
+        } // if search
+
+        //---
+
         // Get the collection...
         $cursor = $this->getCollection('lpa')->find( $query );
 
