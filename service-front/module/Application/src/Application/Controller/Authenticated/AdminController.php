@@ -5,6 +5,7 @@ namespace Application\Controller\Authenticated;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Zend\Mvc\MvcEvent;
+use Zend\View\Model\Zend\View\Model;
 
 class AdminController extends AbstractAuthenticatedController
 {
@@ -18,19 +19,36 @@ class AdminController extends AbstractAuthenticatedController
     {
         $userEmail = (string)$this->getUserDetails()->email;
         
-        $adminAccounts = $this->getServiceLocator()->get('config')['admin']['accounts'];
+        if ($userEmail != '') {
+            $adminAccounts = $this->getServiceLocator()->get('config')['admin']['accounts'];
         
-        $isAdmin = in_array($userEmail, $adminAccounts);
+            $isAdmin = in_array($userEmail, $adminAccounts);
         
-        if (!$isAdmin) {
-            $this->redirect()->toRoute('home');
+            if ($isAdmin) {
+                return parent::onDispatch( $event );
+            }
         }
         
-        return true;
+        $this->redirect()->toRoute('home');
     }
     
     public function statsAction()
     {
         return new ViewModel();
+    }
+    
+    public function systemMessageAction()
+    {
+        $cache = $this->getServiceLocator()->get('Cache');
+
+        // Test setting
+        $cache->setItem('admin-message', 'The system will be going down for maintenance on May 7th 2015');
+        
+        // Test getting
+        $message = $cache->getItem('admin-message');
+        
+        return new ViewModel([
+            'message'=>$message
+        ]);
     }
 }

@@ -14,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClientAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\Logger\Logger;
-
+use Zend\Cache\StorageFactory;
 
 class Module{
     
@@ -165,6 +165,19 @@ class Module{
                     return $logger;
                     
                 },
+                
+                'Cache' => function ( ServiceLocatorInterface $sm ) {
+                    $config = $sm->get('config')['admin'];
+                    
+                    $redisAdapter = StorageFactory::factory([
+                        'adapter' => [
+                            'name' => 'redis',
+                            'options' => $config['redis'],
+                        ]
+                    ]);
+                    
+                    return $redisAdapter;
+                }
 
             ], // factories
         ];
