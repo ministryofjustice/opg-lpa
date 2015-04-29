@@ -38,8 +38,6 @@ class AdminController extends AbstractAuthenticatedController
     
     public function statsAction()
     {
-        $this->adminCheck();
-        
         return new ViewModel();
     }
 }
