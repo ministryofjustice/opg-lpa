@@ -35,9 +35,7 @@ class PeopleToNotifyController extends AbstractLpaController
             if($form->isValid()) {
                 
                 // set user has confirmed if there are people to notify
-                if(!array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $this->getLpa()->metadata)) {
-                    $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
-                }
+                $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
                 
                 $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
