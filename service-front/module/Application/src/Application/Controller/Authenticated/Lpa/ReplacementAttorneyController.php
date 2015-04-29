@@ -37,9 +37,7 @@ class ReplacementAttorneyController extends AbstractLpaController
             if($form->isValid()) {
         
                 // set user has confirmed if there are replacement attorneys  
-                if(!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
-                    $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
-                }
+                $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                 
                 $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }

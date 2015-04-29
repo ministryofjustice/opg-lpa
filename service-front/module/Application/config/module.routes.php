@@ -384,6 +384,16 @@ return [
                             ],
                         ],
                     ],
+                    'benefits' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/benefits',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\BenefitsController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                     'certificate-provider' => [
                         'type' => 'Literal',
                         'options' => [
@@ -547,6 +557,16 @@ return [
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'income-and-universal-credit' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/income-and-universal-credit',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\IncomeAndUniversalCreditController',
                                 'action'     => 'index',
                             ],
                         ],
@@ -754,6 +774,26 @@ return [
                             'route'    => '/register',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\RegisterLpaController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'remission' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/remission',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\RemissionController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'repeat-application' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/repeat-application',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\RepeatApplicationController',
                                 'action'     => 'index',
                             ],
                         ],
