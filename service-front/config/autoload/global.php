@@ -20,6 +20,19 @@ return array(
         'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
     ],
 
+    'admin' => [
+        'redis' => [
+            // Set a default (longish) Redis TTL to protect against long term stale data.
+            'ttl' => (60 * 60 * 24 * 28), // 28 days
+            'namespace' => 'session',
+            'server' => [
+                'host' => 'redisfront.local',
+                'port' => 6379
+            ],
+            'database' => 1, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
+        ],
+    ],
+    
     'session' => [
 
         // ini session.* settings...

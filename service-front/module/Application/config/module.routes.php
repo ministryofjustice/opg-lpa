@@ -207,6 +207,17 @@ return [
                     ],
                 ],
             ],
+            
+            'admin-system-message' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/admin/system-message',
+                    'defaults' => [
+                        'controller' => 'Authenticated\AdminController',
+                        'action'     => 'system-message',
+                    ],
+                ],
+            ],
 
             'postcode' => [
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
