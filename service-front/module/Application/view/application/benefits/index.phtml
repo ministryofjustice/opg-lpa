@@ -1,0 +1,112 @@
+<?php
+    $form        = $this->form;
+    $form->setAttribute('class', 'form');
+    $csrf        = $form->get('secret');
+    
+    $receivesBenefits       = $form->get('reducedFeeReceivesBenefits');
+    $receivesBenefitsValueOptions = $receivesBenefits->getOptions()['value_options'];
+    $receivesBenefitsValueOptions['yes']['label'] = "The donor receiving benefits";
+    $receivesBenefitsValueOptions['no']['label'] = "The donor does not receive benefits";
+    
+    $receivesBenefitsValueOptions['yes'] += [
+            'label_attributes' => [
+                    'for' => 'yes'
+            ],
+            'attributes' => [
+                    'id' => 'yes'
+            ],
+    ];
+    $receivesBenefitsValueOptions['no'] += [
+            'label_attributes' => [
+                    'for' => 'no'
+            ],
+            'attributes' => [
+                    'id' => 'no'
+            ],
+    ];
+    $receivesBenefits->setOptions(['value_options'=>$receivesBenefitsValueOptions]);
+
+    $reducedFeeAwardedDamages       = $form->get('reducedFeeAwardedDamages');
+    $reducedFeeAwardedDamagesValueOptions = $reducedFeeAwardedDamages->getOptions()['value_options'];
+    $reducedFeeAwardedDamagesValueOptions['no-damage']['label'] = "The donor has no personal injury damage award";
+    $reducedFeeAwardedDamagesValueOptions['less-than-16k']['label'] = "The donor has personal injury damage award and is not more than £16,000";
+    $reducedFeeAwardedDamagesValueOptions['over-16k']['label'] = "The donor has awarded personal injury damage over £16,000";
+    
+    $reducedFeeAwardedDamagesValueOptions['no-damage'] += [
+            'label_attributes' => [
+                    'for' => 'no-damage'
+            ],
+            'attributes' => [
+                    'id' => 'no-damage'
+            ],
+    ];
+    $reducedFeeAwardedDamagesValueOptions['less-than-16k'] += [
+            'label_attributes' => [
+                    'for' => 'less-than-16k'
+            ],
+            'attributes' => [
+                    'id' => 'less-than-16k'
+            ],
+    ];
+    $reducedFeeAwardedDamagesValueOptions['over-16k'] += [
+            'label_attributes' => [
+                    'for' => 'over-16k'
+            ],
+            'attributes' => [
+                    'id' => 'over-16k'
+            ],
+    ];
+    $reducedFeeAwardedDamages->setOptions(['value_options'=>$reducedFeeAwardedDamagesValueOptions]);
+
+    $submit      = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+    
+    $formLabel   = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<section id="lpa-type" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Does the donor receive benefits?</h2>
+	
+    <div class="accordion-content">
+    	<div class="section-intro">
+    	   <p><a class="js-guidance" href="/help/#topic-benefits" data-journey-click="stageprompt.lpa:help:benefits">Find out more about benefits and personal injury damages award</a></p>
+		</div>
+	    
+    	
+        <?= $this->form()->openTag($form); ?>
+            
+            <?= $this->formElement($csrf) ?>
+            
+            <?= $this->formErrorList(); ?>
+            
+            <div class="emphasised option group">
+                <?= $formLabel->openTag($receivesBenefits) . $receivesBenefits->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($receivesBenefits)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($receivesBenefits) ?>
+                </p>
+            </div>
+            
+            <div class="emphasised option group">
+                <?= $formLabel->openTag($reducedFeeAwardedDamages) . $reducedFeeAwardedDamages->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($reducedFeeAwardedDamages)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($reducedFeeAwardedDamages) ?>
+                </p>
+            </div>
+            
+            <div class="accordion-actions">
+				<p>
+                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                </p>
+            </div>
+            
+        <?= $this->form()->closeTag(); ?>
+    	
+    </div>
+    
+</section>
