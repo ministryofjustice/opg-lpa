@@ -215,14 +215,16 @@ class Client
      *
      * @return array<Lpa>
      */
-    public function getApplicationList()
+    public function getApplicationList( $query = null )
     {
         $applicationList = array();
 
         $path = '/v1/users/' . $this->getUserId() . '/applications';
         
         do {
-            $response = $this->client()->get( self::PATH_API . $path );
+            $response = $this->client()->get( self::PATH_API . $path, [
+                'query' => [ 'search' => $query ]
+            ]);
 
             if ($response->getStatusCode() != 200) {
                 return $this->log($response, false);
@@ -250,6 +252,53 @@ class Client
         } while (!is_null($path));
         
         return $applicationList;
+    }
+
+    /**
+     * Get list of applications for the current user based on a query string.
+     * Combine pages, if necessary
+     *
+     * @return array<Lpa>
+     */
+    public function searchApplicationList( $query )
+    {
+
+        $applicationList = array();
+
+        $path = '/v1/users/' . $this->getUserId() . '/applications';
+
+        do {
+            $response = $this->client()->get( self::PATH_API . $path, [
+                'query' => [ 'search' => $query ]
+            ]);
+
+            if ($response->getStatusCode() != 200) {
+                return $this->log($response, false);
+            }
+
+            $json = $response->json();
+
+            if ($json['count'] == 0) {
+                return [];
+            }
+
+            if (!isset($json['_links']) || !isset($json['_embedded']['applications'])) {
+                return $this->log($response, false);
+            }
+
+            foreach ($json['_embedded']['applications'] as $application) {
+                $applicationList[] = new Lpa($application);
+            }
+
+            if (isset($json['_links']['next']['href'])) {
+                $path = $json['_links']['next']['href'];
+            } else {
+                $path = null;
+            }
+        } while (!is_null($path));
+
+        return $applicationList;
+
     }
     
     /**

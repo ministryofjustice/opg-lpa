@@ -152,7 +152,7 @@ class StateChecker {
 
     protected function paymentResolved()
     {
-        if(!$this->hasFeeCompleted()) {
+        if(!$this->hasFeeDetermined()) {
             return false;
         }
 
@@ -169,9 +169,9 @@ class StateChecker {
         }
     }
 
-    protected function hasFeeCompleted()
+    protected function hasFeeDetermined()
     {
-        if(!$this->isWhoAreYouAnswered() || !($this->lpa->payment instanceof Payment)) {
+        if(!($this->lpa->payment instanceof Payment)) {
             return false;
         }
 

@@ -62,23 +62,24 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "af9417f765623429c9d2a200f0159537e08d1ef3"
+                "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/af9417f765623429c9d2a200f0159537e08d1ef3",
-                "reference": "af9417f765623429c9d2a200f0159537e08d1ef3",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
+                "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
                 "shasum": ""
             },
             "require": {
-                "doctrine/lexer": "~1.0",
+                "doctrine/lexer": "~1.0,>=1.0.1",
                 "php": ">= 5.3.3"
             },
             "require-dev": {
+                "phpunit/phpunit": "~4.4",
                 "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
@@ -108,7 +109,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-01-04 22:42:32"
+            "time": "2015-04-26 15:49:00"
         },
         {
             "name": "guzzle/common",
@@ -578,12 +579,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "0dfa72906fc176a3cb425139309a502fabbbb2d4"
+                "reference": "1ebfc6421ede0813599cd714aaa6a47b858b4f57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/0dfa72906fc176a3cb425139309a502fabbbb2d4",
-                "reference": "0dfa72906fc176a3cb425139309a502fabbbb2d4",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/1ebfc6421ede0813599cd714aaa6a47b858b4f57",
+                "reference": "1ebfc6421ede0813599cd714aaa6a47b858b4f57",
                 "shasum": ""
             },
             "require": {
@@ -609,7 +610,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-04-16 08:45:00"
+            "time": "2015-04-30 15:47:33"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -617,12 +618,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "9dff12d65c12ff3a273877dbc605d373503e3caa"
+                "reference": "ff2b0fd14444b74f03d9d43ec2f992ab7a9d5326"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/9dff12d65c12ff3a273877dbc605d373503e3caa",
-                "reference": "9dff12d65c12ff3a273877dbc605d373503e3caa",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/ff2b0fd14444b74f03d9d43ec2f992ab7a9d5326",
+                "reference": "ff2b0fd14444b74f03d9d43ec2f992ab7a9d5326",
                 "shasum": ""
             },
             "require": {
@@ -648,7 +649,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-04-16 14:59:20"
+            "time": "2015-04-30 12:53:13"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

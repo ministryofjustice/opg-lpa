@@ -262,7 +262,6 @@ return array(
     'Opg\\Lpa\\Api\\Client\\Traits\\JsonSerializer' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Traits/JsonSerializer.php',
     'Opg\\Lpa\\DataModel\\AbstractData' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/AbstractData.php',
     'Opg\\Lpa\\DataModel\\AccessorInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/AccessorInterface.php',
-    'Opg\\Lpa\\DataModel\\Lpa\\CompleteInterface' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/CompleteInterface.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Attorneys\\AbstractAttorney' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Attorneys/AbstractAttorney.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Attorneys\\Human' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Attorneys/Human.php',
     'Opg\\Lpa\\DataModel\\Lpa\\Document\\Attorneys\\TrustCorporation' => $vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel/Lpa/Document/Attorneys/TrustCorporation.php',
