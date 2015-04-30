@@ -12,6 +12,8 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Metadata;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 class FeeReductionController extends AbstractLpaController
 {
@@ -33,7 +35,22 @@ class FeeReductionController extends AbstractLpaController
                 $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
-                // persist data
+                // if no applying reduced fee, set payment in LPA including amount.
+                if($form->getData()['applyForFeeReduction'] === '0')  {
+                    $lpa = $this->getLpa();
+                    
+                    $payment = new Payment();
+                    
+                    $lpa->payment = $payment;
+                    
+                    // calculate payment amount and get a payment object
+                    Calculator::calculate($lpa);
+                    
+                    if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                        throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
+                    }
+                }
+                
                 $this->getServiceLocator()->get('Metadata')->setApplyForFeeReduction($this->getLpa(), (bool)$form->getData()['applyForFeeReduction']);
                 
                 $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
