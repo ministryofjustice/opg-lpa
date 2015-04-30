@@ -23,6 +23,26 @@ class ApplicationList implements ServiceLocatorAwareInterface {
 
         $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList();
 
+        return $this->convertToStandardResponse( $v2Apis );
+
+    } // function
+
+    public function searchAllALpaSummaries( $query ){
+
+        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList( $query );
+
+        return $this->convertToStandardResponse( $v2Apis );
+
+    } // function
+
+    /**
+     * Converts the LPAs to a standard structure between v1 & v2.
+     *
+     * @param $v2Apis
+     * @return array
+     */
+    private function convertToStandardResponse( $v2Apis ){
+
         $lpas = array();
 
         foreach($v2Apis as $lpa){

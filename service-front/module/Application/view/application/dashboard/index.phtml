@@ -15,9 +15,9 @@
   <div style="margin: 5px;" >
     <a class="add button" href='<?php echo $this->url('user/dashboard/create-lpa') ?>' role="button">Create a new LPA</a>
     <div style="float:right;">
-        <form action="/user/dashboard" method="POST" >
-             <input type="text" name="freeText" style="width: 215px; " placeholder="LPA no, donor first or last name" value="<?php echo isset($this->freeText) ? $this->freeText: ''; ?>" />
-             <input class = "add button" type="submit" value="Search" name="search"/>
+        <form action="<?= $this->url('user/dashboard') ?>" method="GET" >
+             <input type="text" name="search" style="width: 215px; " placeholder="LPA no, donor first or last name" value="<?php echo isset($this->freeText) ? $this->freeText: ''; ?>" />
+             <input class = "add button" type="submit" value="Search"/>
              <a class="add button" id="clear" href="<?php echo $this->url('user/dashboard'); ?>"> Clear </a>
         </form>
     </div>
