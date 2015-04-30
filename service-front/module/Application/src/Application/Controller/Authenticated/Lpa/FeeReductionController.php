@@ -36,12 +36,7 @@ class FeeReductionController extends AbstractLpaController
                 // persist data
                 $this->getServiceLocator()->get('Metadata')->setApplyForFeeReduction($this->getLpa(), (bool)$form->getData()['applyForFeeReduction']);
                 
-                if($form->getData()['applyForFeeReduction'] === '1') {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                }
-                elseif($form->getData()['applyForFeeReduction'] === '0')  {
-                    $this->redirect()->toRoute('lpa/payment', ['lpa-id' => $lpaId]);
-                }
+                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         else {
