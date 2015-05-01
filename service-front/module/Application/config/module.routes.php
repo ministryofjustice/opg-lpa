@@ -778,12 +778,12 @@ return [
                             ],
                         ],
                     ],
-                    'remission' => [
+                    'fee-reduction' => [
                         'type' => 'Literal',
                         'options' => [
-                            'route'    => '/remission',
+                            'route'    => '/fee-reduction',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\RemissionController',
+                                'controller' => 'Authenticated\Lpa\FeeReductionController',
                                 'action'     => 'index',
                             ],
                         ],
