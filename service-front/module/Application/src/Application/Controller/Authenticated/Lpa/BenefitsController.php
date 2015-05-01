@@ -42,7 +42,7 @@ class BenefitsController extends AbstractLpaController
                 
                 if($form->getData()['reducedFeeReceivesBenefits']) {
                     if($form->getData()['reducedFeeAwardedDamages']) {
-                        // has no damage award, or damage award less than 16k
+                        // has no damage award, or damage award less than 16k, no payment required
                         $lpa->payment = new Payment([
                                 'reducedFeeReceivesBenefits' => true,
                                 'reducedFeeAwardedDamages'   => true,
@@ -51,7 +51,7 @@ class BenefitsController extends AbstractLpaController
                         ]);
                     }
                     else {
-                        // damage award over 16k
+                        // damage award over 16k, immediate payment payment maybe required
                         $lpa->payment = new Payment([
                                 'reducedFeeReceivesBenefits' => true,
                                 'reducedFeeAwardedDamages'   => false,
@@ -59,7 +59,7 @@ class BenefitsController extends AbstractLpaController
                     }
                 }
                 else {
-                    // not receives benefits
+                    // not receives benefits, immediate payment maybe required.
                     $lpa->payment = new Payment([
                             'reducedFeeReceivesBenefits' => false,
                     ]);
