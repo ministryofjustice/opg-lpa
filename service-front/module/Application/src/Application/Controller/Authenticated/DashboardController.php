@@ -13,18 +13,32 @@ class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        $paginator = $this->getLpaList();
+        $query = $this->params()->fromQuery('search');
+
+        if( is_string($query) && !empty($query) ){
+
+            $lpas = $this->getServiceLocator()->get('ApplicationList')->searchAllALpaSummaries( $query );
+
+            $paginator = new Paginator(new PaginatorArrayAdapter($lpas));
+
+        } else {
+
+            // No search query - return all LPAs.
+
+            $paginator = $this->getLpaList();
+
+            // If the user currently has no LPAs, redirect them to create one...
+            if( $paginator->getTotalItemCount() == 0 ){
+                return $this->createAction();
+            }
+
+        }
+
+        //---
 
         $paginator->setItemCountPerPage(5);
 
         $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
-
-        //---
-
-        // If the user currently has no LPAs, redirect them to create one...
-        if( $paginator->getTotalItemCount() == 0 ){
-            return $this->createAction();
-        }
 
         //---
 

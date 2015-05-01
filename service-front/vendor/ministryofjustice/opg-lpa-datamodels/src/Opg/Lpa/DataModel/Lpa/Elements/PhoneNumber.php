@@ -3,8 +3,6 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 
 use Opg\Lpa\DataModel\AbstractData;
 
-use Respect\Validation\Rules;
-
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 

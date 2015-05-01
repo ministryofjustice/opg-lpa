@@ -1,0 +1,78 @@
+<?php
+    $form        = $this->form;
+    $form->setAttribute('class', 'form');
+    $csrf        = $form->get('secret');
+    
+    $applyForFeeReduction       = $form->get('applyForFeeReduction');
+    $applyForFeeReductionValueOptions = $applyForFeeReduction->getOptions()['value_options'];
+    $applyForFeeReductionValueOptions['yes']['label'] = "Yes";
+    $applyForFeeReductionValueOptions['no']['label'] = "No";
+    
+    $applyForFeeReductionValueOptions['yes'] += [
+            'label_attributes' => [
+                    'for' => 'yes'
+            ],
+            'attributes' => [
+                    'id' => 'yes'
+            ],
+    ];
+    $applyForFeeReductionValueOptions['no'] += [
+            'label_attributes' => [
+                    'for' => 'no'
+            ],
+            'attributes' => [
+                    'id' => 'no'
+            ],
+    ];
+    $applyForFeeReduction->setOptions(['value_options'=>$applyForFeeReductionValueOptions]);
+    
+    $submit      = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+    
+    $formLabel   = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<section id="lpa-type" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Do you want to apply to pay a reduce fee?</h2>
+	
+    <div class="accordion-content">
+    	<div class="section-intro">
+                <p>If the donor has an income of less than £12,000 a year before tax or receives certain benefits, they might be eligible for a reduced fee, or no fee at all.</p>
+                
+                <p><a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
+    	
+		</div>
+	    
+    	
+        <?= $this->form()->openTag($form); ?>
+            
+            <?= $this->formElement($csrf) ?>
+            
+            <?= $this->formErrorList(); ?>
+            
+            <div class="emphasised option group">
+            
+                <h3>Do you want to apply to pay a reduced fee?</h3>
+                
+                <?= $formLabel->openTag($applyForFeeReduction) . $applyForFeeReduction->getOption('label') . $formLabel->closeTag(); ?>
+                
+                <?= $this->formElement($applyForFeeReduction)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($applyForFeeReduction) ?>
+                </p>
+            </div>
+            
+            <div class="accordion-actions">
+				<p>
+                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                </p>
+            </div>
+            
+        <?= $this->form()->closeTag(); ?>
+    	
+    </div>
+    
+</section>

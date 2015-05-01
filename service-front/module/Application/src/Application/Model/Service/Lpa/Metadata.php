@@ -15,38 +15,49 @@ class Metadata implements ServiceLocatorAwareInterface {
 
     const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
     const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
+    const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
+    const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
     
     use ServiceLocatorAwareTrait;
     
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
-        if(!array_key_exists(self::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
-            
-            $lpa->metadata[self::REPLACEMENT_ATTORNEYS_CONFIRMED] = true;
-            
-            if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in setLpaHasNoReplacementAttorneys()');
-            }
-        }
+        return $this->setMetadataByKey($lpa, self::REPLACEMENT_ATTORNEYS_CONFIRMED);
     }
     
     public function setPeopleToNotifyConfirmed(Lpa $lpa)
     {
-        if(!array_key_exists(self::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
-                
-            $lpa->metadata[self::PEOPLE_TO_NOTIFY_CONFIRMED] = true;
-
+        return $this->setMetadataByKey($lpa, self::PEOPLE_TO_NOTIFY_CONFIRMED);
+    }
+    
+    public function setRepeatApplicationConfirmed(Lpa $lpa)
+    {
+        return $this->setMetadataByKey($lpa, self::REPEAT_APPLICATION_CONFIRMED);
+    }
+    
+    public function setApplyForFeeReduction(Lpa $lpa, $applyOrNot)
+    {
+        $lpa->metadata[self::APPLY_FOR_FEE_REDUCTION] = $applyOrNot;
+        
+        if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
+            throw new \RuntimeException('API client failed to set metadata APPLY_FOR_FEE_REDUCTION for id: '.$lpa->id);
+        }
+    }
+    
+    private function setMetadataByKey(Lpa $lpa, $key)
+    {
+        if(!array_key_exists($key, $lpa->metadata)) {
+        
+            $lpa->metadata[$key] = true;
+        
             if( !$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata) ) {
-                throw new \RuntimeException('API client failed to set metadata for id: '.$lpa->id.' in setLpaHasNoPeopleToNotify()');
+                throw new \RuntimeException('API client failed to set metadata '.$key.' for id: '.$lpa->id.' in '.__METHOD__);
             }
-            
+        
             return true;
         }
         
         return false;
     }
-    
-    //---
-
 
 } // class

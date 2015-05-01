@@ -1,0 +1,83 @@
+<?php
+    $form        = $this->form;
+    $form->setAttribute('class', 'form');
+    $csrf        = $form->get('secret');
+    
+    $isRepeatApplication       = $form->get('isRepeatApplication');
+    $isRepeatApplicationValueOptions = $isRepeatApplication->getOptions()['value_options'];
+    $isRepeatApplicationValueOptions['is-repeat']['label'] = "This is a repeat application";
+    $isRepeatApplicationValueOptions['is-new']['label'] = "This is a new application";
+    
+    $isRepeatApplicationValueOptions['is-repeat'] += [
+            'label_attributes' => [
+                    'for' => 'is-repeat-application'
+            ],
+            'attributes' => [
+                    'id' => 'is-repeat-application'
+            ],
+    ];
+    $isRepeatApplicationValueOptions['is-new'] += [
+            'label_attributes' => [
+                    'for' => 'is-new-application'
+            ],
+            'attributes' => [
+                    'id' => 'is-new-application'
+            ],
+    ];
+    $isRepeatApplication->setOptions(['value_options'=>$isRepeatApplicationValueOptions]);
+    
+    $repeatCaseNumber           = $form->get('repeatCaseNumber');
+    $repeatCaseNumber->setOptions(['label' => "If you are making a repeat application, please enter your case number which was given by the OPG:"]);
+    
+    $submit      = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+    
+    $formLabel   = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<section id="lpa-type" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Are you making a repeat application?</h2>
+	
+    <div class="accordion-content">
+    	<div class="section-intro">
+    		<p>If you’ve already applied to register an LPA and the Office of the Public Guardian said that it was not possible to register it, you can apply again within 3 months and pay half the fee.</p>
+    		<p><a class="js-guidance" href="/guidance/#topic-repeat-application" data-journey-click="stageprompt.lpa:help:repeat-application">Find out about repeat application</a></p>
+		</div>
+	    
+    	
+        <?= $this->form()->openTag($form); ?>
+            
+            <?= $this->formElement($csrf) ?>
+            
+            <?= $this->formErrorList(); ?>
+            
+            <div class="emphasised option group">
+                <?= $this->formElement($isRepeatApplication)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($isRepeatApplication) ?>
+                </p>
+            </div>
+            
+            <div class="emphasised option group">
+                <?= $formLabel->openTag($repeatCaseNumber) . $repeatCaseNumber->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($repeatCaseNumber)?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($repeatCaseNumber) ?>
+                </p>
+            </div>
+            
+            <div class="accordion-actions">
+				<p>
+                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                </p>
+            </div>
+            
+        <?= $this->form()->closeTag(); ?>
+    	
+    </div>
+    
+</section>
