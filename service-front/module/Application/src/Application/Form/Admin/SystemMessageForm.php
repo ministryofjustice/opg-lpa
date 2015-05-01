@@ -1,19 +1,21 @@
 <?php
-namespace Application\Form\General;
+namespace Application\Form\Admin;
 
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+use Application\Form\General\AbstractForm;
+
 /**
  * For an admin to set the system message
  *
  * Class SystemMessageForm
- * @package Application\Form\General
+ * @package Application\Form\Admin
  */
 class SystemMessageForm extends AbstractForm {
 
     const MAX_MESSAGE_LENGTH = 2000;
     
-    public function __construct( $formName = 'admin-system-message' ){
+    public function __construct( $formName = 'admin-system-message' ) {
 
         parent::__construct( $formName );
 
@@ -25,7 +27,7 @@ class SystemMessageForm extends AbstractForm {
         ));
 
         //--------------------------------
-
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add([
@@ -46,7 +48,7 @@ class SystemMessageForm extends AbstractForm {
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => self::MAX_FEEDBACK_LENGTH,
+                        'max' => self::MAX_MESSAGE_LENGTH,
                         'messages' => [
                              StringLength::TOO_LONG => 'Please limit your feedback to ' . self::MAX_MESSAGE_LENGTH . ' chars.',
                          ],

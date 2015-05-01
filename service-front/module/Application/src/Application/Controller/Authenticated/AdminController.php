@@ -5,7 +5,7 @@ namespace Application\Controller\Authenticated;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Zend\Mvc\MvcEvent;
-use Zend\View\Model\Zend\View\Model;
+use Application\Form\Admin\SystemMessageForm;
 
 class AdminController extends AbstractAuthenticatedController
 {
@@ -38,17 +38,20 @@ class AdminController extends AbstractAuthenticatedController
     }
     
     public function systemMessageAction()
-    {
-        $cache = $this->getServiceLocator()->get('Cache');
+    {        
+        $form = new SystemMessageForm();
+        
+        if ($this->request->isPost()) {
+            $post = $this->request->getPost();
+            
+            $form->setData($post);
+            
+            if ($form->isValid()) {
+                $cache = $this->getServiceLocator()->get('Cache');
+                $cache->setItem('system-message', $post['message']);
+            }
+        }
+        return new ViewModel(['form'=>$form]);
 
-        // Test setting
-        $cache->setItem('admin-message', 'The system will be going down for maintenance on May 7th 2015');
-        
-        // Test getting
-        $message = $cache->getItem('admin-message');
-        
-        return new ViewModel([
-            'message'=>$message
-        ]);
     }
 }

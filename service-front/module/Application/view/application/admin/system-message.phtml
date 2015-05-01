@@ -1,3 +1,38 @@
-System message
+<?php
+    $form       = $this->form;
+    $csrf       = $form->get('secret');
+    
+    $form->setAttributes(['class' => 'form']);
+    
+    $message      = $form->get('message');
+    
+    $message->setAttributes(['id' => 'message']);
+    
+    $message->setAttributes([
+        'rows' => 4,
+        'cols' => 80,
+    ]);
+    
 
-<?php echo 'test:' . $this->message; ?>
+?>
+
+<div style="min-height:600px">
+	<h1>System Message</h1>
+    <?= $this->form()->openTag($form); ?>
+        
+    <?= $this->formElement($csrf)?>
+    <?= $this->formElementErrors($csrf)?>
+    
+    <?= $this->formErrorList(); ?>
+        
+    <?= $this->formElement($message)?>
+                
+    <p class='form-element-errors'>
+        <?= $this->formElementErrors($message)?>
+    </p>
+
+	<input type="submit" value="Set system message">
+                
+     <?= $this->form()->closeTag(); ?>
+     
+</div>
