@@ -51,6 +51,10 @@ class AdminController extends AbstractAuthenticatedController
                 
                 return $this->redirect()->toRoute('home');
             }
+        } else {
+            $messageElement = $form->get('message');
+            $currentMessage = $this->cache()->getItem('system-message');
+            $messageElement->setValue($currentMessage);
         }
         
         return new ViewModel(['form'=>$form]);

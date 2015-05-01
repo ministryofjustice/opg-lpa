@@ -13,7 +13,7 @@ use Application\Form\General\AbstractForm;
  */
 class SystemMessageForm extends AbstractForm {
 
-    const MAX_MESSAGE_LENGTH = 2000;
+    const MAX_MESSAGE_LENGTH = 8000;
     
     public function __construct( $formName = 'admin-system-message' ) {
 
@@ -43,7 +43,7 @@ class SystemMessageForm extends AbstractForm {
                     'options' => [
                         'max' => self::MAX_MESSAGE_LENGTH,
                         'messages' => [
-                             StringLength::TOO_LONG => 'Please limit your feedback to ' . self::MAX_MESSAGE_LENGTH . ' chars.',
+                             StringLength::TOO_LONG => 'Please limit the message to ' . self::MAX_MESSAGE_LENGTH . ' chars.',
                          ],
                     ],
                 ],
