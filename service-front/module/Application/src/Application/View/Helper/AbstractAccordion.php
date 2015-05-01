@@ -260,7 +260,10 @@ abstract class AbstractAccordion extends AbstractHelper
             return "The donor receives Universal Credit";
         }
         elseif($this->lpa->payment->reducedFeeLowIncome === true) {
-            return "Donor's gross annual income less than £12,000";
+            return "Donor's gross annual income is less than £12,000";
+        }
+        elseif($this->lpa->payment->reducedFeeLowIncome === false) {
+            return "Donor's gross annual income is over £12,000";
         }
     }
     
