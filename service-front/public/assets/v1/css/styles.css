@@ -2740,3 +2740,14 @@ nav.progress-indicator {
     clear: both;
     border-top: 1px solid #d5e8f3;
     padding: 1em; }
+
+.system-message {
+	display: block;
+	padding: 13px 12px 12px;
+	font-weight: bold;
+	font-size: 14px;
+	color: white;
+	background-color: #2ba6cb;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	text-align:center;	
+}
