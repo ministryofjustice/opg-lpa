@@ -14,6 +14,8 @@ use Application\Controller\AbstractLpaController;
 use Omnipay\Omnipay;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Model\ViewModel;
+use Zend\Session\Container;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 class PaymentController extends AbstractLpaController
 {
@@ -26,23 +28,88 @@ class PaymentController extends AbstractLpaController
      */
     public function indexAction()
     {
-        $paymentService = $this->getServiceLocator()->get('Payment');
-
-        $options = $paymentService->getOptions($this->getLpa());
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
         
-        $response = 
-            $paymentService
-                 ->getGateway()
-                 ->purchase($options)
-                 ->send();
+        if($this->request->isPost()) {
+            $postData = $this->request->getPost();
+            
+            // set data for validation
+            $form->setData($postData);
+            
+            if($postData['method'] == Payment::PAYMENT_TYPE_CHEQUE) {
+                $form->setValidationGroup('method');
+            }
+            
+            if($form->isValid()) {
+                
+                $lpa = $this->getLpa();
+                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+                
+                $lpa->payment->method = $form->getData()['method'];
+                
+                if($form->getData()['method'] == Payment::PAYMENT_TYPE_CHEQUE) {
+                    $lpa->payment->date = new \DateTime();
+                }
+                
+                // persist data
+                if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                    throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpa->id);
+                }
+                
+                if($form->getData()['method'] == Payment::PAYMENT_TYPE_CARD) {
+                
+                    // set paymentEmail in session container.
+                    $container = new Container('paymentEmail');
+                    $container->email = $form->getData()['email'];
+                    
+                    // init online payment
+                    $paymentService = $this->getServiceLocator()->get('Payment');
+                    
+                    $options = $paymentService->getOptions($lpa);
+                    
+                    $response = 
+                        $paymentService
+                             ->getGateway()
+                             ->purchase($options)
+                             ->send();
+                    
+                    $paymentGatewayBaseUrl = $response->getData()->reference;
+                    
+                    $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
+                    
+                    $this->redirect()->toUrl($redirectUrl);
+                    
+                    return $this->getResponse();
+                }
+                else {
+                    // send email
+                    $communicationService = $this->getServiceLocator()->get('Communication');
+                    $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+                    
+                    // to complete page
+                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                }
+                
+            }
+        }
+        else {
+            $data = [];
+            if($this->getLpa()->payment instanceof Payment) {
+                $data['method'] =  $this->getLpa()->payment->method;
+            }
+            
+            $container = new Container('paymentEmail');
+            if(isset($container->email)) {
+                $data['email'] = $container->email;
+            }
+            
+            $form->bind($data);
+        }
         
-        $paymentGatewayBaseUrl = $response->getData()->reference;
+        return new ViewModel([
+                'form'=>$form, 
+        ]);
         
-        $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
-        
-        $this->redirect()->toUrl($redirectUrl);
-        
-        return $this->getResponse();
     }
     
     public function successAction()

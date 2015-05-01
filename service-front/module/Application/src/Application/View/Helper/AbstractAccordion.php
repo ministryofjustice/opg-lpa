@@ -8,6 +8,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Application\View\Helper\Traits\ConcatNamesTrait;
 use Application\Model\Service\Lpa\Metadata;
 
@@ -17,29 +18,33 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected $lpa;
     
-    // map route name to method name
+    // map route name to method name. Returning value is to be injected into a file under layout/partials/accordion/items
     private $bars = [
         'creation' => [
-            'lpa/form-type' => 'type',
-            'lpa/donor' => 'donor',
-            'lpa/when-lpa-starts' => "whenLpaStarts",
-            'lpa/life-sustaining' => "lifeSustaining",
-            'lpa/primary-attorney' => 'primaryAttorney',
-            'lpa/how-primary-attorneys-make-decision' => 'howPrimaryAttorneysMakeDecision',
-            'lpa/replacement-attorney' => 'replacementAttorney',
-            'lpa/when-replacement-attorney-step-in' => 'whenReplacementAttorneyStepIn',
+            'lpa/form-type'                               => 'type',
+            'lpa/donor'                                   => 'donor',
+            'lpa/when-lpa-starts'                         => "whenLpaStarts",
+            'lpa/life-sustaining'                         => "lifeSustaining",
+            'lpa/primary-attorney'                        => 'primaryAttorney',
+            'lpa/how-primary-attorneys-make-decision'     => 'howPrimaryAttorneysMakeDecision',
+            'lpa/replacement-attorney'                    => 'replacementAttorney',
+            'lpa/when-replacement-attorney-step-in'       => 'whenReplacementAttorneyStepIn',
             'lpa/how-replacement-attorneys-make-decision' => 'howReplacementAttorneysMakeDecision',
-            'lpa/certificate-provider' => 'certificateProvider',
-            'lpa/people-to-notify' => 'peopleToNotify',
-            'lpa/instructions' => 'instructions',
+            'lpa/certificate-provider'                    => 'certificateProvider',
+            'lpa/people-to-notify'                        => 'peopleToNotify',
+            'lpa/instructions'                            => 'instructions',
         ],
         'registration' => [
-            'lpa/applicant' => 'applicant',
-            'lpa/correspondent' => 'correspondent',
-            'lpa/who-are-you' => 'whoAreYou',
-            'lpa/fee' => 'fee',
-            'lpa/payment/return/failure' => null,
-            'lpa/payment/return/cancel' => null,
+            'lpa/applicant'                     => 'applicant',
+            'lpa/correspondent'                 => 'correspondent',
+            'lpa/who-are-you'                   => 'whoAreYou',
+            'lpa/repeat-application'            => 'repeatApplication',
+            'lpa/fee-reduction'                 => 'feeReduction',
+            'lpa/benefits'                      => 'benefits',
+            'lpa/income-and-universal-credit'   => 'incomeAndUniversalCredit',
+            'lpa/payment'                       => 'payment',
+            'lpa/payment/return/failure'        => null,
+            'lpa/payment/return/cancel'         => null,
         ],
     ];
     
@@ -196,11 +201,77 @@ abstract class AbstractAccordion extends AbstractHelper
         }
     }
     
-    protected function fee()
+    protected function repeatApplication()
     {
-        if($this->lpa->payment === null) return null;
+        if(!array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata)) return null;
         
-        return "Payment";
+        if($this->lpa->repeatCaseNumber === null) {
+            return 'This is a new application';
+        }
+        else {
+            return "I’m making a repeat application";
+        }
+    }
+    
+    protected function feeReduction()
+    {
+        if(!array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata)) return;
+        
+        if($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === true) {
+            return "I want to apply to reduced fee";
+        }
+        elseif($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
+            return "I do not want to apply for reduced fee";
+        }
+    }
+    
+    protected function benefits()
+    {
+        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata) &&
+                $this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
+            return null;
+        }
+        
+        if(!($this->lpa->payment instanceof Payment)) return null;
+        
+        if($this->lpa->payment->reducedFeeReceivesBenefits === true) {
+            if($this->lpa->payment->reducedFeeAwardedDamages  === true) {
+                return "The donor qualifies fee exemption";
+            }
+            else {
+                return "Donor receives benefits and also has awarded over £16,000 personal injury damages";
+            }
+        }
+        else {
+            return "Donor does not receive benefits";
+        }
+    }
+    
+    protected function incomeAndUniversalCredit()
+    {
+        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata) &&
+                $this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
+            return null;
+        }
+        
+        if(!($this->lpa->payment instanceof Payment)) return null;
+        
+        if($this->lpa->payment->reducedFeeUniversalCredit === true) {
+            return "The donor receives Universal Credit";
+        }
+        elseif($this->lpa->payment->reducedFeeLowIncome === true) {
+            return "Donor's gross annual income is less than £12,000";
+        }
+        elseif($this->lpa->payment->reducedFeeLowIncome === false) {
+            return "Donor's gross annual income is over £12,000";
+        }
+    }
+    
+    protected function payment()
+    {
+        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->amount>0)) {
+            return $this->lpa->payment->amount;
+        }
     }
     
     protected function getViewScriptName($barDataFuncName)
