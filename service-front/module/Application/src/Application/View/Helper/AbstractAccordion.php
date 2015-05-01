@@ -238,11 +238,11 @@ abstract class AbstractAccordion extends AbstractHelper
             if($this->lpa->payment->reducedFeeAwardedDamages  === true) {
                 return "The donor qualifies fee exemption";
             }
-            else {
+            elseif($this->lpa->payment->reducedFeeAwardedDamages  === false)  {
                 return "Donor receives benefits and also has awarded over £16,000 personal injury damages";
             }
         }
-        else {
+        elseif($this->lpa->payment->reducedFeeReceivesBenefits === false) {
             return "Donor does not receive benefits";
         }
     }
@@ -270,7 +270,7 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function payment()
     {
         if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->amount>0)) {
-            return $this->lpa->payment->amount;
+            return 'Application fee: £'.$this->lpa->payment->amount. ' (Payment method: '.$this->lpa->payment->method.')';
         }
     }
     

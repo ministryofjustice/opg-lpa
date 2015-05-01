@@ -692,7 +692,7 @@ class FormFlowChecker extends StateChecker
             }
             else {
                 if($this->lpa->payment instanceof Payment) {
-                    if(($this->lpa->payment->reducedFeeLowIncome !== null)||($this->lpa->payment->reducedFeeUniversalCredit !== null)) {
+                    if(($this->lpa->payment->reducedFeeUniversalCredit === false) && ($this->lpa->payment->reducedFeeLowIncome !== null)) {
                         return true;
                     }
                     else {
