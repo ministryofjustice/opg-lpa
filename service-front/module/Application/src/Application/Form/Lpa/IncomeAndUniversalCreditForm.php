@@ -3,35 +3,32 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
-class BenefitsForm extends AbstractForm
+class IncomeAndUniversalCreditForm extends AbstractForm
 {
     protected $formElements = [
-            'reducedFeeReceivesBenefits' => [
+            'reducedFeeUniversalCredit' => [
                     'type'      => 'Zend\Form\Element\Radio',
                     'required'  => true,
                     'options'   => [
                             'value_options' => [
-                                    'no' => [
-                                            'value' => 0,
-                                    ],
                                     'yes' => [
                                             'value' => 1,
+                                    ],
+                                    'no' => [
+                                            'value' => 0,
                                     ],
                             ],
                     ],
             ],
-            'reducedFeeAwardedDamages' => [
+            'reducedFeeLowIncome' => [
                     'type'      => 'Zend\Form\Element\Radio',
                     'required'  => true,
                     'options'   => [
                             'value_options' => [
-                                    'no-damage' => [
+                                    'yes' => [
                                             'value' => 1,
                                     ],
-                                    'less-than-16k' => [
-                                            'value' => 1,
-                                    ],
-                                    'over-16k' => [
+                                    'no' => [
                                             'value' => 0,
                                     ],
                             ],
@@ -44,7 +41,7 @@ class BenefitsForm extends AbstractForm
     
     public function init()
     {
-        $this->setName('benefits');
+        $this->setName('income-and-universal-credit');
         parent::init();
     }
     
@@ -56,10 +53,10 @@ class BenefitsForm extends AbstractForm
     public function validateByModel()
     {
         $lpa = new Payment([
-                'reducedFeeReceivesBenefits' => (bool)$this->data['reducedFeeReceivesBenefits'],
-                'reducedFeeAwardedDamages'   => array_key_exists('reducedFeeAwardedDamages', $this->data)?(bool)$this->data['reducedFeeAwardedDamages']:null,
+                'reducedFeeLowIncome'       => (bool)$this->data['reducedFeeLowIncome'],
+                'reducedFeeUniversalCredit' => (bool)$this->data['reducedFeeUniversalCredit'],
                 ]);
-        $validation = $lpa->validate(['reducedFeeReceivesBenefits', 'reducedFeeAwardedDamages']);
+        $validation = $lpa->validate(['reducedFeeLowIncome', 'reducedFeeUniversalCredit']);
         
         if(count($validation) == 0) {
             return ['isValid'=>true, 'messages' => []];
