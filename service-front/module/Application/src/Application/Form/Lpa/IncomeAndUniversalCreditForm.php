@@ -54,7 +54,7 @@ class IncomeAndUniversalCreditForm extends AbstractForm
     {
         $lpa = new Payment([
                 'reducedFeeLowIncome'       => (bool)$this->data['reducedFeeLowIncome'],
-                'reducedFeeUniversalCredit' => (bool)$this->data['reducedFeeUniversalCredit'],
+                'reducedFeeUniversalCredit' => array_key_exists('reducedFeeUniversalCredit', $this->data)?(bool)$this->data['reducedFeeUniversalCredit']:null,
                 ]);
         $validation = $lpa->validate(['reducedFeeLowIncome', 'reducedFeeUniversalCredit']);
         
