@@ -16,10 +16,8 @@ class DashboardController extends AbstractAuthenticatedController
         $query = $this->params()->fromQuery('search');
 
         if( is_string($query) && !empty($query) ){
-
-            $lpas = $this->getServiceLocator()->get('ApplicationList')->searchAllALpaSummaries( $query );
-
-            $paginator = new Paginator(new PaginatorArrayAdapter($lpas));
+            
+            $paginator = $this->searchLpaList( $query );
 
         } else {
 
@@ -117,7 +115,7 @@ class DashboardController extends AbstractAuthenticatedController
         return new ViewModel();
     }
 
-    //---
+    //------------------------------------------------------------------
 
     /**
      * Returns a Paginator for all the user's LPAs.
@@ -175,6 +173,65 @@ class DashboardController extends AbstractAuthenticatedController
         return new Paginator(new PaginatorArrayAdapter($lpas));
 
     } // function
+
+    /**
+     * Returns a Paginator for all the user's LPAs the match the given query.
+     *
+     * @return Paginator
+     */
+    private function searchLpaList( $query ){
+
+        // Return all of the (v2) LPAs that match the query.
+        $lpas = $this->getServiceLocator()->get('ApplicationList')->searchAllALpaSummaries( $query );
+
+        //---
+
+        /**
+         * This should be the only point at which we touch the V1Proxy module!
+         *
+         * When removing v1, the whole if statement below can be deleted.
+         *
+         * #v1Code
+         */
+        if( $this->getServiceLocator()->has('ProxyDashboard') ){
+
+            try {
+
+                // This will return an empty array if the user has no v1 LPAs.
+                $v1Lpas = $this->getServiceLocator()->get('ProxyDashboard')->searchLpas( $query );
+
+            } catch( \RuntimeException $e ){
+
+                // Runtime errors are caused by a v1 / v2 auth token mismatch.
+                // Re-authenticating is the only solution.
+                // (realistically this only happens whilst we can login to both v1 & v2)
+                $this->redirect()->toRoute('login', ['state'=>'timeout']);
+
+            }
+
+            // Merge the v1 LPAs into the v2 list.
+            $lpas = array_merge($lpas, $v1Lpas);
+
+        }
+
+        // end #v1Code
+
+        //---
+
+        // Sort by updatedAt into descending order
+        // Once we remove #v1Code, perhaps we can assume they're pre-sorted from the API/DB?
+        usort($lpas, function($a, $b){
+            if ($a->updatedAt == $b->updatedAt) { return 0; }
+            return ($a->updatedAt > $b->updatedAt) ? -1 : 1;
+        });
+
+        //---
+
+        return new Paginator(new PaginatorArrayAdapter($lpas));
+
+    }
+
+    //------------------------------------------------------------------
 
     /**
      * This is overridden to prevent people being (accidently?) directed to this controller post-auth.

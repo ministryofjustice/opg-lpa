@@ -60,12 +60,16 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
     } // function
 
+    public function searchLpas( $query ){
+        return $this->getLpas( false, $query );
+    }
+
     /**
      * Return a list of laps
      *
      * @return array|mixed
      */
-    public function getLpas( $useCache = true ){
+    public function getLpas( $useCache = true, $query = null ){
 
         $config = $this->getServiceLocator()->get('Config')['v1proxy'];
 
@@ -95,7 +99,17 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         $client = $this->getServiceLocator()->get('ProxyOldApiClient');
 
-        $response = $client->get( 'http://api.local/summary' );
+        if( isset($query) ){
+
+            $response = $client->get( 'http://api.local/summary/search', [
+                'query' => [ 'freeText' => $query ]
+            ]);
+
+        } else {
+
+            $response = $client->get( 'http://api.local/summary' );
+
+        }
 
         if( $response->getStatusCode() != 200 ){
             throw new \RuntimeException( 'Error accessing v1 API' );
