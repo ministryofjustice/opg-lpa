@@ -12,11 +12,11 @@ class PaymentForm extends AbstractForm
                     'required'  => true,
                     'options'   => [
                             'value_options' => [
-                                    'card' => [
-                                            'value' => 'card',
-                                    ],
                                     'cheque' => [
                                             'value' => 'cheque',
+                                    ],
+                                    'card' => [
+                                            'value' => 'card',
                                     ],
                             ],
                     ],
