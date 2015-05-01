@@ -88,9 +88,10 @@
                 </div>
             </header>
             <div id="wrapper">
-            <?php echo $this->systemMessage(); ?>
+            
                 <section id="content" role="main" class="group">
                     <?= $this->accountInfo(); ?>
+                    <?php echo $this->systemMessage(); ?>
                     <?= $this->pageHeaders(); ?>
                                 
                                 <?php if(isset($this->contentHeader)): ?>

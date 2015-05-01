@@ -36,15 +36,8 @@ class SystemMessageForm extends AbstractForm {
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
+            'required' => false,
             'validators' => array(
-                [
-                    'name'    => 'NotEmpty',
-                    'options' => [
-                        'messages' => [
-                            NotEmpty::IS_EMPTY => 'No message was entered.',
-                        ],
-                    ],
-                ],
                 [
                     'name'    => 'StringLength',
                     'options' => [

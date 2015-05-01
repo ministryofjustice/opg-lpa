@@ -2742,12 +2742,13 @@ nav.progress-indicator {
     padding: 1em; }
 
 .system-message {
+	margin-top:1em;
 	display: block;
 	padding: 13px 12px 12px;
 	font-weight: bold;
 	font-size: 14px;
 	color: white;
 	background-color: #2ba6cb;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 3px solid #000;
 	text-align:center;	
 }
