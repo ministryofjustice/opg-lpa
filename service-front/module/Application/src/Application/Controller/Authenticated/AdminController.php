@@ -29,7 +29,7 @@ class AdminController extends AbstractAuthenticatedController
             }
         }
         
-        $this->redirect()->toRoute('home');
+        return $this->redirect()->toRoute('home');
     }
     
     public function statsAction()
@@ -47,10 +47,16 @@ class AdminController extends AbstractAuthenticatedController
             $form->setData($post);
             
             if ($form->isValid()) {
-                $cache = $this->getServiceLocator()->get('Cache');
-                $cache->setItem('system-message', $post['message']);
+                $this->cache()->setItem('system-message', $post['message']);
+                
+                return $this->redirect()->toRoute('home');
             }
+        } else {
+            $messageElement = $form->get('message');
+            $currentMessage = $this->cache()->getItem('system-message');
+            $messageElement->setValue($currentMessage);
         }
+        
         return new ViewModel(['form'=>$form]);
 
     }

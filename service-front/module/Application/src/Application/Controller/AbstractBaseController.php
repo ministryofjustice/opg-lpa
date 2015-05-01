@@ -105,6 +105,15 @@ abstract class AbstractBaseController extends AbstractActionController {
     }
     
     /**
+     * Returns the cache object.
+     *
+     * @return array
+     */
+    protected function cache(){
+        return $this->getServiceLocator()->get('Cache');
+    }
+    
+    /**
      * Returns the logger.
      *
      * @return Logger

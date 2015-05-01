@@ -85,7 +85,8 @@ return [
             'formErrorList'         => 'Application\View\Helper\FormErrorList',
             'formLinkedErrorList'   => 'Application\View\Helper\FormLinkedErrorList',
             'concatNames'           => 'Application\View\Helper\ConcatNames',
-            'cellStyles'             => 'Application\View\Helper\CellStyles',
+            'cellStyles'            => 'Application\View\Helper\CellStyles',
+            'systemMessage'         => 'Application\View\Helper\SystemMessage',
         ],
     ],
 
