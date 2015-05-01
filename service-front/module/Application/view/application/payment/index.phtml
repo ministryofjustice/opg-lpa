@@ -1,0 +1,89 @@
+<?php
+    $form       = $this->form;
+    $csrf       = $form->get('secret');
+    
+    $form->setAttributes(['class' => 'form']);
+    
+    $email      = $form->get('email');
+    $email->setOptions(['label' => "Email address"]);
+    $email->setAttributes(['id' => 'email']);
+    
+    $paymentMethod     = $form->get('method');
+    $paymentMethodValueOptions = $paymentMethod->getOptions()['value_options'];
+    $paymentMethodValueOptions['card']['label'] = "I want to pay by card";
+    $paymentMethodValueOptions['cheque']['label'] = "I want to pay by cheque";
+    
+    $paymentMethodValueOptions['card'] += [
+            'label_attributes' => [
+                    'for' => 'card'
+            ],
+            'attributes' => [
+                    'id' => 'card'
+            ],
+    ];
+    $paymentMethodValueOptions['cheque'] += [
+            'label_attributes' => [
+                    'for' => 'cheque'
+            ],
+            'attributes' => [
+                    'id' => 'cheque'
+            ],
+    ];
+    $paymentMethod->setOptions(['value_options'=>$paymentMethodValueOptions]);
+    
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button', 'id'=>'form-submit', 'value'=>'Proceed to payment']);
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+<section id="fee" class="section current">
+    
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Payment</h2>
+
+    <div class="accordion-content">
+    
+    <?= $this->form()->openTag($form); ?>
+    
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
+    
+    <?= $this->formErrorList(); ?>
+    
+        <div class="section-intro">
+
+            <h2>Application fee: £<?= $this->lpa->payment->amount ?></h2>
+
+            <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
+
+            <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
+            
+        </div>
+        
+        <div class="emphasised option group">
+            <?= $formLabel->openTag($paymentMethod) . $paymentMethod->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($paymentMethod)?>
+            
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($paymentMethod) ?>
+            </p>
+        </div>
+        
+        <div id="contact-email">
+            <p>Please enter a contact email for correspondence regarding this payment.</p>
+            <div class="group">
+                <?= $formLabel->openTag($email) . $email->getOption('label') . $formLabel->closeTag(); ?> 
+                    <?= $this->formElement($email) ?>
+                <?= $this->formElementErrors($email) ?>
+            </div>
+        </div>
+
+        <div class="accordion-actions group">
+            <p><?= $this->formElement($submit) ?></p>
+        </div>
+        
+    <?= $this->form()->closeTag(); ?>
+    
+    </div>
+    
+</section>
