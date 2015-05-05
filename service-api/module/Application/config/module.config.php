@@ -57,6 +57,21 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
 
+                    'stats' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/stats/:type',
+                            'constraints' => [
+                                'userId' => '[a-f0-9]+',
+                                'type' => '[a-z0-9][a-z0-9-]*',
+                            ],
+                            'defaults' => [
+                                'controller'    => 'Rest',
+                                'resource'      => 'stats'
+                            ],
+                        ],
+                    ], // stats
+
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -174,6 +189,7 @@ return [
             'resource-repeat-case-number'               => 'Application\Model\Rest\RepeatCaseNumber\Resource',
             'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
             'resource-metadata'                         => 'Application\Model\Rest\Metadata\Resource',
+            'resource-stats'                            => 'Application\Model\Rest\Stats\Resource',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',

@@ -46,7 +46,11 @@ class Entity extends Hal {
      */
     public function setLinks( callable $routeCallback ){
 
-        if( $this->entity instanceof \Application\Model\Rest\Users\Entity ) {
+        if( $this->entity instanceof \Application\Model\Rest\Stats\Entity ) {
+
+
+
+        } elseif( $this->entity instanceof \Application\Model\Rest\Users\Entity ) {
 
             $this->setUri( call_user_func($routeCallback, 'api-v1/user', $this->entity) );
 
