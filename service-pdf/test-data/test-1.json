@@ -1,29 +1,36 @@
 {
   "id": 53183024330,
+  "startedAt": "2014-01-28T13:44:52+00:00",
   "createdAt": "2014-12-28T13:44:52+00:00",
+  "completedAt":"2014-12-30T13:44:52+00:00",
   "updatedAt": "2014-12-30T14:45:37+00:00",
   "user": "36adb4a2d66570c1aaefe375fe657f8a",
-  "repeatCaseNumber": null,
+  "repeatCaseNumber": 3247842368,
   "payment": {
-    "reducedFeeReceivesBenefits": true,
-    "reducedFeeAwardedDamages": true,
-    "reducedFeeLowIncome": true,
-    "reducedFeeUniversalCredit": true,
-    "amount": null,
-    "method": null
+        "method": "card",
+        "phone": {
+            "number": "+511 924 743734"
+        },
+        "amount": 27.5,
+        "reference": "61ln49caftebdu75rg23716x7bqcuo3q",
+        "date": "2015-01-14T21:42:05.000000+0000",
+        "reducedFeeReceivesBenefits": false,
+        "reducedFeeAwardedDamages": true,
+        "reducedFeeLowIncome": true,
+        "reducedFeeUniversalCredit": false
   },
   "whoAreYouAnswered": true,
   "locked": true,
   "seed": null,
   "document": {
-    "type": "health-and-welfare",
+    "type": "property-and-financial",
     "donor": {
       "name": {
         "title": "Miss",
-        "first": "Rylan",
-        "last": "Lang"
+        "first": "Rylan Miss",
+        "last": "Lang Miss"
       },
-      "otherNames": null,
+      "otherNames": "Hiller",
       "address": {
         "address1": "30 Queensway",
         "address2": "Lydd",
@@ -33,28 +40,128 @@
       "dob": {
         "date": "1946-07-27T12:43:19+00:00"
       },
-      "email": null,
+      "email": {
+        "address": "donor@gmail.com"
+      },
       "canSign": false
     },
     "primaryAttorneys": [
-      {
-        "address": {
-          "address1": "598 High Street",
-          "address2": "Forfar",
-          "address3": "Angus, Scotland",
-          "postcode": "WN1 4XK"
-        },
-        "email": null,
-        "type": "human",
-        "name": {
-          "title": "Miss",
-          "first": "Henri",
-          "last": "Moran"
-        },
-        "dob": {
-          "date": "1991-04-30T02:57:54+00:00"
-        }
-      }
+            {
+                "name": "For Very Ltd.",
+                "number": "Q1R10JBJ",
+                "id": 61,
+                "address": {
+                    "address1": "404 The Crescent",
+                    "address2": "Whitehill",
+                    "address3": "Hampshire, England",
+                    "postcode": "WN72 8RZ"
+                },
+                "email": {
+                    "address": "9p5kif@cxduqxn.io"
+                },
+                "type": "trust"
+            },
+            {
+                "name": {
+                    "title": "Hon",
+                    "first": "Bruno",
+                    "last": "Holloway"
+                },
+                "dob": {
+                    "date": "1981-09-24T15:07:31.000000+0000"
+                },
+                "id": 62,
+                "address": {
+                    "address1": "453 The Grove",
+                    "address2": "Carlisle",
+                    "address3": "Cumbria, England",
+                    "postcode": "PL25 6JP"
+                },
+                "email": {
+                    "address": "6f@qtoubjof.co.uk"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Mrs",
+                    "first": "Francis",
+                    "last": "Turner"
+                },
+                "dob": {
+                    "date": "1938-07-11T10:47:43.000000+0000"
+                },
+                "id": 63,
+                "address": {
+                    "address1": "44 South Street",
+                    "address2": "Northleach",
+                    "address3": "Gloucestershire, England",
+                    "postcode": "TF99 6TC"
+                },
+                "email": {
+                    "address": "mf@nxngliiuxn.io"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Mrs",
+                    "first": "Tiana",
+                    "last": "Benson"
+                },
+                "dob": {
+                    "date": "1964-01-10T02:29:24.000000+0000"
+                },
+                "id": 64,
+                "address": {
+                    "address1": "298 North Road",
+                    "address2": "Louth",
+                    "address3": "Lincolnshire, England",
+                    "postcode": "CR83 9BM"
+                },
+                "email": {
+                    "address": "gdfds@qtoubjof.co.uk"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Mrs",
+                    "first": "Polly",
+                    "last": "Burns"
+                },
+                "dob": {
+                    "date": "1954-10-15T05:21:22.000000+0000"
+                },
+                "id": 65,
+                "address": {
+                    "address1": "50 The Avenue",
+                    "address2": "Pwllheli",
+                    "address3": "Gwynedd, Wales",
+                    "postcode": "DE12 2OZ"
+                },
+                "email": null,
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Mrs",
+                    "first": "Alisha",
+                    "last": "Nichols"
+                },
+                "dob": {
+                    "date": "1965-07-04T02:04:34.000000+0000"
+                },
+                "id": 66,
+                "address": {
+                    "address1": "247 Mill Lane",
+                    "address2": "Strabane",
+                    "address3": "County Tyrone, Northern Ireland",
+                    "postcode": "ZE7 2GE"
+                },
+                "email": null,
+                "type": "human"
+            }
     ],
     "certificateProvider": {
       "name": {
@@ -139,32 +246,101 @@
     "instruction": "\"At least he gave me all the Words correctly a little time\r\nago,\" said Bagheera impatiently. \"Baloo, thou hast neither memory\r\nnor respect. What would the jungle think if I, the Black Panther,\r\ncurled myself up like Ikki the Porcupine, and howled?\"\r\n\r\n\"What do I care what the jungle thinks? He may be dead by\r\nnow.\"\r\n\r\n\"Unless and until they drop him from the branches in sport, or\r\nkill him out of idleness, I have no fear for the man-cub. He is\r\nwise and well taught, and above all he has the eyes that make the\r\nJungle-People afraid. But (and it is a great evil) he is in the\r\npower of the Bandar-log, and they, because they live in trees,\r\nhave no fear of any of our people.\" Bagheera licked one forepaw\r\nthoughtfully.\r\n\r\n\"Fool that I am! Oh, fat, brown, root-digging fool that I\r\nam,\" said Baloo, uncoiling himself with a jerk, \"it is true what\r\nHathi the Wild Elephant says: `To each his own fear'; and they,\r\nthe Bandar-log, fear Kaa the Rock Snake. He can climb as well as\r\nthey can. He steals the young monkeys in the night. The whisper\r\nof his name makes their wicked tails cold. Let us go to Kaa.\"\r\n\r\n\"What will he do for us? He is not of our tribe, being\r\nfootless--and with most evil eyes,\" said Bagheera.\r\n\r\n\"He is very old and very cunning. Above all, he is always\r\nhungry,\" said Baloo hopefully. \"Promise him many goats.\"\r\n\r\n\"He sleeps for a full month after he has once eaten. He may\r\nbe asleep now, and even were he awake what if he would rather kill\r\nhis own goats?\" Bagheera, who did not know much about Kaa, was\r\nnaturally suspicious.\r\n\r\n\"Then in that case, thou and I together, old hunter, might\r\nmake him see reason.\" Here Baloo rubbed his faded brown shoulder\r\nagainst the Panther, and they went off to look for Kaa the Rock\r\nPython.\r\n\r\nThey found him stretched out on a warm ledge in the afternoon\r\nsun, admiring his beautiful new coat, for he had been in\r\nretirement for the last ten days changing his skin, and now he was\r\nvery splendid--darting his big blunt-nosed head along the\r\nground, and twisting the thirty feet of his body into fantastic\r\nknots and curves, and licking his lips as he thought of his dinner\r\nto come.\r\n\r\n\"He has not eaten,\" said Baloo, with a grunt of relief, as\r\nsoon as he saw the beautifully mottled brown and yellow jacket.\r\n\"Be careful, Bagheera! He is always a little blind after he has\r\nchanged his skin, and very quick to strike.\"\r\n\r\nKaa was not a poison snake--in fact he rather despised the\r\npoison snakes as cowards--but",
     "preference": "A fresh shower came down on their heads and the two trotted\r\naway, taking Mowgli with them. What Baloo had said about the\r\nmonkeys was perfectly true. They belonged to the tree-tops, and as\r\nbeasts very seldom look up, there was no occasion for the monkeys\r\nand the Jungle-People to cross each other's path. But whenever\r\nthey found a sick wolf, or a wounded tiger, or bear, the monkeys\r\nwould torment him, and would throw sticks and nuts at any beast\r\nfor fun and in the hope of being noticed. Then they would howl\r\nand shriek senseless songs, and invite the Jungle-People to climb\r\nup their trees and fight them, or would start furious battles over\r\nnothing among themselves, and leave the dead monkeys where the\r\nJungle-People could see them. They were always just going to have\r\na leader, and laws and customs of their own, but they never did,\r\nbecause their memories would not hold over from day to day, and so\r\nthey compromised things by making up a saying, \"What the\r\nBandar-log think now the jungle will think later,\" and that\r\ncomforted them a great deal. None of the beasts could reach them,\r\nbut on the other hand none of the beasts would notice them, and\r\nthat was why they were so pleased when Mowgli came to play with\r\nthem, and they heard how angry Baloo was.\r\n\r\nThey never meant to do any more--the Bandar-log never mean\r\nanything at all; but one of them invented what seemed to him a\r\nbrilliant idea, and he told all the others that Mowgli would be a\r\nuseful person to keep in the tribe, because he could weave sticks\r\ntogether for protection from the wind; so, if they caught him,\r\nthey could make him teach them. Of course Mowgli, as a\r\nwoodcutter's child, inherited all sorts of instincts, and used to\r\nmake little huts of fallen branches without thinking how he came\r\nto do it. The Monkey-People, watching in the trees, considered\r\nhis play most wonderful. This time, they said, they were really\r\ngoing to have a leader and become the wisest people in the jungle\r\n--so wise that everyone else would notice and envy them.\r\nTherefore they followed Baloo and Bagheera and Mowgli through the\r\njungle very quietly till it was time for the midday nap, and\r\nMowgli, who was very much ashamed of himself, slept between the\r\nPanther and the Bear, resolving to have no more to do with the\r\nMonkey People.\r\n\r\nThe next thing he remembered was feeling hands on his legs and\r\narms--hard, strong, little hands--and then a swash of branches\r\nin his face, and then he was staring down through the swaying\r\nboughs as Baloo woke the jungle with his deep cries and Bagheera\r\nbounded up the trunk with every tooth bared. The Bandar-log\r\nhowled with triumph and scuffled away to the upper branches where\r\nBagheera dared not follow, shouting: \"He has noticed us! Bagheera\r\nhas noticed us. All the Jungle-People admire us for our skill and\r\nour cun",
     "primaryAttorneyDecisions": {
-      "how": "single-attorney",
-      "canSustainLife": true
+            "canSustainLife": null,
+            "how": "depends",
+            "when": "no-capacity",
+            "howDetails": "\"He sleeps for a full month after he has once eaten. He may be asleep now, and even were he awake what if he would rather kill his own goats?\" Bagheera, who did not know much about Kaa, was naturally suspicious.\n\n\"Then in that case, thou and I together, old hunter, might make him see reason.\" Here Baloo rubbed his faded brown shoulder against the Panther, and they went off to look for Kaa the Rock Python.\n\nThey found him stretched out on a warm ledge in the afternoon sun, admiring his beautiful new coat, for he had been in retirement for the last ten days changing his skin, and now he was very splendid--darting his big blunt-nosed head along the ground, and twisting the thirty feet of his body into fantastic knots and curves, and licking his lips as he thought of his dinner to come.\n\n\"He has not eaten,\" said Baloo, with a grunt of relief, as soon as he saw the beautifully mottled brown and yellow jacket. \"Be careful, Bagheera! He is always a little blind after he has changed his skin, and very quick to strike.\"\n\nKaa was not a poison snake--in fact he rather despised the poison snakes as cowards--but his strength lay in his hug, and when he had once lapped his huge coils round anybody there was no more to be said. \"Good hunting!\" cried Baloo, sitting up on his haunches. Like all snakes of his breed Kaa was rather deaf, and did not hear the call at first. Then he curled up ready for any accident, his head lowered.\n\n\"Good hunting for us all,\" he answered. \"Oho, Baloo, what dost thou do here? Good hunting, Bagheera. One of us at least needs food. Is there any news of game afoot? A doe now, or even a young buck? I am as empty as a dried well.\"\n\n\"We are hunting,\" said Baloo carelessly. He knew that you must not hurry Kaa. He is too big.\n\n\"Give me permission to come with you,\" said Kaa. \"A blow more or less is nothing to thee, Bagheera or Baloo, but I--I have to wait and wait for days in a wood-path and climb half a night on the mere chance of a young ape. Psshaw! The branches are not what they were when I was young. Rotten twigs and dry boughs are they all.\"\n\n\"Maybe thy great weight has something to do with the matter,\" said Baloo.\n\n\"I am a fair length--a fair length,\" said Kaa with a little pride. \"But for all that, it "
     },
     "replacementAttorneys": [
-
+            {
+                "name": {
+                    "title": "Hon",
+                    "first": "Evie-Rose",
+                    "last": "Booker"
+                },
+                "dob": {
+                    "date": "1925-09-30T11:47:55.000000+0000"
+                },
+                "id": 52,
+                "address": {
+                    "address1": "124 Grange Road",
+                    "address2": "North Shields",
+                    "address3": "Tyne and Wear, England",
+                    "postcode": "CT8 8CX"
+                },
+                "email": {
+                    "address": "voptv@yicomqbv.org.uk"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Hon",
+                    "first": "Freddie",
+                    "last": "Calderon"
+                },
+                "dob": {
+                    "date": "1979-09-10T12:20:00.000000+0000"
+                },
+                "id": 53,
+                "address": {
+                    "address1": "324 The Crescent",
+                    "address2": "Weymouth",
+                    "address3": "Dorset, England",
+                    "postcode": "CH4 4GS"
+                },
+                "email": null,
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Prof",
+                    "first": "Caiden",
+                    "last": "England"
+                },
+                "dob": {
+                    "date": "1926-08-28T12:28:00.000000+0000"
+                },
+                "id": 54,
+                "address": {
+                    "address1": "29 St. John's Road",
+                    "address2": "Banff and Macduff",
+                    "address3": "Aberdeenshire, Scotland",
+                    "postcode": "HD7 2VO"
+                },
+                "email": null,
+                "type": "human"
+            }
     ],
-    "replacementAttorneyDecisions": null,
-    "whoIsRegistering": "donor",
+    "replacementAttorneyDecisions": {
+        "whenDetails": null,
+        "how": "jointly",
+        "when": null,
+        "howDetails": null
+    },
+    "whoIsRegistering": [62,63,64,65],
     "correspondent": {
-      "who": "donor",
+      "who": "other",
       "name": {
         "title": "Miss",
         "first": "Rylan",
         "last": "Lang"
       },
-      "company": null,
+      "company": "Super Company",
       "address": {
         "address1": "30 Queensway",
         "address2": "Lydd",
         "address3": "Kent, England",
         "postcode": "CA3 9GU"
       },
-      "email": null,
-      "phone": null,
-      "contactByPost": false,
-      "contactInWelsh": false
+      "email": {
+        "address": "cor@gmail.com"
+      },
+      "phone": {
+        "number": "12312334232"
+      },
+      "contactByPost": true,
+      "contactInWelsh": true
     }
   }
 }
