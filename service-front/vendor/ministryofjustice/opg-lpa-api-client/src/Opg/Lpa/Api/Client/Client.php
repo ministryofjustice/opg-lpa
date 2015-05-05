@@ -1746,7 +1746,7 @@ class Client
         }
 
         // @todo - Log properly
-        if (!$isSuccess) { 
+        if (!$isSuccess) {
         }
         
         $this->setIsError(!$isSuccess);

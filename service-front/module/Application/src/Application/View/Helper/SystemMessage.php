@@ -5,7 +5,7 @@ use Zend\View\Helper\AbstractHelper;
 
 class SystemMessage extends AbstractHelper
 {
-    public function __invoke($refNum)
+    public function __invoke()
     {
         $cache = $this->getView()
                       ->getHelperPluginManager()

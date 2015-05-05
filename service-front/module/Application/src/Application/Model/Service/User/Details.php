@@ -5,6 +5,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 use Application\Model\Service\ServiceDataInputInterface;
+use Application\Model\Service\Lpa\ApiClientFactory;
 
 class Details implements ServiceLocatorAwareInterface {
 
