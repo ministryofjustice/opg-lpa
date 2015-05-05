@@ -16,7 +16,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/c335bc35558e0683f95c3fd5dd11a5817c0a761f",
+                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/eb7ab0c81ada61f11f27d3069d48d7bb82ee4670",
                 "reference": "c335bc3",
                 "shasum": ""
             },
@@ -157,23 +157,24 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "af9417f765623429c9d2a200f0159537e08d1ef3"
+                "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/af9417f765623429c9d2a200f0159537e08d1ef3",
-                "reference": "af9417f765623429c9d2a200f0159537e08d1ef3",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
+                "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
                 "shasum": ""
             },
             "require": {
-                "doctrine/lexer": "~1.0",
+                "doctrine/lexer": "~1.0,>=1.0.1",
                 "php": ">= 5.3.3"
             },
             "require-dev": {
+                "phpunit/phpunit": "~4.4",
                 "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
@@ -203,7 +204,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-01-04 22:42:32"
+            "time": "2015-04-26 15:49:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -370,12 +371,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c"
+                "reference": "d70a0877cd6766c593515f9b9cacb3a057eb0fa6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c",
-                "reference": "6e9bb0f6f3f813aad79c303bf366a90e58a8ab3c",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d70a0877cd6766c593515f9b9cacb3a057eb0fa6",
+                "reference": "d70a0877cd6766c593515f9b9cacb3a057eb0fa6",
                 "shasum": ""
             },
             "require": {
@@ -401,7 +402,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-04-16 10:02:17"
+            "time": "2015-05-05 09:45:43"
         },
         {
             "name": "nocarrier/hal",
@@ -969,16 +970,16 @@
         },
         {
             "name": "zf-commons/zfc-rbac",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ZF-Commons/zfc-rbac.git",
-                "reference": "74e772bdf13602fdf4956fd6a3951d7951891d8c"
+                "reference": "80970aba715fd54f63ddde68a24bee22bafb9d17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ZF-Commons/zfc-rbac/zipball/74e772bdf13602fdf4956fd6a3951d7951891d8c",
-                "reference": "74e772bdf13602fdf4956fd6a3951d7951891d8c",
+                "url": "https://api.github.com/repos/ZF-Commons/zfc-rbac/zipball/80970aba715fd54f63ddde68a24bee22bafb9d17",
+                "reference": "80970aba715fd54f63ddde68a24bee22bafb9d17",
                 "shasum": ""
             },
             "require": {
@@ -1041,20 +1042,20 @@
                 "rbac",
                 "zf2"
             ],
-            "time": "2015-03-31 08:48:51"
+            "time": "2015-04-16 12:10:33"
         },
         {
             "name": "zfcampus/zf-api-problem",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-api-problem.git",
-                "reference": "fcd912181327626bdc0f10d9d63356330bb4cf42"
+                "reference": "788c3a907e3a0bd10923e06d9862bae2e1cf3e89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-api-problem/zipball/fcd912181327626bdc0f10d9d63356330bb4cf42",
-                "reference": "fcd912181327626bdc0f10d9d63356330bb4cf42",
+                "url": "https://api.github.com/repos/zfcampus/zf-api-problem/zipball/788c3a907e3a0bd10923e06d9862bae2e1cf3e89",
+                "reference": "788c3a907e3a0bd10923e06d9862bae2e1cf3e89",
                 "shasum": ""
             },
             "require": {
@@ -1100,7 +1101,7 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2014-06-03 22:10:49"
+            "time": "2014-08-18 16:15:43"
         },
         {
             "name": "zfr/rbac",

@@ -91,7 +91,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/c335bc35558e0683f95c3fd5dd11a5817c0a761f",
+            "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/eb7ab0c81ada61f11f27d3069d48d7bb82ee4670",
             "reference": "c335bc3",
             "shasum": ""
         },
@@ -232,67 +232,6 @@
         "keywords": [
             "security",
             "xml",
-            "zf2"
-        ]
-    },
-    {
-        "name": "zfcampus/zf-api-problem",
-        "version": "1.0.1",
-        "version_normalized": "1.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/zfcampus/zf-api-problem.git",
-            "reference": "fcd912181327626bdc0f10d9d63356330bb4cf42"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/zfcampus/zf-api-problem/zipball/fcd912181327626bdc0f10d9d63356330bb4cf42",
-            "reference": "fcd912181327626bdc0f10d9d63356330bb4cf42",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.23",
-            "zendframework/zend-eventmanager": "~2.3",
-            "zendframework/zend-http": "~2.3",
-            "zendframework/zend-json": "~2.3",
-            "zendframework/zend-mvc": "~2.3",
-            "zendframework/zend-view": "~2.3"
-        },
-        "require-dev": {
-            "fabpot/php-cs-fixer": "*@dev",
-            "phpunit/phpunit": "3.7.*",
-            "zendframework/zend-console": "~2.3",
-            "zendframework/zend-loader": "~2.3"
-        },
-        "time": "2014-06-03 22:10:49",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0-dev",
-                "dev-develop": "1.1-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "ZF\\ApiProblem\\": "src/",
-                "ZFTest\\ApiProblem\\": "test/"
-            },
-            "classmap": [
-                "Module.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "description": "ZF2 Module providing API-Problem assets and rendering",
-        "homepage": "http://apigility.org/",
-        "keywords": [
-            "api-problem",
-            "module",
-            "rest",
-            "zend",
             "zf2"
         ]
     },
@@ -841,58 +780,6 @@
         ]
     },
     {
-        "name": "egulias/email-validator",
-        "version": "1.2.7",
-        "version_normalized": "1.2.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/egulias/EmailValidator.git",
-            "reference": "af9417f765623429c9d2a200f0159537e08d1ef3"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/af9417f765623429c9d2a200f0159537e08d1ef3",
-            "reference": "af9417f765623429c9d2a200f0159537e08d1ef3",
-            "shasum": ""
-        },
-        "require": {
-            "doctrine/lexer": "~1.0",
-            "php": ">= 5.3.3"
-        },
-        "require-dev": {
-            "satooshi/php-coveralls": "dev-master"
-        },
-        "time": "2015-01-04 22:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.3.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Egulias\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Eduardo Gulias Davis"
-            }
-        ],
-        "description": "A library for validating emails",
-        "homepage": "https://github.com/egulias/EmailValidator",
-        "keywords": [
-            "email",
-            "validation",
-            "validator"
-        ]
-    },
-    {
         "name": "sebastian/recursion-context",
         "version": "1.0.0",
         "version_normalized": "1.0.0.0",
@@ -1193,84 +1080,6 @@
             }
         ],
         "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function."
-    },
-    {
-        "name": "zf-commons/zfc-rbac",
-        "version": "v2.5.0",
-        "version_normalized": "2.5.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ZF-Commons/zfc-rbac.git",
-            "reference": "74e772bdf13602fdf4956fd6a3951d7951891d8c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ZF-Commons/zfc-rbac/zipball/74e772bdf13602fdf4956fd6a3951d7951891d8c",
-            "reference": "74e772bdf13602fdf4956fd6a3951d7951891d8c",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.4",
-            "zendframework/zend-mvc": "~2.2",
-            "zendframework/zend-servicemanager": "~2.2",
-            "zfr/rbac": "~1.2"
-        },
-        "require-dev": {
-            "doctrine/common": "~2.4",
-            "doctrine/doctrine-module": "~0.8",
-            "doctrine/doctrine-orm-module": "~0.8",
-            "phpunit/phpunit": "~3.7",
-            "satooshi/php-coveralls": "~0.6",
-            "squizlabs/php_codesniffer": "1.4.*",
-            "zendframework/zend-developer-tools": "dev-master",
-            "zendframework/zendframework": "~2.2"
-        },
-        "suggest": {
-            "doctrine/doctrine-module": "if you want to use Doctrine role provider",
-            "zendframework/zend-developer-tools": "if you want to show information about the roles"
-        },
-        "time": "2015-03-31 08:48:51",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.4-dev",
-                "dev-develop": "3.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "ZfcRbac\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Kyle Spraggs",
-                "email": "theman@spiffyjr.me",
-                "homepage": "http://www.spiffyjr.me/"
-            },
-            {
-                "name": "Jean-Marie Leroux",
-                "email": "jmleroux.pro@gmail.com"
-            },
-            {
-                "name": "Michaël Gallego",
-                "email": "mic.gallego@gmail.com",
-                "homepage": "http://www.michaelgallego.fr"
-            }
-        ],
-        "description": "Zend Framework 2 Module that provides a layer of features of Zend\\Permissions\\Rbac",
-        "homepage": "http://www.github.com/ZF-Commons/zfc-rbac",
-        "keywords": [
-            "module",
-            "permissions",
-            "rbac",
-            "zf2"
-        ]
     },
     {
         "name": "zendframework/zendframework",
@@ -1972,18 +1781,210 @@
         ]
     },
     {
+        "name": "zfcampus/zf-api-problem",
+        "version": "1.0.2",
+        "version_normalized": "1.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zfcampus/zf-api-problem.git",
+            "reference": "788c3a907e3a0bd10923e06d9862bae2e1cf3e89"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zfcampus/zf-api-problem/zipball/788c3a907e3a0bd10923e06d9862bae2e1cf3e89",
+            "reference": "788c3a907e3a0bd10923e06d9862bae2e1cf3e89",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.23",
+            "zendframework/zend-eventmanager": "~2.3",
+            "zendframework/zend-http": "~2.3",
+            "zendframework/zend-json": "~2.3",
+            "zendframework/zend-mvc": "~2.3",
+            "zendframework/zend-view": "~2.3"
+        },
+        "require-dev": {
+            "fabpot/php-cs-fixer": "*@dev",
+            "phpunit/phpunit": "3.7.*",
+            "zendframework/zend-console": "~2.3",
+            "zendframework/zend-loader": "~2.3"
+        },
+        "time": "2014-08-18 16:15:43",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev",
+                "dev-develop": "1.1-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "ZF\\ApiProblem\\": "src/",
+                "ZFTest\\ApiProblem\\": "test/"
+            },
+            "classmap": [
+                "Module.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "ZF2 Module providing API-Problem assets and rendering",
+        "homepage": "http://apigility.org/",
+        "keywords": [
+            "api-problem",
+            "module",
+            "rest",
+            "zend",
+            "zf2"
+        ]
+    },
+    {
+        "name": "zf-commons/zfc-rbac",
+        "version": "v2.5.1",
+        "version_normalized": "2.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ZF-Commons/zfc-rbac.git",
+            "reference": "80970aba715fd54f63ddde68a24bee22bafb9d17"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ZF-Commons/zfc-rbac/zipball/80970aba715fd54f63ddde68a24bee22bafb9d17",
+            "reference": "80970aba715fd54f63ddde68a24bee22bafb9d17",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4",
+            "zendframework/zend-mvc": "~2.2",
+            "zendframework/zend-servicemanager": "~2.2",
+            "zfr/rbac": "~1.2"
+        },
+        "require-dev": {
+            "doctrine/common": "~2.4",
+            "doctrine/doctrine-module": "~0.8",
+            "doctrine/doctrine-orm-module": "~0.8",
+            "phpunit/phpunit": "~3.7",
+            "satooshi/php-coveralls": "~0.6",
+            "squizlabs/php_codesniffer": "1.4.*",
+            "zendframework/zend-developer-tools": "dev-master",
+            "zendframework/zendframework": "~2.2"
+        },
+        "suggest": {
+            "doctrine/doctrine-module": "if you want to use Doctrine role provider",
+            "zendframework/zend-developer-tools": "if you want to show information about the roles"
+        },
+        "time": "2015-04-16 12:10:33",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.4-dev",
+                "dev-develop": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "ZfcRbac\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Kyle Spraggs",
+                "email": "theman@spiffyjr.me",
+                "homepage": "http://www.spiffyjr.me/"
+            },
+            {
+                "name": "Jean-Marie Leroux",
+                "email": "jmleroux.pro@gmail.com"
+            },
+            {
+                "name": "Michaël Gallego",
+                "email": "mic.gallego@gmail.com",
+                "homepage": "http://www.michaelgallego.fr"
+            }
+        ],
+        "description": "Zend Framework 2 Module that provides a layer of features of Zend\\Permissions\\Rbac",
+        "homepage": "http://www.github.com/ZF-Commons/zfc-rbac",
+        "keywords": [
+            "module",
+            "permissions",
+            "rbac",
+            "zf2"
+        ]
+    },
+    {
+        "name": "egulias/email-validator",
+        "version": "1.2.8",
+        "version_normalized": "1.2.8.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/egulias/EmailValidator.git",
+            "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
+            "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/lexer": "~1.0,>=1.0.1",
+            "php": ">= 5.3.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.4",
+            "satooshi/php-coveralls": "dev-master"
+        },
+        "time": "2015-04-26 15:49:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Egulias\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Eduardo Gulias Davis"
+            }
+        ],
+        "description": "A library for validating emails",
+        "homepage": "https://github.com/egulias/EmailValidator",
+        "keywords": [
+            "email",
+            "validation",
+            "validator"
+        ]
+    },
+    {
         "name": "ministryofjustice/opg-lpa-datamodels",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "b1a293c6de3c1adba1ecbc8df56e63194f5116e8"
+            "reference": "d70a0877cd6766c593515f9b9cacb3a057eb0fa6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/b1a293c6de3c1adba1ecbc8df56e63194f5116e8",
-            "reference": "b1a293c6de3c1adba1ecbc8df56e63194f5116e8",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d70a0877cd6766c593515f9b9cacb3a057eb0fa6",
+            "reference": "d70a0877cd6766c593515f9b9cacb3a057eb0fa6",
             "shasum": ""
         },
         "require": {
@@ -1995,7 +1996,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-04-14 13:14:06",
+        "time": "2015-05-05 09:45:43",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
