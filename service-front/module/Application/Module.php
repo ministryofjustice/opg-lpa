@@ -16,6 +16,8 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\Logger\Logger;
 use Zend\Cache\StorageFactory;
 
+use Zend\View\Model\ViewModel;
+
 class Module{
     
     public function onBootstrap(MvcEvent $e){
@@ -243,6 +245,16 @@ class Module{
         if ($exception) {
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
             $logger->err($exception->getMessage());
+            
+            $viewModel = new ViewModel();
+            $viewModel->setTemplate('error/500.phtml'); 
+            
+            $e->getViewModel()->addChild($viewModel); 
+            $e->stopPropagation();
+                         
+            $e->getResponse()->setStatusCode(500);
+            
+            return $viewModel;
         }
     }
 

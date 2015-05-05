@@ -170,7 +170,6 @@ return [
                     ],
                 ],
             ], // stats
-
             'status' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
