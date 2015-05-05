@@ -26,9 +26,6 @@ use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
  */
 class StateChecker {
 
-    const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
-    const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
-    
     /**
      * LPA instance to apply checks to.
      *
@@ -155,12 +152,20 @@ class StateChecker {
 
     protected function paymentResolved()
     {
-        if(!$this->hasFeeCompleted()) {
+        if(!$this->hasFeeDetermined()) {
             return false;
         }
-
-        if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-            if($this->lpa->payment->reference != null) {
+        
+        if($this->lpa->payment->amount > 0) {
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+                if($this->lpa->payment->reference != null) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
                 return true;
             }
             else {
@@ -172,9 +177,9 @@ class StateChecker {
         }
     }
 
-    protected function hasFeeCompleted()
+    protected function hasFeeDetermined()
     {
-        if(!$this->isWhoAreYouAnswered() || !($this->lpa->payment instanceof Payment)) {
+        if(!($this->lpa->payment instanceof Payment)) {
             return false;
         }
 
@@ -220,7 +225,6 @@ class StateChecker {
     protected function lpaHasFinishedCreation()
     {
         return ($this->lpaHasCertificateProvider() &&
-                $this->peopleToNotifyHasBeenConfirmed() && 
                 (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)));
     }
     
@@ -232,12 +236,6 @@ class StateChecker {
     protected function lpaHasCreated()
     {
         return ($this->lpaHasFinishedCreation() && ($this->lpa->createdAt!==null));
-    }
-    
-    protected function peopleToNotifyHasBeenConfirmed()
-    {
-        return ($this->lpaHasCertificateProvider() && 
-                (count($this->lpa->document->peopleToNotify) > 0) || array_key_exists(self::PEOPLE_TO_NOTIFY_CONFIRMED, $this->lpa->metadata));
     }
     
     protected function lpaHasPeopleToNotify($index = null)
@@ -256,12 +254,6 @@ class StateChecker {
     protected function lpaHasCertificateProvider()
     {
         return ($this->lpaHasPrimaryAttorney() && ($this->lpa->document->certificateProvider instanceof CertificateProvider));
-    }
-
-    protected function replacementAttorneyHasBeenConfirmed()
-    {
-        return ($this->lpaHasPrimaryAttorney() &&
-                (count($this->lpa->document->replacementAttorneys) > 0) || array_key_exists(self::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata));
     }
 
     protected function lpaHowReplacementAttorneysMakeDecisionHasValue()
