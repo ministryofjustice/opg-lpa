@@ -63,19 +63,19 @@ class Collection extends Hal {
         //-------------------------------------------------------------
         // First
 
-        $this->addLink( 'first', call_user_func($routeCallback, 'api-v1/level-1', $this->collection) );
+        $this->addLink( 'first', call_user_func($routeCallback, 'api-v1/user/level-1', $this->collection) );
 
         //-------------------------------------------------------------
         // Self
 
         if( $currentPage == 1 ){
 
-            $this->addLink( 'self', call_user_func($routeCallback, 'api-v1/level-1', $this->collection) );
+            $this->addLink( 'self', call_user_func($routeCallback, 'api-v1/user/level-1', $this->collection) );
 
         } else {
 
             $this->addLink( 'self', call_user_func(
-                $routeCallback, 'api-v1/level-1',
+                $routeCallback, 'api-v1/user/level-1',
                 $this->collection,
                 [ 'page' => $currentPage ]
             ));
@@ -89,12 +89,12 @@ class Collection extends Hal {
 
             if ($currentPage - 1 == 1) {
 
-                $this->addLink( 'prev', call_user_func($routeCallback, 'api-v1/level-1', $this->collection) );
+                $this->addLink( 'prev', call_user_func($routeCallback, 'api-v1/user/level-1', $this->collection) );
 
             } else {
 
                 $this->addLink( 'prev', call_user_func(
-                    $routeCallback, 'api-v1/level-1',
+                    $routeCallback, 'api-v1/user/level-1',
                     $this->collection,
                     [ 'page' => $currentPage - 1 ]
                 ));
@@ -110,7 +110,7 @@ class Collection extends Hal {
         if ($currentPage + 1 <= $this->collection->count()) {
 
             $this->addLink( 'next', call_user_func(
-                $routeCallback, 'api-v1/level-1',
+                $routeCallback, 'api-v1/user/level-1',
                 $this->collection,
                 [ 'page' => $currentPage + 1 ]
             ));
@@ -122,12 +122,12 @@ class Collection extends Hal {
 
         if( $this->collection->count() <= 1 ){
 
-            $this->addLink( 'last', call_user_func($routeCallback, 'api-v1/level-1', $this->collection) );
+            $this->addLink( 'last', call_user_func($routeCallback, 'api-v1/user/level-1', $this->collection) );
 
         } else {
 
             $this->addLink( 'last', call_user_func(
-                $routeCallback, 'api-v1/level-1',
+                $routeCallback, 'api-v1/user/level-1',
                 $this->collection,
                 [ 'page' => $this->collection->count() ]
             ));

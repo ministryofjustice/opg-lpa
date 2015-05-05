@@ -48,18 +48,18 @@ class Entity extends Hal {
 
         if( $this->entity instanceof \Application\Model\Rest\Users\Entity ) {
 
-            $this->setUri( call_user_func($routeCallback, 'api-v1', $this->entity) );
+            $this->setUri( call_user_func($routeCallback, 'api-v1/user', $this->entity) );
 
         } elseif( $this->entity instanceof \Application\Model\Rest\Applications\Entity ){
 
-            $this->setUri( call_user_func($routeCallback, 'api-v1/level-1', $this->entity) );
-            $this->addLink( 'user', call_user_func($routeCallback, 'api-v1', $this->entity) );
+            $this->setUri( call_user_func($routeCallback, 'api-v1/user/level-1', $this->entity) );
+            $this->addLink( 'user', call_user_func($routeCallback, 'api-v1/user', $this->entity) );
 
         } else {
 
-            $this->setUri( call_user_func($routeCallback, 'api-v1/level-2', $this->entity) );
-            $this->addLink( 'user', call_user_func($routeCallback, 'api-v1', $this->entity) );
-            $this->addLink( 'application', call_user_func($routeCallback, 'api-v1/level-1', $this->entity) );
+            $this->setUri( call_user_func($routeCallback, 'api-v1/user/level-2', $this->entity) );
+            $this->addLink( 'user', call_user_func($routeCallback, 'api-v1/user', $this->entity) );
+            $this->addLink( 'application', call_user_func($routeCallback, 'api-v1/user/level-1', $this->entity) );
 
         }
 

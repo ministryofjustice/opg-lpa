@@ -16,6 +16,7 @@ return [
                 ],
             ], // home
 
+            /*
             'application' => [
                 'type'    => 'Literal',
                 'options' => [
@@ -42,51 +43,67 @@ return [
                     ],
                 ],
             ], // Services
+            */
 
             'api-v1' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/v1/users/:userId',
-                    'constraints' => [
-                        'userId' => '[a-f0-9]+',
-                    ],
+                    'route'    => '/v1',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller\Version1',
                         'controller'    => 'Rest',
-                        'resource'      => 'users'
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
 
-                    'level-1' => [
+                    'user' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/applications[/:lpaId]',
+                            'route'    => '/users/:userId',
                             'constraints' => [
-                                'lpaId'     => '[0-9]+',
+                                'userId' => '[a-f0-9]+',
                             ],
                             'defaults' => [
                                 'controller'    => 'Rest',
-                                'resource'      => 'applications'
+                                'resource'      => 'users'
                             ],
                         ],
-                    ], // level-1
+                        'may_terminate' => true,
+                        'child_routes' => [
 
-                    'level-2' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/applications/:lpaId/:resource[/:resourceId]',
-                            'constraints' => [
-                                'lpaId'      => '[0-9]+',
-                                'resource'   => '[a-z][a-z-]*',
-                                'resourceId' => '[a-z0-9][a-z0-9.]*',
-                            ],
-                            'defaults' => [
-                                'controller'    => 'Rest',
-                            ],
-                        ],
-                    ], // level-2
+                            'level-1' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/applications[/:lpaId]',
+                                    'constraints' => [
+                                        'lpaId'     => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller'    => 'Rest',
+                                        'resource'      => 'applications'
+                                    ],
+                                ],
+                            ], // level-1
+
+                            'level-2' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/applications/:lpaId/:resource[/:resourceId]',
+                                    'constraints' => [
+                                        'lpaId'      => '[0-9]+',
+                                        'resource'   => '[a-z][a-z-]*',
+                                        'resourceId' => '[a-z0-9][a-z0-9.]*',
+                                    ],
+                                    'defaults' => [
+                                        'controller'    => 'Rest',
+                                    ],
+                                ],
+                            ], // level-2
+
+                        ], // child_routes
+
+                    ], // user
 
                 ], // child_routes
 
