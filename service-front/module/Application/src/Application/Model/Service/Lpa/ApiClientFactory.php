@@ -17,9 +17,8 @@ class ApiClientFactory implements FactoryInterface {
      * @return ApiClient
      */
     public function createService(ServiceLocatorInterface $serviceLocator){
-
+        
         $client = new ApiClient();
-
         //---
 
         $auth = $serviceLocator->get('AuthenticationService');
@@ -33,7 +32,7 @@ class ApiClientFactory implements FactoryInterface {
         }
 
         //---
-
+        
         return $client;
 
     } // function
