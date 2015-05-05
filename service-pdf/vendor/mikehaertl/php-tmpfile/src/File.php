@@ -7,7 +7,7 @@ namespace mikehaertl\tmp;
  * A convenience class for temporary files.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.0.1-dev
+ * @version 1.0.0
  * @license http://www.opensource.org/licenses/MIT
  */
 class File

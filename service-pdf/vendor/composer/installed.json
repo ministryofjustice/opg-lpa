@@ -57,27 +57,28 @@
     },
     {
         "name": "egulias/email-validator",
-        "version": "1.2.7",
-        "version_normalized": "1.2.7.0",
+        "version": "1.2.8",
+        "version_normalized": "1.2.8.0",
         "source": {
             "type": "git",
             "url": "https://github.com/egulias/EmailValidator.git",
-            "reference": "af9417f765623429c9d2a200f0159537e08d1ef3"
+            "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/af9417f765623429c9d2a200f0159537e08d1ef3",
-            "reference": "af9417f765623429c9d2a200f0159537e08d1ef3",
+            "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
+            "reference": "5631c3fe2e56cd5a3f79b20fae970d884a5ff951",
             "shasum": ""
         },
         "require": {
-            "doctrine/lexer": "~1.0",
+            "doctrine/lexer": "~1.0,>=1.0.1",
             "php": ">= 5.3.3"
         },
         "require-dev": {
+            "phpunit/phpunit": "~4.4",
             "satooshi/php-coveralls": "dev-master"
         },
-        "time": "2015-01-04 22:42:32",
+        "time": "2015-04-26 15:49:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -327,12 +328,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "9dff12d65c12ff3a273877dbc605d373503e3caa"
+            "reference": "d70a0877cd6766c593515f9b9cacb3a057eb0fa6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/9dff12d65c12ff3a273877dbc605d373503e3caa",
-            "reference": "9dff12d65c12ff3a273877dbc605d373503e3caa",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d70a0877cd6766c593515f9b9cacb3a057eb0fa6",
+            "reference": "d70a0877cd6766c593515f9b9cacb3a057eb0fa6",
             "shasum": ""
         },
         "require": {
@@ -344,7 +345,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-04-16 14:59:20",
+        "time": "2015-05-05 09:45:43",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -502,20 +503,20 @@
     },
     {
         "name": "mikehaertl/php-tmpfile",
-        "version": "1.0.5",
-        "version_normalized": "1.0.5.0",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/mikehaertl/php-tmpfile.git",
-            "reference": "1defd205b56853ea55bf51881a483fd2c566e305"
+            "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/1defd205b56853ea55bf51881a483fd2c566e305",
-            "reference": "1defd205b56853ea55bf51881a483fd2c566e305",
+            "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/e34d43fa546d09f434b59ea8c05d4e4d55d55687",
+            "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687",
             "shasum": ""
         },
-        "time": "2015-03-25 07:34:27",
+        "time": "2014-07-09 11:08:51",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -529,7 +530,7 @@
         ],
         "authors": [
             {
-                "name": "Michael Härtl",
+                "name": "Michael Haertl",
                 "email": "haertl.mike@gmail.com"
             }
         ],

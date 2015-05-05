@@ -37,6 +37,7 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
     public function getValidEmails()
     {
         return array(
+            array('â@iana.org'),
             array('fabien@symfony.com'),
             array('example@example.co.uk'),
             array('fabien_potencier@example.fr'),
@@ -55,6 +56,13 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
             array('"test\ test"@iana.org'),
             array('""@iana.org'),
             array('"\""@iana.org'),
+            array('müller@möller.de'),
+            array('test@email*'),
+            array('test@email!'),
+            array('test@email&'),
+            array('test@email^'),
+            array('test@email%'),
+            array('test@email$'),
         );
     }
 
@@ -69,7 +77,7 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
     public function getInvalidEmails()
     {
         return array(
-
+            array('test@example.com test'),
             array('user  name@example.com'),
             array('user   name@example.com'),
             array('example.@example.co.uk'),
@@ -109,6 +117,12 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
             array('test@iana.org  \r\n\r\n '),
             array('test@iana/icann.org'),
             array('test@foo;bar.com'),
+            array('test;123@foobar.com'),
+            array('test@example..com'),
+            array('email.email@email."'),
+            array('test@email>'),
+            array('test@email<'),
+            array('test@email{'),
         );
     }
 
