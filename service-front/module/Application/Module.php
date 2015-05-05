@@ -30,6 +30,14 @@ class Module{
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         
+        register_shutdown_function(function () {
+            $error = error_get_last();
+            if ($error['type'] === E_ERROR) {
+                // This is a fatal error, we have no exception and no nice view to render
+                // The fatal error will have been logged already prior to writing this message
+                echo 'An unknown server error has occurred.';
+            }
+        });
         // Only bootstrap the session if it's *not* PHPUnit.
         if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
             $this->bootstrapSession($e);
@@ -245,17 +253,18 @@ class Module{
         if ($exception) {
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
             $logger->err($exception->getMessage());
-            
-            $viewModel = new ViewModel();
-            $viewModel->setTemplate('error/500.phtml'); 
-            
-            $e->getViewModel()->addChild($viewModel); 
-            $e->stopPropagation();
-                         
-            $e->getResponse()->setStatusCode(500);
-            
-            return $viewModel;
         }
-    }
 
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('error/500');
+        
+        $e->getViewModel()->addChild($viewModel);
+        $e->stopPropagation();
+         
+        $e->getResponse()->setStatusCode(500);
+        
+        return $viewModel;
+
+    }
+    
 } // class
