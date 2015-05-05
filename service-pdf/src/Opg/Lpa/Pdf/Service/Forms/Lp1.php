@@ -406,38 +406,40 @@ abstract class Lp1 extends AbstractForm
         $pdf = PdfProcessor::getPdftkInstance();
         $intPdfHandle = 'A';
         if(isset($this->interFileStack['LP1'])) {
-            $lastInsertion = 0;
             $pdf->addFile($this->interFileStack['LP1'], $intPdfHandle);
         }
         else {
             throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
         }
         
+        // add page 1-15
+        $pdf->cat(1, 15, 'A');
+        
         // Section 11 - additional attorneys signature
         if(isset($this->interFileStack['AdditionalAttorneySignature'])) {
-            $insertAt = 15;
-            $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            
             foreach($this->interFileStack['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
                 $pdf->addFile($additionalAttorneySignature, ++$intPdfHandle);
+                
+                // add an additional attorney signature page
                 $pdf->cat(1, null, $intPdfHandle);
             }
-            
-            $lastInsertion = $insertAt;
         }
+        
+        // add page 16, 17
+        $pdf->cat(16, 17, 'A');
         
         // Section 12 additional applicants
         if(isset($this->interFileStack['AdditionalApplicant'])) {
-            $insertAt = 17;
-            $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            
             foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
                 $pdf->addFile($additionalApplicant, ++$intPdfHandle);
+                
+                // add an additional applicant page
                 $pdf->cat(1, null, $intPdfHandle);
             }
-        
-            $lastInsertion = $insertAt;
         }
+        
+        // add page 18, 19, 20
+        $pdf->cat(18, 20, 'A');
         
         // Section 15 - additional applicants signature
         if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && ($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
@@ -452,71 +454,48 @@ abstract class Lp1 extends AbstractForm
         }
         
         if(isset($totalAdditionalPages) && ($totalAdditionalPages > 0)) {
-            $insertAt = 20;
-            $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            
             for($i=0; $i<$totalAdditionalPages; $i++) {
                 $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                
+                // add an additional applicant signature page
                 $pdf->cat(1, null, $intPdfHandle);
             }
-            
-            $lastInsertion = $insertAt;
         }
         
         // Continuation Sheet 1
         if(isset($this->interFileStack['CS1'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
             foreach ($this->interFileStack['CS1'] as $cs1) {
                 $pdf->addFile($cs1, ++$intPdfHandle);
+                
+                // add a CS1 page
                 $pdf->cat(1, null, $intPdfHandle);
             }
-            
-            $lastInsertion = $insertAt;
         }
         
         // Continuation Sheet 2
         if(isset($this->interFileStack['CS2'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
             foreach ($this->interFileStack['CS2'] as $cs2) {
                 $pdf->addFile($cs2, ++$intPdfHandle);
+                
+                // add a CS2 page
                 $pdf->cat(1, null, $intPdfHandle);
             }
-            
-            $lastInsertion = $insertAt;
         }
         
         // Continuation Sheet 3
         if(isset($this->interFileStack['CS3'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
             $pdf->addFile($this->interFileStack['CS3'], ++$intPdfHandle);
-            $pdf->cat(1, null, $intPdfHandle);
             
-            $lastInsertion = $insertAt;
+            // add a CS3 page
+            $pdf->cat(1, null, $intPdfHandle);
         }
         
         // Continuation Sheet 4
         if(isset($this->interFileStack['CS4'])) {
-            $insertAt = 20;
-            if($lastInsertion != $insertAt) {
-                $pdf->cat(++$lastInsertion, $insertAt, 'A');
-            }
             $pdf->addFile($this->interFileStack['CS4'], ++$intPdfHandle);
-            $pdf->cat(1, null, $intPdfHandle);
             
-            $lastInsertion = $insertAt;
-        }
-        
-        if($lastInsertion < 20) {
-            $pdf->cat($lastInsertion, 20, 'A');
+            // add a CS4 page
+            $pdf->cat(1, null, $intPdfHandle);
         }
         
         $pdf->saveAs($this->generatedPdfFilePath);
