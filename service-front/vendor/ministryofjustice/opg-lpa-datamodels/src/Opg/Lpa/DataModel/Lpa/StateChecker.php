@@ -155,9 +155,17 @@ class StateChecker {
         if(!$this->hasFeeDetermined()) {
             return false;
         }
-
-        if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-            if($this->lpa->payment->reference != null) {
+        
+        if($this->lpa->payment->amount > 0) {
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+                if($this->lpa->payment->reference != null) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
                 return true;
             }
             else {
