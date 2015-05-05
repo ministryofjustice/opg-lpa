@@ -1032,7 +1032,7 @@ class FormFlowChecker extends StateChecker
             return 'lpa/view-docs';
         }
         else {
-            return 'lpa/repeat-application';
+            return 'lpa/payment';
         }
     }
 
