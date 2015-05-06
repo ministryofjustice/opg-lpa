@@ -16,6 +16,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -94,7 +95,7 @@ class CorrespondentController extends AbstractLpaController
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name:$correspondent->name),
+                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name:$correspondent->company),
                         'address'   => $correspondent->address,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
@@ -230,9 +231,22 @@ class CorrespondentController extends AbstractLpaController
             else {
                 $correspondent = $this->getLpa()->document->correspondent;
             }
-        
-            $correspondent = $correspondent->flatten();
-            $correspondentForm->bind($correspondent);
+            
+            $correspondentDetails = $correspondent->flatten();
+            
+            if($correspondent instanceof TrustCorporation) {
+                $correspondentDetails['company'] = $correspondent->name;
+                $correspondentDetails['name-title'] = ' ';
+            }
+            
+            if($correspondent instanceof Donor) {
+                $correspondentDetails['who'] = 'donor';
+            }
+            else {
+                $correspondentDetails['who'] = 'attorney';
+            }
+            
+            $correspondentForm->bind($correspondentDetails);
         }
         
         $viewModel->correspondentForm = $correspondentForm;
