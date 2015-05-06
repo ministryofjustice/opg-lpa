@@ -16,9 +16,9 @@ class SystemMessage extends AbstractHelper
         
         if ($message != '') {
             echo <<<SYSMESS
-                <div class="system-message">
-                $message
-                </div>
+            <div class="help-notice application-notice">
+	           <p>$message</p>
+            </div>
 SYSMESS;
         }
     }

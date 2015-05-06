@@ -72,6 +72,7 @@ class User {
     }
 
     public function lastLogin(){
+        
         return $this->lastLogin;
     }
 

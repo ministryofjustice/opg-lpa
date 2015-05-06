@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated;
 
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
-use Zend\Session\Container;
 
 use Zend\Paginator\Paginator;
 use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
