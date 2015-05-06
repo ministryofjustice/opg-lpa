@@ -49,9 +49,9 @@ class Resource extends AbstractResource {
         // Stats can (ideally) be processed on a secondary.
         $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
+        
         //-----------------------------
         // Broken down by month
-
 
         $byMonth = array();
 
@@ -89,7 +89,7 @@ class Resource extends AbstractResource {
 
             //---
 
-            $byMonth[date('Y-m-d',$start->getTimestamp())] = $month;
+            $byMonth[date('Y-m',$start->getTimestamp())] = $month;
 
         } // for
 
@@ -159,7 +159,7 @@ class Resource extends AbstractResource {
             'summary' => $summary,
             'health-and-welfare' => $hw,
             'property-and-finance' => $pf,
-            'boy-month' => $byMonth
+            'by-month' => $byMonth
         );
 
     } // function
