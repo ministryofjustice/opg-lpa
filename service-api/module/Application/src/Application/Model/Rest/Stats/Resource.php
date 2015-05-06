@@ -18,14 +18,14 @@ class Resource extends AbstractResource {
 
         switch( $type ){
             case 'lpas':
-                return new Entity( $this->getAccountsStats() );
-                break;
+                return new Entity( $this->getLpaStats() );
+
             case 'whoareyou':
+                return new Entity( array() );
 
-                break;
             case 'xxx':
+                return new Entity( array() );
 
-                break;
             default:
                 return new ApiProblem( 404, 'Stats type not found.' );
 
@@ -38,7 +38,7 @@ class Resource extends AbstractResource {
      *
      * @return array
      */
-    private function getAccountsStats(){
+    private function getLpaStats(){
 
         return array(
             'one' => 1,

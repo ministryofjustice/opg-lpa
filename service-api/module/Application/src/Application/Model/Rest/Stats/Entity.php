@@ -3,8 +3,6 @@ namespace Application\Model\Rest\Stats;
 
 use Application\Model\Rest\EntityInterface;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-
 class Entity implements EntityInterface {
 
     private $stats;
