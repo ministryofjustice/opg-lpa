@@ -78,8 +78,11 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        $this->seedDataSelector($viewModel, $form);
-                
+        $seedSelection = $this->seedDataSelector($viewModel, $form);
+        if($seedSelection instanceof JsonModel) {
+            return $seedSelection;
+        }
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -255,7 +258,10 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        $this->seedDataSelector($viewModel, $form, true);
+        $seedSelection = $this->seedDataSelector($viewModel, $form, true);
+        if($seedSelection instanceof JsonModel) {
+            return $seedSelection;
+        }
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();

@@ -6,18 +6,12 @@ use RuntimeException;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Form\Lpa\AbstractActorForm;
 use Opg\Lpa\DataModel\User\Dob;
 use Opg\Lpa\DataModel\User\Address;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
-    /**
-     * @var LPA The LPA currently referenced in to the URL
-     */
-    private $lpa;
-    
     /**
      * @var Application\Model\FormFlowChecker
      */
@@ -33,15 +27,15 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      */
     protected function getSeedDetails($trustOnly=false)
     {
-        if(!($this->lpa instanceof Lpa) || ($this->lpa->seed === null)) return null;
+        if($this->getLpa()->seed === null) return null;
         
-        $seedId = $this->lpa->seed;
+        $seedId = $this->getLpa()->seed;
         $cloneContainer = new Container('clone');
         
         if(!$cloneContainer->offsetExists($seedId)) {
             
             // get seed data from the API
-            $seedData = $this->getLpaApplicationService()->getSeedDetails($this->lpa->id);
+            $seedData = $this->getLpaApplicationService()->getSeedDetails($this->getLpa()->id);
             
             if(!$seedData) {
                 return null;
@@ -60,6 +54,25 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         
         // ordering and filtering the data 
         $seedDetails = [];
+        
+        if(!$trustOnly) {
+            $seedDetails[] = [
+            'label' => (string)$userSession->user->name . ' (myself)',
+            'data'  => [
+                'name-title'        => $userSession->user->name->title,
+                'name-first'        => $userSession->user->name->first,
+                'name-last'         => $userSession->user->name->last,
+                'address-address1'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address1:'',
+                'address-address2'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address2:'',
+                'address-address3'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address3:'',
+                'address-postcode'  => ($userSession->user->address instanceof Address)?$userSession->user->address->postcode:'',
+                'dob-date-day'      => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('d'):'',
+                'dob-date-month'    => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('m'):'',
+                'dob-date-year'     => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('Y'):'',
+                'email-address'     => $userSession->user->email->address,
+                ],
+            ];
+        }
         
         foreach($seedData as $type => $actorData) {
             if($trustOnly) {
@@ -93,23 +106,6 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 }
             }
             else {
-                
-                $seedDetails[] = [
-                    'label' => (string)$userSession->user->name . ' (myself)',
-                    'data'  => [
-                        'name-title'        => $userSession->user->name->title,
-                        'name-first'        => $userSession->user->name->first,
-                        'name-last'         => $userSession->user->name->last,
-                        'address-address1'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address1:'',
-                        'address-address2'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address2:'',
-                        'address-address3'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address3:'',
-                        'address-postcode'  => ($userSession->user->address instanceof Address)?$userSession->user->address->postcode:'',
-                        'dob-date-day'      => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('d'):'',
-                        'dob-date-month'    => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('m'):'',
-                        'dob-date-year'     => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('Y'):'',
-                        'email-address'     => $userSession->user->email->address,
-                    ],
-                ];
                 
                 switch($type) {
                     case 'donor':
@@ -193,9 +189,9 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         return $filteredData;
     }
     
-    protected function seedDataSelector(ViewModel $viewModel, AbstractActorForm $mainForm)
+    protected function seedDataSelector(ViewModel $viewModel, AbstractActorForm $mainForm, $trustOnly=false)
     {
-        $seedDetails = $this->getSeedDetails();
+        $seedDetails = $this->getSeedDetails($trustOnly);
         
         if($seedDetails == null) return;
         

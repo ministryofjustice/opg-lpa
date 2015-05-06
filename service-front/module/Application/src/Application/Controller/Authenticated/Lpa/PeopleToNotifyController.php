@@ -81,6 +81,11 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
+        $seedSelection = $this->seedDataSelector($viewModel, $form);
+        if($seedSelection instanceof JsonModel) {
+            return $seedSelection;
+        }
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             

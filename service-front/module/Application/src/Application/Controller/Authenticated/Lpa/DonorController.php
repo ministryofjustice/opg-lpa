@@ -62,7 +62,10 @@ class DonorController extends AbstractLpaActorController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        $this->seedDataSelector($viewModel, $form);
+        $seedSelection = $this->seedDataSelector($viewModel, $form);
+        if($seedSelection instanceof JsonModel) {
+            return $seedSelection;
+        }
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
