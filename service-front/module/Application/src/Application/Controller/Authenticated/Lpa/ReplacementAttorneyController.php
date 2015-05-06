@@ -9,15 +9,15 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
 use Application\Model\Service\Lpa\Metadata;
+use Application\Controller\AbstractLpaActorController;
 
-class ReplacementAttorneyController extends AbstractLpaController
+class ReplacementAttorneyController extends AbstractLpaActorController
 {
     
     protected $contentHeader = 'creation-partial.phtml';
@@ -89,45 +89,14 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        // check if there's a seed number in this LPA and get seed data if it exists.
-        if(($seedDetails = $this->getSeedDetails()) != null) {
-            
-            // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
-            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
-        }
+        $this->seedDataSelector($viewModel, $form);
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
-            // received a POST from the picker form
-            if($postData->offsetExists('pick-details')) {
+            // received POST from replacement attorney form submission
+            if(!$postData->offsetExists('pick-details')) {
                 
-                // load seed data into the form or return form data in json format if request is an ajax
-                $seedDetailsPickerForm->setData($this->request->getPost());
-                if($seedDetailsPickerForm->isValid()) {
-                    
-                    $pickIdx = $this->request->getPost('pick-details');
-                    
-                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
-                        
-                        // prepare data of the chosen actor for populating into the form
-                        $actorData = $seedDetails[$pickIdx]['data'];
-                        $formData = $this->flattenData($actorData);
-                        
-                        // bind data to the form or return json to ajax call
-                        if ( $this->getRequest()->isXmlHttpRequest() ) {
-                            return new JsonModel($formData);
-                        }
-                        else {
-                            $form->bind($formData);
-                        }
-                    }
-                }
-            }
-            // received POST from the AttorneyForm
-            else {
                 // handle replacement attorney form submission
                 $form->setData($postData);
                 if($form->isValid()) {
@@ -284,45 +253,14 @@ class ReplacementAttorneyController extends AbstractLpaController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        // check if there's a seed number in this LPA and get seed data if it exists.
-        if(($seedDetails = $this->getSeedDetails(true)) != null) {
-            
-            // if seed exists, render a picker form for user to choose which actor's details to be auto populated into the form.
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
-            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
-        }
+        $this->seedDataSelector($viewModel, $form, true);
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
-            // received a POST from the picker form
-            if($postData->offsetExists('pick-details')) {
+            // received a POST from the trust corporation form submission
+            if(!$postData->offsetExists('pick-details')) {
                 
-                // load seed data into the form or return form data in json format if request is an ajax
-                $seedDetailsPickerForm->setData($this->request->getPost());
-                if($seedDetailsPickerForm->isValid()) {
-                    
-                    $pickIdx = $this->request->getPost('pick-details');
-                    
-                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
-                        
-                        // prepare data of the chosen actor for populating into the form
-                        $actorData = $seedDetails[$pickIdx]['data'];
-                        $formData = $this->flattenData($actorData);
-                        
-                        // bind data to the form or return json to ajax call
-                        if ( $this->getRequest()->isXmlHttpRequest() ) {
-                            return new JsonModel($formData);
-                        }
-                        else {
-                            $form->bind($formData);
-                        }
-                    }
-                }
-            }
-            // received POST from the TrustCorporationForm
-            else {
                 // handle trust corp form submission
                 $form->setData($postData);
                 if($form->isValid()) {

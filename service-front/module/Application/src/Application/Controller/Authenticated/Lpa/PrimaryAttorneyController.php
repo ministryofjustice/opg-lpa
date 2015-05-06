@@ -11,12 +11,12 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
+use Application\Controller\AbstractLpaActorController;
 
-class PrimaryAttorneyController extends AbstractLpaController
+class PrimaryAttorneyController extends AbstractLpaActorController
 {
     
     protected $contentHeader = 'creation-partial.phtml';
@@ -78,33 +78,14 @@ class PrimaryAttorneyController extends AbstractLpaController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        if(($seedDetails = $this->getSeedDetails()) != null) {
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
-            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
-        }
-        
+        $this->seedDataSelector($viewModel, $form);
+                
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
-            if($postData->offsetExists('pick-details')) {
-                // load seed data into the form or return form data in json format if request is an ajax
-                $seedDetailsPickerForm->setData($this->request->getPost());
-                if($seedDetailsPickerForm->isValid()) {
-                    $pickIdx = $this->request->getPost('pick-details');
-                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
-                        $actorData = $seedDetails[$pickIdx]['data'];
-                        $formData = $this->flattenData($actorData);
-                        if ( $this->getRequest()->isXmlHttpRequest() ) {
-                            return new JsonModel($formData);
-                        }
-                        else {
-                            $form->bind($formData);
-                        }
-                    }
-                }
-            }
-            else {
+            // reveived POST from attorney form submission. 
+            if(!$postData->offsetExists('pick-details')) {
+                
                 // handle primary attorney form submission
                 $form->setData($postData);
                 if($form->isValid()) {
@@ -273,34 +254,14 @@ class PrimaryAttorneyController extends AbstractLpaController
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-
-        if(($seedDetails = $this->getSeedDetails(true)) != null) {
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
-            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
-        }
+        
+        $this->seedDataSelector($viewModel, $form, true);
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
-            if($postData->offsetExists('pick-details')) {
-                // load seed data into the form or return form data in json format if request is an ajax
-                $seedDetailsPickerForm->setData($this->request->getPost());
-                if($seedDetailsPickerForm->isValid()) {
-                    $pickIdx = $this->request->getPost('pick-details');
-                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
-                        $actorData = $seedDetails[$pickIdx]['data'];
-                        $formData = $this->flattenData($actorData);
-                        if ( $this->getRequest()->isXmlHttpRequest() ) {
-                            return new JsonModel($formData);
-                        }
-                        else {
-                            $form->bind($formData);
-                        }
-                    }
-                }
-            }
-            else {
+            if(!$postData->offsetExists('pick-details')) {
+                
                 // handle trust corp form submission
                 $form->setData($postData);
                 if($form->isValid()) {

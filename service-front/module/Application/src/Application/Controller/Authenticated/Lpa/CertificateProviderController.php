@@ -9,12 +9,12 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractLpaActorController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Zend\View\Model\JsonModel;
 
-class CertificateProviderController extends AbstractLpaController
+class CertificateProviderController extends AbstractLpaActorController
 {
     
     protected $contentHeader = 'creation-partial.phtml';
@@ -60,33 +60,13 @@ class CertificateProviderController extends AbstractLpaController
         
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        if(($seedDetails = $this->getSeedDetails()) != null) {
-            $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails]);
-            $seedDetailsPickerForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
-        }
+        $this->seedDataSelector($viewModel, $form);
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
-            if($postData->offsetExists('pick-details')) {
-                // load seed data into the form or return form data in json format if request is an ajax
-                $seedDetailsPickerForm->setData($this->request->getPost());
-                if($seedDetailsPickerForm->isValid()) {
-                    $pickIdx = $this->request->getPost('pick-details');
-                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
-                        $actorData = $seedDetails[$pickIdx]['data'];
-                        $formData = $this->flattenData($actorData);
-                        if ( $this->getRequest()->isXmlHttpRequest() ) {
-                            return new JsonModel($formData);
-                        }
-                        else {
-                            $form->bind($formData);
-                        }
-                    }
-                }
-            }
-            else {
+            if(!$postData->offsetExists('pick-details')) {
+                
                 // handle certificate provider form submission
                 $form->setData($postData);
                 if($form->isValid()) {
