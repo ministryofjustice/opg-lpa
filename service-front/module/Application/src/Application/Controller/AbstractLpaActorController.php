@@ -174,6 +174,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         foreach($seedData as $name => $value) {
             switch($name) {
                 case "name":
+                case "number":
                 case "otherNames":
                 case "address":
                 case "dob":
