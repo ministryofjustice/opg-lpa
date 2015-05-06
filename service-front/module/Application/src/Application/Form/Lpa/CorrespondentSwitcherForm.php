@@ -23,8 +23,9 @@ class CorrespondentSwitcherForm extends AbstractForm
     public function __construct($name, $options)
     {
         if(array_key_exists('lpa', $options)) {
-            $this->lpa = $options['lpa'];
-            unset($options['lpa']);
+            $this->lpa  = $options['lpa'];
+            $this->user = $options['user'];
+            unset($options['lpa'], $options['user']);
         }
     
         parent::__construct($name, $options);
@@ -33,7 +34,7 @@ class CorrespondentSwitcherForm extends AbstractForm
     public function init ()
     {
         $this->formElements['switch-to-type']['options']['value_options'] = [
-                'me'    => 'Myself',
+                'me'    => (string)$this->user->name . ' (Myself)',
                 'donor' => (string)$this->lpa->document->donor->name . ' (The donor)',
         ];
         

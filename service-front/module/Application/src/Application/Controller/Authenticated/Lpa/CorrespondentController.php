@@ -115,7 +115,7 @@ class CorrespondentController extends AbstractLpaController
         $correspondentForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
         $correspondentForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa()]);
+        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa(), 'user'=>$this->getServiceLocator()->get('UserDetailsSession')->user]);
         $switcherForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
@@ -132,7 +132,8 @@ class CorrespondentController extends AbstractLpaController
                                     'who'=>'other',
                                     'name-title' => $userSession->user->name->title,
                                     'name-first' => $userSession->user->name->first,
-                                    'name-last' => $userSession->user->name->last,
+                                    'name-last'  => $userSession->user->name->last,
+                                    'company'    => '',
                             ];
                             if($userSession->user->address instanceof Address) {
                                 $formData += [
@@ -146,6 +147,7 @@ class CorrespondentController extends AbstractLpaController
                         case 'donor':
                             $formData = $this->getLpa()->document->donor->flatten();
                             $formData['who'] = 'donor';
+                            $formData['company'] = '';
                             break;
                         default:
                             if(is_numeric($postData['switch-to-type'])) {
@@ -153,7 +155,12 @@ class CorrespondentController extends AbstractLpaController
                                     if($attorney->id == $postData['switch-to-type']) {
                                         $formData = $attorney->flatten();
                                         if($attorney instanceof TrustCorporation) {
-                                            $formData['company'] = $attorney->name;
+                                            $formData['name-title'] = '';
+                                            $formData['name-first'] = '';
+                                            $formData['company'] = $formData['name-last'] = $attorney->name;
+                                        }
+                                        else {
+                                            $formData['company'] = '';
                                         }
                                         $formData['who'] = 'attorney';
                                         break;
@@ -161,7 +168,17 @@ class CorrespondentController extends AbstractLpaController
                                 }
                             }
                             else {
-                                $formData = ['who'=>'other'];
+                                $formData = [
+                                    'who'=>'other',
+                                    'name-title' => '',
+                                    'name-first' => '',
+                                    'name-last'  => '',
+                                    'company'    => '',
+                                    'address-address1' => '',
+                                    'address-address2' => '',
+                                    'address-address3' => '',
+                                    'address-postcode' => '',
+                                ];
                             }
                             break;
                     }
