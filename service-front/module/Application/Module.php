@@ -38,6 +38,7 @@ class Module{
                 echo 'An unknown server error has occurred.';
             }
         });
+
         // Only bootstrap the session if it's *not* PHPUnit.
         if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
             $this->bootstrapSession($e);
