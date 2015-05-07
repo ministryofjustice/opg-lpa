@@ -39,14 +39,14 @@ class AdminController extends AbstractAuthenticatedController
         $lpaUserStats = $apiClient->getApiStats('lpasperuser');
         
         switch ($this->params()->fromQuery('by')) {
-            case 'lpa' :
-                $columns = ['Number of LPAs', 'Number of Users with this many LPAs'];
-                $byStats = $lpaUserStats['byLpaCount'];
-                break;
             case 'user' :
-            default:
-                $columns = ['Number of Users with this many LPAs', 'Number of LPAs'];
+                $columns = ['Number of Users', 'Number of LPAs'];
                 $byStats = $lpaUserStats['byUserCount'];
+                break;
+            case 'lpa' :
+            default:
+                $columns = ['Number of LPAs', 'Number of Users'];
+                $byStats = $lpaUserStats['byLpaCount'];
                 break;
         }
         
