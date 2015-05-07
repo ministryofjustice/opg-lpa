@@ -40,6 +40,9 @@ class Resource extends AbstractResource {
     /**
      * Return general stats on LPA numbers.
      *
+     * Some of this could be done using aggregate queries, however I'd rather keep the queries simple.
+     * Stats are not looked at very often, so performance when done like this should be "good enough".
+     *
      * @return array
      */
     private function getLpaStats(){
@@ -49,7 +52,7 @@ class Resource extends AbstractResource {
         // Stats can (ideally) be processed on a secondary.
         $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
-        
+
         //-----------------------------
         // Broken down by month
 
@@ -151,12 +154,10 @@ class Resource extends AbstractResource {
         // Deleted LPAs have no 'document'...
         $summary['deleted'] = $collection->find( [ 'document' => [ '$exists' => false ] ] )->count();
 
-        $summary['total'] = $summary['completed'] + $summary['created'] + $summary['started'] + $summary['deleted'];
-
         //---
 
         return array(
-            'summary' => $summary,
+            'all' => $summary,
             'health-and-welfare' => $hw,
             'property-and-finance' => $pf,
             'by-month' => $byMonth
