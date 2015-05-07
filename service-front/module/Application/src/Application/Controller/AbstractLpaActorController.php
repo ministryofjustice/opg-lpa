@@ -181,32 +181,49 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         
         $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get( 'Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails] );
         $seedDetailsPickerForm->setAttribute( 'action', $this->url()->fromRoute( $this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id] ) );
-        $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         
-        if(!$this->request->isPost()) return;
-        
-        $postData = $this->request->getPost();
-        
-        if(!$postData->offsetExists('pick-details')) return;
-                
-        // load seed data into the form or return form data in json format if request is an ajax
-        $seedDetailsPickerForm->setData($this->request->getPost());
-        
-        if(!$seedDetailsPickerForm->isValid()) return;
-            
-        $pickIdx = $this->request->getPost('pick-details');
-        
-        if(!(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails))) return;
-        
-        $actorData = $seedDetails[$pickIdx]['data'];
-        
-        $formData = $this->flattenData($actorData);
-        
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
-            return new JsonModel($formData);
+        if($trustOnly) {
+            if(!$this->params()->fromQuery('use-trust-details')) {
+                $viewModel->useTrustRoute = $this->url()->fromRoute( $this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id] ).'?use-trust-details=1';
+                $viewModel->trustName = $seedDetails[0]['label'];
+            }
         }
         else {
-            $mainForm->bind($formData);
+            $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
+        }
+        
+        if($this->request->isPost()) {
+            
+            $postData = $this->request->getPost();
+            
+            if(!$postData->offsetExists('pick-details')) return;
+                    
+            // load seed data into the form or return form data in json format if request is an ajax
+            $seedDetailsPickerForm->setData($this->request->getPost());
+            
+            if(!$seedDetailsPickerForm->isValid()) return;
+                
+            $pickIdx = $this->request->getPost('pick-details');
+            
+            if(!(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails))) return;
+            
+            $actorData = $seedDetails[$pickIdx]['data'];
+            
+            $formData = $this->flattenData($actorData);
+            
+            if ( $this->getRequest()->isXmlHttpRequest() ) {
+                return new JsonModel($formData);
+            }
+            else {
+                $mainForm->bind($formData);
+            }
+        }
+        else {
+            if($this->params()->fromQuery('use-trust-details')) {
+                $actorData = $seedDetails[0]['data'];
+                $formData = $this->flattenData($actorData);
+                $mainForm->bind($formData);
+            }
         }
     }
     

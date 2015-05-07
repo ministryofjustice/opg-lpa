@@ -50,27 +50,15 @@
 
 <h2 class="header">Edit trust corporation details</h2>
 
-<?php ############################ picker form ############################ ?>
-
-<?php if(isset($pickerForm)):?>
-    <?= $this->form()->openTag($pickerForm); ?>
-    
-    <?= $this->formElement($pickerCsrf) ?>
-    <?= $this->formErrorList($pickerForm); ?>
-    
-    <div class="role-select group">
-        <?= $formLabel->openTag($picker) . $picker->getOption('label') . $formLabel->closeTag() ?>
-        <?= $this->formSelect($picker) ?>
-        <?= $this->formElementErrors($picker) ?>
-        <?= $this->formsubmit($pickerSubmit) ?> 
-    </div>
-    
-    <?= $this->form()->closeTag(); ?>
-<?php endif;?>
-
 <?php ############################ trust corp form ############################ ?>
 
 <?= $this->form()->openTag($form); ?>
+
+<?php if(isset($this->useTrustRoute )): ?>
+<p class="role-select group">
+    <a class="js-form-popup" href="<?= $this->useTrustRoute ?>">Use details of the <?=$this->trustName ?></a>
+</p>
+<?php endif;?>
 
 <p class="role-select group">
     <a class="js-form-popup" href="<?= $this->addAttorneyRoute ?>">Using an individual?</a>
