@@ -1,5 +1,3 @@
-<h1>Number of users having x number of LPAs</h1>
-
 <style>
 <!--
 div#stats {
@@ -81,9 +79,31 @@ table.stats img {
 </style>
 
 <div id="stats" style="min-height:35em">
+    <h2>Accounts</h2>
+
+    <table class="stats">
+    		<thead>
+    			<tr style="width: 100%">
+    				<th>Total</th>
+    				<th>Activated</th>
+    				<th>Activated this month</th>
+    			</tr>
+    		</thead>
+    		<tbody class="app_stats">
+                <tr>
+    				<td><?= $this->auth_stats['total']; ?></td>
+    				<td><?= $this->auth_stats['activated']; ?></td>
+    				<td><?= $this->auth_stats['activated-this-month']; ?></td>
+    		     </tr>
+    		</tbody>
+    </table>
+    
+    <h2>Applications</h2>
+
     <a href="/admin/stats?by=user">By user</a> |
     <a href="/admin/stats?by=lpa">By applications</a>
-	<table class="stats">
+
+    <table class="stats">
 		<thead>
 			<tr style="width: 100%">
 				<th><?= $this->columns[0]; ?></th>
@@ -91,7 +111,7 @@ table.stats img {
 			</tr>
 		</thead>
 		<tbody class="app_stats">
-<?php foreach ($this->stats as $lpas => $users): ?>
+<?php foreach ($this->api_stats as $lpas => $users): ?>
 <tr>
 				<td><?= $lpas; ?></td>
 				<td><?= $users; ?></td>

@@ -1572,6 +1572,25 @@ class Client
     }
     
     /**
+     * Return user stats from the auth server
+     *
+     * @return bool|mixed
+     */
+    public function getAuthStats( ){
+    
+        $response = $this->client()->get( self::PATH_AUTH . '/admin/stats' );
+    
+        $code = $response->getStatusCode();
+    
+        if ($code != 200) {
+            return $this->log($response, false);
+        }
+    
+        return $response->json();
+    
+    }
+    
+    /**
      * @return the $lastStatusCode
      */
     public function getLastStatusCode()

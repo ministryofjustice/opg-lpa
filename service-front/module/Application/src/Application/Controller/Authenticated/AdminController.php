@@ -36,22 +36,27 @@ class AdminController extends AbstractAuthenticatedController
     {
         $apiClient = $this->getServiceLocator()->get('ApiClient');
         
-        $stats = $apiClient->getApiStats('lpasperuser');
+        $lpaUserStats = $apiClient->getApiStats('lpasperuser');
         
         switch ($this->params()->fromQuery('by')) {
             case 'lpa' :
                 $columns = ['Number of LPAs', 'Number of Users with this many LPAs'];
-                $byStats = $stats['byLpaCount'];
+                $byStats = $lpaUserStats['byLpaCount'];
                 break;
             case 'user' :
             default:
                 $columns = ['Number of Users with this many LPAs', 'Number of LPAs'];
-                $byStats = $stats['byUserCount'];
+                $byStats = $lpaUserStats['byUserCount'];
                 break;
         }
         
+        $authStats = $apiClient->getAuthStats();
+        
         return new ViewModel([
-            'stats' => $byStats,
+            'columns' => $columns,
+            'api_stats' => $byStats,
+            'auth_stats' => $authStats,
+            'pageTitle' => 'Admin stats',
         ]);
     }
     
