@@ -60,9 +60,11 @@
 </p>
 <?php endif;?>
 
+<?php if(isset($this->addAttorneyRoute )): ?>
 <p class="role-select group">
     <a class="js-form-popup" href="<?= $this->addAttorneyRoute ?>">Using an individual?</a>
 </p>
+<?php endif;?>
 
 <?= $this->formElement($csrf) ?>
 <?= $this->formElementErrors($csrf) ?>
