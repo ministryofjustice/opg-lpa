@@ -95,7 +95,7 @@ class CorrespondentController extends AbstractLpaController
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name:$correspondent->company),
+                        'name'      => ($correspondent instanceof Correspondence)?$correspondent->company:(string)$correspondent->name,
                         'address'   => $correspondent->address,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
@@ -158,7 +158,8 @@ class CorrespondentController extends AbstractLpaController
                                         if($attorney instanceof TrustCorporation) {
                                             $formData['name-title'] = '';
                                             $formData['name-first'] = '';
-                                            $formData['company'] = $formData['name-last'] = $attorney->name;
+                                            $formData['name-last'] = '';
+                                            $formData['company'] = $attorney->name;
                                         }
                                         else {
                                             $formData['company'] = '';
@@ -238,8 +239,10 @@ class CorrespondentController extends AbstractLpaController
                 $correspondentDetails['company'] = $correspondent->name;
                 $correspondentDetails['name-title'] = ' ';
             }
-            
-            if($correspondent instanceof Donor) {
+            elseif($correspondent instanceof Correspondence) {
+                $correspondentDetails['name-title'] = ' ';
+            }
+            elseif($correspondent instanceof Donor) {
                 $correspondentDetails['who'] = 'donor';
             }
             else {
