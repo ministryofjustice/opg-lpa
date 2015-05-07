@@ -81,15 +81,17 @@ table.stats img {
 </style>
 
 <div id="stats" style="min-height:35em">
+    <a href="/admin/stats?by=user">By user</a> |
+    <a href="/admin/stats?by=lpa">By applications</a>
 	<table class="stats">
 		<thead>
 			<tr style="width: 100%">
-				<th>Number of LPAs</th>
-				<th>Number of Users with this many LPAs</th>
+				<th><?= $this->columns[0]; ?></th>
+				<th><?= $this->columns[1]; ?></th>
 			</tr>
 		</thead>
 		<tbody class="app_stats">
-<?php foreach ($this->stats['byLpaCount'] as $lpas => $users): ?>
+<?php foreach ($this->stats as $lpas => $users): ?>
 <tr>
 				<td><?= $lpas; ?></td>
 				<td><?= $users; ?></td>
