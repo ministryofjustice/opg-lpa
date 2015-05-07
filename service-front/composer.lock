@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "69db8a43c97bf33958de64bdf3ba787f",
@@ -579,12 +579,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "1ebfc6421ede0813599cd714aaa6a47b858b4f57"
+                "reference": "3184fba33db87285687ac86fba77271f280656bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/1ebfc6421ede0813599cd714aaa6a47b858b4f57",
-                "reference": "1ebfc6421ede0813599cd714aaa6a47b858b4f57",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/3184fba33db87285687ac86fba77271f280656bb",
+                "reference": "3184fba33db87285687ac86fba77271f280656bb",
                 "shasum": ""
             },
             "require": {
@@ -610,7 +610,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-04-30 15:47:33"
+            "time": "2015-05-07 11:03:15"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",

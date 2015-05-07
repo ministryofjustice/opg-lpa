@@ -574,47 +574,6 @@
         ]
     },
     {
-        "name": "ministryofjustice/opg-lpa-api-client",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "1ebfc6421ede0813599cd714aaa6a47b858b4f57"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/1ebfc6421ede0813599cd714aaa6a47b858b4f57",
-            "reference": "1ebfc6421ede0813599cd714aaa6a47b858b4f57",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "^5.1.0",
-            "ministryofjustice/opg-lpa-datamodels": "dev-master",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-04-30 15:47:33",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "API Wrapper for opg-lpa-api",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
-        }
-    },
-    {
         "name": "raven/raven",
         "version": "0.11.0",
         "version_normalized": "0.11.0.0",
@@ -2457,5 +2416,46 @@
             "testing",
             "xunit"
         ]
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-api-client",
+        "version": "dev-develop",
+        "version_normalized": "dev-develop",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
+            "reference": "3184fba33db87285687ac86fba77271f280656bb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/3184fba33db87285687ac86fba77271f280656bb",
+            "reference": "3184fba33db87285687ac86fba77271f280656bb",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^5.1.0",
+            "ministryofjustice/opg-lpa-datamodels": "dev-master",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2015-05-07 11:03:15",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "API Wrapper for opg-lpa-api",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
+        }
     }
 ]

@@ -254,52 +254,6 @@ class Client
         return $applicationList;
     }
 
-    /**
-     * Get list of applications for the current user based on a query string.
-     * Combine pages, if necessary
-     *
-     * @return array<Lpa>
-     */
-    public function searchApplicationList( $query )
-    {
-
-        $applicationList = array();
-
-        $path = '/v1/users/' . $this->getUserId() . '/applications';
-
-        do {
-            $response = $this->client()->get( self::PATH_API . $path, [
-                'query' => [ 'search' => $query ]
-            ]);
-
-            if ($response->getStatusCode() != 200) {
-                return $this->log($response, false);
-            }
-
-            $json = $response->json();
-
-            if ($json['count'] == 0) {
-                return [];
-            }
-
-            if (!isset($json['_links']) || !isset($json['_embedded']['applications'])) {
-                return $this->log($response, false);
-            }
-
-            foreach ($json['_embedded']['applications'] as $application) {
-                $applicationList[] = new Lpa($application);
-            }
-
-            if (isset($json['_links']['next']['href'])) {
-                $path = $json['_links']['next']['href'];
-            } else {
-                $path = null;
-            }
-        } while (!is_null($path));
-
-        return $applicationList;
-
-    }
     
     /**
      * Activate an account from an activation token (generated at registration)
@@ -1593,6 +1547,28 @@ class Client
         } while (!is_null($path));
     
         return $pdfList;
+    }
+
+    /**
+     * Return stats from the API server
+     *
+     * @param $type string - The stats type (or context)
+     * @return bool|mixed
+     */
+    public function getApiStats( $type ){
+
+        $path = '/v1/stats/' . $type;
+
+        $response = $this->client()->get( self::PATH_API . $path );
+
+        $code = $response->getStatusCode();
+
+        if ($code != 200) {
+            return $this->log($response, false);
+        }
+
+        return $response->json();
+
     }
     
     /**
