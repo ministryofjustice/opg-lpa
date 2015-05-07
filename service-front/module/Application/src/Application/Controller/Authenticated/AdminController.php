@@ -34,7 +34,11 @@ class AdminController extends AbstractAuthenticatedController
     
     public function statsAction()
     {
-        return new ViewModel();
+        $apiClient = $this->getServiceLocator()->get('ApiClient');
+        
+        return new ViewModel([
+            'stats' => $apiClient->getApiStats('lpasperuser')
+        ]);
     }
     
     public function systemMessageAction()

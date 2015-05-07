@@ -26,9 +26,9 @@ table.stats img {width:60px;}
 <tr style="width:100%"><th>Number of LPAs</th><th>Number of Users with this many LPAs</th></tr>
 </thead>
 <tbody class="app_stats">
-<?php for ($i=0; $i<200; $i++): ?>
-<tr><td><?= rand(1,200); ?></td><td><?= rand(1,200); ?></td></tr>
+<?php foreach ($this->stats as $lpas => $users): ?>
+<tr><td><?= $lpas; ?></td><td><?= $users; ?></td></tr>
 </tbody>
-<?php endfor; ?>
+<?php endforeach; ?>
 </table>
 </div>
