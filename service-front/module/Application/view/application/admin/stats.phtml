@@ -80,7 +80,7 @@ table.stats img {
 -->
 </style>
 
-<div id="stats">
+<div id="stats" style="min-height:35em">
 	<table class="stats">
 		<thead>
 			<tr style="width: 100%">
@@ -89,7 +89,7 @@ table.stats img {
 			</tr>
 		</thead>
 		<tbody class="app_stats">
-<?php foreach ($this->stats as $lpas => $users): ?>
+<?php foreach ($this->stats['byLpaCount'] as $lpas => $users): ?>
 <tr>
 				<td><?= $lpas; ?></td>
 				<td><?= $users; ?></td>
