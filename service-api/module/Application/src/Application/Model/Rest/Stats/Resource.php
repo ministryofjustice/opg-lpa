@@ -27,8 +27,8 @@ class Resource extends AbstractResource {
             case 'whoareyou':
                 return new Entity( array() );
 
-            case 'xxx':
-                return new Entity( array() );
+            case 'lpasperuser':
+                return new Entity( $this->getLpasPerUser() );
 
             default:
                 return new ApiProblem( 404, 'Stats type not found.' );
@@ -163,5 +163,22 @@ class Resource extends AbstractResource {
         );
 
     } // function
-
+    
+    /**
+     * Returns a list of lpa counts and user counts, in order to
+     * answer questions of the form how many users have five LPAs?
+     *
+     * @return array
+     */
+    private function getLpasPerUser(){
+        
+        // The key of $lpaCount is the number of LPAs
+        // The value is the number of users with this many LPAs
+        
+        for ($i=0; $i<100; $i+=rand(1,3)) {
+            $lpaCount[$i] = rand(1,200);
+        }
+        return $lpaCount;
+    } // function getLpasPerUser()
+        
 } // cass
