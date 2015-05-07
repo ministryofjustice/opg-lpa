@@ -14,6 +14,11 @@ class ClientSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
     
+    function it_can_get_auth_server_stats()
+    {
+        $stats = $this->getAuthStats()->shouldBeTheAuthStatsArray();
+    }
+    
     function it_can_set_and_get_and_delete_metadata()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
@@ -1240,6 +1245,18 @@ class ClientSpec extends ObjectBehavior
                 }
             
                 return true;
+            },
+            'beTheAuthStatsArray' => function($subject) {
+                
+                if (is_array($subject) && count($subject) == 3) {
+                    return (
+                        isset($subject['total']) && 
+                        isset($subject['activated']) && 
+                        isset($subject['activated-this-month'])
+                    );
+                }
+                
+                return false;
             },
         ];
     }

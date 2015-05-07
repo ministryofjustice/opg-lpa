@@ -34,7 +34,30 @@ class AdminController extends AbstractAuthenticatedController
     
     public function statsAction()
     {
-        return new ViewModel();
+        $apiClient = $this->getServiceLocator()->get('ApiClient');
+        
+        $lpaUserStats = $apiClient->getApiStats('lpasperuser');
+        
+        switch ($this->params()->fromQuery('by')) {
+            case 'user' :
+                $columns = ['Number of Users', 'Number of LPAs'];
+                $byStats = $lpaUserStats['byUserCount'];
+                break;
+            case 'lpa' :
+            default:
+                $columns = ['Number of LPAs', 'Number of Users'];
+                $byStats = $lpaUserStats['byLpaCount'];
+                break;
+        }
+        
+        $authStats = $apiClient->getAuthStats();
+        
+        return new ViewModel([
+            'columns' => $columns,
+            'api_stats' => $byStats,
+            'auth_stats' => $authStats,
+            'pageTitle' => 'Admin stats',
+        ]);
     }
     
     public function systemMessageAction()

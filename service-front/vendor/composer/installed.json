@@ -2424,12 +2424,12 @@
         "source": {
             "type": "git",
             "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "3184fba33db87285687ac86fba77271f280656bb"
+            "reference": "46ac67ae3899d6f00170cf0d6404dbcc664f2b80"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/3184fba33db87285687ac86fba77271f280656bb",
-            "reference": "3184fba33db87285687ac86fba77271f280656bb",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/46ac67ae3899d6f00170cf0d6404dbcc664f2b80",
+            "reference": "46ac67ae3899d6f00170cf0d6404dbcc664f2b80",
             "shasum": ""
         },
         "require": {
@@ -2441,7 +2441,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-05-07 11:03:15",
+        "time": "2015-05-07 15:29:48",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
