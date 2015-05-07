@@ -102,7 +102,7 @@ class DashboardController extends AbstractAuthenticatedController
             throw new \RuntimeException('API client failed to delete LPA for id: '.$lpaId);
         }
         
-        $this->redirect()->toRoute('user/dashboard');
+        return $this->redirect()->toRoute('user/dashboard');
     }
 
     //---
