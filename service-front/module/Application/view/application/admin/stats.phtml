@@ -2,33 +2,99 @@
 
 <style>
 <!--
-div#stats {outline:none; width:950px; overflow:auto;}
-table.stats {border:0px solid black; width:950px; background:#EEE; border-collapse: collapse}
-table.stats th {text-align:center; border:1px solid #ddd; padding:8px; background:#333; color:#eee; font-family:tahoma; font-weight:normal;}
-table.stats td {padding:3px; font-size:16pt; height:30px; text-align:center; vertical-align:middle; border:1px solid #ccc;}
-table.stats td a {text-decoration: none; color:black}
-table.stats tbody.app_stats td {width:180px}
-table.stats tbody.app_stats td.app_status {font-size:10pt; vertical-align: middle; font-family:Verdana; width:100px;}
-table.stats tbody.site td {width:180px;}
-table.stats tbody.db td {width:110px; margin:10px;}
+div#stats {
+	outline: none;
+	width: 950px;
+	overflow: auto;
+}
 
-table.stats td.error {height:200px; background:red;}
-table.stats td.warning {height:200px; background:orange;}
-table.stats td.ok {height:200px; background:#88aa88;}
+table.stats {
+	border: 0px solid black;
+	width: 950px;
+	background: #EEE;
+	border-collapse: collapse
+}
 
-table.stats img {width:60px;}
+table.stats th {
+	text-align: center;
+	border: 1px solid #ddd;
+	padding: 8px;
+	background: #333;
+	color: #eee;
+	font-family: tahoma;
+	font-weight: normal;
+}
+
+table.stats td {
+	padding: 3px;
+	font-size: 16pt;
+	height: 30px;
+	text-align: center;
+	vertical-align: middle;
+	border: 1px solid #ccc;
+}
+
+table.stats td a {
+	text-decoration: none;
+	color: black
+}
+
+table.stats tbody.app_stats td {
+	width: 180px
+}
+
+table.stats tbody.app_stats td.app_status {
+	font-size: 10pt;
+	vertical-align: middle;
+	font-family: Verdana;
+	width: 100px;
+}
+
+table.stats tbody.site td {
+	width: 180px;
+}
+
+table.stats tbody.db td {
+	width: 110px;
+	margin: 10px;
+}
+
+table.stats td.error {
+	height: 200px;
+	background: red;
+}
+
+table.stats td.warning {
+	height: 200px;
+	background: orange;
+}
+
+table.stats td.ok {
+	height: 200px;
+	background: #88aa88;
+}
+
+table.stats img {
+	width: 60px;
+}
 -->
 </style>
 
 <div id="stats">
-<table class="stats">
-<thead>
-<tr style="width:100%"><th>Number of LPAs</th><th>Number of Users with this many LPAs</th></tr>
-</thead>
-<tbody class="app_stats">
+	<table class="stats">
+		<thead>
+			<tr style="width: 100%">
+				<th>Number of LPAs</th>
+				<th>Number of Users with this many LPAs</th>
+			</tr>
+		</thead>
+		<tbody class="app_stats">
 <?php foreach ($this->stats as $lpas => $users): ?>
-<tr><td><?= $lpas; ?></td><td><?= $users; ?></td></tr>
-</tbody>
+<tr>
+				<td><?= $lpas; ?></td>
+				<td><?= $users; ?></td>
+			</tr>
+		</tbody>
 <?php endforeach; ?>
 </table>
 </div>
