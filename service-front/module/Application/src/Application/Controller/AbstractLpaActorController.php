@@ -7,8 +7,6 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
 use Application\Form\Lpa\AbstractActorForm;
-use Opg\Lpa\DataModel\User\Dob;
-use Opg\Lpa\DataModel\User\Address;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
@@ -49,28 +47,13 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         // get seed data from session container
         $seedData = $cloneContainer->$seedId;
         
-        // get user's details
-        $userSession = $this->getServiceLocator()->get('UserDetailsSession');
-        
         // ordering and filtering the data 
         $seedDetails = [];
         
         if(!$trustOnly) {
             $seedDetails[] = [
-            'label' => (string)$userSession->user->name . ' (myself)',
-            'data'  => [
-                'name-title'        => $userSession->user->name->title,
-                'name-first'        => $userSession->user->name->first,
-                'name-last'         => $userSession->user->name->last,
-                'address-address1'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address1:'',
-                'address-address2'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address2:'',
-                'address-address3'  => ($userSession->user->address instanceof Address)?$userSession->user->address->address3:'',
-                'address-postcode'  => ($userSession->user->address instanceof Address)?$userSession->user->address->postcode:'',
-                'dob-date-day'      => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('d'):'',
-                'dob-date-month'    => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('m'):'',
-                'dob-date-year'     => ($userSession->user->dob instanceof Dob)?$userSession->user->dob->date->format('Y'):'',
-                'email-address'     => $userSession->user->email->address,
-                ],
+                'label' => (string)$this->getServiceLocator()->get('UserDetailsSession')->user->name . ' (myself)',
+                'data'  => $this->getUserDetailsAsArray(),
             ];
         }
         
@@ -200,33 +183,42 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         $seedDetailsPickerForm->setAttribute( 'action', $this->url()->fromRoute( $this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id] ) );
         $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         
-        if($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        if(!$this->request->isPost()) return;
         
-            if($postData->offsetExists('pick-details')) {
+        $postData = $this->request->getPost();
+        
+        if(!$postData->offsetExists('pick-details')) return;
                 
-                // load seed data into the form or return form data in json format if request is an ajax
-                $seedDetailsPickerForm->setData($this->request->getPost());
-                
-                if($seedDetailsPickerForm->isValid()) {
-                    
-                    $pickIdx = $this->request->getPost('pick-details');
-                    
-                    if(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails)) {
-                        
-                        $actorData = $seedDetails[$pickIdx]['data'];
-                        
-                        $formData = $this->flattenData($actorData);
-                        
-                        if ( $this->getRequest()->isXmlHttpRequest() ) {
-                            return new JsonModel($formData);
-                        }
-                        else {
-                            $mainForm->bind($formData);
-                        }
-                    }
-                }
-            }
+        // load seed data into the form or return form data in json format if request is an ajax
+        $seedDetailsPickerForm->setData($this->request->getPost());
+        
+        if(!$seedDetailsPickerForm->isValid()) return;
+            
+        $pickIdx = $this->request->getPost('pick-details');
+        
+        if(!(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails))) return;
+        
+        $actorData = $seedDetails[$pickIdx]['data'];
+        
+        $formData = $this->flattenData($actorData);
+        
+        if ( $this->getRequest()->isXmlHttpRequest() ) {
+            return new JsonModel($formData);
         }
+        else {
+            $mainForm->bind($formData);
+        }
+    }
+    
+    protected function getUserDetailsAsArray()
+    {
+        $userDetails = $this->getUserDetails()->flatten();
+        if($userDetails['dob-date']) {
+            $userDetails['dob-date-day'] = $this->getUserDetails()->dob->date->format('d');
+            $userDetails['dob-date-month'] = $this->getUserDetails()->dob->date->format('m');
+            $userDetails['dob-date-year'] = $this->getUserDetails()->dob->date->format('Y');
+        }
+        
+        return $userDetails;
     }
 }

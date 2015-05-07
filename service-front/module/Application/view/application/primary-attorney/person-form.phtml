@@ -86,6 +86,12 @@
 
 <?= $this->form()->openTag($form); ?>
 
+<?php if(isset($this->useMyDetailsRoute )): ?>
+<p class="role-select group">
+    <a class="js-form-popup" href="<?= $this->useMyDetailsRoute ?>">Use my details</a>
+</p>
+<?php endif;?>
+
 <?php if(isset($this->addTrustCorporationRoute )): ?>
 <p class="role-select group">
     <a class="js-form-popup" href="<?= $this->addTrustCorporationRoute ?>">Using a trust corporation?</a>

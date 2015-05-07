@@ -125,8 +125,19 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 }
             }
         }
+        else {
+            // load user's details into the form
+            if($this->params()->fromQuery('use-my-details')) {
+                $form->bind($this->getUserDetailsAsArray());
+            }
+        }
         
         $viewModel->form = $form;
+        
+        // show user my details link (if the link has not been clicked and seed dropdown is not set in the view)
+        if(($viewModel->seedDetailsPickerForm==null) && !$this->params()->fromQuery('use-my-details')) {
+            $viewModel->useMyDetailsRoute = $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]) . '?use-my-details=1';
+        }
         
         // only provide add trust corp link if lpa has not a trust already and lpa is of PF type.
         if(!$this->hasTrust() && ($this->getLpa()->document->type == Document::LPA_TYPE_PF) ) {
