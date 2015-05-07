@@ -170,16 +170,63 @@ class Resource extends AbstractResource {
      * answer questions of the form how many users have five LPAs?
      *
      * @return array
+     * 
+     * The key of the return array is the number of LPAs
+     * The value is the number of users with this many LPAs
      */
     private function getLpasPerUser(){
         
-        // The key of $lpaCount is the number of LPAs
-        // The value is the number of users with this many LPAs
+        $collection = $this->getCollection('lpa');
         
-        for ($i=0; $i<100; $i+=rand(1,3)) {
-            $lpaCount[$i] = rand(1,200);
+        // Stats can (ideally) be processed on a secondary.
+        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
+        
+        // Get a list of users and the number of applications they have
+        $results = $collection->group(
+            ['user' => 1],
+            ['lpacount' => 0],
+            'function (obj, prev) { prev.lpacount ++; }'
+        )['retval'];
+        
+        // Create an array indexed by userId with lpaCount as a value
+        $userLpaCounts = [];
+        foreach ($results as $result) {
+            
+            $userId = $result['user'];
+            $lpaCount = $result['lpacount'];
+            
+            if (!empty($userId)) {
+                $userLpaCounts[$userId] = $lpaCount;
+            }
         }
-        return $lpaCount;
+
+        // Create an array indexed by number of lpas with number of users as the value
+        $byLpaCount = [];
+        foreach ($userLpaCounts as $userId => $lpaCount) {
+            if (isset($byLpaCount[$lpaCount])) {
+                $byLpaCount[$lpaCount] ++;
+            } else {
+                $byLpaCount[$lpaCount] = 1;
+            }
+        }
+
+        // Create an array indexed by number of users with number of lpas as the value
+        $byUserCount = [];
+        foreach ($byLpaCount as $lpaCount => $userCount) {
+            if (isset($byUserCount[$userCount])) {
+                $byUserCount[$userCount] += $lpaCount;
+            } else {
+                $byUserCount[$userCount] = $lpaCount;
+            }
+        }
+        
+        krsort($byLpaCount);
+        krsort($byUserCount);
+        
+        return [
+            'byLpaCount' => $byLpaCount,
+            'byUserCount' => $byUserCount,  
+        ];
     } // function getLpasPerUser()
         
-} // cass
+} // class
