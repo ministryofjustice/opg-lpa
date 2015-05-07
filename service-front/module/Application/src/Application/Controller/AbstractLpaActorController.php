@@ -110,21 +110,21 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 switch($type) {
                     case 'donor':
                         $seedDetails[] = [
-                        'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Donor)',
+                        'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was the donor)',
                         'data' => $this->seedDataFilter($actorData),
                         ];
                         break;
                     case 'correspondent':
                         if($actorData['who'] == 'other') {
                             $seedDetails[] = [
-                            'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Correspondent)',
+                            'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was the correspondent)',
                             'data' => $this->seedDataFilter($actorData),
                             ];
                         }
                         break;
                     case 'certificateProvider':
                         $seedDetails[] = [
-                        'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Certificate Provider)',
+                        'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was the certificate provider)',
                         'data' => $this->seedDataFilter($actorData),
                         ];
                         break;
@@ -132,7 +132,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                         foreach($actorData as $singleActorData) {
                             if($singleActorData['type'] == 'trust') continue;
                             $seedDetails[] = [
-                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a Primary Attorney)',
+                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a primary attorney)',
                                     'data' => $this->seedDataFilter($singleActorData),
                             ];
                         }
@@ -141,7 +141,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                         foreach($actorData as $singleActorData) {
                             if($singleActorData['type'] == 'trust') continue;
                             $seedDetails[] = [
-                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a Replacement Attorney)',
+                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a replacement attorney)',
                                     'data' => $this->seedDataFilter($singleActorData),
                             ];
                         }
