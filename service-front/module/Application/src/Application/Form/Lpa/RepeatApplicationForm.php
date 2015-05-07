@@ -22,6 +22,7 @@ class RepeatApplicationForm extends AbstractForm
             ],
             'repeatCaseNumber' => [
                     'type' => 'Text',
+                    'required'  => true,
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
