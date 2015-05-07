@@ -50,7 +50,7 @@ class DonorController extends AbstractLpaActorController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         if( $this->getLpa()->document->donor instanceof Donor ) {
-            $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
+            return $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
         }
         
         $viewModel = new ViewModel();
@@ -87,7 +87,7 @@ class DonorController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -132,7 +132,7 @@ class DonorController extends AbstractLpaActorController
                     return new JsonModel(['success' => true]);
                 }
                 else {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
         }

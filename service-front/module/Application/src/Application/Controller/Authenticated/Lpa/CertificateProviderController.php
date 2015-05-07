@@ -47,7 +47,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         if( $this->getLpa()->document->certificateProvider instanceof CertificateProvider ) {
-            $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id'=>$lpaId]);
+            return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id'=>$lpaId]);
         }
         
         $viewModel = new ViewModel();
@@ -84,7 +84,7 @@ class CertificateProviderController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -125,7 +125,7 @@ class CertificateProviderController extends AbstractLpaActorController
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
                     return new JsonModel(['success' => true]);
                 } else {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
         }

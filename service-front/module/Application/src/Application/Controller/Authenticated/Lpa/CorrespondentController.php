@@ -88,7 +88,7 @@ class CorrespondentController extends AbstractLpaController
                     }
                 }
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         
@@ -208,7 +208,7 @@ class CorrespondentController extends AbstractLpaController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }

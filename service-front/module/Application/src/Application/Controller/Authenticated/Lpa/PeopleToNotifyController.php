@@ -37,7 +37,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                 // set user has confirmed if there are people to notify
                 $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         
@@ -75,7 +75,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         if(count($this->getLpa()->document->peopleToNotify) >= 5 ) {
-            $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
+            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
         }
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
@@ -112,7 +112,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -165,7 +165,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                     return new JsonModel(['success' => true]);
                 }
                 else {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
         }
@@ -201,7 +201,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
         else {
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
         }
     }
 }

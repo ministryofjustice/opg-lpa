@@ -39,7 +39,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 // set user has confirmed if there are replacement attorneys  
                 $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         
@@ -120,7 +120,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -189,7 +189,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                     return new JsonModel(['success' => true]);
                 }
                 else {
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
         }
@@ -233,7 +233,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
         else {
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
         }
     }
     
@@ -250,7 +250,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         
         // redirect to add human attorney if lpa is of hw type or a trust was added already.
         if( ($this->getLpa()->document->type == Document::LPA_TYPE_HW) || $this->hasTrust() ) {
-            $this->redirect()->toRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]);
         }
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
@@ -287,7 +287,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }

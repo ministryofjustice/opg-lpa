@@ -14,6 +14,6 @@ class IndexController extends AbstractLpaController
         }
         
         $destinationRoute = $this->getFlowChecker()->backToForm('lpa/view-docs');
-        $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$this->getLpa()->id]);
+        return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$this->getLpa()->id]);
     }
 }
