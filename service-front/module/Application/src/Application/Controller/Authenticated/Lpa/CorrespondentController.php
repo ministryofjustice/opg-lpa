@@ -16,6 +16,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -87,14 +88,14 @@ class CorrespondentController extends AbstractLpaController
                     }
                 }
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name:$correspondent->name),
+                        'name'      => (($correspondent->name instanceof Name)?$correspondent->name:$correspondent->company),
                         'address'   => $correspondent->address,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
@@ -115,7 +116,7 @@ class CorrespondentController extends AbstractLpaController
         $correspondentForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
         $correspondentForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
-        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa()]);
+        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa(), 'user'=>$this->getServiceLocator()->get('UserDetailsSession')->user]);
         $switcherForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
         
         if($this->request->isPost()) {
@@ -132,7 +133,8 @@ class CorrespondentController extends AbstractLpaController
                                     'who'=>'other',
                                     'name-title' => $userSession->user->name->title,
                                     'name-first' => $userSession->user->name->first,
-                                    'name-last' => $userSession->user->name->last,
+                                    'name-last'  => $userSession->user->name->last,
+                                    'company'    => '',
                             ];
                             if($userSession->user->address instanceof Address) {
                                 $formData += [
@@ -146,6 +148,7 @@ class CorrespondentController extends AbstractLpaController
                         case 'donor':
                             $formData = $this->getLpa()->document->donor->flatten();
                             $formData['who'] = 'donor';
+                            $formData['company'] = '';
                             break;
                         default:
                             if(is_numeric($postData['switch-to-type'])) {
@@ -153,7 +156,12 @@ class CorrespondentController extends AbstractLpaController
                                     if($attorney->id == $postData['switch-to-type']) {
                                         $formData = $attorney->flatten();
                                         if($attorney instanceof TrustCorporation) {
-                                            $formData['company'] = $attorney->name;
+                                            $formData['name-title'] = '';
+                                            $formData['name-first'] = '';
+                                            $formData['company'] = $formData['name-last'] = $attorney->name;
+                                        }
+                                        else {
+                                            $formData['company'] = '';
                                         }
                                         $formData['who'] = 'attorney';
                                         break;
@@ -161,7 +169,17 @@ class CorrespondentController extends AbstractLpaController
                                 }
                             }
                             else {
-                                $formData = ['who'=>'other'];
+                                $formData = [
+                                    'who'=>'other',
+                                    'name-title' => '',
+                                    'name-first' => '',
+                                    'name-last'  => '',
+                                    'company'    => '',
+                                    'address-address1' => '',
+                                    'address-address2' => '',
+                                    'address-address3' => '',
+                                    'address-postcode' => '',
+                                ];
                             }
                             break;
                     }
@@ -190,7 +208,7 @@ class CorrespondentController extends AbstractLpaController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -213,9 +231,22 @@ class CorrespondentController extends AbstractLpaController
             else {
                 $correspondent = $this->getLpa()->document->correspondent;
             }
-        
-            $correspondent = $correspondent->flatten();
-            $correspondentForm->bind($correspondent);
+            
+            $correspondentDetails = $correspondent->flatten();
+            
+            if($correspondent instanceof TrustCorporation) {
+                $correspondentDetails['company'] = $correspondent->name;
+                $correspondentDetails['name-title'] = ' ';
+            }
+            
+            if($correspondent instanceof Donor) {
+                $correspondentDetails['who'] = 'donor';
+            }
+            else {
+                $correspondentDetails['who'] = 'attorney';
+            }
+            
+            $correspondentForm->bind($correspondentDetails);
         }
         
         $viewModel->correspondentForm = $correspondentForm;

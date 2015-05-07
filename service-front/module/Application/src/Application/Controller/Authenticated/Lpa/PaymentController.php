@@ -87,7 +87,7 @@ class PaymentController extends AbstractLpaController
                     $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
                     
                     // to complete page
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
                 }
                 
             }
@@ -129,7 +129,7 @@ class PaymentController extends AbstractLpaController
         $communicationService = $this->getServiceLocator()->get('Communication');
         $communicationService->sendInstrumentCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
         
-        $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
+        return $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
         
         return $this->getResponse();
     }
@@ -190,7 +190,7 @@ class PaymentController extends AbstractLpaController
     {
         //@todo:  set flash message before redirecting
         
-        $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
+        return $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
         
         return $this->getResponse();
     }

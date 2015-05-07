@@ -70,7 +70,7 @@ class BenefitsController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set benefits in payment for id: '.$lpa->id);
                 }
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
             }
         }
         else {

@@ -4,11 +4,10 @@ namespace Application\Controller;
 use RuntimeException;
 
 use Zend\Mvc\MvcEvent;
-use Application\Model\FormFlowChecker;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Zend\Session\Container;
+use Application\Model\FormFlowChecker;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
@@ -130,154 +129,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         }
         return false;
     }
-    
-    /**
-     * Return clone source LPA details from session container, or from the api 
-     * if not found in the session container. 
-     * 
-     * @param bool $trustOnly - when true, only return trust corporation details
-     * 
-     * @return Array|Null;
-     */
-    protected function getSeedDetails($trustOnly=false)
-    {
-        if(!($this->lpa instanceof Lpa) || ($this->lpa->seed === null)) return null;
         
-        $seedId = $this->lpa->seed;
-        $cloneContainer = new Container('clone');
-        
-        if(!$cloneContainer->offsetExists($seedId)) {
-            
-            // get seed data from the API
-            $seedData = $this->getLpaApplicationService()->getSeedDetails($this->lpa->id);
-            
-            if(!$seedData) {
-                return null;
-            }
-            
-            // save seed data into session container
-            $cloneContainer->$seedId = $seedData;
-            
-        }
-        
-        $seedData = $cloneContainer->$seedId;
-        
-        // ordering and filtering the data 
-        $seedDetails = [];
-        foreach($seedData as $type => $actorData) {
-            if($trustOnly) {
-                switch($type) {
-                    case 'primaryAttorneys':
-                        foreach($actorData as $singleActorData) {
-                            if($singleActorData['type'] == 'trust') {
-                                $seedDetails[] = [
-                                        'label' => $singleActorData['name'] . ' (was a Primary Attorney)',
-                                        'data' => $this->seedDataFilter($singleActorData),
-                                ];
-                                
-                                // only one trust can be in an LPA
-                                return $seedDetails;
-                            }
-                        }
-                        break;
-                    case 'replacementAttorneys':
-                        foreach($actorData as $singleActorData) {
-                            if($singleActorData['type'] == 'trust') {
-                                $seedDetails[] = [
-                                        'label' => $singleActorData['name'] . ' (was a Replacement Attorney)',
-                                        'data' => $this->seedDataFilter($singleActorData),
-                                ];
-                                
-                                // only one trust can be in an LPA
-                                return $seedDetails;
-                            }
-                        }
-                        break;
-                }
-            }
-            else {
-                switch($type) {
-                    case 'donor':
-                        $seedDetails[] = [
-                        'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Donor)',
-                        'data' => $this->seedDataFilter($actorData),
-                        ];
-                        break;
-                    case 'correspondent':
-                        if($actorData['who'] == 'other') {
-                            $seedDetails[] = [
-                            'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Correspondent)',
-                            'data' => $this->seedDataFilter($actorData),
-                            ];
-                        }
-                        break;
-                    case 'certificateProvider':
-                        $seedDetails[] = [
-                        'label' => $actorData['name']['first'].' '.$actorData['name']['last'] . ' (was a Certificate Provider)',
-                        'data' => $this->seedDataFilter($actorData),
-                        ];
-                        break;
-                    case 'primaryAttorneys':
-                        foreach($actorData as $singleActorData) {
-                            if($singleActorData['type'] == 'trust') continue;
-                            $seedDetails[] = [
-                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a Primary Attorney)',
-                                    'data' => $this->seedDataFilter($singleActorData),
-                            ];
-                        }
-                        break;
-                    case 'replacementAttorneys':
-                        foreach($actorData as $singleActorData) {
-                            if($singleActorData['type'] == 'trust') continue;
-                            $seedDetails[] = [
-                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a Replacement Attorney)',
-                                    'data' => $this->seedDataFilter($singleActorData),
-                            ];
-                        }
-                        break;
-                    case 'peopleToNotify':
-                        foreach($actorData as $singleActorData) {
-                            $seedDetails[] = [
-                                    'label' => $singleActorData['name']['first'].' '.$singleActorData['name']['last'] . ' (was a person to be notified)',
-                                    'data' => $this->seedDataFilter($singleActorData),
-                            ];
-                        }
-                        break;
-                    default: break;
-                }
-            }
-        }
-        
-        return $seedDetails;
-    }
-    
-    /**
-     * Filtering seed details
-     * 
-     * @param array $seedData
-     * @return array
-     */
-    private function seedDataFilter($seedData)
-    {
-        $filteredData = [];
-        foreach($seedData as $name => $value) {
-            switch($name) {
-                case "name":
-                case "otherNames":
-                case "address":
-                case "dob":
-                case "email":
-                case "phone":
-                    $filteredData[$name] = $value;
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        return $filteredData;
-    }
-    
     /**
      * Convert model/seed data for populating into form
      * 

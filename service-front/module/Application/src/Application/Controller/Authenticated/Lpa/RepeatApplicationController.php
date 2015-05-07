@@ -49,7 +49,7 @@ class RepeatApplicationController extends AbstractLpaController
                 // set metadata
                 $this->getServiceLocator()->get('Metadata')->setRepeatApplicationConfirmed($this->getLpa());
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         else {

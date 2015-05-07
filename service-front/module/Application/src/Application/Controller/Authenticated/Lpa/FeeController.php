@@ -108,7 +108,7 @@ class FeeController extends AbstractLpaController
                     $container = new Container('paymentEmail');
                     $container->email = $form->getData()['email'];
                     
-                    $this->redirect()->toRoute('lpa/payment', ['lpa-id' => $lpa->id]);
+                    return $this->redirect()->toRoute('lpa/payment', ['lpa-id' => $lpa->id]);
                 }
                 else {
                     // send email
@@ -116,7 +116,7 @@ class FeeController extends AbstractLpaController
                     $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
                 
                     // to complete page
-                    $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
                 }
             }
         }

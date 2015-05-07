@@ -46,7 +46,7 @@ class LifeSustainingController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set life sustaining for id: '.$lpaId);
                 }
                 
-                $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
         else {
