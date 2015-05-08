@@ -20,7 +20,16 @@
 
 <div id='stats'>
 
-    <table class='stats' style="">
+    <table class='stats'>
+        <thead>
+        <tr><th>Total no. of registered users</th><th>Total no. of activated users</th><th>No. of activated users this month</th></tr>
+        </thead>
+        <tbody class='app_stats'>
+        <tr><td><?= $this->users['total'] ?></td><td><?= $this->users['activated'] ?></td><td><?= $this->users['activated-this-month'] ?></td></tr>
+        </tbody>
+    </table>
+
+    <table class='stats'>
         <thead>
         <tr><th>Current Progress</th><th>All applications</th><th>Health and Welfare</th><th>Property and Financial Affairs</th></tr>
         </thead>

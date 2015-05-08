@@ -16,8 +16,15 @@ class StatsController extends AbstractBaseController
         // Ensure the months are ordered correctly.
         ksort($generalLpaStats['by-month']);
 
+        //---
+
+        $userStats = $this->getServiceLocator()->get('LpaApplicationService')->getAuthStats();
+
+        //---
+
         return new ViewModel([
             'laps' => $generalLpaStats,
+            'users' => $userStats,
         ]);
 
     } // function
