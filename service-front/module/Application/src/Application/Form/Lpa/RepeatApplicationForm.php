@@ -11,11 +11,11 @@ class RepeatApplicationForm extends AbstractForm
                     'required'  => true,
                     'options'   => [
                             'value_options' => [
-                                    'is-new' => [
-                                            'value' => 'is-new',
-                                    ],
                                     'is-repeat' => [
                                             'value' => 'is-repeat',
+                                    ],
+                                    'is-new' => [
+                                            'value' => 'is-new',
                                     ],
                             ],
                     ],
