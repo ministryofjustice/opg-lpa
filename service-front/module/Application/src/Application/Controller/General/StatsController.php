@@ -7,8 +7,16 @@ use Application\Controller\AbstractBaseController;
 
 class StatsController extends AbstractBaseController
 {
+
     public function indexAction()
     {
-        return new ViewModel();
-    }
-}
+
+        $generalLpaStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'lpas' );
+
+        return new ViewModel([
+            'laps' => $generalLpaStats,
+        ]);
+
+    } // function
+
+} // class
