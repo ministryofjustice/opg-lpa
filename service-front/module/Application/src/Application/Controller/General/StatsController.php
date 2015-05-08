@@ -13,6 +13,9 @@ class StatsController extends AbstractBaseController
 
         $generalLpaStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'lpas' );
 
+        // Ensure the months are ordered correctly.
+        ksort($generalLpaStats['by-month']);
+
         return new ViewModel([
             'laps' => $generalLpaStats,
         ]);
