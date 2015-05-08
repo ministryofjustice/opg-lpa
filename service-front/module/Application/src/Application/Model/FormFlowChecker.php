@@ -978,7 +978,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToRepeatApplication()
     {
-        if($this->hasFeeDetermined()) {
+        if($this->isWhoAreYouAnswered() && array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata)) {
             return 'lpa/repeat-application';
         }
         else {
