@@ -187,8 +187,7 @@ class Module {
                 // Access collections within the above DB...
                 'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
                 'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
-                'MongoDB-Default-stats-usage' => new MongoCollectionFactory('stats-usage', 'MongoDB-Default'),
-                'MongoDB-Default-stats-who' => new MongoCollectionFactory('stats-who', 'MongoDB-Default'),
+                'MongoDB-Default-stats-who' => new MongoCollectionFactory('whoAreYou', 'MongoDB-Default'),
 
             ], // factories
         ];
