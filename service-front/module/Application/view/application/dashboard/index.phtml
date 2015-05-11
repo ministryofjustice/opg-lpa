@@ -46,7 +46,7 @@
       <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
-        <a class="button" href="/lpa/<?= $lpa->id ?>"><?= ($lpa->progress=='Completed')?'View Docs':'Continue' ?></a>
+        <a class="button" href="/lpa/<?= $lpa->id ?>"><?= ($lpa->progress=='Completed')?'View LPA':'Continue' ?></a>
         <a class="button" href="/lpa/<?= $lpa->id ?>/date-check">Dates</a>
         <a class="button" href="<?= $this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] )?>">Clone</a>
         <a class="button-warning delete-lpa" href="/user/dashboard/delete-lpa/<?= $lpa->id ?>">Delete</a>
@@ -62,7 +62,7 @@
       <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
-        <a class="button" href="/forward/lpa/<?= sprintf("%010d", $lpa->id) ?>"><?= ($lpa->status=='Completed')?'View Docs':'Continue' ?></a>
+        <a class="button" href="/forward/lpa/<?= sprintf("%010d", $lpa->id) ?>"><?= ($lpa->status=='Completed')?'View LPA':'Continue' ?></a>
         <a class="button" href="/lpa/<?= $lpa->id ?>/date-check">Dates</a>
         <a class="button" href="<?= $this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] )?>">Clone</a>
         <a class="button-warning delete-lpa" href="/service/delete/<?= sprintf("%010d", $lpa->id) ?>">Delete</a>
