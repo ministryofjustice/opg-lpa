@@ -12,7 +12,6 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
@@ -256,7 +255,9 @@ class CorrespondentController extends AbstractLpaController
                 $correspondentDetails['name-title'] = ' ';
             }
             elseif($correspondent instanceof Correspondence) {
-                $correspondentDetails['name-title'] = ' ';
+                if($correspondent->name == null) {
+                    $correspondentDetails['name-title'] = ' ';
+                }
             }
             elseif($correspondent instanceof Donor) {
                 $correspondentDetails['who'] = 'donor';
