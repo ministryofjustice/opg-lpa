@@ -24,13 +24,13 @@ class Communication implements ServiceLocatorAwareInterface {
 
     public function sendInstrumentCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        $this->sendEmail('email/lpa-instrument.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to sign', 'opg-lpa-complete-instrument');
+        return $this->sendEmail('email/lpa-instrument.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to sign', 'opg-lpa-complete-instrument');
     }
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl)
     {
         
-        $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        return $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
     }
     
     private function sendEmail($emailTemplate, Lpa $lpa, $signinUrl, $subject, $category)
@@ -80,7 +80,9 @@ class Communication implements ServiceLocatorAwareInterface {
             $this->getServiceLocator()->get('MailTransport')->send($message);
 
         } catch ( \Exception $e ){
-
+            
+            $this->getServiceLocator()->get('Logger')->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
+            
             return "failed-sending-email";
 
         }
