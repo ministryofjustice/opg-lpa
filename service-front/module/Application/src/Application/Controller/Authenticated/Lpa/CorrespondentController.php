@@ -92,10 +92,26 @@ class CorrespondentController extends AbstractLpaController
             }
         }
         
+        // work out correspondent name
+        if($correspondent instanceof Correspondence) {
+            $correspondentName = trim((string)$correspondent->name);
+            if($correspondentName == '') {
+                $correspondentName = $correspondent->company;
+            }
+            else {
+                if($correspondent->company != null) {
+                    $correspondentName .= ', '.$correspondent->company;
+                }
+            }
+        }
+        else {
+            $correspondentName = (string)$correspondent->name;
+        }
+        
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
-                        'name'      => ($correspondent instanceof Correspondence)?$correspondent->company:(string)$correspondent->name,
+                        'name'      => $correspondentName,
                         'address'   => $correspondent->address,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
