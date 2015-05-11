@@ -23,11 +23,11 @@ $form->prepare();
     
         <?= $this->partialloop('application/replacement-attorney/partials/attorney.phtml', $this->attorneys)?>
 
-        <p class="add-another"><a class="add js-form-popup" href="<?= $this->addRoute ?>">Add another attorney?</a></p>
+        <p class="add-another"><a class="add js-form-popup" href="<?= $this->addRoute ?>">Add another replacement attorney?</a></p>
 		
     <?php else:?>
     
-        <p><a class="add button js-form-popup" href="<?= $this->addRoute ?>" role="button">Add an attorney</a></p>
+        <p><a class="add button js-form-popup" href="<?= $this->addRoute ?>" role="button">Add replacement attorney</a></p>
 		
     <?php endif; ?>
     
