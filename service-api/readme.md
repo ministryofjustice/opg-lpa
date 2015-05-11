@@ -10,6 +10,8 @@ Lasting Power of Attorney API Service
 - db.lpa.createIndex( { createdAt: 1 } )
 - db.lpa.createIndex( { completedAt: 1 } )
 
+- db.whoAreYou.createIndex( { who: 1, subquestion: 1, _id: 1  } )
+
 License
 -------
 

@@ -1,9 +1,10 @@
 <?php
 namespace Application\Model\Rest\Stats;
 
-use MongoDate;
+use MongoId, MongoDate;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 
 use Application\Model\Rest\AbstractResource;
 
@@ -25,7 +26,7 @@ class Resource extends AbstractResource {
                 return new Entity( $this->getLpaStats() );
 
             case 'whoareyou':
-                return new Entity( array() );
+                return new Entity( $this->getWhoAreYou() );
 
             case 'lpasperuser':
                 return new Entity( $this->getLpasPerUser() );
@@ -164,6 +165,118 @@ class Resource extends AbstractResource {
         );
 
     } // function
+
+    //-------------------------------------------------------------------------
+
+    /**
+     * Return a breakdown of the Who Are You stats.
+     *
+     * @return array
+     */
+    private function getWhoAreYou(){
+
+        $results = array();
+
+        $firstDayOfThisMonth = strtotime( 'first day of ' . date('F Y') );
+
+        $lastTimestamp = time(); // initially set to now...
+
+        //---
+
+        for( $i=0; $i<4; $i++ ){
+
+            $ts = strtotime( "-{$i} months", $firstDayOfThisMonth );
+
+            //---
+
+            $results['by-month'][ date('Y-m', $ts) ] = $this->getWhoAreYouStatsForTimeRange( $ts, $lastTimestamp );
+
+            //---
+
+            $lastTimestamp = $ts;
+
+        } // for
+
+        //---
+
+        $results['all'] = $this->getWhoAreYouStatsForTimeRange( 0, time() );
+
+        //---
+
+        return $results;
+
+    } // function
+
+
+    /**
+     * Return the WhoAreYou values for a specific date range.
+     *
+     * @param $start
+     * @param $end
+     * @return array
+     */
+    private function getWhoAreYouStatsForTimeRange( $start, $end ){
+
+        $collection = $this->getCollection('stats-who');
+
+        // Stats can (ideally) be processed on a secondary.
+        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
+
+
+        //---------------------------------------
+        // Convert the timestamps to MongoIds
+
+        $start = str_pad( dechex($start) , 8, "0", STR_PAD_LEFT);
+        $start = new MongoId($start."0000000000000000");
+
+        $end = str_pad( dechex($end) , 8, "0", STR_PAD_LEFT);
+        $end = new MongoId($end."0000000000000000");
+
+        $range = [ '$gte' => $start, '$lte' => $end ];
+
+
+        //--------------------------------
+
+        $result = array();
+
+        // Base the groupings on the Model's data.
+        $options = WhoAreYou::options();
+
+        // For each top level 'who' level...
+        foreach( $options as $topLevel => $details ){
+
+            // Get the count for all top level...
+            $result[$topLevel] = array(
+                'count' => $collection->find( [ 'who'=>$topLevel, '_id' => $range ] )->count(),
+            );
+
+            //---
+
+            // Count all the subquestion values
+
+            $result[$topLevel]['subquestions'] = array();
+
+            foreach( $details['subquestion'] as $subquestion ){
+
+                if( empty($subquestion) ){ continue; }
+
+                $result[$topLevel]['subquestions'][$subquestion] = $collection->find( [
+                    'who' => $topLevel,
+                    'subquestion' => $subquestion,
+                    '_id' => $range
+                ] )->count();
+
+            } // foreach
+
+        } // foreach
+
+        //---
+
+        return $result;
+
+    } // function
+
+    //-------------------------------------------------------------------------
     
     /**
      * Returns a list of lpa counts and user counts, in order to
