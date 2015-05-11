@@ -37,21 +37,39 @@
   </thead>
   <tbody>
   <?php foreach($this->lpas as $lpa): ?>
+    <?php if($lpa->version == 2):?>
       <tr>
-      <td><?= ( $lpa->version == 2 )? \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id) : $lpa->id #v1Code ?></td>
+      <td><?= \Opg\Lpa\DataModel\Lpa\Formatter::id($lpa->id)?></td>
       <td><?= $lpa->donor; ?></td>
       <td><?= ($lpa->type == 'property-and-financial') ? 'PF' : (($lpa->type == 'health-and-welfare')?'HW':'') ?></td>
-      <td><?= ( $lpa->version == 2 )?$lpa->progress:$lpa->status ?></td>
+      <td><?= $lpa->progress ?></td>
       <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
       <td>
         <div class="lpa-actions">
-        <a class="button" href="<?= ($lpa->version == 2)?("/lpa/".$lpa->id):("/forward/lpa/".sprintf("%010d", $lpa->id)) #v1Code ?>">Continue</a>
-        <?= ($lpa->version == 2) ? '<a class="button" href="/lpa/' . $lpa->id . '/date-check">Dates</a>' : '' #v1Code ?>
-        <?= ($lpa->version == 2) ? '<a class="button" href="'.$this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] ).'">Clone</a>' : '' #v1Code ?>
-        <a class="button-warning delete-lpa" href="<?= ($lpa->version == 2)?("/user/dashboard/delete-lpa/".$lpa->id):("/service/delete/".sprintf("%010d", $lpa->id)) #v1Code ?>">Delete</a>
+        <a class="button" href="/lpa/<?= $lpa->id ?>"><?= ($lpa->progress=='Completed')?'View Docs':'Continue' ?></a>
+        <a class="button" href="/lpa/<?= $lpa->id ?>/date-check">Dates</a>
+        <a class="button" href="<?= $this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] )?>">Clone</a>
+        <a class="button-warning delete-lpa" href="/user/dashboard/delete-lpa/<?= $lpa->id ?>">Delete</a>
         </div>
       </td>
       </tr>
+    <?php else:?>
+      <tr>
+      <td><?= $lpa->id ?></td>
+      <td><?= $lpa->donor; ?></td>
+      <td><?= ($lpa->type == 'property-and-financial') ? 'PF' : (($lpa->type == 'health-and-welfare')?'HW':'') ?></td>
+      <td><?= $lpa->status ?></td>
+      <td><?= $lpa->updatedAt->format('d/m/y'); ?></td>
+      <td>
+        <div class="lpa-actions">
+        <a class="button" href="/forward/lpa/<?= sprintf("%010d", $lpa->id) ?>"><?= ($lpa->status=='Completed')?'View Docs':'Continue' ?></a>
+        <a class="button" href="/lpa/<?= $lpa->id ?>/date-check">Dates</a>
+        <a class="button" href="<?= $this->url( 'user/dashboard/create-lpa', [ 'lpa-id'=>$lpa->id ] )?>">Clone</a>
+        <a class="button-warning delete-lpa" href="/service/delete/<?= sprintf("%010d", $lpa->id) ?>">Delete</a>
+        </div>
+      </td>
+      </tr>
+    <?php endif;?>
   <?php endforeach;?>
   
   </tbody>
