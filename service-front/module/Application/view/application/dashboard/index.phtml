@@ -3,13 +3,29 @@
 <?php endif; ?>
 
 <?php if($this->message):?>
-<h3><?php echo $this->message?></h3>
+
+    <h3><?php echo $this->message?></h3>
+
 <?php else:?>
+
     <?php if( $this->lpas->getTotalItemCount() == 0 ): ?>
-    <p>You haven't created any LPAs yet.</p>
+
+        <?php if( $this->isSearch ): ?>
+            <p>Your search has found no results</p>
+        <?php else: ?>
+            <p>You haven't created any LPAs yet.</p>
+        <?php endif;?>
+
     <?php else: ?>
-    <p>These are all the LPAs that you've created.</p>
+
+        <?php if( $this->isSearch ): ?>
+            <p>Your search has found these results</p>
+        <?php else: ?>
+            <p>These are all the LPAs that you've created.</p>
+        <?php endif;?>
+
     <?php endif;?>
+
 <?php endif;?>
 
   <div style="margin: 5px;" >

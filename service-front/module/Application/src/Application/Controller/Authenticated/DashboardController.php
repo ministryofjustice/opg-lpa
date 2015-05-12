@@ -41,7 +41,8 @@ class DashboardController extends AbstractAuthenticatedController
 
         return new ViewModel([
             'lpas' => $paginator,
-            'query' => $query,
+            'freeText' => $query,
+            'isSearch' => (is_string($query) && !empty($query)),
             'version' => [
                 'commit' => $this->config()['version']['commit'],
                 'cache' => $this->config()['version']['cache'],
