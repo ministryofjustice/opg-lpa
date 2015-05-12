@@ -311,8 +311,16 @@ class Client
 
             $json = $response->json();
 
+            if( isset($json['error_description']) && $json['error_description'] == 'account locked' ){
+                return $authResponse->setErrorDescription( "locked" );
+            }
+
             if( isset($json['error_description']) && $json['error_description'] == 'account is not activated' ){
                 return $authResponse->setErrorDescription( "not-activated" );
+            }
+
+            if( isset($json['failure_count']) ){
+                return $authResponse->setErrorDescription( "incorrect-".(int)$json['failure_count'] );
             }
 
             return $authResponse->setErrorDescription( "authentication-failed" );

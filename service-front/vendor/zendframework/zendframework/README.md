@@ -11,41 +11,20 @@ Develop:
 
 ## RELEASE INFORMATION
 
-*Zend Framework 2.4.1*
+*Zend Framework 2.4.2*
 
-This is the first maintenance release in the version 2.4 series.
+This is the second maintenance release in the version 2.4 series.
 
-07 May 2015
+11 May 2015
 
-### UPDATES IN 2.4.1
+### UPDATES IN 2.4.2
 
-This release contains the following security fixes:
+This release fixes issues introduced when correcting
+[ZF2015-04](http://framework.zend.com/security/advisory/ZF2015-04), including:
 
-- **ZF2015-04**: `Zend\Mail` and `Zend\Http` were both susceptible to CRLF
-  Injection Attack vectors (for HTTP, this is often referred to as HTTP Response
-  Splitting). Both components were updated to perform header value validations
-  to ensure no values contain characters not detailed in their corresponding
-  specifications, and will raise exceptions on detection. Each also provides new
-  facilities for both validating and filtering header values prior to injecting
-  them into header classes.
-
-  If you use either `Zend\Mail` or `Zend\Http` (which includes users of
-  `Zend\Mvc`), we recommend upgrading immediately.
-
-Other important changes:
-
-- [#7422](https://github.com/zendframework/zf2/pull/7422) fixes a regression in
-  `Zend\Db\Sql\Expression` whereby placeholders were being double
-  percent-encoded.
-- [#7426](https://github.com/zendframework/zf2/pull/7426) fixes a regression in
-  `Zend\Form` whereby input filters attached to collections were no longer
-  being added to the form, leading to incorrect validation and the inability
-  to bind data to nested fieldsets.
-- [#7446](https://github.com/zendframework/zf2/pull/7446) fixes a regression in
-  `Zend\Form` with regards to removal of multiple elements at once.
-- [#7474](https://github.com/zendframework/zf2/pull/7474) fixes a regression in
-  `Zend\InputFilter` which broke the relationship between required inputs that
-  were allowed empty, leading to false identification of invalid inputs.
+- [#7506](https://github.com/zendframework/zf2/pull/7506) resolves issues when UTF-8 values are used in Mail headers, particularly addresses.
+- [#7507](https://github.com/zendframework/zf2/pull/7507) ensures that array values can be used with cookies.
+- [#7514](https://github.com/zendframework/zf2/pull/7514) ensures that multipart MIME messages can be added to `Zend\Mail\Message` instances in such a way that they do not conflict with ZF2015-04.
 
 Please see [CHANGELOG.md](CHANGELOG.md).
 
