@@ -7,6 +7,8 @@ if(isset($this->form)) {
     
     $form->setAttribute('class', 'form');
     
+    $form = $this->formErrorTextExchange($form);
+    
     $who            = $form->get('who');
     
     $professional   = $form->get('professional');

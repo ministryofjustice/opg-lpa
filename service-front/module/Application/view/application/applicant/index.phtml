@@ -4,6 +4,8 @@ $form       = $this->form;
 $form->setAttributes(['class'=>'form']);
 $csrf       = $form->get('secret');
 
+$form = $this->formErrorTextExchange($form);
+
 $whoIsRegistering = $form->get('whoIsRegistering');
 $whoIsRegisteringValueOptions = $whoIsRegistering->getOptions()['value_options'];
 $whoIsRegisteringValueOptions['donor']['label'] = "The donor - ".(string)$this->lpa->document->donor->name;
