@@ -38,12 +38,26 @@ $formLabel = $this->plugin('formLabel');
             </div>
         <?php endif; // timed out ?>
         
-        <? if ( !empty($authError)):  ?>
+        <? if ( !empty($authError)){  ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
-              <h1 id="error-heading">Login error</h1>
-              <p><?= $this->escapeHtml($authError) ?></p>
+              <h1 id="error-heading">There was a problem submitting the form</h1>
+                <? switch($authError){
+                    case 'not-activated':
+                        ?><p>Your account has not yet been activated.</p><?
+                        break;
+                    case 'incorrect-4':
+                        ?><p>Email and password combination not recognised. Did you click the link in the email we sent you to activate your account?</p>
+                        <p>You can make 1 more attempt to sign in. If you enter the wrong details you won't be able to try again for 15 minutes. Forgotten your password? <a href="<?= $this->url('forgot-password'); ?>">Reset your password now</a>.</p><?
+                        break;
+                    case 'locked':
+                        ?><p>This user account has been locked. Please go <a href="<?= $this->url('forgot-password'); ?>">here</a> to reset your password OR you can attempt again in 15 minutes.</p><?
+                        break;
+                    default:
+                        ?><p><p>Email and password combination not recognised. Did you click the link in the email we sent you to activate your account?</p></p><?
+                        break;
+                } ?>
             </div>
-        <? endif; // error ?>
+        <? } // error ?>
 
         <? if ( count($form->getMessages()) > 0) { ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">

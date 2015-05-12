@@ -104,21 +104,13 @@ class AuthController extends AbstractBaseController {
 
                 //---
 
-                $message = $result->getMessages();
+                $authError = $result->getMessages();
 
                 // If there is a message, extract it (there will only ever be one).
-                if( is_array($message) && count($message) > 0 ){
-                    $message = array_pop($message);
+                if( is_array($authError) && count($authError) > 0 ){
+                    $authError = array_pop($authError);
                 }
 
-                switch( $message ){
-                    case 'not-activated':
-                        $authError = 'Your account has not yet been activated.';
-                        break;
-                    case 'authentication-failed':
-                    default:
-                        $authError = 'Email and password combination not recognised.';
-                }
 
                 // Help mitigate brute force attacks.
                 sleep(1);
