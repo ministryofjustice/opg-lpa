@@ -7,6 +7,11 @@
     table.stats td a {text-decoration: none; color:black}
     table.stats tbody.app_stats td {width:180px}
     table.stats tbody.app_stats td.app_status {font-size:10pt; vertical-align: middle; font-family:Verdana; width:100px;}
+
+    table.stats tbody.app_stats tr.border td { border-top-width: 8px; }
+    table.stats tbody.app_stats tr.subquestion td {font-size:9pt; vertical-align: middle; font-family:Verdana; width:100px;}
+    table.stats tbody.app_stats tr.subquestion td.app_status {font-size:8pt;}
+
     table.stats tbody.site td {width:180px;}
     table.stats tbody.db td {width:110px; margin:10px;}
 
@@ -93,6 +98,106 @@
             <td class='app_status'>Completed LPAs</td>
             <? foreach( $this->laps['by-month'] as $month=>$values ){ ?>
                 <td><?= $values['completed'] ?></td>
+            <? } ?>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="stats whoareyou">
+        <thead>
+        <tr>
+            <th></th>
+            <th>All time</th>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <th><?= ( $month == date('Y-m') ) ? 'This Month' : date('F Y', strtotime($month)) ?></th>
+            <? } ?>
+        </tr>
+        </thead>
+        <tbody class="app_stats">
+        <tr>
+            <td class="app_status">Donor</td>
+            <td><?= $this->who['all']['donor']['count'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['donor']['count'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="border">
+            <td class="app_status">Friend or family</td>
+            <td><?= $this->who['all']['friendOrFamily']['count'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['friendOrFamily']['count'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="border">
+            <td class="app_status">Professional</td>
+            <td><?= $this->who['all']['professional']['count'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['professional']['count'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="subquestion">
+            <td class="app_status">Solicitor</td>
+            <td><?= $this->who['all']['professional']['subquestions']['solicitor'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['professional']['subquestions']['solicitor'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="subquestion">
+            <td class="app_status">Will-writer</td>
+            <td><?= $this->who['all']['professional']['subquestions']['will-writer'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['professional']['subquestions']['will-writer'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="subquestion">
+            <td class="app_status">Other</td>
+            <td><?= $this->who['all']['professional']['subquestions']['other'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['professional']['subquestions']['other'] ?></td>
+            <? } ?>
+        </tr>
+
+        <tr class="border">
+            <td class="app_status">Digital Partner</td>
+            <td><?= $this->who['all']['digitalPartner']['count'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['digitalPartner']['count'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="subquestion">
+            <td class="app_status">Age UK</td>
+            <td><?= $this->who['all']['digitalPartner']['subquestions']['Age-Uk'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['digitalPartner']['subquestions']['Age-Uk'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="subquestion">
+            <td class="app_status">Alzheimer's Society</td>
+            <td><?= $this->who['all']['digitalPartner']['subquestions']['Alzheimer-Society'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['digitalPartner']['subquestions']['Alzheimer-Society'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="subquestion">
+            <td class="app_status">Citizens Advice Bureau</td>
+            <td><?= $this->who['all']['digitalPartner']['subquestions']['Citizens-Advice-Bureau'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['digitalPartner']['subquestions']['Citizens-Advice-Bureau'] ?></td>
+            <? } ?>
+        </tr>
+
+        <tr class="border">
+            <td class="app_status">Another organisation</td>
+            <td><?= $this->who['all']['organisation']['count'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['organisation']['count'] ?></td>
+            <? } ?>
+        </tr>
+        <tr class="border">
+            <td class="app_status">Not said</td>
+            <td><?= $this->who['all']['notSaid']['count'] ?></td>
+            <? foreach( $this->who['by-month'] as $month=>$values ){ ?>
+                <td><?= $values['notSaid']['count'] ?></td>
             <? } ?>
         </tr>
         </tbody>

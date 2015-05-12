@@ -18,12 +18,20 @@ class StatsController extends AbstractBaseController
 
         //---
 
+        $whoAreYouStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'whoareyou' );
+
+        // Ensure the months are ordered correctly.
+        ksort($whoAreYouStats['by-month']);
+
+        //---
+
         $userStats = $this->getServiceLocator()->get('LpaApplicationService')->getAuthStats();
 
         //---
 
         return new ViewModel([
             'laps' => $generalLpaStats,
+            'who' => $whoAreYouStats,
             'users' => $userStats,
         ]);
 
