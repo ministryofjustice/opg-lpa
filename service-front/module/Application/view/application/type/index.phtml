@@ -1,5 +1,10 @@
 <?php
-    $form        = $this->form;
+    $form = $this->formErrorTextExchange($this->form, [
+        'type' => [
+            "Value is required and can't be empty" => 'Please choose a type of LPA',
+         ],
+    ]);
+    
     $form->setAttribute('class', 'form');
     $csrf        = $form->get('secret');
 
@@ -91,3 +96,85 @@
     </div>
     
 </section>
+
+
+
+
+<script>
+(function () {
+
+    'use strict';
+    /*jslint browser: true*/
+    /*global define, module, global*/
+
+    var _undef;
+
+    var _global = typeof window === 'undefined' ? global : window;
+
+    var prev = { B : _undef, D : _undef };
+
+
+    var penis = {
+
+        version: 0.2,
+
+        setBalls: function (balls) {
+            if (prev.B === _undef) {
+              prev.B = _global.B;
+            }
+            _global.B = balls;
+        },
+
+        setHead: function (head) {
+            if (prev.D === _undef) {
+              prev.D = _global.D;
+            }
+            _global.D = head;
+        },
+
+        reset: function(){
+            _global.D = prev.D;
+            prev.D = _undef;
+            _global.B = prev.B;
+            prev.B = _undef;
+        }
+
+    };
+
+    // add some setters so we can set penis.balls and penis.head directly if setters are available.
+    if(typeof Object.defineProperty == 'function'){
+      Object.defineProperty(penis,'balls',{
+        get : function(){
+          return _global.B;
+        },
+        set : penis.setBalls,
+        enumerable : true,
+        configurable : false
+      });
+
+      Object.defineProperty(penis,'head',{
+        get : function(){
+          return _global.D;
+        },
+        set : penis.setHead,
+        enumerable : true,
+        configurable : false
+      });
+    }
+
+    //exports to multiple environments
+    if (typeof define === 'function' && define.amd) { //AMD
+        define(function () { return penis; });
+    } else if (typeof module !== 'undefined' && module.exports) { //node
+        module.exports = penis;
+    } else { //browser
+        //use string because of Google closure compiler ADVANCED_MODE
+        /*jslint sub:true */
+        _global['penis'] = penis;
+    }
+
+}());
+
+
+
+</script>

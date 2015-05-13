@@ -6,53 +6,70 @@ use Zend\View\Helper\AbstractHelper;
 class FormErrorTextExchange extends AbstractHelper
 {
     /**
-     * @var array - Common Map - generic transformations for common messages
+     * Catch-all transformations, ignorant of field name
+     * 
+     * @var array - Common Generic Map
      */
     private $commonMap = [
-        'cannot-be-blank' => 'Please enter a value for this field'
+        'cannot-be-blank' => 'Please enter a value for this field',
+        'invalid-email-address' => 'Please enter a valid email address',
+        'invalid-phone-number' => 'Please enter a valid phone number',
     ];
     
     /**
-     * @var array Override Map - Specific transformations for named fields
+     * Generic transformations for named fields
+     * 
+     * $var array - Common Field Map
      */
-    private $overrideMap = [
-        'whoIsRegistering' => [
-            'allowed-values:donor,Array' => 'You must select either the donor one or more of the attorneys'
-        ],
+    private $commonFieldMap = [
+        'address-postcode' => [
+            'must-be-greater-than-or-equal:5' => 'Postcode must be at least five characters',
+        ]
     ];
-    
     
     /**
      * Look at each element message on the form. If a transform message exists
      * in the override map then replace the message with its override. If no 
      * override message exists, see if there is a transformation in the common map.
+     * 
+     * The override map is merged with a generic override map which provides 
+     * messages for common field names.
      *  
      * @param Form $form
      * @return Form
      */
-    public function __invoke($form)
+    public function __invoke($form, $overrideMap)
     {
-        foreach ($form->getElements() as $element) {
-            foreach ($element->getMessages() as &$elementMessage) {
-                
-                $name = $element->getName();
-                
-                if (array_key_exists($name, $this->overrideMap)) {
-                    $messageMap = $this->overrideMap[$name];
-                    
-                    if (array_key_exists($elementMessage, $messageMap)) {
-                        $elementMessage = $messageMap[$elementMessage];
-                        continue;
-                    }
-                }
-                
-                if (array_key_exists($elementMessage, $this->commonMap)) {
-                    $elementMessage = $this->commonMap[$elementMessage];
-                    continue;
-                }
-            }
-        }
+        $overrideMap = array_merge_recursive(
+            $this->commonFieldMap,
+            $overrideMap
+        );
         
+        foreach ($form->getElements() as $element) {
+            
+            $name = $element->getName();
+            
+            if (array_key_exists($name, $overrideMap)) {
+                $elementMap = $overrideMap[$name];
+            } else {
+                $elementMap = [];
+            }
+            
+            $messages = $element->getMessages();
+            
+            foreach ($messages as &$elementMessage) {
+
+                if (array_key_exists($elementMessage, $elementMap)) {
+                    $elementMessage = $elementMap[$elementMessage];
+                } elseif (array_key_exists($elementMessage, $this->commonMap)) {
+                    $elementMessage = $this->commonMap[$elementMessage];
+                }
+               
+            }
+            
+            $element->setMessages($messages);
+        }
+
         return $form;
     }
 }
