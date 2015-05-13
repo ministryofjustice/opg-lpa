@@ -58,6 +58,26 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
                 if( $result === true ){
 
+                    /**
+                     * When removing v1, the whole if statement below can be deleted.
+                     *
+                     * #v1Code
+                     */
+                    if( $this->getServiceLocator()->has('ChangeEmailAddress') ){
+
+                        // Update Email Address on Account Service
+                        $this->getServiceLocator()->get('ChangeEmailAddress')->changeAddress(
+                            $currentAddress,
+                            $form->getDataForModel()['email']
+                        );
+
+                    } // if
+
+                    // end #v1Code
+
+
+                    //---
+
                     // Clear the old details out the session.
                     // They will be reloaded the next time the the AbstractAuthenticatedController is called.
                     $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
