@@ -85,7 +85,7 @@ return [
             'formElementErrors'     => 'Application\View\Helper\FormElementErrors',
             'formErrorList'         => 'Application\View\Helper\FormErrorList',
             'formLinkedErrorList'   => 'Application\View\Helper\FormLinkedErrorList',
-            'formErrorTextExchange' => 'Application\View\Helper\formErrorTextExchange',
+            'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
             'concatNames'           => 'Application\View\Helper\ConcatNames',
             'cellStyles'            => 'Application\View\Helper\CellStyles',
             'systemMessage'         => 'Application\View\Helper\SystemMessage',
