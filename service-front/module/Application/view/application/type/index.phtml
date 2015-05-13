@@ -1,5 +1,10 @@
 <?php
-    $form        = $this->form;
+    $form = $this->formErrorTextExchange($this->form, [
+        'type' => [
+            "Value is required and can't be empty" => 'Please choose a type of LPA',
+         ],
+    ]);
+    
     $form->setAttribute('class', 'form');
     $csrf        = $form->get('secret');
 

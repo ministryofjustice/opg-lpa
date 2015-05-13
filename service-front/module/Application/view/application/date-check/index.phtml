@@ -1,6 +1,7 @@
 <?php
     use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-    $form       = $this->form;
+    
+    $form = $this->formErrorTextExchange($this->form, []);
     
     $donorElement = $form->get('sign-date-donor');
     $donorElement->setAttributes(['placeholder' => 'DD/MM/YYYY']);

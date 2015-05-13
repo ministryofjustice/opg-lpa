@@ -1,5 +1,10 @@
 <?php
-    $form           = $this->form;
+    $form = $this->formErrorTextExchange($this->form, [
+        'canSustainLife' => [
+            "Value is required and can't be empty" => 'Please select either option A or option B',
+        ],
+    ]);
+    
     $form->setAttribute('class', 'form');
     $csrf           = $form->get('secret');
     $canSustainLife = $form->get('canSustainLife');

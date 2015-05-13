@@ -23,7 +23,7 @@
     /**
      * trust corp form
      */
-    $form       = $this->form;
+    $form = $this->formErrorTextExchange($this->form, []);
     $csrf       = $form->get('secret');
     $name       = $form->get('name');
     $companyNumber   = $form->get('number');
