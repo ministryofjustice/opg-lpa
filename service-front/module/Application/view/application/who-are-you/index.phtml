@@ -2,12 +2,14 @@
 use Zend\Form\Element;
 use Zend\Form\Element\Hidden;
 if(isset($this->form)) {
-    $form           = $this->form;
+
+    $form = $this->formErrorTextExchange($this->form, [
+        'cannot-be-blank' => 'Please choose one of the options below',
+    ]);
+    
     $csrf           = $form->get('secret');
     
     $form->setAttribute('class', 'form');
-    
-    $form = $this->formErrorTextExchange($form);
     
     $who            = $form->get('who');
     

@@ -131,8 +131,6 @@ class DashboardController extends AbstractAuthenticatedController
         //---
 
         /**
-         * This should be the only point at which we touch the V1Proxy module!
-         *
          * When removing v1, the whole if statement below can be deleted.
          *
          * #v1Code

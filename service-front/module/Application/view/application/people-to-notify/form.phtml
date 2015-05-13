@@ -23,7 +23,7 @@
     /**
      * people to notify form
      */
-    $form       = $this->form;
+    $form = $this->formErrorTextExchange($this->form, []);
     $csrf       = $form->get('secret');
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
