@@ -1,6 +1,30 @@
 <?php 
 $form = $this->form;
 $csrf = $form->get('secret');
+
+$correspondence = $form->get('correspondence');
+
+$contactByEmail = $correspondence->get('contactByEmail');
+$contactByPhone = $correspondence->get('contactByPhone');
+$contactByPost  = $correspondence->get('contactByPost');
+$contactInWelsh = $correspondence->get('contactInWelsh');
+
+$contactByPost->setOptions( ['label' => "Post", 'use_hidden_element' => true] );
+$contactByPost->setAttributes( ['id' => 'contactByPost'] );
+
+$contactByPhone->setOptions( ['label' => "Phone ".(($this->correspondent['contactPhone'])?'('.$this->correspondent['contactPhone'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add email address</a>'), 'use_hidden_element' => true] );
+$contactByPost->setAttributes( ['id' => 'contactByPhone'] );
+
+$contactByEmail->setOptions( ['label' => "Email ".(($this->correspondent['contactEmail'])?'('.$this->correspondent['contactEmail'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add phone number</a>'), 'use_hidden_element' => true] );
+$contactByPost->setAttributes( ['id' => 'contactByEmail'] );
+
+$contactInWelsh->setOptions( ['label' => "Welsh", 'use_hidden_element' => true] );
+$contactInWelsh->setAttributes( ['id' => 'contactInWelsh'] );
+
+$submit     = $form->get('submit');
+$submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+
+$formLabel  = $this->plugin('formLabel');
 $form->prepare();
 
 ?>
@@ -21,12 +45,13 @@ $form->prepare();
             
             <p><a href="/help/#topic-correspondence-address" class="js-guidance" data-journey-click="stageprompt.lpa:help:correspondence-address">Find out more about the correspondence address</a></p>
 
-    		<h3>Correspondence address</h3>
-    		
 		</div>
 
+		<h3>The Correspondent</h3>
+		
 		<div class="person-summary group">
-			<div class="person">
+    		
+		    <div class="person">
 				<h3><?= $this->correspondent['name'] ?></h3>
 				<p><?= $this->correspondent['address'] ?></p>
 			</div>
@@ -35,14 +60,67 @@ $form->prepare();
 				<li><a href="<?= $this->editRoute ?>" class="js-form-popup">Change this</a></li>
 			</ul>
 		</div>
-        
+		
+        <h3>How would the person above prefer to be contacted?</h3>
+		
         <?= $this->form()->openTag($form); ?>
+        
         <?= $this->formElement($csrf) ?>
         <?= $this->formElementErrors($csrf) ?>
         
+        <p class='form-element-errors'>
+            <?= $this->formElementErrors($correspondence) ?>
+        </p>
+        
+        <fieldset>
+            
+            <p>You can choose more than one.</p>
+            
+            <div class="option group">
+                
+                <?= $formLabel->openTag($contactByPost) . $this->formElement($contactByPost) . $contactByPost->getOption('label') . $formLabel->closeTag(); ?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($contactByPost) ?>
+                </p>
+            
+            </div>
+            
+            <div class="form_element">
+            
+                <?= $formLabel->openTag($contactByPhone) . $this->formElement($contactByPhone) . $contactByPhone->getOption('label') . $formLabel->closeTag(); ?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($contactByPhone) ?>
+                </p>
+                        
+            </div>
+            
+            <div class="form_element">
+            
+                <?= $formLabel->openTag($contactByEmail) . $this->formElement($contactByEmail) . $contactByEmail->getOption('label') . $formLabel->closeTag(); ?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($contactByEmail) ?>
+                </p>
+                        
+            </div>
+            
+            <div class="option group">
+            
+                <?= $formLabel->openTag($contactInWelsh) . $this->formElement($contactInWelsh) . $contactInWelsh->getOption('label') . $formLabel->closeTag(); ?>
+                
+                <p class='form-element-errors'>
+                    <?= $this->formElementErrors($contactInWelsh) ?>
+                </p>
+            
+            </div>
+        
+        </fieldset>
+        
         <div class="accordion-actions">
 			<p>
-                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                <?= $this->formElement($submit) ?>
             </p>
         </div>
         

@@ -35,8 +35,6 @@
     $postcode   = $form->get('address-postcode');
     $email      = $form->get('email-address');
     $phone      = $form->get('phone-number');
-    $contactByPost = $form->get('contactByPost');
-    $contactInWelsh = $form->get('contactInWelsh');
     
     $title->setOptions( ['label' => 'Title'] );
     $firstname->setOptions( ['label' => 'First names'] );
@@ -46,12 +44,8 @@
     $address2->setOptions( ['label' => 'Address line 2'] );
     $address3->setOptions( ['label' => 'Address line 3'] );
     $postcode->setOptions( ['label' => 'Postcode'] );
-    $email->setOptions( ['label' => "Email (optional)"] );
+    $email->setOptions( ['label' => "Email"] );
     $phone->setOptions( ['label' => "Daytime phone No."] );
-    $contactByPost->setOptions( ['label' => "I prefer to be contacted by post", 'use_hidden_element' => false] );
-    $contactByPost->setAttributes( ['id' => 'contactByPost'] );
-    $contactInWelsh->setOptions( ['label' => "I prefer to be contacted in Welsh", 'use_hidden_element' => false,] );
-    $contactInWelsh->setAttributes( ['id' => 'contactInWelsh'] );
     
     $submit     = $form->get('submit');
     $submit->setAttributes(['value'=>'Save and continue']);
@@ -218,26 +212,6 @@
         
         <p class='form-element-errors'>
             <?= $this->formElementErrors($phone) ?>
-        </p>
-    
-    </div>
-    
-    <div class="option group">
-        
-        <?= $formLabel->openTag($contactByPost) . $this->formElement($contactByPost) . $contactByPost->getOption('label') . $formLabel->closeTag(); ?>
-        
-        <p class='form-element-errors'>
-            <?= $this->formElementErrors($contactByPost) ?>
-        </p>
-    
-    </div>
-    
-    <div class="option group">
-    
-        <?= $formLabel->openTag($contactInWelsh) . $this->formElement($contactInWelsh) . $contactInWelsh->getOption('label') . $formLabel->closeTag(); ?>
-        
-        <p class='form-element-errors'>
-            <?= $this->formElementErrors($contactInWelsh) ?>
         </p>
     
     </div>
