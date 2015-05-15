@@ -1,5 +1,5 @@
 {
-    "name": "zendframework/skeleton-application",
+    "name": "ministryofjustice/opg-lpa-front",
     "description": "Skeleton Application for ZF2",
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
@@ -33,7 +33,7 @@
         "zendframework/zendframework": "2.4.*",
         "sendgrid/sendgrid": "2.2.*",
         "ministryofjustice/opg-lpa-api-client": "dev-develop",
-        "ministryofjustice/opg-lpa-datamodels": "dev-master",
+        "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
         "ministryofjustice/opg-lpa-logger": "dev-develop",
         "Netsensia/omnipay-worldpay-xml": "*",
         "michelf/php-markdown": "1.5.0"

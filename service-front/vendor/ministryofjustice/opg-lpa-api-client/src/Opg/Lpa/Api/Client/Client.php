@@ -534,7 +534,7 @@ class Client
     )
     {
         $response = $this->client()->post( self::PATH_AUTH . '/users/' . $this->getEmail() . '/put', [
-            'body' => ['new_email' => $newEmail],
+            'body' => ['new_email' => strtolower($newEmail) ],
             'headers' => ['Token' => $this->getToken()]
         ]);
         

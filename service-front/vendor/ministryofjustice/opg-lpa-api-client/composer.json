@@ -11,7 +11,7 @@
     "require": {
         "php": ">=5.4.0",
         "guzzlehttp/guzzle": "^5.1.0",
-        "ministryofjustice/opg-lpa-datamodels": "dev-master"
+        "ministryofjustice/opg-lpa-datamodels": "^1.0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.*",
@@ -24,6 +24,3 @@
         "psr-4": {"Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"}
     }
 }
-
-
-    
