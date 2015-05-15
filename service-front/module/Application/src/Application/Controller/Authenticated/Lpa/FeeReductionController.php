@@ -70,9 +70,15 @@ class FeeReductionController extends AbstractLpaController
                         break;
                 }
                 
-                // calculate payment amount and get a payment object
+                // calculate payment amount and set payment in LPA
                 Calculator::calculate($lpa);
                 
+                /**
+                 * If amount is 0 or still unknown (null), set date in payment to mark
+                 * complete of LPA process.
+                 * 
+                 * Otherwise, pending payment to be made, either online or offline in the following step.
+                 */ 
                 if(!$lpa->payment->amount) {
                     $lpa->payment->date = new \DateTime();
                 }
