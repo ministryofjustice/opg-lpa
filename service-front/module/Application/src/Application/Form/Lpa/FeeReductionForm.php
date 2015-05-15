@@ -4,20 +4,27 @@ namespace Application\Form\Lpa;
 class FeeReductionForm extends AbstractForm
 {
     protected $formElements = [
-            'applyForFeeReduction' => [
+            'reductionOptions' => [
                     'type'      => 'Zend\Form\Element\Radio',
                     'required'  => true,
                     'options'   => [
                             'value_options' => [
-                                    'yes' => [
-                                            'value' => 1,
+                                    'reducedFeeReceivesBenefits' => [
+                                            'value' => 'reducedFeeReceivesBenefits',
                                     ],
-                                    'no' => [
-                                            'value' => 0,
+                                    'reducedFeeUniversalCredit' => [
+                                            'value' => 'reducedFeeUniversalCredit',
+                                    ],
+                                    'reducedFeeLowIncome' =>[
+                                            'value' => 'reducedFeeLowIncome',
+                                    ],
+                                    'notApply' => [
+                                            'value' => 'notApply'
                                     ],
                             ],
                     ],
             ],
+            
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
             ],
