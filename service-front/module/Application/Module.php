@@ -25,17 +25,18 @@ class Module{
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-
+        
         // Register error handler for dispatch and render errors
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         
         register_shutdown_function(function () {
             $error = error_get_last();
+            
             if ($error['type'] === E_ERROR) {
                 // This is a fatal error, we have no exception and no nice view to render
                 // The fatal error will have been logged already prior to writing this message
-                echo 'An unknown server error has occurred.';
+                echo 'Asn unknown server error has occurred.';
             }
         });
 
@@ -249,23 +250,24 @@ class Module{
      */
     public function handleError(MvcEvent $e)
     {
+
         $exception = $e->getResult()->exception;
         
         if ($exception) {
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
             $logger->err($exception->getMessage());
+            
+            $viewModel = new ViewModel();
+            $viewModel->setTemplate('error/500');
+            
+            $e->getViewModel()->addChild($viewModel);
+            $e->stopPropagation();
+             
+            $e->getResponse()->setStatusCode(500);
+            
+            return $viewModel;
         }
-
-        $viewModel = new ViewModel();
-        $viewModel->setTemplate('error/500');
         
-        $e->getViewModel()->addChild($viewModel);
-        $e->stopPropagation();
-         
-        $e->getResponse()->setStatusCode(500);
-        
-        return $viewModel;
-
     }
     
 } // class
