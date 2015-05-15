@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "eb90e86815878441801eef4852f1c298",
+    "hash": "d385be8962629ecccd68fa45fc3ad2b3",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -653,7 +653,7 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "dev-develop",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
@@ -2385,8 +2385,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ministryofjustice/opg-lpa-api-client": 20,
-        "ministryofjustice/opg-lpa-logger": 20
+        "ministryofjustice/opg-lpa-api-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

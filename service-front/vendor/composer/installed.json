@@ -421,47 +421,6 @@
         ]
     },
     {
-        "name": "ministryofjustice/opg-lpa-logger",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-            "reference": "1a93da11f5dd9d607504a520bb2187fa9f335826"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/1a93da11f5dd9d607504a520bb2187fa9f335826",
-            "reference": "1a93da11f5dd9d607504a520bb2187fa9f335826",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.4.0",
-            "raven/raven": "0.11.0",
-            "zendframework/zend-log": "^2.3.7"
-        },
-        "require-dev": {
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-04-01 13:24:45",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "Common logger component for OPG LPA modules",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/develop",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
-        }
-    },
-    {
         "name": "michelf/php-markdown",
         "version": "1.5.0",
         "version_normalized": "1.5.0.0",
@@ -2456,6 +2415,47 @@
         "support": {
             "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
             "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
+        }
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-logger",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
+            "reference": "1a93da11f5dd9d607504a520bb2187fa9f335826"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/1a93da11f5dd9d607504a520bb2187fa9f335826",
+            "reference": "1a93da11f5dd9d607504a520bb2187fa9f335826",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0",
+            "raven/raven": "0.11.0",
+            "zendframework/zend-log": "^2.3.7"
+        },
+        "require-dev": {
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2015-04-01 13:24:45",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "Common logger component for OPG LPA modules",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/develop",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
         }
     }
 ]
