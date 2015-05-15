@@ -145,7 +145,6 @@ class CorrespondentController extends AbstractLpaController
         }
         else { // donor or attorney is correspondent
             $correspondentName = (string)$correspondent->name;
-            vardump($correspondent->email instanceof EmailAddress);
             $form->bind(['correspondence'=>[
                     'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
             ]]);
