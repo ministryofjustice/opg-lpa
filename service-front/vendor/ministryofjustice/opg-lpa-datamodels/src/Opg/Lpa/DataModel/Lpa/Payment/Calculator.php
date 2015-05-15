@@ -17,12 +17,12 @@ class Calculator
     {
         if(!($lpa->payment instanceof Payment)) return null;
         
-        if($lpa->payment->reducedFeeUniversalCredit) {
-            $amount = null;
+        if(($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) {
+            $amount = (float) 0;
         }
         else {
-            if(($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) {
-                $amount = (float) 0;
+            if($lpa->payment->reducedFeeUniversalCredit) {
+                $amount = null;
             }
             elseif($lpa->payment->reducedFeeLowIncome) {
                 $amount = (float) self::STANDARD_FEE/2;

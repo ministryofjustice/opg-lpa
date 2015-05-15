@@ -4,31 +4,53 @@
     $form->setAttribute('class', 'form');
     $csrf        = $form->get('secret');
     
-    $applyForFeeReduction       = $form->get('applyForFeeReduction');
-    $applyForFeeReductionValueOptions = $applyForFeeReduction->getOptions()['value_options'];
-    $applyForFeeReductionValueOptions['yes']['label'] = "Yes";
-    $applyForFeeReductionValueOptions['no']['label'] = "No";
+    $reductionOptions       = $form->get('reductionOptions');
+    $reductionOptions->setLabelOptions(['disable_html_escape' => true]);
+    $reductionOptionsValueOptions = $reductionOptions->getOptions()['value_options'];
+    $reductionOptionsValueOptions['reducedFeeReceivesBenefits']['label'] = "The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000";
+    $reductionOptionsValueOptions['reducedFeeUniversalCredit']['label'] = "The donor receives Universal Credit";
+    $reductionOptionsValueOptions['reducedFeeLowIncome']['label'] = "The donor currently has an income of less than £12,000 a year before tax";
+    $reductionOptionsValueOptions['notApply']['label'] = "I'm not applying for a reduced fee";
     
-    $applyForFeeReductionValueOptions['yes'] += [
+    $reductionOptionsValueOptions['reducedFeeReceivesBenefits'] += [
             'label_attributes' => [
-                    'for' => 'yes'
+                    'for' => 'reducedFeeReceivesBenefits',
             ],
             'attributes' => [
-                    'id' => 'yes'
+                    'id' => 'reducedFeeReceivesBenefits'
             ],
     ];
-    $applyForFeeReductionValueOptions['no'] += [
+    $reductionOptionsValueOptions['reducedFeeUniversalCredit'] += [
             'label_attributes' => [
-                    'for' => 'no'
+                    'for' => 'reducedFeeUniversalCredit',
             ],
             'attributes' => [
-                    'id' => 'no'
+                    'id' => 'reducedFeeUniversalCredit'
             ],
     ];
-    $applyForFeeReduction->setOptions(['value_options'=>$applyForFeeReductionValueOptions]);
+    $reductionOptionsValueOptions['reducedFeeLowIncome'] += [
+            'label_attributes' => [
+                    'for' => 'reducedFeeLowIncome',
+            ],
+            'attributes' => [
+                    'id' => 'reducedFeeLowIncome'
+            ],
+    ];
+    $reductionOptionsValueOptions['notApply'] += [
+            'label_attributes' => [
+                    'for' => 'notApply',
+                    // @todo temporary inline style. use a class instead.
+                    'style' => 'margin-top:30px;font-weight:bold;',
+            ],
+            'attributes' => [
+                    'id' => 'notApply',
+            ],
+    ];
+    
+    $reductionOptions->setOptions(['value_options'=>$reductionOptionsValueOptions]);
     
     $submit      = $form->get('submit');
-    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'L do not want to apply reduction']);
     
     $formLabel   = $this->plugin('formLabel');
     $form->prepare();
@@ -55,14 +77,12 @@
             
             <div class="emphasised option group">
             
-                <h3>Do you want to apply to pay a reduced fee?</h3>
+                <?= $formLabel->openTag($reductionOptions) . $reductionOptions->getOption('label') . $formLabel->closeTag(); ?>
                 
-                <?= $formLabel->openTag($applyForFeeReduction) . $applyForFeeReduction->getOption('label') . $formLabel->closeTag(); ?>
-                
-                <?= $this->formElement($applyForFeeReduction)?>
+                <?= $this->formElement($reductionOptions)?>
                 
                 <p class='form-element-errors'>
-                    <?= $this->formElementErrors($applyForFeeReduction) ?>
+                    <?= $this->formElementErrors($reductionOptions) ?>
                 </p>
             </div>
             
