@@ -54,8 +54,6 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/repeat-application'                        => 'isRepeatApplicationAccessible',
             'lpa/fee-reduction'                             => 'isFeeReductionAccessible',
-            'lpa/benefits'                                  => 'isBenefitsAccessible',
-            'lpa/income-and-universal-credit'               => 'isIncomeAndUniversalCreditAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
@@ -85,8 +83,6 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'returnToWhoAreYou',
             'lpa/repeat-application'                        => 'returnToRepeatApplication',
             'lpa/fee-reduction'                             => 'returnToFeeReduction',
-            'lpa/benefits'                                  => 'returnToBenefits',
-            'lpa/income-and-universal-credit'               => 'returnToIncomeAndUniversalCredit',
             'lpa/payment'                                   => 'returnToPayment',
             'lpa/view-docs'                                 => 'returnToViewDocs',
     );
@@ -128,9 +124,7 @@ class FormFlowChecker extends StateChecker
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
-            'lpa/fee-reduction'                             => ['lpa/benefits', 'lpa/payment'],
-            'lpa/benefits'                                  => ['lpa/income-and-universal-credit', 'lpa/complete'],
-            'lpa/income-and-universal-credit'               => ['lpa/payment', 'lpa/complete'],
+            'lpa/fee-reduction'                             => 'lpa/payment',
             'lpa/payment'                                   => 'lpa/complete',
             
     );
@@ -658,51 +652,11 @@ class FormFlowChecker extends StateChecker
             return 'lpa/repeat-application';
         }
     }
-
-    private function isBenefitsAccessible()
-    {
-        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata) && 
-                ($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === true)) {
-            return true;
-        }
-        else {
-            return 'lpa/fee-reduction';
-        }
-    }
-
-    private function isIncomeAndUniversalCreditAccessible()
-    {
-        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata) && 
-                ($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === true) &&
-                ($this->lpa->payment instanceof Payment) && 
-                ($this->lpa->payment->reducedFeeReceivesBenefits !== null) && 
-                ($this->lpa->payment->reducedFeeAwardedDamages !== true)) {
-            return true;
-        }
-        else {
-            return 'lpa/benefits';
-        }
-    }
     
     private function isPaymentAccessible()
     {
-        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata)) {
-            if($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
-                return true;
-            }
-            else {
-                if($this->lpa->payment instanceof Payment) {
-                    if(($this->lpa->payment->reducedFeeUniversalCredit === false) && ($this->lpa->payment->reducedFeeLowIncome !== null)) {
-                        return true;
-                    }
-                    else {
-                        return 'lpa/income-and-universal-credit';
-                    }
-                }
-                else {
-                    return 'lpa/benefits';
-                }
-            }
+        if($this->lpa->payment instanceof Payment) {
+            return true;
         }
         else {
             return 'lpa/fee-reduction';
@@ -988,7 +942,7 @@ class FormFlowChecker extends StateChecker
     
     private function returnToFeeReduction()
     {
-        if($this->hasFeeDetermined()) {
+        if($this->lpa->payment instanceof Payment) {
             return 'lpa/fee-reduction';
         }
         else {
@@ -996,33 +950,13 @@ class FormFlowChecker extends StateChecker
         }
     }
     
-    private function returnToBenefits()
-    {
-        if($this->hasFeeDetermined()) {
-            return 'lpa/benefits';
-        }
-        else {
-            return 'lpa/fee-reduction';
-        }
-    }
-    
-    private function returnToIncomeAndUniversalCredit()
-    {
-        if($this->hasFeeDetermined()) {
-            return 'lpa/income-and-universal-credit';
-        }
-        else {
-            return 'lpa/benefits';
-        }
-    }
-    
     private function returnToPayment()
     {
-        if($this->hasFeeDetermined()) {
+        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
             return 'lpa/payment';
         }
         else {
-            return 'lpa/income-and-universal-credit';
+            return 'lpa/fee-reduction';
         }
     }
     
