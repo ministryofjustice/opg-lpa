@@ -19,7 +19,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Application\Form\Lpa\AbstractActorForm;
-use Application\Form\Lpa\AbstractForm;
 
 class CorrespondentController extends AbstractLpaController
 {
@@ -146,9 +145,10 @@ class CorrespondentController extends AbstractLpaController
         }
         else { // donor or attorney is correspondent
             $correspondentName = (string)$correspondent->name;
-            $form->bind([
+            vardump($correspondent->email instanceof EmailAddress);
+            $form->bind(['correspondence'=>[
                     'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
-            ]);
+            ]]);
         }
         
         return new ViewModel([
