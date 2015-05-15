@@ -24,7 +24,7 @@
         "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
         "colinmollenhour/credis": "^1.2",
-        "ministryofjustice/opg-lpa-datamodels": "dev-master",
+        "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
         "zf-commons/zfc-rbac": "~2.4"
     },
     "require-dev": {
