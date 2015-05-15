@@ -50,7 +50,7 @@ class CorrespondenceForm extends AbstractActorForm
         $error = ['correspondence' => []];
         
         if($this->data['correspondence']['contactByEmail'] == "1") {
-            if(!($this->lpa->document->correspondent->email instanceof EmailAddress)) {
+            if(($this->lpa->document->correspondent instanceof Correspondence) && !($this->lpa->document->correspondent->email instanceof EmailAddress)) {
                 $error['correspondence']['contactByEmail'] = ["Email address is not provided"];
             }
         }
