@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9999a9a7c8e0097d73d31819b8fa1fca",
+    "hash": "4a7aaa0b4394eb101747118b11ae5d2a",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -692,7 +692,7 @@
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Netsensia/omnipay-worldpay-xml.git",

@@ -35,7 +35,7 @@
         "ministryofjustice/opg-lpa-api-client": "^1.0.1",
         "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
         "ministryofjustice/opg-lpa-logger": "^1.0.1",
-        "Netsensia/omnipay-worldpay-xml": "*",
+        "Netsensia/omnipay-worldpay-xml": "^1.0.1",
         "michelf/php-markdown": "1.5.0"
     },
     "require-dev": {

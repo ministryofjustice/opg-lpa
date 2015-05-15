@@ -951,64 +951,6 @@
         "abandoned": "guzzle/guzzle"
     },
     {
-        "name": "netsensia/omnipay-worldpay-xml",
-        "version": "v1.0.1",
-        "version_normalized": "1.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Netsensia/omnipay-worldpay-xml.git",
-            "reference": "ac6627015069b681311f1532a3e95e394e7c1113"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Netsensia/omnipay-worldpay-xml/zipball/ac6627015069b681311f1532a3e95e394e7c1113",
-            "reference": "ac6627015069b681311f1532a3e95e394e7c1113",
-            "shasum": ""
-        },
-        "require": {
-            "guzzle/plugin-cookie": "~3.9",
-            "omnipay/common": "~2.3"
-        },
-        "require-dev": {
-            "omnipay/tests": "~2.0"
-        },
-        "time": "2015-01-29 11:32:17",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Omnipay\\WorldPayXML\\": "src/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Dave Nash",
-                "email": "dave.nash@teaandcode.com"
-            }
-        ],
-        "description": "WorldPay XML driver for the Omnipay payment processing library",
-        "homepage": "https://github.com/teaandcode/omnipay-worldpay-xml",
-        "keywords": [
-            "gateway",
-            "merchant",
-            "omnipay",
-            "pay",
-            "payment",
-            "worldpay"
-        ],
-        "support": {
-            "source": "https://github.com/Netsensia/omnipay-worldpay-xml/tree/v1.0.1"
-        }
-    },
-    {
         "name": "sebastian/version",
         "version": "1.0.5",
         "version_normalized": "1.0.5.0",
@@ -2456,6 +2398,64 @@
         "support": {
             "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/develop",
             "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
+        }
+    },
+    {
+        "name": "netsensia/omnipay-worldpay-xml",
+        "version": "v1.0.2",
+        "version_normalized": "1.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Netsensia/omnipay-worldpay-xml.git",
+            "reference": "ac6627015069b681311f1532a3e95e394e7c1113"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Netsensia/omnipay-worldpay-xml/zipball/ac6627015069b681311f1532a3e95e394e7c1113",
+            "reference": "ac6627015069b681311f1532a3e95e394e7c1113",
+            "shasum": ""
+        },
+        "require": {
+            "guzzle/plugin-cookie": "~3.9",
+            "omnipay/common": "~2.3"
+        },
+        "require-dev": {
+            "omnipay/tests": "~2.0"
+        },
+        "time": "2015-01-29 11:32:17",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Omnipay\\WorldPayXML\\": "src/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Dave Nash",
+                "email": "dave.nash@teaandcode.com"
+            }
+        ],
+        "description": "WorldPay XML driver for the Omnipay payment processing library",
+        "homepage": "https://github.com/teaandcode/omnipay-worldpay-xml",
+        "keywords": [
+            "gateway",
+            "merchant",
+            "omnipay",
+            "pay",
+            "payment",
+            "worldpay"
+        ],
+        "support": {
+            "source": "https://github.com/Netsensia/omnipay-worldpay-xml/tree/v1.0.1"
         }
     }
 ]
