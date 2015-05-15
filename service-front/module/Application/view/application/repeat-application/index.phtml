@@ -27,7 +27,7 @@
     $isRepeatApplication->setOptions(['value_options'=>$isRepeatApplicationValueOptions]);
     
     $repeatCaseNumber           = $form->get('repeatCaseNumber');
-    $repeatCaseNumber->setOptions(['label' => "If you are making a repeat application, please enter your case number which was given by the OPG:"]);
+    $repeatCaseNumber->setOptions(['label' => "Case number"]);
     
     $submit      = $form->get('submit');
     $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
@@ -70,7 +70,8 @@
             <div class="emphasised option group">
                 <?= $formLabel->openTag($repeatCaseNumber) . $repeatCaseNumber->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($repeatCaseNumber)?>
-                
+                <p>Your case number is in the letter that came with your returned LPA application.</p>
+                <p>By click on the Save and continue button, you confirm that the Office of the Public Guardian has told you that you can apply to make a repeat application for £55 within 3 months.</p>
                 <p class='form-element-errors'>
                     <?= $this->formElementErrors($repeatCaseNumber) ?>
                 </p>

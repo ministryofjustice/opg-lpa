@@ -1,7 +1,7 @@
 <?php
-    $$form = $this->formErrorTextExchange($this->form, []);
+    $form = $this->formErrorTextExchange($this->form, []);
     
-    $csrf       = $form->get('secret');
+    $csrf = $form->get('secret');
     $form->setAttributes(['id'=>'decisions-form', 'class' => 'form']);
     
     $how        = $form->get('how');

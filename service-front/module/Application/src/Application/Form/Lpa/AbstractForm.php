@@ -131,14 +131,13 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         }
         
         // do validation through Zend Validator first 
-        $this->isValid = $result = (bool) $filter->isValid();
+        $result = (bool) $filter->isValid();
+        
+        // do validation though model validators.
+        $modelValidationResult = $this->validateByModel();
         
         // if Zend validation was successful, do validation through model.
-        if($result) {
-            // validate data though model validators.
-            $modelValidationResult = $this->validateByModel();
-            $this->isValid = $result = (bool) ($result & $modelValidationResult['isValid']);
-        }
+        $this->isValid = $result = (bool) ($result & $modelValidationResult['isValid']);
         
         $this->hasValidated = true;
         

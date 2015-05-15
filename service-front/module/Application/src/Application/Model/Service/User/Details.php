@@ -69,7 +69,7 @@ class Details implements ServiceLocatorAwareInterface {
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthEmail( $details->getDataForModel()['email'] );
+        $result = $client->updateAuthEmail( strtolower($details->getDataForModel()['email']) );
 
         //---
 

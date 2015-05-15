@@ -16,6 +16,7 @@ class Module {
         return [
             'invokables' => [
                 'ProxyAboutYou' => 'V1Proxy\Model\AboutYou',
+                'ChangeEmailAddress' => 'V1Proxy\Model\ChangeEmailAddress',
                 'ProxyDashboard' => 'V1Proxy\Model\Dashboard',
             ],
             'factories' => [
