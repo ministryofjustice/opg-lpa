@@ -52,7 +52,7 @@ class Register implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Activate your lasting power of attorney registration' );
+        $message->setSubject( 'Activate your lasting power of attorney account' );
 
         //---
 
