@@ -30,67 +30,66 @@ class PaymentController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
         
+        $lpa = $this->getLpa();
+        
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
             // set data for validation
             $form->setData($postData);
             
-            if($postData['method'] == Payment::PAYMENT_TYPE_CHEQUE) {
-                $form->setValidationGroup('method');
-            }
-            
             if($form->isValid()) {
                 
-                $lpa = $this->getLpa();
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-                
-                $lpa->payment->method = $form->getData()['method'];
-                
-                if($form->getData()['method'] == Payment::PAYMENT_TYPE_CHEQUE) {
-                    $lpa->payment->date = new \DateTime();
-                }
+                $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
                 
                 // persist data
                 if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
                     throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpa->id);
                 }
                 
-                if($form->getData()['method'] == Payment::PAYMENT_TYPE_CARD) {
+                // set paymentEmail in session container.
+                $container = new Container('paymentEmail');
+                $container->email = $form->getData()['email'];
                 
-                    // set paymentEmail in session container.
-                    $container = new Container('paymentEmail');
-                    $container->email = $form->getData()['email'];
-                    
-                    // init online payment
-                    $paymentService = $this->getServiceLocator()->get('Payment');
-                    
-                    $options = $paymentService->getOptions($lpa);
-                    
-                    $response = 
-                        $paymentService
-                             ->getGateway()
-                             ->purchase($options)
-                             ->send();
-                    
-                    $paymentGatewayBaseUrl = $response->getData()->reference;
-                    
-                    $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
-                    
-                    $this->redirect()->toUrl($redirectUrl);
-                    
-                    return $this->getResponse();
-                }
-                else {
-                    // send email
-                    $communicationService = $this->getServiceLocator()->get('Communication');
-                    $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
-                    
-                    // to complete page
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
-                }
+                // init online payment
+                $paymentService = $this->getServiceLocator()->get('Payment');
                 
+                $options = $paymentService->getOptions($lpa);
+                
+                $response = 
+                    $paymentService
+                         ->getGateway()
+                         ->purchase($options)
+                         ->send();
+                
+                $paymentGatewayBaseUrl = $response->getData()->reference;
+                
+                $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
+                
+                $this->redirect()->toUrl($redirectUrl);
+                
+                return $this->getResponse();
+                
+            } // if($form->isValid())
+        }
+        elseif($this->params()->fromQuery('pay-by-cheque')) {
+            
+            $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
+                
+            $lpa->payment->date = new \DateTime();
+            
+            if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
             }
+            
+            // send email
+            $communicationService = $this->getServiceLocator()->get('Communication');
+            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+            
+            // to complete page
+            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
         }
         else {
             $data = [];
@@ -107,7 +106,8 @@ class PaymentController extends AbstractLpaController
         }
         
         return new ViewModel([
-                'form'=>$form, 
+                'form'=>$form,
+                'payByChequeRoute' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
         ]);
         
     }

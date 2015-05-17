@@ -13,10 +13,10 @@ $contactInWelsh = $correspondence->get('contactInWelsh');
 $contactByPost->setOptions( ['label' => "Post", 'use_hidden_element' => true] );
 $contactByPost->setAttributes( ['id' => 'contactByPost'] );
 
-$contactByPhone->setOptions( ['label' => "Phone ".(($this->correspondent['contactPhone'])?'('.$this->correspondent['contactPhone'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add email address</a>'), 'use_hidden_element' => true] );
+$contactByPhone->setOptions( ['label' => "Phone ".(($this->correspondent['contactPhone'])?'('.$this->correspondent['contactPhone'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add phone number</a>'), 'use_hidden_element' => true] );
 $contactByPost->setAttributes( ['id' => 'contactByPhone'] );
 
-$contactByEmail->setOptions( ['label' => "Email ".(($this->correspondent['contactEmail'])?'('.$this->correspondent['contactEmail'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add phone number</a>'), 'use_hidden_element' => true] );
+$contactByEmail->setOptions( ['label' => "Email ".(($this->correspondent['contactEmail'])?'('.$this->correspondent['contactEmail'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add email address</a>'), 'use_hidden_element' => true] );
 $contactByPost->setAttributes( ['id' => 'contactByEmail'] );
 
 $contactInWelsh->setOptions( ['label' => "Welsh", 'use_hidden_element' => true] );

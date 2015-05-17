@@ -9,29 +9,6 @@
     $email->setOptions(['label' => "Email address"]);
     $email->setAttributes(['id' => 'email']);
     
-    $paymentMethod     = $form->get('method');
-    $paymentMethodValueOptions = $paymentMethod->getOptions()['value_options'];
-    $paymentMethodValueOptions['card']['label'] = "I want to pay by card";
-    $paymentMethodValueOptions['cheque']['label'] = "I want to pay by cheque";
-    
-    $paymentMethodValueOptions['card'] += [
-            'label_attributes' => [
-                    'for' => 'card'
-            ],
-            'attributes' => [
-                    'id' => 'card'
-            ],
-    ];
-    $paymentMethodValueOptions['cheque'] += [
-            'label_attributes' => [
-                    'for' => 'cheque'
-            ],
-            'attributes' => [
-                    'id' => 'cheque'
-            ],
-    ];
-    $paymentMethod->setOptions(['value_options'=>$paymentMethodValueOptions]);
-    
     $submit     = $form->get('submit');
     $submit->setAttributes(['class'=>'button', 'id'=>'form-submit', 'value'=>'Proceed to payment']);
     
@@ -61,15 +38,6 @@
             
         </div>
         
-        <div class="emphasised option group">
-            <?= $formLabel->openTag($paymentMethod) . $paymentMethod->getOption('label') . $formLabel->closeTag(); ?>
-            <?= $this->formElement($paymentMethod)?>
-            
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($paymentMethod) ?>
-            </p>
-        </div>
-        
         <div id="contact-email">
             <p>Please enter a contact email for correspondence regarding this payment.</p>
             <div class="group">
@@ -84,6 +52,8 @@
         </div>
         
     <?= $this->form()->closeTag(); ?>
+    
+    <p><a href='<?= $this->payByChequeRoute ?>'>I want to pay by cheque</a></p>
     
     </div>
     

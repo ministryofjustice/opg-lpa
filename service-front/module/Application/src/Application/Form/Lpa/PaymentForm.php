@@ -2,28 +2,16 @@
 namespace Application\Form\Lpa;
 
 use Zend\Validator\EmailAddress;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
 class PaymentForm extends AbstractForm
 {
     protected $formElements = [
-            'method' => [
-                    'type'      => 'Zend\Form\Element\Radio',
-                    'required'  => true,
-                    'options'   => [
-                            'value_options' => [
-                                    'cheque' => [
-                                            'value' => 'cheque',
-                                    ],
-                                    'card' => [
-                                            'value' => 'card',
-                                    ],
-                            ],
-                    ],
-            ],
             'email' => [
                     'required' => true,
                     'type' => 'Email',
+                    'validators' => array(
+                            '\Zend\Form\Element\Email',
+                    ),
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
@@ -47,18 +35,6 @@ class PaymentForm extends AbstractForm
     */
     public function validateByModel()
     {
-        $payment = new Payment(['method'=>$this->data['method']]);
-        
-        $validation = $payment->validate(['method']);
-        
-        if(count($validation) == 0) {
-            return ['isValid'=>true, 'messages' => []];
-        }
-        else {
-            return [
-                    'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
-            ];
-        }
+        return ['isValid'=>true, 'messages' => []];
     }
 }

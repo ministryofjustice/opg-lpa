@@ -40,8 +40,6 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/who-are-you'                   => 'whoAreYou',
             'lpa/repeat-application'            => 'repeatApplication',
             'lpa/fee-reduction'                 => 'feeReduction',
-            'lpa/benefits'                      => 'benefits',
-            'lpa/income-and-universal-credit'   => 'incomeAndUniversalCredit',
             'lpa/payment'                       => 'payment',
             'lpa/payment/return/failure'        => null,
             'lpa/payment/return/cancel'         => null,
@@ -215,61 +213,22 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function feeReduction()
     {
-        if(!array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata)) return;
+        if(!($this->lpa->payment instanceof Payment)) return;
         
-        if($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === true) {
-            return "I want to apply to reduced fee";
+        if(($this->lpa->payment->reducedFeeReceivesBenefits == null)
+                && ($this->lpa->payment->reducedFeeAwardedDamages == null)
+                && ($this->lpa->payment->reducedFeeUniversalCredit == null)
+                && ($this->lpa->payment->reducedFeeLowIncome == null)) {
+            return "I am not applying for reduced fee";
         }
-        elseif($this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
-            return "I do not want to apply for reduced fee";
-        }
-    }
-    
-    protected function benefits()
-    {
-        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata) &&
-                $this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
-            return null;
-        }
-        
-        if(!($this->lpa->payment instanceof Payment)) return null;
-        
-        if($this->lpa->payment->reducedFeeReceivesBenefits === true) {
-            if($this->lpa->payment->reducedFeeAwardedDamages  === true) {
-                return "The donor qualifies fee exemption";
-            }
-            elseif($this->lpa->payment->reducedFeeAwardedDamages  === false)  {
-                return "Donor receives benefits and also has awarded over £16,000 personal injury damages";
-            }
-        }
-        elseif($this->lpa->payment->reducedFeeReceivesBenefits === false) {
-            return "Donor does not receive benefits";
-        }
-    }
-    
-    protected function incomeAndUniversalCredit()
-    {
-        if(array_key_exists(Metadata::APPLY_FOR_FEE_REDUCTION, $this->lpa->metadata) &&
-                $this->lpa->metadata[Metadata::APPLY_FOR_FEE_REDUCTION] === false) {
-            return null;
-        }
-        
-        if(!($this->lpa->payment instanceof Payment)) return null;
-        
-        if($this->lpa->payment->reducedFeeUniversalCredit === true) {
-            return "The donor receives Universal Credit";
-        }
-        elseif($this->lpa->payment->reducedFeeLowIncome === true) {
-            return "Donor's gross annual income is less than £12,000";
-        }
-        elseif($this->lpa->payment->reducedFeeLowIncome === false) {
-            return "Donor's gross annual income is over £12,000";
+        else {
+            return "I am applying for reduced fee";
         }
     }
     
     protected function payment()
     {
-        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->amount>0)) {
+        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
             return 'Application fee: £'.$this->lpa->payment->amount. ' (Payment method: '.$this->lpa->payment->method.')';
         }
     }

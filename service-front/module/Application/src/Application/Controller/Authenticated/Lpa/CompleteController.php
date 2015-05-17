@@ -11,7 +11,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
@@ -62,7 +61,7 @@ class CompleteController extends AbstractLpaController
                 'correspondentName'  => (($lpa->document->correspondent->name instanceof Name)?$lpa->document->correspondent->name:$lpa->document->correspondent->company),
                 'paymentAmount'      => $lpa->payment->amount,
                 'paymentReferenceNo' => $lpa->payment->reference,
-                'hasRemission'       => ($lpa->payment->amount != Calculator::STANDARD_FEE),
+                'hasRemission'       => ($this->getFlowChecker()->isEligibleForFeeReduction()),
         ];
         
         if(count($lpa->document->peopleToNotify) > 0) {
@@ -70,8 +69,7 @@ class CompleteController extends AbstractLpaController
             $viewParams['peopleToNotify'] = $lpa->document->peopleToNotify;
         }
         
-        $payment = Calculator::calculate($lpa);
-        if($payment->amount != Calculator::STANDARD_FEE) {
+        if($this->getFlowChecker()->isEligibleForFeeReduction()) {
             $viewParams['lpa120Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lpa120']);
         }
         
