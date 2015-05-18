@@ -36,7 +36,7 @@ class Module{
             if ($error['type'] === E_ERROR) {
                 // This is a fatal error, we have no exception and no nice view to render
                 // The fatal error will have been logged already prior to writing this message
-                echo 'Asn unknown server error has occurred.';
+                echo 'An unknown server error has occurred.';
             }
         });
 
