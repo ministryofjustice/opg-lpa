@@ -51,7 +51,7 @@
 
     <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
         <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
-            <h1 id="error-heading">There was a problem submitting the form</h1>
+            <h1 id="error-heading">There was a problem creating your account</h1>
             <? if (isset($this->error) ) {
                 switch($this->error){
                     case 'address-already-registered':
