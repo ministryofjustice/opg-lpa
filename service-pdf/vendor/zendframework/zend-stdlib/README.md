@@ -1,15 +1,15 @@
-Stdlib Component from ZF2
-=========================
+# zend-stdlib
 
-This is the Stdlib component for ZF2.
+`Zend\Stdlib` is a set of components that implements general purpose utility
+class for different scopes like:
 
-- File issues at https://github.com/zendframework/zf2/issues
-- Create pull requests against https://github.com/zendframework/zf2
-- Documentation is at http://framework.zend.com/docs
+- array utilities functions;
+- hydrators;
+- json serialazible interfaces;
+- general messaging systems;
+- strin wrappers;
+- etc
 
-LICENSE
--------
 
-The files in this archive are released under the [Zend Framework
-license](http://framework.zend.com/license), which is a 3-clause BSD license.
-
+- File issues at https://github.com/zendframework/zend-stdlib/issues
+- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-stdlib

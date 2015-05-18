@@ -7,10 +7,10 @@
         "log",
         "logging"
     ],
-    "homepage": "https://github.com/zendframework/zf2",
+    "homepage": "https://github.com/zendframework/zend-log",
     "autoload": {
         "psr-4": {
-            "Zend\\Log\\": ""
+            "Zend\\Log\\": "src/"
         }
     },
     "require": {
@@ -23,7 +23,10 @@
         "zendframework/zend-db": "self.version",
         "zendframework/zend-escaper": "self.version",
         "zendframework/zend-mail": "self.version",
-        "zendframework/zend-validator": "self.version"
+        "zendframework/zend-validator": "self.version",
+        "fabpot/php-cs-fixer": "1.7.*",
+        "satooshi/php-coveralls": "dev-master",
+        "phpunit/PHPUnit": "~4.0"
     },
     "suggest": {
         "ext-mongo": "*",
@@ -32,12 +35,16 @@
         "zendframework/zend-escaper": "Zend\\Escaper component, for use in the XML formatter",
         "zendframework/zend-mail": "Zend\\Mail component",
         "zendframework/zend-validator": "Zend\\Validator component"
-
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.3-dev",
-            "dev-develop": "2.4-dev"
+            "dev-master": "2.4-dev",
+            "dev-develop": "2.5-dev"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZendTest\\Log\\": "test/"
         }
     }
 }

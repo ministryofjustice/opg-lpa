@@ -1,15 +1,9 @@
-ServiceManager Component from ZF2
-=================================
+# zend-servicemanager
 
-This is the ServiceManager component for ZF2.
+The Service Locator design pattern is implemented by the `Zend\ServiceManager`
+component. The Service Locator is a service/object locator, tasked with
+retrieving other objects.
 
-- File issues at https://github.com/zendframework/zf2/issues
-- Create pull requests against https://github.com/zendframework/zf2
-- Documentation is at http://framework.zend.com/docs
 
-LICENSE
--------
-
-The files in this archive are released under the [Zend Framework
-license](http://framework.zend.com/license), which is a 3-clause BSD license.
-
+- File issues at https://github.com/zendframework/zend-servicemanager/issues
+- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-servicemanager

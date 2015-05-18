@@ -6,10 +6,10 @@
         "zf2",
         "stdlib"
     ],
-    "homepage": "https://github.com/zendframework/zf2",
+    "homepage": "https://github.com/zendframework/zend-stdlib",
     "autoload": {
         "psr-4": {
-            "Zend\\Stdlib\\": ""
+            "Zend\\Stdlib\\": "src/"
         }
     },
     "require": {
@@ -19,7 +19,10 @@
         "zendframework/zend-eventmanager": "self.version",
         "zendframework/zend-serializer": "self.version",
         "zendframework/zend-servicemanager": "self.version",
-        "zendframework/zend-filter": "self.version"
+        "zendframework/zend-filter": "self.version",
+        "fabpot/php-cs-fixer": "1.7.*",
+        "satooshi/php-coveralls": "dev-master",
+        "phpunit/PHPUnit": "~4.0"
     },
     "suggest": {
         "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
@@ -29,8 +32,13 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.3-dev",
-            "dev-develop": "2.4-dev"
+            "dev-master": "2.4-dev",
+            "dev-develop": "2.5-dev"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZendTest\\Stdlib\\": "test/"
         }
     }
 }

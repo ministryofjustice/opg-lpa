@@ -1,15 +1,9 @@
-Log Component from ZF2
-======================
+# zend-log
 
-This is the Log component for ZF2.
+`Zend\Log` is a component for general purpose logging. It supports multiple log
+backends, formatting messages sent to the log, and filtering messages from being
+logged.
 
-- File issues at https://github.com/zendframework/zf2/issues
-- Create pull requests against https://github.com/zendframework/zf2
-- Documentation is at http://framework.zend.com/docs
 
-LICENSE
--------
-
-The files in this archive are released under the [Zend Framework
-license](http://framework.zend.com/license), which is a 3-clause BSD license.
-
+- File issues at https://github.com/zendframework/zend-log/issues
+- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-log

@@ -1,15 +1,21 @@
-Crypt Component from ZF2
-========================
+# zend-crypt
 
-This is the Crypt component for ZF2.
+`Zend\Crypt` provides support of some cryptographic tools.
+The available features are:
 
-- File issues at https://github.com/zendframework/zf2/issues
-- Create pull requests against https://github.com/zendframework/zf2
-- Documentation is at http://framework.zend.com/docs
+- encrypt-then-authenticate using symmetric ciphers (the authentication step
+  is provided using HMAC);
+- encrypt/decrypt using symmetric and public key algorithm (e.g. RSA algorithm);
+- generate digital sign using public key algorithm (e.g. RSA algorithm);
+- key exchange using the Diffie-Hellman method;
+- key derivation function (e.g. using PBKDF2 algorithm);
+- secure password hash (e.g. using Bcrypt algorithm);
+- generate Hash values;
+- generate HMAC values;
 
-LICENSE
--------
+The main scope of this component is to offer an easy and secure way to protect
+and authenticate sensitive data in PHP.
 
-The files in this archive are released under the [Zend Framework
-license](http://framework.zend.com/license), which is a 3-clause BSD license.
 
+- File issues at https://github.com/zendframework/zend-crypt/issues
+- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-crypt
