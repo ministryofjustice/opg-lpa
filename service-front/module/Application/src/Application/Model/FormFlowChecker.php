@@ -150,7 +150,7 @@ class FormFlowChecker extends StateChecker
                ($currentRouteName != 'lpa/date-check') && 
                 ($currentRouteName != 'lpa/download')
             ) {
-                return 'lpa/view-docs';
+//                 return 'lpa/view-docs';
             }
         }
         
@@ -569,28 +569,10 @@ class FormFlowChecker extends StateChecker
         }
     }
     
+    // accessibility is checked in controller, and will not be redirected when not available.
     private function isDownloadAccessible($pdfType)
     {
-        if(!in_array($pdfType, ['lp1', 'lp3', 'lpa120'])) {
-            return false;
-        }
-        
-        if($pdfType == 'lp1') {
-            if($this->isCreatedAccessible() === true) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            if($this->isCompleteAccessible() === true) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+        return true;
     }
     
     private function isApplicantAccessible()

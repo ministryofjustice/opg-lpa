@@ -10,12 +10,22 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use Zend\View\Model\ViewModel;
 
 class DownloadController extends AbstractLpaController
 {
     public function indexAction()
     {
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
+        
+        // check PDF availability. return a nice error if unavailable.
+        if((($pdfType == 'lpa120') && !$this->getFlowChecker()->canGenerateLPA120())
+                || (($pdfType == 'lp3') && !$this->getFlowChecker()->canGenerateLP3())
+                || (($pdfType == 'lpa1') && !$this->getFlowChecker()->canGenerateLP1())) {
+            
+            return new ViewModel();
+        }
+        
         $this->layout('layout/download.phtml');
 
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
