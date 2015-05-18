@@ -43,6 +43,7 @@ class FeeReductionController extends AbstractLpaController
                             'reducedFeeLowIncome'       => null,
                             'reducedFeeUniversalCredit' => null,
                         ]);
+                        // payment date will be set by the API when setPayment() is called.
                         break;
                     case 'reducedFeeUniversalCredit':
                         $lpa->payment = new Payment([
@@ -51,6 +52,7 @@ class FeeReductionController extends AbstractLpaController
                             'reducedFeeLowIncome'       => null,
                             'reducedFeeUniversalCredit' => true,
                         ]);
+                        // payment date will be set by the API when setPayment() is called.
                         break;
                     case 'reducedFeeLowIncome':
                         $lpa->payment = new Payment([
@@ -72,16 +74,6 @@ class FeeReductionController extends AbstractLpaController
                 
                 // calculate payment amount and set payment in LPA
                 Calculator::calculate($lpa);
-                
-                /**
-                 * If amount is 0 or still unknown (null), set date in payment to mark
-                 * complete of LPA process.
-                 * 
-                 * Otherwise, pending payment to be made, either online or offline in the following step.
-                 */ 
-                if(!$lpa->payment->amount) {
-                    $lpa->payment->date = new \DateTime();
-                }
                 
                 if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
                     throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');

@@ -77,8 +77,9 @@ class PaymentController extends AbstractLpaController
         elseif($this->params()->fromQuery('pay-by-cheque')) {
             
             $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
-                
-            $lpa->payment->date = new \DateTime();
+
+            // payment date is only for online payment.
+            //$lpa->payment->date = new \DateTime();
             
             if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
                 throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');

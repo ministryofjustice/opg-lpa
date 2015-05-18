@@ -149,7 +149,7 @@ class StateChecker {
     // Below are the functions copied from the front2 model.
     
     /**
-     * Payment either paid online or offline, or no payment required
+     * Payment either paid online or offline, or no payment to be taken.
      * @return boolean
      */
     protected function paymentResolved()
@@ -158,13 +158,15 @@ class StateChecker {
             return false;
         }
         
-        // use payment date to flag the page process is complete.
-        if($this->lpa->payment->date === null) {
-            return false;
+        if($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) {
+            // has exemption
+            return true;
         }
-        
-        // below may not be necessary for the frontend, but is needed at API level.
-        if($this->lpa->payment->amount > 0) {
+        elseif($this->lpa->payment->reducedFeeUniversalCredit) {
+            // receive universal credit
+            return true;
+        }
+        else {
             if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
                 // pay by card
                 if($this->lpa->payment->reference != null) {
@@ -177,17 +179,13 @@ class StateChecker {
                 }
             }
             elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                // pya by cheque
+                // pay by cheque
                 return true;
             }
             else {
                 // must have a payment method if amount is greater than 0.
                 return false;
             }
-        }
-        else {
-            // no payment to be taken, but payment date has been set
-            return true;
         }
     }
     

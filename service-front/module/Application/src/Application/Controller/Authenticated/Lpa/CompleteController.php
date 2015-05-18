@@ -53,7 +53,7 @@ class CompleteController extends AbstractLpaController
         $lpa = $this->getLpa();
         
         $viewParams = [
-                'completedAt'        => $lpa->payment->date->format('d/m/Y'),
+                'completedAt'        => $lpa->completedAt->format('d/m/Y'),
                 'donorName'          => $lpa->document->donor->name,
                 'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp1']),
                 'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$lpa->id]),

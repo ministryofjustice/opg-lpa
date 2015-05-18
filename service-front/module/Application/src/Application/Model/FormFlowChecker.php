@@ -145,13 +145,11 @@ class FormFlowChecker extends StateChecker
         }
         
         // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
-        if(($this->lpa->payment instanceof Payment)  && ($this->lpa->payment->date instanceof \DateTime)) {
-            if(($currentRouteName != 'lpa/complete') && 
-               ($currentRouteName != 'lpa/date-check') && 
-                ($currentRouteName != 'lpa/download')
-            ) {
-//                 return 'lpa/view-docs';
-            }
+        if(($this->lpa->completedAt instanceof \DateTime)
+               && ($currentRouteName != 'lpa/complete') 
+               && ($currentRouteName != 'lpa/date-check') 
+               && ($currentRouteName != 'lpa/download')) {
+                return 'lpa/view-docs';
         }
         
         $checkFunction = static::$accessibleFunctionMap[$currentRouteName];
