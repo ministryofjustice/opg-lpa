@@ -106,13 +106,11 @@ class StateChecker {
 
         //---
         
-        $payment = Calculator::calculate($lpa);
-        
-        if( !($payment instanceof Payment) ){
+        if( !($lpa->payment instanceof Payment) ){
             return false;
         }
-
-        return ($payment->amount != Calculator::STANDARD_FEE);
+        
+        return $this->isEligibleForFeeReduction();
 
     } // function
 
@@ -149,49 +147,63 @@ class StateChecker {
 
     //------------------------------------------------------------------------
     // Below are the functions copied from the front2 model.
-
+    
+    /**
+     * Payment either paid online or offline, or no payment to be taken.
+     * @return boolean
+     */
     protected function paymentResolved()
-    {
-        if(!$this->hasFeeDetermined()) {
-            return false;
-        }
-        
-        if($this->lpa->payment->amount > 0) {
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-                if($this->lpa->payment->reference != null) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            return true;
-        }
-    }
-
-    protected function hasFeeDetermined()
     {
         if(!($this->lpa->payment instanceof Payment)) {
             return false;
         }
-
-        if($this->lpa->payment->reducedFeeUniversalCredit===true) {
+        
+        if($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) {
+            // has exemption
             return true;
         }
-
-        if($this->lpa->payment->amount !== null) {
+        elseif($this->lpa->payment->reducedFeeUniversalCredit) {
+            // receive universal credit
             return true;
         }
-
-        return false;
+        else {
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+                // pay by card
+                if($this->lpa->payment->reference != null) {
+                    // payment ref received from payment service provider
+                    return true;
+                }
+                else {
+                    // payment ref not received from payment service provider
+                    return false;
+                }
+            }
+            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
+                // pay by cheque
+                return true;
+            }
+            else {
+                // must have a payment method if amount is greater than 0.
+                return false;
+            }
+        }
+    }
+    
+    /**
+     * is the donor eligible for fee reduction due to having benefit, damage, income or universal credit.
+     * 
+     * @return boolean
+     */
+    public function isEligibleForFeeReduction()
+    {
+        $lpa = $this->getLpa();
+        if(!($lpa->payment instanceof Payment)) {
+            return false;
+        }
+        
+        return ((($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) 
+                || ($lpa->payment->reducedFeeUniversalCredit)
+                || ($lpa->payment->reducedFeeLowIncome));
     }
 
     protected function isWhoAreYouAnswered()
