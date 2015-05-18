@@ -19,7 +19,7 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $resetToken = $client->requestPasswordReset( $email );
+        $resetToken = $client->requestPasswordReset( strtolower( $email ) );
 
         // A successful response is a string...
         if( !is_string($resetToken) ){
