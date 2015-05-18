@@ -41,10 +41,11 @@ $formLabel = $this->plugin('formLabel');
         
         <? if ( !empty($authError)){  ?>
             <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
-              <h1 id="error-heading">There was a problem submitting the form</h1>
+              <h1 id="error-heading">There's been a problem logging in</h1>
                 <? switch($authError){
                     case 'not-activated':
-                        ?><p>Your account has not yet been activated.</p><?
+                        ?><p>Your account has not been activated. Click on the link in the email sent to you when you created the account.
+                        If you haven't received an email, check your spam, bulk or junk email folder.</p><?
                         break;
                     case 'incorrect-4':
                         ?><p>Email and password combination not recognised. Did you click the link in the email we sent you to activate your account?</p>
@@ -54,7 +55,7 @@ $formLabel = $this->plugin('formLabel');
                         ?><p>This user account has been locked. Please go <a href="<?= $this->url('forgot-password'); ?>">here</a> to reset your password OR you can attempt again in 15 minutes.</p><?
                         break;
                     default:
-                        ?><p><p>Email and password combination not recognised. Did you click the link in the email we sent you to activate your account?</p></p><?
+                        ?><p><p>Email and password combination not recognised. Did you click the link in the email we sent you to activate your account? If so, please try logging in again below.</p></p><?
                         break;
                 } ?>
             </div>
