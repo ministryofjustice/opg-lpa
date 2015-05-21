@@ -19,7 +19,7 @@
     $email_confirm->setAttributes([
         'id' => 'email_confirm',
         'autocomplete' => 'off'
-    ]);
+    ])->setOptions( ['label' => 'Re-enter your email address'] );
 
     $password->setAttributes([
         'id' => 'password',
@@ -33,7 +33,7 @@
 
     $terms->setAttributes([
         'id' => 'terms',
-    ]);
+    ])->setOptions( ['label' => 'I agree to the Terms and conditions and privacy policy'] );;
 
     $form->prepare();
 
@@ -77,14 +77,14 @@
         <legend>Email address</legend>
 
         <div class="group">
-            <?= $formLabel->openTag() ?>Email Address<?= $formLabel->closeTag(); ?>
+            <?= $formLabel->openTag() ?>Enter your email address<?= $formLabel->closeTag(); ?>
             <?= $this->formElement($email) ?>
             <?= $this->formElementErrors($email) ?>
         </div>
         
         
         <div class="group">
-            <?= $formLabel->openTag() ?>Confirm Email address<?= $formLabel->closeTag(); ?>
+            <?= $formLabel->openTag() ?>Re-enter your email address<?= $formLabel->closeTag(); ?>
             <?= $this->formElement($email_confirm) ?>
             <?= $this->formElementErrors($email_confirm) ?>
         </div>
