@@ -69,7 +69,11 @@ abstract class AbstractForm
      * @var array - cross lines corrrdinates
      */
     protected $crossLineParams = array(
+<<<<<<< HEAD
         'primaryAttorney-1-hw'     => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>546),
+=======
+        'primaryAttorney-1-hw'     => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>545),
+>>>>>>> branch 'develop' of https://github.com/ministryofjustice/opg-lpa-pdf
         'primaryAttorney-1-pf'     => array('bx'=>313, 'by'=>178, 'tx'=>550, 'ty'=>471),
         'primaryAttorney-2'        => array('bx'=>45,  'by'=>375, 'tx'=>282, 'ty'=>679),
         'primaryAttorney-3'        => array('bx'=>313, 'by'=>375, 'tx'=>550, 'ty'=>679),
