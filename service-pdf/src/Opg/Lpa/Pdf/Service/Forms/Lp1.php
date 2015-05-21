@@ -91,24 +91,25 @@ abstract class Lp1 extends AbstractForm
             ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             
             $content = "";
-            switch($this->lpa->document->replacementAttorneyDecisions->how) {
-                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $content = "Replacement attorneys make decisions jointly and severally\r\n";
-                    break;
-                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $content = "Replacement attorneys make decisions depend on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
-            }
-            
             switch($this->lpa->document->replacementAttorneyDecisions->when) {
                 case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
-                    $content .= "Replacement attorneys step in when the first attorney is unable to act\r\n";
+                    $content = "Replacement attorneys are to step in when one of original attorneys can no longer act\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
-                    $content .= "Replacement attorneys step in when the last attorney is unable to act\r\n";
+                    $content = "Replacement attorneys are to step in only when all original attorneys can no longer act\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
-                    $content .= "Replacement attorneys step in depends on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
+                    $content = "Replacement attorneys are to step in for some decisons, as below\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
                     break;
+            }
+            
+            switch($this->lpa->document->replacementAttorneyDecisions->how) {
+                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
+                    $content .= "Replacement attorneys are to act jointly and severally\r\n";
+                    break;
+                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
+                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
+                    $content .= "Replacement attorneys are to act joint for some decisions, joint and several for other decisions, as below\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
             }
             
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content))->generate();
