@@ -24,10 +24,11 @@ abstract class AbstractForm
     protected $lpa;
 
     /**
+     * Data to be populated into PDF form elements.
      * 
      * @var array
      */
-    protected $flattenLpa;
+    protected $pdfFormData = [];
     
     /**
      * The path of the pdf file to be generated.
@@ -42,16 +43,22 @@ abstract class AbstractForm
     protected $interFileStack = array();
     
     /**
-     * Base path for intermediate files. It's a ram disk folder.
+     * It's a ram disk folder and is the base path for storing 
+     * intermediate files temporarily. Defined in config file.
      * @var string
      */
     protected $intermediateFileBasePath;
     
     /**
+     * The folder that stores template PDFs which all form elements values are empty.
      * @var string
      */
     protected $pdfTemplatePath;
     
+    /**
+     * Store cross line strokes parameters.
+     * @var array
+     */
     protected $drawingTargets = array();
     
     /**
@@ -62,26 +69,26 @@ abstract class AbstractForm
      * @var array - cross lines corrrdinates
      */
     protected $crossLineParams = array(
-        'primaryAttorney-1'      => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>545),
-        'primaryAttorney-2'      => array('bx'=>45,  'by'=>359, 'tx'=>283, 'ty'=>662),
-        'primaryAttorney-3'      => array('bx'=>313, 'by'=>359, 'tx'=>550, 'ty'=>662),
+        'primaryAttorney-1-hw'      => array('bx'=>313, 'by'=>243, 'tx'=>550, 'ty'=>545),
+        'primaryAttorney-1-pf'      => array('bx'=>313, 'by'=>178, 'tx'=>550, 'ty'=>471),
+        'primaryAttorney-2'      => array('bx'=>45,  'by'=>375, 'tx'=>282, 'ty'=>679),
+        'primaryAttorney-3'      => array('bx'=>313, 'by'=>375, 'tx'=>550, 'ty'=>679),
         'replacementAttorney-0'  => array('bx'=>45,  'by'=>315, 'tx'=>283, 'ty'=>536),
         'replacementAttorney-1'  => array('bx'=>313, 'by'=>315, 'tx'=>550, 'ty'=>536),
-        'life-sustain-A'         => array('bx'=>44,  'by'=>275, 'tx'=>283, 'ty'=>485),
-        'life-sustain-B'         => array('bx'=>307, 'by'=>275, 'tx'=>550, 'ty'=>485),
+        'life-sustain-A'         => array('bx'=>44,  'by'=>265, 'tx'=>283, 'ty'=>478),
+        'life-sustain-B'         => array('bx'=>307, 'by'=>265, 'tx'=>550, 'ty'=>478),
         'people-to-notify-0'     => array('bx'=>44,  'by'=>335, 'tx'=>283, 'ty'=>501),
         'people-to-notify-1'     => array('bx'=>312, 'by'=>335, 'tx'=>552, 'ty'=>501),
         'people-to-notify-2'     => array('bx'=>44,  'by'=>127, 'tx'=>283, 'ty'=>294),
         'people-to-notify-3'     => array('bx'=>312, 'by'=>127, 'tx'=>552, 'ty'=>294),
-        'preference-pf'          => array('bx'=>41,  'by'=>419, 'tx'=>554, 'ty'=>529),
-        'instruction-pf'         => array('bx'=>41,  'by'=>118, 'tx'=>554, 'ty'=>227),
-        'preference-hw'          => array('bx'=>41,  'by'=>439, 'tx'=>554, 'ty'=>529),
-        'instruction-hw'         => array('bx'=>41,  'by'=>157, 'tx'=>554, 'ty'=>248),
-        'attorney-signature'     => array('bx'=>42,  'by'=>144, 'tx'=>553, 'ty'=>317),
-        'applicant-0'            => array('bx'=>42,  'by'=>315, 'tx'=>283, 'ty'=>412),
-        'applicant-1'            => array('bx'=>308, 'by'=>315, 'tx'=>549, 'ty'=>412),
-        'applicant-2'            => array('bx'=>42,  'by'=>147, 'tx'=>283, 'ty'=>245),
-        'applicant-3'            => array('bx'=>308, 'by'=>147, 'tx'=>549, 'ty'=>245),
+        'preference'          => array('bx'=>41,  'by'=>422, 'tx'=>554, 'ty'=>532),
+        'instruction'         => array('bx'=>41,  'by'=>121, 'tx'=>554, 'ty'=>230),
+        'attorney-signature-hw'     => array('bx'=>42,  'by'=>143, 'tx'=>553, 'ty'=>317),
+        'attorney-signature-pf'     => array('bx'=>42,  'by'=>131, 'tx'=>553, 'ty'=>306),
+        'applicant-0'            => array('bx'=>42,  'by'=>318, 'tx'=>283, 'ty'=>416),
+        'applicant-1'            => array('bx'=>308, 'by'=>318, 'tx'=>549, 'ty'=>416),
+        'applicant-2'            => array('bx'=>42,  'by'=>154, 'tx'=>283, 'ty'=>253),
+        'applicant-3'            => array('bx'=>308, 'by'=>154, 'tx'=>549, 'ty'=>253),
         'additional-applicant-1' => array('bx'=>308, 'by'=>303, 'tx'=>549, 'ty'=>401),
         'additional-applicant-2' => array('bx'=>42,  'by'=>139, 'tx'=>283, 'ty'=>237),
         'additional-applicant-3' => array('bx'=>308, 'by'=>139, 'tx'=>549, 'ty'=>237),
@@ -96,7 +103,6 @@ abstract class AbstractForm
     public function __construct(Lpa $lpa)
     {
         $this->lpa = $lpa;
-        $this->flattenLpa = $lpa->flatten('lpa-');
         $config = Config::getInstance();
         $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
         $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];

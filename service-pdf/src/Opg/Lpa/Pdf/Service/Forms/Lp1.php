@@ -2,11 +2,14 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Formatter;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -18,9 +21,7 @@ abstract class Lp1 extends AbstractForm
     const MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM = 4;
     
     const MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM = 4;
-    
     const MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM = 4;
-    
     const MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM = 4;
     
     /**
@@ -49,6 +50,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateStandardForm()
     {
+        // register a randem generated temp file path, and store it $interFileStack.
         $filePath = $this->registerTempFile('LP1');
         
         // data mapping
@@ -74,37 +76,37 @@ abstract class Lp1 extends AbstractForm
         // CS1 is generated when number of people to notify are larger than what is available on standard form. 
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify > 4) {
-            $generatedCs1 = (new Cs1($this->lpa, 'peopleToNotify', $this->lpa->document->peopleToNotify))->generate();
+            $generatedCs1 = (new Cs1($this->lpa, 'peopleToNotify'))->generate();
             $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
         // generate a CS2 page if attorneys act depend on a special decision.
-        if($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+        if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_ATTORNEY_DECISIONS, $this->lpa->document->primaryAttorneyDecisions->howDetails))->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
         }
         
         // generate a CS2 page if replacement attorneys decision differ to standard arrangement.
         if((count($this->lpa->document->replacementAttorneys) > 1) && 
-            ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
+            ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
             
             $content = "";
             switch($this->lpa->document->replacementAttorneyDecisions->how) {
-                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
+                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                     $content = "Replacement attorneys make decisions jointly and severally\r\n";
                     break;
-                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
+                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
                     $content = "Replacement attorneys make decisions depend on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
             }
             
             switch($this->lpa->document->replacementAttorneyDecisions->when) {
-                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
+                case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
                     $content .= "Replacement attorneys step in when the first attorney is unable to act\r\n";
                     break;
-                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
+                case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
                     $content .= "Replacement attorneys step in when the last attorney is unable to act\r\n";
                     break;
-                case Decisions\ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
+                case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
                     $content .= "Replacement attorneys step in depends on below\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
                     break;
             }
@@ -142,81 +144,106 @@ abstract class Lp1 extends AbstractForm
     
     protected function dataMapping()
     {
-        $this->flattenLpa['lpa-id'] = Formatter::id($this->lpa->id);
-        
-        $this->flattenLpa['lpa-document-donor-dob-date-day'] =  $this->lpa->document->donor->dob->date->format('d');
-        $this->flattenLpa['lpa-document-donor-dob-date-month'] = $this->lpa->document->donor->dob->date->format('m');
-        $this->flattenLpa['lpa-document-donor-dob-date-year'] = $this->lpa->document->donor->dob->date->format('Y');
+        /**
+         * Donor section (section 1)
+         */
+        $this->pdfFormData['lpa-id'] = Formatter::id($this->lpa->id);
+        $this->pdfFormData['lpa-document-donor-name-title'] = $this->lpa->document->donor->name->title;
+        $this->pdfFormData['lpa-document-donor-name-first'] = $this->lpa->document->donor->name->first;
+        $this->pdfFormData['lpa-document-donor-name-last'] = $this->lpa->document->donor->name->last;
+        $this->pdfFormData['lpa-document-donor-otherNames'] = $this->lpa->document->donor->otherNames;
+        $this->pdfFormData['lpa-document-donor-dob-date-day'] =  $this->lpa->document->donor->dob->date->format('d');
+        $this->pdfFormData['lpa-document-donor-dob-date-month'] = $this->lpa->document->donor->dob->date->format('m');
+        $this->pdfFormData['lpa-document-donor-dob-date-year'] = $this->lpa->document->donor->dob->date->format('Y');
+        $this->pdfFormData['lpa-document-donor-address-address1']= $this->lpa->document->donor->address->address1;
+        $this->pdfFormData['lpa-document-donor-address-address2']= $this->lpa->document->donor->address->address2;
+        $this->pdfFormData['lpa-document-donor-address-address3']= $this->lpa->document->donor->address->address3;
+        $this->pdfFormData['lpa-document-donor-address-postcode']= $this->lpa->document->donor->address->postcode;
+        $this->pdfFormData['lpa-document-donor-email-address']= ($this->lpa->document->donor->email instanceof EmailAddress)?$this->lpa->document->donor->email->address:null;
         
         /**
          * attorneys section (section 2)
          */
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfPrimaryAttorneys == 1) {
-            $this->drawingTargets[1] = array('primaryAttorney-1');
             $this->drawingTargets[2] = array('primaryAttorney-2', 'primaryAttorney-3');
         }
-        elseif($noOfPrimaryAttorneys > 4) {
-            $this->flattenLpa['has-more-than-4-attorneys'] = self::CHECK_BOX_ON;
+        elseif($noOfPrimaryAttorneys == 2) {
+            $this->drawingTargets[2] = array('primaryAttorney-2', 'primaryAttorney-3');
         }
-        else {
-            if($noOfPrimaryAttorneys == 2) {
-                $this->drawingTargets[2] = array('primaryAttorney-2', 'primaryAttorney-3');
-            }
-            elseif($noOfPrimaryAttorneys == 3) {
-                $this->drawingTargets[2] = array('primaryAttorney-3');
-            }
+        elseif($noOfPrimaryAttorneys == 3) {
+            $this->drawingTargets[2] = array('primaryAttorney-3');
+        }
+        
+        if($noOfPrimaryAttorneys > 4) {
+            $this->pdfFormData['has-more-than-4-attorneys'] = self::CHECK_BOX_ON;
         }
         
         /**
          * attorney decision section (section 3)
          */
-        if($noOfPrimaryAttorneys > 1) {
-            switch($this->flattenLpa['lpa-document-primaryAttorneyDecisions-how']) {
-                case Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                    $this->flattenLpa['attorneys-act-jointly'] = self::CHECK_BOX_ON;
+        if($noOfPrimaryAttorneys == 1) {
+            $this->pdfFormData['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
+        }
+        
+        if( $this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions ) {
+            switch($this->lpa->document->primaryAttorneyDecisions->how) {
+                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
+                    $this->pdfFormData['attorneys-act-jointly'] = self::CHECK_BOX_ON;
                     break;
-                case Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $this->flattenLpa['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
+                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
+                    $this->pdfFormData['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
                     break;
-                case Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $this->flattenLpa['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
-                    break;
-                default:
+                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
+                    $this->pdfFormData['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
                     break;
             }
-        }
-        else {
-            $this->flattenLpa['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
         }
         
         /**
          * replacement attorneys section (section 4)
          */
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        if($noOfReplacementAttorneys > 2) {
-            $this->flattenLpa['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
+        if($noOfReplacementAttorneys == 0) {
+            $this->drawingTargets[4] = array('replacementAttorney-0', 'replacementAttorney-1');
         }
         elseif($noOfReplacementAttorneys == 1) {
             $this->drawingTargets[4] = array('replacementAttorney-1');
         }
-        elseif($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[4] = array('replacementAttorney-0', 'replacementAttorney-1');
+        
+        if($noOfReplacementAttorneys > 2) {
+            $this->pdfFormData['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
         }
         
-        if(($noOfReplacementAttorneys > 1) && ($this->lpa->document->replacementAttorneyDecisions instanceof Decisions\ReplacementAttorneyDecisions) &&
-            ($this->lpa->document->replacementAttorneyDecisions->how != Decisions\ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
-                $this->flattenLpa['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+        //@todo to be investigated
+        if(($noOfReplacementAttorneys > 1) && ($this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) &&
+            ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
+                $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
         }
         
         /**
          * People to notify (Section 6)
          */
+        $i=0;
+        foreach($this->lpa->document->peopleToNotify as $peopleToNotify) {
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-name-title'] = $peopleToNotify->name->title;
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-name-first'] = $peopleToNotify->name->first;
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-name-last'] = $peopleToNotify->name->last;
+            
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-address-address1'] = $peopleToNotify->address->address1;
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-address-address2'] = $peopleToNotify->address->address2;
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-address-address3'] = $peopleToNotify->address->address3;
+            $this->pdfFormData['lpa-document-peopleToNotify-'.$i.'-address-postcode'] = $peopleToNotify->address->postcode;
+            
+            if(++$i == self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) break;
+        }
+        
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
-            $this->flattenLpa['has-more-than-4-notified-people'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['has-more-than-4-notified-people'] = self::CHECK_BOX_ON;
         }
-        elseif($noOfPeopleToNotify < self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+        
+        if($noOfPeopleToNotify < self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
             $this->drawingTargets[6] = array();
             for($i=self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $noOfPeopleToNotify; $i>0; $i--) {
                 $this->drawingTargets[6][] = 'people-to-notify-'. (self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $i);
@@ -226,74 +253,63 @@ abstract class Lp1 extends AbstractForm
         /**
          *  Preference and Instructions. (Section 7)
          */
-        if(!empty($this->flattenLpa['lpa-document-preference'])) {
-            if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-preference'])) {
-                $this->flattenLpa['has-more-preferences'] = self::CHECK_BOX_ON;
+        if(!empty($this->lpa->document->preference)) {
+            if(!$this->canFitIntoTextBox($this->lpa->document->preference)) {
+                $this->pdfFormData['has-more-preferences'] = self::CHECK_BOX_ON;
             }
-            $this->flattenLpa['lpa-document-preference'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-preference'], self::CONTENT_TYPE_PREFERENCES);
+            $this->pdfFormData['lpa-document-preference'] = $this->getContentForBox(0, $this->lpa->document->preference, self::CONTENT_TYPE_PREFERENCES);
+        }
+        else {
+            $this->drawingTargets[7] = array('preference');
         }
         
-        if(!empty($this->flattenLpa['lpa-document-instruction'])) {
-            if(!$this->canFitIntoTextBox($this->flattenLpa['lpa-document-instruction'])) {
-                $this->flattenLpa['has-more-instructions'] = self::CHECK_BOX_ON;
+        if(!empty($this->lpa->document->instruction)) {
+            if(!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
+                $this->pdfFormData['has-more-instructions'] = self::CHECK_BOX_ON;
             }
-            $this->flattenLpa['lpa-document-instruction'] = $this->getContentForBox(0, $this->flattenLpa['lpa-document-instruction'], self::CONTENT_TYPE_INSTRUCTIONS);
+            $this->pdfFormData['lpa-document-instruction'] = $this->getContentForBox(0, $this->lpa->document->instruction, self::CONTENT_TYPE_INSTRUCTIONS);
+        }
+        else {
+            $this->drawingTargets[7] = isset($this->drawingTargets[7])? array('preference', 'instruction'):array('instruction');
         }
         
         /**
-         * Populate primary and replacement attorneys signature pages (Section 11)
+         * Populate certificate provider page (Section 10) 
          */
-        $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
-        $attorneyIndex=0;
-        foreach($allAttorneys as $attorney) {
-            
-            if($attorney instanceof TrustCorporation) continue;
-            
-            $this->flattenLpa['signature-attorney-'.$attorneyIndex.'-name-title'] = $attorney->name->title;
-            $this->flattenLpa['signature-attorney-'.$attorneyIndex.'-name-first'] = $attorney->name->first;
-            $this->flattenLpa['signature-attorney-'.$attorneyIndex.'-name-last'] = $attorney->name->last;
-            $attorneyIndex++;
-        }
+        $this->pdfFormData['lpa-document-certificateProvider-name-title'] = $this->lpa->document->certificateProvider->name->title;
+        $this->pdfFormData['lpa-document-certificateProvider-name-first'] = $this->lpa->document->certificateProvider->name->first;
+        $this->pdfFormData['lpa-document-certificateProvider-name-last'] = $this->lpa->document->certificateProvider->name->last;
         
-        $numberOfHumanAttorneys = $attorneyIndex;
-        
-        switch($numberOfHumanAttorneys) {
-            case 3:
-                $this->drawingTargets[14] = array('attorney-signature');
-                break;
-            case 2:
-                $this->drawingTargets[13] = array('attorney-signature');
-                $this->drawingTargets[14] = array('attorney-signature');
-                break;
-            case 1:
-                $this->drawingTargets[12] = array('attorney-signature');
-                $this->drawingTargets[13] = array('attorney-signature');
-                $this->drawingTargets[14] = array('attorney-signature');
-                break;
-        }
+        $this->pdfFormData['lpa-document-certificateProvider-address-address1'] = $this->lpa->document->certificateProvider->address->address1;
+        $this->pdfFormData['lpa-document-certificateProvider-address-address2'] = $this->lpa->document->certificateProvider->address->address2;
+        $this->pdfFormData['lpa-document-certificateProvider-address-address3'] = $this->lpa->document->certificateProvider->address->address3;
+        $this->pdfFormData['lpa-document-certificateProvider-address-postcode'] = $this->lpa->document->certificateProvider->address->postcode;
         
         /**
          * Applicant (Section 12)
          */
         if($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->flattenLpa['donor-is-applicant'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['donor-is-applicant'] = self::CHECK_BOX_ON;
             $this->drawingTargets[16] = array('applicant-0','applicant-1','applicant-2','applicant-3');
         }
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
-            $this->flattenLpa['attorney-is-applicant'] = self::CHECK_BOX_ON;
-            foreach($this->lpa->document->whoIsRegistering as $index=>$attorneyId) {
+            $this->pdfFormData['attorney-is-applicant'] = self::CHECK_BOX_ON;
+            $i = 0;
+            foreach($this->lpa->document->whoIsRegistering as $attorneyId) {
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
                 if($attorney instanceof TrustCorporation) {
-                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $attorney->name;
+                    $this->pdfFormData['applicant-'.$i.'-name-last']      = $attorney->name;
                 }
                 else {
-                    $this->flattenLpa['applicant-'.$index.'-name-title']     = $attorney->name->title;
-                    $this->flattenLpa['applicant-'.$index.'-name-first']     = $attorney->name->first;
-                    $this->flattenLpa['applicant-'.$index.'-name-last']      = $attorney->name->last;
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-day']   = $attorney->dob->date->format('d');
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-month'] = $attorney->dob->date->format('m');
-                    $this->flattenLpa['applicant-'.$index.'-dob-date-year']  = $attorney->dob->date->format('Y');
+                    $this->pdfFormData['applicant-'.$i.'-name-title']     = $attorney->name->title;
+                    $this->pdfFormData['applicant-'.$i.'-name-first']     = $attorney->name->first;
+                    $this->pdfFormData['applicant-'.$i.'-name-last']      = $attorney->name->last;
+                    $this->pdfFormData['applicant-'.$i.'-dob-date-day']   = $attorney->dob->date->format('d');
+                    $this->pdfFormData['applicant-'.$i.'-dob-date-month'] = $attorney->dob->date->format('m');
+                    $this->pdfFormData['applicant-'.$i.'-dob-date-year']  = $attorney->dob->date->format('Y');
                 }
+                
+                if(++$i == self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) break;
             }
             
             switch(count($this->lpa->document->whoIsRegistering)) {
@@ -313,43 +329,50 @@ abstract class Lp1 extends AbstractForm
          * Correspondent (Section 13)
          */
         if($this->lpa->document->correspondent instanceof Correspondence) {
-            switch($this->flattenLpa['lpa-document-correspondent-who']) {
+            switch($this->lpa->document->correspondent->who) {
                 case Correspondence::WHO_DONOR:
-                    $this->flattenLpa['donor-is-correspondent'] = self::CHECK_BOX_ON;
-                    $this->flattenLpa['lpa-document-correspondent-name-title'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-name-first'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-name-last'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
+                    $this->pdfFormData['donor-is-correspondent'] = self::CHECK_BOX_ON;
                     break;
                 case Correspondence::WHO_ATTORNEY:
-                    $this->flattenLpa['attorney-is-correspondent'] = self::CHECK_BOX_ON;
-                    $this->flattenLpa['lpa-document-correspondent-address-address1'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-address2'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-address3'] = null;
-                    $this->flattenLpa['lpa-document-correspondent-address-postcode'] = null;
+                    $this->pdfFormData['attorney-is-correspondent'] = self::CHECK_BOX_ON;
+                    if($this->lpa->document->correspondent->name instanceof Name) {
+                        $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
+                        $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
+                        $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
+                    }
+                    $this->pdfFormData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;
                     break;
                 case Correspondence::WHO_OTHER:
-                    $this->flattenLpa['other-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['other-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
+                    $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
+                    $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
+                    $this->pdfFormData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;
+                    
+                    $this->pdfFormData['lpa-document-correspondent-address-address1'] = $this->lpa->document->correspondent->address->address1;
+                    $this->pdfFormData['lpa-document-correspondent-address-address2'] = $this->lpa->document->correspondent->address->address2;
+                    $this->pdfFormData['lpa-document-correspondent-address-address3'] = $this->lpa->document->correspondent->address->address3;
+                    $this->pdfFormData['lpa-document-correspondent-address-postcode'] = $this->lpa->document->correspondent->address->postcode;
                     break;
             }
             
-            if($this->flattenLpa['lpa-document-correspondent-contactByPost'] === true) {
-                $this->flattenLpa['correspondent-contact-by-post'] = self::CHECK_BOX_ON;
+            // correspondence preference
+            if($this->lpa->document->correspondent->contactByPost === true) {
+                $this->pdfFormData['correspondent-contact-by-post'] = self::CHECK_BOX_ON;
             }
             
-            if(isset($this->flattenLpa['lpa-document-correspondent-phone-number'])) {
-                $this->flattenLpa['correspondent-contact-by-phone'] = self::CHECK_BOX_ON;
+            if($this->lpa->document->correspondent->phone instanceof PhoneNumber) {
+                $this->pdfFormData['correspondent-contact-by-phone'] = self::CHECK_BOX_ON;
+                $this->pdfFormData['lpa-document-correspondent-phone-number'] = str_replace(" ", "", $this->lpa->document->correspondent->phone->number);
             }
             
-            if(isset($this->flattenLpa['lpa-document-correspondent-email-address'])) {
-                $this->flattenLpa['correspondent-contact-by-email'] = self::CHECK_BOX_ON;
+            if($this->lpa->document->correspondent->email instanceof EmailAddress) {
+                $this->pdfFormData['correspondent-contact-by-email'] = self::CHECK_BOX_ON;
+                $this->pdfFormData['lpa-document-correspondent-email-address'] = $this->lpa->document->correspondent->email->address;
             }
             
-            if($this->flattenLpa['lpa-document-correspondent-contactInWelsh'] === true) {
-                $this->flattenLpa['correspondent-contact-in-welsh'] = self::CHECK_BOX_ON;
+            if($this->lpa->document->correspondent->contactInWelsh === true) {
+                $this->pdfFormData['correspondent-contact-in-welsh'] = self::CHECK_BOX_ON;
             }
         }
         
@@ -358,38 +381,39 @@ abstract class Lp1 extends AbstractForm
          */
         // Fee reduction, repeat application
         if($this->lpa->repeatCaseNumber !== null) {
-            $this->flattenLpa['is-repeat-application'] = self::CHECK_BOX_ON;
-            $this->flattenLpa['repeat-application-case-number'] = $this->lpa->repeatCaseNumber;
+            $this->pdfFormData['is-repeat-application'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['repeat-application-case-number'] = $this->lpa->repeatCaseNumber;
         }
         
         if($this->lpa->payment instanceof Payment) {
             // payment method
-            if($this->flattenLpa['lpa-payment-method'] == Payment::PAYMENT_TYPE_CARD) {
-                $this->flattenLpa['pay-by-card'] = self::CHECK_BOX_ON;
-                $this->flattenLpa['lpa-payment-phone-number'] = "NOT REQUIRED. PAYMENT MADE ONLINE.";
-                
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+                $this->pdfFormData['pay-by-card'] = self::CHECK_BOX_ON;
+                $this->pdfFormData['lpa-payment-phone-number'] = "NOT REQUIRED. PAYMENT MADE ONLINE.";
             }
-            elseif($this->flattenLpa['lpa-payment-method'] == Payment::PAYMENT_TYPE_CHEQUE) {
-                $this->flattenLpa['pay-by-cheque'] = self::CHECK_BOX_ON;
+            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
+                $this->pdfFormData['pay-by-cheque'] = self::CHECK_BOX_ON;
             }
-        
-            if($this->lpa->payment->reducedFeeLowIncome || 
-                ($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) ||
+            
+            // apply to pay reduced fee
+            if(($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) ||
+                $this->lpa->payment->reducedFeeLowIncome ||
                 $this->lpa->payment->reducedFeeUniversalCredit) {
                 
-                $this->flattenLpa['apply-for-fee-reduction'] = self::CHECK_BOX_ON;
+                $this->pdfFormData['apply-for-fee-reduction'] = self::CHECK_BOX_ON;
             }
             
             // Online payment details
-            if(isset($this->flattenLpa['lpa-payment-reference'])) {
-                $this->flattenLpa['lpa-payment-amount'] = '£'.sprintf('%.2f', $this->flattenLpa['lpa-payment-amount']);
-                $this->flattenLpa['lpa-payment-date-day'] = $this->lpa->payment->date->format('d');
-                $this->flattenLpa['lpa-payment-date-month'] = $this->lpa->payment->date->format('m');
-                $this->flattenLpa['lpa-payment-date-year'] = $this->lpa->payment->date->format('Y');
+            if($this->lpa->payment->reference !== null) {
+                $this->pdfFormData['lpa-payment-reference'] = $this->lpa->payment->reference;
+                $this->pdfFormData['lpa-payment-amount'] = '£'.sprintf('%.2f', $this->lpa->payment->amount);
+                $this->pdfFormData['lpa-payment-date-day'] = $this->lpa->payment->date->format('d');
+                $this->pdfFormData['lpa-payment-date-month'] = $this->lpa->payment->date->format('m');
+                $this->pdfFormData['lpa-payment-date-year'] = $this->lpa->payment->date->format('Y');
             }
         }
         
-        return $this->flattenLpa;
+        return $this->pdfFormData;
         
     } // function dataMapping()
     
@@ -442,7 +466,8 @@ abstract class Lp1 extends AbstractForm
         $pdf->cat(18, 20, 'A');
         
         // Section 15 - additional applicants signature
-        if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && ($this->lpa->document->primaryAttorneyDecisions->how == Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
+        if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && 
+                ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
                 (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
             $totalAdditionalApplicants = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
             $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);

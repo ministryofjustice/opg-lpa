@@ -23,48 +23,50 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
         
         $additionalAttorneys = $noOfAttorneys - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
         $additionalPages = ceil($additionalAttorneys/Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM);
-        $mappedAttorneys = 0;
+        $populatedAttorneys = 0;
         
+        $attorneys = $this->lpa->document->primaryAttorneys;
+        sort($attorneys);
         for($i=0; $i<$additionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalAttorneys');
             
-            $mappings = array();
+            $pdfFormData = array();
             if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-                $mappings['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
+                $pdfFormData['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
             }
             elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
-                $mappings['attorneys-act-jointly'] = self::CHECK_BOX_ON;
+                $pdfFormData['attorneys-act-jointly'] = self::CHECK_BOX_ON;
             }
             elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                $mappings['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
+                $pdfFormData['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
             }
             
             $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
             for($j=0; $j < Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
-                if($mappedAttorneys >= $additionalAttorneys) break;
+                if($populatedAttorneys >= $additionalAttorneys) break;
                 
                 $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $i ) + $j;
                 if(is_string($this->lpa->document->primaryAttorneys[$attorneyIndex]->name)) {
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys->name;
                 }
                 else {
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->title;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->first;
-                    $mappings['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $this->lpa->document->primaryAttorneys[$attorneyIndex]->name->last;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $attorneys->name->title;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $attorneys->name->first;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys->name->last;
                 }
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address1;
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address2;
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->address3;
-                $mappings['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $this->lpa->document->primaryAttorneys[$attorneyIndex]->address->postcode;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $attorneys->address->address1;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $attorneys->address->address2;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $attorneys->address->address3;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $attorneys->address->postcode;
                 
-                if(++$mappedAttorneys >= $additionalAttorneys) {
+                if(++$populatedAttorneys >= $additionalAttorneys) {
                     break;
                 }
             }
             
             $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage
-                ->fillForm($mappings)
+                ->fillForm($pdfFormData)
                 ->flatten()
                 ->saveAs($filePath);
             

@@ -2,36 +2,58 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class Cs1 extends AbstractForm
 {
-    private $roleType, $roleGroup;
+    use AttorneysTrait;
+    
+    private $actorType, $actors;
     
     static $SETTINGS = array(
-        'max-slots-on-standard-form' => array(
+        'max-slots-on-standard-form' => [
             'primaryAttorney'       => Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM,
             'replacementAttorney'   => Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM,
             'peopleToNotify'        => Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM
-        ),
+        ],
         'max-slots-on-cs1-form'     => 2,
-        'roleGroup'                 => array(
+        'actors'                 => [
             'primaryAttorney'       => 'primaryAttorneys',
             'replacementAttorney'   => 'replacementAttorneys',
             'peopleToNotify'        => 'peopleToNotify'
-        )
+        ]
     );
     
-    public function __construct(Lpa $lpa, $roleType, $roleGroup)
+    /**
+     * 
+     * @param Lpa $lpa
+     * @param string $actorType
+     */
+    public function __construct(Lpa $lpa, $actorType)
     {
         parent::__construct($lpa);
-        $this->roleType = $roleType;
-        $this->roleGroup = $roleGroup;
+        
+        $this->actorType = $actorType;
+        
+        /**
+         * One of LPA document actors property name
+         * @var string - primaryAttorneys | replacementAttorneys | peopleToNotify
+         */
+        $actors = self::$SETTINGS['actors'][$actorType];
+        
+        if(($lpa->document->type == Document::LPA_TYPE_PF) && ($actorType != 'peopleToNotify')) {
+            $this->actors = $this->sortAttorneys($actors);
+        }
+        else {
+            $this->actors = $this->lpa->document->$actors;
+        }
+        
+        sort($this->actors);
     }
     
     /**
      * Calculate how many CS1 pages need to be generated to fit all content in for a field.
      * 
-     * @param string $this->roleType - primaryAttorneys, replacementAttorneys or peopleToNotify.
      * @return array - CS1 pdf paths
      */
     public function generate()
@@ -39,20 +61,20 @@ class Cs1 extends AbstractForm
         /**
          * Number of same roles filled on standard form.
          */
-        $baseIndexForThisRole = self::$SETTINGS['max-slots-on-standard-form'][$this->roleType];
+        $startingIndexForThisActor = self::$SETTINGS['max-slots-on-standard-form'][$this->actorType];
         
         /**
          * Number of persons can be put on to CS1
          */
         $maxNumPersonOnCS1 = self::$SETTINGS['max-slots-on-cs1-form'];
         
-        $total = count($this->lpa->document->{self::$SETTINGS['roleGroup'][$this->roleType]});
+        $total = count($this->actors);
         
-        $totalAdditionalPersonsOfSameRole = $total - $baseIndexForThisRole;
+        $totalAdditionalPersonsOfThisActorType = $total - $startingIndexForThisActor;
         
-        $noOfAdditionalPages = ceil($totalAdditionalPersonsOfSameRole/2);
+        $noOfAdditionalPages = ceil($totalAdditionalPersonsOfThisActorType/2);
         
-        $totalMappedAdditionalPeople = 0;
+        $totalPopulatedAdditionalPeople = 0;
         
         for($i=0; $i<$noOfAdditionalPages; $i++) {
             
@@ -63,34 +85,34 @@ class Cs1 extends AbstractForm
             $formData = array();
             for($j=0; $j<$maxNumPersonOnCS1; $j++) {
                 
-                $roleIndex = $i*$maxNumPersonOnCS1 + $j + $baseIndexForThisRole;
+                $actorIndex = $i*$maxNumPersonOnCS1 + $j + $startingIndexForThisActor;
                 
-                $formData['cs1-'.$j.'-is-'.$this->roleType] = self::CHECK_BOX_ON;
-                if(is_object($this->roleGroup[$roleIndex]->name)) {
-                    $formData['cs1-'.$j.'-name-title']       = $this->roleGroup[$roleIndex]->name->title;
-                    $formData['cs1-'.$j.'-name-first']       = $this->roleGroup[$roleIndex]->name->first;
-                    $formData['cs1-'.$j.'-name-last']        = $this->roleGroup[$roleIndex]->name->last;
+                $formData['cs1-'.$j.'-is-'.$this->actorType] = self::CHECK_BOX_ON;
+                if(is_object($this->actors[$actorIndex]->name)) {
+                    $formData['cs1-'.$j.'-name-title']       = $this->actors[$actorIndex]->name->title;
+                    $formData['cs1-'.$j.'-name-first']       = $this->actors[$actorIndex]->name->first;
+                    $formData['cs1-'.$j.'-name-last']        = $this->actors[$actorIndex]->name->last;
                 }
                 else {
-                    $formData['cs1-'.$j.'-name-last']        = $this->roleGroup[$roleIndex]->name;
+                    $formData['cs1-'.$j.'-name-last']        = $this->actors[$actorIndex]->name;
                 }
                 
-                $formData['cs1-'.$j.'-address-address1'] = $this->roleGroup[$roleIndex]->address->address1;
-                $formData['cs1-'.$j.'-address-address2'] = $this->roleGroup[$roleIndex]->address->address2;
-                $formData['cs1-'.$j.'-address-address3'] = $this->roleGroup[$roleIndex]->address->address3;
-                $formData['cs1-'.$j.'-address-postcode']  = $this->roleGroup[$roleIndex]->address->postcode;
+                $formData['cs1-'.$j.'-address-address1'] = $this->actors[$actorIndex]->address->address1;
+                $formData['cs1-'.$j.'-address-address2'] = $this->actors[$actorIndex]->address->address2;
+                $formData['cs1-'.$j.'-address-address3'] = $this->actors[$actorIndex]->address->address3;
+                $formData['cs1-'.$j.'-address-postcode']  = $this->actors[$actorIndex]->address->postcode;
                 
-                if(property_exists($this->roleGroup[$roleIndex], 'dob') && is_object($this->roleGroup[$roleIndex]->dob) && property_exists($this->roleGroup[$roleIndex]->dob, 'date')) {
-                    $formData['cs1-'.$j.'-dob-date-day']   = $this->roleGroup[$roleIndex]->dob->date->format('d');
-                    $formData['cs1-'.$j.'-dob-date-month'] = $this->roleGroup[$roleIndex]->dob->date->format('m');
-                    $formData['cs1-'.$j.'-dob-date-year']  = $this->roleGroup[$roleIndex]->dob->date->format('Y');
+                if(property_exists($this->actors[$actorIndex], 'dob') && is_object($this->actors[$actorIndex]->dob) && property_exists($this->actors[$actorIndex]->dob, 'date')) {
+                    $formData['cs1-'.$j.'-dob-date-day']   = $this->actors[$actorIndex]->dob->date->format('d');
+                    $formData['cs1-'.$j.'-dob-date-month'] = $this->actors[$actorIndex]->dob->date->format('m');
+                    $formData['cs1-'.$j.'-dob-date-year']  = $this->actors[$actorIndex]->dob->date->format('Y');
                 }
                 
-                if(property_exists($this->roleGroup[$roleIndex], 'email') && is_object($this->roleGroup[$roleIndex]->email) && property_exists($this->roleGroup[$roleIndex]->email, 'address')) {
-                    $formData['cs1-'.$j.'-email-address']  = $this->roleGroup[$roleIndex]->email->address;
+                if(property_exists($this->actors[$actorIndex], 'email') && is_object($this->actors[$actorIndex]->email) && property_exists($this->actors[$actorIndex]->email, 'address')) {
+                    $formData['cs1-'.$j.'-email-address']  = $this->actors[$actorIndex]->email->address;
                 }
                 
-                if(++$totalMappedAdditionalPeople >= $totalAdditionalPersonsOfSameRole) {
+                if(++$totalPopulatedAdditionalPeople >= $totalAdditionalPersonsOfThisActorType) {
                     break;
                 }
                 
@@ -106,7 +128,7 @@ class Cs1 extends AbstractForm
         
         
         // draw cross lines if there's any blank slot in the last CS1 pdf
-        if($totalAdditionalPersonsOfSameRole % self::$SETTINGS['max-slots-on-cs1-form']) {
+        if($totalAdditionalPersonsOfThisActorType % self::$SETTINGS['max-slots-on-cs1-form']) {
             $this->drawCrossLines($filePath, array(array('cs1')));
         }
         
