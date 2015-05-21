@@ -107,9 +107,11 @@ abstract class Lp1 extends AbstractForm
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                     $content .= "Replacement attorneys are to act jointly and severally\r\n";
                     break;
-                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
                     $content .= "Replacement attorneys are to act joint for some decisions, joint and several for other decisions, as below\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
+                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
+                    // this is default
+                    break;
             }
             
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content))->generate();
