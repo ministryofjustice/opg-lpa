@@ -10,6 +10,8 @@ use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\StateChecker;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -29,6 +31,20 @@ abstract class Lp1 extends AbstractForm
      * @var PDFTK pdf object
      */
     protected $pdf;
+    
+    /**
+     * @var bool
+     */
+    protected $generateInstrumentOnly;
+    
+    public function __construct(Lpa $lpa)
+    {
+        parent::__construct($lpa);
+        
+        $stateChecker = new StateChecker($lpa);
+        
+        $this->generateInstrumentOnly = !$stateChecker->isStateCompleted();
+    }
     
     /**
      * Populate LPA data into PDF forms, generate pdf file.
@@ -211,7 +227,6 @@ abstract class Lp1 extends AbstractForm
             $this->pdfFormData['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
         }
         
-        //@todo to be investigated
         if(($noOfReplacementAttorneys > 1) && ($this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) &&
             ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
                 $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
@@ -432,16 +447,20 @@ abstract class Lp1 extends AbstractForm
             }
         }
         
-        // add page 16, 17
-        $pdf->cat(16, 17, 'A');
-        
-        // Section 12 additional applicants
-        if(isset($this->interFileStack['AdditionalApplicant'])) {
-            foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
-                $pdf->addFile($additionalApplicant, ++$intPdfHandle);
-                
-                // add an additional applicant page
-                $pdf->cat(1, null, $intPdfHandle);
+        // skip adding LPA registration pages if only instrument pdf is to be generated
+        if(!$this->generateInstrumentOnly) {
+            
+            // add page 16, 17
+            $pdf->cat(16, 17, 'A');
+            
+            // Section 12 additional applicants
+            if(isset($this->interFileStack['AdditionalApplicant'])) {
+                foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
+                    $pdf->addFile($additionalApplicant, ++$intPdfHandle);
+                    
+                    // add an additional applicant page
+                    $pdf->cat(1, null, $intPdfHandle);
+                }
             }
         }
         
