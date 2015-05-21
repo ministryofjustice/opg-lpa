@@ -420,7 +420,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        if($this->countIntermediateFiles() == 1) {
+        if(($this->countIntermediateFiles() == 1) && !$this->generateInstrumentOnly) {
             $this->generatedPdfFilePath = $this->interFileStack['LP1'][0];
             return;
         }
@@ -462,30 +462,30 @@ abstract class Lp1 extends AbstractForm
                     $pdf->cat(1, null, $intPdfHandle);
                 }
             }
-        }
-        
-        // add page 18, 19, 20
-        $pdf->cat(18, 20, 'A');
-        
-        // Section 15 - additional applicants signature
-        if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && 
-                ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
-                (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
-            $totalAdditionalApplicants = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-            $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
-        }
-        elseif(is_array($this->lpa->document->whoIsRegistering) &&
-                (count($this->lpa->document->whoIsRegistering) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
-            $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-            $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
-        }
-        
-        if(isset($totalAdditionalPages) && ($totalAdditionalPages > 0)) {
-            for($i=0; $i<$totalAdditionalPages; $i++) {
-                $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
-                
-                // add an additional applicant signature page
-                $pdf->cat(1, null, $intPdfHandle);
+            
+            // add page 18, 19, 20
+            $pdf->cat(18, 20, 'A');
+            
+            // Section 15 - additional applicants signature
+            if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && 
+                    ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
+                    (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
+                $totalAdditionalApplicants = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+                $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+            }
+            elseif(is_array($this->lpa->document->whoIsRegistering) &&
+                    (count($this->lpa->document->whoIsRegistering) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
+                $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+                $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+            }
+            
+            if(isset($totalAdditionalPages) && ($totalAdditionalPages > 0)) {
+                for($i=0; $i<$totalAdditionalPages; $i++) {
+                    $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                    
+                    // add an additional applicant signature page
+                    $pdf->cat(1, null, $intPdfHandle);
+                }
             }
         }
         
