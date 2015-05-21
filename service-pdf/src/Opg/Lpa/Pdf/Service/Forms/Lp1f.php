@@ -86,6 +86,14 @@ class Lp1f extends Lp1
             if(++$i == self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) break;
         }
         
+        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+        if($noOfReplacementAttorneys == 0) {
+            $this->drawingTargets[4] = array('replacementAttorney-0-pf', 'replacementAttorney-1-pf');
+        }
+        elseif($noOfReplacementAttorneys == 1) {
+            $this->drawingTargets[4] = array('replacementAttorney-1-pf');
+        }
+        
         /**
          * When attroney can make decisions (Section 5)
          */
@@ -126,6 +134,24 @@ class Lp1f extends Lp1
                 $this->drawingTargets[13] = array('attorney-signature-pf');
                 $this->drawingTargets[14] = array('attorney-signature-pf');
                 break;
+        }
+        
+        // Section 12
+        if($this->lpa->document->whoIsRegistering == 'donor') {
+            $this->drawingTargets[16] = array('applicant-0-pf','applicant-1-pf','applicant-2-pf','applicant-3-pf');
+        }
+        elseif(is_array($this->lpa->document->whoIsRegistering)) {
+            switch(count($this->lpa->document->whoIsRegistering)) {
+                case 3:
+                    $this->drawingTargets[16] = array('applicant-3-pf');
+                    break;
+                case 2:
+                    $this->drawingTargets[16] = array('applicant-2-pf','applicant-3-pf');
+                    break;
+                case 1:
+                    $this->drawingTargets[16] = array('applicant-1-pf','applicant-2-pf','applicant-3-pf');
+                    break;
+            }
         }
         
         return $this->pdfFormData;
