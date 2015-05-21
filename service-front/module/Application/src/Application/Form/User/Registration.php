@@ -58,7 +58,7 @@ class Registration extends SetPassword {
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
+                            Validator\Identical::NOT_SAME => 'must match Enter your email address',
                         ],
                     ),
                 ),

@@ -9,6 +9,12 @@ return array(
             'key' => '{{pillar['session']['encryption']['key']}}'
         ],
 
+        'redis' => [
+            'server' => [
+                'host' => '{{pillar['session']['redis']['host']}}'
+            ],
+        ],
+
     ], // session
 
     'address' => [
@@ -49,4 +55,17 @@ return array(
 {% endfor %}
         ],
     ], // admin
+
+
+    #v1Code
+    'v1proxy' => [
+
+        'redis' => [
+            'server' => [
+                'host' => '{{pillar['v1proxy']['redis']['host']}}',
+            ],
+        ],
+
+    ],
+
 );
