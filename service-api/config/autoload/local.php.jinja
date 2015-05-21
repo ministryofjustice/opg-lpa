@@ -16,7 +16,29 @@ return array(
 
         ], // mongo
 
-    ],
+        // Used to access generated PDFs.
+        'redis' => [
+
+            'default' => [
+
+                'host' => '{{pillar['pdf']['cache']['redis']['host']}}',
+
+            ],
+
+        ], // redis
+
+        // The queue for PDFs to be generated.
+        'resque' => [
+
+            'default' => [
+
+                'host' => '{{pillar['resque']['redis']['host']}}',
+
+            ],
+
+        ], // resque
+
+    ], // db
 
     'pdf' => [
         'encryption' => [
@@ -24,10 +46,6 @@ return array(
             'keys' => [
                 'queue'     => '{{pillar['pdf']['encryption']['key']['queue']}}',      // Key for JSON pushed onto the queue
                 'document'  => '{{pillar['pdf']['encryption']['key']['document']}}',   // Key for generated PDFs in the file store
-            ],
-            'options' => [
-                'algorithm' => 'aes',
-                'mode' => 'cbc',
             ],
         ],
     ], // pdf
