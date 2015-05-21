@@ -204,13 +204,6 @@ abstract class Lp1 extends AbstractForm
          * replacement attorneys section (section 4)
          */
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        if($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[4] = array('replacementAttorney-0', 'replacementAttorney-1');
-        }
-        elseif($noOfReplacementAttorneys == 1) {
-            $this->drawingTargets[4] = array('replacementAttorney-1');
-        }
-        
         if($noOfReplacementAttorneys > 2) {
             $this->pdfFormData['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
         }
@@ -290,7 +283,6 @@ abstract class Lp1 extends AbstractForm
          */
         if($this->lpa->document->whoIsRegistering == 'donor') {
             $this->pdfFormData['donor-is-applicant'] = self::CHECK_BOX_ON;
-            $this->drawingTargets[16] = array('applicant-0','applicant-1','applicant-2','applicant-3');
         }
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
             $this->pdfFormData['attorney-is-applicant'] = self::CHECK_BOX_ON;
@@ -310,18 +302,6 @@ abstract class Lp1 extends AbstractForm
                 }
                 
                 if(++$i == self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) break;
-            }
-            
-            switch(count($this->lpa->document->whoIsRegistering)) {
-                case 3:
-                    $this->drawingTargets[16] = array('applicant-3');
-                    break;
-                case 2:
-                    $this->drawingTargets[16] = array('applicant-2','applicant-3');
-                    break;
-                case 1:
-                    $this->drawingTargets[16] = array('applicant-1','applicant-2','applicant-3');
-                    break;
             }
         }
         
