@@ -28,6 +28,23 @@ class PaymentController extends AbstractLpaController
      */
     public function indexAction()
     {
+        // Fee exemption & universal credit page will only display a link to the complete page
+        if($this->getLpa()->payment->reducedFeeReceivesBenefits && $this->getLpa()->payment->reducedFeeAwardedDamages) {
+            $viewModel = new ViewModel([
+                    'nextRoute' => $this->url()->fromRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]),
+            ]);
+            $viewModel->setTemplate('application/payment/exemption.phtml');
+            return $viewModel;
+        }
+        elseif($this->getLpa()->payment->reducedFeeUniversalCredit) {
+            $viewModel = new ViewModel([
+                    'nextRoute' => $this->url()->fromRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]),
+            ]);
+            $viewModel->setTemplate('application/payment/universal-credit.phtml');
+            return $viewModel;
+        }
+        
+        // Payment form page
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
         
         $lpa = $this->getLpa();
