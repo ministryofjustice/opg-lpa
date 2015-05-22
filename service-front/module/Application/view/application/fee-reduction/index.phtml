@@ -7,8 +7,31 @@
     $reductionOptions       = $form->get('reductionOptions');
     $reductionOptions->setLabelOptions(['disable_html_escape' => true]);
     $reductionOptionsValueOptions = $reductionOptions->getOptions()['value_options'];
-    $reductionOptionsValueOptions['reducedFeeReceivesBenefits']['label'] = "The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000";
-    $reductionOptionsValueOptions['reducedFeeUniversalCredit']['label'] = "The donor receives Universal Credit";
+    $reductionOptionsValueOptions['reducedFeeReceivesBenefits']['label'] = <<<EOT
+    The donor currently claims one of <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
+        <div class="revised-fee" id="revised-fee-0">
+        	<h2>Reduced fee: &pound;0</h2>
+            <p>In order to apply for this exemption, you must enclose copies of letters from the DWP or your
+            benefit provider confirming that the benefit is being paid at the time the LPA is sent to us for
+            registration. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+            
+            <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll
+            need to pay the rest of the fee.</p>
+            
+            <p>On the next page, you can download the application for remission form with the application to register form.
+            Sign and date this and include it in your application.</p>
+        </div>
+EOT;
+    $reductionOptionsValueOptions['reducedFeeUniversalCredit']['label'] = <<<EOT
+    The donor receives Universal Credit
+        <div class="revised-fee" id="revised-fee-uc">
+        	<h2>We'll contact you about the fee</h2>
+        	<p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
+        	<p>This means <strong>the tool will not charge you for this LPA now.</strong></p>
+        	<p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
+        	<p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
+        </div>
+EOT;
     $reductionOptionsValueOptions['reducedFeeLowIncome']['label'] = "The donor currently has an income of less than £12,000 a year before tax";
     $reductionOptionsValueOptions['notApply']['label'] = "I'm not applying for a reduced fee";
     
@@ -85,27 +108,6 @@
                 <?= $this->formElementErrors($reductionOptions) ?>
             </p>
         </div>
-        </div>
-        
-        <div class="revised-fee" id="revised-fee-uc">
-        	<h2>We'll contact you about the fee</h2>
-        	<p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
-        	<p>This means <strong>the tool will not charge you for this LPA now.</strong></p>
-        	<p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
-        	<p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
-        </div>
-        
-        <div class="revised-fee" id="revised-fee-0">
-        	<h2>Reduced fee: &pound;0</h2>
-            <p>In order to apply for this exemption, you must enclose copies of letters from the DWP or your
-            benefit provider confirming that the benefit is being paid at the time the LPA is sent to us for
-            registration. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
-            
-            <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll
-            need to pay the rest of the fee.</p>
-            
-            <p>On the next page, you can download the application for remission form with the application to register form.
-            Sign and date this and include it in your application.</p>
         </div>
         
         <div class="accordion-actions">
