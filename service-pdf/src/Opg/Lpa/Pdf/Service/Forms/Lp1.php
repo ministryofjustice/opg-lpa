@@ -264,7 +264,7 @@ abstract class Lp1 extends AbstractForm
         /**
          *  Preference and Instructions. (Section 7)
          */
-        if(!empty($this->lpa->document->preference)) {
+        if(!empty((string)$this->lpa->document->preference)) {
             if(!$this->canFitIntoTextBox($this->lpa->document->preference)) {
                 $this->pdfFormData['has-more-preferences'] = self::CHECK_BOX_ON;
             }
@@ -274,7 +274,7 @@ abstract class Lp1 extends AbstractForm
             $this->drawingTargets[7] = array('preference');
         }
         
-        if(!empty($this->lpa->document->instruction)) {
+        if(!empty((string)$this->lpa->document->instruction)) {
             if(!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
                 $this->pdfFormData['has-more-instructions'] = self::CHECK_BOX_ON;
             }
