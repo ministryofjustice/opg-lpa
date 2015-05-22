@@ -17,6 +17,15 @@ return array(
 
     ], // session
 
+    'admin' => [
+        'redis' => [
+            'server' => [
+                'host' => '{{pillar['session']['redis']['host']}}'
+
+            ],
+        ],
+    ],
+
     'address' => [
 
         'postcodeanywhere' => [
