@@ -14,7 +14,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
      * Namespace used to cache the fact that
      * a given user has no v1 LPAs in their account.
      */
-    const USER_HAS_NO_V1_LAPS = 'no-laps:';
+    const USER_HAS_NO_V1_LPAS = 'no-lpas:';
 
     //---
 
@@ -83,7 +83,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
         $cache = $this->getServiceLocator()->get('ProxyCache');
 
         // If we've cached that the user has no v1 LPAs...
-        if( $useCache && (bool)$cache->getItem( self::USER_HAS_NO_V1_LAPS . $hashedUserId ) === true ){
+        if( $useCache && (bool)$cache->getItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId ) === true ){
             return array();
         }
 
@@ -124,8 +124,8 @@ class Dashboard implements ServiceLocatorAwareInterface {
         // If no LPAs were found, cache that fact...
         if( !isset($array['lpa']) || count($array['lpa']) == 0 ){
 
-            if( $config['cache-no-laps'] ){
-                $cache->setItem( self::USER_HAS_NO_V1_LAPS . $hashedUserId, true );
+            if( $config['cache-no-lpas'] ){
+                $cache->setItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId, true );
             }
 
             return array();

@@ -41,31 +41,31 @@
         <tbody class='app_stats'>
         <tr>
             <td class='app_status'>Started</td>
-            <td><?= $this->laps['all']['started'] ?></td>
-            <td><?= $this->laps['health-and-welfare']['started'] ?></td>
-            <td><?= $this->laps['property-and-finance']['started'] ?></td>
+            <td><?= $this->lpas['all']['started'] ?></td>
+            <td><?= $this->lpas['health-and-welfare']['started'] ?></td>
+            <td><?= $this->lpas['property-and-finance']['started'] ?></td>
         </tr>
         <tr>
             <td class='app_status'>Created</td>
-            <td><?= $this->laps['all']['created'] ?></td>
-            <td><?= $this->laps['health-and-welfare']['created'] ?></td>
-            <td><?= $this->laps['property-and-finance']['created'] ?></td>
+            <td><?= $this->lpas['all']['created'] ?></td>
+            <td><?= $this->lpas['health-and-welfare']['created'] ?></td>
+            <td><?= $this->lpas['property-and-finance']['created'] ?></td>
         </tr>
         <tr>
             <td class='app_status'>Completed</td>
-            <td><?= $this->laps['all']['completed'] ?></td>
-            <td><?= $this->laps['health-and-welfare']['completed'] ?></td>
-            <td><?= $this->laps['property-and-finance']['completed'] ?></td>
+            <td><?= $this->lpas['all']['completed'] ?></td>
+            <td><?= $this->lpas['health-and-welfare']['completed'] ?></td>
+            <td><?= $this->lpas['property-and-finance']['completed'] ?></td>
         </tr>
         <tr>
             <td class='app_status'><strong>Total</strong></td>
-            <td><?= $this->laps['all']['started'] + $this->laps['all']['created'] + $this->laps['all']['completed'] ?></td>
-            <td><?= $this->laps['health-and-welfare']['started'] + $this->laps['health-and-welfare']['created'] + $this->laps['health-and-welfare']['completed'] ?></td>
-            <td><?= $this->laps['property-and-finance']['started'] + $this->laps['property-and-finance']['created'] + $this->laps['property-and-finance']['completed'] ?></td>
+            <td><?= $this->lpas['all']['started'] + $this->lpas['all']['created'] + $this->lpas['all']['completed'] ?></td>
+            <td><?= $this->lpas['health-and-welfare']['started'] + $this->lpas['health-and-welfare']['created'] + $this->lpas['health-and-welfare']['completed'] ?></td>
+            <td><?= $this->lpas['property-and-finance']['started'] + $this->lpas['property-and-finance']['created'] + $this->lpas['property-and-finance']['completed'] ?></td>
         </tr>
         <tr>
             <td class='app_status'>Deleted</td>
-            <td><?= $this->laps['all']['deleted'] ?></td>
+            <td><?= $this->lpas['all']['deleted'] ?></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
@@ -76,7 +76,7 @@
         <thead>
         <tr>
             <th></th>
-            <? foreach( $this->laps['by-month'] as $month=>$values ){ ?>
+            <? foreach( $this->lpas['by-month'] as $month=>$values ){ ?>
                 <th><?= ( $month == date('Y-m') ) ? 'This Month' : date('F Y', strtotime($month)) ?></th>
             <? } ?>
         </tr>
@@ -84,19 +84,19 @@
         <tbody class='app_stats'>
         <tr>
             <td class='app_status'>Started LPAs</td>
-            <? foreach( $this->laps['by-month'] as $month=>$values ){ ?>
+            <? foreach( $this->lpas['by-month'] as $month=>$values ){ ?>
                 <td><?= $values['started'] ?></td>
             <? } ?>
         </tr>
         <tr>
             <td class='app_status'>Created LPAs</td>
-            <? foreach( $this->laps['by-month'] as $month=>$values ){ ?>
+            <? foreach( $this->lpas['by-month'] as $month=>$values ){ ?>
                 <td><?= $values['created'] ?></td>
             <? } ?>
         </tr>
         <tr>
             <td class='app_status'>Completed LPAs</td>
-            <? foreach( $this->laps['by-month'] as $month=>$values ){ ?>
+            <? foreach( $this->lpas['by-month'] as $month=>$values ){ ?>
                 <td><?= $values['completed'] ?></td>
             <? } ?>
         </tr>

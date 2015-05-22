@@ -30,7 +30,7 @@ class StatsController extends AbstractBaseController
         //---
 
         return new ViewModel([
-            'laps' => $generalLpaStats,
+            'lpas' => $generalLpaStats,
             'who' => $whoAreYouStats,
             'users' => $userStats,
         ]);
