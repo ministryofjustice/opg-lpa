@@ -28,28 +28,31 @@ class PaymentController extends AbstractLpaController
      */
     public function indexAction()
     {
-        // Fee exemption & universal credit page will only display a link to the complete page
-        if($this->getLpa()->payment->reducedFeeReceivesBenefits && $this->getLpa()->payment->reducedFeeAwardedDamages) {
-            $viewModel = new ViewModel([
-                    'nextRoute' => $this->url()->fromRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]),
-            ]);
-            $viewModel->setTemplate('application/payment/exemption.phtml');
-            return $viewModel;
-        }
-        elseif($this->getLpa()->payment->reducedFeeUniversalCredit) {
-            $viewModel = new ViewModel([
-                    'nextRoute' => $this->url()->fromRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]),
-            ]);
-            $viewModel->setTemplate('application/payment/universal-credit.phtml');
-            return $viewModel;
+        $lpa = $this->getLpa();
+        
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
+        if($this->params()->fromQuery('pay-by-cheque')) {
+        
+            $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
+        
+            // payment date is only for online payment.
+            //$lpa->payment->date = new \DateTime();
+        
+            if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
+            }
+        
+            // send email
+            $communicationService = $this->getServiceLocator()->get('Communication');
+            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+        
+            // to complete page
+            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
         }
         
         // Payment form page
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
-        
-        $lpa = $this->getLpa();
-        
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -90,24 +93,6 @@ class PaymentController extends AbstractLpaController
                 return $this->getResponse();
                 
             } // if($form->isValid())
-        }
-        elseif($this->params()->fromQuery('pay-by-cheque')) {
-            
-            $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
-
-            // payment date is only for online payment.
-            //$lpa->payment->date = new \DateTime();
-            
-            if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
-            }
-            
-            // send email
-            $communicationService = $this->getServiceLocator()->get('Communication');
-            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
-            
-            // to complete page
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
         }
         else {
             $data = [];

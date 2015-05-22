@@ -4522,29 +4522,14 @@ $(document).ready(function () {
 
   $allRevisedFees = $('.revised-fee').hide();
 
-  $('#claimBenefits, #receiveUniversalCredit, #hasLowIncome').change(function(){
-    var $cheque = $('#pay-by-cheque');
-
-    var showChequeOption = function (option) {
-      if (option) {
-        $cheque.show();
-      } else {
-        $cheque.hide();
-        $cheque.find('#payByCheque').prop('checked', false);
-      }
-    };
+  $("input[name=reductionOptions]").change(function(){
 
     $allRevisedFees.hide();
-    showChequeOption(true);
 
-    if ($('#claimBenefits').is(':checked')) {
+    if ($('#reducedFeeReceivesBenefits').is(':checked')) {
       $revisedFee = $('#revised-fee-0').show();
-      showChequeOption(false);
-    } else if ($('#receiveUniversalCredit').is(':checked')) {
+    } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
       $revisedFee = $('#revised-fee-uc').show();
-      showChequeOption(false);
-    } else if ($('#hasLowIncome').is(':checked')) {
-      $revisedFee = $('#revised-fee-65').show();
     }
   });
 

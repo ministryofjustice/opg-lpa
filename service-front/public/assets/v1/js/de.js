@@ -10,33 +10,116 @@ if(jQuery !== undefined) {
 		if((key[17] && key[76] && key[224])||(key[17] && key[76] && key[91])) {
 			$('form').each(function(){
 				var formAction = $(this).attr('action');
-				var createPattern=RegExp('^/create/add-(donor|attorney|trust-corporation|replacement-attorney|certificate-provider|notified-person|second-certificate-provider)/?(\\d+|attorney|replacement-attorney)?$');
-				var registerPattern=RegExp('^/register/(signature-dates|notice-dates)?$');
-				var createMatches = createPattern.exec(formAction);
-				var registerMatches = registerPattern.exec(formAction);
-				if(createMatches) {
-					var role = createMatches[1];
-					if(createMatches[2] !== undefined) {
-						role += '-'+createMatches[2];
+				var routePattern = RegExp('^/lpa/\\d+/(donor|primary-attorney|replacement-attorney|certificate-provider|people-to-notify)/(add|add-trust)$');
+				var routeMatch = routePattern.exec(formAction);
+				if(routeMatch) {
+					var role = routeMatch[1];
+					if(routeMatch[2] == 'add-trust') {
+						role += '-trust';
 					}
+					
 					$.ajax( {
-						url:'/service/get/' + role,
+						url: location.pathname + '?load=' + role,
 						dataType:'json',
 						success: function(data) {
-							$('.address-fieldset.hidden').removeClass('hidden');
+							$('.js-PostcodeLookup__postal-add.hidden').removeClass('hidden');
 							for(var index in data) {
-								$('#' + index).val(data[index]);
+								$('[name=' + index+']').val(data[index]);
+								if(index == 'name-title') {
+									$('[name=name-title__select]').val(data[index]);
+								}
 							}
-							$('input#address-addr1').trigger('change');
+							$('[name=name-title__select]').trigger('change');
 						}
-					});
-				}
-				else if(registerMatches) {
-					$('input.hasDatepicker').each(function(){
-						$(this).val($.datepicker.formatDate('dd/mm/yy', new Date()));
 					});
 				}
 			});
 		}
 	});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
