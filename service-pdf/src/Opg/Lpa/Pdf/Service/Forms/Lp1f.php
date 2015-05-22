@@ -123,7 +123,7 @@ class Lp1f extends Lp1
         $numberOfHumanAttorneys = $attorneyIndex;
         switch($numberOfHumanAttorneys) {
             case 3:
-                $this->drawingTargets[14] = array('attorney-signature-pdf');
+                $this->drawingTargets[14] = array('attorney-signature-pf');
                 break;
             case 2:
                 $this->drawingTargets[13] = array('attorney-signature-pf');
