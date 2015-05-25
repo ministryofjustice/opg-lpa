@@ -46,20 +46,20 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                 if($populatedAttorneys >= $additionalAttorneys) break;
                 
                 $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $i ) + $j;
-                if(is_string($this->lpa->document->primaryAttorneys[$attorneyIndex]->name)) {
-                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys->name;
+                if(is_string($attorneys[$attorneyIndex]->name)) {
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys[$attorneyIndex]->name;
                 }
                 else {
-                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $attorneys->name->title;
-                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $attorneys->name->first;
-                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys->name->last;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-title']        = $attorneys[$attorneyIndex]->name->title;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-first']        = $attorneys[$attorneyIndex]->name->first;
+                    $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys[$attorneyIndex]->name->last;
                 }
-                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $attorneys->address->address1;
-                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $attorneys->address->address2;
-                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $attorneys->address->address3;
-                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $attorneys->address->postcode;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address1']  = $attorneys[$attorneyIndex]->address->address1;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $attorneys[$attorneyIndex]->address->address2;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $attorneys[$attorneyIndex]->address->address3;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $attorneys[$attorneyIndex]->address->postcode;
                 
-                if(++$populatedAttorneys >= $additionalAttorneys) {
+                if(++$populatedAttorneys == $additionalAttorneys) {
                     break;
                 }
             }
