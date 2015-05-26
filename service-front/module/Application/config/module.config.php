@@ -79,6 +79,7 @@ return [
             'accordionBottom'       => 'Application\View\Helper\AccordionBottom',
             'accordionIdx'          => 'Application\View\Helper\AccordionIdx',
             'accountInfo'           => 'Application\View\Helper\AccountInfo',
+            'actorsList'            => 'Application\View\Helper\ActorsList',
             'pageHeaders'           => 'Application\View\Helper\PageHeaders',
             'elementGroupClass'     => 'Application\View\Helper\ElementGroupClass',
             'routeName'             => 'Application\View\Helper\RouteName',
