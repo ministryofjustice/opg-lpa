@@ -111,7 +111,9 @@ class DonorController extends AbstractLpaActorController
     
     public function editAction()
     {
-        $viewModel = new ViewModel();
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        
         $viewModel->setTemplate('application/donor/form.phtml');
         
         if ( $this->getRequest()->isXmlHttpRequest() ) {
@@ -119,7 +121,7 @@ class DonorController extends AbstractLpaActorController
         }
         
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $currentRouteName = $routeMatch->getMatchedRouteName();
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));

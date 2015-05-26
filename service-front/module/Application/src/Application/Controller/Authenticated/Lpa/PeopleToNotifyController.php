@@ -136,16 +136,18 @@ class PeopleToNotifyController extends AbstractLpaActorController
     
     public function editAction()
     {
-        $viewModel = new ViewModel();
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        
         $viewModel->setTemplate('application/people-to-notify/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
         
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $currentRouteName = $routeMatch->getMatchedRouteName();
         
-        $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
+        $personIdx = $routeMatch->getParam('idx');
         if(array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
             $notifiedPerson = $this->getLpa()->document->peopleToNotify[$personIdx];
         }
