@@ -29,6 +29,7 @@ class Cs2 extends AbstractForm
      */
     public function generate()
     {
+        $cs2Continued = '';
         $formatedContentLength = strlen($this->flattenTextContent($this->content));
         if(($this->contentType == self::CONTENT_TYPE_ATTORNEY_DECISIONS) || ($this->contentType == self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN)) {
             $contentLengthOnStandardForm = 0;
@@ -49,11 +50,18 @@ class Cs2 extends AbstractForm
                 $pageNo = $i+1;
             }
             
+            if(($i>0)||
+                ($this->contentType==self::CONTENT_TYPE_PREFERENCES)||
+                ($this->contentType==self::CONTENT_TYPE_INSTRUCTIONS)) {
+                    $cs2Continued = '(Continued)';
+            }
+            
             $cs2 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
             $cs2->fillForm(array(
                     $this->contentType  => self::CHECK_BOX_ON,
                     'cs2-content'       => $this->getContentForBox($pageNo, $this->content, $this->contentType),
-                    'donor-full-name'   => $this->fullName($this->lpa->document->donor->name)
+                    'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
+                    'cs2-continued'     => $cs2Continued,
             ))
             ->flatten()
             ->saveAs($filePath);
