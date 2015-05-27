@@ -11,11 +11,17 @@
 
 namespace Symfony\Component\Validator\Constraints;
 
+use Symfony\Component\Validator\Constraint;
+
 /**
+ * @Annotation
+ * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
  * @api
  */
-class FalseValidator extends IsFalseValidator
+class IsNull extends Constraint
 {
+    public $message = 'This value should be null.';
 }

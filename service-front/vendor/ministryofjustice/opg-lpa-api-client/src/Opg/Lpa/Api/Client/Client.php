@@ -20,10 +20,16 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 
 class Client
 {
-
-    const PATH_API = 'http://localhost:8083';
-    const PATH_AUTH = 'http://auth.local';
-
+    /**
+     * The base URI for the API
+     */
+    private $apiBaseUri;
+    
+    /**
+     * The base URI for the auth server
+     */
+    private $authBaseUri;
+    
     /**
      * The API auth token
      * 
@@ -73,6 +79,38 @@ class Client
     private $isError;
     
     /**
+     * @return the $apiBaseUri
+     */
+    public function getApiBaseUri()
+    {
+        return $this->apiBaseUri;
+    }
+
+    /**
+     * @return the $authBaseUri
+     */
+    public function getAuthBaseUri()
+    {
+        return $this->authBaseUri;
+    }
+
+    /**
+     * @param field_type $apiBaseUri
+     */
+    public function setApiBaseUri($apiBaseUri)
+    {
+        $this->apiBaseUri = $apiBaseUri;
+    }
+
+    /**
+     * @param field_type $authBaseUri
+     */
+    public function setAuthBaseUri($authBaseUri)
+    {
+        $this->authBaseUri = $authBaseUri;
+    }
+
+    /**
      * Create an API client for the given uri endpoint.
      * 
      * Optionally pass in a previously-obtained token. If no token is provided,
@@ -121,7 +159,7 @@ class Client
         $password
     )
     {
-        $response = $this->client()->post( self::PATH_AUTH . '/users' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/users' ,[
             'body' => [
                 'username' => strtolower($email),
                 'password' => $password,
@@ -149,7 +187,7 @@ class Client
      */
     public function createApplication()
     {
-        $response = $this->client()->post( self::PATH_API . '/v1/users/' . $this->getUserId() . '/applications', []);
+        $response = $this->client()->post( $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications', []);
     
         if( $response->getStatusCode() != 201 ){
             return $this->log($response, false);
@@ -173,7 +211,7 @@ class Client
      */
     public function deleteApplication($lpaId, $succeedIfDocumentNotFound = false)
     {
-        $response = $this->client()->delete( self::PATH_API . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId, [
+        $response = $this->client()->delete( $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId, [
             'headers' => ['Content-Type' => 'application/json']
         ]);
     
@@ -198,7 +236,7 @@ class Client
      */
     public function getApplication($lpaId)
     {
-        $response = $this->client()->get( self::PATH_API . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId, [
+        $response = $this->client()->get( $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId, [
             'headers' => ['Content-Type' => 'application/json']
         ]);
     
@@ -222,7 +260,7 @@ class Client
         $path = '/v1/users/' . $this->getUserId() . '/applications';
         
         do {
-            $response = $this->client()->get( self::PATH_API . $path, [
+            $response = $this->client()->get( $this->apiBaseUri . $path, [
                 'query' => [ 'search' => $query ]
             ]);
 
@@ -265,7 +303,7 @@ class Client
         $activationToken
     )
     {
-        $response = $this->client()->post( self::PATH_AUTH . '/users/activate' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/users/activate' ,[
             'body' => [
                 'activation_token' => $activationToken,
             ]
@@ -298,7 +336,7 @@ class Client
         //-------------------------
         // Authenticate the user
 
-        $response = $this->client()->post( self::PATH_AUTH . '/token' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/token' ,[
             'body' => [
                 'username' => strtolower($email),
                 'password' => $password,
@@ -335,7 +373,7 @@ class Client
         //-------------------------
         // Get the user's details
 
-        $response = $this->client()->get( self::PATH_AUTH . '/tokeninfo', [
+        $response = $this->client()->get( $this->authBaseUri . '/tokeninfo', [
             'query' => [ 'access_token' => $this->getToken() ]
         ]);
 
@@ -370,7 +408,7 @@ class Client
     public function getTokenInfo($token)
     {
 
-        $response = $this->client()->get( self::PATH_AUTH . '/tokeninfo', [
+        $response = $this->client()->get( $this->authBaseUri . '/tokeninfo', [
             'query' => [ 'access_token' => $token ]
         ]);
 
@@ -429,7 +467,7 @@ class Client
      */
     public function deleteAllLpas()
     {
-        $response = $this->client()->delete( self::PATH_API . '/v1/users/' . $this->getUserId(), [
+        $response = $this->client()->delete( $this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-AuthOne' => $this->getToken(),
@@ -457,7 +495,7 @@ class Client
             return false;
         }
         
-        $response = $this->client()->get( self::PATH_AUTH . '/deregister', [
+        $response = $this->client()->get( $this->authBaseUri . '/deregister', [
             'headers' => ['Token' => $this->getToken()]
         ]);
         
@@ -477,7 +515,7 @@ class Client
     public function requestPasswordReset( $email )
     {
 
-        $response = $this->client()->post( self::PATH_AUTH . '/pwreset' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/pwreset' ,[
             'body' => [
                 'email' => strtolower($email),
             ]
@@ -506,7 +544,7 @@ class Client
      */
     public function requestPasswordResetAuthToken( $resetToken ){
 
-        $response = $this->client()->get( self::PATH_AUTH . '/pwreset/' . $resetToken );
+        $response = $this->client()->get( $this->authBaseUri . '/pwreset/' . $resetToken );
 
         if( $response->getStatusCode() != 200 ){
             return $this->log($response, false);
@@ -533,7 +571,7 @@ class Client
         $newEmail
     )
     {
-        $response = $this->client()->post( self::PATH_AUTH . '/users/' . $this->getEmail() . '/put', [
+        $response = $this->client()->post( $this->authBaseUri . '/users/' . $this->getEmail() . '/put', [
             'body' => ['new_email' => strtolower($newEmail) ],
             'headers' => ['Token' => $this->getToken()]
         ]);
@@ -563,7 +601,7 @@ class Client
         $newPassword
     )
     {
-        $response = $this->client()->post( self::PATH_AUTH . '/users/' . $this->getEmail() . '/put', [
+        $response = $this->client()->post( $this->authBaseUri . '/users/' . $this->getEmail() . '/put', [
             'body' => ['new_password' => $newPassword],
             'headers' => ['Token' => $this->getToken()]
         ]);
@@ -585,7 +623,7 @@ class Client
         User $user
     )
     {
-        $response = $this->client()->put( self::PATH_API . '/v1/users/' . $this->getUserId(), [
+        $response = $this->client()->put( $this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'body' => $user->toJson(),
             'headers' => ['Content-Type' => 'application/json']
         ]);
@@ -604,7 +642,7 @@ class Client
      */
     public function getAboutMe()
     {
-        $response = $this->client()->get( self::PATH_API . '/v1/users/' . $this->getUserId(), [
+        $response = $this->client()->get( $this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'headers' => ['Content-Type' => 'application/json']
         ]);
         
@@ -1089,7 +1127,7 @@ class Client
      */
     public function lockLpa($lpaId)
     {
-        $uri = self::PATH_API . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/lock';
+        $uri = $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/lock';
         
         $response = $this->client()->post( $uri );
         
@@ -1501,7 +1539,7 @@ class Client
     {
         $path = '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/pdfs/' . $pdfName . '.pdf';
         
-        $response = $this->client()->get( self::PATH_API . $path );
+        $response = $this->client()->get( $this->apiBaseUri . $path );
         
         $code = $response->getStatusCode();
         
@@ -1527,7 +1565,7 @@ class Client
         $path = '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/pdfs';
     
         do {
-            $response = $this->client()->get( self::PATH_API . $path );
+            $response = $this->client()->get( $this->apiBaseUri . $path );
     
             if ($response->getStatusCode() != 200) {
                 return $this->log($response, false);
@@ -1567,7 +1605,7 @@ class Client
 
         $path = '/v1/stats/' . $type;
 
-        $response = $this->client()->get( self::PATH_API . $path );
+        $response = $this->client()->get( $this->apiBaseUri . $path );
 
         $code = $response->getStatusCode();
 
@@ -1586,7 +1624,7 @@ class Client
      */
     public function getAuthStats( ){
     
-        $response = $this->client()->get( self::PATH_AUTH . '/admin/stats' );
+        $response = $this->client()->get( $this->authBaseUri . '/admin/stats' );
     
         $code = $response->getStatusCode();
     

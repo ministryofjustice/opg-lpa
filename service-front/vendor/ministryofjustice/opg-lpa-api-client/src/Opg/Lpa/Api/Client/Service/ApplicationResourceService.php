@@ -26,7 +26,7 @@ class ApplicationResourceService
     {
         $this->apiClient = $apiClient;
         $this->resourceType = $resourceType;
-        $this->endpoint = Client::PATH_API . '/v1/users/' . $this->apiClient->getUserId() . '/applications/' . $lpaId . '/' . $resourceType;
+        $this->endpoint = $apiClient->getApiBaseUri() . '/v1/users/' . $this->apiClient->getUserId() . '/applications/' . $lpaId . '/' . $resourceType;
     }
 
     /**
