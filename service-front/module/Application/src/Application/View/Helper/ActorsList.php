@@ -49,7 +49,7 @@ class ActorsList extends AbstractAccordion
         $names = [];
         foreach($actors as $actor) {
             if(($actor != null) && !($actor instanceof TrustCorporation)) {
-                $names[] = $actor->name->first . ' ' . $actor->name->last;
+                $names[] = strtolower($actor->name->first . ' ' . $actor->name->last);
             }
         }
         
