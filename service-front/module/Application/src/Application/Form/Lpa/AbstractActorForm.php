@@ -61,36 +61,6 @@ abstract class AbstractActorForm extends AbstractForm
     }
     
     /**
-     * Get validated form data for creating model object.
-     * 
-     * @see \Application\Form\Lpa\AbstractForm::getModelDataFromValidatedForm()
-     * 
-     * @return e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
-     */
-    public function getModelDataFromValidatedForm()
-    {
-        $formDataForModel = parent::getModelDataFromValidatedForm();
-    
-        if(array_key_exists('dob', $formDataForModel) && ($formDataForModel['dob']['date'] == "")) {
-            $formDataForModel['dob'] = null;
-        }
-    
-        if(array_key_exists('email', $formDataForModel) && ($formDataForModel['email']['address'] == "")) {
-            $formDataForModel['email'] = null;
-        }
-        
-        if(array_key_exists('phone', $formDataForModel) && ($formDataForModel['phone']['number'] == "")) {
-            $formDataForModel['phone'] = null;
-        }
-        
-        if(array_key_exists('name', $formDataForModel) && is_array($formDataForModel['name']) && ($formDataForModel['name']['first'] == "") && ($formDataForModel['name']['last'] == "")) {
-            $formDataForModel['name'] = null;
-        }
-        
-        return $formDataForModel;
-    }
-    
-    /**
      * Convert form data to model-compatible input data format.
      *
      * @param array $formData. e.g. ['name-title'=>'Mr','name-first'=>'John',]
