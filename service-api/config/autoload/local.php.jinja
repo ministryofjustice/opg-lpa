@@ -9,7 +9,7 @@ return array(
             'default' => [
 
                 'options' => [
-                    'password' => '{{pillar.mongodb.databases[appslug]['password']}}',
+                    'password' => '{{pillar['mongodb']['configuration']['databases']['opglpa-api']['owner_password']}}',
                 ],
 
             ],
