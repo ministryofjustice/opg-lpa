@@ -6,7 +6,7 @@ An LPA is mainly used if you don't have the mental capacity to make decisions yo
 
 ### Mental capacity: definition
 
-'Mental capacity' means the ability to make a decision. A person with mental capacity has at least a general understanding of the decision they need to make, why they need to make it and the likely consequences. Sometimes people can make some kinds of decision but don't have the mental capacity to make others.
+'Mental capacity' means the ability to make a decision. A person with mental capacity has at least a general understanding of the decision they need to make, why they need to make it and the likely consequences. Sometimes people can make some kinds of decisions but don't have the mental capacity to make others.
 
 The Ministry of Justice website has <a href="http://www.justice.gov.uk/protecting-the-vulnerable/mental-capacity-act" rel="external" target="_blank">more information about mental capacity</a>.
 
@@ -29,7 +29,7 @@ This LPA covers your personal and health care. This type of LPA can only be used
 
 You can use it to let your attorneys decide about your daily routine, such as what you wear and eat, moving into a care home or getting help from social services. You can also give your attorneys the power to refuse or agree to any medical treatment you may need to stay alive, if ever you are unable to make that decision. If your attorneys don't have that power, doctors would decide.
 
-Some people make 1 LPA, while others make both. You'll find more information about the 2 types of LPA when you're asked to choose which type to make.
+Some people make one type of LPA, while others make both. You'll find more information about the 2 types of LPA when you're asked to choose which type to make.
 
 ## Protecting your interests
 
@@ -64,7 +64,7 @@ An LPA can't be used by your attorneys until it's been registered by the Office 
 * the LPA has no errors
 * people have had the opportunity to object if they have concerns
 
-OPG can ask the Court of Protection to remove invalid restrictions, guidance or specific words so that an LPA can be registered.
+OPG can ask the Court of Protection to remove invalid instructions and preferences so that an LPA can be registered.
 
 A donor who still has mental capacity can ask OPG to cancel their registered LPA if they change their mind.
 
@@ -72,7 +72,7 @@ OPG protects people who don't have the mental capacity to make decisions for the
 
 ### Related help topics
 
-* [About this tool](/help/#topic-about-this-tool)
+* [About this service](/help/#topic-about-this-tool)
 * [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)
 * [Donor](/help/#topic-donor)
 * [Attorneys](/help/#topic-attorneys)

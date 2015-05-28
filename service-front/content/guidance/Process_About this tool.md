@@ -44,8 +44,8 @@ You need to make quite a few decisions when you make your LPA. You should think 
 * How many attorneys do you need?
 * Should you have replacement attorneys? These are people who step in if original attorneys can no longer act, so they're a way to protect your LPA.
 * How should your attorneys make decisions on your behalf? Should they act together or individually, or a mixture of the two?
-* Do you want any conditions or restrictions on the way your attorneys make decisions?
-* Do you want to give any guidance to your attorneys about how to make decisions?
+* Do you want to give your attorneys any instructions about how to make decisions?
+* Do you want to state any preferences about your beliefs and values to guide your attorneys' decision-making?
 * Who's the independent person – the certificate provider – who can sign your LPA to confirm that you understand it and no one is forcing you to make it? This person is a safeguard who can raise concerns when you make your LPA.
 * Are there any 'people to be told' about your LPA when it is about to be registered? These people are an optional safeguard who can raise concerns about your LPA before it can be used.
 

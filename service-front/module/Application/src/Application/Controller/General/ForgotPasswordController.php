@@ -40,12 +40,19 @@ class ForgotPasswordController extends AbstractBaseController
 
             if ($form->isValid()) {
 
-                // Create a callback for the Model to get the callback URL from.
-                $callback = function( $token ) {
+                // Create a callback for the Model to get the forgotten password route.
+                $fpCallback = function( $token ) {
                     return $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
                 };
 
-                $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $form->getData()['email'], $callback );
+                // Create a callback for the Model to get the activate callback.
+                $activateCallback = function( $token ) {
+                    return $this->url()->fromRoute('register/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
+                };
+
+                //---
+
+                $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $form->getData()['email'], $fpCallback, $activateCallback );
 
                 if( $result === true ){
 
@@ -93,13 +100,6 @@ class ForgotPasswordController extends AbstractBaseController
         //-------------------------------------
         // We have a valid reset token...
 
-        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
-        $session = $this->getServiceLocator()->get('SessionManager');
-        $session->getStorage()->clear();
-        $session->initialise();
-
-        //---
-
         $form = new ResetPasswordPasswordForm();
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ] ) );
 
@@ -133,6 +133,13 @@ class ForgotPasswordController extends AbstractBaseController
             } // if
 
         } // if
+
+        //---------------------------
+
+        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
+        $session = $this->getServiceLocator()->get('SessionManager');
+        $session->getStorage()->clear();
+        $session->initialise();
 
         //---------------------------
 

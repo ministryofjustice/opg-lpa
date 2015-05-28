@@ -2,7 +2,7 @@
 
 * LPA basics
 	* About LPAs_LPA basics.md
-* About this tool
+* About this service
 	* Process_About this tool.md
 * The 2 types of LPA
 	* About LPAs_The 2 types of LPA.md
@@ -22,7 +22,7 @@
 	* People_Certificate providers.md
 * People to be told
 	* People_People to be told.md
-* Restrictions and guidance
+* Instructions and preferences
 	* Decisions_Restrictions and guidance.md
 * Paying attorneys
 	* Decisions_Paying attorneys.md
