@@ -15,9 +15,11 @@ class AccountInfo extends AbstractHelper
         if ($auth->hasIdentity()) {
 
             $details = $this->view->getHelperPluginManager()->getServiceLocator()->get('UserDetailsSession');
-            
-            $params['name'] = "{$details->user->name->first} {$details->user->name->last}";
-            
+
+            if( $details->user->name->first != null && $details->user->name->last != null ){
+                $params['name'] = "{$details->user->name->first} {$details->user->name->last}";
+            }
+
             $params['links'][] = array(
                 'text' => 'Your details',
                 'url' => $this->view->url('user/about-you'),

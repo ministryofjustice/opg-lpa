@@ -5,7 +5,7 @@
   <div class="inner">
     <nav role="navigation" class="content">
       <ul id="navigation">
-        <?php if (trim($this->name) != '') : ?>
+        <?php if ( isset($this->name) && trim($this->name) != '') : ?>
           <li class="user"><?php echo $this->escapeHtml($this->name) ?>: </li>
         <?php endif; ?>
         <?php foreach ($this->links as $link) : ?> 
