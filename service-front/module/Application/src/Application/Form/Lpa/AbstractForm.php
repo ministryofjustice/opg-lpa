@@ -88,65 +88,16 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
      */
     public function isValid()
     {
-        if ($this->hasValidated) {
-            return $this->isValid;
-        }
-
-        $this->isValid = false;
-
-        if (!is_array($this->data) && !is_object($this->object)) {
-            throw new Exception\DomainException(sprintf(
-                '%s is unable to validate as there is no data currently set',
-                __METHOD__
-            ));
-        }
-
-        if (!is_array($this->data)) {
-            $data = $this->extract();
-            $this->populateValues($data, true);
-            if (!is_array($data)) {
-                throw new Exception\DomainException(sprintf(
-                    '%s is unable to validate as there is no data currently set',
-                    __METHOD__
-                ));
-            }
-            $this->data = $data;
-        }
-
-        $filter = $this->getInputFilter();
-        if (!$filter instanceof InputFilterInterface) {
-            throw new Exception\DomainException(sprintf(
-                '%s is unable to validate as there is no input filter present',
-                __METHOD__
-            ));
-        }
-        
-        $filter->setData($this->data);
-        $filter->setValidationGroup(InputFilterInterface::VALIDATE_ALL);
-
-        $validationGroup = $this->getValidationGroup();
-        if ($validationGroup !== null) {
-            $this->prepareValidationGroup($this, $this->data, $validationGroup);
-            $filter->setValidationGroup($validationGroup);
-        }
-        
-        // do validation through Zend Validator first 
-        $result = (bool) $filter->isValid();
+        $result = parent::isValid();
         
         // do validation though model validators.
         $modelValidationResult = $this->validateByModel();
         
         // if Zend validation was successful, do validation through model.
-        $this->isValid = $result = (bool) ($result & $modelValidationResult['isValid']);
+        $result = (bool) ($result & $modelValidationResult['isValid']);
         
-        $this->hasValidated = true;
-        
-        if ($result && $this->bindOnValidate()) {
-            $this->bindValues();
-        }
-
         if (!$result) {
-            $messages = $filter->getMessages();
+            $messages = $this->getInputFilter()->getMessages();
             
             // simplify zend email address validation error.
             if(isset($messages['email-address'])) {
