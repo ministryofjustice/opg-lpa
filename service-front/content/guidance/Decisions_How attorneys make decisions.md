@@ -35,7 +35,7 @@ If you choose this option, you must not say anywhere else in the LPA that certai
 
 You can say how you’d like your attorneys to make a particular decision in the guidance section of your LPA. However, they don’t have to follow your guidance.
 
-See [Restrictions and guidance](/help/#topic-restrictions-and-guidance) for more information.
+See [Instructions and preferences](/help/#topic-restrictions-and-guidance) for more information.
 
 ## Jointly (attorneys agree every decision unanimously)
 
