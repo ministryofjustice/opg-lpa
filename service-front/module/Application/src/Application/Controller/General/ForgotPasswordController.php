@@ -93,6 +93,13 @@ class ForgotPasswordController extends AbstractBaseController
         //-------------------------------------
         // We have a valid reset token...
 
+        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
+        $session = $this->getServiceLocator()->get('SessionManager');
+        $session->getStorage()->clear();
+        $session->initialise();
+
+        //---
+
         $form = new ResetPasswordPasswordForm();
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ] ) );
 
