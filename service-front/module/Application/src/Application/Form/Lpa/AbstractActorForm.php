@@ -17,10 +17,19 @@ abstract class AbstractActorForm extends AbstractForm
     public function validateByModel()
     {
         $dataForModel = $this->convertFormDataForModel($this->data);
-        
+    
+        $messages = [];
+        if(array_key_exists('dob', $dataForModel)) {
+            list($year, $month, $day) = explode('-', $dataForModel['dob']['date']);
+            if(!checkdate($month, $day, $year)) {
+                $messages['dob-date-year'] = ['invalid date'];
+                unset($dataForModel['dob']);
+            }
+        }
+    
         $this->actorModel->populate($dataForModel);
         $validation = $this->actorModel->validate();
-        
+    
         // set validation message for form elements
         if($validation->offsetExists('dob')) {
             $validation['dob-date-year'] = $validation['dob'];
@@ -30,17 +39,17 @@ abstract class AbstractActorForm extends AbstractForm
             $validation['dob-date-year'] = $validation['dob.date'];
             unset($validation['dob.date']);
         }
-        
+    
         if(array_key_exists('email', $dataForModel) && ($dataForModel['email'] == null) && $validation->offsetExists('email')) {
             $validation['email-address'] = $validation['email'];
             unset($validation['email']);
         }
-        
+    
         if(array_key_exists('phone', $dataForModel) && ($dataForModel['phone'] == null) && $validation->offsetExists('phone')) {
             $validation['phone-number'] = $validation['phone'];
             unset($validation['phone']);
         }
-        
+    
         if(array_key_exists('name', $dataForModel) && ($dataForModel['name'] == null) && $validation->offsetExists('name')) {
             if(array_key_exists('name-first', $this->data)) {
                 $validation['name-first'] = $validation['name'];
@@ -48,14 +57,14 @@ abstract class AbstractActorForm extends AbstractForm
                 unset($validation['name']);
             }
         }
-        
-        if(count($validation) == 0) {
+    
+        if(empty($message) && (count($validation) == 0)) {
             return ['isValid'=>true, 'messages' => []];
         }
         else {
             return [
                     'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
+                    'messages' => array_merge($this->modelValidationMessageConverter($validation), $messages),
             ];
         }
     }
