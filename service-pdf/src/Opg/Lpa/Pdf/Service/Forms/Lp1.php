@@ -89,10 +89,28 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
-        // CS1 is generated when number of people to notify are larger than what is available on standard form. 
+        $cs1ActorTypes = [];
+        
+        // CS1 is to be generated when number of attorneys that are larger than what is available on standard form.
+        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
+        if($noOfPrimaryAttorneys > 4) {
+            $cs1ActorTypes[] = 'primaryAttorney';
+        }
+        
+        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+        if($noOfReplacementAttorneys > 2) {
+            $cs1ActorTypes[] = 'replacementAttorney';
+        }
+        
+        // CS1 is to be generated when number of people to notify are larger than what is available on standard form. 
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify > 4) {
-            $generatedCs1 = (new Cs1($this->lpa, 'peopleToNotify'))->generate();
+            $cs1ActorTypes[] = 'peopleToNotify';
+        }
+        
+        // generate CS1
+        if(!empty($cs1ActorTypes)) {
+            $generatedCs1 = (new Cs1($this->lpa, $cs1ActorTypes))->generate();
             $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
@@ -330,6 +348,7 @@ abstract class Lp1 extends AbstractForm
             switch($this->lpa->document->correspondent->who) {
                 case Correspondence::WHO_DONOR:
                     $this->pdfFormData['donor-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->drawingTargets[17] = ['correspondent-empty-name-address'];
                     break;
                 case Correspondence::WHO_ATTORNEY:
                     $this->pdfFormData['attorney-is-correspondent'] = self::CHECK_BOX_ON;
@@ -339,6 +358,7 @@ abstract class Lp1 extends AbstractForm
                         $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
                     }
                     $this->pdfFormData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;
+                    $this->drawingTargets[17] = ['correspondent-empty-address'];
                     break;
                 case Correspondence::WHO_OTHER:
                     $this->pdfFormData['other-is-correspondent'] = self::CHECK_BOX_ON;

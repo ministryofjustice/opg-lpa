@@ -55,7 +55,9 @@ class Lp1f extends Lp1
         
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfPrimaryAttorneys == 1) {
-            $this->drawingTargets[1] = array('primaryAttorney-1-pf');
+            //pageNo = 1 is page 2
+            $pageNo = 1;
+            $this->drawingTargets[$pageNo] = array('primaryAttorney-1-pf');
         }
         
         // Section 4
@@ -87,11 +89,13 @@ class Lp1f extends Lp1
         }
         
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+        //pageNo = 4 is page 5
+        $pageNo = 4;
         if($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[4] = array('replacementAttorney-0-pf', 'replacementAttorney-1-pf');
+            $this->drawingTargets[$pageNo] = array('replacementAttorney-0-pf', 'replacementAttorney-1-pf');
         }
         elseif($noOfReplacementAttorneys == 1) {
-            $this->drawingTargets[4] = array('replacementAttorney-1-pf');
+            $this->drawingTargets[$pageNo] = array('replacementAttorney-1-pf');
         }
         
         /**
@@ -161,19 +165,6 @@ class Lp1f extends Lp1
     {
         parent::generateAdditionalPages();
         
-        // CS1 is generated when number of attorneys that are larger than what is available on standard form. 
-        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
-        if($noOfPrimaryAttorneys > 4) {
-            $generatedCs1 = (new Cs1($this->lpa, 'primaryAttorney'))->generate();
-            $this->mergerIntermediateFilePaths($generatedCs1);
-        }
-        
-        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        if($noOfReplacementAttorneys > 2) {
-            $generatedCs1 = (new Cs1($this->lpa, 'replacementAttorney'))->generate();
-            $this->mergerIntermediateFilePaths($generatedCs1);
-        }
-                
         // CS4
         if ($this->hasTrustCorporation()) {
             $generatedCs4 = (new Cs4($this->lpa, $this->getTrustCorporation()->number))->generate();

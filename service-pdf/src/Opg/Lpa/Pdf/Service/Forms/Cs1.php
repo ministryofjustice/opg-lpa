@@ -3,12 +3,14 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 
 class Cs1 extends AbstractForm
 {
     use AttorneysTrait;
     
-    private $actorType, $actors;
+    private $actorTypes, $actors=[];
     
     static $SETTINGS = array(
         'max-slots-on-standard-form' => [
@@ -27,28 +29,32 @@ class Cs1 extends AbstractForm
     /**
      * 
      * @param Lpa $lpa
-     * @param string $actorType
+     * @param string $actorTypes
      */
-    public function __construct(Lpa $lpa, $actorType)
+    public function __construct(Lpa $lpa, $actorTypes)
     {
         parent::__construct($lpa);
         
-        $this->actorType = $actorType;
+        $this->actorTypes = $actorTypes;
         
         /**
          * One of LPA document actors property name
          * @var string - primaryAttorneys | replacementAttorneys | peopleToNotify
          */
-        $actors = self::$SETTINGS['actors'][$actorType];
-        
-        if(($lpa->document->type == Document::LPA_TYPE_PF) && ($actorType != 'peopleToNotify')) {
-            $this->actors = $this->sortAttorneys($actors);
+        foreach($actorTypes as $actorType) {
+            $actorGroup = self::$SETTINGS['actors'][$actorType];
+            
+            if(($lpa->document->type == Document::LPA_TYPE_PF) && ($actorGroup != 'peopleToNotify')) {
+                $actors = $this->sortAttorneys($actorGroup);
+            }
+            else {
+                $actors = $this->lpa->document->$actorGroup;
+            }
+            
+            sort($actors);
+            
+            $this->actors[$actorType] = $actors;
         }
-        else {
-            $this->actors = $this->lpa->document->$actors;
-        }
-        
-        sort($this->actors);
     }
     
     /**
@@ -58,77 +64,70 @@ class Cs1 extends AbstractForm
      */
     public function generate()
     {
-        /**
-         * Number of same roles filled on standard form.
-         */
-        $startingIndexForThisActor = self::$SETTINGS['max-slots-on-standard-form'][$this->actorType];
+        $additionalActors = [];
         
-        /**
-         * Number of persons can be put on to CS1
-         */
-        $maxNumPersonOnCS1 = self::$SETTINGS['max-slots-on-cs1-form'];
+        foreach($this->actors as $actorType => $actorGroup) {
+            $startingIndexForThisActorGroup = self::$SETTINGS['max-slots-on-standard-form'][$actorType];
+            $totalActorsInGroup = count($actorGroup);
+            for($i=$startingIndexForThisActorGroup; $i<$totalActorsInGroup; $i++) {
+                $additionalActors[] = ['person'=>$actorGroup[$i], 'type'=>$actorType];
+            }
+        }
         
-        $total = count($this->actors);
+        if(empty($additionalActors)) return;
         
-        $totalAdditionalPersonsOfThisActorType = $total - $startingIndexForThisActor;
-        
-        $noOfAdditionalPages = ceil($totalAdditionalPersonsOfThisActorType/2);
-        
-        $totalPopulatedAdditionalPeople = 0;
-        
-        for($i=0; $i<$noOfAdditionalPages; $i++) {
+        foreach($additionalActors as $idx=>$actor) {
+            $pIdx = ($idx % self::$SETTINGS['max-slots-on-cs1-form']);
             
+            if($pIdx == 0) {
+                $formData = ['donor-full-name' => $this->fullName($this->lpa->document->donor->name)];
+            }
+            
+            $formData['cs1-'.$pIdx.'-is-'.$actor['type']] = self::CHECK_BOX_ON;
+            
+            if($actor['person']->name instanceof Name) {
+                $formData['cs1-'.$pIdx.'-name-title'] = $actor['person']->name->title;
+                $formData['cs1-'.$pIdx.'-name-first'] = $actor['person']->name->first;
+                $formData['cs1-'.$pIdx.'-name-last']  = $actor['person']->name->last;
+            }
+            else {
+                $formData['cs1-'.$pIdx.'-name-last'] = $actor['person']->name;
+            }
+            
+            $formData['cs1-'.$pIdx.'-address-address1'] = $actor['person']->address->address1;
+            $formData['cs1-'.$pIdx.'-address-address2'] = $actor['person']->address->address2;
+            $formData['cs1-'.$pIdx.'-address-address3'] = $actor['person']->address->address3;
+            $formData['cs1-'.$pIdx.'-address-postcode'] = $actor['person']->address->postcode;
+            
+            if(property_exists($actor['person'], 'dob')) {
+                $formData['cs1-'.$pIdx.'-dob-date-day']   = $actor['person']->dob->date->format('d');
+                $formData['cs1-'.$pIdx.'-dob-date-month'] = $actor['person']->dob->date->format('m');
+                $formData['cs1-'.$pIdx.'-dob-date-year']  = $actor['person']->dob->date->format('Y');
+            }
+            
+            if(property_exists($actor['person'], 'email') && ($actor['person']->email instanceof EmailAddress)) {
+                $formData['cs1-'.$pIdx.'-email-address'] = "\n".$actor['person']->email->address;
+            }
+            
+            if($pIdx == 1) {
+                $filePath = $this->registerTempFile('CS1');
+                $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                
+                $cs1->fillForm($formData)
+                    ->flatten()
+                    ->saveAs($filePath);
+            }
+        }
+        
+        if($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            
             $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
-            
-            $formData = array();
-            for($j=0; $j<$maxNumPersonOnCS1; $j++) {
-                
-                $actorIndex = $i*$maxNumPersonOnCS1 + $j + $startingIndexForThisActor;
-                
-                $formData['cs1-'.$j.'-is-'.$this->actorType] = self::CHECK_BOX_ON;
-                if(is_object($this->actors[$actorIndex]->name)) {
-                    $formData['cs1-'.$j.'-name-title']       = $this->actors[$actorIndex]->name->title;
-                    $formData['cs1-'.$j.'-name-first']       = $this->actors[$actorIndex]->name->first;
-                    $formData['cs1-'.$j.'-name-last']        = $this->actors[$actorIndex]->name->last;
-                }
-                else {
-                    $formData['cs1-'.$j.'-name-last']        = $this->actors[$actorIndex]->name;
-                }
-                
-                $formData['cs1-'.$j.'-address-address1'] = $this->actors[$actorIndex]->address->address1;
-                $formData['cs1-'.$j.'-address-address2'] = $this->actors[$actorIndex]->address->address2;
-                $formData['cs1-'.$j.'-address-address3'] = $this->actors[$actorIndex]->address->address3;
-                $formData['cs1-'.$j.'-address-postcode']  = $this->actors[$actorIndex]->address->postcode;
-                
-                if(property_exists($this->actors[$actorIndex], 'dob') && is_object($this->actors[$actorIndex]->dob) && property_exists($this->actors[$actorIndex]->dob, 'date')) {
-                    $formData['cs1-'.$j.'-dob-date-day']   = $this->actors[$actorIndex]->dob->date->format('d');
-                    $formData['cs1-'.$j.'-dob-date-month'] = $this->actors[$actorIndex]->dob->date->format('m');
-                    $formData['cs1-'.$j.'-dob-date-year']  = $this->actors[$actorIndex]->dob->date->format('Y');
-                }
-                
-                if(property_exists($this->actors[$actorIndex], 'email') && is_object($this->actors[$actorIndex]->email) && property_exists($this->actors[$actorIndex]->email, 'address')) {
-                    $formData['cs1-'.$j.'-email-address']  = $this->actors[$actorIndex]->email->address;
-                }
-                
-                if(++$totalPopulatedAdditionalPeople >= $totalAdditionalPersonsOfThisActorType) {
-                    break;
-                }
-                
-            } // end for loop for 2 persons per page
-            
-            $formData['donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
             
             $cs1->fillForm($formData)
                 ->flatten()
                 ->saveAs($filePath);
             
-        } // loop each CS page
-        
-        
-        // draw cross lines if there's any blank slot in the last CS1 pdf
-        if($totalAdditionalPersonsOfThisActorType % self::$SETTINGS['max-slots-on-cs1-form']) {
+            // draw cross lines if there's any blank slot in the last CS1 pdf
             $this->drawCrossLines($filePath, array(array('cs1')));
         }
         
