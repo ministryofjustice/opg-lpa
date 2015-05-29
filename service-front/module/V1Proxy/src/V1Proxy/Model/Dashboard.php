@@ -33,7 +33,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
             // Zero-pad the id...
             $id = sprintf("%010d", $lpa->id);
 
-            $client->delete( "https://apiv1/applications/{$id}" );
+            $client->delete( "https://apiv1-01/applications/{$id}" );
 
         }
 
@@ -101,13 +101,13 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         if( isset($query) ){
 
-            $response = $client->get( 'https://apiv1/summary/search', [
+            $response = $client->get( 'https://apiv1-01/summary/search', [
                 'query' => [ 'freeText' => $query ]
             ]);
 
         } else {
 
-            $response = $client->get( 'https://apiv1/summary' );
+            $response = $client->get( 'https://apiv1-01/summary' );
 
         }
 
