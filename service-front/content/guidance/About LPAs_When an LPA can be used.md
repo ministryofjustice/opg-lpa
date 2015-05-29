@@ -46,4 +46,4 @@ However, if you trust your attorneys to assess your mental capacity, you do not 
 
 ### Related help topics
 * [Registering the LPA](/help/#topic-registering-the-lpa)
-* [Instructions and preferences](/help/#topic-restrictions-and-guidance)
+* [Instructions and preferences](/help/#topic-instructions-and-preferences)
