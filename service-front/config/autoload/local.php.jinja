@@ -44,8 +44,8 @@ return array(
     ], // email
     
     'api_client' => [
-        'api_uri' => '',
-        'auth_uri' => '',
+        'api_uri' => "{{pillar['endpoints']['api']}}",
+        'auth_uri' => "{{pillar['endpoints']['auth']}}",
     ], // api_client
     
     'log' => [
