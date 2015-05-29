@@ -8,9 +8,7 @@ A health and welfare LPA takes effect only after it's registered and if you don'
 
 A property and financial affairs LPA usually takes effect when it's registered. You decide whether your attorneys should act on your behalf and in which circumstances. If you don't have mental capacity, your attorneys can act and make decisions on your behalf.
 
-However, you can choose that your property and financial affairs LPA will take effect – and your attorneys will be able to act for you – only when you don't have mental capacity.
-
-Banks and other financial institutions sometimes want written confirmation that a donor does not have mental capacity before they'll recognise an attorney's authority to act under an LPA.
+However, you can choose that your property and financial affairs LPA will take effect – and your attorneys will be able to act for you – only when you don't have mental capacity. In this case, banks and other financial institutions will sometimes want written confirmation that a donor does not have mental capacity before they'll recognise an attorney's authority to act under an LPA.
 
 ### As soon as it's registered (and also when I don't have mental capacity)
 
@@ -30,11 +28,7 @@ Choose this option if:
 
 * you want the security of having the LPA registered and ready to use in case you don't have mental capacity in the future
 
-After you've chosen this option and filled in the rest of your information, these words will appear in the 'Restrictions and guidance' section of the LPA document that you print:
-
-> I would like my LPA to take effect only when I don't have capacity to make decisions about my property and financial affairs.
-
-When you reach the 'Restrictions and guidance' section in this LPA tool, you can add instructions. Some people explain how their mental capacity should be assessed. For example:
+When you reach the 'Instructions and preferences' section in this LPA service, you can add directions for how your attorneys should act. Some people explain how their mental capacity should be assessed. For example:
 
 > My attorneys shall only act under this power if they have obtained a written medical opinion stating that I am no longer mentally capable of managing and administering my property and financial affairs.
 

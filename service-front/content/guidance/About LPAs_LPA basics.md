@@ -38,7 +38,7 @@ Your attorneys must always act in your best interests and follow any instruction
 * whether attorneys make all or some decisions together or individually
 * conditions or restrictions on how attorneys make decisions
 
-You can also include guidance to make sure that attorneys' decisions will be similar to the ones you would make.
+You can also include preferences to guide attorneys’ decision-making in a way that reflects your beliefs and values.
 
 Your attorneys can only make decisions that you've allowed them to make in your LPA. For example, if your LPA is for your property and financial affairs, your attorneys can't make decisions about your care or where you live. If your LPA is for your health and welfare, they can't make decisions about your money.
 

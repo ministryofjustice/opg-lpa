@@ -20,7 +20,7 @@ You can ask anyone with mental capacity aged 18 or over to be your attorney, inc
 
 Make sure that each person agrees to be your attorney before you name them in your LPA.
 
-If you choose your wife, husband or civil partner and your relationship is later legally ended, they will usually have to stop being your attorney. However, you can state in your restrictions that they can continue to be your attorney if your relationship legally ends. If you don't and they are your only attorney, your LPA will be cancelled.
+If you choose your wife, husband or civil partner and your relationship is later legally ended, they will usually have to stop being your attorney. However, you can state in your instructions that they can continue to be your attorney if your relationship legally ends. If you don't and they are your only attorney, your LPA will be cancelled.
 
 A person who is on the Disclosure and Barring Service barred list can't act as an attorney. They're breaking the law if they do.
 

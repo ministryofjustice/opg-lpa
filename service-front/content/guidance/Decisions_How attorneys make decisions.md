@@ -33,7 +33,7 @@ If you choose this option, you must not say anywhere else in the LPA that certai
 *	some or all of your attorneys
 *	a minimum number of attorneys
 
-You can say how you’d like your attorneys to make a particular decision in the guidance section of your LPA. However, they don’t have to follow your guidance.
+You can say how you’d like your attorneys to make a particular decision in the preferences section of your LPA. However, they don’t have to follow your preferences.
 
 See [Instructions and preferences](/help/#topic-restrictions-and-guidance) for more information.
 

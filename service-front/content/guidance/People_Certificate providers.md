@@ -2,7 +2,7 @@
 
 A certificate provider is an impartial person who confirms that you understand what you're doing and that nobody is forcing you to make an LPA.
 
-You need at least one certificate provider to make your LPA valid.
+You need a certificate provider to make your LPA valid.
 
 ## A certificate provider's role
 A certificate provider is a safeguard. They help to make sure that all's well when you make your LPA. They must confirm that:
