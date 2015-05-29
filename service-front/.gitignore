@@ -6,3 +6,8 @@ nbproject
 .idea
 .project
 .settings
+.idea/*
+*.iml
+.sass-cache/*
+node_modules/*
+bower_downloads/*
