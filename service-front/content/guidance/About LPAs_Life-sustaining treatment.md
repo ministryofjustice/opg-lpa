@@ -65,5 +65,5 @@ There's more about life-sustaining treatment, advance decisions and how health p
 
 ### Related help topics
 * [Attorneys](/help/#topic-attorneys)
-* [Instructions and preferences](/help/#topic-restrictions-and-guidance)
+* [Instructions and preferences](/help/#topic-instructions-and-preferences)
 * [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)

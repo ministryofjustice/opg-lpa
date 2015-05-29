@@ -91,5 +91,5 @@ Most donors take some time choosing the best people to be their attorneys. Consi
 * Who can be your replacement attorneys?
 
 ### Related help topics
-* [Instructions and preferences](/help/#topic-restrictions-and-guidance)
+* [Instructions and preferences](/help/#topic-instructions-and-preferences)
 * [Replacement attorneys](/help/#topic-replacement-attorneys)
