@@ -56,4 +56,4 @@ When making a health and welfare LPA, you'll have to decide whether your attorne
 ### Related help topics
 * [When an LPA can be used](/help/#topic-when-an-lpa-can-be-used)
 * [Life-sustaining treatment](/help/#topic-life-sustaining-treatment)
-* [Instructions and preferences](/help/#topic-restrictions-and-guidance)
+* [Instructions and preferences](/help/#topic-instructions-and-preferences)

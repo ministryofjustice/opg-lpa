@@ -33,7 +33,7 @@ class AboutYou implements ServiceLocatorAwareInterface, ServiceDataInputInterfac
         $response = $client->get( "https://accountv1-01/query?email=".$emailAddress );
         $response = $response->json();
 
-        if( !isset($response['id']) ){
+        if( !isset($response['id']) || empty($response['id']) ){
             return false;
         }
 

@@ -6,10 +6,8 @@ You can state in your health and welfare LPA what you'd want to happen if you ne
 
 You have 2 options:
 
-* Option A. Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf.
-* Option B. No. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf.
-
-If you choose option B it means that doctors will make the decisions about life-sustaining treatment instead of your attorneys.
+* Option A. Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf. If you choose this option, your attorneys can speak to doctors as if they were you.
+* Option B. No. I do not give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf. If you choose this option, it means doctors will make the decisions about life-sustaining treatment instead of your attorneys.
 
 After you print out your LPA document, you'll have to sign and date the option you've chosen. This must be witnessed.
 
@@ -32,7 +30,7 @@ Decisions about life-sustaining treatment can be needed in unexpected circumstan
 
 Choose option A if you want your attorneys to decide about life-sustaining treatment if ever you need it and can't make the decisions yourself.
 
-At the end of the LPA tool there is a section where you can add restrictions and guidance for your attorneys. If you have specific wishes about life-sustaining treatment, make them clear in that section, so that any decisions your attorneys make are as close as possible to the decisions you would have made.
+At the end of the LPA service there is a section where you can add instructions and preferences for your attorneys. If you have specific wishes about life-sustaining treatment, make them clear in that section, so that any decisions your attorneys make are as close as possible to the decisions you would have made.
 
 You can specify medical or physical conditions where your attorneys must or must not consent to life-sustaining treatment on your behalf. For example, you can state that your attorneys must not agree to life-sustaining treatment if you are in a persistent vegetative state.
 
@@ -40,7 +38,7 @@ If you have already made an 'advance decision' to refuse a specific life-sustain
 
 An advance decision is a legally binding document in which you state which life-sustaining treatments you don't want, in case you cannot decide at some point.
 
-See [Instructions and preferences](/help/#topic-restrictions-and-guidance) for more on giving guidance to your attorneys.
+See [Instructions and preferences](/help/#topic-instructions-and-preferences) for more on giving guidance to your attorneys.
 
 ### Option B: doctors
 
@@ -52,7 +50,7 @@ Choose option B if you want your doctors to decide about life-sustaining treatme
 
 ### Making your treatment preferences known
 
-If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'restrictions and conditions' section of this LPA tool. You'll also need to include a copy of the decision when you send your LPA to the Office of the Public Guardian (OPG) to be registered.
+If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'instructions and preferences' section of this LPA service. You'll also need to include a copy of the decision when you send your LPA to the Office of the Public Guardian (OPG) to be registered.
 
  <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" rel="external" target="_blank">NHS Choices has information about advance decisions.</a>
 
@@ -67,5 +65,5 @@ There's more about life-sustaining treatment, advance decisions and how health p
 
 ### Related help topics
 * [Attorneys](/help/#topic-attorneys)
-* [Instructions and preferences](/help/#topic-restrictions-and-guidance)
+* [Instructions and preferences](/help/#topic-instructions-and-preferences)
 * [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)

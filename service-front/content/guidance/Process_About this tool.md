@@ -16,12 +16,11 @@ If you can't sign or make a mark yourself, you can ask someone else to sign on y
 
 ## The 3 steps
 
-1. Create: make decisions about your LPA, choose the people you want to be involved and print your completed LPA document.
-2. Sign: make sure that all the required people sign your LPA document in the correct order. See [Signing the LPA](/help/#topic-signing-the-lpa)
+1. Create your LPA and pay the registration fee: make decisions about your LPA, choose the people you want to be involved, review it and then pay the registration fee. See [Registering your LPA](/help/#topic-registering-the-lpa)
+2. Print and sign your LPA: make sure that all the required people sign your LPA document in the correct order. See [Signing the LPA](/help/#topic-signing-the-lpa)
+3. Post your LPA to OPG: include all documentary evidence required (for example, to pay a reduced fee), as well as a cheque if you are not paying online. 
 
-3. Apply to register: fill in more details, pay the application fee and then send the documents to OPG. See [Registering your LPA](/help/#topic-registering-the-lpa)
-
-Apply to register your LPA sooner rather than later, in case there are any problems to sort out before it's registered. Your LPA will then be ready to use as soon as you need it.
+You don't have to register your LPA right after you create it but it's a good idea to. You can then sort out any problems in good time and your LPA will then be ready to use as soon as you need it.
 
 ## Fees
 
