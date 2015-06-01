@@ -24,6 +24,11 @@ return array(
 
             ],
         ],
+        'accounts' => [
+{% for name, admin_email_address in pillar['admin_accounts'].iteritems() %}
+    "{{ admin_email_address }}",
+{% endfor %}
+        ],
     ],
 
     'address' => [
@@ -44,8 +49,8 @@ return array(
     ], // email
     
     'api_client' => [
-        'api_uri' => '',
-        'auth_uri' => '',
+        'api_uri' => "{{pillar['endpoints']['api']}}",
+        'auth_uri' => "{{pillar['endpoints']['auth']}}",
     ], // api_client
     
     'log' => [
@@ -61,15 +66,6 @@ return array(
         'mac_secret' => '{{pillar['payment']['worldpay']['mac_secret']}}',
         'api_token_secret' => '{{pillar['payment']['worldpay']['api_token_secret']}}',
     ], // worldpay
-    
-    'admin' => [
-        'accounts' => [
-{% for name, admin_email_address in pillar['admin_accounts'].iteritems() %}
-    "{{ admin_email_address }}",
-{% endfor %}
-        ],
-    ], // admin
-
 
     #v1Code
     'v1proxy' => [

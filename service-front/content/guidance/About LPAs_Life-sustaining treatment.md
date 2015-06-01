@@ -38,7 +38,7 @@ If you have already made an 'advance decision' to refuse a specific life-sustain
 
 An advance decision is a legally binding document in which you state which life-sustaining treatments you don't want, in case you cannot decide at some point.
 
-See [Instructions and preferences](/help/#topic-restrictions-and-guidance) for more on giving guidance to your attorneys.
+See [Instructions and preferences](/help/#topic-instructions-and-preferences) for more on giving guidance to your attorneys.
 
 ### Option B: doctors
 
@@ -65,5 +65,5 @@ There's more about life-sustaining treatment, advance decisions and how health p
 
 ### Related help topics
 * [Attorneys](/help/#topic-attorneys)
-* [Instructions and preferences](/help/#topic-restrictions-and-guidance)
+* [Instructions and preferences](/help/#topic-instructions-and-preferences)
 * [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)

@@ -35,7 +35,7 @@ If you choose this option, you must not say anywhere else in the LPA that certai
 
 You can say how you’d like your attorneys to make a particular decision in the preferences section of your LPA. However, they don’t have to follow your preferences.
 
-See [Instructions and preferences](/help/#topic-restrictions-and-guidance) for more information.
+See [Instructions and preferences](/help/#topic-instructions-and-preferences) for more information.
 
 ## Jointly (attorneys agree every decision unanimously)
 
@@ -102,6 +102,6 @@ In both examples, 'everything else' means all decisions about your day-to-day ca
 ### Related help topics
 * [Attorneys](/help/#topic-attorneys)
 * [Replacement attorneys](/help/#topic-replacement-attorneys)
-* [Restrictions and guidance](/help/#topic-restrictions-and-guidance)
+* [Restrictions and guidance](/help/#topic-instructions-and-preferences)
 
 
