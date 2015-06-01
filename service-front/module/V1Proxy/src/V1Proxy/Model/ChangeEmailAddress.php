@@ -27,7 +27,7 @@ class ChangeEmailAddress implements ServiceLocatorAwareInterface {
 
         // Load the user's Account Service account.
 
-        $response = $client->get( "http://accounts.local/query?email=".$currentEmail );
+        $response = $client->get( "https://accountv1-01/query?email=".$currentEmail );
         $response = $response->json();
 
         // If there is no account, return...
@@ -38,7 +38,7 @@ class ChangeEmailAddress implements ServiceLocatorAwareInterface {
         //----------------
 
         // Update the address.
-        $client->put( "http://accounts.local/account/".$response['id'], [
+        $client->put( "https://accountv1-01/account/".$response['id'], [
             'body' => [
                 'email' => strtolower($newEmail),
             ]
