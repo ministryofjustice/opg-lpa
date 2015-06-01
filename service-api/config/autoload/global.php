@@ -12,7 +12,7 @@ return array(
 
             'default' => [
 
-                'hosts' => [ 'mongodb-04.local:27017', 'mongodb-05.local:27017', 'mongodb-06.local:27017' ],
+                'hosts' => [ 'mongodb-01:27017', 'mongodb-02:27017', 'mongodb-03:27017' ],
                 'options' => [
                     'db' => 'opglpa-api',
                     'username' => 'opglpa-api',
