@@ -19,7 +19,7 @@ class PageHeaders extends AbstractHelper
             echo '<h1>' . $ourView->pageTitle . '</h1>';
             
             echo '</hgroup></header>';
-            
+
             ?>
             <div class="article-container group">
             <article role="article" class="group">

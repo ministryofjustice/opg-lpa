@@ -8,6 +8,8 @@ use Application\Form\User\Registration as RegistrationForm;
 
 class RegisterController extends AbstractBaseController {
 
+    protected $contentHeader = 'confirm-partial.phtml';
+
     /**
      * Register a new account.
      *
@@ -85,6 +87,10 @@ class RegisterController extends AbstractBaseController {
          *  Alas no other details are returned.
          */
         $success = $this->getServiceLocator()->get('Register')->activateAccount( $token );
+
+        if(isset($this->contentHeader)) {
+            $this->layout()->contentHeader = $this->contentHeader;
+        }
 
         if( !$success ){
             return new ViewModel( [ 'error'=>'account-missing' ] );
