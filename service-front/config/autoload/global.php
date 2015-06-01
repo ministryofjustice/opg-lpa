@@ -24,7 +24,7 @@ return array(
         'redis' => [
             // Set a default (longish) Redis TTL to protect against long term stale data.
             'ttl' => (60 * 60 * 24 * 28), // 28 days
-            'namespace' => 'session',
+            'namespace' => 'admin',
             'server' => [
                 'host' => 'redisfront.local',
                 'port' => 6379
