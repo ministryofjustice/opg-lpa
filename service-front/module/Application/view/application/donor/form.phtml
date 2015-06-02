@@ -44,15 +44,17 @@
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
     $otherNames = $form->get('otherNames');
-    $dobDay     = $form->get('dob-date-day');
-    $dobMonth   = $form->get('dob-date-month');
-    $dobYear    = $form->get('dob-date-year');
     $email      = $form->get('email-address');
     $address1   = $form->get('address-address1');
     $address2   = $form->get('address-address2');
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
     $canSign    = $form->get('canSign');
+    
+    $dob      = $form->get('dob-date');
+    $dobDay   = $dob->get('day');
+    $dobMonth = $dob->get('month');
+    $dobYear  = $dob->get('year');
     
     $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
 
@@ -62,13 +64,15 @@
     $lastname->setOptions(  ['label' => 'Last name'] );
     $otherNames->setOptions(['label' => 'Other names'] );
     
+    $dob->setOptions(['label'=>'Date of Birth']);
+    
     $dobDay->setOptions(    ['label' => 'Day'] );
     $dobMonth->setOptions(  ['label' => 'Month'] );
     $dobYear->setOptions(   ['label' => 'Year'] );
     
-    $dobDay->setAttribute('id', 'dob-day');
-    $dobMonth->setAttribute('id', 'dob-month');
-    $dobYear->setAttribute('id', 'dob-year');
+    $dobDay->setAttribute('id', 'dob-date-day');
+    $dobMonth->setAttribute('id', 'dob-date-month');
+    $dobYear->setAttribute('id', 'dob-date-year');
     
     $email->setOptions(     ['label' => 'Email address'] );
     $address1->setOptions(  ['label' => 'Address line 1'] );
@@ -168,7 +172,10 @@
                 <?= $this->formElement($dobYear) ?>
             </div>
         </div>
-        
+        <?= $this->formElementErrors($dobDay) ?>
+        <?= $this->formElementErrors($dobMonth) ?>
+        <?= $this->formElementErrors($dobYear) ?>
+        <?= $this->formElementErrors($dob) ?>
     </div>
     <div class="group">
         <?= $this->formElementErrors($dobYear) ?>

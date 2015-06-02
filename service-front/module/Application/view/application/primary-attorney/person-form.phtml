@@ -39,34 +39,38 @@
             "Value is required and can't be empty" => "Please enter a year",
         ],
     ]);
-        
+    
     $csrf       = $form->get('secret');
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
-    $dobDay     = $form->get('dob-date-day');
-    $dobMonth   = $form->get('dob-date-month');
-    $dobYear    = $form->get('dob-date-year');
     $email      = $form->get('email-address');
     $address1   = $form->get('address-address1');
     $address2   = $form->get('address-address2');
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
-
+    
+    $dob      = $form->get('dob-date');
+    $dobDay   = $dob->get('day');
+    $dobMonth = $dob->get('month');
+    $dobYear  = $dob->get('year');
+    
+    $dob->setOptions(['label'=>'Date of Birth']);
+    
+    $dobDay->setOptions(    ['label' => 'Day'] );
+    $dobMonth->setOptions(  ['label' => 'Month'] );
+    $dobYear->setOptions(   ['label' => 'Year'] );
+    
+    $dobDay->setAttribute('id', 'dob-date-day');
+    $dobMonth->setAttribute('id', 'dob-date-month');
+    $dobYear->setAttribute('id', 'dob-date-year');
+    
     $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
     
     $title->setOptions( ['label' => 'Title'] );
     $title->setAttributes(['id'=>'name-title']);
     $firstname->setOptions( ['label' => 'First names'] );
     $lastname->setOptions( ['label' => 'Last name'] );
-    
-    $dobDay->setOptions(    ['label' => 'Day'] );
-    $dobMonth->setOptions(  ['label' => 'Month'] );
-    $dobYear->setOptions(   ['label' => 'Year'] );
-    
-    $dobDay->setAttribute('id', 'dob-day');
-    $dobMonth->setAttribute('id', 'dob-month');
-    $dobYear->setAttribute('id', 'dob-year');
     
     $email->setOptions( ['label' => 'Email address'] );
     $address1->setOptions( ['label' => 'Address line 1'] );
@@ -133,7 +137,7 @@
         <?= $this->formElementErrors($firstname) ?>
     </div>
     
-    <div class="groupp">
+    <div class="group">
         <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
         <?= $this->formElement($lastname) ?>
         <?= $this->formElementErrors($lastname) ?>
@@ -145,19 +149,23 @@
         <div class="dob-element">
             <div class="form-group form-group-day">
                 <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($dobDay) ?>
+                <?= $this->formDateSegments($dobDay) ?>
             </div>
             
             <div class="form-group form-group-month">
                 <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($dobMonth) ?>
+                <?= $this->formDateSegments($dobMonth) ?>
             </div>
             
             <div class="form-group form-group-year">
                 <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($dobYear) ?>
+                <?= $this->formDateSegments($dobYear) ?>
             </div>
         </div>
+        <?= $this->formElementErrors($dobDay) ?>
+        <?= $this->formElementErrors($dobMonth) ?>
+        <?= $this->formElementErrors($dobYear) ?>
+        <?= $this->formElementErrors($dob) ?>
     </div>
     
     <div class="group">
