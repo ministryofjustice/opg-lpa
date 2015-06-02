@@ -29,9 +29,11 @@ class CorrespondenceForm extends AbstractActorForm
                                 'checked_value' => true,
                                 'unchecked_value' => false,
                         ],
-                        'validators' => array(
-                                new \Application\Form\Lpa\Validator\Correspondence(),
-                        ),
+                        'validators' => [
+                            [
+                                'name' => 'Application\Form\Validator\Correspondence',
+                            ]
+                        ],
                 ],
                 'submit' => [
                         'type' => 'Zend\Form\Element\Submit',
