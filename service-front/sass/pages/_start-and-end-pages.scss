@@ -1,0 +1,73 @@
+// ================================================================
+// Styles for start and end pages of the parts of the transaction
+// ================================================================
+
+
+
+// ================================================================
+// LPA DETAILS BOX
+
+.LPA-details{
+  min-width: 17em;
+  h3, li{
+    @include core-16;
+  }
+  h3{
+    font-weight: bold;
+    margin: 0;
+  }
+  ul{
+    margin: 0;
+  }
+  ul, li{
+    padding: 0;
+    list-style-image: none;
+    list-style-type: none;
+  }
+  overflow: hidden;
+  margin: 1em 0;
+  &.right{
+    float: right;
+    margin: 1em -5em 0 2em;
+  }
+  border: 1px solid $border-colour;
+  padding: 1em;
+  .LPA-actions{
+    margin-top: 0.5em;
+  }
+}
+
+
+
+// ================================================================
+// NEXT STEPS
+
+article .next.steps {
+  h3{
+    margin-top: 0.15em;
+  }
+  p{
+    margin: 0.75em 0;
+  }
+  .form-download{
+    width: 80%;
+  }
+}
+
+// ================================================================
+// FORM DOWNLOAD PANEL
+
+// We need to change the styles in application.css so they apply to elements  
+// outside of the application div (eg. popups)
+
+.form-download {
+  background: url(https://d17tffe05zdvwj.cloudfront.net/static/icon-file-download-00b5dbb3ea8a18c444a08497b3d03d56.png) no-repeat scroll 98% 1em #D5E8F3;
+  margin: 1em -1em 1.5em -1em;
+  padding: 0.25em 1em 0.25em 1em;
+  p {
+    padding-right:3em;
+  }
+  a {
+    display: block;
+  }
+}
