@@ -20,7 +20,8 @@ return array(
                     'replicaSet' => 'rs0',
                     'connect' => false,
                     'connectTimeoutMS' => 1000,
-                    'w' => 'majority'
+                    'w' => 'majority',
+                    'ssl' => true
                 ],
 
             ],
