@@ -109,7 +109,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
             
             // @todo: to be removed - capture CSRF error
             if(($this->getLogger() !== null) && isset($messages['secret']) && isset($messages['secret']['notSame'])) {
-                $this->getLogger()->err($messages['secret']['notSame'].". Received CSRF: ".$this->data['secret']);
+                $this->getLogger()->err($messages['secret']['notSame'].", and received CSRF taken is: ".$this->data['secret']);
                 
                 // logging session container contents
                 $csrfSsession = new \Zend\Session\Container($this->get('secret')->getCsrfValidator()->getSessionName());
@@ -126,7 +126,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         
         //@todo: to be removed - logging received CSRF
         if($this->getLogger() !== null) {
-            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", Received CSRF: ".$this->data['secret']);
+            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().". CSRF token: ".$this->data['secret']);
         } // end of to be removed.
         
         return $result;
