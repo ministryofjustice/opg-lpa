@@ -1,5 +1,5 @@
 <?php
-namespace Application\Form\Lpa\Validator;
+namespace Application\Form\Validator;
 
 use Zend\Validator\AbstractValidator;
 

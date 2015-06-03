@@ -22,6 +22,9 @@ class HowReplacementAttorneysMakeDecisionController extends AbstractLpaControlle
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
         
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -30,26 +33,26 @@ class HowReplacementAttorneysMakeDecisionController extends AbstractLpaControlle
             
             if($form->isValid()) {
                 
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-                
-                $howAttorneyAct = $form->get('how')->getValue();
+                $howReplacementAct = $form->get('how')->getValue();
                 
                 if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                    $decision = $this->getLpa()->document->replacementAttorneyDecisions;
+                    $replacementDecisions = $this->getLpa()->document->replacementAttorneyDecisions;
                 }
                 else {
-                    $decision = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $replacementDecisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
                 }
                 
-                $decision->how = $howAttorneyAct;
+                $replacementDecisions->how = $howReplacementAct;
                 
-                if($howAttorneyAct == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                    $decision->howDetails = $form->get('howDetails')->getValue();
+                if($howReplacementAct == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                    $replacementDecisions->howDetails = $form->get('howDetails')->getValue();
+                }
+                else {
+                    $replacementDecisions->howDetails = null;
                 }
                 
                 // persist data
-                if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $decision)) {
+                if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $replacementDecisions)) {
                     throw new \RuntimeException('API client failed to set replacement attorney decisions for id: '.$lpaId);
                 }
                 
