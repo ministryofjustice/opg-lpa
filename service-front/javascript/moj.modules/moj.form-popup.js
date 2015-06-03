@@ -39,8 +39,8 @@
 
     btnClick: function (e) {
       var source = $(e.target),
-          href = source.attr('href'),
-          form = source.data('form');
+        href = source.attr('href'),
+        form = source.data('form');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -90,14 +90,14 @@
         }
       });
 
-        // hide use button and switch button
-        $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
+      // hide use button and switch button
+      $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
 
     },
 
     submitForm: function (e) {
       var $form = $(e.target),
-          url = $form.attr('action');
+        url = $form.attr('action');
 
       $form.find('input[type="submit"]').spinner();
 
@@ -114,7 +114,7 @@
 
     ajaxSuccess: function (response, textStatus, jqXHR) {
       var $form = $(this),
-          data;
+        data;
 
       if (response.success !== undefined && response.success) {
         // successful, so redirect

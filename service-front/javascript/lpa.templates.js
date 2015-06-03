@@ -106,5 +106,5 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"loading\">\n  <p><img src=\"/static/images/ajax/ajax-loader.gif\" class=\"spinner\"> Loading</p>\n</div>\n";
+  return "<div class=\"loading\">\n  <p><img src=\"/assets/v1/images/ajax/ajax-loader.gif\" class=\"spinner\"> Loading</p>\n</div>\n";
   });

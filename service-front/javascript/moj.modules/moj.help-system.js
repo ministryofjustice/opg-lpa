@@ -29,7 +29,7 @@
 
         // open popup if hash is present in url
         var hash = window.location.hash,
-            topic;
+          topic;
         if (this._isGuidanceHash(hash)) {
           // on page load parse hash
           topic = hash.substring(hash.lastIndexOf('/') + 1);
@@ -51,7 +51,7 @@
       // nav click event
       $('body').on('click', this.settings.selector, function () {
         var href = $(this).attr('href'),
-            topic = href.substring(href.lastIndexOf('#') + 1);
+          topic = href.substring(href.lastIndexOf('#') + 1);
         // set the current click as the source
         self.source = $(this);
         // select topic
@@ -62,7 +62,7 @@
       // listen to hash changes in url
       $(window).on('hashchange.moj.Modules.HelpSystem', function () {
         var hash = window.location.hash,
-            topic;
+          topic;
 
         // if a change has been made, select the topic
         if (self._isGuidanceHash(hash)) {
@@ -89,7 +89,7 @@
         if ($('#popup.help-system').length > 0) {
           self._setTopic(topic);
         } else {
-        // otherwise, load in the overlay first and set in callback
+          // otherwise, load in the overlay first and set in callback
           this._loadOverlay(topic);
         }
       }
@@ -137,10 +137,10 @@
 
     _loadOverlay: function (topic) {
       var self = this,
-          html = this._hasCachedContent();
+        html = this._hasCachedContent();
 
-        // todo - remove this
-        html = false;
+      // todo - remove this
+      html = false;
 
       // if content has been cached, load it straight in
       if (html !== false) {

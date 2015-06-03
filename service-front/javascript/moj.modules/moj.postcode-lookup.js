@@ -19,10 +19,10 @@
       // used to populate fields
       // key is the key name sent in response and value is name of app's field
       fieldMappings: {
-          line1: 'address-address1',
-          line2: 'address-address2',
-          line3: 'address-address3',
-          postcode: 'postcode'
+        line1: 'address-address1',
+        line2: 'address-address2',
+        line3: 'address-address3',
+        postcode: 'postcode'
       }
     },
 
@@ -47,7 +47,7 @@
     init: function () {
       // make sure the fields exist before adding them to the toggle
       var hasPostal = this.$postalFields.length > 0 ? true : false,
-          hasDx = this.$dxFields.length > 0 ? true : false;
+        hasDx = this.$dxFields.length > 0 ? true : false;
 
       // prepend template to postal fields
       this.$postalFields.before(this.searchTpl() + this.toggleTpl({postal: hasPostal, dx: hasDx})).addClass('hidden');
@@ -88,7 +88,7 @@
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-          val = $el.val();
+        val = $el.val();
 
       $el.spinner();
       this.findAddress(val);
@@ -140,7 +140,7 @@
           alert('Please enter a valid UK postcode');
         }
       } else {
-      // successful
+        // successful
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -185,7 +185,7 @@
         this.$dxFields.find('[name*="dxNumber"]').focus();
       } else {
         var $search = this.$wrap.find('.js-PostcodeLookup__query'),
-            $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
+          $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
         // popuplate postcode field
         if ($search.val() !== '' && $pcode.val() === '') {
           $pcode.val($search.val()).change();
@@ -193,8 +193,8 @@
         this.$postalFields.removeClass('hidden');
         this.$dxFields.addClass('hidden');
         // focus on first address field
-        if($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length == 1) {
-        	this.$postalFields.find('[name*="addr1"]').focus();
+        if ($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length === 1) {
+          this.$postalFields.find('[name*="addr1"]').focus();
         }
       }
       // toggle class

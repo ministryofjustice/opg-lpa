@@ -27,7 +27,7 @@ module.exports = function (grunt) {
           'javascript/vendor/lodash-2.4.1.min.js',
           // LPA scripts
           'javascript/stageprompt.2.0.0.js',
-          'public/static/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
+          'public/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
           'javascript/jquery-plugin/opg/jquery-plugin-opg-hascrollbar.js',
           'javascript/jquery-plugin/opg/jquery-plugin-opg-spinner.js',
           'javascript/jquery-plugin/jquery-details/jquery.details.min.js',
@@ -50,12 +50,13 @@ module.exports = function (grunt) {
           'javascript/who-are-you.js',
           'javascript/form.js'
         ],
-        dest: 'public/static/js/application.js'
+        dest: 'public/assets/v1/js/application.js',
+        nonull: true
       },
       govukStatic: {
         files: {
-          'public/static/js/pwstrength.js': ['javascript/zxcvbn.js', 'javascript/pwstrength.js'],
-          'public/static/js/zxcvbn-async.js': 'javascript/zxcvbn-async.js'
+          'public/assets/v1/js/pwstrength.js': ['javascript/zxcvbn.js', 'javascript/pwstrength.js'],
+          'public/assets/v1/js/zxcvbn-async.js': 'javascript/zxcvbn-async.js'
         }
       }
     },
@@ -66,12 +67,12 @@ module.exports = function (grunt) {
         options: {
           banner: '<%= meta.banner %>'
         },
-        src: 'public/static/js/application.js',
-        dest: 'public/static/js/application.min.js'
+        src: 'public/assets/v1/js/application.js',
+        dest: 'public/assets/v1/js/application.min.js'
       },
       jquery: {
-        src: 'public/static/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js',
-        dest: 'public/static/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'
+        src: 'public/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js',
+        dest: 'public/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'
       }
     },
 
