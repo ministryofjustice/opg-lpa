@@ -19,7 +19,7 @@ You (the donor) must sign your LPA before anyone else.
 You must sign:
 
 * section 9
-* any continuation sheets (one or more copies of either continuation sheet 1 or 2)
+* any continuation sheets (you may have one or more copies of either continuation sheet 1 or 2)
 * the statement about life-sustaining treatment on page 6, if it is a health and welfare LPA
 
 An independent witness must then sign. Your signatures must be made and witnessed on the same date. 
