@@ -30,19 +30,29 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
             
             // set data for validation
             $form->setData($postData);
+            
             if($form->isValid()) {
                 
+                $whenReplacementStepIn = $form->get('when')->getValue();
+                
                 if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                    $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions;
+                    $replacementDecisions = $this->getLpa()->document->replacementAttorneyDecisions;
                 }
                 else {
-                    $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $replacementDecisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
                 }
                 
-                $replacementAttorneyDecisions->when = $form->get('when')->getValue();
+                $replacementDecisions->when = $whenReplacementStepIn;
+                
+                if($whenReplacementStepIn == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                    $replacementDecisions->whenDetails = $form->get('whenDetails')->getValue();
+                }
+                else {
+                    $replacementDecisions->whenDetails = null;
+                }
                 
                 // persist data
-                if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $replacementAttorneyDecisions)) {
+                if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $replacementDecisions)) {
                     throw new \RuntimeException('API client failed to set replacement step in decisions for id: '.$lpaId);
                 }
                 
