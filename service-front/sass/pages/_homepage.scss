@@ -1,0 +1,67 @@
+
+
+// Beta badge
+.page-header .beta{
+    display: inline-block;
+    background: $beta-colour;
+
+    color: #fff;
+    @include bold-16;
+    line-height: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+
+    padding: 4px 5px 0px 6px;
+    margin-left: 1em;
+    vertical-align: middle;
+}
+
+header.page-header hgroup h1 span {
+  @include core-27($line-height: 1);
+  display: block;
+  margin-bottom: 0.25em;
+  text-shadow: none;
+  color: $secondary-text-colour ;
+}
+
+
+.homepage-cta{
+  margin: 2.5em 0;
+}
+
+.page-intro{
+  p{
+    @include core-24;
+  }
+}
+
+.create-lpa.button{
+  @include core-24;
+}
+
+article .make-LPA.steps {
+  margin-top: 2em;
+  li{
+    margin-bottom: 0;
+  }
+  .what-next{
+    background-image: none;
+    padding-bottom: 2em;
+  }
+  p{
+    margin: 0.75em 0;
+  }
+  .step-title{
+    margin: 0 0 0.75em 0;
+    @include core-24;
+  }
+  img{
+    width: 12em;
+    float: right;
+    margin: -1em 0 -1em 6em;
+    @include media(mobile) {
+      display: none;
+    }
+  }
+}

@@ -192,11 +192,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
         else {
             $flattenAttorneyData = $attorney->flatten();
+            
             if($attorney instanceof Human) {
                 $dob = $attorney->dob->date;
-                $flattenAttorneyData['dob-date-day'] = $dob->format('d');
-                $flattenAttorneyData['dob-date-month'] = $dob->format('m');
-                $flattenAttorneyData['dob-date-year'] = $dob->format('Y');
+                $flattenAttorneyData['dob-date'] = [
+                        'day'   => $dob->format('d'),
+                        'month' => $dob->format('m'),
+                        'year'  => $dob->format('Y'),
+                ];
             }
             
             $form->bind($flattenAttorneyData);

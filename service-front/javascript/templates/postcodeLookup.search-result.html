@@ -1,0 +1,9 @@
+<div class="group">
+  <label for="address-search-result">Address</label>
+  <select class="js-PostcodeLookup__search-results" id="address-search-result">
+    <option value="">Please select an address...</option>
+    {{#each results}}
+      <option value="{{id}}">{{description}}</option>
+    {{/each}}
+  </select>
+</div>

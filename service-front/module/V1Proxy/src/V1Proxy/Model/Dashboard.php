@@ -118,9 +118,11 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //---
 
         $xml = $response->xml();
+        
         $json = json_encode( $xml );
+        
         $array = json_decode($json,TRUE);
-
+        
         // If no LPAs were found, cache that fact...
         if( !isset($array['lpa']) || count($array['lpa']) == 0 ){
 
@@ -134,11 +136,18 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Map the returned LPAs to a standard data structure
 
-        foreach( $array['lpa'] as $lpa ){
+        foreach( $array['lpa'] as $k=>$lpa ){
+            
+            // Don't include registration sections.
+            if( $k == 'registration' ){
+                continue;
+            }
 
             if( isset($lpa['application']) ){
+                // If there is more than one LPA, then there will be an application section.
                 $application = $lpa['application'];
             } else {
+                // Otherwise if there is only 1 LPA, then $lpa is already teh application.
                 $application = $lpa;
             }
 
