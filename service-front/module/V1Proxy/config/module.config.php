@@ -5,7 +5,37 @@ return array(
     'router' => [
         'routes' => [
 
-            /*
+            // Redirects
+
+            'proxy-redirect-dashboard' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/logout',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'logout'
+                    ],
+                ],
+            ],
+
+
+            'proxy-redirect-details' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/account',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'user/about-you'
+                    ],
+                ],
+            ],
+
+
+            /* Main Routes
+             *
+             *
              * /forward
              * /service
              * /create
