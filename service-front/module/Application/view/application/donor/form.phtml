@@ -118,25 +118,21 @@
 <?= $this->formErrorList($form); ?>
         
 <fieldset>
-    
-    <div class="group">
-        <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
-        <?= $this->formElement($title) ?>
-        <?= $this->formElementErrors($title) ?>
-    </div>
-    
-    <div class="group">
-        <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
-        <?= $this->formElement($firstname) ?>
-        <?= $this->formElementErrors($firstname) ?>
-    </div>
-    
-    
-    <div class="group">
-        <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
-        <?= $this->formElement($lastname) ?>
-        <?= $this->formElementErrors($lastname) ?>
-    </div>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $title
+    ] ) ?>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $firstname
+    ] ) ?>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $lastname
+    ] ) ?>
     
     <details>
         <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>

@@ -3250,7 +3250,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         // open popup if hash is present in url
         var hash = window.location.hash,
-            topic;
+          topic;
         if (this._isGuidanceHash(hash)) {
           // on page load parse hash
           topic = hash.substring(hash.lastIndexOf('/') + 1);
@@ -3272,7 +3272,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // nav click event
       $('body').on('click', this.settings.selector, function () {
         var href = $(this).attr('href'),
-            topic = href.substring(href.lastIndexOf('#') + 1);
+          topic = href.substring(href.lastIndexOf('#') + 1);
         // set the current click as the source
         self.source = $(this);
         // select topic
@@ -3283,7 +3283,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // listen to hash changes in url
       $(window).on('hashchange.moj.Modules.HelpSystem', function () {
         var hash = window.location.hash,
-            topic;
+          topic;
 
         // if a change has been made, select the topic
         if (self._isGuidanceHash(hash)) {
@@ -3310,7 +3310,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         if ($('#popup.help-system').length > 0) {
           self._setTopic(topic);
         } else {
-        // otherwise, load in the overlay first and set in callback
+          // otherwise, load in the overlay first and set in callback
           this._loadOverlay(topic);
         }
       }
@@ -3358,11 +3358,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     _loadOverlay: function (topic) {
       var self = this,
-          html = this._hasCachedContent();
+        html = this._hasCachedContent();
 
       // todo - remove this
       html = false;
+<<<<<<< Updated upstream
       
+=======
+
+>>>>>>> Stashed changes
       // if content has been cached, load it straight in
       if (html !== false) {
         moj.Modules.Popup.open(html, {
@@ -3445,8 +3449,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     btnClick: function (e) {
       var source = $(e.target),
-          href = source.attr('href'),
-          form = source.data('form');
+        href = source.attr('href'),
+        form = source.data('form');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -3495,7 +3499,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('PersonForm.render', {wrap: '#popup'});
         }
       });
+<<<<<<< Updated upstream
       
+=======
+
+>>>>>>> Stashed changes
       // hide use button and switch button
       $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
 
@@ -3503,7 +3511,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     submitForm: function (e) {
       var $form = $(e.target),
-          url = $form.attr('action');
+        url = $form.attr('action');
 
       $form.find('input[type="submit"]').spinner();
 
@@ -3520,7 +3528,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     ajaxSuccess: function (response, textStatus, jqXHR) {
       var $form = $(this),
-          data;
+        data;
 
       if (response.success !== undefined && response.success) {
         // successful, so redirect
@@ -3697,10 +3705,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     // <a> click
     linkClicked: function (e, params) {
       var $el = $(e.target),
-          $form = $el.closest('form'),
-          url = $el.data('service'),
-          proceed = this.isFormClean($form) ? true : confirm(this.message),
-          _this = this;
+        $form = $el.closest('form'),
+        url = $el.data('service'),
+        proceed = this.isFormClean($form) ? true : confirm(this.message),
+        _this = this;
 
       $el.spinner();
       $.get(url, function (data) {
@@ -3715,6 +3723,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     // <select> change
     selectChanged: function (e, params) {
       var $el = $(e.target),
+<<<<<<< Updated upstream
           $form = $el.closest('form'),
           url = $form.attr('action'),
           postData,
@@ -3738,6 +3747,32 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         	postData = {'secret':$form.find('[name=secret]').val(), 'switch-to-type':$form.find('[name=switch-to-type]').val(), 'switcher-submit':$form.find('[name=switcher-submit]').val()};
         }
         
+=======
+        $form = $el.closest('form'),
+        url = $form.attr('action'),
+        postData,
+        _this = this,
+        proceed;
+
+      if (($el.val() === '') || ($el.val() === selected)) {
+        return;
+      }
+
+      proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
+
+      if (proceed) {
+        $el.spinner();
+
+        selected = $el.val();
+
+        if ($form.find('[name=switch-to-type]').length === 0) {
+          postData = {'secret': $form.find('[name=secret]').val(), 'pick-details': $form.find('[name=pick-details]').val()};
+        }
+        else {
+          postData = {'secret': $form.find('[name=secret]').val(), 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val()};
+        }
+
+>>>>>>> Stashed changes
         $.post(url, postData, function (data) {
           $el.spinner('off');
           if (proceed) {
@@ -3753,15 +3788,24 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     populateForm: function (data) {
       var $el,
+<<<<<<< Updated upstream
           $focus,
           i = 0;
+=======
+        $focus,
+        i = 0;
+>>>>>>> Stashed changes
 
       // Show any fields which were hidden
       $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
       // loop over data and change values
       _(data).each(function (value, key) {
         // set el
+<<<<<<< Updated upstream
         $el = $('[name=' + key+']');
+=======
+        $el = $('[name=' + key + ']');
+>>>>>>> Stashed changes
         // if value is null, set to empty string
         value = (value === null) ? '' : value;
         // make sure the element exists && that new value doesn't match current value
@@ -3769,6 +3813,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           // increment counter
           i += 1;
           // change the value of the element
+<<<<<<< Updated upstream
           if(key=='canSign') {
         	  //for donor canSign checkbox
         	  if((value === false)) {
@@ -3777,6 +3822,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           }
           else {
         	  $el.val(value).change();
+=======
+          if (key === 'canSign') {
+            //for donor canSign checkbox
+            if ((value === false)) {
+              $el.filter('[type=checkbox]').attr('checked', 'checked');
+            }
+          }
+          else {
+            $el.val(value).change();
+>>>>>>> Stashed changes
           }
           // if first element changed, save the el
           if (i === 1) {
@@ -3853,7 +3908,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     init: function () {
       // make sure the fields exist before adding them to the toggle
       var hasPostal = this.$postalFields.length > 0 ? true : false,
-          hasDx = this.$dxFields.length > 0 ? true : false;
+        hasDx = this.$dxFields.length > 0 ? true : false;
 
       // prepend template to postal fields
       this.$postalFields.before(this.searchTpl() + this.toggleTpl({postal: hasPostal, dx: hasDx})).addClass('hidden');
@@ -3894,7 +3949,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-          val = $el.val();
+        val = $el.val();
 
       $el.spinner();
       this.findAddress(val);
@@ -3946,7 +4001,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           alert('Please enter a valid UK postcode');
         }
       } else {
-      // successful
+        // successful
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -3991,7 +4046,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.$dxFields.find('[name*="dxNumber"]').focus();
       } else {
         var $search = this.$wrap.find('.js-PostcodeLookup__query'),
-            $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
+          $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
         // popuplate postcode field
         if ($search.val() !== '' && $pcode.val() === '') {
           $pcode.val($search.val()).change();
@@ -3999,8 +4054,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.$postalFields.removeClass('hidden');
         this.$dxFields.addClass('hidden');
         // focus on first address field
-        if($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length == 1) {
-        	this.$postalFields.find('[name*="addr1"]').focus();
+        if ($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length === 1) {
+          this.$postalFields.find('[name*="addr1"]').focus();
         }
       }
       // toggle class

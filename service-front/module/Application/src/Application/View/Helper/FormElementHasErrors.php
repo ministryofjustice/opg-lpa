@@ -11,14 +11,11 @@ class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
             return $this;
         }
 
-        $this->setMessageOpenFormat('<div class="group validation"><span class="validation-message">');
-        $this->setMessageCloseString('</span></div>');
-        $this->setMessageSeparatorString('<br>');
-
         if (count($element->getMessages()) > 0) {
-            echo '<div class="form-element-errors">';
-            echo $this->render($element, $attributes);
-            echo '</div>';
+            echo ' field-element-has-errors';
+        }
+        else{
+            echo '';
         }
 
     }
