@@ -5,7 +5,61 @@ return array(
     'router' => [
         'routes' => [
 
-            /*
+            // Redirects
+
+            'proxy-redirect-dashboard' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/logout',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'logout'
+                    ],
+                ],
+            ],
+
+
+            'proxy-redirect-details' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/account',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'user/about-you'
+                    ],
+                ],
+            ],
+
+            'proxy-redirect-feedback' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/feedback',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'send-feedback'
+                    ],
+                ],
+            ],
+
+            'proxy-redirect-terms' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/terms-and-conditions/',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'terms'
+                    ],
+                ],
+            ],
+
+
+            /* Main Routes
+             *
+             *
              * /forward
              * /service
              * /create
