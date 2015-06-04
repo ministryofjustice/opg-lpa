@@ -12,7 +12,6 @@ If an attorney applies to register the LPA, the attorney's financial circumstanc
 
 It is only the donor whose benefits and income matter.
 
-
 ## Means-tested benefits: no fee
 
 If you (the donor) get any of these means-tested benefits, you won't have to pay a fee:
@@ -50,7 +49,6 @@ The letter must confirm that you got the benefit at the time the LPA was sent to
 Send your proof to the Office of the Public Guardian (OPG) with all the following:
 
 * LPA document
-* application to register form (LPA002)
 * application for remission form (LPA120A)
 
 ## Low income: reduced fee
@@ -80,7 +78,6 @@ If you don't have an income, you have to send OPG a signed statement explaining 
 Send your proof to OPG with all the following:
 
 * LPA document
-* application to register form (LPA002)
 * application for remission form (LPA120A)
 
 ## Universal Credit: reduced fee
@@ -96,7 +93,6 @@ If you state that you get Universal Credit, you won't be charged through this di
 Send a copy of your benefit award letter to OPG with all the following:
 
 * LPA document
-* application to register form (LPA002)
 * application for remission form (LPA120A)
 
 OPG will contact you to let you know how much you'll have to pay and to arrange payment. OPG aims to do this within 7 working days of getting your application.

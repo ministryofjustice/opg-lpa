@@ -1,4 +1,4 @@
-/*! opg-lpa 2014-10-22 */
+/*! opg-lpa-2 2015-06-03 */
 /*!
 
  handlebars v1.1.2
@@ -3360,9 +3360,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var self = this,
           html = this._hasCachedContent();
 
-      // todo - remove this
-      html = false;
-      
+        // todo - remove this
+        html = false;
+
       // if content has been cached, load it straight in
       if (html !== false) {
         moj.Modules.Popup.open(html, {
@@ -3495,9 +3495,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('PersonForm.render', {wrap: '#popup'});
         }
       });
-      
-      // hide use button and switch button
-      $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
+
+        // hide use button and switch button
+        $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
 
     },
 
@@ -3687,7 +3687,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       _.bindAll(this, 'linkClicked', 'selectChanged');
       this.bindEvents();
     },
-    
+
     bindEvents: function () {
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
@@ -3714,92 +3714,92 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     // <select> change
     selectChanged: function (e, params) {
-      var $el = $(e.target),
-          $form = $el.closest('form'),
-          url = $form.attr('action'),
-          postData,
-          _this = this;
-      
-      if(($el.val()==='')||($el.val()===selected)) {
-    	  return;
-      }
-      
-      var proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
-      
-      if (proceed) {
-        $el.spinner();
-        
-        selected = $el.val();
-        
-        if($form.find('[name=switch-to-type]').length == 0) {
-        	postData = {'secret':$form.find('[name=secret]').val(), 'pick-details':$form.find('[name=pick-details]').val()};
+        var $el = $(e.target),
+            $form = $el.closest('form'),
+            url = $form.attr('action'),
+            postData,
+            _this = this;
+
+        if(($el.val()==='')||($el.val()===selected)) {
+            return;
         }
-        else {
-        	postData = {'secret':$form.find('[name=secret]').val(), 'switch-to-type':$form.find('[name=switch-to-type]').val(), 'switcher-submit':$form.find('[name=switcher-submit]').val()};
+
+        var proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
+
+        if (proceed) {
+            $el.spinner();
+
+            selected = $el.val();
+
+            if($form.find('[name=switch-to-type]').length == 0) {
+                postData = {'secret':$form.find('[name=secret]').val(), 'pick-details':$form.find('[name=pick-details]').val()};
+            }
+            else {
+                postData = {'secret':$form.find('[name=secret]').val(), 'switch-to-type':$form.find('[name=switch-to-type]').val(), 'switcher-submit':$form.find('[name=switcher-submit]').val()};
+            }
+
+            $.post(url, postData, function (data) {
+                $el.spinner('off');
+                if (proceed) {
+                    _this.populateForm(data);
+                }
+            });
+        } else {
+            // In case the user chose not to overwrite the details, we must select something
+            // neutral to allow re-selecting that option (on change)
+            $el.val($el.find('option:first').val());
         }
-        
-        $.post(url, postData, function (data) {
-          $el.spinner('off');
-          if (proceed) {
-            _this.populateForm(data);
-          }
-        });
-      } else {
-        // In case the user chose not to overwrite the details, we must select something
-        // neutral to allow re-selecting that option (on change)
-        $el.val($el.find('option:first').val());
-      }
     },
 
     populateForm: function (data) {
-      var $el,
-          $focus,
-          i = 0;
+        var $el,
+            $focus,
+            i = 0;
 
-      // Show any fields which were hidden
-      $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
-      // loop over data and change values
-      _(data).each(function (value, key) {
-        // set el
-        $el = $('[name=' + key+']');
-        // if value is null, set to empty string
-        value = (value === null) ? '' : value;
-        // make sure the element exists && that new value doesn't match current value
-        if ($el.length > 0 && $el.val() !== value) {
-          // increment counter
-          i += 1;
-          // change the value of the element
-          if(key=='canSign') {
-        	  //for donor canSign checkbox
-        	  if((value === false)) {
-        		  $el.filter('[type=checkbox]').attr('checked', 'checked');
-        	  }
-          }
-          else {
-        	  $el.val(value).change();
-          }
-          // if first element changed, save the el
-          if (i === 1) {
-            $focus = $('[name="' + key + '"]');
-          }
+        // Show any fields which were hidden
+        $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
+        // loop over data and change values
+        _(data).each(function (value, key) {
+            // set el
+            $el = $('[name=' + key+']');
+            // if value is null, set to empty string
+            value = (value === null) ? '' : value;
+            // make sure the element exists && that new value doesn't match current value
+            if ($el.length > 0 && $el.val() !== value) {
+                // increment counter
+                i += 1;
+                // change the value of the element
+                if(key=='canSign') {
+                    //for donor canSign checkbox
+                    if((value === false)) {
+                        $el.filter('[type=checkbox]').attr('checked', 'checked');
+                    }
+                }
+                else {
+                    $el.val(value).change();
+                }
+                // if first element changed, save the el
+                if (i === 1) {
+                    $focus = $('[name="' + key + '"]');
+                }
+            }
+        });
+        // focus on first changed, or first form element (accessibility)
+        if ($focus !== undefined) {
+            $focus.focus();
+        } else {
+            $('input[type=text], select, textarea').filter(':visible').first().focus();
         }
-      });
-      // focus on first changed, or first form element (accessibility)
-      if ($focus !== undefined) {
-        $focus.focus();
-      } else {
-        $('input[type=text], select, textarea').filter(':visible').first().focus();
-      }
     },
 
     isFormClean: function (form) {
-      var clean = true;
-      $('input[type="text"], select:not(.js-reusable), textarea', form).each(function () {
-        if ($(this).val() !== '' && $(this).filter('[name*="name-title"]').val() !== 'Mr') {
-          clean = false;
-        }
-      });
-      return clean;
+        var clean = true;
+        $('input[type="text"], select:not(.js-reusable), textarea', form).each(function () {
+            if ($(this).val() !== '' && $(this).filter('[name*="name-title"]').val() !== 'Mr') {
+                clean = false;
+            }
+        });
+        return clean;
     }
   };
 
@@ -3825,10 +3825,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // used to populate fields
       // key is the key name sent in response and value is name of app's field
       fieldMappings: {
-        line1: 'address-address1',
-        line2: 'address-address2',
-        line3: 'address-address3',
-        postcode: 'postcode'
+          line1: 'address-address1',
+          line2: 'address-address2',
+          line3: 'address-address3',
+          postcode: 'postcode'
       }
     },
 
@@ -4356,7 +4356,7 @@ lpa.updateSelectbox = function (el, value) {
   }
 
   // Apply the correct value
-  // As the field changes to a text box we lose its reference,
+  // As the field changes to a text box we lose it's reference,
   // so we need to reselect the element.
   form.find('[name=' + field + ']').val(value); // use the name attr as it's unique & will always exist
 };
@@ -4520,18 +4520,18 @@ $(document).ready(function () {
 
   // Fee remissions
 
-  $allRevisedFees = $('.revised-fee').hide();
+    $allRevisedFees = $('.revised-fee').hide();
 
-  $("input[name=reductionOptions]").change(function(){
+    $("input[name=reductionOptions]").change(function(){
 
-    $allRevisedFees.hide();
+        $allRevisedFees.hide();
 
-    if ($('#reducedFeeReceivesBenefits').is(':checked')) {
-      $revisedFee = $('#revised-fee-0').show();
-    } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
-      $revisedFee = $('#revised-fee-uc').show();
-    }
-  });
+        if ($('#reducedFeeReceivesBenefits').is(':checked')) {
+            $revisedFee = $('#revised-fee-0').show();
+        } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
+            $revisedFee = $('#revised-fee-uc').show();
+        }
+    });
 
 
   // Make button text reflect chosen payment option

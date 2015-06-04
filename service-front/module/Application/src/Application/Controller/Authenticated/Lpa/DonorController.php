@@ -152,9 +152,11 @@ class DonorController extends AbstractLpaActorController
         else {
             $donor = $this->getLpa()->document->donor->flatten();
             $dob = $this->getLpa()->document->donor->dob->date;
-            $donor['dob-date-day'] = $dob->format('d');
-            $donor['dob-date-month'] = $dob->format('m');
-            $donor['dob-date-year'] = $dob->format('Y');
+            $donor['dob-date'] = [
+                        'day'   => $dob->format('d'),
+                        'month' => $dob->format('m'),
+                        'year'  => $dob->format('Y'),
+            ];
             $form->bind($donor);
         }
         
