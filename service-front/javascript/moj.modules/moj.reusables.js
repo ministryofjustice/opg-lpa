@@ -81,14 +81,31 @@
     populateForm: function (data) {
       var $el,
         $focus,
-        i = 0;
+        i = 0,
+        props,
+        property,
+        value,
+        value2;
+      
+      // prepare the data
+      for( props in data ){
+      	// if value is an object then flatten it with PHP array notation...
+    	  value = data[props];
+    	  if(_.isObject(value)){
+    		  for ( property in value ){
+      			value2 = value[property];
+      			data[props + '[' + property + ']'] = value2;
+      		  } 
+    	  }
+      }
 
       // Show any fields which were hidden
       $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
       // loop over data and change values
       _(data).each(function (value, key) {
+    	      	  
         // set el
-        $el = $('[name=' + key + ']');
+        $el = $('[name="' + key + '"]');
         // if value is null, set to empty string
         value = (value === null) ? '' : value;
         // make sure the element exists && that new value doesn't match current value
