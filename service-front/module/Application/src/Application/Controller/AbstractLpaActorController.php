@@ -231,9 +231,11 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     {
         $userDetails = $this->getUserDetails()->flatten();
         if($userDetails['dob-date']) {
-            $userDetails['dob-date-day'] = $this->getUserDetails()->dob->date->format('d');
-            $userDetails['dob-date-month'] = $this->getUserDetails()->dob->date->format('m');
-            $userDetails['dob-date-year'] = $this->getUserDetails()->dob->date->format('Y');
+            $userDetails['dob-date'] = [
+                'day'   => $this->getUserDetails()->dob->date->format('d'),
+                'month' => $this->getUserDetails()->dob->date->format('m'),
+                'year'  => $this->getUserDetails()->dob->date->format('Y'),
+            ];
         }
         
         return $userDetails;
