@@ -32,6 +32,30 @@ return array(
                 ],
             ],
 
+            'proxy-redirect-feedback' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/feedback',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'send-feedback'
+                    ],
+                ],
+            ],
+
+            'proxy-redirect-terms' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/terms-and-conditions/',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'terms'
+                    ],
+                ],
+            ],
+
 
             /* Main Routes
              *
