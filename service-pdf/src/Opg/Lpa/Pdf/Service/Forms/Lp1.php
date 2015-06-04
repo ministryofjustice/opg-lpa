@@ -55,6 +55,7 @@ abstract class Lp1 extends AbstractForm
     {
         $this->generateStandardForm();
         $this->generateAdditionalPages();
+        $this->generateCoversheets();
         $this->mergePdfs();
         
         return $this;
@@ -208,6 +209,18 @@ abstract class Lp1 extends AbstractForm
         }
         
     } // function generateAdditionalPagePdfs()
+    
+    protected function generateCoversheets()
+    {
+        if($this->generateInstrumentOnly) {
+            $coversheetInstrument = (new CoversheetInstrument($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($coversheetInstrument);
+        }
+        else {
+            $coversheetRegistration = (new CoversheetRegistration($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($coversheetRegistration);
+        }
+    }
     
     protected function dataMapping()
     {
@@ -470,30 +483,30 @@ abstract class Lp1 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        if(($this->countIntermediateFiles() == 1) && !$this->generateInstrumentOnly) {
-            $this->generatedPdfFilePath = $this->interFileStack['LP1'][0];
-            return;
-        }
-        
         $pdf = PdfProcessor::getPdftkInstance();
-        $intPdfHandle = 'A';
-        if(isset($this->interFileStack['LP1'])) {
-            $pdf->addFile($this->interFileStack['LP1'], $intPdfHandle);
+        
+        $fileTag = $lp1FileTag = 'B';
+        if(isset($this->interFileStack['LP1']) && isset($this->interFileStack['Coversheet'])) {
+            $pdf->addFile($this->interFileStack['Coversheet'], 'A');
+            $pdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
         }
         else {
             throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
         }
         
+        // add cover sheet
+        $pdf->cat(1, 'end', 'A');
+        
         // add page 1-15
-        $pdf->cat(1, 15, 'A');
+        $pdf->cat(1, 15, $lp1FileTag);
         
         // Section 11 - additional attorneys signature
         if(isset($this->interFileStack['AdditionalAttorneySignature'])) {
             foreach($this->interFileStack['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
-                $pdf->addFile($additionalAttorneySignature, ++$intPdfHandle);
+                $pdf->addFile($additionalAttorneySignature, ++$fileTag);
                 
                 // add an additional attorney signature page
-                $pdf->cat(1, null, $intPdfHandle);
+                $pdf->cat(1, null, $fileTag);
             }
         }
         
@@ -501,20 +514,20 @@ abstract class Lp1 extends AbstractForm
         if(!$this->generateInstrumentOnly) {
             
             // add page 16, 17
-            $pdf->cat(16, 17, 'A');
+            $pdf->cat(16, 17, $lp1FileTag);
             
             // Section 12 additional applicants
             if(isset($this->interFileStack['AdditionalApplicant'])) {
                 foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
-                    $pdf->addFile($additionalApplicant, ++$intPdfHandle);
+                    $pdf->addFile($additionalApplicant, ++$fileTag);
                     
                     // add an additional applicant page
-                    $pdf->cat(1, null, $intPdfHandle);
+                    $pdf->cat(1, null, $fileTag);
                 }
             }
             
             // add page 18, 19, 20
-            $pdf->cat(18, 20, 'A');
+            $pdf->cat(18, 20, $lp1FileTag);
             
             // Section 15 - additional applicants signature
             if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && 
@@ -531,10 +544,10 @@ abstract class Lp1 extends AbstractForm
             
             if(isset($totalAdditionalPages) && ($totalAdditionalPages > 0)) {
                 for($i=0; $i<$totalAdditionalPages; $i++) {
-                    $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$intPdfHandle);
+                    $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$fileTag);
                     
                     // add an additional applicant signature page
-                    $pdf->cat(1, null, $intPdfHandle);
+                    $pdf->cat(1, null, $fileTag);
                 }
             }
         }
@@ -542,37 +555,37 @@ abstract class Lp1 extends AbstractForm
         // Continuation Sheet 1
         if(isset($this->interFileStack['CS1'])) {
             foreach ($this->interFileStack['CS1'] as $cs1) {
-                $pdf->addFile($cs1, ++$intPdfHandle);
+                $pdf->addFile($cs1, ++$fileTag);
                 
                 // add a CS1 page
-                $pdf->cat(1, null, $intPdfHandle);
+                $pdf->cat(1, null, $fileTag);
             }
         }
         
         // Continuation Sheet 2
         if(isset($this->interFileStack['CS2'])) {
             foreach ($this->interFileStack['CS2'] as $cs2) {
-                $pdf->addFile($cs2, ++$intPdfHandle);
+                $pdf->addFile($cs2, ++$fileTag);
                 
                 // add a CS2 page
-                $pdf->cat(1, null, $intPdfHandle);
+                $pdf->cat(1, null, $fileTag);
             }
         }
         
         // Continuation Sheet 3
         if(isset($this->interFileStack['CS3'])) {
-            $pdf->addFile($this->interFileStack['CS3'], ++$intPdfHandle);
+            $pdf->addFile($this->interFileStack['CS3'], ++$fileTag);
             
             // add a CS3 page
-            $pdf->cat(1, null, $intPdfHandle);
+            $pdf->cat(1, null, $fileTag);
         }
         
         // Continuation Sheet 4
         if(isset($this->interFileStack['CS4'])) {
-            $pdf->addFile($this->interFileStack['CS4'], ++$intPdfHandle);
+            $pdf->addFile($this->interFileStack['CS4'], ++$fileTag);
             
             // add a CS4 page
-            $pdf->cat(1, null, $intPdfHandle);
+            $pdf->cat(1, null, $fileTag);
         }
         
         $pdf->saveAs($this->generatedPdfFilePath);
