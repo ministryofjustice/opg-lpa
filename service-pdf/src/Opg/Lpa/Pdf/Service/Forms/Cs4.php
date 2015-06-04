@@ -23,6 +23,7 @@ class Cs4 extends AbstractForm
             array(
                     'cs4-trust-corporation-company-registration-number' => $this->companyNumber
             ))
+        ->flatten()
         ->saveAs($filePath);
         
         return $this->interFileStack;
