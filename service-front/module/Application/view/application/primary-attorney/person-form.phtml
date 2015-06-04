@@ -149,17 +149,17 @@
         <div class="dob-element">
             <div class="form-group form-group-day">
                 <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formDateSegments($dobDay) ?>
+                <?= $this->formElement($dobDay) ?>
             </div>
             
             <div class="form-group form-group-month">
                 <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formDateSegments($dobMonth) ?>
+                <?= $this->formElement($dobMonth) ?>
             </div>
             
             <div class="form-group form-group-year">
                 <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formDateSegments($dobYear) ?>
+                <?= $this->formElement($dobYear) ?>
             </div>
         </div>
         <?= $this->formElementErrors($dobDay) ?>
