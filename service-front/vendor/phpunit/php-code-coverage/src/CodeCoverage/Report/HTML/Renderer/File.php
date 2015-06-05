@@ -44,6 +44,11 @@ if (!defined('T_YIELD')) {
 class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report_HTML_Renderer
 {
     /**
+     * @var integer
+     */
+    private $htmlspecialcharsFlags;
+
+    /**
      * Constructor.
      *
      * @param string  $templatePath
@@ -61,6 +66,12 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
             $lowUpperBound,
             $highLowerBound
         );
+
+        $this->htmlspecialcharsFlags = ENT_COMPAT;
+
+        if (defined('ENT_SUBSTITUTE')) {
+            $this->htmlspecialcharsFlags = $this->htmlspecialcharsFlags | ENT_HTML401 | ENT_SUBSTITUTE;
+        }
     }
 
     /**
@@ -92,7 +103,9 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
         $template = new Text_Template($this->templatePath . 'file_item.html', '{{', '}}');
 
         $methodItemTemplate = new Text_Template(
-            $this->templatePath . 'method_item.html', '{{', '}}'
+            $this->templatePath . 'method_item.html',
+            '{{',
+            '}}'
         );
 
         $items = $this->renderItemTemplate(
@@ -168,44 +181,46 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                     'numMethods'                   => $numMethods,
                     'numTestedMethods'             => $numTestedMethods,
                     'linesExecutedPercent'         => PHP_CodeCoverage_Util::percent(
-                            $item['executedLines'],
-                            $item['executableLines'],
-                            false
-                        ),
+                        $item['executedLines'],
+                        $item['executableLines'],
+                        false
+                    ),
                     'linesExecutedPercentAsString' => PHP_CodeCoverage_Util::percent(
-                            $item['executedLines'],
-                            $item['executableLines'],
-                            true
-                        ),
+                        $item['executedLines'],
+                        $item['executableLines'],
+                        true
+                    ),
                     'numExecutedLines'             => $item['executedLines'],
                     'numExecutableLines'           => $item['executableLines'],
                     'testedMethodsPercent'         => PHP_CodeCoverage_Util::percent(
-                            $numTestedMethods,
-                            $numMethods,
-                            false
-                        ),
+                        $numTestedMethods,
+                        $numMethods,
+                        false
+                    ),
                     'testedMethodsPercentAsString' => PHP_CodeCoverage_Util::percent(
-                            $numTestedMethods,
-                            $numMethods,
-                            true
-                        ),
+                        $numTestedMethods,
+                        $numMethods,
+                        true
+                    ),
                     'testedClassesPercent'         => PHP_CodeCoverage_Util::percent(
-                            $numTestedMethods == $numMethods ? 1 : 0,
-                            1,
-                            false
-                        ),
+                        $numTestedMethods == $numMethods ? 1 : 0,
+                        1,
+                        false
+                    ),
                     'testedClassesPercentAsString' => PHP_CodeCoverage_Util::percent(
-                            $numTestedMethods == $numMethods ? 1 : 0,
-                            1,
-                            true
-                        ),
+                        $numTestedMethods == $numMethods ? 1 : 0,
+                        1,
+                        true
+                    ),
                     'crap'                         => $item['crap']
                 )
             );
 
             foreach ($item['methods'] as $method) {
                 $buffer .= $this->renderFunctionOrMethodItem(
-                    $methodItemTemplate, $method, '&nbsp;'
+                    $methodItemTemplate,
+                    $method,
+                    '&nbsp;'
                 );
             }
         }
@@ -228,7 +243,8 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
 
         foreach ($functions as $function) {
             $buffer .= $this->renderFunctionOrMethodItem(
-                $template, $function
+                $template,
+                $function
             );
         }
 
@@ -247,35 +263,36 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
             $template,
             array(
                 'name'                         => sprintf(
-                    '%s<a href="#%d">%s</a>',
+                    '%s<a href="#%d"><abbr title="%s">%s</abbr></a>',
                     $indent,
                     $item['startLine'],
-                    htmlspecialchars($item['signature'])
+                    htmlspecialchars($item['signature']),
+                    isset($item['functionName']) ? $item['functionName'] : $item['methodName']
                 ),
                 'numMethods'                   => 1,
                 'numTestedMethods'             => $numTestedItems,
                 'linesExecutedPercent'         => PHP_CodeCoverage_Util::percent(
-                        $item['executedLines'],
-                        $item['executableLines'],
-                        false
-                    ),
+                    $item['executedLines'],
+                    $item['executableLines'],
+                    false
+                ),
                 'linesExecutedPercentAsString' => PHP_CodeCoverage_Util::percent(
-                        $item['executedLines'],
-                        $item['executableLines'],
-                        true
-                    ),
+                    $item['executedLines'],
+                    $item['executableLines'],
+                    true
+                ),
                 'numExecutedLines'             => $item['executedLines'],
                 'numExecutableLines'           => $item['executableLines'],
                 'testedMethodsPercent'         => PHP_CodeCoverage_Util::percent(
-                        $numTestedItems,
-                        1,
-                        false
-                    ),
+                    $numTestedItems,
+                    1,
+                    false
+                ),
                 'testedMethodsPercentAsString' => PHP_CodeCoverage_Util::percent(
-                        $numTestedItems,
-                        1,
-                        true
-                    ),
+                    $numTestedItems,
+                    1,
+                    true
+                ),
                 'crap'                         => $item['crap']
             )
         );
@@ -294,7 +311,6 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
         $i            = 1;
 
         foreach ($codeLines as $line) {
-            $numTests       = '';
             $trClass        = '';
             $popoverContent = '';
             $popoverTitle   = '';
@@ -307,7 +323,7 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                 } elseif ($numTests == 0) {
                     $trClass = ' class="danger"';
                 } else {
-                    $trClass        = ' class="success popin"';
+                    $lineCss        = 'covered-by-large-tests';
                     $popoverContent = '<ul>';
 
                     if ($numTests > 1) {
@@ -317,42 +333,55 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                     }
 
                     foreach ($coverageData[$i] as $test) {
-                        switch ($testData[$test]) {
-                            case 0: {
-                                $testCSS = ' class="success"';
-                            }
+                        if ($lineCss == 'covered-by-large-tests' && $testData[$test]['size'] == 'medium') {
+                            $lineCss = 'covered-by-medium-tests';
+                        } elseif ($testData[$test]['size'] == 'small') {
+                            $lineCss = 'covered-by-small-tests';
+                        }
+
+                        switch ($testData[$test]['status']) {
+                            case 0:
+                                switch ($testData[$test]['size']) {
+                                    case 'small':
+                                        $testCSS = ' class="covered-by-small-tests"';
+                                        break;
+
+                                    case 'medium':
+                                        $testCSS = ' class="covered-by-medium-tests"';
+                                        break;
+
+                                    default:
+                                        $testCSS = ' class="covered-by-large-tests"';
+                                        break;
+                                }
                                 break;
 
                             case 1:
-                            case 2: {
+                            case 2:
                                 $testCSS = ' class="warning"';
-                            }
                                 break;
 
-                            case 3: {
+                            case 3:
                                 $testCSS = ' class="danger"';
-                            }
                                 break;
 
-                            case 4: {
+                            case 4:
                                 $testCSS = ' class="danger"';
-                            }
                                 break;
 
-                            default: {
-                            $testCSS = '';
-                            }
+                            default:
+                                $testCSS = '';
                         }
 
                         $popoverContent .= sprintf(
                             '<li%s>%s</li>',
-
                             $testCSS,
                             htmlspecialchars($test)
                         );
                     }
 
                     $popoverContent .= '</ul>';
+                    $trClass         = ' class="' . $lineCss . ' popin"';
                 }
             }
 
@@ -402,7 +431,6 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                 if ($token === '"' && $tokens[$j - 1] !== '\\') {
                     $result[$i] .= sprintf(
                         '<span class="string">%s</span>',
-
                         htmlspecialchars($token)
                     );
 
@@ -410,7 +438,6 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                 } else {
                     $result[$i] .= sprintf(
                         '<span class="keyword">%s</span>',
-
                         htmlspecialchars($token)
                     );
                 }
@@ -423,7 +450,7 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
             $value = str_replace(
                 array("\t", ' '),
                 array('&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;'),
-                htmlspecialchars($value)
+                htmlspecialchars($value, $this->htmlspecialcharsFlags)
             );
 
             if ($value === "\n") {
@@ -439,15 +466,13 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                             $colour = 'string';
                         } else {
                             switch ($token) {
-                                case T_INLINE_HTML: {
+                                case T_INLINE_HTML:
                                     $colour = 'html';
-                                }
                                     break;
 
                                 case T_COMMENT:
-                                case T_DOC_COMMENT: {
+                                case T_DOC_COMMENT:
                                     $colour = 'comment';
-                                }
                                     break;
 
                                 case T_ABSTRACT:
@@ -505,20 +530,17 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                                 case T_USE:
                                 case T_VAR:
                                 case T_WHILE:
-                                case T_YIELD: {
+                                case T_YIELD:
                                     $colour = 'keyword';
-                                }
                                     break;
 
-                                default: {
-                                $colour = 'default';
-                                }
+                                default:
+                                    $colour = 'default';
                             }
                         }
 
                         $result[$i] .= sprintf(
                             '<span class="%s">%s</span>',
-
                             $colour,
                             $line
                         );

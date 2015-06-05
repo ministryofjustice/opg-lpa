@@ -40,12 +40,12 @@ class DateCheck implements ServiceLocatorAwareInterface
         
         // Donor must be first
         if ($donor > $certificateProvider || $donor > $minAttorneyDate) {
-            return false;
+            return 'The donor must be the first person to sign the LPA.';
         }
         
         // CP must be next
         if ($certificateProvider > $minAttorneyDate) {
-            return false;
+            return 'The Certificate Provider must sign the LPA before the attorneys.';
         }
         
         return true;
