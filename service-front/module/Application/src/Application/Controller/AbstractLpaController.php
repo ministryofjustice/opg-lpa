@@ -8,7 +8,7 @@ use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Application\Model\FormFlowChecker;
-use Application\Form\Lpa\AbstractForm;
+use Zend\View\Model\JsonModel;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
@@ -71,7 +71,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         // inject lpa into view
         $view = parent::onDispatch($e);
         
-        if(($view instanceof ViewModel) && ($view->form instanceof AbstractForm)) {
+        if(($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             $view->setVariable('lpa', $this->getLpa());
         }
         
