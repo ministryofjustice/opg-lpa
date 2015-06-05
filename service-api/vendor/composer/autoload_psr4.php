@@ -9,6 +9,8 @@ return array(
     'Zend\\' => array($vendorDir . '/zendframework/zendframework/library/Zend'),
     'ZF\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/src'),
     'ZFTest\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/test'),
+    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
+    'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'PhlyMongo\\' => array($vendorDir . '/phly/phly-mongo/src'),
     'PhlyMongoTest\\' => array($vendorDir . '/phly/phly-mongo/test'),

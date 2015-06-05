@@ -162,25 +162,29 @@ class Document extends AbstractData {
             new Assert\Valid,
         ]);
 
-        // instruction should be string or boolean false.
+        // instruction should be string, null or boolean false.
         $metadata->addPropertyConstraint('instruction', new Assert\Callback(function ($value, ExecutionContextInterface $context){
-            if( is_null($value) || is_string($value) || $value === false ){ return; }
-            $context->buildViolation( 'expected-type:string-or-bool=false' )->addViolation();
 
-            if( strlen($value) > 10000 ){
+            if( is_string($value) && strlen($value) > 10000 ){
                 $context->buildViolation( 'must-be-less-than-or-equal:10000' )->addViolation();
             }
+
+            if( is_null($value) || is_string($value) || $value === false ){ return; }
+
+            $context->buildViolation( 'expected-type:string-or-bool=false' )->addViolation();
 
         }));
 
-        // preference should be string or boolean false.
+        // preference should be string, null or boolean false.
         $metadata->addPropertyConstraint('preference', new Assert\Callback(function ($value, ExecutionContextInterface $context){
-            if( is_null($value) || is_string($value) || $value === false ){ return; }
-            $context->buildViolation( 'expected-type:string-or-bool=false' )->addViolation();
 
-            if( strlen($value) > 10000 ){
+            if( is_string($value) && strlen($value) > 10000 ){
                 $context->buildViolation( 'must-be-less-than-or-equal:10000' )->addViolation();
             }
+
+            if( is_null($value) || is_string($value) || $value === false ){ return; }
+
+            $context->buildViolation( 'expected-type:string-or-bool=false' )->addViolation();
 
         }));
 
