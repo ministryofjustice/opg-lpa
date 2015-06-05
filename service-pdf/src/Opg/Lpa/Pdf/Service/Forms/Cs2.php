@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Cs2 extends AbstractForm
 {
@@ -62,6 +63,7 @@ class Cs2 extends AbstractForm
                     'cs2-content'       => $this->getContentForBox($pageNo, $this->content, $this->contentType),
                     'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
                     'cs2-continued'     => $cs2Continued,
+                    'footer_right'    => Config::getInstance()['footer']['cs2'],
             ))
             ->flatten()
             ->saveAs($filePath);

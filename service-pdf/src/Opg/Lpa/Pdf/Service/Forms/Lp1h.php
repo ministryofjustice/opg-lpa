@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Lp1h extends Lp1
 {
@@ -133,6 +134,9 @@ class Lp1h extends Lp1
                     break;
             }
         }
+        
+        $this->pdfFormData['footer_instrument_right'] = Config::getInstance()['footer']['lp1h']['instrument'];
+        $this->pdfFormData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
         
         return $this->pdfFormData;
     } // function dataMapping()

@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Cs4 extends AbstractForm
 {
@@ -21,7 +22,8 @@ class Cs4 extends AbstractForm
         
         $cs2->fillForm(
             array(
-                    'cs4-trust-corporation-company-registration-number' => $this->companyNumber
+                    'cs4-trust-corporation-company-registration-number' => $this->companyNumber,
+                    'footer_right'    => Config::getInstance()['footer']['cs4'],
             ))
         ->flatten()
         ->saveAs($filePath);

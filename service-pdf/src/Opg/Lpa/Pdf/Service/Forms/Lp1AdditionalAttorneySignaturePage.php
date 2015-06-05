@@ -3,6 +3,8 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
@@ -32,11 +34,13 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
             
+            $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF)?'lp1f':'lp1h';
             $attorneySignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP1_AdditionalAttorneySignature.pdf");
             $attorneySignaturePage->fillForm(array(
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
-                    'signature-attorney-name-last'  => $attorney->name->last
+                    'signature-attorney-name-last'  => $attorney->name->last,
+                    'footer_instrument_right' => Config::getInstance()['footer'][$lpaType]['instrument'],
             ))
             ->flatten()
             ->saveAs($filePath);

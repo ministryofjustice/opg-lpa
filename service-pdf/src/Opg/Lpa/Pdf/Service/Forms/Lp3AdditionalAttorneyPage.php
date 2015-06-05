@@ -3,6 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Lp3AdditionalAttorneyPage extends AbstractForm
 {
@@ -63,6 +64,8 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                     break;
                 }
             }
+            
+            $pdfFormData['footer_right'] = Config::getInstance()['footer']['lp1f']['instrument'];
             
             $additionalAttorneyPage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage

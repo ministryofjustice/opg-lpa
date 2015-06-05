@@ -3,6 +3,8 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
 {
@@ -52,6 +54,13 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             } // endfor
             
             $formData['attorney-is-applicant'] = self::CHECK_BOX_ON;
+            
+            if($this->lpa->document->type == Document::LPA_TYPE_PF) {
+                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1f']['registration'];
+            }
+            else {
+                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
+            }
             
             $additionalApplicant->fillForm($formData)
                 ->flatten()

@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Cs1 extends AbstractForm
 {
@@ -80,7 +81,10 @@ class Cs1 extends AbstractForm
             $pIdx = ($idx % self::$SETTINGS['max-slots-on-cs1-form']);
             
             if($pIdx == 0) {
-                $formData = ['donor-full-name' => $this->fullName($this->lpa->document->donor->name)];
+                $formData = [
+                    'donor-full-name' => $this->fullName($this->lpa->document->donor->name),
+                    'footer_right'    => Config::getInstance()['footer']['cs1'], 
+                ];
             }
             
             $formData['cs1-'.$pIdx.'-is-'.$actor['type']] = self::CHECK_BOX_ON;

@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 
 class Cs3 extends AbstractForm
 {
@@ -18,7 +19,8 @@ class Cs3 extends AbstractForm
         $cs3 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
     
         $cs3->fillForm(array(
-                'donor-full-name' => $this->fullName($this->lpa->document->donor->name)
+                'donor-full-name' => $this->fullName($this->lpa->document->donor->name),
+                'footer_right'    => Config::getInstance()['footer']['cs3'],
         ))
         ->flatten()
         ->saveAs($filePath);
