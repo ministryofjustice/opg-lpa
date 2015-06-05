@@ -114,7 +114,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         // Check LPA is (still) valid.
         if( $lpa->validateAllGroups()->hasErrors() ){
-            throw new RuntimeException('A malformed LPA object');
+            throw new RuntimeException('LPA object is invalid');
         }
 
         //--------------------------------------------------------
