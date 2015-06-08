@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9a11f243d417998d3db2c0c8667053d4",
+    "hash": "3948549287edae4da2eae6850675b213",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -367,16 +367,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "235192dc6f38ec804697df8fb4fc29cc8b5ff360"
+                "reference": "26d2b3bd553693b9105fabea2be65e05968efdf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/235192dc6f38ec804697df8fb4fc29cc8b5ff360",
-                "reference": "235192dc6f38ec804697df8fb4fc29cc8b5ff360",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/26d2b3bd553693b9105fabea2be65e05968efdf7",
+                "reference": "26d2b3bd553693b9105fabea2be65e05968efdf7",
                 "shasum": ""
             },
             "require": {
@@ -399,10 +399,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.0.4",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.0.5",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-06-05 15:20:22"
+            "time": "2015-06-08 14:39:58"
         },
         {
             "name": "nocarrier/hal",
@@ -1213,16 +1213,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.1.3",
+            "version": "2.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "28a6b34e91d789b2608072ab3c82eaae7cdb973c"
+                "reference": "3703c4bb67c8700957dd41c843254658539d091d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/28a6b34e91d789b2608072ab3c82eaae7cdb973c",
-                "reference": "28a6b34e91d789b2608072ab3c82eaae7cdb973c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3703c4bb67c8700957dd41c843254658539d091d",
+                "reference": "3703c4bb67c8700957dd41c843254658539d091d",
                 "shasum": ""
             },
             "require": {
@@ -1271,7 +1271,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-03 07:01:01"
+            "time": "2015-06-06 08:33:23"
         },
         {
             "name": "phpunit/php-file-iterator",
