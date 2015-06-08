@@ -15,17 +15,18 @@
     },
     "require": {
         "php": ">=5.3.23",
-        "zendframework/zend-servicemanager": "self.version",
-        "zendframework/zend-stdlib": "self.version"
+        "zendframework/zend-servicemanager": "~2.5",
+        "zendframework/zend-stdlib": "~2.5"
     },
     "require-dev": {
-        "zendframework/zend-console": "self.version",
-        "zendframework/zend-db": "self.version",
-        "zendframework/zend-escaper": "self.version",
-        "zendframework/zend-mail": "self.version",
-        "zendframework/zend-validator": "self.version",
+        "zendframework/zend-console": "~2.5",
+        "zendframework/zend-db": "~2.5",
+        "zendframework/zend-escaper": "~2.5",
+        "zendframework/zend-filter": "~2.5",
+        "zendframework/zend-mail": "~2.5",
+        "zendframework/zend-mvc": "~2.5",
+        "zendframework/zend-validator": "~2.5",
         "fabpot/php-cs-fixer": "1.7.*",
-        "satooshi/php-coveralls": "dev-master",
         "phpunit/PHPUnit": "~4.0"
     },
     "suggest": {
@@ -36,10 +37,12 @@
         "zendframework/zend-mail": "Zend\\Mail component",
         "zendframework/zend-validator": "Zend\\Validator component"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.4-dev",
-            "dev-develop": "2.5-dev"
+            "dev-master": "2.5-dev",
+            "dev-develop": "2.6-dev"
         }
     },
     "autoload-dev": {

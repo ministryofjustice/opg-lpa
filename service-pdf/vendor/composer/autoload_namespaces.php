@@ -7,9 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'ZendPdf\\' => array($vendorDir . '/zendframework/zendpdf/library'),
-    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
-    'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Resque' => array($vendorDir . '/chrisboulton/php-resque/lib'),
     'Raven_' => array($vendorDir . '/raven/raven/lib'),

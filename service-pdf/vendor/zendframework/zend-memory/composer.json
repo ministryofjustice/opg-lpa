@@ -16,18 +16,19 @@
         "php": ">=5.3.23"
     },
     "require-dev": {
-        "zendframework/zend-cache": "self.version",
+        "zendframework/zend-cache": "~2.5",
         "fabpot/php-cs-fixer": "1.7.*",
-        "satooshi/php-coveralls": "dev-master",
         "phpunit/PHPUnit": "~4.0"
     },
     "suggest": {
         "zendframework/zend-cache": "To support swap the memory objects"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.4-dev",
-            "dev-develop": "2.5-dev"
+            "dev-master": "2.5-dev",
+            "dev-develop": "2.6-dev"
         }
     },
     "autoload-dev": {
