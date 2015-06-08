@@ -201,11 +201,22 @@ abstract class Lp1 extends AbstractForm
             $this->mergerIntermediateFilePaths($generatedCs3);
         }
         
-        // if number of applicant is greater than 4, duplicate Section 12 - Applicants 
-        // as many as needed to be able to fit all applicants in.
-        if(is_array($this->lpa->document->whoIsRegistering) && (count($this->lpa->document->whoIsRegistering)>4)) {
+        $numOfApplicants = count($this->lpa->document->whoIsRegistering);
+        
+        // Section 12 - Applicants. If number of applicant is greater than 4, duplicate this page as many as needed in order to fit all applicants in.
+        if(is_array($this->lpa->document->whoIsRegistering) && ($numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM)) {
             $generatedAdditionalApplicantPages = (new Lp1AdditionalApplicantPage($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($generatedAdditionalApplicantPages);
+        }
+
+        // Section 15 - additional applicants signature
+        if(is_array($this->lpa->document->whoIsRegistering) && ($numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
+            $totalAdditionalApplicants = $numOfApplicants - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+            $totalAdditionalApplicantPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+            if($totalAdditionalApplicantPages > 0) {
+                $generatedAdditionalApplicantSignaturePages = (new Lp1AdditionalApplicantSignaturePage($this->lpa))->generate();
+                $this->mergerIntermediateFilePaths($generatedAdditionalApplicantSignaturePages);
+            }
         }
         
     } // function generateAdditionalPagePdfs()
@@ -509,6 +520,42 @@ abstract class Lp1 extends AbstractForm
                 $pdf->cat(1, null, $fileTag);
             }
         }
+
+        // Continuation Sheet 1
+        if(isset($this->interFileStack['CS1'])) {
+            foreach ($this->interFileStack['CS1'] as $cs1) {
+                $pdf->addFile($cs1, ++$fileTag);
+        
+                // add a CS1 page
+                $pdf->cat(1, null, $fileTag);
+            }
+        }
+        
+        // Continuation Sheet 2
+        if(isset($this->interFileStack['CS2'])) {
+            foreach ($this->interFileStack['CS2'] as $cs2) {
+                $pdf->addFile($cs2, ++$fileTag);
+        
+                // add a CS2 page
+                $pdf->cat(1, null, $fileTag);
+            }
+        }
+        
+        // Continuation Sheet 3
+        if(isset($this->interFileStack['CS3'])) {
+            $pdf->addFile($this->interFileStack['CS3'], ++$fileTag);
+        
+            // add a CS3 page
+            $pdf->cat(1, null, $fileTag);
+        }
+        
+        // Continuation Sheet 4
+        if(isset($this->interFileStack['CS4'])) {
+            $pdf->addFile($this->interFileStack['CS4'], ++$fileTag);
+        
+            // add a CS4 page
+            $pdf->cat(1, null, $fileTag);
+        }
         
         // skip adding LPA registration pages if only instrument pdf is to be generated
         if(!$this->generateInstrumentOnly) {
@@ -530,62 +577,14 @@ abstract class Lp1 extends AbstractForm
             $pdf->cat(18, 20, $lp1FileTag);
             
             // Section 15 - additional applicants signature
-            if(($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) && 
-                    ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) &&
-                    (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
-                $totalAdditionalApplicants = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-                $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
-            }
-            elseif(is_array($this->lpa->document->whoIsRegistering) &&
-                    (count($this->lpa->document->whoIsRegistering) > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
-                $totalAdditionalApplicants = count($this->lpa->document->whoIsRegistering) - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-                $totalAdditionalPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
-            }
-            
-            if(isset($totalAdditionalPages) && ($totalAdditionalPages > 0)) {
-                for($i=0; $i<$totalAdditionalPages; $i++) {
-                    $pdf->addFile($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf", ++$fileTag);
+            if(isset($this->interFileStack['AdditionalApplicantSignature'])) {
+                foreach($this->interFileStack['AdditionalApplicantSignature'] as $additionalApplicantSignature) {
+                    $pdf->addFile($additionalApplicantSignature, ++$fileTag);
                     
                     // add an additional applicant signature page
                     $pdf->cat(1, null, $fileTag);
                 }
             }
-        }
-        
-        // Continuation Sheet 1
-        if(isset($this->interFileStack['CS1'])) {
-            foreach ($this->interFileStack['CS1'] as $cs1) {
-                $pdf->addFile($cs1, ++$fileTag);
-                
-                // add a CS1 page
-                $pdf->cat(1, null, $fileTag);
-            }
-        }
-        
-        // Continuation Sheet 2
-        if(isset($this->interFileStack['CS2'])) {
-            foreach ($this->interFileStack['CS2'] as $cs2) {
-                $pdf->addFile($cs2, ++$fileTag);
-                
-                // add a CS2 page
-                $pdf->cat(1, null, $fileTag);
-            }
-        }
-        
-        // Continuation Sheet 3
-        if(isset($this->interFileStack['CS3'])) {
-            $pdf->addFile($this->interFileStack['CS3'], ++$fileTag);
-            
-            // add a CS3 page
-            $pdf->cat(1, null, $fileTag);
-        }
-        
-        // Continuation Sheet 4
-        if(isset($this->interFileStack['CS4'])) {
-            $pdf->addFile($this->interFileStack['CS4'], ++$fileTag);
-            
-            // add a CS4 page
-            $pdf->cat(1, null, $fileTag);
         }
         
         $pdf->saveAs($this->generatedPdfFilePath);
