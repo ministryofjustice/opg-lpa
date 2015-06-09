@@ -31,25 +31,137 @@
 
     formEvents: function (i, el) {
       var $form = $(el),
-          $submitBtn = $('input[type="submit"]', $form),
-          donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
-          $allFields = $('label.required + input, label.required ~ select', $form),
-          $addressFields = $('input[name^="address"]', $form),
-          allPopulated,
-          countAddr;
+        $submitBtn = $('input[type="submit"]', $form),
+        donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
+        $allFields = $('input[required], label.required + input, label.required ~ select', $form),
+        $addressFields = $('input[name^="address"]', $form),
+        allPopulated,
+        countAddr,
+        dob,
+        getDOB = function () {
+          var day,
+            month,
+            year,
+            $dayObj = $('#dob-date-day'),
+            $monthObj = $('#dob-date-month'),
+            $yearObj = $('#dob-date-year'),
+            returnDate;
+
+          if ($dayObj.val() !== '') {
+            day = parseInt($dayObj.val());
+            if (isNaN(day) || (day <= 1)) {
+              day = undefined;
+            }
+          }
+          if ($monthObj.val() !== '') {
+            month = parseInt($monthObj.val());
+            if (isNaN(month) || (month <= 0)) {
+              month = undefined;
+            }
+            else {
+              month = month - 1;
+            }
+          }
+          if ($yearObj.val() !== '') {
+            year = parseInt($yearObj.val());
+            if (isNaN(year) || (year <= 0)) {
+              year = undefined;
+            }
+          }
+
+          returnDate = new Date(year, month, day);
+          if (!isFinite(returnDate)) {
+            returnDate = null;
+          }
+
+          return returnDate;
+
+        },
+        tplFormElementErrors = lpa.templates['errors.formElement'],
+        tplErrorsFormSummary = lpa.templates['errors.formSummary'],
+        tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
       $submitBtn.attr('disabled', $('#address-addr1', $form).val() === '');
 
       // Listen for changes to form
       $form
-        .on('change.moj.Modules.PersonForm', 'input, select', function () {
+        .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
+
+          var currentDate = new Date(),
+            minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+            maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+            $dobElement = $(evt.target).parents('.dob-element'),
+            $dobGroup,
+            actionGroup = $('.group.action');
+
+
+          // Verify the DOB
+          if ($dobElement.length > 0) {
+
+            dob = getDOB();
+            $dobGroup = $dobElement.parents('.group');
+            $dobGroup.removeClass('validation');
+            $dobGroup.find('.form-element-errors').remove();
+            $('.js-age-check').remove();
+            $('.validation-summary').remove();
+
+            if (dob !== null) {
+
+              if (dob > minAge) {
+                console.log('too young');
+                $dobGroup.addClass('validation');
+                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                actionGroup.before($(tplInputCheckbox({
+                  'elementJSref': 'js-age-check',
+                  'elementName': 'ageCheck',
+                  'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                })).addClass('validation'));
+
+                $form.prepend(tplErrorsFormSummary());
+
+              }
+              else if (dob <= maxAge) {
+                $dobGroup.addClass('validation');
+                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                actionGroup.before($(tplInputCheckbox({
+                  'elementJSref': 'js-age-check',
+                  'elementName': 'ageCheck',
+                  'elementLabel': 'Please confirm that they are over 100 years old.'
+                })).addClass('validation'));
+
+                $form.prepend(tplErrorsFormSummary());
+
+              }
+
+            }
+            else {
+              $dobGroup.addClass('validation');
+              $dobGroup.append(tplFormElementErrors({'validationMessage': 'The age appears to be invalid'}));
+
+              $form.prepend(tplErrorsFormSummary());
+            }
+
+          }
+
+
+          $allFields = $('input[required], label.required + input, label.required ~ select', $form);
+
           allPopulated = true;
 
           // Test required fields are populated
           $allFields.each(function () {
-            if ($.trim($(this).val()) === '') {
-              allPopulated = false;
+            if (allPopulated) {
+
+              var $field = $(this);
+
+              if ($.trim($field.val()) === '') {
+                allPopulated = false;
+              }
+              if ($field.prop('type') === 'checkbox') {
+                allPopulated = $field.prop('checked');
+              }
+
             }
           });
 
@@ -62,6 +174,7 @@
           if (countAddr < 2) {
             allPopulated = false;
           }
+
 
           $submitBtn.attr('disabled', !allPopulated);
         })

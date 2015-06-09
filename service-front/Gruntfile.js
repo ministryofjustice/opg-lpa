@@ -183,7 +183,7 @@ module.exports = function (grunt) {
 
   // Tasks
   grunt.registerTask('default', ['build']);
-  grunt.registerTask('dev', ['sass', 'handlebars', 'concat:dist']);
+  grunt.registerTask('dev', ['sass', 'handlebars', 'concat:dist', 'watch']);
   grunt.registerTask('test', ['jshint', 'dalek:headless']);
   grunt.registerTask('build', ['sass', 'handlebars', 'concat', 'uglify']);
 };
