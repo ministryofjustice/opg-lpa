@@ -7,6 +7,10 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Zend\\' => array($vendorDir . '/zendframework/zendframework/library/Zend'),
+    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
+    'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
+    'Symfony\\Component\\HttpFoundation\\' => array($vendorDir . '/symfony/http-foundation'),
+    'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'Opg\\Lpa\\Logger\\' => array($vendorDir . '/ministryofjustice/opg-lpa-logger/src/Opg/Lpa/Logger'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),

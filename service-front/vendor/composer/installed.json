@@ -1325,63 +1325,6 @@
         ]
     },
     {
-        "name": "phpunit/phpunit-mock-objects",
-        "version": "2.3.1",
-        "version_normalized": "2.3.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-            "reference": "74ffb87f527f24616f72460e54b595f508dccb5c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/74ffb87f527f24616f72460e54b595f508dccb5c",
-            "reference": "74ffb87f527f24616f72460e54b595f508dccb5c",
-            "shasum": ""
-        },
-        "require": {
-            "doctrine/instantiator": "~1.0,>=1.0.2",
-            "php": ">=5.3.3",
-            "phpunit/php-text-template": "~1.2"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.4"
-        },
-        "suggest": {
-            "ext-soap": "*"
-        },
-        "time": "2015-04-02 05:36:41",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.3.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Sebastian Bergmann",
-                "email": "sb@sebastian-bergmann.de",
-                "role": "lead"
-            }
-        ],
-        "description": "Mock Object library for PHPUnit",
-        "homepage": "https://github.com/sebastianbergmann/phpunit-mock-objects/",
-        "keywords": [
-            "mock",
-            "xunit"
-        ]
-    },
-    {
         "name": "phpunit/php-timer",
         "version": "1.0.5",
         "version_normalized": "1.0.5.0",
@@ -1818,260 +1761,6 @@
         }
     },
     {
-        "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "v1.0.3",
-        "version_normalized": "1.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "43c31a5a80dd68619d8e00ca31577b6a99bdaf52"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/43c31a5a80dd68619d8e00ca31577b6a99bdaf52",
-            "reference": "43c31a5a80dd68619d8e00ca31577b6a99bdaf52",
-            "shasum": ""
-        },
-        "require": {
-            "egulias/email-validator": "1.2.*",
-            "php": ">=5.5.9",
-            "symfony/intl": "2.6.*",
-            "symfony/validator": "2.6.*"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-05-18 14:28:42",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "PHP data models that represent a Lasting Power of Attorney",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/master",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
-        }
-    },
-    {
-        "name": "symfony/intl",
-        "version": "v2.6.8",
-        "version_normalized": "2.6.8.0",
-        "target-dir": "Symfony/Component/Intl",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Intl.git",
-            "reference": "fda6507cc5bfc2f93ac48f48791b4c5317a49904"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Intl/zipball/fda6507cc5bfc2f93ac48f48791b4c5317a49904",
-            "reference": "fda6507cc5bfc2f93ac48f48791b4c5317a49904",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "symfony/filesystem": ">=2.1",
-            "symfony/phpunit-bridge": "~2.7"
-        },
-        "suggest": {
-            "ext-intl": "to use the component with locales other than \"en\""
-        },
-        "time": "2015-05-22 14:53:08",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Intl\\": ""
-            },
-            "classmap": [
-                "Symfony/Component/Intl/Resources/stubs"
-            ],
-            "files": [
-                "Symfony/Component/Intl/Resources/stubs/functions.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bernhard Schussek",
-                "email": "bschussek@gmail.com"
-            },
-            {
-                "name": "Eriksen Costa",
-                "email": "eriksen.costa@infranology.com.br"
-            },
-            {
-                "name": "Igor Wiedler",
-                "email": "igor@wiedler.ch"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "A PHP replacement layer for the C intl extension that includes additional data from the ICU library.",
-        "homepage": "https://symfony.com",
-        "keywords": [
-            "i18n",
-            "icu",
-            "internationalization",
-            "intl",
-            "l10n",
-            "localization"
-        ]
-    },
-    {
-        "name": "symfony/translation",
-        "version": "v2.6.8",
-        "version_normalized": "2.6.8.0",
-        "target-dir": "Symfony/Component/Translation",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Translation.git",
-            "reference": "d030b3d8d9699795dbf8c59e915ef879007a4483"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Translation/zipball/d030b3d8d9699795dbf8c59e915ef879007a4483",
-            "reference": "d030b3d8d9699795dbf8c59e915ef879007a4483",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "psr/log": "~1.0",
-            "symfony/config": "~2.3,>=2.3.12",
-            "symfony/intl": "~2.3",
-            "symfony/phpunit-bridge": "~2.7",
-            "symfony/yaml": "~2.2"
-        },
-        "suggest": {
-            "psr/log": "To use logging capability in translator",
-            "symfony/config": "",
-            "symfony/yaml": ""
-        },
-        "time": "2015-05-22 14:37:51",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Translation\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Translation Component",
-        "homepage": "https://symfony.com"
-    },
-    {
-        "name": "symfony/validator",
-        "version": "v2.6.8",
-        "version_normalized": "2.6.8.0",
-        "target-dir": "Symfony/Component/Validator",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Validator.git",
-            "reference": "e57121649846efe64559aaa1fd00edf9373332e9"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Validator/zipball/e57121649846efe64559aaa1fd00edf9373332e9",
-            "reference": "e57121649846efe64559aaa1fd00edf9373332e9",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "symfony/translation": "~2.0,>=2.0.5"
-        },
-        "require-dev": {
-            "doctrine/annotations": "~1.0",
-            "doctrine/cache": "~1.0",
-            "doctrine/common": "~2.3",
-            "egulias/email-validator": "~1.2,>=1.2.1",
-            "symfony/config": "~2.2",
-            "symfony/expression-language": "~2.4",
-            "symfony/http-foundation": "~2.1",
-            "symfony/intl": "~2.3",
-            "symfony/phpunit-bridge": "~2.7",
-            "symfony/property-access": "~2.3",
-            "symfony/yaml": "~2.0,>=2.0.5"
-        },
-        "suggest": {
-            "doctrine/annotations": "For using the annotation mapping. You will also need doctrine/cache.",
-            "doctrine/cache": "For using the default cached annotation reader and metadata cache.",
-            "egulias/email-validator": "Strict (RFC compliant) email validation",
-            "symfony/config": "",
-            "symfony/expression-language": "For using the 2.4 Expression validator",
-            "symfony/http-foundation": "",
-            "symfony/intl": "",
-            "symfony/property-access": "For using the 2.4 Validator API",
-            "symfony/yaml": ""
-        },
-        "time": "2015-05-26 21:42:28",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Validator\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Validator Component",
-        "homepage": "https://symfony.com"
-    },
-    {
         "name": "guzzlehttp/ringphp",
         "version": "1.1.0",
         "version_normalized": "1.1.0.0",
@@ -2226,18 +1915,456 @@
         }
     },
     {
-        "name": "phpunit/php-code-coverage",
-        "version": "2.0.17",
-        "version_normalized": "2.0.17.0",
+        "name": "symfony/intl",
+        "version": "v2.6.9",
+        "version_normalized": "2.6.9.0",
+        "target-dir": "Symfony/Component/Intl",
         "source": {
             "type": "git",
-            "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-            "reference": "c4e8e7725e351184a76544634855b8a9c405a6e3"
+            "url": "https://github.com/symfony/Intl.git",
+            "reference": "fda6507cc5bfc2f93ac48f48791b4c5317a49904"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/c4e8e7725e351184a76544634855b8a9c405a6e3",
-            "reference": "c4e8e7725e351184a76544634855b8a9c405a6e3",
+            "url": "https://api.github.com/repos/symfony/Intl/zipball/fda6507cc5bfc2f93ac48f48791b4c5317a49904",
+            "reference": "fda6507cc5bfc2f93ac48f48791b4c5317a49904",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "symfony/filesystem": ">=2.1",
+            "symfony/phpunit-bridge": "~2.7"
+        },
+        "suggest": {
+            "ext-intl": "to use the component with locales other than \"en\""
+        },
+        "time": "2015-05-22 14:53:08",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Intl\\": ""
+            },
+            "classmap": [
+                "Symfony/Component/Intl/Resources/stubs"
+            ],
+            "files": [
+                "Symfony/Component/Intl/Resources/stubs/functions.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bernhard Schussek",
+                "email": "bschussek@gmail.com"
+            },
+            {
+                "name": "Eriksen Costa",
+                "email": "eriksen.costa@infranology.com.br"
+            },
+            {
+                "name": "Igor Wiedler",
+                "email": "igor@wiedler.ch"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "A PHP replacement layer for the C intl extension that includes additional data from the ICU library.",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "i18n",
+            "icu",
+            "internationalization",
+            "intl",
+            "l10n",
+            "localization"
+        ]
+    },
+    {
+        "name": "symfony/translation",
+        "version": "v2.7.0",
+        "version_normalized": "2.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Translation.git",
+            "reference": "cc1907bbeacfcc703c031b67545400d6e7d1eb79"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Translation/zipball/cc1907bbeacfcc703c031b67545400d6e7d1eb79",
+            "reference": "cc1907bbeacfcc703c031b67545400d6e7d1eb79",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "conflict": {
+            "symfony/config": "<2.7"
+        },
+        "require-dev": {
+            "psr/log": "~1.0",
+            "symfony/config": "~2.7",
+            "symfony/intl": "~2.3",
+            "symfony/phpunit-bridge": "~2.7",
+            "symfony/yaml": "~2.2"
+        },
+        "suggest": {
+            "psr/log": "To use logging capability in translator",
+            "symfony/config": "",
+            "symfony/yaml": ""
+        },
+        "time": "2015-05-29 14:44:44",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Translation\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Translation Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "symfony/validator",
+        "version": "v2.6.9",
+        "version_normalized": "2.6.9.0",
+        "target-dir": "Symfony/Component/Validator",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Validator.git",
+            "reference": "1089074196ae0c4161b9a97cc97b79a85bf36edd"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Validator/zipball/1089074196ae0c4161b9a97cc97b79a85bf36edd",
+            "reference": "1089074196ae0c4161b9a97cc97b79a85bf36edd",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "symfony/translation": "~2.0,>=2.0.5"
+        },
+        "require-dev": {
+            "doctrine/annotations": "~1.0",
+            "doctrine/cache": "~1.0",
+            "doctrine/common": "~2.3",
+            "egulias/email-validator": "~1.2,>=1.2.1",
+            "symfony/config": "~2.2",
+            "symfony/expression-language": "~2.4",
+            "symfony/http-foundation": "~2.1",
+            "symfony/intl": "~2.3",
+            "symfony/phpunit-bridge": "~2.7",
+            "symfony/property-access": "~2.3",
+            "symfony/yaml": "~2.0,>=2.0.5"
+        },
+        "suggest": {
+            "doctrine/annotations": "For using the annotation mapping. You will also need doctrine/cache.",
+            "doctrine/cache": "For using the default cached annotation reader and metadata cache.",
+            "egulias/email-validator": "Strict (RFC compliant) email validation",
+            "symfony/config": "",
+            "symfony/expression-language": "For using the 2.4 Expression validator",
+            "symfony/http-foundation": "",
+            "symfony/intl": "",
+            "symfony/property-access": "For using the 2.4 Validator API",
+            "symfony/yaml": ""
+        },
+        "time": "2015-05-29 14:42:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Validator\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Validator Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "phpunit/phpunit-mock-objects",
+        "version": "2.3.3",
+        "version_normalized": "2.3.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
+            "reference": "253c005852591fd547fc18cd5b7b43a1ec82d8f7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/253c005852591fd547fc18cd5b7b43a1ec82d8f7",
+            "reference": "253c005852591fd547fc18cd5b7b43a1ec82d8f7",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/instantiator": "~1.0,>=1.0.2",
+            "php": ">=5.3.3",
+            "phpunit/php-text-template": "~1.2"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.4"
+        },
+        "suggest": {
+            "ext-soap": "*"
+        },
+        "time": "2015-05-29 05:19:18",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Sebastian Bergmann",
+                "email": "sb@sebastian-bergmann.de",
+                "role": "lead"
+            }
+        ],
+        "description": "Mock Object library for PHPUnit",
+        "homepage": "https://github.com/sebastianbergmann/phpunit-mock-objects/",
+        "keywords": [
+            "mock",
+            "xunit"
+        ]
+    },
+    {
+        "name": "symfony/yaml",
+        "version": "v2.7.0",
+        "version_normalized": "2.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Yaml.git",
+            "reference": "4a29a5248aed4fb45f626a7bbbd330291492f5c3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Yaml/zipball/4a29a5248aed4fb45f626a7bbbd330291492f5c3",
+            "reference": "4a29a5248aed4fb45f626a7bbbd330291492f5c3",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "symfony/phpunit-bridge": "~2.7"
+        },
+        "time": "2015-05-02 15:21:08",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Yaml\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Yaml Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "symfony/http-foundation",
+        "version": "v2.7.0",
+        "version_normalized": "2.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/HttpFoundation.git",
+            "reference": "729de183da037c125c5f6366bd4f0631ba1a1abb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/729de183da037c125c5f6366bd4f0631ba1a1abb",
+            "reference": "729de183da037c125c5f6366bd4f0631ba1a1abb",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "symfony/expression-language": "~2.4",
+            "symfony/phpunit-bridge": "~2.7"
+        },
+        "time": "2015-05-22 14:54:25",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\HttpFoundation\\": ""
+            },
+            "classmap": [
+                "Resources/stubs"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony HttpFoundation Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "symfony/event-dispatcher",
+        "version": "v2.7.0",
+        "version_normalized": "2.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/EventDispatcher.git",
+            "reference": "687039686d0e923429ba6e958d0baa920cd5d458"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/687039686d0e923429ba6e958d0baa920cd5d458",
+            "reference": "687039686d0e923429ba6e958d0baa920cd5d458",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "psr/log": "~1.0",
+            "symfony/config": "~2.0,>=2.0.5",
+            "symfony/dependency-injection": "~2.6",
+            "symfony/expression-language": "~2.6",
+            "symfony/phpunit-bridge": "~2.7",
+            "symfony/stopwatch": "~2.3"
+        },
+        "suggest": {
+            "symfony/dependency-injection": "",
+            "symfony/http-kernel": ""
+        },
+        "time": "2015-05-02 15:21:08",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\EventDispatcher\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony EventDispatcher Component",
+        "homepage": "https://symfony.com"
+    },
+    {
+        "name": "phpunit/php-code-coverage",
+        "version": "2.1.4",
+        "version_normalized": "2.1.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
+            "reference": "3703c4bb67c8700957dd41c843254658539d091d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3703c4bb67c8700957dd41c843254658539d091d",
+            "reference": "3703c4bb67c8700957dd41c843254658539d091d",
             "shasum": ""
         },
         "require": {
@@ -2257,11 +2384,11 @@
             "ext-xdebug": ">=2.2.1",
             "ext-xmlwriter": "*"
         },
-        "time": "2015-05-25 05:11:59",
+        "time": "2015-06-06 08:33:23",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.0.x-dev"
+                "dev-master": "2.1.x-dev"
             }
         },
         "installation-source": "dist",
@@ -2290,172 +2417,44 @@
         ]
     },
     {
-        "name": "symfony/yaml",
-        "version": "v2.6.8",
-        "version_normalized": "2.6.8.0",
-        "target-dir": "Symfony/Component/Yaml",
+        "name": "ministryofjustice/opg-lpa-datamodels",
+        "version": "v1.0.5",
+        "version_normalized": "1.0.5.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/Yaml.git",
-            "reference": "f157ab074e453ecd4c0fa775f721f6e67a99d9e2"
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
+            "reference": "26d2b3bd553693b9105fabea2be65e05968efdf7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Yaml/zipball/f157ab074e453ecd4c0fa775f721f6e67a99d9e2",
-            "reference": "f157ab074e453ecd4c0fa775f721f6e67a99d9e2",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/26d2b3bd553693b9105fabea2be65e05968efdf7",
+            "reference": "26d2b3bd553693b9105fabea2be65e05968efdf7",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.3"
+            "egulias/email-validator": "1.2.*",
+            "php": ">=5.5.9",
+            "symfony/intl": "2.6.*",
+            "symfony/validator": "2.6.*"
         },
         "require-dev": {
-            "symfony/phpunit-bridge": "~2.7"
+            "phpunit/phpunit": "4.3.*"
         },
-        "time": "2015-05-02 15:18:45",
+        "time": "2015-06-08 14:39:58",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Yaml\\": ""
+            "psr-4": {
+                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Yaml Component",
-        "homepage": "https://symfony.com"
-    },
-    {
-        "name": "symfony/http-foundation",
-        "version": "v2.6.8",
-        "version_normalized": "2.6.8.0",
-        "target-dir": "Symfony/Component/HttpFoundation",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/HttpFoundation.git",
-            "reference": "f9b28dcc6d3e50f5568b42dda7292656a9fe8432"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/f9b28dcc6d3e50f5568b42dda7292656a9fe8432",
-            "reference": "f9b28dcc6d3e50f5568b42dda7292656a9fe8432",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "symfony/expression-language": "~2.4",
-            "symfony/phpunit-bridge": "~2.7"
-        },
-        "time": "2015-05-22 14:53:08",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\HttpFoundation\\": ""
-            },
-            "classmap": [
-                "Symfony/Component/HttpFoundation/Resources/stubs"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony HttpFoundation Component",
-        "homepage": "https://symfony.com"
-    },
-    {
-        "name": "symfony/event-dispatcher",
-        "version": "v2.6.8",
-        "version_normalized": "2.6.8.0",
-        "target-dir": "Symfony/Component/EventDispatcher",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/EventDispatcher.git",
-            "reference": "672593bc4b0043a0acf91903bb75a1c82d8f2e02"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/672593bc4b0043a0acf91903bb75a1c82d8f2e02",
-            "reference": "672593bc4b0043a0acf91903bb75a1c82d8f2e02",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "psr/log": "~1.0",
-            "symfony/config": "~2.0,>=2.0.5",
-            "symfony/dependency-injection": "~2.6",
-            "symfony/expression-language": "~2.6",
-            "symfony/phpunit-bridge": "~2.7",
-            "symfony/stopwatch": "~2.3"
-        },
-        "suggest": {
-            "symfony/dependency-injection": "",
-            "symfony/http-kernel": ""
-        },
-        "time": "2015-05-02 15:18:45",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\EventDispatcher\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony EventDispatcher Component",
-        "homepage": "https://symfony.com"
+        "description": "PHP data models that represent a Lasting Power of Attorney",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.0.5",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
+        }
     }
 ]

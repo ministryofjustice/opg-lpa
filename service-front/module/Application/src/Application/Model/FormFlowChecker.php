@@ -124,7 +124,7 @@ class FormFlowChecker extends StateChecker
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
-            'lpa/fee-reduction'                             => 'lpa/payment',
+            'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
             'lpa/payment'                                   => 'lpa/complete',
             
     );
