@@ -1,5 +1,7 @@
 <div class="element <?= $this->elementGroupClass($element) ?>">
     <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
-    <?= $this->formElement($element) ?>
+    <?=
+    $this->formElement($element)
+    ?>
     <?= $this->formElementErrors($element) ?>
 </div>

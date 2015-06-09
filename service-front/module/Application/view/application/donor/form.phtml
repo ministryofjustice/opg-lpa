@@ -10,20 +10,20 @@
         $pickerForm   = $this->seedDetailsPickerForm;
         $pickerForm->setAttribute('class', 'form');
         $pickerCsrf   = $pickerForm->get('secret');
-        
+
         $picker = $pickerForm->get('pick-details');
         $picker->setAttributes(['id'=>'pick-details', 'class'=>'js-reusable']);
         $picker->setOptions([
                 'label' => 'Use these details',
                 'empty_option' => 'Choose a person',
         ]);
-        
+
         $pickerSubmit     = $pickerForm->get('submit');
         $pickerSubmit->setAttributes(['value'=>'Use details', 'class'=>'button']);
         $pickerFormLabel  = $this->plugin('formLabel');
         $pickerForm->prepare();
     }
-    
+
     /**
      * Donor form
      */
@@ -38,7 +38,7 @@
             "Value is required and can't be empty" => "Please enter a year",
         ],
     ]);
-    
+
     $csrf       = $form->get('secret');
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
@@ -50,18 +50,35 @@
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
     $canSign    = $form->get('canSign');
-    
+
     $dob      = $form->get('dob-date');
     $dobDay   = $dob->get('day');
+    $dobDay->setAttributes([
+        'maxlength' => '2',
+        'pattern' => '[0-9]{2}'
+    ]);
     $dobMonth = $dob->get('month');
+    $dobMonth->setAttributes([
+        'maxlength' => '2',
+        'pattern' => '[0-9]{2}'
+    ]);
     $dobYear  = $dob->get('year');
+    $dobYear->setAttributes([
+        'maxlength' => '4',
+        'pattern' => '[0-9]{4}'
+    ]);
     
-    $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
+    $form->setAttributes([
+        'class' => 'form js-PersonForm js-PostcodeLookup',
+        'novalidate' => ''
+    ]);
 
     $title->setOptions(     ['label' => 'Title'] );
     $title->setAttributes(['id'=>'name-title']);
     $firstname->setOptions( ['label' => 'First names'] );
+    $firstname->setAttributes(['required' => 'required']);
     $lastname->setOptions(  ['label' => 'Last name'] );
+    $lastname->setAttributes(['required' => 'required']);
     $otherNames->setOptions(['label' => 'Other names'] );
     
     $dob->setOptions(['label'=>'Date of Birth']);
@@ -92,17 +109,17 @@
 
 <?php if(isset($pickerForm)):?>
     <?= $this->form()->openTag($pickerForm); ?>
-    
+
     <?= $this->formElement($pickerCsrf) ?>
     <?= $this->formErrorList($pickerForm); ?>
-    
+
     <div class="role-select group">
         <?= $formLabel->openTag($picker) . $picker->getOption('label') . $formLabel->closeTag() ?>
         <?= $this->formSelect($picker) ?>
         <?= $this->formElementErrors($picker) ?>
-        <?= $this->formsubmit($pickerSubmit) ?> 
+        <?= $this->formsubmit($pickerSubmit) ?>
     </div>
-    
+
     <?= $this->form()->closeTag(); ?>
 <?php endif;?>
 
@@ -120,7 +137,7 @@
 <?= $this->formElementErrors($csrf) ?>
 
 <?= $this->formErrorList($form); ?>
-        
+
 <fieldset>
 
     <?= $this->partial("partial/form/formElement.phtml", [
@@ -130,39 +147,42 @@
 
     <?= $this->partial("partial/form/formElement.phtml", [
         'formLabel' => $formLabel,
-        'element' => $firstname
+        'element' => $firstname,
+        'required' => true
     ] ) ?>
 
     <?= $this->partial("partial/form/formElement.phtml", [
         'formLabel' => $formLabel,
-        'element' => $lastname
+        'element' => $lastname,
+        'required' => true
     ] ) ?>
-    
+
     <details>
         <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
         <div class="group">
-            <?= $formLabel->openTag() . $otherNames->getOption('label') . $formLabel->closeTag(); ?>
-            <?= $this->formElement($otherNames) ?>
-            <?= $this->formElementErrors($otherNames) ?>
+            <?= $this->partial("partial/form/formElement.phtml", [
+                'formLabel' => $formLabel,
+                'element' => $otherNames
+            ] ) ?>
         </div>
     </details>
-    
-    <div class="group">
-        
+
+    <div class="<?= $this->elementGroupClass($dob) ?>">
+
         <label for="dob" id="dob-label" class="required">Date of birth</label>
-        
+
         <div class="dob-element">
-        
+
             <div class="form-group form-group-day">
                 <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($dobDay) ?>
             </div>
-            
+
             <div class="form-group form-group-month">
                 <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($dobMonth) ?>
             </div>
-            
+
             <div class="form-group form-group-year">
                 <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($dobYear) ?>
@@ -173,43 +193,37 @@
         <?= $this->formElementErrors($dobYear) ?>
         <?= $this->formElementErrors($dob) ?>
     </div>
+    <?= $this->formElementErrors($dobYear) ?>
+
     <div class="group">
-        <?= $this->formElementErrors($dobYear) ?>
-    </div>
-    
-    <div class="group">
-        <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
-        <?= $this->formElement($email) ?>
-        <?= $this->formElementErrors($email) ?>
+        <?= $this->partial("partial/form/formElement.phtml", [
+            'formLabel' => $formLabel,
+            'element' => $email
+        ] ) ?>
     </div>
 
 </fieldset>
 
 <fieldset class="js-PostcodeLookup__postal-add">
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $address1
+    ]) ?>
 
-        <div class="<?= $this->elementGroupClass($address1); ?>">
-            <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
-            <?= $this->formElement($address1) ?>
-            <?= $this->formElementErrors($address1) ?>
-        </div>
-        
-        <div class="<?= $this->elementGroupClass($address2); ?>">
-            <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
-            <?= $this->formElement($address2) ?>
-            <?= $this->formElementErrors($address2) ?>
-        </div>
-        
-        <div class="<?= $this->elementGroupClass($address3); ?>">
-            <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
-            <?= $this->formElement($address3) ?>
-            <?= $this->formElementErrors($address3) ?>
-        </div>
-        
-        <div class="<?= $this->elementGroupClass($postcode); ?>">
-            <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
-            <?= $this->formElement($postcode) ?>
-            <?= $this->formElementErrors($postcode) ?>
-        </div>
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $address2
+    ]) ?>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $address3
+    ]) ?>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $postcode
+    ]) ?>
 </fieldset>
 
 <fieldset id="donor-sign">
@@ -222,7 +236,7 @@
 </fieldset>
 
 <p class="action group">
-<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<input type="submit" name="submit" id="form-save" value="Save details" class="button">
 <button name="cancel" id="form-cancel" type="button" class="button-secondary">Cancel</button>
 </p>
 

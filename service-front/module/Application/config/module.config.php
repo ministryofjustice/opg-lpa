@@ -84,7 +84,6 @@ return [
             'elementGroupClass'     => 'Application\View\Helper\ElementGroupClass',
             'routeName'             => 'Application\View\Helper\RouteName',
             'formElementErrors'     => 'Application\View\Helper\FormElementErrors',
-            'formElementHasErrors'     => 'Application\View\Helper\FormElementHasErrors',
             'formErrorList'         => 'Application\View\Helper\FormErrorList',
             'formLinkedErrorList'   => 'Application\View\Helper\FormLinkedErrorList',
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
