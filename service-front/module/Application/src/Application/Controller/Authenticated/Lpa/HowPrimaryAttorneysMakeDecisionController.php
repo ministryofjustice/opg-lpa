@@ -22,6 +22,9 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
         
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -29,9 +32,6 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
             $form->setData($postData);
             
             if($form->isValid()) {
-                
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
                 $howAttorneyAct = $form->get('how')->getValue();
                 
@@ -46,6 +46,9 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                 
                 if($howAttorneyAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
                     $decision->howDetails = $form->get('howDetails')->getValue();
+                }
+                else {
+                    $decision->howDetails = null;
                 }
                 
                 // persist data

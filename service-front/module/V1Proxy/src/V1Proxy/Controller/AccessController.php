@@ -10,6 +10,28 @@ use Zend\Session\Container;
 
 class AccessController extends AbstractActionController {
 
+    /**
+     * Basic v1 -> v2 redirects.
+     *
+     * @return \Zend\Http\Response
+     */
+    public function redirectAction(){
+
+        $endpoint = $this->params('endpoint');
+
+        if( is_string($endpoint) ){
+
+            return $this->redirect()->toRoute( $endpoint );
+
+        } else {
+
+            // Default to the homepage...
+            return $this->redirect()->toRoute( 'home' );
+
+        }
+
+    } // function
+
 
     public function indexAction(){
 
@@ -153,6 +175,6 @@ class AccessController extends AbstractActionController {
 
         return $this->getResponse();
 
-    }
+    } // function
 
-}
+} // class

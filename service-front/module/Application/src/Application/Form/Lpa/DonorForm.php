@@ -1,7 +1,6 @@
 <?php
 namespace Application\Form\Lpa;
 
-use Zend\Validator;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class DonorForm extends AbstractActorForm
@@ -23,57 +22,11 @@ class DonorForm extends AbstractActorForm
             'otherNames' => [
                     'type' => 'Text',
             ],
-            'dob-date-day' => [
-                    'type' => 'Text',
-                    'required' => true,
-                    'filters' => [
-                            ['name' => 'Zend\Filter\Int'],
-                    ],
+            'dob-date' => [
+                    'type' => 'Application\Form\Fieldset\Dob',
                     'validators' => [
                         [
-                            'name'    => 'Between',
-                            'options' => [
-                                'min' => 1, 'max' => 31,
-                                'messages' => [
-                                    Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
-                                ],
-                            ],
-                        ],
-                    ],
-            ],
-            'dob-date-month' => [
-                    'type' => 'Text',
-                    'required' => true,
-                    'filters' => [
-                            ['name' => 'Zend\Filter\Int'],
-                    ],
-                    'validators' => [
-                        [
-                            'name'    => 'Between',
-                            'options' => [
-                                'min' => 1, 'max' => 12,
-                                'messages' => [
-                                    Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
-                                ],
-                            ],
-                        ],
-                    ],
-            ],
-            'dob-date-year' => [
-                    'type' => 'Text',
-                    'required' => true,
-                    'filters' => [
-                            ['name' => 'Zend\Filter\Int'],
-                    ],
-                    'validators' => [
-                        [
-                            'name'    => 'Between',
-                            'options' => [
-                                'min' => (int)date('Y') - 150, 'max' => (int)date('Y'),
-                                'messages' => [
-                                    Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
-                                ],
-                            ],
+                            'name'    => 'Application\Form\Validator\Date',
                         ],
                     ],
             ],

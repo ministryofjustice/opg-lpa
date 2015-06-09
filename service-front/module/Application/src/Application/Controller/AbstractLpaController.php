@@ -8,6 +8,7 @@ use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Application\Model\FormFlowChecker;
+use Zend\View\Model\JsonModel;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
 {
@@ -69,7 +70,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         
         // inject lpa into view
         $view = parent::onDispatch($e);
-        if($view instanceof ViewModel) {
+        
+        if(($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             $view->setVariable('lpa', $this->getLpa());
         }
         
@@ -143,9 +145,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             if(is_array($l2)) {
                 foreach($l2 as $name=>$l3) {
                     if($l1=='dob') {
-                        $formData['dob-date-day'] = (new \DateTime($l3))->format('d');
-                        $formData['dob-date-month'] = (new \DateTime($l3))->format('m');
-                        $formData['dob-date-year'] = (new \DateTime($l3))->format('Y');
+                        $dob = new \DateTime($l3);
+                        $formData['dob-date'] = [
+                                'day'   => $dob->format('d'),
+                                'month' => $dob->format('m'),
+                                'year'  => $dob->format('Y'),
+                        ];
                     }
                     else {
                         $formData[$l1.'-'.$name] = $l3;

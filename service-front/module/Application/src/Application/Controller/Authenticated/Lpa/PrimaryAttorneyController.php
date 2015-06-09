@@ -15,6 +15,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
 use Application\Controller\AbstractLpaActorController;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
 {
@@ -98,6 +99,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                     if( !$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney) ) {
                         throw new \RuntimeException('API client failed to add a primary attorney for id: '.$lpaId);
                     }
+                    
+                    // set this attorney as applicant if primary attorney acts jointly and applicant are primary attorneys. 
+                    $this->resetApplicants();
                     
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
@@ -192,11 +196,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
         else {
             $flattenAttorneyData = $attorney->flatten();
+            
             if($attorney instanceof Human) {
                 $dob = $attorney->dob->date;
-                $flattenAttorneyData['dob-date-day'] = $dob->format('d');
-                $flattenAttorneyData['dob-date-month'] = $dob->format('m');
-                $flattenAttorneyData['dob-date-year'] = $dob->format('Y');
+                $flattenAttorneyData['dob-date'] = [
+                        'day'   => $dob->format('d'),
+                        'month' => $dob->format('m'),
+                        'year'  => $dob->format('Y'),
+                ];
             }
             
             $form->bind($flattenAttorneyData);
@@ -291,6 +298,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                         throw new \RuntimeException('API client failed to add a trust corporation attorney for id: '.$lpaId);
                     }
                     
+                    // set this attorney as applicant if primary attorney acts jointly and applicant are primary attorneys.
+                    $this->resetApplicants();
+                    
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }
@@ -305,5 +315,24 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $viewModel->addAttorneyRoute = $this->url()->fromRoute( 'lpa/primary-attorney/add', ['lpa-id' => $lpaId] );
         
         return $viewModel;
+    }
+    
+    /**
+     * Reset whoIsRegistering value by collecting all primary attorneys ids.
+     * This is due to new attorney has been added, therefore if applicant are attorneys and 
+     * they act jointly, applicants need to be updated.
+     */
+    protected function resetApplicants()
+    {
+        // set this attorney as applicant if primary attorney act jointly.
+        if(($this->getLpa()->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) && is_array($this->getLpa()->document->whoIsRegistering)) {
+            $primaryAttorneys = $this->getLpaApplicationService()->getPrimaryAttorneys($this->getLpa()->id);
+            $this->getLpa()->document->whoIsRegistering = [];
+            foreach($primaryAttorneys as $attorney) {
+                $this->getLpa()->document->whoIsRegistering[] = $attorney->id;
+            }
+            
+            $this->getLpaApplicationService()->setWhoIsRegistering($this->getLpa()->id, $this->getLpa()->document->whoIsRegistering);
+        }
     }
 }

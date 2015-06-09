@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
@@ -159,6 +160,17 @@ class Lpa extends AbstractData {
         $metadata->addPropertyConstraints('metadata', [
             new Assert\NotNull,
             new Assert\Type([ 'type' => 'array' ]),
+            new Assert\Callback(function ($value, ExecutionContextInterface $context){
+
+                // Max allowed size when JSON encoded in bytes.
+                $bytes = 1024 * 1024 * 1;
+
+                // Put a $bytes limit (when JSON encoded) on the metadata array.
+                if( is_array($value) && strlen( json_encode($value) ) >  $bytes ){
+                    $context->buildViolation( 'must-be-less-than-or-equal:'.$bytes.'-bytes' )->addViolation();
+                }
+
+            }) // Assert\Callback
         ]);
 
     } // function
