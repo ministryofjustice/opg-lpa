@@ -58,6 +58,46 @@ class Lpa120 extends AbstractForm
      */
     protected function dataMapping()
     {
+        if($this->lpa->payment->reducedFeeReceivesBenefits === true) {
+            $benefits = 'yes';
+        }
+        elseif($this->lpa->payment->reducedFeeReceivesBenefits === false) {
+            $benefits = 'no';
+        }
+        else {
+            $benefits = null;
+        }
+        
+        if($this->lpa->payment->reducedFeeAwardedDamages === true) {
+            $damages = 'no';
+        }
+        elseif($this->lpa->payment->reducedFeeAwardedDamages === false) {
+            $damages = 'yes';
+        }
+        else {
+            $damages = null;
+        }
+        
+        if($this->lpa->payment->reducedFeeLowIncome === true) {
+            $income = 'yes';
+        }
+        elseif($this->lpa->payment->reducedFeeLowIncome === false) {
+            $income = 'no';
+        }
+        else {
+            $income = null;
+        }
+        
+        if($this->lpa->payment->reducedFeeUniversalCredit === true) {
+            $uc = 'yes';
+        }
+        elseif($this->lpa->payment->reducedFeeUniversalCredit === false) {
+            $uc = 'no';
+        }
+        else {
+            $uc = null;
+        }
+        
         $mappings = array(
                 'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
                 'donor-address'     => "\n".implode(', ', array(
@@ -82,10 +122,10 @@ class Lpa120 extends AbstractForm
                 )),
                 'correspondent-phone'       => ($this->lpa->document->correspondent->phone instanceof PhoneNumber)?$this->lpa->document->correspondent->phone->number:null,
                 'correspondent-email-address' => ($this->lpa->document->correspondent->email instanceof EmailAddress)?$this->lpa->document->correspondent->email->address:null,
-                'receive-benefits'          => $this->lpa->payment->reducedFeeReceivesBenefits?'yes':'no',
-                'damage-awarded'            => $this->lpa->payment->reducedFeeAwardedDamages?'no':'yes',
-                'low-income'                => $this->lpa->payment->reducedFeeLowIncome?'yes':'no',
-                'receive-universal-credit'  => $this->lpa->payment->reducedFeeUniversalCredit?'yes':'no'
+                'receive-benefits'          => $benefits,
+                'damage-awarded'            => $damages,
+                'low-income'                => $income,
+                'receive-universal-credit'  => $uc,
         );
         
         return $mappings;
