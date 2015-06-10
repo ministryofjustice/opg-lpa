@@ -1,6 +1,10 @@
 <?php
 
-    $form = $this->formErrorTextExchange($this->form, []);
+    $form = $this->formErrorTextExchange($this->form, [
+        'terms' => [
+            "must be checked" => "Please tick this checkbox"
+        ]
+    ]);
     $form->setAttribute('class', 'form');
 
     $email              = $form->get('email');
@@ -33,7 +37,7 @@
 
     $terms->setAttributes([
         'id' => 'terms',
-    ])->setOptions( ['label' => 'I agree to the Terms and conditions and privacy policy'] );;
+    ])->setOptions( ['label' => 'I agree to the terms and conditions and privacy policy'] );;
 
     $form->prepare();
 
@@ -61,7 +65,7 @@
                         ?><p><?= $this->escapeHtml($this->error) ?></p><?
                 }
             } elseif ( count($form->getMessages()) > 0 ) { ?>
-                <p>Because of the following problems:</p>
+                <p>You need to do the following:</p>
                 <ol>
                     <?php $this->formLinkedErrorList($form); ?>
                 </ol>

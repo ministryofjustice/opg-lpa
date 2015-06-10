@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-06-03 */
+/*! opg-lpa-2 2015-06-09 */
 /*!
 
  handlebars v1.1.2
@@ -2941,6 +2941,59 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
 this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
 
+this["lpa"]["templates"]["errors.formElement"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"form-element-errors\">\n    <div class=\"group validation\">\n        <span class=\"validation-message\">";
+  if (stack1 = helpers.validationMessage) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.validationMessage); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</span>\n    </div>\n</div>";
+  return buffer;
+  });
+
+this["lpa"]["templates"]["errors.formSummary"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"validation-summary group\" role=\"alert\" aria-labelledby=\"error-heading\" tabindex=\"-1\">\n    <h1 id=\"error-heading\">There was a problem submitting the form</h1>\n\n    <p>Because of the following problems:</p>\n    <ol>\n    </ol>\n</div>\n";
+  });
+
+this["lpa"]["templates"]["input.checkbox"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<fieldset class=\"";
+  if (stack1 = helpers.elementJSref) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementJSref); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n    <div class=\"input-checkbox group\">\n        <label for=\"";
+  if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n            <input type=\"checkbox\" name=\"";
+  if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" id=\"";
+  if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"\" value=\"1\" required=\"required\">\n            ";
+  if (stack1 = helpers.elementLabel) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementLabel); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </label>\n    </div>\n</fieldset>";
+  return buffer;
+  });
+
 this["lpa"]["templates"]["popup.close"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -3036,7 +3089,7 @@ function program1(depth0,data) {
   buffer += "<div class=\"group\">\n  <label for=\"address-search-result\">Address</label>\n  <select class=\"js-PostcodeLookup__search-results\" id=\"address-search-result\">\n    <option value=\"\">Please select an address...</option>\n    ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.results), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</div>";
+  buffer += "\n  </select>\n</div>\n";
   return buffer;
   });
 
@@ -3250,7 +3303,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         // open popup if hash is present in url
         var hash = window.location.hash,
-            topic;
+          topic;
         if (this._isGuidanceHash(hash)) {
           // on page load parse hash
           topic = hash.substring(hash.lastIndexOf('/') + 1);
@@ -3272,7 +3325,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // nav click event
       $('body').on('click', this.settings.selector, function () {
         var href = $(this).attr('href'),
-            topic = href.substring(href.lastIndexOf('#') + 1);
+          topic = href.substring(href.lastIndexOf('#') + 1);
         // set the current click as the source
         self.source = $(this);
         // select topic
@@ -3283,7 +3336,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // listen to hash changes in url
       $(window).on('hashchange.moj.Modules.HelpSystem', function () {
         var hash = window.location.hash,
-            topic;
+          topic;
 
         // if a change has been made, select the topic
         if (self._isGuidanceHash(hash)) {
@@ -3310,7 +3363,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         if ($('#popup.help-system').length > 0) {
           self._setTopic(topic);
         } else {
-        // otherwise, load in the overlay first and set in callback
+          // otherwise, load in the overlay first and set in callback
           this._loadOverlay(topic);
         }
       }
@@ -3358,10 +3411,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     _loadOverlay: function (topic) {
       var self = this,
-          html = this._hasCachedContent();
+        html = this._hasCachedContent();
 
-        // todo - remove this
-        html = false;
+      // todo - remove this
+      html = false;
 
       // if content has been cached, load it straight in
       if (html !== false) {
@@ -3445,8 +3498,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     btnClick: function (e) {
       var source = $(e.target),
-          href = source.attr('href'),
-          form = source.data('form');
+        href = source.attr('href'),
+        form = source.data('form');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -3496,14 +3549,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
 
-        // hide use button and switch button
-        $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
+      // hide use button and switch button
+      $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
 
     },
 
     submitForm: function (e) {
       var $form = $(e.target),
-          url = $form.attr('action');
+        url = $form.attr('action');
 
       $form.find('input[type="submit"]').spinner();
 
@@ -3520,7 +3573,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     ajaxSuccess: function (response, textStatus, jqXHR) {
       var $form = $(this),
-          data;
+        data;
 
       if (response.success !== undefined && response.success) {
         // successful, so redirect
@@ -3697,10 +3750,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     // <a> click
     linkClicked: function (e, params) {
       var $el = $(e.target),
-          $form = $el.closest('form'),
-          url = $el.data('service'),
-          proceed = this.isFormClean($form) ? true : confirm(this.message),
-          _this = this;
+        $form = $el.closest('form'),
+        url = $el.data('service'),
+        proceed = this.isFormClean($form) ? true : confirm(this.message),
+        _this = this;
 
       $el.spinner();
       $.get(url, function (data) {
@@ -3714,41 +3767,42 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     // <select> change
     selectChanged: function (e, params) {
-        var $el = $(e.target),
-            $form = $el.closest('form'),
-            url = $form.attr('action'),
-            postData,
-            _this = this;
+      var $el = $(e.target),
+        $form = $el.closest('form'),
+        url = $form.attr('action'),
+        postData,
+        _this = this,
+        proceed;
 
-        if(($el.val()==='')||($el.val()===selected)) {
-            return;
+      if (($el.val() === '') || ($el.val() === selected)) {
+        return;
+      }
+
+      proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
+
+      if (proceed) {
+        $el.spinner();
+
+        selected = $el.val();
+
+        if ($form.find('[name=switch-to-type]').length === 0) {
+          postData = {'secret': $form.find('[name=secret]').val(), 'pick-details': $form.find('[name=pick-details]').val()};
+        }
+        else {
+          postData = {'secret': $form.find('[name=secret]').val(), 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val()};
         }
 
-        var proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
-
-        if (proceed) {
-            $el.spinner();
-
-            selected = $el.val();
-
-            if($form.find('[name=switch-to-type]').length == 0) {
-                postData = {'secret':$form.find('[name=secret]').val(), 'pick-details':$form.find('[name=pick-details]').val()};
-            }
-            else {
-                postData = {'secret':$form.find('[name=secret]').val(), 'switch-to-type':$form.find('[name=switch-to-type]').val(), 'switcher-submit':$form.find('[name=switcher-submit]').val()};
-            }
-
-            $.post(url, postData, function (data) {
-                $el.spinner('off');
-                if (proceed) {
-                    _this.populateForm(data);
-                }
-            });
-        } else {
-            // In case the user chose not to overwrite the details, we must select something
-            // neutral to allow re-selecting that option (on change)
-            $el.val($el.find('option:first').val());
-        }
+        $.post(url, postData, function (data) {
+          $el.spinner('off');
+          if (proceed) {
+            _this.populateForm(data);
+          }
+        });
+      } else {
+        // In case the user chose not to overwrite the details, we must select something
+        // neutral to allow re-selecting that option (on change)
+        $el.val($el.find('option:first').val());
+      }
     },
 
     populateForm: function (data) {
@@ -3759,63 +3813,70 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         property,
         value,
         value2;
-      
+
       // prepare the data
-      for( props in data ){
-      	// if value is an object then flatten it with PHP array notation...
-    	  value = data[props];
-    	  if(_.isObject(value)){
-    		  for ( property in value ){
-      			value2 = value[property];
-      			data[props + '[' + property + ']'] = value2;
-      		  } 
-    	  }
+      for (props in data) {
+
+        if (data.hasOwnProperty(props) && _.isObject(data[props])) {
+          // if value is an object then flatten it with PHP array notation...
+          for (property in value) {
+
+            if (value.hasOwnProperty(property)) {
+              value2 = value[property];
+              data[props + '[' + property + ']'] = value2;
+            }
+
+          }
+
+        }
+
       }
 
-        // Show any fields which were hidden
-        $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
-        // loop over data and change values
-        _(data).each(function (value, key) {
-            // set el
-            $el = $('[name="' + key+'"]');
-            // if value is null, set to empty string
-            value = (value === null) ? '' : value;
-            // make sure the element exists && that new value doesn't match current value
-            if ($el.length > 0 && $el.val() !== value) {
-                // increment counter
-                i += 1;
-                // change the value of the element
-                if(key=='canSign') {
-                    //for donor canSign checkbox
-                    if((value === false)) {
-                        $el.filter('[type=checkbox]').attr('checked', 'checked');
-                    }
-                }
-                else {
-                    $el.val(value).change();
-                }
-                // if first element changed, save the el
-                if (i === 1) {
-                    $focus = $('[name="' + key + '"]');
-                }
+      // Show any fields which were hidden
+      $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
+      // loop over data and change values
+      _(data).each(function (value, key) {
+
+        // set el
+        $el = $('[name="' + key + '"]');
+        // if value is null, set to empty string
+        value = (value === null) ? '' : value;
+        // make sure the element exists && that new value doesn't match current value
+        if ($el.length > 0 && $el.val() !== value) {
+          // increment counter
+          i += 1;
+          // change the value of the element
+          if (key === 'canSign') {
+            //for donor canSign checkbox
+            if ((value === false)) {
+              $el.filter('[type=checkbox]').attr('checked', 'checked');
             }
-        });
-        // focus on first changed, or first form element (accessibility)
-        if ($focus !== undefined) {
-            $focus.focus();
-        } else {
-            $('input[type=text], select, textarea').filter(':visible').first().focus();
+          }
+          else {
+            $el.val(value).change();
+          }
+          // if first element changed, save the el
+          if (i === 1) {
+            $focus = $('[name="' + key + '"]');
+          }
         }
+      });
+      // focus on first changed, or first form element (accessibility)
+      if ($focus !== undefined) {
+        $focus.focus();
+      } else {
+        $('input[type=text], select, textarea').filter(':visible').first().focus();
+      }
     },
 
     isFormClean: function (form) {
-        var clean = true;
-        $('input[type="text"], select:not(.js-reusable), textarea', form).each(function () {
-            if ($(this).val() !== '' && $(this).filter('[name*="name-title"]').val() !== 'Mr') {
-                clean = false;
-            }
-        });
-        return clean;
+      var clean = true;
+      $('input[type="text"], select:not(.js-reusable), textarea', form).each(function () {
+        if ($(this).val() !== '' && $(this).filter('[name*="name-title"]').val() !== 'Mr') {
+          clean = false;
+        }
+      });
+      return clean;
     }
   };
 
@@ -3841,10 +3902,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // used to populate fields
       // key is the key name sent in response and value is name of app's field
       fieldMappings: {
-          line1: 'address-address1',
-          line2: 'address-address2',
-          line3: 'address-address3',
-          postcode: 'postcode'
+        line1: 'address-address1',
+        line2: 'address-address2',
+        line3: 'address-address3',
+        postcode: 'postcode'
       }
     },
 
@@ -3869,7 +3930,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     init: function () {
       // make sure the fields exist before adding them to the toggle
       var hasPostal = this.$postalFields.length > 0 ? true : false,
-          hasDx = this.$dxFields.length > 0 ? true : false;
+        hasDx = this.$dxFields.length > 0 ? true : false;
 
       // prepend template to postal fields
       this.$postalFields.before(this.searchTpl() + this.toggleTpl({postal: hasPostal, dx: hasDx})).addClass('hidden');
@@ -3910,7 +3971,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-          val = $el.val();
+        val = $el.val();
 
       $el.spinner();
       this.findAddress(val);
@@ -3962,7 +4023,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           alert('Please enter a valid UK postcode');
         }
       } else {
-      // successful
+        // successful
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -4007,7 +4068,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.$dxFields.find('[name*="dxNumber"]').focus();
       } else {
         var $search = this.$wrap.find('.js-PostcodeLookup__query'),
-            $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
+          $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
         // popuplate postcode field
         if ($search.val() !== '' && $pcode.val() === '') {
           $pcode.val($search.val()).change();
@@ -4015,8 +4076,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.$postalFields.removeClass('hidden');
         this.$dxFields.addClass('hidden');
         // focus on first address field
-        if($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length == 1) {
-        	this.$postalFields.find('[name*="addr1"]').focus();
+        if ($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length === 1) {
+          this.$postalFields.find('[name*="addr1"]').focus();
         }
       }
       // toggle class
@@ -4078,25 +4139,137 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     formEvents: function (i, el) {
       var $form = $(el),
-          $submitBtn = $('input[type="submit"]', $form),
-          donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
-          $allFields = $('label.required + input, label.required ~ select', $form),
-          $addressFields = $('input[name^="address"]', $form),
-          allPopulated,
-          countAddr;
+        $submitBtn = $('input[type="submit"]', $form),
+        donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
+        $allFields = $('input[required], label.required + input, label.required ~ select', $form),
+        $addressFields = $('input[name^="address"]', $form),
+        allPopulated,
+        countAddr,
+        dob,
+        getDOB = function () {
+          var day,
+            month,
+            year,
+            $dayObj = $('#dob-date-day'),
+            $monthObj = $('#dob-date-month'),
+            $yearObj = $('#dob-date-year'),
+            returnDate;
+
+          if ($dayObj.val() !== '') {
+            day = parseInt($dayObj.val());
+            if (isNaN(day) || (day <= 1)) {
+              day = undefined;
+            }
+          }
+          if ($monthObj.val() !== '') {
+            month = parseInt($monthObj.val());
+            if (isNaN(month) || (month <= 0)) {
+              month = undefined;
+            }
+            else {
+              month = month - 1;
+            }
+          }
+          if ($yearObj.val() !== '') {
+            year = parseInt($yearObj.val());
+            if (isNaN(year) || (year <= 0)) {
+              year = undefined;
+            }
+          }
+
+          returnDate = new Date(year, month, day);
+          if (!isFinite(returnDate)) {
+            returnDate = null;
+          }
+
+          return returnDate;
+
+        },
+        tplFormElementErrors = lpa.templates['errors.formElement'],
+        tplErrorsFormSummary = lpa.templates['errors.formSummary'],
+        tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
       $submitBtn.attr('disabled', $('#address-addr1', $form).val() === '');
 
       // Listen for changes to form
       $form
-        .on('change.moj.Modules.PersonForm', 'input, select', function () {
+        .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
+
+          var currentDate = new Date(),
+            minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+            maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+            $dobElement = $(evt.target).parents('.dob-element'),
+            $dobGroup,
+            actionGroup = $('.group.action');
+
+
+          // Verify the DOB
+          if ($dobElement.length > 0) {
+
+            dob = getDOB();
+            $dobGroup = $dobElement.parents('.group');
+            $dobGroup.removeClass('validation');
+            $dobGroup.find('.form-element-errors').remove();
+            $('.js-age-check').remove();
+            $('.validation-summary').remove();
+
+            if (dob !== null) {
+
+              if (dob > minAge) {
+                console.log('too young');
+                $dobGroup.addClass('validation');
+                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                actionGroup.before($(tplInputCheckbox({
+                  'elementJSref': 'js-age-check',
+                  'elementName': 'ageCheck',
+                  'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                })).addClass('validation'));
+
+                $form.prepend(tplErrorsFormSummary());
+
+              }
+              else if (dob <= maxAge) {
+                $dobGroup.addClass('validation');
+                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                actionGroup.before($(tplInputCheckbox({
+                  'elementJSref': 'js-age-check',
+                  'elementName': 'ageCheck',
+                  'elementLabel': 'Please confirm that they are over 100 years old.'
+                })).addClass('validation'));
+
+                $form.prepend(tplErrorsFormSummary());
+
+              }
+
+            }
+            else {
+              $dobGroup.addClass('validation');
+              $dobGroup.append(tplFormElementErrors({'validationMessage': 'The age appears to be invalid'}));
+
+              $form.prepend(tplErrorsFormSummary());
+            }
+
+          }
+
+
+          $allFields = $('input[required], label.required + input, label.required ~ select', $form);
+
           allPopulated = true;
 
           // Test required fields are populated
           $allFields.each(function () {
-            if ($.trim($(this).val()) === '') {
-              allPopulated = false;
+            if (allPopulated) {
+
+              var $field = $(this);
+
+              if ($.trim($field.val()) === '') {
+                allPopulated = false;
+              }
+              if ($field.prop('type') === 'checkbox') {
+                allPopulated = $field.prop('checked');
+              }
+
             }
           });
 
@@ -4109,6 +4282,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           if (countAddr < 2) {
             allPopulated = false;
           }
+
 
           $submitBtn.attr('disabled', !allPopulated);
         })
@@ -4547,7 +4721,7 @@ $(document).ready(function () {
         } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
             $revisedFee = $('#revised-fee-uc').show();
         }
-    });
+    }).change();
 
 
   // Make button text reflect chosen payment option

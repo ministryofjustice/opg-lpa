@@ -1627,7 +1627,8 @@ article table {
       line-height: 1.2; } }
 .form fieldset {
   margin: 0;
-  margin-top: 2em; }
+  margin-top: 2em;
+  float: left; }
   .form fieldset fieldset {
     margin-top: 0; }
     .form fieldset fieldset legend {
@@ -2402,6 +2403,14 @@ article .next.steps .form-download {
   border: 3px solid #000;
   text-align: center; }
 
+.form-element-errors {
+  float: left;
+  width: 100%;
+  margin-top: 1px; }
+
+#popup.form-popup .input-checkbox label {
+  width: auto; }
+
 html {
   background: #fff; }
 
@@ -2712,7 +2721,8 @@ nav.progress-indicator {
   background-color: #fff;
   margin: 4em auto 20em auto;
   padding: 0 0 0.5em;
-  border: 0.5em solid #222; }
+  border: 0.5em solid #222;
+  overflow: hidden; }
   #popup .close {
     margin: 0;
     position: absolute;

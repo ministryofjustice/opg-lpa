@@ -203,7 +203,7 @@ $(document).ready(function () {
         } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
             $revisedFee = $('#revised-fee-uc').show();
         }
-    });
+    }).change();
 
 
   // Make button text reflect chosen payment option

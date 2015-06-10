@@ -49,7 +49,7 @@ class FeeReductionController extends AbstractLpaController
                         $lpa->payment = new Payment([
                             'reducedFeeReceivesBenefits' => false,
                             'reducedFeeAwardedDamages'  => null,
-                            'reducedFeeLowIncome'       => null,
+                            'reducedFeeLowIncome'       => false,
                             'reducedFeeUniversalCredit' => true,
                         ]);
                         // payment date will be set by the API when setPayment() is called.
@@ -59,7 +59,7 @@ class FeeReductionController extends AbstractLpaController
                             'reducedFeeReceivesBenefits' => false,
                             'reducedFeeAwardedDamages'  => null,
                             'reducedFeeLowIncome'       => true,
-                            'reducedFeeUniversalCredit' => null,
+                            'reducedFeeUniversalCredit' => false,
                         ]);
                         break;
                     case 'notApply':
