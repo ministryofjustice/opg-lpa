@@ -40,7 +40,8 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
                     'signature-attorney-name-last'  => $attorney->name->last,
-                    'footer_instrument_right' => Config::getInstance()['footer'][$lpaType]['instrument'],
+                    'footer_instrument_right-pf'    => ($this->lpa->document->type == Document::LPA_TYPE_PF)?Config::getInstance()['footer'][$lpaType]['instrument']:null,
+                    'footer_instrument_right-hw'    => ($this->lpa->document->type == Document::LPA_TYPE_HW)?Config::getInstance()['footer'][$lpaType]['instrument']:null,
             ))
             ->flatten()
             ->saveAs($filePath);
