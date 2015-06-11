@@ -24,8 +24,6 @@
 	* People_People to be told.md
 * Instructions and preferences
 	* Decisions_Restrictions and guidance.md
-* Paying attorneys
-	* Decisions_Paying attorneys.md
 * Signing the LPA
 	* Process_Signing the LPA.md
 * Registering the LPA
@@ -34,8 +32,6 @@
 	* People_Applicant.md
 * Correspondence address
 	* People_Correspondence address.md
-* Previous powers of attorney
-	* Process_Previous powers of attorney.md
 * Fees and reductions
 	* Process_Fees and reductions.md
 * Glossary
