@@ -28,7 +28,7 @@
      * attorney form
      */
     $form = $this->formErrorTextExchange($this->form, []);
-    $csrf       = $form->get('secret');
+    $csrf       = $form->get($form->csrfName());
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');

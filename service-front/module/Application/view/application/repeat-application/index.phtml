@@ -1,7 +1,7 @@
 <?php
     $form = $this->formErrorTextExchange($this->form, []);
     $form->setAttribute('class', 'form');
-    $csrf        = $form->get('secret');
+    $csrf        = $form->get($form->csrfName());
     
     $isRepeatApplication       = $form->get('isRepeatApplication');
     $isRepeatApplicationValueOptions = $isRepeatApplication->getOptions()['value_options'];

@@ -23,7 +23,7 @@
     $form       = $this->correspondentForm;
     $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
     
-    $csrf       = $form->get('secret');
+    $csrf       = $form->get($form->csrfName());
     $who        = $form->get('who');
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');

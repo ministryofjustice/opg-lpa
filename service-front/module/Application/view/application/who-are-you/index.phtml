@@ -7,7 +7,7 @@ if(isset($this->form)) {
         'cannot-be-blank' => 'Please choose one of the options below',
     ]);
     
-    $csrf           = $form->get('secret');
+    $csrf           = $form->get($form->csrfName());
     
     $form->setAttribute('class', 'form');
     

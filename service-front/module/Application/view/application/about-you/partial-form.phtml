@@ -38,7 +38,7 @@ $formLabel = $this->plugin('formLabel');
 
     <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
 
-    <?= $this->formElement($form->get('secret')) ?>
+    <?= $this->formElement($form->get($form->csrfName())) ?>
 
     <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
         <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
