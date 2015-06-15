@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-06-09 */
+/*! opg-lpa-2 2015-06-15 */
 /*!
 
  handlebars v1.1.2
@@ -2986,11 +2986,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"\" value=\"1\" required=\"required\">\n            ";
+    + "\" class=\"confirmation-validation\" value=\"1\"\n                   required=\"required\">\n            ";
   if (stack1 = helpers.elementLabel) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.elementLabel); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </label>\n    </div>\n</fieldset>";
+  buffer += "\n        </label>\n    </div>\n</fieldset>\n";
   return buffer;
   });
 
@@ -3786,12 +3786,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         selected = $el.val();
 
         if ($form.find('[name=switch-to-type]').length === 0) {
-          postData = { 'pick-details': $form.find('[name=pick-details]').val() };
-          postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
-        }
-        else {
-          postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
-          postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
+            postData = { 'pick-details': $form.find('[name=pick-details]').val() };
+            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
+          }
+          else {
+            postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
+            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
         }
 
         $.post(url, postData, function (data) {
@@ -4117,10 +4117,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 (function () {
   'use strict';
 
+  var self;
+
   moj.Modules.PersonForm = {
     selector: '.js-PersonForm',
 
     init: function () {
+      self = this;
+
       _.bindAll(this, 'render', 'formEvents');
       this.cacheEls();
       this.bindEvents();
@@ -4201,62 +4205,100 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
 
-          var currentDate = new Date(),
+          var $target = $(evt.target),
+            currentDate = new Date(),
             minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
             maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
-            $dobElement = $(evt.target).parents('.dob-element'),
+            $dobElement = $('.dob-element'),
             $dobGroup,
-            actionGroup = $('.group.action');
+            actionGroup = $('.group.action'),
+            $firstName = $('input[name="name-first"]', $form),
+            $lastName = $('input[name="name-last"]', $form),
+            $nameGroups = $('input[name^="name"]', $form).parents('.group'),
+            duplicateName = null,
+            loop,
+            item;
 
+          if (!$target.hasClass('confirmation-validation')) {
+            // If the input changed is not a confirmation tick box, then do the form checks...
 
-          // Verify the DOB
-          if ($dobElement.length > 0) {
+            // Are we editing the name fields?
+            if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
 
-            dob = getDOB();
-            $dobGroup = $dobElement.parents('.group');
-            $dobGroup.removeClass('validation');
-            $dobGroup.find('.form-element-errors').remove();
-            $('.js-age-check').remove();
-            $('.validation-summary').remove();
-
-            if (dob !== null) {
-
-              if (dob > minAge) {
-                console.log('too young');
-                $dobGroup.addClass('validation');
-                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                actionGroup.before($(tplInputCheckbox({
-                  'elementJSref': 'js-age-check',
-                  'elementName': 'ageCheck',
-                  'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
-                })).addClass('validation'));
-
-                $form.prepend(tplErrorsFormSummary());
-
+              // Check for duplicate names
+              if (actors && actors.names && actors.names.length) {
+                for (loop = 0; loop < actors.names.length; loop++) {
+                  item = actors.names[loop];
+                  if ($firstName.val().toLocaleLowerCase() === item.firstname.toLocaleLowerCase()) {
+                    if ($lastName.val().toLocaleLowerCase() === item.lastname.toLocaleLowerCase()) {
+                      duplicateName = item;
+                      break;
+                    }
+                  }
+                }
               }
-              else if (dob <= maxAge) {
-                $dobGroup.addClass('validation');
-                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                actionGroup.before($(tplInputCheckbox({
-                  'elementJSref': 'js-age-check',
-                  'elementName': 'ageCheck',
-                  'elementLabel': 'Please confirm that they are over 100 years old.'
-                })).addClass('validation'));
 
-                $form.prepend(tplErrorsFormSummary());
+              $('.js-confirm-name').remove();
+              $nameGroups.removeClass('validation').find('.form-element-errors').remove();
+
+              if (duplicateName !== null) {
+                $nameGroups.addClass('validation');
+                $nameGroups.append(tplFormElementErrors({'validationMessage': 'Is this a duplicate name?' }));
+
+                actionGroup.before($(tplInputCheckbox({
+                  'elementJSref': 'js-confirm-name',
+                  'elementName': 'confirmName',
+                  'elementLabel': 'The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. Click here to confirm that these are 2 different people with the same name.'
+                })).addClass('validation'));
+              }
+
+            }
+
+
+            // Are we editing the DOB?
+            if ($target.parents('.dob-element').length) {
+
+              $dobGroup = $dobElement.parents('.group');
+              $dobGroup.removeClass('validation');
+              $dobGroup.find('.form-element-errors').remove();
+              $('.js-age-check').remove();
+
+              dob = getDOB();
+              if (dob !== null) {
+
+                if (dob > minAge) {
+                  $dobGroup.addClass('validation');
+                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                  actionGroup.before($(tplInputCheckbox({
+                    'elementJSref': 'js-age-check',
+                    'elementName': 'ageCheck',
+                    'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                  })).addClass('validation'));
+
+                }
+                else if (dob <= maxAge) {
+                  $dobGroup.addClass('validation');
+                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                  actionGroup.before($(tplInputCheckbox({
+                    'elementJSref': 'js-age-check',
+                    'elementName': 'ageCheck',
+                    'elementLabel': 'Please confirm that they are over 100 years old.'
+                  })).addClass('validation'));
+
+                }
 
               }
 
             }
-            else {
-              $dobGroup.addClass('validation');
-              $dobGroup.append(tplFormElementErrors({'validationMessage': 'The age appears to be invalid'}));
 
+
+            $('.validation-summary').remove();
+            if ($form.find('.group.validation').length > 0) {
               $form.prepend(tplErrorsFormSummary());
+
             }
 
           }
-
 
           $allFields = $('input[required], label.required + input, label.required ~ select', $form);
 
@@ -4290,7 +4332,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 
           $submitBtn.attr('disabled', !allPopulated);
-        })
+        }
+      )
         // Relationship: other toggle
         .on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
           var other = $('#relationshipToDonorOther').closest('.group');
@@ -4325,7 +4368,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
     }
-
 
   };
 
@@ -4375,24 +4417,29 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
       var startTime = this.time();
       // check to see if user is logged in
-      $.ajax({
-        url: '/user/is-logged-in',
-        dataType: 'json',
-        timeout: 10000,
-        cache: false,
-        context: this,
-        success: function (response) {
-          if (response.isLoggedIn) {
-            // if logged in, start setTimeout to alert them when timeout is imminent
-            this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+
+      if (false) {
+
+        $.ajax({
+          url: '/user/is-logged-in',
+          dataType: 'json',
+          timeout: 10000,
+          cache: false,
+          context: this,
+          success: function (response) {
+            if (response.isLoggedIn) {
+              // if logged in, start setTimeout to alert them when timeout is imminent
+              this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+            }
           }
-        }
-      });
+        });
+
+      }
     },
 
     warning: function () {
       var html = '',
-          self = this;
+        self = this;
 
       // TODO: get this HTML out of the JS into a template
       // TODO: get someone to look at this copy, I made it up. Clive.
@@ -4407,7 +4454,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       html += '</div>';
 
       moj.Modules.Popup.open(html, {
-        ident:  'timeout'
+        ident: 'timeout'
       });
 
       $('#sessionRefresh').on('click', function (e) {
@@ -4427,26 +4474,30 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     refreshSession: function () {
       var startTime = this.time();
 
-      $.ajax({
-        url: '/user/is-logged-in',
-        dataType: 'json',
-        timeout: 10000,
-        cache: false,
-        context: this,
-        success: function (response) {
-          if (response.isLoggedIn) {
-            // if logged in, start another timeout
-            this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
-          } else {
-            // redirect tp login if no longer logged in
+      if (false) {
+
+        $.ajax({
+          url: '/user/is-logged-in',
+          dataType: 'json',
+          timeout: 10000,
+          cache: false,
+          context: this,
+          success: function (response) {
+            if (response.isLoggedIn) {
+              // if logged in, start another timeout
+              this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+            } else {
+              // redirect tp login if no longer logged in
+              window.location = '/login/timeout';
+            }
+          },
+          error: function () {
+            // if any errors occur, attempt logout
             window.location = '/login/timeout';
           }
-        },
-        error: function () {
-          // if any errors occur, attempt logout
-          window.location = '/login/timeout';
-        }
-      });
+        });
+
+      }
     },
 
     time: function () {
