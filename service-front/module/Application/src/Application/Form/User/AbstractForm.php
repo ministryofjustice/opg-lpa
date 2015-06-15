@@ -3,6 +3,7 @@ namespace Application\Form\User;
 
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
+use Application\Form\Validator\Csrf as CsrfValidator;
 
 use Application\Model\Service\ServiceDataInputInterface;
 
@@ -23,10 +24,12 @@ abstract class AbstractForm extends Form implements ServiceDataInputInterface {
 
         $this->csrfName = 'secret_'.md5(get_class($this));
 
-        $this->add( (new Csrf($this->csrfName))->setCsrfValidatorOptions([
-            'timeout' => null,
-            'salt' => sha1('Application\Form\User-Salt'),
-        ]));
+        $this->add( (new Csrf($this->csrfName))->setCsrfValidator(
+            new CsrfValidator([
+                'name' => $this->csrfName,
+                'salt' => sha1('Application\Form\User-Salt'),
+            ])
+        ));
 
     } // function
 

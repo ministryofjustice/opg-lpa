@@ -3,6 +3,7 @@ namespace Application\Form\Lpa;
 
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
+use Application\Form\Validator\Csrf as CsrfValidator;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
@@ -33,10 +34,12 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 
         $this->csrfName = 'secret_'.md5(get_class($this));
 
-        $this->add( (new Csrf($this->csrfName))->setCsrfValidatorOptions([
-            'timeout' => null,
-            'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
+        $this->add( (new Csrf($this->csrfName))->setCsrfValidator(
+            new CsrfValidator([
+                'name' => $this->csrfName,
+                'salt' => sha1('Application\Form\Lps-Salt'),
+            ])
+        ));
         
         $filter = $this->getInputFilter();
         
