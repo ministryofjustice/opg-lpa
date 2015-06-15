@@ -21,7 +21,7 @@
         $replacementAttorneyElements[$idx]->setAttributes(['placeholder' => 'DD/MM/YYYY']);
     }
     
-    $csrf       = $form->get('secret');
+    $csrf       = $form->get($form->csrfName());
     
     $form->setAttributes(['class' => 'form']);
     

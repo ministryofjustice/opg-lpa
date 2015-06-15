@@ -2,7 +2,7 @@
     $form = $this->formErrorTextExchange($this->form, []);
     
     $form->setAttribute('class', 'form');
-    $csrf        = $form->get('secret');
+    $csrf        = $form->get($form->csrfName());
     
     $reductionOptions       = $form->get('reductionOptions');
     $reductionOptions->setLabelOptions(['disable_html_escape' => true]);

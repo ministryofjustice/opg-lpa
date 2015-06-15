@@ -3,6 +3,7 @@ namespace Application\Form\Lpa;
 
 use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
+use Application\Form\Validator\Csrf as CsrfValidator;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
@@ -13,20 +14,32 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 {
     protected $inputFilter, $serviceLocator, $logger;
+
+    /**
+     * @var string The Csrf name user for this form.
+     */
+    private $csrfName = null;
+
+    /**
+     * @return string The CSRF name user for this form.
+     */
+    public function csrfName(){
+        return $this->csrfName;
+    }
     
     public function init()
     {
         parent::init();
         $this->setAttribute('method', 'post');
 
-        $this->add( new \Zend\Form\Element\Hidden('secret') );
+        $this->csrfName = 'secret_'.md5(get_class($this));
 
-        /*
-        $this->add( (new Csrf('secret'))->setCsrfValidatorOptions([
-            'timeout' => null,
-            'salt' => sha1('Application\Form\Lpa-Salt'),
-        ]));
-        */
+        $this->add( (new Csrf($this->csrfName))->setCsrfValidator(
+            new CsrfValidator([
+                'name' => $this->csrfName,
+                'salt' => sha1('Application\Form\Lps-Salt'),
+            ])
+        ));
         
         $filter = $this->getInputFilter();
         

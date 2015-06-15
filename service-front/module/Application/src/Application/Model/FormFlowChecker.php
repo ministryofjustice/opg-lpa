@@ -4,7 +4,6 @@ namespace Application\Model;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Application\Model\Service\Lpa\Metadata;
@@ -293,12 +292,17 @@ class FormFlowChecker extends StateChecker
     
     private function isAttorneyAddAccessible()
     {
-        return $this->isAttorneyAccessible();
+        if($this->isAttorneyAccessible() === true) {
+            return true;
+        }
+        else {
+            return 'lpa/primary-attorney';
+        }
     }
     
     private function isAttorneyEditAccessible($idx)
     {
-        if($this->lpaHasPrimaryAttorney($idx)) {
+        if(($this->isAttorneyAccessible() === true) && $this->lpaHasPrimaryAttorney($idx)) {
             return true;
         }
         else {
@@ -308,7 +312,7 @@ class FormFlowChecker extends StateChecker
     
     private function isAttorneyDeleteAccessible($idx)
     {
-        if($this->lpaHasPrimaryAttorney($idx)) {
+        if(($this->isAttorneyAccessible() === true) && $this->lpaHasPrimaryAttorney($idx)) {
             return true;
         }
         else {
@@ -318,7 +322,7 @@ class FormFlowChecker extends StateChecker
 
     private function isAttorneyAddTrustAccessible()
     {
-        if(($this->isAttorneyAccessible()===true) && (!$this->lpaHasTrustCorporation('primary'))) {
+        if(($this->isAttorneyAccessible() === true) && (!$this->lpaHasTrustCorporation('primary'))) {
             return true;
         }
         else {
@@ -328,7 +332,7 @@ class FormFlowChecker extends StateChecker
     
     private function isAttorneyEditTrustAccessible()
     {
-        if($this->lpaHasTrustCorporation('primary')) {
+        if(($this->isAttorneyAccessible() === true) && $this->lpaHasTrustCorporation('primary')) {
             return true;
         }
         else {
@@ -338,7 +342,7 @@ class FormFlowChecker extends StateChecker
     
     private function isAttorneyDeleteTrustAccessible($idx)
     {
-        if($this->lpaHasTrustCorporation('primary')) {
+        if(($this->isAttorneyAccessible() === true) && $this->lpaHasTrustCorporation('primary')) {
             return true;
         }
         else {
@@ -359,8 +363,7 @@ class FormFlowChecker extends StateChecker
     private function isReplacementAttorneyAccessible()
     {
         if($this->lpaHasMultiplePrimaryAttorneys()) {
-            if(($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions) 
-                &&$this->lpaHowPrimaryAttorneysMakeDecisionHasValue()) {
+            if($this->lpaHowPrimaryAttorneysMakeDecisionHasValue()) {
                 return true;
             }
             else {
@@ -376,12 +379,17 @@ class FormFlowChecker extends StateChecker
     
     private function isReplacementAttorneyAddAccessible()
     {
-        return $this->isReplacementAttorneyAccessible();
+        if($this->isReplacementAttorneyAccessible() === true) {
+            return true;
+        }
+        else {
+            return 'lpa/replacement-attorney';
+        }
     }
 
     private function isReplacementAttorneyEditAccessible($idx)
     {
-        if($this->lpaHasReplacementAttorney($idx)) {
+        if(($this->isReplacementAttorneyAccessible() === true) && $this->lpaHasReplacementAttorney($idx)) {
             return true;
         }
         else {
@@ -391,7 +399,7 @@ class FormFlowChecker extends StateChecker
     
     private function isReplacementAttorneyDeleteAccessible($idx)
     {
-        if($this->lpaHasReplacementAttorney($idx)) {
+        if(($this->isReplacementAttorneyAccessible() === true) && $this->lpaHasReplacementAttorney($idx)) {
             return true;
         }
         else {
@@ -401,7 +409,7 @@ class FormFlowChecker extends StateChecker
 
     private function isReplacementAttorneyAddTrustAccessible()
     {
-        if(($this->isReplacementAttorneyAccessible()===true) && (!$this->lpaHasTrustCorporation('replacement'))) {
+        if(($this->isReplacementAttorneyAccessible() === true) && (!$this->lpaHasTrustCorporation('replacement'))) {
             return true;
         }
         else {
@@ -411,7 +419,7 @@ class FormFlowChecker extends StateChecker
     
     private function isReplacementAttorneyEditTrustAccessible()
     {
-        if($this->lpaHasTrustCorporation('replacement')) {
+        if(($this->isReplacementAttorneyAccessible() === true) && $this->lpaHasTrustCorporation('replacement')) {
             return true;
         }
         else {
@@ -421,7 +429,7 @@ class FormFlowChecker extends StateChecker
     
     private function isReplacementAttorneyDeleteTrustAccessible($idx)
     {
-        if($this->lpaHasTrustCorporation('replacement')) {
+        if(($this->isReplacementAttorneyAccessible() === true) && $this->lpaHasTrustCorporation('replacement')) {
             return true;
         }
         else {
@@ -466,15 +474,15 @@ class FormFlowChecker extends StateChecker
     private function isCertificateProviderAccessible()
     {
         if($this->lpaHasPrimaryAttorney() && (
-            ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends())
-            || ((count($this->lpa->document->replacementAttorneys) == 0) && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
-            || ((count($this->lpa->document->replacementAttorneys) == 1) && (count($this->lpa->document->primaryAttorneys) == 1))
-            || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly())
-            || ($this->lpaHasMultipleReplacementAttorneys() && (count($this->lpa->document->primaryAttorneys) == 1) && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
-            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
-            || ((count($this->lpa->document->replacementAttorneys) == 1) && $this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaWhenReplacementAttorneyStepInHasValue())
-            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && ($this->lpa->document->replacementAttorneyDecisions instanceof AbstractDecisions) && in_array($this->lpa->document->replacementAttorneyDecisions->when, [ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST, ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS]))
-            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
+               ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasNoReplacementAttorney() && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
+            || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasSingleReplacementAttorney())
+            || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() && $this->lpaHasNoReplacementAttorney() && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
+            || ($this->lpaHasMultiplePrimaryAttorneys() && ($this->lpaPrimaryAttorneysMakeDecisionJointly() || $this->lpaPrimaryAttorneysMakeDecisionDepends()) && $this->lpaHasSingleReplacementAttorney())
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaHasSingleReplacementAttorney() && $this->lpaWhenReplacementAttorneyStepInHasValue())
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaWhenReplacementAttorneyStepInHasValue() && ($this->lpa->document->replacementAttorneyDecisions->when != ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST))
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
         )) {
             return true;
         }
@@ -499,12 +507,17 @@ class FormFlowChecker extends StateChecker
     
     private function isCertificateProviderAddAccessible()
     {
-        return $this->isCertificateProviderAccessible();
+        if($this->isCertificateProviderAccessible() === true) {
+            return true;
+        }
+        else {
+            return 'lpa/certificate-provider';
+        }
     }
     
     private function isCertificateProviderEditAccessible()
     {
-        if($this->lpaHasCertificateProvider()) {
+        if(($this->isCertificateProviderAccessible() === true) && $this->lpaHasCertificateProvider()) {
             return true;
         }
         else {
@@ -514,7 +527,7 @@ class FormFlowChecker extends StateChecker
     
     private function isPeopleToNotifyAccessible()
     {
-        if($this->lpaHasCertificateProvider()) {
+        if(($this->isCertificateProviderAccessible() === true) && $this->lpaHasCertificateProvider()) {
             return true;
         }
         else {
@@ -524,12 +537,17 @@ class FormFlowChecker extends StateChecker
 
     private function isPeopleToNotifyAddAccessible()
     {
-        return $this->isPeopleToNotifyAccessible();
+        if($this->isPeopleToNotifyAccessible() === true) {
+            return true;
+        }
+        else {
+            return 'lpa/people-to-notify';
+        }
     }
 
     private function isPeopleToNotifyEditAccessible($idx)
     {
-        if($this->lpaHasPeopleToNotify($idx)) {
+        if(($this->isPeopleToNotifyAccessible() === true) && $this->lpaHasPeopleToNotify($idx)) {
             return true;
         }
         else {
@@ -539,7 +557,7 @@ class FormFlowChecker extends StateChecker
 
     private function isPeopleToNotifyDeleteAccessible($idx)
     {
-        if($this->lpaHasPeopleToNotify($idx)) {
+        if(($this->isPeopleToNotifyAccessible() === true) && $this->lpaHasPeopleToNotify($idx)) {
             return true;
         }
         else {
@@ -549,7 +567,7 @@ class FormFlowChecker extends StateChecker
     
     private function isInstructionsAccessible()
     {
-        if($this->lpaHasCertificateProvider() && $this->peopleToNotifyHasBeenConfirmed()) {
+        if(($this->isPeopleToNotifyAccessible() === true) && $this->peopleToNotifyHasBeenConfirmed()) {
             return true;
         }
         else {
@@ -559,7 +577,7 @@ class FormFlowChecker extends StateChecker
     
     private function isCreatedAccessible()
     {
-        if($this->lpaHasFinishedCreation()) {
+        if(($this->isInstructionsAccessible() === true) && $this->lpaHasFinishedCreation()) {
             return true;
         }
         else {
@@ -717,6 +735,26 @@ class FormFlowChecker extends StateChecker
     {
         return ($this->lpaHasPrimaryAttorney() &&
                 (count($this->lpa->document->replacementAttorneys) > 0) || array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata));
+    }
+
+    protected function lpaHasSingleReplacementAttorney()
+    {
+        return ($this->lpaHasReplacementAttorney() && (count($this->lpa->document->replacementAttorneys) == 1));
+    }
+
+    protected function lpaHasNoReplacementAttorney()
+    {
+        return (count($this->lpa->document->replacementAttorneys) == 0);
+    }
+    
+    protected function lpaHasSinglePrimaryAttorney()
+    {
+        return ($this->lpaHasPrimaryAttorney() && (count($this->lpa->document->primaryAttorneys) == 1));
+    }
+    
+    protected function lpaHasNoPrimaryAttorney()
+    {
+        return (count($this->lpa->document->primaryAttorneys)==0);
     }
     
 ######################## return functions #####################    
