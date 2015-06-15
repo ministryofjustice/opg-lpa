@@ -19,14 +19,10 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         parent::init();
         $this->setAttribute('method', 'post');
 
-        $this->add( new \Zend\Form\Element\Hidden('secret') );
-
-        /*
         $this->add( (new Csrf('secret'))->setCsrfValidatorOptions([
             'timeout' => null,
             'salt' => sha1('Application\Form\Lpa-Salt'),
         ]));
-        */
         
         $filter = $this->getInputFilter();
         
