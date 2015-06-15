@@ -19,10 +19,14 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         parent::init();
         $this->setAttribute('method', 'post');
 
+        $this->add( new \Zend\Form\Element\Hidden('secret') );
+
+        /*
         $this->add( (new Csrf('secret'))->setCsrfValidatorOptions([
             'timeout' => null,
             'salt' => sha1('Application\Form\Lpa-Salt'),
         ]));
+        */
         
         $filter = $this->getInputFilter();
         
@@ -73,7 +77,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         
         //@todo: to be removed - logging form CSRF element value
         if($this->getLogger() !== null) {
-            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", FormName: ". $this->getName() .', Csrf: '.$this->get('secret')->getValue());
+            //$this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().", FormName: ". $this->getName() .', Csrf: '.$this->get('secret')->getValue());
         }
     }
     
@@ -112,8 +116,8 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
                 $this->getLogger()->err($messages['secret']['notSame'].", and received CSRF taken is: ".$this->data['secret']);
                 
                 // logging session container contents
-                $csrfSsession = new \Zend\Session\Container($this->get('secret')->getCsrfValidator()->getSessionName());
-                $this->getLogger()->debug($csrfSsession->tokenList);
+                //$csrfSsession = new \Zend\Session\Container($this->get('secret')->getCsrfValidator()->getSessionName());
+                //$this->getLogger()->debug($csrfSsession->tokenList);
             } // end of to be removed.
             
             // merge Zend and model validation errors.
@@ -126,7 +130,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         
         //@todo: to be removed - logging received CSRF
         if($this->getLogger() !== null) {
-            $this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().". CSRF token: ".$this->data['secret']);
+            //$this->getLogger()->debug('SessionId: '.$this->get('secret')->getCsrfValidator()->getSessionName().". CSRF token: ".$this->data['secret']);
         } // end of to be removed.
         
         return $result;
