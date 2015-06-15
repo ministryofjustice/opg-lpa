@@ -18,7 +18,7 @@
     $email->setAttributes([
         'id' => 'email',
         'autocomplete' => 'off'
-    ]);
+    ])->setOptions( ['label' => 'Enter your email address'] );
 
     $email_confirm->setAttributes([
         'id' => 'email_confirm',
@@ -28,12 +28,12 @@
     $password->setAttributes([
         'id' => 'password',
         'autocomplete' => 'off'
-    ]);
+    ])->setOptions( ['label' => 'Password'] );
 
     $password_confirm->setAttributes([
         'id' => 'password_confirm',
         'autocomplete' => 'off'
-    ]);
+    ])->setOptions( ['label' => 'Confirm Password'] );
 
     $terms->setAttributes([
         'id' => 'terms',

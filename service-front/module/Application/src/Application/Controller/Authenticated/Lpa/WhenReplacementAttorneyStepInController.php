@@ -28,6 +28,12 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
+            if($postData['when'] != ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                $form->setValidationGroup(
+                        'when'
+                );
+            }
+            
             // set data for validation
             $form->setData($postData);
             
