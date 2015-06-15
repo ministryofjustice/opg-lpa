@@ -736,6 +736,26 @@ class FormFlowChecker extends StateChecker
         return ($this->lpaHasPrimaryAttorney() &&
                 (count($this->lpa->document->replacementAttorneys) > 0) || array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata));
     }
+
+    protected function lpaHasSingleReplacementAttorney()
+    {
+        return ($this->lpaHasReplacementAttorney() && (count($this->lpa->document->replacementAttorneys) == 1));
+    }
+
+    protected function lpaHasNoReplacementAttorney()
+    {
+        return (count($this->lpa->document->replacementAttorneys) == 0);
+    }
+    
+    protected function lpaHasSinglePrimaryAttorney()
+    {
+        return ($this->lpaHasPrimaryAttorney() && (count($this->lpa->document->primaryAttorneys) == 1));
+    }
+    
+    protected function lpaHasNoPrimaryAttorney()
+    {
+        return (count($this->lpa->document->primaryAttorneys)==0);
+    }
     
 ######################## return functions #####################    
     
