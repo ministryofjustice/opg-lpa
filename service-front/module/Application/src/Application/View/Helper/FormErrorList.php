@@ -18,7 +18,7 @@ class FormErrorList extends AbstractHelper
                 <p>Because of the following problems:</p>
                 <ol>
                     <?php
-                    $this->view->formLinkedErrorList($this->view->form);
+                    $this->view->formLinkedErrorList($form);
     
                     if (property_exists($this->view, 'error')) {
                         echo '<li><a href="">';
