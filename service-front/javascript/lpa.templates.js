@@ -46,11 +46,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"\" value=\"1\" required=\"required\">\n            ";
+    + "\" class=\"confirmation-validation\" value=\"1\"\n                   required=\"required\">\n            ";
   if (stack1 = helpers.elementLabel) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.elementLabel); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </label>\n    </div>\n</fieldset>";
+  buffer += "\n        </label>\n    </div>\n</fieldset>\n";
   return buffer;
   });
 

@@ -4,10 +4,14 @@
 (function () {
   'use strict';
 
+  var self;
+
   moj.Modules.PersonForm = {
     selector: '.js-PersonForm',
 
     init: function () {
+      self = this;
+
       _.bindAll(this, 'render', 'formEvents');
       this.cacheEls();
       this.bindEvents();
@@ -88,62 +92,100 @@
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
 
-          var currentDate = new Date(),
+          var $target = $(evt.target),
+            currentDate = new Date(),
             minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
             maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
-            $dobElement = $(evt.target).parents('.dob-element'),
+            $dobElement = $('.dob-element'),
             $dobGroup,
-            actionGroup = $('.group.action');
+            actionGroup = $('.group.action'),
+            $firstName = $('input[name="name-first"]', $form),
+            $lastName = $('input[name="name-last"]', $form),
+            $nameGroups = $('input[name^="name"]', $form).parents('.group'),
+            duplicateName = null,
+            loop,
+            item;
 
+          if (!$target.hasClass('confirmation-validation')) {
+            // If the input changed is not a confirmation tick box, then do the form checks...
 
-          // Verify the DOB
-          if ($dobElement.length > 0) {
+            // Are we editing the name fields?
+            if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
 
-            dob = getDOB();
-            $dobGroup = $dobElement.parents('.group');
-            $dobGroup.removeClass('validation');
-            $dobGroup.find('.form-element-errors').remove();
-            $('.js-age-check').remove();
-            $('.validation-summary').remove();
-
-            if (dob !== null) {
-
-              if (dob > minAge) {
-                console.log('too young');
-                $dobGroup.addClass('validation');
-                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                actionGroup.before($(tplInputCheckbox({
-                  'elementJSref': 'js-age-check',
-                  'elementName': 'ageCheck',
-                  'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
-                })).addClass('validation'));
-
-                $form.prepend(tplErrorsFormSummary());
-
+              // Check for duplicate names
+              if (actors && actors.names && actors.names.length) {
+                for (loop = 0; loop < actors.names.length; loop++) {
+                  item = actors.names[loop];
+                  if ($firstName.val().toLocaleLowerCase() === item.firstname.toLocaleLowerCase()) {
+                    if ($lastName.val().toLocaleLowerCase() === item.lastname.toLocaleLowerCase()) {
+                      duplicateName = item;
+                      break;
+                    }
+                  }
+                }
               }
-              else if (dob <= maxAge) {
-                $dobGroup.addClass('validation');
-                $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+
+              $('.js-confirm-name').remove();
+              $nameGroups.removeClass('validation').find('.form-element-errors').remove();
+
+              if (duplicateName !== null) {
+                $nameGroups.addClass('validation');
+                $nameGroups.append(tplFormElementErrors({'validationMessage': 'Is this a duplicate name?' }));
+
                 actionGroup.before($(tplInputCheckbox({
-                  'elementJSref': 'js-age-check',
-                  'elementName': 'ageCheck',
-                  'elementLabel': 'Please confirm that they are over 100 years old.'
+                  'elementJSref': 'js-confirm-name',
+                  'elementName': 'confirmName',
+                  'elementLabel': 'The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. Click here to confirm that these are 2 different people with the same name.'
                 })).addClass('validation'));
-
-                $form.prepend(tplErrorsFormSummary());
-
               }
 
             }
-            else {
-              $dobGroup.addClass('validation');
-              $dobGroup.append(tplFormElementErrors({'validationMessage': 'The age appears to be invalid'}));
 
+
+            // Are we editing the DOB?
+            if ($target.parents($dobElement)) {
+
+              $dobGroup = $dobElement.parents('.group');
+              $dobGroup.removeClass('validation');
+              $dobGroup.find('.form-element-errors').remove();
+              $('.js-age-check').remove();
+
+              dob = getDOB();
+              if (dob !== null) {
+
+                if (dob > minAge) {
+                  $dobGroup.addClass('validation');
+                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                  actionGroup.before($(tplInputCheckbox({
+                    'elementJSref': 'js-age-check',
+                    'elementName': 'ageCheck',
+                    'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                  })).addClass('validation'));
+
+                }
+                else if (dob <= maxAge) {
+                  $dobGroup.addClass('validation');
+                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                  actionGroup.before($(tplInputCheckbox({
+                    'elementJSref': 'js-age-check',
+                    'elementName': 'ageCheck',
+                    'elementLabel': 'Please confirm that they are over 100 years old.'
+                  })).addClass('validation'));
+
+                }
+
+              }
+              
+            }
+
+
+            $('.validation-summary').remove();
+            if ($form.find('.group.validation').length > 0) {
               $form.prepend(tplErrorsFormSummary());
+
             }
 
           }
-
 
           $allFields = $('input[required], label.required + input, label.required ~ select', $form);
 
@@ -177,9 +219,11 @@
 
 
           $submitBtn.attr('disabled', !allPopulated);
-        })
+        }
+      )
         // Relationship: other toggle
-        .on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
+        .
+        on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
           var other = $('#relationshipToDonorOther').closest('.group');
           if ($(this).val() === 'Other') {
             other.show().find('input').focus();
@@ -212,7 +256,6 @@
         }
       });
     }
-
 
   };
 
