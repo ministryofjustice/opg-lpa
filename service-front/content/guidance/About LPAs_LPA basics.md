@@ -72,7 +72,7 @@ OPG protects people who don't have the mental capacity to make decisions for the
 
 ### Related help topics
 
-* [About this service](/help/#topic-about-this-tool)
+* [About this service](/help/#topic-about-this-service)
 * [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)
 * [Donor](/help/#topic-donor)
 * [Attorneys](/help/#topic-attorneys)
