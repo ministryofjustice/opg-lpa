@@ -1,7 +1,7 @@
 <?php 
 $form = $this->formErrorTextExchange($this->form, []);
 
-$csrf = $form->get('secret');
+$csrf = $form->get($form->csrfName());
 
 $correspondence = $form->get('correspondence');
 

@@ -3786,10 +3786,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         selected = $el.val();
 
         if ($form.find('[name=switch-to-type]').length === 0) {
-          postData = {'secret': $form.find('[name=secret]').val(), 'pick-details': $form.find('[name=pick-details]').val()};
+          postData = { 'pick-details': $form.find('[name=pick-details]').val() };
+          postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
         }
         else {
-          postData = {'secret': $form.find('[name=secret]').val(), 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val()};
+          postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
+          postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
         }
 
         $.post(url, postData, function (data) {
@@ -3818,6 +3820,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       for (props in data) {
 
         if (data.hasOwnProperty(props) && _.isObject(data[props])) {
+
+          value = data[props];
+
           // if value is an object then flatten it with PHP array notation...
           for (property in value) {
 

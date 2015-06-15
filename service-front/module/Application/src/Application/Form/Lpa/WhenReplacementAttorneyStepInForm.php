@@ -25,6 +25,7 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
             ],
             'whenDetails' => [
                     'type' => 'TextArea',
+                    'required' => true,
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',

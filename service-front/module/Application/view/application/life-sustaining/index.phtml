@@ -6,7 +6,7 @@
     ]);
     
     $form->setAttribute('class', 'form');
-    $csrf           = $form->get('secret');
+    $csrf           = $form->get($form->csrfName());
     $canSustainLife = $form->get('canSustainLife');
     
     $canSustainLifeValueOptions = $canSustainLife->getOptions()['value_options'];

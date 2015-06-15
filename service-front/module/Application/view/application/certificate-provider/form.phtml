@@ -9,7 +9,8 @@
     if(isset($this->seedDetailsPickerForm)) {
         $pickerForm   = $this->seedDetailsPickerForm;
         $pickerForm->setAttribute('class', 'form');
-        $pickerCsrf   = $pickerForm->get('secret');
+        $pickerCsrf   = $pickerForm->get($pickerForm->csrfName());
+        $pickerCsrf->setAttributes(['id'=>'secret']);
         
         $picker = $pickerForm->get('pick-details');
         $picker->setAttributes(['id'=>'pick-details', 'class'=>'js-reusable']);
@@ -29,7 +30,7 @@
      */
     $form = $this->formErrorTextExchange($this->form, []);
     
-    $csrf       = $form->get('secret');
+    $csrf       = $form->get($form->csrfName());
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');

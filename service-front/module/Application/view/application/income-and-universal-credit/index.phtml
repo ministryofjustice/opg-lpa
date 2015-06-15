@@ -2,7 +2,7 @@
     $form = $this->formErrorTextExchange($this->form, []);
     
     $form->setAttribute('class', 'form');
-    $csrf        = $form->get('secret');
+    $csrf        = $form->get($form->csrfName());
     
     $lowIncome       = $form->get('reducedFeeLowIncome');
     $lowIncomeValueOptions = $lowIncome->getOptions()['value_options'];

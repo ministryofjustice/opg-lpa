@@ -1,6 +1,6 @@
 <?php 
 $form = $this->formErrorTextExchange($this->form, []);
-$csrf = $form->get('secret');
+$csrf = $form->get($form->csrfName());
 $form->prepare();
 
 ?>

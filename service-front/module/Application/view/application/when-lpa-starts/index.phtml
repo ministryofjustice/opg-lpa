@@ -1,7 +1,7 @@
 <?php
     $form = $this->formErrorTextExchange($this->form, []);
     $form->setAttribute('class', 'form');
-    $csrf           = $form->get('secret');
+    $csrf           = $form->get($form->csrfName());
     
     $when  = $form->get('when');
     $whenValueOptions = $when->getOptions()['value_options'];

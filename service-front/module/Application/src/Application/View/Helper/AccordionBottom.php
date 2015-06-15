@@ -32,7 +32,11 @@ class AccordionBottom extends AbstractAccordion
         
         $skip = true;
         foreach($barConfig as $barRouteName => $barDataFuncName) {
+            
+            // we only care about accessible pages
             if($barRouteName == $flowChecker->getNearestAccessibleRoute($barRouteName)) {
+                
+                // skip bar items until the one for current page.
                 if($barRouteName == $routeName) {
                     $seq++;
                     $skip = false;
@@ -44,6 +48,7 @@ class AccordionBottom extends AbstractAccordion
                     continue;
                 }
                 
+                // generate bar items starting from the next page.
                 if(method_exists($this, $barDataFuncName)) {
                     if($this->$barDataFuncName() === null) break;
                     
