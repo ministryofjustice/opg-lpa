@@ -93,6 +93,9 @@
       for (props in data) {
 
         if (data.hasOwnProperty(props) && _.isObject(data[props])) {
+
+          value = data[props];
+
           // if value is an object then flatten it with PHP array notation...
           for (property in value) {
 
