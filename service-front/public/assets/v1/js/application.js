@@ -3786,12 +3786,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         selected = $el.val();
 
         if ($form.find('[name=switch-to-type]').length === 0) {
-          postData = { 'pick-details': $form.find('[name=pick-details]').val() };
-          postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
-        }
-        else {
-          postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
-          postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
+            postData = { 'pick-details': $form.find('[name=pick-details]').val() };
+            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
+          }
+          else {
+            postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
+            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
         }
 
         $.post(url, postData, function (data) {
@@ -4256,7 +4256,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 
             // Are we editing the DOB?
-            if ($target.parents($dobElement)) {
+            if ($target.parents('.dob-element').length) {
 
               $dobGroup = $dobElement.parents('.group');
               $dobGroup.removeClass('validation');
@@ -4288,7 +4288,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 }
 
               }
-              
+
             }
 
 
@@ -4335,8 +4335,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       )
         // Relationship: other toggle
-        .
-        on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
+        .on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
           var other = $('#relationshipToDonorOther').closest('.group');
           if ($(this).val() === 'Other') {
             other.show().find('input').focus();

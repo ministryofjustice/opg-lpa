@@ -94,23 +94,20 @@
 
 <fieldset>
 
-    <div class="form_element">
-        <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag() ?>
-        <?= $this->formElement($title) ?>
-        <?= $this->formElementErrors($title) ?>
-    </div>
-    
-    <div class="form_element">
-        <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag() ?>
-        <?= $this->formElement($firstname) ?>
-        <?= $this->formElementErrors($firstname) ?>
-    </div>
-    
-    <div class="form_element">
-        <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag() ?>
-        <?= $this->formElement($lastname) ?>
-        <?= $this->formElementErrors($lastname) ?>
-    </div>
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $title
+    ] ) ?>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $firstname
+    ] ) ?>
+
+    <?= $this->partial("partial/form/formElement.phtml", [
+        'formLabel' => $formLabel,
+        'element' => $lastname
+    ] ) ?>
 
 </fieldset>
 

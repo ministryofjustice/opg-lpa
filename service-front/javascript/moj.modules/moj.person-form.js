@@ -143,7 +143,7 @@
 
 
             // Are we editing the DOB?
-            if ($target.parents($dobElement)) {
+            if ($target.parents('.dob-element').length) {
 
               $dobGroup = $dobElement.parents('.group');
               $dobGroup.removeClass('validation');
@@ -175,7 +175,7 @@
                 }
 
               }
-              
+
             }
 
 
@@ -222,8 +222,7 @@
         }
       )
         // Relationship: other toggle
-        .
-        on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
+        .on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
           var other = $('#relationshipToDonorOther').closest('.group');
           if ($(this).val() === 'Other') {
             other.show().find('input').focus();
