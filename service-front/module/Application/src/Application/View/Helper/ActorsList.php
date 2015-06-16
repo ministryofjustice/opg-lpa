@@ -5,22 +5,25 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class ActorsList extends AbstractAccordion
 {
     /**
+     * Generate a list of actors that user has already added into LPA. 
+     * This is used by actor form viewscript to generate json variable that javascript 
+     * can access to determin if the actor name is already used in other actors.
+     * 
      * @param Lpa $lpa
+     * @param $routeMatch - needed when user is editing actor details.
+     * 
      * @return array|null
      */
     public function __invoke (Lpa $lpa, RouteMatch $routeMatch=null)
     {
-        if($lpa === null) {
-            return null;
-        }
-        
         $actors = [];
         
-        if(($routeMatch == null) || ($routeMatch->getMatchedRouteName() != 'lpa/donor/edit')) {
+        if((($routeMatch == null) || ($routeMatch->getMatchedRouteName() != 'lpa/donor/edit')) && ($lpa->document->donor instanceof Donor)) {
             $actors[] = ['firstname'=>$lpa->document->donor->name->first, 'lastname'=>$lpa->document->donor->name->last, 'type'=>'donor'];
         }
         

@@ -45,7 +45,7 @@ class Date extends DateValidator
                 $isInvalid = true;
             }
             
-            if(!checkdate($value['month'],$value['day'],$value['year'])) {
+            if(!$isInvalid && !checkdate((int)$value['month'],(int)$value['day'],(int)$value['year'])) {
                 $this->error(parent::INVALID_DATE);
                 $isInvalid = true;
             }
