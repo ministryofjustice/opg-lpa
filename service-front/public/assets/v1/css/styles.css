@@ -1360,7 +1360,6 @@ article table {
     padding: 1em 0 0.5em 0; }
 
 .lpa-list .lpa-actions {
-  width: 15em;
   float: right; }
   .lpa-list .lpa-actions a.button, .lpa-list .lpa-actions .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .lpa-list .lpa-actions a.ui-priority-primary,
   .lpa-list .lpa-actions a.button-warning {
@@ -1402,7 +1401,6 @@ article table {
         list-style-type: none;
         padding: 0.5em 2em 0.5em 2em;
         margin: 3em -2em 0 -2em;
-        background-color: #f9f9f9;
         clear: both;
         overflow: hidden; }
     .accordion-form .section.complete {
@@ -2404,6 +2402,39 @@ article .next.steps .form-download {
   border: 3px solid #000;
   text-align: center; }
 
+.dashboard-header {
+  font-family: "nta", Arial, sans-serif;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 400;
+  text-transform: none;
+  padding: 0 4em 0 1.5em;
+  margin-top: -1em; }
+  @media (max-width: 640px) {
+    .dashboard-header {
+      font-size: 20px;
+      line-height: 1.2; } }
+  article .dashboard-header p {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 400;
+    text-transform: none; }
+    @media (max-width: 640px) {
+      article .dashboard-header p {
+        font-size: 20px;
+        line-height: 1.2; } }
+  article .dashboard-header li {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 400;
+    text-transform: none; }
+    @media (max-width: 640px) {
+      article .dashboard-header li {
+        font-size: 20px;
+        line-height: 1.2; } }
+
 .form-element-errors {
   float: left;
   width: 100%;
@@ -2411,6 +2442,74 @@ article .next.steps .form-download {
 
 #popup.form-popup .input-checkbox label {
   width: auto; }
+
+#about-you input[type="text"] {
+  width: 15em; }
+#about-you input.postcode {
+  width: 5em; }
+
+article .inner {
+  padding: 0; }
+
+.account-activated h1 {
+  font-size: 48px;
+  margin-top: 0.5em; }
+
+.toolbar {
+  margin: 4em 0 2em 0;
+  overflow: hidden; }
+  .toolbar .tool {
+    float: left;
+    background-color: #f8f8f8;
+    padding: 15px;
+    margin-right: 15px; }
+    .toolbar .tool:last-child {
+      margin-right: 0; }
+    .toolbar .tool__search {
+      width: 60%;
+      position: relative; }
+      .toolbar .tool__search input[type="text"] {
+        float: left;
+        font-family: "nta", Arial, sans-serif;
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 400;
+        text-transform: none;
+        width: 73%;
+        margin-left: 0; }
+        @media (max-width: 640px) {
+          .toolbar .tool__search input[type="text"] {
+            font-size: 20px;
+            line-height: 1.2; } }
+      .toolbar .tool__search .button, .toolbar .tool__search .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__search .ui-priority-primary {
+        float: right;
+        font-family: "nta", Arial, sans-serif;
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 400;
+        text-transform: none;
+        padding-left: 1em;
+        padding-right: 1em; }
+        @media (max-width: 640px) {
+          .toolbar .tool__search .button, .toolbar .tool__search .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__search .ui-priority-primary {
+            font-size: 20px;
+            line-height: 1.2; } }
+    .toolbar .tool__create {
+      float: right;
+      width: 32%;
+      padding: 18px; }
+      .toolbar .tool__create .button, .toolbar .tool__create .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__create .ui-priority-primary {
+        font-family: "nta", Arial, sans-serif;
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 400;
+        text-transform: none;
+        padding-left: 3em;
+        padding-right: 3em; }
+        @media (max-width: 640px) {
+          .toolbar .tool__create .button, .toolbar .tool__create .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__create .ui-priority-primary {
+            font-size: 20px;
+            line-height: 1.2; } }
 
 html {
   background: #fff; }
