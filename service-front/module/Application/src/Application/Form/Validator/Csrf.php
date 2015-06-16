@@ -1,6 +1,8 @@
 <?php
 namespace Application\Form\Validator;
 
+use RuntimeException;
+
 use Zend\Math\Rand;
 use Zend\Session\Container as SessionContainer;
 use Zend\Validator\Csrf as ZFCsrfValidator;
@@ -58,8 +60,17 @@ class Csrf extends ZFCsrfValidator {
      *  - The validator's salt.
      *
      * @return string
+     * @throws RuntimeException if salt is null
      */
     public function getHash(){
+
+        $salt = $this->getSalt();
+
+        if( $salt == null || empty($salt) ){
+            throw new RuntimeException('CSRF salt cannot be null or empty');
+        }
+
+        //---
 
         $session = new SessionContainer('CsrfValidator');
 
@@ -69,7 +80,7 @@ class Csrf extends ZFCsrfValidator {
 
         //---
 
-        return hash( 'sha512', $this->getName() . $session->token . $this->getSalt() );
+        return hash( 'sha512', $this->getName() . $session->token . $salt );
 
     }
 

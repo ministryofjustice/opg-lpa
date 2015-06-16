@@ -74,6 +74,11 @@ return array(
 
     ], // session
 
+    'csrf' => [
+        // Salt used for generating csrf tokens
+        'salt' => 'csrf-secret',
+    ],
+
     'email' => [
 
         'sendgrid' => [
