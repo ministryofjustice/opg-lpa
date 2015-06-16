@@ -4,7 +4,8 @@
      */
     $switcherForm   = $this->switcherForm;
     $switcherForm->setAttribute('class', 'form');
-    $sCsrf          = $switcherForm->get('secret');
+    $sCsrf = $switcherForm->get($switcherForm->csrfName());
+    $sCsrf->setAttributes(['id'=>'secret']);
     $switchTo = $switcherForm->get('switch-to-type');
     $switchTo->setAttributes(['id'=>'switch-to-type', 'class'=>'js-reusable']);
     $switchTo->setOptions([

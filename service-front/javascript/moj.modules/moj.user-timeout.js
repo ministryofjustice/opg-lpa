@@ -14,24 +14,29 @@
 
       var startTime = this.time();
       // check to see if user is logged in
-      $.ajax({
-        url: '/user/is-logged-in',
-        dataType: 'json',
-        timeout: 10000,
-        cache: false,
-        context: this,
-        success: function (response) {
-          if (response.isLoggedIn) {
-            // if logged in, start setTimeout to alert them when timeout is imminent
-            this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+
+      if (false) {
+
+        $.ajax({
+          url: '/user/is-logged-in',
+          dataType: 'json',
+          timeout: 10000,
+          cache: false,
+          context: this,
+          success: function (response) {
+            if (response.isLoggedIn) {
+              // if logged in, start setTimeout to alert them when timeout is imminent
+              this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+            }
           }
-        }
-      });
+        });
+
+      }
     },
 
     warning: function () {
       var html = '',
-          self = this;
+        self = this;
 
       // TODO: get this HTML out of the JS into a template
       // TODO: get someone to look at this copy, I made it up. Clive.
@@ -46,7 +51,7 @@
       html += '</div>';
 
       moj.Modules.Popup.open(html, {
-        ident:  'timeout'
+        ident: 'timeout'
       });
 
       $('#sessionRefresh').on('click', function (e) {
@@ -66,26 +71,30 @@
     refreshSession: function () {
       var startTime = this.time();
 
-      $.ajax({
-        url: '/user/is-logged-in',
-        dataType: 'json',
-        timeout: 10000,
-        cache: false,
-        context: this,
-        success: function (response) {
-          if (response.isLoggedIn) {
-            // if logged in, start another timeout
-            this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
-          } else {
-            // redirect tp login if no longer logged in
+      if (false) {
+
+        $.ajax({
+          url: '/user/is-logged-in',
+          dataType: 'json',
+          timeout: 10000,
+          cache: false,
+          context: this,
+          success: function (response) {
+            if (response.isLoggedIn) {
+              // if logged in, start another timeout
+              this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+            } else {
+              // redirect tp login if no longer logged in
+              window.location = '/login/timeout';
+            }
+          },
+          error: function () {
+            // if any errors occur, attempt logout
             window.location = '/login/timeout';
           }
-        },
-        error: function () {
-          // if any errors occur, attempt logout
-          window.location = '/login/timeout';
-        }
-      });
+        });
+
+      }
     },
 
     time: function () {

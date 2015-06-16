@@ -1669,7 +1669,8 @@ article table {
 .form fieldset {
   margin: 0;
   margin-top: 2em;
-  float: left; }
+  float: left;
+  width: 100%; }
   .form fieldset fieldset {
     margin-top: 0; }
     .form fieldset fieldset legend {
