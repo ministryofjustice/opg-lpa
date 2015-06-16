@@ -5,8 +5,6 @@ namespace Application\Controller\Authenticated;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
-use Application\Form\User\ChangePassword as ChangePasswordForm;
-
 class ChangePasswordController extends AbstractAuthenticatedController
 {
     public function indexAction(){
@@ -15,7 +13,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
 
         //----------------------
 
-        $form = new ChangePasswordForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ChangePassword');
         $form->setAttribute( 'action', $this->url()->fromRoute('user/change-password') );
 
         $error = null;

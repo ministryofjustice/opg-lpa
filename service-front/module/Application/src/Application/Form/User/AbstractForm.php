@@ -5,9 +5,14 @@ use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
 use Application\Form\Validator\Csrf as CsrfValidator;
 
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
+
 use Application\Model\Service\ServiceDataInputInterface;
 
-abstract class AbstractForm extends Form implements ServiceDataInputInterface {
+abstract class AbstractForm extends Form implements ServiceDataInputInterface, ServiceLocatorAwareInterface {
+
+    use ServiceLocatorAwareTrait;
 
     /**
      * @var string The Csrf name user for this form.
@@ -18,6 +23,14 @@ abstract class AbstractForm extends Form implements ServiceDataInputInterface {
 
         parent::__construct( $formName );
 
+
+
+    } // function
+
+    public function init()
+    {
+        parent::init();
+
         $this->setAttribute( 'method', 'post' );
 
         //---
@@ -27,11 +40,11 @@ abstract class AbstractForm extends Form implements ServiceDataInputInterface {
         $this->add( (new Csrf($this->csrfName))->setCsrfValidator(
             new CsrfValidator([
                 'name' => $this->csrfName,
-                'salt' => sha1('Application\Form\User-Salt'),
+                'salt' => $this->getServiceLocator()->getServiceLocator()->get('Config')['csrf']['salt'],
             ])
         ));
 
-    } // function
+    }
 
     /**
      * @return string The CSRF name user for this form.
