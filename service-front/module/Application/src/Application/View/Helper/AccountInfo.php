@@ -15,19 +15,24 @@ class AccountInfo extends AbstractHelper
         if ($auth->hasIdentity()) {
 
             $details = $this->view->getHelperPluginManager()->getServiceLocator()->get('UserDetailsSession');
-
-            if( $details->user->name->first != null && $details->user->name->last != null ){
-                $params['name'] = "{$details->user->name->first} {$details->user->name->last}";
+            
+            // do not show user names and links to account details and dashboard if user is logging in the first time.
+            if($details->user->name !== null) { 
+                
+                if( $details->user->name->first != null && $details->user->name->last != null ){
+                    $params['name'] = "{$details->user->name->first} {$details->user->name->last}";
+                }
+    
+                $params['links'][] = array(
+                    'text' => 'Your details',
+                    'url' => $this->view->url('user/about-you'),
+                );
+                $params['links'][] = array(
+                    'text' => 'Your LPAs',
+                    'url' => $this->view->url('user/dashboard'),
+                );
             }
-
-            $params['links'][] = array(
-                'text' => 'Your details',
-                'url' => $this->view->url('user/about-you'),
-            );
-            $params['links'][] = array(
-                'text' => 'Your LPAs',
-                'url' => $this->view->url('user/dashboard'),
-            );
+            
             $params['links'][] = array(
                 'text' => 'Sign out',
                 'url' => $this->view->url('logout'),
