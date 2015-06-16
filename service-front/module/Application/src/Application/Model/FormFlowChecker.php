@@ -478,6 +478,7 @@ class FormFlowChecker extends StateChecker
             || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasSingleReplacementAttorney())
             || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
             || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() && $this->lpaHasNoReplacementAttorney() && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends() && $this->lpaHasMultipleReplacementAttorneys())
             || ($this->lpaHasMultiplePrimaryAttorneys() && ($this->lpaPrimaryAttorneysMakeDecisionJointly() || $this->lpaPrimaryAttorneysMakeDecisionDepends()) && $this->lpaHasSingleReplacementAttorney())
             || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
             || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() && $this->lpaHasSingleReplacementAttorney() && $this->lpaWhenReplacementAttorneyStepInHasValue())
