@@ -13,7 +13,8 @@ use Zend\Validator\Csrf as ZFCsrfValidator;
  *
  * This means that session writes are not needed after the initial token is generated.
  *
- * This is to help mitigate the false positive Csrf validation errors we were getting.
+ * This is to help mitigate the false positive Csrf validation errors we were getting,
+ * which is caused by slow writes of the session data.
  *
  * Class Csrf
  * @package Application\Form\Validator
@@ -63,7 +64,7 @@ class Csrf extends ZFCsrfValidator {
         $session = new SessionContainer('CsrfValidator');
 
         if( !isset($session->token) ){
-            $session->token = hash( 'sha512', Rand::getBytes(128) );
+            $session->token = hash( 'sha512', Rand::getBytes(128, true) );
         }
 
         //---
