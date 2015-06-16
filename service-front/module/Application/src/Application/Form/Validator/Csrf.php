@@ -28,7 +28,7 @@ class Csrf extends ZFCsrfValidator {
      * @var array
      */
     protected $messageTemplates = array(
-        self::NOT_SAME => "The form submitted did not originate from the expected site",
+        self::NOT_SAME => "Oops! Something went wrong with the information you entered. Please try again.",
     );
 
     /**
