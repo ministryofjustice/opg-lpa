@@ -9,10 +9,12 @@ use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
 use Zend\Form\Element\Radio;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 {
+    use ServiceLocatorAwareTrait;
+
     protected $inputFilter, $serviceLocator, $logger;
 
     /**
@@ -37,10 +39,12 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         $this->add( (new Csrf($this->csrfName))->setCsrfValidator(
             new CsrfValidator([
                 'name' => $this->csrfName,
-                'salt' => sha1('Application\Form\Lps-Salt'),
+                'salt' => $this->getServiceLocator()->getServiceLocator()->get('Config')['csrf']['salt'],
             ])
         ));
-        
+
+        //---
+
         $filter = $this->getInputFilter();
         
         // add elements
@@ -267,17 +271,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
             return $this->convertFormDataForModel($this->getData());
         }
     }
-    
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->serviceLocator = $serviceLocator;
-    }
-    
-    public function getServiceLocator()
-    {
-        return $this->serviceLocator;
-    }
-    
+
     public function getLogger()
     {
         return $this->getServiceLocator()->getServiceLocator()->get('Logger');

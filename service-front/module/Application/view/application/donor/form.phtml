@@ -158,7 +158,7 @@
         'required' => true
     ] ) ?>
 
-    <details>
+    <details<?= empty($otherNames->getValue())?"":" open" ?>>
         <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
         <div class="group">
             <?= $this->partial("partial/form/formElement.phtml", [

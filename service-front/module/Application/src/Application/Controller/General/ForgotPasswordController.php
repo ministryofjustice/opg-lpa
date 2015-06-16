@@ -5,8 +5,6 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 
-use Application\Form\User\ResetPasswordEmail as ResetPasswordEmailForm;
-use Application\Form\User\SetPassword as ResetPasswordPasswordForm;
 use Application\Controller\AbstractBaseController;
 
 class ForgotPasswordController extends AbstractBaseController
@@ -24,8 +22,8 @@ class ForgotPasswordController extends AbstractBaseController
         if( $check !== true ){ return $check; }
 
         //---
-        
-        $form = new ResetPasswordEmailForm();
+
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ResetPasswordEmail');
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password') );
 
         $error = null;
@@ -100,7 +98,7 @@ class ForgotPasswordController extends AbstractBaseController
         //-------------------------------------
         // We have a valid reset token...
 
-        $form = new ResetPasswordPasswordForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\SetPassword');
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ] ) );
 
         $error = null;

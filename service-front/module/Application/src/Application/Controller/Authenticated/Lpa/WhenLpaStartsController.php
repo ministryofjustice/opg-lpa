@@ -39,11 +39,16 @@ class WhenLpaStartsController extends AbstractLpaController
                     $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
                 }
                 
-                $primaryAttorneyDecisions->when = $form->get('when')->getValue();
+                $whenToStart = $form->getData()['when'];
                 
-                // persist data
-                if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
-                    throw new \RuntimeException('API client failed to set when LPA starts for id: '.$lpaId);
+                if($primaryAttorneyDecisions->when !== $whenToStart) {
+                    
+                    $primaryAttorneyDecisions->when = $whenToStart;
+                    
+                    // persist data
+                    if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
+                        throw new \RuntimeException('API client failed to set when LPA starts for id: '.$lpaId);
+                    }
                 }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

@@ -5,8 +5,6 @@ namespace Application\Controller\Authenticated;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
-use Application\Form\User\AboutYou as AboutYouForm;
-
 class AboutYouController extends AbstractAuthenticatedController {
 
     /**
@@ -113,7 +111,7 @@ class AboutYouController extends AbstractAuthenticatedController {
 
         //---
 
-        $form = new AboutYouForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\AboutYou');
 
         $form->setData( $service->load()->flatten() );
 
