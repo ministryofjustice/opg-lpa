@@ -76,7 +76,7 @@ return array(
 
     'csrf' => [
         // Salt used for generating csrf tokens
-        'salt' => 'csrf-secret',
+        'salt' => null,
     ],
 
     'email' => [
