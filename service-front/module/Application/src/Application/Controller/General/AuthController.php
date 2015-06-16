@@ -136,7 +136,7 @@ class AuthController extends AbstractBaseController {
      */
     private function getLoginForm(){
 
-        $form = new LoginForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\Login');
         $form->setAttribute( 'action', $this->url()->fromRoute('login') );
 
         return $form;
