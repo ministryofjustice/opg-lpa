@@ -1,6 +1,8 @@
 <?php
 namespace Application\Form\Validator;
 
+use RuntimeException;
+
 use Zend\Math\Rand;
 use Zend\Session\Container as SessionContainer;
 use Zend\Validator\Csrf as ZFCsrfValidator;
@@ -13,7 +15,8 @@ use Zend\Validator\Csrf as ZFCsrfValidator;
  *
  * This means that session writes are not needed after the initial token is generated.
  *
- * This is to help mitigate the false positive Csrf validation errors we were getting.
+ * This is to help mitigate the false positive Csrf validation errors we were getting,
+ * which is caused by slow writes of the session data.
  *
  * Class Csrf
  * @package Application\Form\Validator
@@ -57,18 +60,27 @@ class Csrf extends ZFCsrfValidator {
      *  - The validator's salt.
      *
      * @return string
+     * @throws RuntimeException if salt is null
      */
     public function getHash(){
 
-        $session = new SessionContainer('CsrfValidator');
+        $salt = $this->getSalt();
 
-        if( !isset($session->token) ){
-            $session->token = hash( 'sha512', Rand::getBytes(128) );
+        if( $salt == null || empty($salt) ){
+            throw new RuntimeException('CSRF salt cannot be null or empty');
         }
 
         //---
 
-        return hash( 'sha512', $this->getName() . $session->token . $this->getSalt() );
+        $session = new SessionContainer('CsrfValidator');
+
+        if( !isset($session->token) ){
+            $session->token = hash( 'sha512', Rand::getBytes(128, true) );
+        }
+
+        //---
+
+        return hash( 'sha512', $this->getName() . $session->token . $salt );
 
     }
 
