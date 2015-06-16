@@ -89,7 +89,7 @@
             </header>
             <div id="wrapper">
             
-                <section id="content" role="main" class="group <?php  ?>">
+                <section id="content" role="main" class="group <?= str_replace('/', ' ', $this->routeName()) ?>">
                     <?= $this->accountInfo(); ?>
                     <?= $this->pageHeaders(); ?>
                                 
