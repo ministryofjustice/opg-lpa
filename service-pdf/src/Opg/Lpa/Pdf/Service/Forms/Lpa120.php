@@ -122,6 +122,13 @@ class Lpa120 extends AbstractForm
         if(($applicant->address->address3!=null)&&($applicant->address->address3!='')) $address[] = $applicant->address->address3;
         if(($applicant->address->postcode!=null)&&($applicant->address->postcode!='')) $address[] = $applicant->address->postcode;
         
+        if($applicant->name instanceof Name) {
+            $applicantNameTitle = strtolower($applicant->name->title);
+            if(!in_array($applicantNameTitle, ['mr','mrs','miss','ms'])) {
+                $applicantNameTitle = 'other';
+            }
+        }
+        
         $mappings = array(
                 'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
                 'donor-address'     => "\n".implode(', ', array(
@@ -135,7 +142,8 @@ class Lpa120 extends AbstractForm
                 'is-repeat-application'     => ($this->lpa->repeatCaseNumber===null)?null:self::CHECK_BOX_ON,
                 'case-number'               => $this->lpa->repeatCaseNumber,
                 'applicant-type'             => $applicantType,
-                'applicant-name-title'  => ($applicant->name instanceof Name)?strtolower($applicant->name->title):null,
+                'applicant-name-title'  => $applicantNameTitle,
+                'applicant-name-title-other'  => ($applicantNameTitle=='other')?$applicant->name->title:null,
                 'applicant-name-first'  => ($applicant->name instanceof Name)?$applicant->name->first:null,
                 'applicant-name-last'   => ($applicant->name instanceof Name)?$applicant->name->last:$applicant->name,
                 'applicant-address'     => "\n".implode(', ', $address),
