@@ -1,82 +1,130 @@
-<div class="page-intro">
-<p>This tool will help you to create a <a class="js-guidance" href="/guidance/#topic-lpa-basics" data-journey-click="stageprompt.lpa:help:lpa-basics">lasting power of attorney</a> (LPA) that can be registered in England and Wales. It will also support you in signing and applying to register an LPA with the Office of the Public Guardian (OPG).</p>
+<div class="paragraph-block">
+    <p>This online service will help you to create a <a class="js-guidance" href="/guidance/#topic-lpa-basics"
+                                                        data-journey-click="stageprompt.lpa:help:lpa-basics">lasting
+            power of attorney</a> (LPA) for England and Wales.</p>
 
-<p>Remember, an LPA must be registered before it can be used.</p>
+    <p>It will also guide you through signing your LPA and registering it with the Office of the Public Guardian.
+        Remember, you have to register an LPA before you can use it.</p>
 
-<?= $this->systemMessage() ?>
+    <?= $this->systemMessage() ?>
 
-<p class="homepage-cta"><strong>Follow the steps below, or <a href="<?= $this->url('login') ?>">Sign in</a></strong></p>
 </div>
 
 <div id="homepageflag" style="display: none">&nbsp;</div>
 
-<ol class="make-LPA steps" aria-role="list">
-  <li>
-    <img src="<?= $this->staticAssetPath('/assets/v1/images/pictogram-create-lpa.png') ?>" alt="">
-    <p class="step-title"><strong>Create an LPA</strong></p>
-    <p>Use this digital tool to fill in the LPA form. When it’s complete you can print an LPA document.</p>
-    <?php if(!$this->identity()) : ?>
-        <p><a class="create-lpa button" href="<?= $this->url('register') ?>" role="button">Create an LPA now</a></p>
-    <?php else: ?>
-    <p><a class="create-lpa button" href="/forward/newlpa" role="button">Create an LPA now</a></p>
-    <?php endif; ?>
-  </li>
-  <li>
-    <img src="<?= $this->staticAssetPath('/assets/v1/images/pictogram-sign-lpa.png') ?>" alt="">
-    <p class="step-title"><strong>Sign the LPA</strong></p>
-    <p>Several people must sign the LPA document in a set order. We’ll explain who needs to sign and when.</p>
-    <p><a class="js-guidance" href="/guidance/#topic-signing-the-lpa" data-journey-click="stageprompt.lpa:help:signing-the-lpa">More about signing</a></p>
-  </li>
-  <li>
-    <img src="<?= $this->staticAssetPath('/assets/v1/images/pictogram-register-lpa.png') ?>" alt="">
-    <p class="step-title"><strong>Register the LPA</strong></p>
-    <p>When you’re ready, sign back in here to complete a registration form and pay the £<!-- @todo --> fee. Then post the LPA and registration form to OPG.</p>
-    <p><a class="js-guidance" href="/guidance/#topic-registering-the-lpa" data-journey-click="stageprompt.lpa:help:registering-the-lpa">More about registering</a></p>
-  </li>
-  <li class="what-next">
-    <img src="<?= $this->staticAssetPath('/assets/v1/images/pictogram-receive-lpa.png') ?>" alt="">
-    <p class="step-title"><strong>Receive your LPA</strong></p>
-    <p><p>OPG will return your registered and stamped LPA – ready to use when you need it.</p></p>
-  </li>
-</ol>
 
-<hr>
+<ul class="lpa-access steps" aria-role="list">
+    <li>
+        <div class="left">
+            <p class="step-title"><strong>I want to create an LPA</strong></p>
+
+            <p>New to the LPA process? Begin the guided steps for creating</p>
+        </div>
+        <div class="right">
+            <?php if (!$this->identity()) : ?>
+                <p><a class="create-lpa button" href="<?= $this->url('register') ?>" role="button">Create an account
+                        now</a></p>
+            <?php else: ?>
+                <p><a class="create-lpa button" href="/forward/newlpa" role="button">Create an LPA now</a></p>
+            <?php endif; ?>
+            <details>
+                <summary
+                    data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form">
+                    What you'll need to complete the form
+                </summary>
+                <ul class="list-complete-form">
+                    <li>Name, address abd date of birth of the <a class="js-guidance" href="/guide#topic-donor"
+                                                                  data-journey="stageprompt.lpa:help:donor">donor</a>
+                        (the person the LPA is for)
+                    </li>
+                    <li>Names, addresses and dates of birth of all <a class="js-guidance" href="/guide#topic-attorneys"
+                                                                      data-journey="stageprompt.lpa:help:attorneys">attorneys</a>
+                    </li>
+                    <li>Names and addresses of <a class="js-guidance" href="/guide#topic-certificate-providers"
+                                                  data-journey="stageprompt.lpa:help:certificate-providers">certificate
+                            provider(s)</a></li>
+                    <li>Names and addresses of <a class="js-guidance" href="/guide#topic-people-to-be-told"
+                                                  data-journey="stageprompt.lpa:help:people-to-be-told">'people to be
+                            told'</a></li>
+                </ul>
+            </details>
+        </div>
+    </li>
+    <li>
+        <div class="left">
+            <p class="step-title"><strong>I already have an LPA account</strong></p>
+
+            <p>Sign in to access your existing account.</p>
+        </div>
+
+        <div class="right">
+            <p><a class="create-lpa button" href="<?= $this->url('login') ?>" role="button">Sign in</a></p>
+        </div>
+    </li>
+</ul>
 
 <h2>Before you begin</h2>
 
-<p>If you’re making your first LPA, there a few things you need to know and to think about. These help topics are a good place to start:</p>
-<p><a class="js-guidance" href="/guidance/#topic-lpa-basics" data-journey-click="stageprompt.lpa:help:lpa-basics">LPA basics</a></p>
-<p><a class="js-guidance" href="/guidance/#topic-about-this-tool" data-journey-click="stageprompt.lpa:help:about-this-tool">About this tool</a></p>
+<div class="paragraph-block--end">
+    <p>If you’re making your first LPA, there a few things you need to think about. These help topics and quick
+        questions are a good place to start.</p>
 
-<h2>Quick questions</h2>
+    <p>You don't have to complete the LPA form in one go; you can save your details and complete it later. You'll find
+        lots more guidance as you progress through the LA form.</p>
+</div>
+<p><a class="js-guidance" href="/guidance/#topic-lpa-basics" data-journey-click="stageprompt.lpa:help:lpa-basics">LPA
+        basics</a></p>
 
-<p>Here are some answers to common questions. You’ll find lots more guidance on the decisions you need to make, and the information you need to add, as you progress through the LPA tool.</p>
+<p><a class="js-guidance" href="/guidance/#topic-about-this-tool"
+      data-journey-click="stageprompt.lpa:help:about-this-tool">About this online service</a></p>
 
 <details>
-  <summary data-journey-click="stageprompt.lpa:help.inline:/:how-much-does-it-cost-to-apply-to-register-an-lpa">How much does it cost to apply to register an LPA?</summary>
-  <p>There's a £<!-- @todo --> application fee to register an LPA, paid by or on behalf of the donor – that’s the person who’s making the LPA. If the donor has an income below £12,000, or gets certain benefits, they might qualify for a lower fee, or the fee might be waived altogether.</p>
-  <p><a class="js-guidance" href="/guidance/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Fees and reductions</a></p>
-  <p>Remember, an LPA must be registered before it can be used.</p>
+    <summary data-journey-click="stageprompt.lpa:help.inline:/:how-much-does-it-cost-to-apply-to-register-an-lpa">How
+        much does it cost to apply to register an LPA?
+    </summary>
+    <p>There's a £<!-- @todo --> application fee to register an LPA, paid by or on behalf of the donor – that’s the
+        person who’s making the LPA. If the donor has an income below £12,000, or gets certain benefits, they might
+        qualify for a lower fee, or the fee might be waived altogether.</p>
+
+    <p><a class="js-guidance" href="/guidance/#topic-fees-and-reductions"
+          data-journey-click="stageprompt.lpa:help:fees-and-reductions">Fees and reductions</a></p>
+
+    <p>Remember, an LPA must be registered before it can be used.</p>
 </details>
 
 <details>
-  <summary data-journey-click="stageprompt.lpa:help.inline:/:how-long-does-it-take-to-register-an-lpa">How long does it take to register an LPA?</summary>
+    <summary data-journey-click="stageprompt.lpa:help.inline:/:how-long-does-it-take-to-register-an-lpa">How long does
+        it take to register an LPA?
+    </summary>
 
-  <p>After you send in your application, it can be 8 to 10 weeks before you receive the registered LPA. 
-<p>Some of this is processing time, when we check that there are no mistakes in the LPA, including anything that would make it invalid or unworkable. We'll get in touch if there are problems.</p> 
-<p>The time also includes a four-week waiting period. This is a safeguard required by law and allows people involved in the LPA to raise any concerns they might have.</p>
-  <p>It’s a good idea to apply to register an LPA sooner rather than later.</p>
-  <p><a class="js-guidance" href="/guidance/#topic-registering-the-lpa" data-journey-click="stageprompt.lpa:help:registering-the-lpa">Registering an LPA</a></p>
+    <p>After you send in your application, it can be 8 to 10 weeks before you receive the registered LPA.
+
+    <p>Some of this is processing time, when we check that there are no mistakes in the LPA, including anything that
+        would make it invalid or unworkable. We'll get in touch if there are problems.</p>
+
+    <p>The time also includes a four-week waiting period. This is a safeguard required by law and allows people involved
+        in the LPA to raise any concerns they might have.</p>
+
+    <p>It’s a good idea to apply to register an LPA sooner rather than later.</p>
+
+    <p><a class="js-guidance" href="/guidance/#topic-registering-the-lpa"
+          data-journey-click="stageprompt.lpa:help:registering-the-lpa">Registering an LPA</a></p>
 </details>
 
 <details>
-  <summary data-journey-click="stageprompt.lpa:help.inline:/:can-i-do-it-all-using-this-tool">Can I do it all using this tool?</summary>
+    <summary data-journey-click="stageprompt.lpa:help.inline:/:can-i-do-it-all-using-this-tool">Can I do it all using
+        this tool?
+    </summary>
 
-<p>Not quite. This digital tool will help you make an LPA and support you in applying to register it. You’ll need to print a copy though, and get this signed, as well as completing some of the registration tasks offline. Then you’ll need to post the LPA to OPG for registration.</p>
+    <p>Not quite. This digital tool will help you make an LPA and support you in applying to register it. You’ll need to
+        print a copy though, and get this signed, as well as completing some of the registration tasks offline. Then
+        you’ll need to post the LPA to OPG for registration.</p>
 
-<p>We’ll explain what you need to do as you complete each step.</p>
+    <p>We’ll explain what you need to do as you complete each step.</p>
 
-<p>You need a PDF reader like Adobe Reader (<a href='http://www.adobe.com/uk/products/reader.html' target='_blank'>http://www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.</p>
+    <p>You need a PDF reader like Adobe Reader (<a href='http://www.adobe.com/uk/products/reader.html' target='_blank'>http://www.adobe.com/uk/products/reader.html</a>)
+        to view and print the LPA forms.</p>
 
-<p><a class="js-guidance" href="/guidance/#topic-about-this-tool" data-journey-click="stageprompt.lpa:help:about-this-tool">About this tool</a></p>
+    <p><a class="js-guidance" href="/guidance/#topic-about-this-tool"
+          data-journey-click="stageprompt.lpa:help:about-this-tool">About this tool</a></p>
 </details>
