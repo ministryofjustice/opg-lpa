@@ -9,7 +9,6 @@ use Zend\Form\Element\Checkbox;
 use Zend\Form\FormInterface;
 use Zend\Form\Element\Radio;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface

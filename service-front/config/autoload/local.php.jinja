@@ -17,6 +17,11 @@ return array(
 
     ], // session
 
+    'csrf' => [
+        // Salt used for generating csrf tokens
+        'salt' => '{{pillar['csrf']['salt']}}'
+    ],
+
     'admin' => [
         'redis' => [
             'server' => [

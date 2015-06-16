@@ -4,8 +4,6 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
-use Application\Form\User\Registration as RegistrationForm;
-
 class RegisterController extends AbstractBaseController {
 
     protected $contentHeader = 'confirm-partial.phtml';
@@ -22,7 +20,7 @@ class RegisterController extends AbstractBaseController {
 
         //---
 
-        $form = new RegistrationForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\Registration');
         $form->setAttribute( 'action', $this->url()->fromRoute('register') );
 
         $error = null;
