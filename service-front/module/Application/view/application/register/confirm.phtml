@@ -1,23 +1,34 @@
+<div class="account-activated">
+    
+    <div class="opg-padded">
 
-<div class="opg-padded">
+        <h1>Account activated</h1>
 
-    <? /* Show the same error for both situations. */ ?>
-    <? if ( isset($this->error) ) { ?>
 
-        <p>Sorry, there was a problem activating your account. This is probably because you created the account more than 24 hours ago.</p>
+        <? /* Show the same error for both situations. */ ?>
+        <? if (isset($this->error)) { ?>
 
-        <p>Accounts must be activated within 24 hours of their creation. Those that aren't activated are automatically deleted.</p>
+            <p>Sorry, there was a problem activating your account. This is probably because you created the account more
+                than 24 hours ago.</p>
 
-        <p>You should return to <a href="<?= $this->url('register') ?>">the registration page</a> and create a new account, which you can then activate.</p>
+            <p>Accounts must be activated within 24 hours of their creation. Those that aren't activated are
+                automatically deleted.</p>
 
-        <p>If this doesn't work and you need further assistance, send an email to <a href="mailto:customerservices@PublicGuardian.gsi.gov.uk">customerservices@PublicGuardian.gsi.gov.uk</a> or call 0300 456 0300.</p>
+            <p>You should return to <a href="<?= $this->url('register') ?>">the registration page</a> and create a new
+                account, which you can then activate.</p>
 
-    <? } else { ?>
+            <p>If this doesn't work and you need further assistance, send an email to <a
+                    href="mailto:customerservices@PublicGuardian.gsi.gov.uk">customerservices@PublicGuardian.gsi.gov.uk</a>
+                or call 0300 456 0300.</p>
 
-        <p>Thank you. Your account has now been activated.</p>
+        <? } else { ?>
 
-        <p>Please <a href="<?= $this->url('login') ?>">sign in</a></p>
+            <p>Thank you. Your account has now been activated.</p>
 
-    <? } ?>
+            <p>Please <a href="<?= $this->url('login') ?>">sign in</a></p>
+
+        <? } ?>
+
+    </div>
 
 </div>

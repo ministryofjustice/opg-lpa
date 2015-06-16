@@ -11,3 +11,19 @@
 
   }
 }
+
+#about-you {
+
+  input {
+
+    &[type="text"] {
+      width: 15em;
+    }
+
+    &.postcode {
+      width: 5em;
+    }
+
+  }
+
+}

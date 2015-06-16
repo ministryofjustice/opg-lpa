@@ -3,11 +3,11 @@
 // ===========================================================
 
 // A more minimal table style
-article table{
+article table {
   // Reset default table styles
   margin: 0;
   width: auto;
-  td, th{
+  td, th {
     border: 0 solid;
     background-color: transparent;
     padding: 0;
@@ -16,14 +16,14 @@ article table{
   // New table styles
   margin-bottom: 2em;
   width: 100%;
-  td, th{
+  td, th {
     border-bottom: 1px solid $border-colour;
     padding: 1em 0 0.5em 0;
   }
 }
+
 .lpa-list {
-  .lpa-actions{
-    width: 15em;
+  .lpa-actions {
     float: right;
     a.button,
     a.button-warning {
@@ -37,11 +37,9 @@ article table{
     }
   }
   .button,
-  .button-warning{
+  .button-warning {
     margin-bottom: 0.25em;
     margin-top: -0.3em;
     top: 0;
   }
 }
-
-
