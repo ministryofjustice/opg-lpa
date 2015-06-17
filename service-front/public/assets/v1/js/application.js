@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-06-16 */
+/*! opg-lpa-2 2015-06-17 */
 /*!
 
  handlebars v1.1.2
@@ -4217,7 +4217,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             actionGroup = $('.group.action'),
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
-            $nameGroups = $('input[name^="name"]', $form).parents('.group'),
+            $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
             duplicateName = null,
             loop,
             item;
