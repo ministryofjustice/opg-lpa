@@ -15,7 +15,23 @@ $form->prepare();
 
 		<p>The people you add here step in if your original attorney can no longer act.</p>
 		<p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
-
+        
+		<?php if($this->lpa->document->primaryAttorneyDecisions instanceof \Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions):?>
+	        <?php if($this->lpa->document->primaryAttorneyDecisions->how == \Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY):?>
+	        <div class="info-notice application-notice">
+				<h3>You appointed your original attorneys jointly</h3>
+				<p>This means if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorneys.</p>
+				<p>If you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can no longer be used.</p>
+			</div>
+			<?php elseif($this->lpa->document->primaryAttorneyDecisions->how == \Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS):?>
+			<div class="info-notice application-notice">
+				<h3>You appointed your original attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
+				<p>This means the people you add here will step in once the FIRST of your attorneys can no longer act.<p>
+				<p>The rest of your original attorneys will no longer be able to make the decisions that you specified must be made jointly.</p>
+			</div>
+			<?php endif;?>
+        <?php endif;?>
+		
 		<p><a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
 	</div>
 	
