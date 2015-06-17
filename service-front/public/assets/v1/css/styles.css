@@ -2514,6 +2514,11 @@ article .next.steps .form-download {
 #about-you input.postcode {
   width: 5em; }
 
+.lpa.edit input[type="text"], .lpa.add input[type="text"] {
+  width: 15em; }
+.lpa.edit input.postcode, .lpa.add input.postcode {
+  width: 5em; }
+
 #content.home header.page-header hgroup {
   padding-left: 0;
   padding-top: 5em;
