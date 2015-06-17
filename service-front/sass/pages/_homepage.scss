@@ -1,20 +1,18 @@
-
-
 // Beta badge
-.page-header .beta{
-    display: inline-block;
-    background: $beta-colour;
+.page-header .beta {
+  display: inline-block;
+  background: $beta-colour;
 
-    color: #fff;
-    @include bold-16;
-    line-height: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-decoration: none;
+  color: #fff;
+  @include bold-16;
+  line-height: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
 
-    padding: 4px 5px 0px 6px;
-    margin-left: 1em;
-    vertical-align: middle;
+  padding: 4px 5px 0px 6px;
+  margin-left: 1em;
+  vertical-align: middle;
 }
 
 header.page-header hgroup h1 span {
@@ -22,46 +20,90 @@ header.page-header hgroup h1 span {
   display: block;
   margin-bottom: 0.25em;
   text-shadow: none;
-  color: $secondary-text-colour ;
+  color: $secondary-text-colour;
 }
 
-
-.homepage-cta{
+.homepage-cta {
   margin: 2.5em 0;
 }
 
-.page-intro{
-  p{
+.paragraph-block {
+  p {
     @include core-24;
   }
+
+  &--end {
+    p {
+      @include core-19;
+    }
+  }
+
 }
 
-.create-lpa.button{
+.create-lpa.button {
   @include core-24;
 }
 
-article .make-LPA.steps {
+article .lpa-access.steps {
+  @include core-24;
+
+  border-top: 1px solid $grey-2;
+  border-bottom: 1px solid $grey-2;
   margin-top: 2em;
-  li{
+  margin-bottom: 3em;
+  list-style: none;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  li {
+    border-bottom: 1px solid $grey-2;
     margin-bottom: 0;
+    padding: 15px 0 15px 0;
+    position: relative;
+    overflow: hidden;
+
+    &:last-of-type {
+      border-bottom: 0;
+    }
+
+    .right {
+      float: right;
+      width: 50%;
+    }
+
+    .left {
+      float: left;
+      width: 50%;
+    }
+
+    details summary {
+      @include bold-24();
+    }
+
+    .button {
+      padding-left: 1.5em;
+      padding-right: 1.5em;
+    }
+
   }
-  .what-next{
-    background-image: none;
-    padding-bottom: 2em;
-  }
-  p{
+  p {
     margin: 0.75em 0;
+    @include core-24;
+    padding-right: 2em;
   }
-  .step-title{
+  .step-title {
     margin: 0 0 0.75em 0;
     @include core-24;
   }
-  img{
-    width: 12em;
-    float: right;
-    margin: -1em 0 -1em 6em;
-    @include media(mobile) {
-      display: none;
+
+  .list-complete-form {
+    li {
+      @include core-24;
+      border: 0;
+      text-indent: -0.5em;
+      padding-left: 0.5em;
+      padding-bottom: 0;
     }
   }
+
 }

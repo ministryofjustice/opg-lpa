@@ -12,10 +12,6 @@ class PageHeaders extends AbstractHelper
         if ($ourView->pageTitle) {
             echo '<header class="page-header group"><hgroup>';
 
-            if ($this->view->routeName() == 'home') {
-                echo '<h1><span>Service</span></h1>';
-            }
-            
             echo '<h1>' . $ourView->pageTitle . '</h1>';
             
             echo '</hgroup></header>';

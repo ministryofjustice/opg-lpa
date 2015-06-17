@@ -4229,7 +4229,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
 
               // Check for duplicate names
-              if (actors && actors.names && actors.names.length) {
+              if ((typeof actors !== 'undefined') && actors.names && actors.names.length) {
                 for (loop = 0; loop < actors.names.length; loop++) {
                   item = actors.names[loop];
                   if ($firstName.val().toLocaleLowerCase() === item.firstname.toLocaleLowerCase()) {
