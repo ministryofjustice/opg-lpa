@@ -1,5 +1,13 @@
 <?php
-    $form = $this->formErrorTextExchange($this->form, []);
+    $form = $this->formErrorTextExchange($this->form, [
+            'isRepeatApplication' => [
+                    "Value is required and can't be empty" => 'Please choose Yes or No',
+            ],
+            'repeatCaseNumber' => [
+                    "Value is required and can't be empty" => "If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian.",
+            ],
+    ]);
+    
     $form->setAttribute('class', 'form');
     $csrf        = $form->get($form->csrfName());
     
@@ -70,11 +78,12 @@
             <div class="emphasised option group">
                 <?= $formLabel->openTag($repeatCaseNumber) . $repeatCaseNumber->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($repeatCaseNumber)?>
-                <p>Your case number is in the letter that came with your returned LPA application.</p>
-                <p>By click on the Save and continue button, you confirm that the Office of the Public Guardian has told you that you can apply to make a repeat application for £55 within 3 months.</p>
                 <p class='form-element-errors'>
                     <?= $this->formElementErrors($repeatCaseNumber) ?>
                 </p>
+                
+                <p>Your case number is in the letter that came with your returned LPA application.</p>
+                <p>By click on the Save and continue button, you confirm that the Office of the Public Guardian has told you that you can apply to make a repeat application for £55 within 3 months.</p>
             </div>
             
             <div class="accordion-actions">
