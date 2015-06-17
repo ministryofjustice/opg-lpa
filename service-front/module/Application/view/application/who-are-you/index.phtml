@@ -9,7 +9,7 @@ if(isset($this->form)) {
     
     $csrf           = $form->get($form->csrfName());
     
-    $form->setAttribute('class', 'form');
+    $form->setAttributes(['class'=>'form', 'id'=>'WhoAreYou']);
     
     $who            = $form->get('who');
     
