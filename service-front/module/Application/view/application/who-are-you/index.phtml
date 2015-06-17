@@ -9,7 +9,7 @@ if(isset($this->form)) {
     
     $csrf           = $form->get($form->csrfName());
     
-    $form->setAttribute('class', 'form');
+    $form->setAttributes(['class'=>'form', 'id'=>'WhoAreYou']);
     
     $who            = $form->get('who');
     
@@ -215,7 +215,7 @@ if(isset($this->form)) {
                     <?= $this->formInput($whoOptions['professional'])  . $whoOptions['professional']->getOption('label'); ?>
                 <?= $formLabel->closeTag(); ?>
                 
-                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em;">
+                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em; display:none;">
                     <?= $formLabel->openTag($professionalOptions['solicitor']); ?>
                         <?= $this->formInput($professionalOptions['solicitor'])  . $professionalOptions['solicitor']->getOption('label'); ?>
                     <?= $formLabel->closeTag(); ?>
@@ -242,7 +242,7 @@ if(isset($this->form)) {
                     <?= $this->formInput($whoOptions['digital-partner'])  . $whoOptions['digital-partner']->getOption('label'); ?>
                 <?= $formLabel->closeTag(); ?>
                 
-                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em;">
+                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em; display:none;">
                     <?= $formLabel->openTag($digitalPartnerOptions['Age-Uk']); ?>
                         <?= $this->formInput($digitalPartnerOptions['Age-Uk'])  . $digitalPartnerOptions['Age-Uk']->getOption('label'); ?>
                     <?= $formLabel->closeTag(); ?>
@@ -262,7 +262,7 @@ if(isset($this->form)) {
                     <?= $this->formInput($whoOptions['organisation'])  . $whoOptions['organisation']->getOption('label'); ?>
                 <?= $formLabel->closeTag(); ?>
                 
-                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em;">
+                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em; display:none;">
                     <div>
                         <?= $formLabel->openTag($organisation). $organisation->getOption('label').$formLabel->closeTag(); ?>
                         <?= $this->formText($organisation) ?>
