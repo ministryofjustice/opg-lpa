@@ -205,20 +205,6 @@ $(document).ready(function () {
         }
     }).change();
 
-
-  // Make button text reflect chosen payment option
-
-  $('#claimBenefits, #payByCheque, #receiveUniversalCredit').change(function(){
-      if($('#claimBenefits, #payByCheque, #receiveUniversalCredit').is(':checked')) {
-          $('#form-submit').val('Proceed');
-          $('#contact-email').hide();
-      } else {
-          $('#form-submit').val('Proceed to payment');
-          $('#contact-email').show();
-      }
-  }).change();
-
-
   $('#load-pf').click(function(){
     $.get('/service/loadpf');
   });
