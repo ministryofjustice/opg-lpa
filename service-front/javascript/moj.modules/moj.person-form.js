@@ -101,7 +101,7 @@
             actionGroup = $('.group.action'),
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
-            $nameGroups = $('input[name^="name"]', $form).parents('.group'),
+            $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
             duplicateName = null,
             loop,
             item;
