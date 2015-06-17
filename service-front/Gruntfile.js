@@ -46,6 +46,7 @@ module.exports = function (grunt) {
           'javascript/moj.modules/moj.validation.js',
           'javascript/moj.modules/moj.user-timeout.js',
           'javascript/moj.modules/moj.sticky-nav.js',
+          'javascript/moj.modules/moj.repeat-application.js',
           'javascript/main.js',
           'javascript/who-are-you.js',
           'javascript/form.js'
@@ -96,20 +97,22 @@ module.exports = function (grunt) {
     // compile sass files
     sass: {
       dist: {
-        files: [{
-          expand: true,
-          cwd: 'sass',
-          src: ['*.scss'],
-          dest: 'public/assets/v1/css',
-          ext: '.css'
-        }]
+        files: [
+          {
+            expand: true,
+            cwd: 'sass',
+            src: ['*.scss'],
+            dest: 'public/assets/v1/css',
+            ext: '.css'
+          }
+        ]
       }
     },
 
     // lint js files
     jshint: {
       options: {
-        jshintrc : '.jshintrc',
+        jshintrc: '.jshintrc',
         ignores: [
           // ignore templates
           '<%= handlebars.compile.dest %>',
@@ -176,7 +179,7 @@ module.exports = function (grunt) {
       },
       scripts: {
         files: ['javascript/**/*.js', 'test/**', '!<%= handlebars.compile.dest %>'],
-        tasks: ['jshint', 'concat:dist']
+        tasks: ['concat:dist']
       }
     }
   });
