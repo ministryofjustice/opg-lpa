@@ -1,0 +1,35 @@
+#content.lpa.created {
+
+  .progress-indicator {
+    display: none;
+  }
+
+  #global-nav {
+    border-bottom: 0;
+  }
+
+  .LPA-details {
+    display: none;
+  }
+
+  .paragraph-block {
+    padding: 0 10em 0 2em;
+  }
+
+  .next-step-section {
+    margin: 4em 2em 3em 2em;
+
+    p {
+      margin-bottom: 2em;
+    }
+
+    a {
+      @include core-24();
+      padding-left: 1.5em;
+      padding-right: 1.5em;
+
+    }
+
+  }
+
+}
