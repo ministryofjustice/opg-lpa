@@ -48,22 +48,6 @@ class WhoAreYouForm extends AbstractForm
                             ],
                     ],
             ],
-            'digitalPartner' => [
-                    'type' => 'Zend\Form\Element\Radio',
-                    'options' => [
-                            'value_options' => [
-                                    'Age-Uk'      => [
-                                            'value' => 'Age-Uk',
-                                    ],
-                                    'Alzheimer-Society'      => [
-                                            'value' => 'Alzheimer-Society',
-                                    ],
-                                    'Citizens-Advice-Bureau'      => [
-                                            'value' => 'Citizens-Advice-Bureau',
-                                    ],
-                            ],
-                    ],
-            ],
             'professional-other' => [
                     'type' => 'Text'
             ],
@@ -126,10 +110,6 @@ class WhoAreYouForm extends AbstractForm
                         $modelData['qualifier'] = null;
                     }
                     break;
-                case 'digitalPartner' :
-                    $modelData['subquestion'] = $formData['digitalPartner'];
-                    $modelData['qualifier'] = null;
-                    break;
                 case 'organisation' :
                     $modelData['subquestion'] = null;
                     $modelData['qualifier'] = $formData['organisation'];
@@ -157,9 +137,6 @@ class WhoAreYouForm extends AbstractForm
                 switch($context['who']) {
                     case 'professional':
                         $fieldName = 'professional';
-                        break;
-                    case 'digitalPartner' :
-                        $fieldName = 'digitalPartner';
                         break;
                     case 'organisation' :
                         break;
