@@ -44,13 +44,14 @@ class CertificateProviderController extends AbstractLpaActorController
     public function addAction()
     {
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         if( $this->getLpa()->document->certificateProvider instanceof CertificateProvider ) {
             return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id'=>$lpaId]);
         }
         
-        $viewModel = new ViewModel();
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        
         $viewModel->setTemplate('application/certificate-provider/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
@@ -58,7 +59,7 @@ class CertificateProviderController extends AbstractLpaActorController
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
         
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         
         $seedSelection = $this->seedDataSelector($viewModel, $form);
         if($seedSelection instanceof JsonModel) {
@@ -84,7 +85,7 @@ class CertificateProviderController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
                     }
                 }
             }

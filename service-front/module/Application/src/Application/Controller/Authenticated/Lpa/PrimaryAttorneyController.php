@@ -67,17 +67,18 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     
     public function addAction()
     {
-        $viewModel = new ViewModel();
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        
         $viewModel->setTemplate('application/primary-attorney/person-form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
         
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         
         $seedSelection = $this->seedDataSelector($viewModel, $form);
         if($seedSelection instanceof JsonModel) {
@@ -107,7 +108,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -261,14 +262,15 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     
     public function addTrustAction()
     {
-        $viewModel = new ViewModel();
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
         $viewModel->setTemplate('application/primary-attorney/trust-form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
         
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         // redirect to add human attorney if lpa is of hw type or a trust was added already.
         if( ($this->getLpa()->document->type == Document::LPA_TYPE_HW) || $this->hasTrust() ) {
@@ -276,7 +278,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         
         $seedSelection = $this->seedDataSelector($viewModel, $form, true);
         if($seedSelection instanceof JsonModel) {
@@ -305,7 +307,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
                     }
                 }
             }
