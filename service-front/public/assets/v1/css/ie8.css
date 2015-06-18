@@ -2518,6 +2518,50 @@ article .next.steps .form-download {
         font-size: 20px;
         line-height: 1.2; } }
 
+#popup.dialog-confirmation {
+  width: 65%; }
+  #popup.dialog-confirmation .close {
+    display: none; }
+  #popup.dialog-confirmation .dialog__container {
+    padding: 15px 30px 15px 15px;
+    overflow: hidden; }
+  #popup.dialog-confirmation .dialog__title-block {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 48px;
+    line-height: 1.04167;
+    font-weight: 400;
+    text-transform: none; }
+    @media (max-width: 640px) {
+      #popup.dialog-confirmation .dialog__title-block {
+        font-size: 32px;
+        line-height: 1.09375; } }
+  #popup.dialog-confirmation .dialog__message-block {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 19px;
+    line-height: 1.31579;
+    font-weight: 400;
+    text-transform: none;
+    margin-bottom: 2em; }
+    @media (max-width: 640px) {
+      #popup.dialog-confirmation .dialog__message-block {
+        font-size: 16px;
+        line-height: 1.25; } }
+  #popup.dialog-confirmation .dialog__button-bar {
+    position: relative;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 400;
+    text-transform: none; }
+    @media (max-width: 640px) {
+      #popup.dialog-confirmation .dialog__button-bar {
+        font-size: 20px;
+        line-height: 1.2; } }
+  #popup.dialog-confirmation .dialog__button--accept {
+    float: left; }
+  #popup.dialog-confirmation .dialog__button--cancel {
+    float: right; }
+
 .form-element-errors {
   float: left;
   width: 100%;
@@ -2529,6 +2573,11 @@ article .next.steps .form-download {
 #about-you input[type="text"] {
   width: 15em; }
 #about-you input.postcode {
+  width: 5em; }
+
+.lpa.edit input[type="text"], .lpa.add input[type="text"] {
+  width: 15em; }
+.lpa.edit input.postcode, .lpa.add input.postcode {
   width: 5em; }
 
 #content.home header.page-header hgroup {

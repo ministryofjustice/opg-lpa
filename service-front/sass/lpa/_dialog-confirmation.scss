@@ -1,0 +1,41 @@
+#popup.dialog-confirmation {
+
+  width: 65%;
+
+  .close {
+    display: none;
+  }
+
+  .dialog {
+
+    &__container {
+      padding: 15px 30px 15px 15px;
+      overflow: hidden;
+    }
+
+    &__title-block {
+      @include core-48()
+    }
+
+    &__message-block {
+      @include core-19();
+      margin-bottom: 2em;
+    }
+
+    &__button-bar {
+      position: relative;
+      @include core-24()
+    }
+
+    &__button {
+      &--accept {
+        float: left;
+      }
+      &--cancel {
+        float: right;
+      }
+    }
+
+  }
+
+}

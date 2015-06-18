@@ -34,6 +34,7 @@
     },
 
     formEvents: function (i, el) {
+      console.log('count ' + i);
       var $form = $(el),
         $submitBtn = $('input[type="submit"]', $form),
         donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
@@ -101,7 +102,7 @@
             actionGroup = $('.group.action'),
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
-            $nameGroups = $('input[name^="name"]', $form).parents('.group'),
+            $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
             duplicateName = null,
             loop,
             item;

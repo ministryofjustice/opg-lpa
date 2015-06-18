@@ -1,90 +1,100 @@
 <?php
-    $form = $this->formErrorTextExchange($this->form, []);
-    $form->setAttribute('class', 'form');
-    $csrf        = $form->get($form->csrfName());
-    
-    $isRepeatApplication       = $form->get('isRepeatApplication');
-    $isRepeatApplicationValueOptions = $isRepeatApplication->getOptions()['value_options'];
-    $isRepeatApplicationValueOptions['is-repeat']['label'] = "Yes";
-    $isRepeatApplicationValueOptions['is-new']['label'] = "No";
-    
-    $isRepeatApplicationValueOptions['is-repeat'] += [
-            'label_attributes' => [
-                    'for' => 'is-repeat-application'
-            ],
-            'attributes' => [
-                    'id' => 'is-repeat-application'
-            ],
-    ];
-    $isRepeatApplicationValueOptions['is-new'] += [
-            'label_attributes' => [
-                    'for' => 'is-new-application'
-            ],
-            'attributes' => [
-                    'id' => 'is-new-application'
-            ],
-    ];
-    $isRepeatApplication->setOptions(['value_options'=>$isRepeatApplicationValueOptions]);
-    
-    $repeatCaseNumber           = $form->get('repeatCaseNumber');
-    $repeatCaseNumber->setOptions(['label' => "Case number"]);
-    
-    $submit      = $form->get('submit');
-    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'Save and continue']);
-    
-    $formLabel   = $this->plugin('formLabel');
-    $form->prepare();
+$form = $this->formErrorTextExchange($this->form, []);
+$form->setAttribute('class', 'form');
+$csrf = $form->get($form->csrfName());
+
+$isRepeatApplication = $form->get('isRepeatApplication');
+$isRepeatApplicationValueOptions = $isRepeatApplication->getOptions()['value_options'];
+$isRepeatApplicationValueOptions['is-repeat']['label'] = "Yes";
+$isRepeatApplicationValueOptions['is-new']['label'] = "No";
+
+$isRepeatApplicationValueOptions['is-repeat'] += [
+    'label_attributes' => [
+        'for' => 'is-repeat-application'
+    ],
+    'attributes' => [
+        'id' => 'is-repeat-application'
+    ],
+];
+$isRepeatApplicationValueOptions['is-new'] += [
+    'label_attributes' => [
+        'for' => 'is-new-application'
+    ],
+    'attributes' => [
+        'id' => 'is-new-application'
+    ],
+];
+$isRepeatApplication->setOptions(['value_options' => $isRepeatApplicationValueOptions]);
+
+$repeatCaseNumber = $form->get('repeatCaseNumber');
+$repeatCaseNumber->setOptions(['label' => "Case number"]);
+
+$submit = $form->get('submit');
+$submit->setAttributes(['class' => 'button gotonextpart', 'value' => 'Save and continue']);
+
+$formLabel = $this->plugin('formLabel');
+$form->prepare();
 ?>
 
 <section id="lpa-type" class="section current">
-	
-	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Are you making a repeat application to register your LPA?</h2>
-	
+
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Are you making a repeat application to
+        register your LPA?</h2>
+
     <div class="accordion-content">
-    
+
         <div class="section-intro">
             <details>
-            
-    			<summary data-journey-click="stageprompt.lpa:help.inline:register/fees:applying-for-a-reduction-of-the-fee" role="button" aria-expanded="false">What is a repeat application?</summary>
-    			
-    			<p>A repeat application is when your LPA can’t be registered but the Office of the Public Guardian says that you can make a repeat application within 3 months for a reduced fee. You will need the case number from OPG’s letter saying that you can make a repeat application.</p>
-    
-			</details>
-		</div>
-	    
-    	
+
+                <summary
+                    data-journey-click="stageprompt.lpa:help.inline:register/fees:applying-for-a-reduction-of-the-fee"
+                    role="button" aria-expanded="false">What is a repeat application?
+                </summary>
+
+                <p>A repeat application is when a previously submitted LPA can’t be registered and has been sent back to
+                    you with instructions on how to submit a repeat application within 3 months for a reduced fee. You
+                    will need the case number from OPG’s letter saying that you can make a
+                    repeat application.</p>
+
+            </details>
+        </div>
+
+
         <?= $this->form()->openTag($form); ?>
-            
-            <?= $this->formElement($csrf) ?>
-            
-            <?= $this->formErrorList(); ?>
-            
-            <div class="emphasised option group">
-                <?= $this->formElement($isRepeatApplication)?>
-                
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($isRepeatApplication) ?>
-                </p>
-            </div>
-            
-            <div class="emphasised option group">
-                <?= $formLabel->openTag($repeatCaseNumber) . $repeatCaseNumber->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($repeatCaseNumber)?>
-                <p>Your case number is in the letter that came with your returned LPA application.</p>
-                <p>By click on the Save and continue button, you confirm that the Office of the Public Guardian has told you that you can apply to make a repeat application for £55 within 3 months.</p>
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($repeatCaseNumber) ?>
-                </p>
-            </div>
-            
-            <div class="accordion-actions">
-				<p>
-                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-                </p>
-            </div>
-            
+
+        <?= $this->formElement($csrf) ?>
+
+        <?= $this->formErrorList(); ?>
+
+        <div class="emphasised option group">
+            <?= $this->formElement($isRepeatApplication) ?>
+
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($isRepeatApplication) ?>
+            </p>
+        </div>
+
+        <div class="js-case-number emphasised option group">
+            <?= $formLabel->openTag($repeatCaseNumber) . $repeatCaseNumber->getOption('label') . $formLabel->closeTag(); ?>
+            <?= $this->formElement($repeatCaseNumber) ?>
+            <p>Your case number is in the letter that came with your returned LPA application.</p>
+
+            <p>By click on the Save and continue button, you confirm that the Office of the Public Guardian has told you
+                that you can apply to make a repeat application for £55 within 3 months.</p>
+
+            <p class='form-element-errors'>
+                <?= $this->formElementErrors($repeatCaseNumber) ?>
+            </p>
+        </div>
+
+        <div class="accordion-actions">
+            <p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+            </p>
+        </div>
+
         <?= $this->form()->closeTag(); ?>
-    	
+
     </div>
-    
+
 </section>
