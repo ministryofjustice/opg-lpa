@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-06-17 */
+/*! opg-lpa-2 2015-06-19 */
 /*!
 
  handlebars v1.1.2
@@ -4926,7 +4926,6 @@ $(document).ready(function () {
             $revisedFee = $('#revised-fee-uc').show();
         }
     }).change();
-
 
   $('#load-pf').click(function(){
     $.get('/service/loadpf');
