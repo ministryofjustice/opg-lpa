@@ -2602,7 +2602,7 @@ article .inner {
   margin: 4em 2em 3em 2em; }
   #content.lpa.created .next-step-section p {
     margin-bottom: 2em; }
-  #content.lpa.created .next-step-section a {
+  #content.lpa.created .next-step-section a.button, #content.lpa.created .next-step-section .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane #content.lpa.created .next-step-section a.ui-priority-primary {
     font-family: "nta", Arial, sans-serif;
     font-size: 24px;
     line-height: 1.25;
@@ -2611,7 +2611,7 @@ article .inner {
     padding-left: 1.5em;
     padding-right: 1.5em; }
     @media (max-width: 640px) {
-      #content.lpa.created .next-step-section a {
+      #content.lpa.created .next-step-section a.button, #content.lpa.created .next-step-section .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane #content.lpa.created .next-step-section a.ui-priority-primary {
         font-size: 20px;
         line-height: 1.2; } }
 
