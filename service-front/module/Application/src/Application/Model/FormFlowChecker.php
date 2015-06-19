@@ -45,7 +45,6 @@ class FormFlowChecker extends StateChecker
             'lpa/people-to-notify/delete'                   => 'isPeopleToNotifyDeleteAccessible',
             'lpa/instructions'                              => 'isInstructionsAccessible',
             'lpa/created'                                   => 'isCreatedAccessible',
-            'lpa/register'                                  => 'isCreatedAccessible',
             'lpa/download'                                  => 'isDownloadAccessible',
             'lpa/applicant'                                 => 'isApplicantAccessible',
             'lpa/correspondent'                             => 'isCorrespondentAccessible',
@@ -148,7 +147,7 @@ class FormFlowChecker extends StateChecker
                && ($currentRouteName != 'lpa/complete') 
                && ($currentRouteName != 'lpa/date-check') 
                && ($currentRouteName != 'lpa/download')) {
-                //return 'lpa/view-docs';
+                  return 'lpa/view-docs';
         }
         
         $checkFunction = static::$accessibleFunctionMap[$currentRouteName];
