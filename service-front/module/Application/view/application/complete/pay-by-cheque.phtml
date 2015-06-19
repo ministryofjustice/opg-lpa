@@ -13,7 +13,17 @@
             how. If you
             sign them in the wrong order, your LPA will be invalid and you may have to pay an additional fee.</p>
 
-        <a class="button" href="<?= $this->lp1Url ?>" target="_blank">Print LPA</a>
+        <div class="form-download">
+            <p><a class="pdf_dl_lnk" href="<?= $this->lp1Url ?>" target="_blank">Download your print-ready LPA form</a></p>
+            
+            <?php if(isset($this->lpa120Url)):?> 
+            <p><a class="pdf_dl_lnk" href="<?= $this->lpa120Url ?>" target="_blank">Download your fee remissions and exemption form</a></p>
+            <?php endif;?>
+            
+            <?php if(isset($this->lp3Url)): ?>
+            <p><a class="pdf_dl_lnk" href="<?= $this->lp3Url ?>" target="_blank">Download the notification letter (PDF)</a></p>
+            <?php endif;?>
+        </div>
 
     </div>
 
@@ -48,8 +58,9 @@
                 B2 2WH
             </strong></p>
 
-        <p>If you’ve not already done so, remember to send the notification letters to [Correspondent details inserted
-            automatically]</p>
+        <?php if(isset($this->peopleToNotify)):?>                     
+            <p>If you've not already done so, remember to send the notification letters to <?= $this->concatNames($this->peopleToNotify) ?> as well.</p>
+        <?php endif;?>            
 
 
         <h2>What happens next?</h2>
