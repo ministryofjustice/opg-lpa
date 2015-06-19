@@ -148,7 +148,7 @@ class FormFlowChecker extends StateChecker
                && ($currentRouteName != 'lpa/complete') 
                && ($currentRouteName != 'lpa/date-check') 
                && ($currentRouteName != 'lpa/download')) {
-                return 'lpa/view-docs';
+                //return 'lpa/view-docs';
         }
         
         $checkFunction = static::$accessibleFunctionMap[$currentRouteName];

@@ -28,7 +28,7 @@ class CreatedController extends AbstractLpaController
                 'deleteRoute'   => $this->url()->fromRoute('user/dashboard/delete-lpa', ['lpa-id'=>$lpaId]),
                 'downloadRoute' => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpaId, 'pdf-type'=>'lp1']),
                 'cloneUrl'      => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$lpaId]),
-                'nextRoute'     => $this->url()->fromRoute('lpa/register', ['lpa-id'=>$lpaId]),
+                'nextRoute'     => $this->url()->fromRoute('lpa/applicant', ['lpa-id'=>$lpaId]),
         ]);
     }
 }

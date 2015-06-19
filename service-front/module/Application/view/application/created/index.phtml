@@ -1,61 +1,50 @@
 <div class="article-container group">
-	<article role="article" class="group">
-		<div class="inner">
-<div class="LPA-details right">
-  <h3>LPA for <?= $this->lpaType ?></h3>
-  <ul>
-    <li>For <?= $this->donorName ?>.</li>
-    <li>Created on <?= $this->creationDate ?>.</li>
-  </ul>
-  <div class="LPA-actions">
-    <a href="<?= $this->editRoute ?>">View or edit this LPA</a> &nbsp;&nbsp; | &nbsp;&nbsp; <a id="delete-lpa" href="<?= $this->deleteRoute ?>">Delete this LPA</a>
-  </div>
-</div>
+    <article role="article" class="group">
+        <div class="inner">
+            <div class="LPA-details right">
+                <h3>LPA for <?= $this->lpaType ?></h3>
+                <ul>
+                    <li>For <?= $this->donorName ?>.</li>
+                    <li>Created on <?= $this->creationDate ?>.</li>
+                </ul>
+                <div class="LPA-actions">
+                    <a href="<?= $this->editRoute ?>">View or edit this LPA</a> &nbsp;&nbsp; | &nbsp;&nbsp; <a
+                        id="delete-lpa" href="<?= $this->deleteRoute ?>">Delete this LPA</a>
+                </div>
+            </div>
 
-<p>That’s all we need for the LPA itself. Now it’s ready to print and sign.</p>
+            <div class="paragraph-block">
 
-<p>After it’s signed, you’ll need to log back in here to complete a registration form and pay the application fee.</p>
+                <p>That’s all we need for the LPA itself. Now you can review your LPA, pay the registration fee, print
+                    and
+                    sign the LPA and send it to the Office of the Public Guardian.</p>
 
-<p>Everything’s been saved, so you can pause here to arrange things and talk to
-the people involved in your LPA. We've emailed you a link that you can follow
-whenever you’re ready to register, or just sign back in to this account.</p>
+            </div>
 
-<ol class="next steps">
-  <li>
-    <h3>Print your LPA</h3>
-    <div class="form-download">
-      <p><a class="pdf_dl_lnk" href="<?= $this->downloadRoute ?>" target="_blank">Download the LPA document you've created now</a></p>
-    </div>
-    <p>Most computers will open this LPA document automatically when you click on the link above.</p>
-    <p>If the LPA document doesn't open automatically, you may need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" target="_blank">http://www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.</p>
-    <p>You can print in colour or black and white.</p>
-  </li>
-  <li>
-    <h3>Sign your LPA</h3>
-    <p>Everyone involved must sign the LPA. Follow the instructions on the cover sheet of your LPA document. <a class="js-guidance" href="/help/#topic-signing-the-lpa" data-journey-click="stageprompt.lpa:help:signing-the-lpa">Find out more about who needs to sign the LPA – and in what order</a>.</p>
+            <div class="next-step-section">
+                <h2>Review you LPA</h2>
 
-    <p>Please don’t make any changes to your LPA after it’s been signed. If you do
-      need to change it, come back and edit it here, then print and sign the new version.</p>
-  </li>
-  <li>
-    <h3>Register the LPA</h3>
-    <p>After everyone’s signed the LPA, you have to pay an application fee, then send the signed LPA along with a completed registration form to the Office of the Public Guardian. It’s a good idea to apply to register your LPA straight after making it. An unregistered LPA can't be used.</p>
-    <p>
-      <a href="<?= $this->nextRoute ?>" class="button" role="button">Apply to register your LPA now</a>
-    </p>
-    <p><a class="js-guidance" href="/help/#topic-registering-the-lpa" data-journey-click="stageprompt.lpa:help:registering-the-lpa">Find out more about registering your LPA</a></p>
-  </li>
-</ol>
+                <p>Click below to review your LPA and edit it, if you need to. You can also print your LPA now and
+                    register
+                    it later. However, we recommend that you move on to paying your registration fee as soon as you are
+                    happy with the details of your LPA. That way, the Office of the Public Guardian can deal with any
+                    problems with the LPA in good time.</p>
 
-<hr>
+                <a class="button" href="<?= $this->downloadRoute ?>" target="_blank">Review LPA</a>
+            </div>
 
-<h2>Want to create another LPA?</h2>
+            <div class="next-step-section">
+                <h2>Review you LPA</h2>
 
-<p><strong><a href="<?= $this->cloneUrl ?>">Make an LPA based on this one</a></strong> (you'll be able to add people in a single click).</p>
+                <p>Click below to review your LPA and edit it, if you need to. You can also print your LPA now and
+                    register
+                    it later. However, we recommend that you move on to paying your registration fee as soon as you are
+                    happy with the details of your LPA. That way, the Office of the Public Guardian can deal with any
+                    problems with the LPA in good time.</p>
 
-<p><a href="/user/dashboard/create">Make an LPA from scratch</a>.</p>
+                <a class="button" href="<?= $this->nextRoute ?>">Pay your registration fee now</a>
+            </div>
 
-                        
-</div>
-</article>
+        </div>
+    </article>
 </div>

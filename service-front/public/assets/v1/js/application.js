@@ -4927,7 +4927,6 @@ $(document).ready(function () {
         }
     }).change();
 
-
   $('#load-pf').click(function(){
     $.get('/service/loadpf');
   });
