@@ -14,7 +14,6 @@ if(isset($this->form)) {
     $who            = $form->get('who');
     
     $professional   = $form->get('professional');
-    $digitalPartner = $form->get('digitalPartner');
     
     $defaultWho = new Hidden('who');
     $defaultProfessional = new Hidden('professional');
@@ -65,7 +64,7 @@ if(isset($this->form)) {
     ]);
     
     $whoOptions['digital-partner'] = new Element('who', [
-            'label' => "One of OPG's Assisted Digital Partners helped the donor",
+            'label' => "OPG's assisted digital helped the donor",
     ]);
     $whoOptions['digital-partner']->setAttributes([
             'type' => 'radio',
@@ -125,37 +124,6 @@ if(isset($this->form)) {
             'checked' => (($professional->getValue() == 'other')? 'checked':null),
     ]);
     
-    
-    $digitalPartnerOptions = [];
-    $digitalPartnerOptions['Age-Uk'] = new Element('digitalPartner', [
-            'label' => "Age Uk",
-    ]);
-    $digitalPartnerOptions['Age-Uk']->setAttributes([
-            'type' => 'radio',
-            'id' => 'partner-Age-Uk',
-            'value' => $digitalPartner->getOptions()['value_options']['Age-Uk']['value'],
-            'checked' => (($digitalPartner->getValue() == 'Age-Uk')? 'checked':null),
-    ]);
-    
-    $digitalPartnerOptions['Alzheimer-Society'] = new Element('digitalPartner', [
-            'label' => "Alzheimer's Society",
-    ]);
-    $digitalPartnerOptions['Alzheimer-Society']->setAttributes([
-            'type' => 'radio',
-            'id' => 'partner-Alzheimer-Society',
-            'value' => $digitalPartner->getOptions()['value_options']['Alzheimer-Society']['value'],
-            'checked' => (($digitalPartner->getValue() == 'Alzheimer-Society')? 'checked':null),
-    ]);
-    
-    $digitalPartnerOptions['Citizens-Advice-Bureau'] = new Element('digitalPartner', [
-            'label' => "Citizens Advice Bureau",
-    ]);
-    $digitalPartnerOptions['Citizens-Advice-Bureau']->setAttributes([
-            'type' => 'radio',
-            'id' => 'partner-Citizens-Advice-Bureau',
-            'value' => $digitalPartner->getOptions()['value_options']['Citizens-Advice-Bureau']['value'],
-            'checked' => (($digitalPartner->getValue() == 'Citizens-Advice-Bureau')? 'checked':null),
-    ]);
 }
 ?>
 
@@ -191,7 +159,6 @@ if(isset($this->form)) {
         <?= $this->formElement($defaultProfessional); ?>
         <?= $this->formElement($defaultDigitalPartner); ?>
         
-        <?= $this->formElementErrors($digitalPartner) ?>
         <?= $this->formElementErrors($professional) ?>
         <?= $this->formElementErrors($organisation) ?>
         <?= $this->formElementErrors($professionalOther) ?>
@@ -242,19 +209,6 @@ if(isset($this->form)) {
                     <?= $this->formInput($whoOptions['digital-partner'])  . $whoOptions['digital-partner']->getOption('label'); ?>
                 <?= $formLabel->closeTag(); ?>
                 
-                <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em; display:none;">
-                    <?= $formLabel->openTag($digitalPartnerOptions['Age-Uk']); ?>
-                        <?= $this->formInput($digitalPartnerOptions['Age-Uk'])  . $digitalPartnerOptions['Age-Uk']->getOption('label'); ?>
-                    <?= $formLabel->closeTag(); ?>
-                    
-                    <?= $formLabel->openTag($digitalPartnerOptions['Alzheimer-Society']); ?>
-                        <?= $this->formInput($digitalPartnerOptions['Alzheimer-Society'])  . $digitalPartnerOptions['Alzheimer-Society']->getOption('label'); ?>
-                    <?= $formLabel->closeTag(); ?>
-                    
-                    <?= $formLabel->openTag($digitalPartnerOptions['Citizens-Advice-Bureau']); ?>
-                        <?= $this->formInput($digitalPartnerOptions['Citizens-Advice-Bureau'])  . $digitalPartnerOptions['Citizens-Advice-Bureau']->getOption('label'); ?>
-                    <?= $formLabel->closeTag(); ?>
-                </div>
             </div>
             
             <div class="set">

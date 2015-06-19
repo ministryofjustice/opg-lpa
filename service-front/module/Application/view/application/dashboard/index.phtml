@@ -51,7 +51,7 @@
         <form action="<?= $this->url('user/dashboard') ?>" method="GET">
             <input type="text" name="search"
                    placeholder="LPA no, donor's first or last name"
-                   value="<?php echo isset($this->freeText) ? $this->freeText : ''; ?>"/>
+                   value="<?php echo isset($this->freeText) ? $this->escapeHtmlAttr( $this->freeText ) : ''; ?>"/>
             <input class="add button button" type="submit" value="Search"/>
         </form>
 
