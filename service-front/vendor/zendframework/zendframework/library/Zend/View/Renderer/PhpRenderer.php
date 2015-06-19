@@ -363,7 +363,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
     /**
      * Get plugin instance
      *
-     * @param  string $name Name of plugin to return
+     * @param  string     $name Name of plugin to return
      * @param  null|array $options Options to pass to plugin constructor (if not already instantiated)
      * @return AbstractHelper
      */
@@ -441,7 +441,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
     public function render($nameOrModel, $values = null)
     {
         if ($nameOrModel instanceof Model) {
-            $model = $nameOrModel;
+            $model       = $nameOrModel;
             $nameOrModel = $model->getTemplate();
             if (empty($nameOrModel)) {
                 throw new Exception\DomainException(sprintf(
@@ -498,9 +498,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
             }
             try {
                 ob_start();
-                echo "<!-- PHPTEMPLATE START ". $this->__file." -->";
                 $includeReturn = include $this->__file;
-                echo "<!-- PHPTEMPLATE END ". $this->__file." -->";
                 $this->__content = ob_get_clean();
             } catch (\Exception $ex) {
                 ob_end_clean();
@@ -533,7 +531,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
      */
     public function setCanRenderTrees($renderTrees)
     {
-        $this->__renderTrees = (bool)$renderTrees;
+        $this->__renderTrees = (bool) $renderTrees;
         return $this;
     }
 
