@@ -15,6 +15,5 @@ return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Nocarrier' => array($vendorDir . '/nocarrier/hal/src'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
-    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
 );
