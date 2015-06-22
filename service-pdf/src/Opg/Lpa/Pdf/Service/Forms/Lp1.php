@@ -357,6 +357,13 @@ abstract class Lp1 extends AbstractForm
         }
         
         /**
+         * Section 9. Donor signature page
+         */
+        if($this->lpa->document->donor->canSign === false) {
+            $this->pdfFormData['see_continuation_sheet_3'] = 'see continuation sheet 3';
+        }
+        
+        /**
          * Populate certificate provider page (Section 10) 
          */
         $this->pdfFormData['lpa-document-certificateProvider-name-title'] = $this->lpa->document->certificateProvider->name->title;
