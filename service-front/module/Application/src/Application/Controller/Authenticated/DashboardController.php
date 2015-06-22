@@ -199,17 +199,17 @@ class DashboardController extends AbstractAuthenticatedController
                 // This will return an empty array if the user has no v1 LPAs.
                 $v1Lpas = $this->getServiceLocator()->get('ProxyDashboard')->searchLpas( $query );
 
+                // Merge the v1 LPAs into the v2 list.
+                $lpas = array_merge($lpas, $v1Lpas);
+
             } catch( \RuntimeException $e ){
 
                 // Runtime errors are caused by a v1 / v2 auth token mismatch.
                 // Re-authenticating is the only solution.
                 // (realistically this only happens whilst we can login to both v1 & v2)
-                $this->redirect()->toRoute('login', ['state'=>'timeout']);
+                return $this->redirect()->toRoute('login', ['state'=>'timeout']);
 
             }
-
-            // Merge the v1 LPAs into the v2 list.
-            $lpas = array_merge($lpas, $v1Lpas);
 
         }
 

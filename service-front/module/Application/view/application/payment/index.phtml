@@ -2,7 +2,7 @@
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 $form = $this->formErrorTextExchange($this->form, []);
     
-    $csrf       = $form->get('secret');
+    $csrf       = $form->get($form->csrfName());
     
     $form->setAttributes(['class' => 'form']);
     

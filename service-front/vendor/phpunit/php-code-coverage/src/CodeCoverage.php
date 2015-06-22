@@ -304,16 +304,28 @@ class PHP_CodeCoverage
             return;
         }
 
+        $size   = 'unknown';
         $status = null;
 
         if ($id instanceof PHPUnit_Framework_TestCase) {
+            $_size = $id->getSize();
+
+            if ($_size == PHPUnit_Util_Test::SMALL) {
+                $size = 'small';
+            } elseif ($_size == PHPUnit_Util_Test::MEDIUM) {
+                $size = 'medium';
+            } elseif ($_size == PHPUnit_Util_Test::LARGE) {
+                $size = 'large';
+            }
+
             $status = $id->getStatus();
             $id     = get_class($id) . '::' . $id->getName();
         } elseif ($id instanceof PHPUnit_Extensions_PhptTestCase) {
-            $id = $id->getName();
+            $size = 'large';
+            $id   = $id->getName();
         }
 
-        $this->tests[$id] = $status;
+        $this->tests[$id] = array('size' => $size, 'status' => $status);
 
         foreach ($data as $file => $lines) {
             if (!$this->filter->isFile($file)) {
@@ -322,7 +334,9 @@ class PHP_CodeCoverage
 
             foreach ($lines as $k => $v) {
                 if ($v == 1) {
-                    $this->data[$file][$k][] = $id;
+                    if (empty($this->data[$file][$k]) || !in_array($id, $this->data[$file][$k])) {
+                        $this->data[$file][$k][] = $id;
+                    }
                 }
             }
         }
@@ -358,6 +372,14 @@ class PHP_CodeCoverage
         }
 
         $this->tests = array_merge($this->tests, $that->getTests());
+
+        $this->filter->setBlacklistedFiles(
+            array_merge($this->filter->getBlacklistedFiles(), $that->filter()->getBlacklistedFiles())
+        );
+
+        $this->filter->setWhitelistedFiles(
+            array_merge($this->filter->getWhitelistedFiles(), $that->filter()->getWhitelistedFiles())
+        );
     }
 
     /**
@@ -691,7 +713,7 @@ class PHP_CodeCoverage
 
                             // A DOC_COMMENT token or a COMMENT token starting with "/*"
                             // does not contain the final \n character in its text
-                            if (0 === strpos($_token, '/*') && '*/' === substr(trim($lines[$i-1]), -2)) {
+                            if (isset($lines[$i-1]) && 0 === strpos($_token, '/*') && '*/' === substr(trim($lines[$i-1]), -2)) {
                                 $this->ignoredLines[$filename][] = $i;
                             }
                         }

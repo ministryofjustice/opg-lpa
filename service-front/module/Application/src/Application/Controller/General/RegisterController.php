@@ -4,9 +4,9 @@ namespace Application\Controller\General;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
-use Application\Form\User\Registration as RegistrationForm;
-
 class RegisterController extends AbstractBaseController {
+
+    protected $contentHeader = 'confirm-partial.phtml';
 
     /**
      * Register a new account.
@@ -20,7 +20,7 @@ class RegisterController extends AbstractBaseController {
 
         //---
 
-        $form = new RegistrationForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\Registration');
         $form->setAttribute( 'action', $this->url()->fromRoute('register') );
 
         $error = null;
@@ -85,6 +85,10 @@ class RegisterController extends AbstractBaseController {
          *  Alas no other details are returned.
          */
         $success = $this->getServiceLocator()->get('Register')->activateAccount( $token );
+
+        if(isset($this->contentHeader)) {
+            $this->layout()->contentHeader = $this->contentHeader;
+        }
 
         if( !$success ){
             return new ViewModel( [ 'error'=>'account-missing' ] );

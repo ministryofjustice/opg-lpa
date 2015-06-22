@@ -33,9 +33,13 @@ class TypeController extends AbstractLpaController
                 $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
-                // persist data
-                if(!$this->getLpaApplicationService()->setType($lpaId, $form->get('type')->getValue())) {
-                    throw new \RuntimeException('API client failed to set LPA type for id: '.$lpaId);
+                $lpaType = $form->getData()['type'];
+                
+                if($lpaType != $this->getLpa()->document->type) {
+                    // persist data
+                    if(!$this->getLpaApplicationService()->setType($lpaId, $lpaType)) {
+                        throw new \RuntimeException('API client failed to set LPA type for id: '.$lpaId);
+                    }
                 }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

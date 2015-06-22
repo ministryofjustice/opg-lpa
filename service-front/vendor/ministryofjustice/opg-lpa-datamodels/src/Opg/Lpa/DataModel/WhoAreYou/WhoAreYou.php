@@ -96,7 +96,7 @@ class WhoAreYou extends AbstractData {
                 'qualifier' => true,
             ],
             'digitalPartner' => [
-                'subquestion' => ['Age-Uk', 'Alzheimer-Society', 'Citizens-Advice-Bureau' ],
+                'subquestion' => [ null ],
                 'qualifier' => false,
             ],
             'organisation' => [

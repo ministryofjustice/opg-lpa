@@ -47,20 +47,20 @@ class DonorController extends AbstractLpaActorController
     public function addAction()
     {
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $routeMatch = $this->getEvent()->getRouteMatch();
         
         if( $this->getLpa()->document->donor instanceof Donor ) {
             return $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
         }
         
-        $viewModel = new ViewModel();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
         $viewModel->setTemplate('application/donor/form.phtml');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         
         $seedSelection = $this->seedDataSelector($viewModel, $form);
         if($seedSelection instanceof JsonModel) {
@@ -87,7 +87,7 @@ class DonorController extends AbstractLpaActorController
                         return new JsonModel(['success' => true]);
                     }
                     else {
-                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
                     }
                 }
             }
@@ -152,9 +152,11 @@ class DonorController extends AbstractLpaActorController
         else {
             $donor = $this->getLpa()->document->donor->flatten();
             $dob = $this->getLpa()->document->donor->dob->date;
-            $donor['dob-date-day'] = $dob->format('d');
-            $donor['dob-date-month'] = $dob->format('m');
-            $donor['dob-date-year'] = $dob->format('Y');
+            $donor['dob-date'] = [
+                        'day'   => $dob->format('d'),
+                        'month' => $dob->format('m'),
+                        'year'  => $dob->format('Y'),
+            ];
             $form->bind($donor);
         }
         

@@ -1,4 +1,4 @@
-/*! opg-lpa 2014-10-22 */
+/*! opg-lpa-2 2015-06-19 */
 /*!
 
  handlebars v1.1.2
@@ -2941,6 +2941,93 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
 this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
 
+this["lpa"]["templates"]["dialog.confirmRepeatApplication"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"dialog__container\">\n\n    <div class=\"dialog__title-block\">";
+  if (stack1 = helpers.dialogTitle) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.dialogTitle); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n\n    <div class=\"dialog__message-block\"><p>";
+  if (stack1 = helpers.dialogMessage) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.dialogMessage); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</p></div>\n\n    <div class=\"dialog__button-bar\">\n        <a class=\"button dialog__button--accept ";
+  if (stack1 = helpers.acceptClass) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.acceptClass); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (stack1 = helpers.acceptButtonText) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.acceptButtonText); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</a>\n        <a class=\"button-secondary dialog__button--cancel  ";
+  if (stack1 = helpers.cancelClass) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.cancelClass); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (stack1 = helpers.cancelButtonText) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.cancelButtonText); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</a>\n    </div>\n\n</div>\n";
+  return buffer;
+  });
+
+this["lpa"]["templates"]["errors.formElement"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"form-element-errors\">\n    <div class=\"group validation\">\n        <span class=\"validation-message\">";
+  if (stack1 = helpers.validationMessage) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.validationMessage); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</span>\n    </div>\n</div>";
+  return buffer;
+  });
+
+this["lpa"]["templates"]["errors.formSummary"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"validation-summary group\" role=\"alert\" aria-labelledby=\"error-heading\" tabindex=\"-1\">\n    <h1 id=\"error-heading\">There was a problem submitting the form</h1>\n\n    <p>Because of the following problems:</p>\n    <ol>\n    </ol>\n</div>\n";
+  });
+
+this["lpa"]["templates"]["input.checkbox"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<fieldset class=\"";
+  if (stack1 = helpers.elementJSref) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementJSref); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n    <div class=\"input-checkbox group\">\n        <label for=\"";
+  if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n            <input type=\"checkbox\" name=\"";
+  if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" id=\"";
+  if (stack1 = helpers.elementName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"confirmation-validation\" value=\"1\"\n                   required=\"required\">\n            ";
+  if (stack1 = helpers.elementLabel) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.elementLabel); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </label>\n    </div>\n</fieldset>\n";
+  return buffer;
+  });
+
 this["lpa"]["templates"]["popup.close"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -3036,7 +3123,7 @@ function program1(depth0,data) {
   buffer += "<div class=\"group\">\n  <label for=\"address-search-result\">Address</label>\n  <select class=\"js-PostcodeLookup__search-results\" id=\"address-search-result\">\n    <option value=\"\">Please select an address...</option>\n    ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.results), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</div>";
+  buffer += "\n  </select>\n</div>\n";
   return buffer;
   });
 
@@ -3250,7 +3337,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         // open popup if hash is present in url
         var hash = window.location.hash,
-            topic;
+          topic;
         if (this._isGuidanceHash(hash)) {
           // on page load parse hash
           topic = hash.substring(hash.lastIndexOf('/') + 1);
@@ -3272,7 +3359,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // nav click event
       $('body').on('click', this.settings.selector, function () {
         var href = $(this).attr('href'),
-            topic = href.substring(href.lastIndexOf('#') + 1);
+          topic = href.substring(href.lastIndexOf('#') + 1);
         // set the current click as the source
         self.source = $(this);
         // select topic
@@ -3283,7 +3370,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // listen to hash changes in url
       $(window).on('hashchange.moj.Modules.HelpSystem', function () {
         var hash = window.location.hash,
-            topic;
+          topic;
 
         // if a change has been made, select the topic
         if (self._isGuidanceHash(hash)) {
@@ -3310,7 +3397,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         if ($('#popup.help-system').length > 0) {
           self._setTopic(topic);
         } else {
-        // otherwise, load in the overlay first and set in callback
+          // otherwise, load in the overlay first and set in callback
           this._loadOverlay(topic);
         }
       }
@@ -3358,11 +3445,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     _loadOverlay: function (topic) {
       var self = this,
-          html = this._hasCachedContent();
+        html = this._hasCachedContent();
 
       // todo - remove this
       html = false;
-      
+
       // if content has been cached, load it straight in
       if (html !== false) {
         moj.Modules.Popup.open(html, {
@@ -3445,8 +3532,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     btnClick: function (e) {
       var source = $(e.target),
-          href = source.attr('href'),
-          form = source.data('form');
+        href = source.attr('href'),
+        form = source.data('form');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -3495,7 +3582,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('PersonForm.render', {wrap: '#popup'});
         }
       });
-      
+
       // hide use button and switch button
       $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
 
@@ -3503,7 +3590,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     submitForm: function (e) {
       var $form = $(e.target),
-          url = $form.attr('action');
+        url = $form.attr('action');
 
       $form.find('input[type="submit"]').spinner();
 
@@ -3520,7 +3607,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     ajaxSuccess: function (response, textStatus, jqXHR) {
       var $form = $(this),
-          data;
+        data;
 
       if (response.success !== undefined && response.success) {
         // successful, so redirect
@@ -3687,7 +3774,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       _.bindAll(this, 'linkClicked', 'selectChanged');
       this.bindEvents();
     },
-    
+
     bindEvents: function () {
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
@@ -3697,10 +3784,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     // <a> click
     linkClicked: function (e, params) {
       var $el = $(e.target),
-          $form = $el.closest('form'),
-          url = $el.data('service'),
-          proceed = this.isFormClean($form) ? true : confirm(this.message),
-          _this = this;
+        $form = $el.closest('form'),
+        url = $el.data('service'),
+        proceed = this.isFormClean($form) ? true : confirm(this.message),
+        _this = this;
 
       $el.spinner();
       $.get(url, function (data) {
@@ -3715,29 +3802,32 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     // <select> change
     selectChanged: function (e, params) {
       var $el = $(e.target),
-          $form = $el.closest('form'),
-          url = $form.attr('action'),
-          postData,
-          _this = this;
-      
-      if(($el.val()==='')||($el.val()===selected)) {
-    	  return;
+        $form = $el.closest('form'),
+        url = $form.attr('action'),
+        postData,
+        _this = this,
+        proceed;
+
+      if (($el.val() === '') || ($el.val() === selected)) {
+        return;
       }
-      
-      var proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
-      
+
+      proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
+
       if (proceed) {
         $el.spinner();
-        
+
         selected = $el.val();
-        
-        if($form.find('[name=switch-to-type]').length == 0) {
-        	postData = {'secret':$form.find('[name=secret]').val(), 'pick-details':$form.find('[name=pick-details]').val()};
+
+        if ($form.find('[name=switch-to-type]').length === 0) {
+            postData = { 'pick-details': $form.find('[name=pick-details]').val() };
+            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
+          }
+          else {
+            postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
+            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
         }
-        else {
-        	postData = {'secret':$form.find('[name=secret]').val(), 'switch-to-type':$form.find('[name=switch-to-type]').val(), 'switcher-submit':$form.find('[name=switcher-submit]').val()};
-        }
-        
+
         $.post(url, postData, function (data) {
           $el.spinner('off');
           if (proceed) {
@@ -3753,15 +3843,44 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     populateForm: function (data) {
       var $el,
-          $focus,
-          i = 0;
+        $focus,
+        i = 0,
+        props,
+        property,
+        value,
+        value2;
+
+      // prepare the data
+      for (props in data) {
+
+        if (data.hasOwnProperty(props) && _.isObject(data[props])) {
+
+          value = data[props];
+
+          // if value is an object then flatten it with PHP array notation...
+          for (property in value) {
+
+            if (value.hasOwnProperty(property)) {
+              value2 = value[property];
+              data[props + '[' + property + ']'] = value2;
+            }
+
+          }
+
+        }
+
+      }
+      
+      // empty existing form element values before populating data into the form.
+      $('form.js-PersonForm').find('input[type=text],input[type=email],select').each(function(){$(this).val('')});
 
       // Show any fields which were hidden
       $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
       // loop over data and change values
       _(data).each(function (value, key) {
+
         // set el
-        $el = $('[name=' + key+']');
+        $el = $('[name="' + key + '"]');
         // if value is null, set to empty string
         value = (value === null) ? '' : value;
         // make sure the element exists && that new value doesn't match current value
@@ -3769,14 +3888,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           // increment counter
           i += 1;
           // change the value of the element
-          if(key=='canSign') {
-        	  //for donor canSign checkbox
-        	  if((value === false)) {
-        		  $el.filter('[type=checkbox]').attr('checked', 'checked');
-        	  }
+          if (key === 'canSign') {
+            //for donor canSign checkbox
+            if ((value === false)) {
+              $el.filter('[type=checkbox]').attr('checked', 'checked');
+            }
           }
           else {
-        	  $el.val(value).change();
+            $el.val(value).change();
           }
           // if first element changed, save the el
           if (i === 1) {
@@ -3853,7 +3972,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     init: function () {
       // make sure the fields exist before adding them to the toggle
       var hasPostal = this.$postalFields.length > 0 ? true : false,
-          hasDx = this.$dxFields.length > 0 ? true : false;
+        hasDx = this.$dxFields.length > 0 ? true : false;
 
       // prepend template to postal fields
       this.$postalFields.before(this.searchTpl() + this.toggleTpl({postal: hasPostal, dx: hasDx})).addClass('hidden');
@@ -3894,7 +4013,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-          val = $el.val();
+        val = $el.val();
 
       $el.spinner();
       this.findAddress(val);
@@ -3946,7 +4065,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           alert('Please enter a valid UK postcode');
         }
       } else {
-      // successful
+        // successful
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -3991,7 +4110,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.$dxFields.find('[name*="dxNumber"]').focus();
       } else {
         var $search = this.$wrap.find('.js-PostcodeLookup__query'),
-            $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
+          $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
         // popuplate postcode field
         if ($search.val() !== '' && $pcode.val() === '') {
           $pcode.val($search.val()).change();
@@ -3999,8 +4118,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.$postalFields.removeClass('hidden');
         this.$dxFields.addClass('hidden');
         // focus on first address field
-        if($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length == 1) {
-        	this.$postalFields.find('[name*="addr1"]').focus();
+        if ($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length === 1) {
+          this.$postalFields.find('[name*="addr1"]').focus();
         }
       }
       // toggle class
@@ -4035,10 +4154,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 (function () {
   'use strict';
 
+  var self;
+
   moj.Modules.PersonForm = {
     selector: '.js-PersonForm',
 
     init: function () {
+      self = this;
+
       _.bindAll(this, 'render', 'formEvents');
       this.cacheEls();
       this.bindEvents();
@@ -4061,26 +4184,177 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     formEvents: function (i, el) {
+      console.log('count ' + i);
       var $form = $(el),
-          $submitBtn = $('input[type="submit"]', $form),
-          donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
-          $allFields = $('label.required + input, label.required ~ select', $form),
-          $addressFields = $('input[name^="address"]', $form),
-          allPopulated,
-          countAddr;
+        $submitBtn = $('input[type="submit"]', $form),
+        donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
+        $allFields = $('input[required], label.required + input, label.required ~ select', $form),
+        $addressFields = $('input[name^="address"]', $form),
+        allPopulated,
+        countAddr,
+        dob,
+        getDOB = function () {
+          var day,
+            month,
+            year,
+            $dayObj = $('#dob-date-day'),
+            $monthObj = $('#dob-date-month'),
+            $yearObj = $('#dob-date-year'),
+            returnDate;
+
+          if ($dayObj.val() !== '') {
+            day = parseInt($dayObj.val());
+            if (isNaN(day) || (day <= 1)) {
+              day = undefined;
+            }
+          }
+          if ($monthObj.val() !== '') {
+            month = parseInt($monthObj.val());
+            if (isNaN(month) || (month <= 0)) {
+              month = undefined;
+            }
+            else {
+              month = month - 1;
+            }
+          }
+          if ($yearObj.val() !== '') {
+            year = parseInt($yearObj.val());
+            if (isNaN(year) || (year <= 0)) {
+              year = undefined;
+            }
+          }
+
+          returnDate = new Date(year, month, day);
+          if (!isFinite(returnDate)) {
+            returnDate = null;
+          }
+
+          return returnDate;
+
+        },
+        tplFormElementErrors = lpa.templates['errors.formElement'],
+        tplErrorsFormSummary = lpa.templates['errors.formSummary'],
+        tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
       $submitBtn.attr('disabled', $('#address-addr1', $form).val() === '');
 
       // Listen for changes to form
       $form
-        .on('change.moj.Modules.PersonForm', 'input, select', function () {
+        .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
+
+          var $target = $(evt.target),
+            currentDate = new Date(),
+            minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+            maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+            $dobElement = $('.dob-element'),
+            $dobGroup,
+            actionGroup = $('.group.action'),
+            $firstName = $('input[name="name-first"]', $form),
+            $lastName = $('input[name="name-last"]', $form),
+            $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
+            duplicateName = null,
+            loop,
+            item;
+
+          if (!$target.hasClass('confirmation-validation')) {
+            // If the input changed is not a confirmation tick box, then do the form checks...
+
+            // Are we editing the name fields?
+            if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
+
+              // Check for duplicate names
+              if ((typeof actors !== 'undefined') && actors.names && actors.names.length) {
+                for (loop = 0; loop < actors.names.length; loop++) {
+                  item = actors.names[loop];
+                  if ($firstName.val().toLocaleLowerCase() === item.firstname.toLocaleLowerCase()) {
+                    if ($lastName.val().toLocaleLowerCase() === item.lastname.toLocaleLowerCase()) {
+                      duplicateName = item;
+                      break;
+                    }
+                  }
+                }
+              }
+
+              $('.js-confirm-name').remove();
+              $nameGroups.removeClass('validation').find('.form-element-errors').remove();
+
+              if (duplicateName !== null) {
+                $nameGroups.addClass('validation');
+                $nameGroups.append(tplFormElementErrors({'validationMessage': 'Is this a duplicate name?' }));
+
+                actionGroup.before($(tplInputCheckbox({
+                  'elementJSref': 'js-confirm-name',
+                  'elementName': 'confirmName',
+                  'elementLabel': 'The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. Click here to confirm that these are 2 different people with the same name.'
+                })).addClass('validation'));
+              }
+
+            }
+
+
+            // Are we editing the DOB?
+            if ($target.parents('.dob-element').length) {
+
+              $dobGroup = $dobElement.parents('.group');
+              $dobGroup.removeClass('validation');
+              $dobGroup.find('.form-element-errors').remove();
+              $('.js-age-check').remove();
+
+              dob = getDOB();
+              if (dob !== null) {
+
+                if (dob > minAge) {
+                  $dobGroup.addClass('validation');
+                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                  actionGroup.before($(tplInputCheckbox({
+                    'elementJSref': 'js-age-check',
+                    'elementName': 'ageCheck',
+                    'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                  })).addClass('validation'));
+
+                }
+                else if (dob <= maxAge) {
+                  $dobGroup.addClass('validation');
+                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+                  actionGroup.before($(tplInputCheckbox({
+                    'elementJSref': 'js-age-check',
+                    'elementName': 'ageCheck',
+                    'elementLabel': 'Please confirm that they are over 100 years old.'
+                  })).addClass('validation'));
+
+                }
+
+              }
+
+            }
+
+
+            $('.validation-summary').remove();
+            if ($form.find('.group.validation').length > 0) {
+              $form.prepend(tplErrorsFormSummary());
+
+            }
+
+          }
+
+          $allFields = $('input[required], label.required + input, label.required ~ select', $form);
+
           allPopulated = true;
 
           // Test required fields are populated
           $allFields.each(function () {
-            if ($.trim($(this).val()) === '') {
-              allPopulated = false;
+            if (allPopulated) {
+
+              var $field = $(this);
+
+              if ($.trim($field.val()) === '') {
+                allPopulated = false;
+              }
+              if ($field.prop('type') === 'checkbox') {
+                allPopulated = $field.prop('checked');
+              }
+
             }
           });
 
@@ -4094,8 +4368,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             allPopulated = false;
           }
 
+
           $submitBtn.attr('disabled', !allPopulated);
-        })
+        }
+      )
         // Relationship: other toggle
         .on('change.moj.Modules.PersonForm', '[name="relationshipToDonor"]', function () {
           var other = $('#relationshipToDonorOther').closest('.group');
@@ -4130,7 +4406,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
     }
-
 
   };
 
@@ -4180,24 +4455,29 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
       var startTime = this.time();
       // check to see if user is logged in
-      $.ajax({
-        url: '/user/is-logged-in',
-        dataType: 'json',
-        timeout: 10000,
-        cache: false,
-        context: this,
-        success: function (response) {
-          if (response.isLoggedIn) {
-            // if logged in, start setTimeout to alert them when timeout is imminent
-            this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+
+      if (false) {
+
+        $.ajax({
+          url: '/user/is-logged-in',
+          dataType: 'json',
+          timeout: 10000,
+          cache: false,
+          context: this,
+          success: function (response) {
+            if (response.isLoggedIn) {
+              // if logged in, start setTimeout to alert them when timeout is imminent
+              this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+            }
           }
-        }
-      });
+        });
+
+      }
     },
 
     warning: function () {
       var html = '',
-          self = this;
+        self = this;
 
       // TODO: get this HTML out of the JS into a template
       // TODO: get someone to look at this copy, I made it up. Clive.
@@ -4212,7 +4492,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       html += '</div>';
 
       moj.Modules.Popup.open(html, {
-        ident:  'timeout'
+        ident: 'timeout'
       });
 
       $('#sessionRefresh').on('click', function (e) {
@@ -4232,26 +4512,30 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     refreshSession: function () {
       var startTime = this.time();
 
-      $.ajax({
-        url: '/user/is-logged-in',
-        dataType: 'json',
-        timeout: 10000,
-        cache: false,
-        context: this,
-        success: function (response) {
-          if (response.isLoggedIn) {
-            // if logged in, start another timeout
-            this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
-          } else {
-            // redirect tp login if no longer logged in
+      if (false) {
+
+        $.ajax({
+          url: '/user/is-logged-in',
+          dataType: 'json',
+          timeout: 10000,
+          cache: false,
+          context: this,
+          success: function (response) {
+            if (response.isLoggedIn) {
+              // if logged in, start another timeout
+              this.timeout = setTimeout(this.warning, this.timeoutDuration - (this.time() - startTime));
+            } else {
+              // redirect tp login if no longer logged in
+              window.location = '/login/timeout';
+            }
+          },
+          error: function () {
+            // if any errors occur, attempt logout
             window.location = '/login/timeout';
           }
-        },
-        error: function () {
-          // if any errors occur, attempt logout
-          window.location = '/login/timeout';
-        }
-      });
+        });
+
+      }
     },
 
     time: function () {
@@ -4305,6 +4589,116 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   };
 })();
 
+// Repeat Application code module for LPA
+// Dependencies: moj, _, jQuery
+
+(function () {
+  'use strict';
+
+  moj.Modules.RepeatApplication = {
+    selector: '#lpa-type',
+
+    init: function () {
+      console.log('RepeatApplication');
+
+      _.bindAll(this, 'render');
+      this.cacheEls();
+      this.bindEvents();
+      this.render(null, {wrap: 'body'});
+    },
+
+    cacheEls: function () {
+      this.$selector = $(this.selector);
+    },
+
+    bindEvents: function () {
+      moj.Events.on('RepeatApplication.render', this.render);
+    },
+    displayCaseNumber: function (duration) {
+      if ($('#is-repeat-application:checked').length) {
+        $('.js-case-number').animate({
+          'height': 'show',
+          'opacity': 1
+        }, duration); // show
+      }
+      else {
+        $('.js-case-number').animate({
+          'height': 'hide',
+          'opacity': 0
+        }, duration); // hide
+      }
+
+    },
+    render: function (e, params) {
+      var $el = $(this.selector, $(params.wrap));
+
+      this.displayCaseNumber(0);
+      this.initialiseEvents();
+
+    },
+    onRepeatApplicationFormChangeHandler: function (evt) {
+      this.displayCaseNumber(500);
+    },
+    onRepeatApplicationFormClickHandler: function (evt) {
+      var tplDialogConfirm = lpa.templates['dialog.confirmRepeatApplication'],
+        html,
+        formToSubmit,
+        formSubmitted = false;
+
+      if ($('#is-repeat-application:checked').length) {
+
+        formToSubmit = evt.target.form;
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+
+        html = tplDialogConfirm({
+          'dialogTitle': 'Confirm',
+          'dialogMessage': 'I confirm that the Office of the Public Guardian has told me that I can apply to make a repeat application for £55 within 3 months.',
+          'acceptButtonText': 'Confirm and continue',
+          'cancelButtonText': 'Cancel',
+          'acceptClass': 'js-dialog-accept',
+          'cancelClass': 'js-dialog-cancel'
+        });
+        moj.Modules.Popup.open(html, {
+          ident: 'dialog-confirmation'
+        });
+
+        $('.dialog-confirmation').on('click', 'a', function (evt) {
+          var $target = $(evt.target);
+
+          if (!formSubmitted) {
+
+            if ($target.hasClass('js-dialog-accept')) {
+              $target.addClass('disabled');
+              formToSubmit.submit();
+              formSubmitted = true;
+            }
+            else {
+              moj.Modules.Popup.close();
+            }
+
+          }
+
+        });
+
+      }
+    },
+    initialiseEvents: function () {
+      var self = this;
+
+      $('form#repeat-application').on('change', 'input[type="radio"]', function (evt) {
+        self.onRepeatApplicationFormChangeHandler(evt);
+      });
+
+      $('form#repeat-application').on('click', 'input[type="submit"]', function (evt) {
+        self.onRepeatApplicationFormClickHandler(evt);
+      });
+
+    }
+  };
+
+})();
+
 $(moj.init);
 
 $(function(){
@@ -4356,7 +4750,7 @@ lpa.updateSelectbox = function (el, value) {
   }
 
   // Apply the correct value
-  // As the field changes to a text box we lose its reference,
+  // As the field changes to a text box we lose it's reference,
   // so we need to reselect the element.
   form.find('[name=' + field + ']').val(value); // use the name attr as it's unique & will always exist
 };
@@ -4520,32 +4914,18 @@ $(document).ready(function () {
 
   // Fee remissions
 
-  $allRevisedFees = $('.revised-fee').hide();
+    $allRevisedFees = $('.revised-fee').hide();
 
-  $("input[name=reductionOptions]").change(function(){
+    $("input[name=reductionOptions]").change(function(){
 
-    $allRevisedFees.hide();
+        $allRevisedFees.hide();
 
-    if ($('#reducedFeeReceivesBenefits').is(':checked')) {
-      $revisedFee = $('#revised-fee-0').show();
-    } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
-      $revisedFee = $('#revised-fee-uc').show();
-    }
-  });
-
-
-  // Make button text reflect chosen payment option
-
-  $('#claimBenefits, #payByCheque, #receiveUniversalCredit').change(function(){
-      if($('#claimBenefits, #payByCheque, #receiveUniversalCredit').is(':checked')) {
-          $('#form-submit').val('Proceed');
-          $('#contact-email').hide();
-      } else {
-          $('#form-submit').val('Proceed to payment');
-          $('#contact-email').show();
-      }
-  }).change();
-
+        if ($('#reducedFeeReceivesBenefits').is(':checked')) {
+            $revisedFee = $('#revised-fee-0').show();
+        } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
+            $revisedFee = $('#revised-fee-uc').show();
+        }
+    }).change();
 
   $('#load-pf').click(function(){
     $.get('/service/loadpf');

@@ -17,26 +17,17 @@ abstract class AbstractActorForm extends AbstractForm
     public function validateByModel()
     {
         $dataForModel = $this->convertFormDataForModel($this->data);
-    
-        $messages = [];
-        if(array_key_exists('dob', $dataForModel)) {
-            list($year, $month, $day) = explode('-', $dataForModel['dob']['date']);
-            if(!checkdate($month, $day, $year)) {
-                $messages['dob-date-year'] = ['invalid date'];
-                unset($dataForModel['dob']);
-            }
-        }
-    
+        
         $this->actorModel->populate($dataForModel);
         $validation = $this->actorModel->validate();
-    
+        
         // set validation message for form elements
         if($validation->offsetExists('dob')) {
-            $validation['dob-date-year'] = $validation['dob'];
+            $validation['dob-date'] = $validation['dob'];
             unset($validation['dob']);
         }
         elseif($validation->offsetExists('dob.date')) {
-            $validation['dob-date-year'] = $validation['dob.date'];
+            $validation['dob-date'] = $validation['dob.date'];
             unset($validation['dob.date']);
         }
     
@@ -64,7 +55,7 @@ abstract class AbstractActorForm extends AbstractForm
         else {
             return [
                     'isValid'=>false,
-                    'messages' => array_merge($this->modelValidationMessageConverter($validation), $messages),
+                    'messages' => $this->modelValidationMessageConverter($validation),
             ];
         }
     }
@@ -78,10 +69,9 @@ abstract class AbstractActorForm extends AbstractForm
      */
     protected function convertFormDataForModel($formData)
     {
-        if(array_key_exists('dob-date-day', $formData)) {
-            if(($formData['dob-date-year']>0) && ($formData['dob-date-month']>0) && ($formData['dob-date-day']>0)) {
-                $formData['dob-date'] = $formData['dob-date-year'] . '-' . $formData['dob-date-month'] . '-' . $formData['dob-date-day'];
-                unset($formData['dob-date-day'],$formData['dob-date-month'],$formData['dob-date-year']);
+        if(array_key_exists('dob-date', $formData)) {
+            if(($formData['dob-date']['year']>0) && ($formData['dob-date']['month']>0) && ($formData['dob-date']['day']>0)) {
+                $formData['dob-date'] = $formData['dob-date']['year'] . '-' . $formData['dob-date']['month'] . '-' . $formData['dob-date']['day'];
             }
             else {
                 $formData['dob'] = null;

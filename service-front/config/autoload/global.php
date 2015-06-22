@@ -74,6 +74,11 @@ return array(
 
     ], // session
 
+    'csrf' => [
+        // Salt used for generating csrf tokens
+        'salt' => 'csrf-secret',
+    ],
+
     'email' => [
 
         'sendgrid' => [
@@ -112,7 +117,7 @@ return array(
 
         // Should we allow new v1 LPAs to be created.
         // Should be FALSE in production.
-        'allow-v1-laps-to-be-created' => true,
+        'allow-v1-laps-to-be-created' => false,
 
         'redis' => [
             // This data should persist for the length v1 is alive (6 months predicted).

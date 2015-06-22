@@ -24,6 +24,7 @@ class HowAttorneysMakeDecisionForm extends AbstractForm
                     ],
             ],
             'howDetails' => [
+                    'required' => true,
                     'type' => 'TextArea',
             ],
             'submit' => [

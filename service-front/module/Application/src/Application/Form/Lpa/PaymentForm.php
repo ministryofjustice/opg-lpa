@@ -9,9 +9,11 @@ class PaymentForm extends AbstractForm
             'email' => [
                     'required' => true,
                     'type' => 'Email',
-                    'validators' => array(
-                            '\Zend\Form\Element\Email',
-                    ),
+                    'validators' => [
+                        [
+                            'name' => 'EmailAddress',
+                        ]
+                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',

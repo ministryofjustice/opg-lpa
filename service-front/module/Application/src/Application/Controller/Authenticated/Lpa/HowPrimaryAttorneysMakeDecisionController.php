@@ -22,35 +22,47 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
         
+        $lpaId = $this->getLpa()->id;
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
+            
+            if($postData['how'] != PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                $form->setValidationGroup(
+                        'how'
+                );
+            }
             
             // set data for validation
             $form->setData($postData);
             
             if($form->isValid()) {
                 
-                $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-                
-                $howAttorneyAct = $form->get('how')->getValue();
-                
                 if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-                    $decision = $this->getLpa()->document->primaryAttorneyDecisions;
+                    $decisions = $this->getLpa()->document->primaryAttorneyDecisions;
                 }
                 else {
-                    $decision = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+                    $decisions = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
                 }
                 
-                $decision->how = $howAttorneyAct;
+                $howAttorneysAct = $form->getData()['how'];
                 
-                if($howAttorneyAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                    $decision->howDetails = $form->get('howDetails')->getValue();
+                if($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                    $howDetails = $form->getData()['howDetails'];
+                }
+                else {
+                    $howDetails = null;
                 }
                 
-                // persist data
-                if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $decision)) {
-                    throw new \RuntimeException('API client failed to set primary attorney decisions for id: '.$lpaId);
+                if(($decisions->how !== $howAttorneysAct) || ($decisions->howDetails !== $howDetails)) {
+                    $decisions->how = $howAttorneysAct;
+                    $decisions->howDetails = $howDetails;
+                    
+                    // persist data
+                    if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $decisions)) {
+                        throw new \RuntimeException('API client failed to set primary attorney decisions for id: '.$lpaId);
+                    }
                 }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

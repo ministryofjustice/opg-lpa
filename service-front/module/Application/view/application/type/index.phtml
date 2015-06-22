@@ -6,7 +6,7 @@
     ]);
     
     $form->setAttribute('class', 'form');
-    $csrf        = $form->get('secret');
+    $csrf        = $form->get($form->csrfName());
 
     $type        = $form->get('type');
     $typeValueOptions = $type->getOptions()['value_options'];

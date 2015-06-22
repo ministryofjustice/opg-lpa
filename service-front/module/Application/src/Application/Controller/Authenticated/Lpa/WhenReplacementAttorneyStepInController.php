@@ -28,22 +28,41 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
+            if($postData['when'] != ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                $form->setValidationGroup(
+                        'when'
+                );
+            }
+            
             // set data for validation
             $form->setData($postData);
+            
             if($form->isValid()) {
                 
                 if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                    $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions;
+                    $decisions = $this->getLpa()->document->replacementAttorneyDecisions;
                 }
                 else {
-                    $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $decisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
                 }
                 
-                $replacementAttorneyDecisions->when = $form->get('when')->getValue();
+                $whenReplacementStepIn = $form->getData()['when'];
                 
-                // persist data
-                if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $replacementAttorneyDecisions)) {
-                    throw new \RuntimeException('API client failed to set replacement step in decisions for id: '.$lpaId);
+                if($whenReplacementStepIn == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                    $whenDetails = $form->getData()['whenDetails'];
+                }
+                else {
+                    $whenDetails = null;
+                }
+                
+                if(($decisions->when !== $whenReplacementStepIn) || ($decisions->whenDetails !== $whenDetails)) {
+                    $decisions->when = $whenReplacementStepIn;
+                    $decisions->whenDetails = $whenDetails;
+                    
+                    // persist data
+                    if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $decisions)) {
+                        throw new \RuntimeException('API client failed to set replacement step in decisions for id: '.$lpaId);
+                    }
                 }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);

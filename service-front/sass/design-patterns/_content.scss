@@ -1,0 +1,49 @@
+// =======================================================
+// BASIC CONTENT STYLES
+//
+// CSS for basic content elements not already covered by
+// the template CSS files.
+
+// Horizontal rules
+hr {
+  height: 1px;
+  border: 0;
+  background-color: $border-colour;
+  margin: 2em 0;
+}
+
+// Link-style text
+.link-style, 
+.link-style:focus, 
+.link-style:active {
+  color: $link-colour;
+  border: none;
+  display: inline;
+  margin: 0em;
+  padding: 0em;
+  outline: none;
+  outline-offset: 0em;
+  background: none;
+  text-decoration: underline;
+  font: inherit;
+  cursor: pointer;
+  &:hover{
+    color: $link-hover-colour;
+  }
+}
+/* Remove extra space inside buttons in Firefox */
+.link-style::-moz-focus-inner {
+    border: none;
+    padding: 0em;
+}
+
+// Make links appear as text (e.g. on toggle links)
+.text-style,
+.text-style:focus,
+.text-style:hover,
+.text-style:visited,
+.text-style:active {
+  color: $text-colour;
+  text-decoration: none;
+  cursor: text;
+}

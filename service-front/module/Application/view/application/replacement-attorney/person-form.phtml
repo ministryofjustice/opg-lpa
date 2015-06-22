@@ -9,7 +9,8 @@
     if(isset($this->seedDetailsPickerForm)) {
         $pickerForm   = $this->seedDetailsPickerForm;
         $pickerForm->setAttribute('class', 'form');
-        $pickerCsrf   = $pickerForm->get('secret');
+        $pickerCsrf   = $pickerForm->get($pickerForm->csrfName());
+        $pickerCsrf->setAttributes(['id'=>'secret']);
         
         $picker = $pickerForm->get('pick-details');
         $picker->setAttributes(['id'=>'pick-details', 'class'=>'js-reusable']);
@@ -28,18 +29,22 @@
      * attorney form
      */
     $form = $this->formErrorTextExchange($this->form, []);
-    $csrf       = $form->get('secret');
+    $csrf       = $form->get($form->csrfName());
     $title      = $form->get('name-title');
     $firstname  = $form->get('name-first');
     $lastname   = $form->get('name-last');
-    $dobDay     = $form->get('dob-date-day');
-    $dobMonth   = $form->get('dob-date-month');
-    $dobYear    = $form->get('dob-date-year');
     $address1   = $form->get('address-address1');
     $address2   = $form->get('address-address2');
     $address3   = $form->get('address-address3');
     $postcode   = $form->get('address-postcode');
 
+    $dob      = $form->get('dob-date');
+    $dobDay   = $dob->get('day');
+    $dobMonth = $dob->get('month');
+    $dobYear  = $dob->get('year');
+    
+    $dob->setOptions(['label'=>'Date of Birth']);
+    
     $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
     
     $title->setOptions( ['label' => 'Title'] );
@@ -51,9 +56,9 @@
     $dobMonth->setOptions(  ['label' => 'Month'] );
     $dobYear->setOptions(   ['label' => 'Year'] );
     
-    $dobDay->setAttribute('id', 'dob-day');
-    $dobMonth->setAttribute('id', 'dob-month');
-    $dobYear->setAttribute('id', 'dob-year');
+    $dobDay->setAttribute('id', 'dob-date-day');
+    $dobMonth->setAttribute('id', 'dob-date-month');
+    $dobYear->setAttribute('id', 'dob-date-year');
     
     $address1->setOptions( ['label' => 'Address line 1'] );
     $address2->setOptions( ['label' => 'Address line 2'] );
@@ -149,6 +154,10 @@
                 <?= $this->formElement($dobYear) ?>
             </div>
         </div>
+        <?= $this->formElementErrors($dobDay) ?>
+        <?= $this->formElementErrors($dobMonth) ?>
+        <?= $this->formElementErrors($dobYear) ?>
+        <?= $this->formElementErrors($dob) ?>
     </div>
     
     <div class="group">

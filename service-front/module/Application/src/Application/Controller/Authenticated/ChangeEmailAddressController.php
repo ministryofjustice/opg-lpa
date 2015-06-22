@@ -5,8 +5,6 @@ namespace Application\Controller\Authenticated;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
-use Application\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
-
 class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
     public function indexAction()
@@ -16,7 +14,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
         //----------------------
 
-        $form = new ChangeEmailAddressForm();
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ChangeEmailAddress');
         $form->setAttribute( 'action', $this->url()->fromRoute('user/change-email-address') );
 
         $error = null;

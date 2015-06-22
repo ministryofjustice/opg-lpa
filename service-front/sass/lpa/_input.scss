@@ -1,0 +1,49 @@
+.input {
+  &-checkbox {
+
+    #popup.form-popup & {
+
+      label {
+        width: auto;
+      }
+
+    }
+
+  }
+}
+
+#about-you {
+
+  input {
+
+    &[type="text"] {
+      width: 15em;
+    }
+
+    &.postcode {
+      width: 5em;
+    }
+
+  }
+
+}
+
+.lpa {
+
+  &.edit,&.add {
+
+    input {
+
+      &[type="text"] {
+        width: 15em;
+      }
+
+      &.postcode {
+        width: 5em;
+      }
+
+    }
+
+  }
+
+}
