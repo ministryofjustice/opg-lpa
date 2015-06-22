@@ -1,17 +1,17 @@
 # Registering the LPA
 
-Once you have completed the questions on your LPA form, this service will take you through the steps to send in your LPA for registration.
+Once you have completed the questions in the first part of your LPA form, this service will take you through the steps to send in your LPA for registration.
 
 To register your LPA:
 
-1. Using this service, complete a registration form (this form, the LPA002, is different from the LPA itself).
+1. Using this service, answer the questions in the registration part of the LPA form.
 2. Pay the application fee online or by cheque.
-3. Print the LPA and the registration form together and sign them in the right order.
-4. Send both to the Office of the Public Guardian (OPG).
+3. Print the completed LPA, including the registration section, and sign it in the right order.
+4. Send your signed LPA form to the Office of the Public Guardian (OPG), along with a fee remission form and evidence if you are applying to pay a reduced fee.
 
 The current fee for applying to register an LPA is £110. If you get means-tested benefits or have a low income, you may be able to pay less or no fee. [Fees and reductions](/help/#topic-fees-and-reductions) has more information. If paying by cheque, enclose your cheque with your LPA and registration forms when you send them to OPG.
 
-Before you send in the LPA for registration, you can use this service to make sure you sign it in the right order and notify any people who need to be told that you are registering it.
+Before you send in the LPA for registration, you can use this service to make sure you [sign it in the right order](/help/#topic-signing-the-lpa) and print the completed forms to notify any people who need to be told that you are registering it.
 
 Don't make any changes to the LPA document after you've signed it. That could make it invalid, so you'd have to print it again and get everyone to sign it again.
 
@@ -27,19 +27,19 @@ If you no longer have mental capacity, your attorneys can apply to register your
 
 ### The information you'll need to fill in
 
-The registration part of the LPA service will ask you:
+The registration part of the LPA service will ask you a few questions such as:
 
 * who is applying to register the LPA – this will be you (the donor) or at least one of the attorneys
 * the correspondence address – give details of where OPG should write or phone while your application is processed
-* other powers of attorney – give details of any enduring power of attorney (EPA) or registered LPA that you've made as a donor
+* whether you’re applying to pay a reduced fee
 
 The rest of the details will be completed automatically for you.
 
 ### Print your forms, sign them and send them in
 
-Once you've filled everything in, print out the LPA and the registration form and sign them in the right order.
+Once you've filled everything in, print out the LPA and sign it in the right order.
 
-You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.
+You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">www.adobe.com/uk/products/reader.html</a>) to view and print the LPA form.
 
 Send the following documents to OPG:
 
@@ -63,7 +63,7 @@ The 4-week wait is set by law. It gives people time to raise concerns they have 
 
 OPG also uses the time to check that the LPA has been made correctly and there's nothing that would make it invalid or unworkable. If there is something that must be corrected before it can be registered, OPG will contact you.
 
-The registered LPA document that OPG sends you is the same form that you filled in and sent to OPG – but you will see it's been stamped, once OPG's registered it. 
+The registered LPA document that OPG sends you is the same form that you filled in and sent to OPG – but you will see it's been stamped, once OPG has registered it. 
 
 ### Related help topics
 * [Signing the LPA](/help/#topic-signing-the-lpa)
