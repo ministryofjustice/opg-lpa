@@ -1344,7 +1344,7 @@ return array(
     'Symfony\\Component\\Yaml\\Tests\\YamlTest' => $vendorDir . '/symfony/yaml/Tests/YamlTest.php',
     'Symfony\\Component\\Yaml\\Unescaper' => $vendorDir . '/symfony/yaml/Unescaper.php',
     'Symfony\\Component\\Yaml\\Yaml' => $vendorDir . '/symfony/yaml/Yaml.php',
-    'Text_Template' => $vendorDir . '/phpunit/php-text-template/Text/Template.php',
+    'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'ZFTest\\ApiProblem\\ApiProblemResponseTest' => $vendorDir . '/zfcampus/zf-api-problem/test/ApiProblemResponseTest.php',
     'ZFTest\\ApiProblem\\ApiProblemTest' => $vendorDir . '/zfcampus/zf-api-problem/test/ApiProblemTest.php',
     'ZFTest\\ApiProblem\\Bootstrap' => $vendorDir . '/zfcampus/zf-api-problem/test/Bootstrap.php',
