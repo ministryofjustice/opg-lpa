@@ -16,34 +16,16 @@ return [
                 ],
             ], // home
 
-            /*
-            'application' => [
-                'type'    => 'Literal',
+            'ping' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/application',
+                    'route'    => '/ping',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'index',
+                        'controller' => 'Application\Controller\Ping',
+                        'action'     => 'index',
                     ],
                 ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'default' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/[:controller[/:action]]',
-                            'constraints' => [
-                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            ],
-                            'defaults' => [
-                            ],
-                        ],
-                    ],
-                ],
-            ], // Services
-            */
+            ], // ping
 
             'api-v1' => [
                 'type'    => 'Segment',
@@ -154,6 +136,7 @@ return [
     'controllers' => [
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Ping' => 'Application\Controller\PingController',
             'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
         ],
         'factories' => [
