@@ -97,7 +97,10 @@ class Status implements ServiceLocatorAwareInterface {
             $client = new GuzzleClient();
             $client->setDefaultOption('exceptions', false);
 
-            $response = $client->get( 'https://frontv1-01/manage/availability?healthcheck=1' );
+            $response = $client->get(
+                'https://frontv1-01/manage/availability?healthcheck=1',
+                ['connect_timeout' => 5, 'timeout' => 20]
+            );
 
             if ( $response->getStatusCode() == 200 ){
                 $result['details']['200'] = true;
@@ -140,7 +143,10 @@ class Status implements ServiceLocatorAwareInterface {
             $client = new GuzzleClient();
             $client->setDefaultOption('exceptions', false);
 
-            $response = $client->get($config['api_uri'] . '/ping');
+            $response = $client->get(
+                $config['api_uri'] . '/ping',
+                ['connect_timeout' => 5, 'timeout' => 10]
+            );
 
             // There should be no JSON if we don't get a 200, so return.
             if ($response->getStatusCode() != 200) {
