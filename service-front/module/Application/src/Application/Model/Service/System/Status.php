@@ -22,9 +22,9 @@ class Status implements ServiceLocatorAwareInterface {
      * Services:
      *  - API 2
      *  - Auth
-     *  - Postcode Anywhere
-     *  - SendGird
      *  - RedisFront
+     *  - Postcode Anywhere #TODO
+     *  - SendGird #TODO
      */
 
     public function check(){
@@ -49,17 +49,44 @@ class Status implements ServiceLocatorAwareInterface {
         }
         // end #v1Code
 
+
         //-----------------------------------
-        // Postcode anywhere
+        // Check Redis (sessions)
 
-        var_dump($result); die;
+        $result['sessions'] = array( 'ok' => false );
 
-    }
+        try {
+
+            $config = $this->getServiceLocator()->get('Config')['session']['redis']['server'];
+
+            $redis = new \Redis();
+            $redis->connect( $config['host'], $config['port'] );
+
+            if( $redis->ping() == '+PONG' ){
+                $result['sessions']['ok'] = true;
+            }
+
+        } catch ( Exception $e ){}
+
+
+        //-----------------------------------
+
+        $ok = true;
+
+        foreach( $result as $service ){
+            $ok = $ok && $service['ok'];
+        }
+
+        $result['ok'] = $ok;
+
+        return $result;
+
+    } // function
 
     //------------------------------------------------------------------------
 
     /**
-     * This while method is #v1Code code.
+     * This whole method is #v1Code code.
      */
     private function v1(){
 
@@ -72,14 +99,27 @@ class Status implements ServiceLocatorAwareInterface {
 
             $response = $client->get( 'http://front.local/manage/availability?healthcheck=1' );
 
-            if ($response->getStatusCode() != 200) {
-                return $result;
+            if ( $response->getStatusCode() == 200 ){
+                $result['details']['200'] = true;
             }
 
             //---
 
-            $result['details']['200'] = true;
+            // Get the XML in array form.
+            $v1 = json_encode( $response->xml() );
+            $v1 = json_decode( $v1, true );
 
+            if( is_array($v1) ){
+
+                if( isset($v1['status']) ){
+
+                    if( $v1['status'] == 'OK' ){ $result['ok'] = true; }
+
+                    $result['details']['status'] = $v1['status'];
+
+                }
+
+            } // if
 
         } catch (Exception $e) { /* Don't throw exceptions; we just return ok==false */ }
 

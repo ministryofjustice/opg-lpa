@@ -32,12 +32,10 @@ class PaymentController extends AbstractLpaController
         
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
+        // make payment by cheque
         if($this->params()->fromQuery('pay-by-cheque')) {
         
             $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
-        
-            // payment date is only for online payment.
-            //$lpa->payment->date = new \DateTime();
         
             if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
                 throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
@@ -45,7 +43,7 @@ class PaymentController extends AbstractLpaController
         
             // send email
             $communicationService = $this->getServiceLocator()->get('Communication');
-            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
         
             // to complete page
             return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
@@ -130,8 +128,7 @@ class PaymentController extends AbstractLpaController
         
         // send email
         $communicationService = $this->getServiceLocator()->get('Communication');
-        $communicationService->sendInstrumentCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
-        
+        $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
         return $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
         
         return $this->getResponse();
