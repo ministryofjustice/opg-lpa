@@ -42,11 +42,17 @@ class DateCheckController extends AbstractLpaController
                     }
                 }
                 
-                $viewParams['dateError'] = DateCheck::checkDates([
+                $result = DateCheck::checkDates([
                     'donor' => $postArray['sign-date-donor'],
                     'certificate-provider' => $postArray['sign-date-certificate-provider'],
                     'attorneys' => $attorneySignatureDates,
                 ]);
+                
+                if ($result === true) {
+                    $viewParams['dateError'] = '';
+                } else {
+                    $viewParams['dateError'] = $result;
+                }
             }
         }
                 
