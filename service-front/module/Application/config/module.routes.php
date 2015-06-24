@@ -170,18 +170,28 @@ return [
                     ],
                 ],
             ], // stats
-            'status' => [
+
+            'ping' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/status',
+                    'route'    => '/ping',
                     'defaults' => [
-                        'controller' => 'General\StatusController',
+                        'controller' => 'General\PingController',
                         'action'     => 'index',
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'default' => [
+                    'json' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/json',
+                            'defaults' => [
+                                'action'     => 'json',
+                            ],
+                        ],
+                    ],
+                    'pingdom' => [
                         'type'    => 'Segment',
                         'options' => [
                             'route'    => '/pingdom',
