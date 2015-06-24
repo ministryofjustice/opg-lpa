@@ -142,6 +142,7 @@ class Module{
                 'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
                 'Communication'         => 'Application\Model\Service\Lpa\Communication',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
+                'SiteStatus'            => 'Application\Model\Service\System\Status',
             ],
             'factories' => [
                 'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
