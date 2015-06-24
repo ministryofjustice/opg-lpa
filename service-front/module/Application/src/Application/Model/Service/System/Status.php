@@ -97,7 +97,7 @@ class Status implements ServiceLocatorAwareInterface {
             $client = new GuzzleClient();
             $client->setDefaultOption('exceptions', false);
 
-            $response = $client->get( 'http://front.local/manage/availability?healthcheck=1' );
+            $response = $client->get( 'https://frontv1-01/manage/availability?healthcheck=1' );
 
             if ( $response->getStatusCode() == 200 ){
                 $result['details']['200'] = true;
