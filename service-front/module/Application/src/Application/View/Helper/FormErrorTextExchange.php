@@ -26,7 +26,7 @@ class FormErrorTextExchange extends AbstractHelper
             'must-be-greater-than-or-equal:5' => 'Postcode must be at least five characters',
         ],
         'name-title' => [
-            'must-be-less-than-or-equal:5' => 'Your title must be five letters or fewer - please abbreviate, if necessary',
+            'must-be-less-than-or-equal:5' => 'Title must be five letters or fewer - please abbreviate, if necessary',
         ]
     ];
     
