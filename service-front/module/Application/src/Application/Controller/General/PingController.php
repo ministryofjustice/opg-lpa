@@ -2,6 +2,7 @@
 
 namespace Application\Controller\General;
 
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
@@ -10,33 +11,46 @@ class PingController extends AbstractBaseController {
     public function indexAction()
     {
 
-        $this->doChecks();
-
         return new ViewModel();
     }
 
-    public function jsonAction()
-    {
+    public function jsonAction(){
 
-        $this->doChecks();
+        $result = $this->getServiceLocator()->get('SiteStatus')->check();
 
-        die('json');
+        return new JsonModel( $result );
+
     }
     
-    public function pingdomAction()
-    {
-        return new ViewModel();
-    }
+    public function pingdomAction(){
 
-    private function doChecks(){
+        $start = round(microtime(true) * 1000);
 
-        // All v2 stuff.
-        $status = $this->getServiceLocator()->get('SiteStatus');
+        $response = new \Zend\Http\Response();
+        $response->getHeaders()->addHeaderLine('Content-Type', 'text/xml; charset=utf-8');
 
-        $a = $status->check();
+        $xml = simplexml_load_string("<?xml version='1.0' ?><pingdom_http_custom_check><status></status><response_time></response_time></pingdom_http_custom_check>");
 
-        // And the v1 Healthcheck.
+        //---
 
+        $result = $this->getServiceLocator()->get('SiteStatus')->check();
+
+        if( $result['ok'] == true ){
+            $xml->status = 'OK';
+        } else {
+            $response->setStatusCode(500);
+            $xml->status = 'ERROR';
+        }
+
+        //---
+
+        $end = round(microtime(true) * 1000);
+
+        $xml->response_time = ( $end - $start ) / 1000;
+
+        $response->setContent($xml->asXML());
+
+        return $response;
 
     }
 
