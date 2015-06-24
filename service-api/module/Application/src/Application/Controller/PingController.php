@@ -52,12 +52,6 @@ class PingController extends AbstractActionController {
 
         //---
 
-        if( !$allOk ){
-            $this->getResponse()->setStatusCode(500);
-        }
-
-        //---
-
         return new JsonModel([
             'ok' => $allOk,
             'database' => (isset($mongoOK))?$mongoOK:false,
