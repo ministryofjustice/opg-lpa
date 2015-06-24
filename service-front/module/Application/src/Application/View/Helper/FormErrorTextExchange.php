@@ -24,6 +24,9 @@ class FormErrorTextExchange extends AbstractHelper
     private $commonFieldMap = [
         'address-postcode' => [
             'must-be-greater-than-or-equal:5' => 'Postcode must be at least five characters',
+        ],
+        'name-title' => [
+            'must-be-less-than-or-equal:5' => 'Your title must be five letters or fewer - please abbreviate, if necessary',
         ]
     ];
     
