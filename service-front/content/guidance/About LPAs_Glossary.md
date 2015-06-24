@@ -47,8 +47,8 @@ Here are words you'll see when you're making your lasting power of attorney (LPA
 **Office of the Public Guardian (OPG)**
 > OPG is the agency in England and Wales that registers LPAs and protects people who don't have mental capacity. Also see 'Registration'.
 
-**People to be notify**
-> People to notify are individuals you choose to be notified when you apply to register your LPA. These people provide extra security as they get a chance to raise any concerns about your LPA before it's registered – for example, if they believe you've been put under pressure to make it.
+**People to be told**
+> People to be told are individuals you choose to be notified when you apply to register your LPA. These people provide extra security as they get a chance to raise any concerns about your LPA before it's registered – for example, if they believe you've been put under pressure to make it.
 
 **Preferences**
 > You can state preferences in your LPA. Preferences are what you'd like your attorneys to think about when making decisions for you. Attorneys should take your preferences into account but don't have to follow them. Also see 'Instructions'.
