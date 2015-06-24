@@ -51,7 +51,7 @@ $form->prepare();
 		
     		<summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions for the attorneys?</summary>
 		    
-		    <p>If you'd like to add anything here, please <a class="js-guidance" href="/help/#topic-restrictions-and-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on instructions and preferences</a>. It contains useful examples and can help you avoid mistakes.</p>
+		    <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-instructions-and-preferences" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on instructions and preferences</a>. It contains useful examples and can help you avoid mistakes.</p>
 		    
             <div class="emphasised option group">
                 
@@ -59,7 +59,7 @@ $form->prepare();
                     <?= $formLabel->openTag($instructions) . $instructions->getOption('label'); ?>
                     <?= $formLabel->closeTag() ?>
                 </h3>
-                <p class="hint">These are things that the attorneys MUST or MUST NOT do. <a href="/help/#topic-restrictions-and-guidance" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a></p>
+                <p class="hint">These are things that the attorneys MUST or MUST NOT do. <a href="/guide#topic-instructions-and-preferences" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a></p>
                 
                 <p>
                 <?= $this->formElement($instructions)?>
@@ -77,7 +77,7 @@ $form->prepare();
                 <?= $formLabel->openTag($preferences) . $preferences->getOption('label'); ?><?= $formLabel->closeTag() ?>
                 </h3>
                 
-                <p class="hint">These are things you would like attorneys to think about when making decisions. <a href="/help/#topic-restrictions-and-guidance" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a></p>
+                <p class="hint">These are things you would like attorneys to think about when making decisions. <a href="/guide#topic-instructions-and-preferences" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a></p>
                 
                 <p>
                 <?= $this->formElement($preferences)?>
