@@ -31,7 +31,7 @@ class DonorForm extends AbstractActorForm
                     ],
             ],
             'email-address' => [
-                    'type' => 'Text',
+                    'type' => 'Email',
                     'validators' => [
                         [
                             'name'    => 'EmailAddress',

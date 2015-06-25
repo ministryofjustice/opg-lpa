@@ -51,7 +51,7 @@ class FeedbackForm extends AbstractForm {
         
         $this->add(array(
             'name' => 'email',
-            'type' => 'Text',
+            'type' => 'Email',
         ));
         
         //--------------------------------

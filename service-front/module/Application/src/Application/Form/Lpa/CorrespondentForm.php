@@ -23,6 +23,11 @@ class CorrespondentForm extends AbstractActorForm
             ],
             'email-address' => [
                     'type' => 'Email',
+                    'validators' => [
+                        [
+                            'name' => 'EmailAddress',
+                        ]
+                    ],
             ],
             'phone-number' => [
                     'type' => 'Text',

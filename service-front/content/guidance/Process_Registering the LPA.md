@@ -41,14 +41,11 @@ Once you've filled everything in, print out the LPA and sign it in the right ord
 
 You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">www.adobe.com/uk/products/reader.html</a>) to view and print the LPA form.
 
-Send the following documents to OPG:
-
-1. the signed LPA document. You must include pages 1 and 2, which are important parts of the form, and any continuation sheets that have been printed and signed.
-2. The signed 'Application to register a lasting power of attorney' form (LPA002).
+Send OPG the signed LPA document. You must include any continuation sheets that have been printed and signed.
 
 If you want to apply to pay lower or no application fees, you must include:
 
-1. The signed 'Application for exemption or remission of EPA/LPA application to register fees' form (LPA120A). You can download this at the same time as you download the LPA and registration forms.
+1. The signed 'Application for exemption or remission of LPA/EPA application fees' form (LPA120A). You can download this at the same time as you download the LPA and registration forms.
 2. Proof that you should pay less or don't have to pay at all.
 
 See [Fees and reductions](/help/#topic-fees-and-reductions) to find out if you can pay less.

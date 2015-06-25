@@ -50,6 +50,11 @@ class FeeForm extends AbstractForm
             'email' => [
                     'required' => true,
                     'type' => 'Email',
+                    'validators' => [
+                        [
+                            'name' => 'EmailAddress',
+                        ]
+                    ],
             ],
             'submit' => [
                     'type' => 'Zend\Form\Element\Submit',
