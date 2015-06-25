@@ -32,6 +32,11 @@ class AttorneyForm extends AbstractActorForm
             ],
             'email-address' => [
                     'type' => 'Email',
+                    'validators' => [
+                        [
+                            'name' => 'EmailAddress',
+                        ]
+                    ],
             ],
             'address-address1' => [
                     'type' => 'Text',
