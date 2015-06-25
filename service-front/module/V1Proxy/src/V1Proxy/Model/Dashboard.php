@@ -139,7 +139,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
         foreach( $array['lpa'] as $k=>$lpa ){
             
             // Don't include registration sections.
-            if( $k == 'registration' ){
+            if( $k === 'registration' ){
                 continue;
             }
 
