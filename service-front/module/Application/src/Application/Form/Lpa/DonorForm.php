@@ -64,7 +64,7 @@ class DonorForm extends AbstractActorForm
             ],
         ];
         
-        $this->setName('donor');
+        $this->setName('form-donor');
         
         parent::init();
     }

@@ -58,7 +58,7 @@ class DateCheckForm extends AbstractForm
             }
         }
         
-        $this->setName('date-checker');
+        $this->setName('form-date-checker');
         
         parent::init();
         

@@ -49,7 +49,7 @@ class ApplicantForm extends AbstractForm
             $this->setAttorneyList();
         }
         
-        $this->setName('applicant');
+        $this->setName('form-applicant');
         
         parent::init();
     }

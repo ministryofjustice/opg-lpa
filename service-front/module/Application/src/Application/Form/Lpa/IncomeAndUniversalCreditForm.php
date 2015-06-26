@@ -41,7 +41,7 @@ class IncomeAndUniversalCreditForm extends AbstractForm
     
     public function init()
     {
-        $this->setName('income-and-universal-credit');
+        $this->setName('form-income-and-universal-credit');
         parent::init();
     }
     

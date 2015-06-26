@@ -21,7 +21,7 @@ class CorrespondenceForm extends AbstractActorForm
     
     public function init ()
     {
-        $this->setName('correspondence');
+        $this->setName('form-correspondence');
         $this->formElements = [
                 'correspondence' => [
                         'type' => 'Application\Form\Lpa\CorrespondenceFieldset',
