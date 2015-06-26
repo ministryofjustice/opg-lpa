@@ -50,6 +50,7 @@
             </details>
         </div>
     </li>
+    <?php if (!$this->identity()) : ?>
     <li>
         <div class="left">
             <p class="step-title"><strong>I already have an LPA account</strong></p>
@@ -61,6 +62,7 @@
             <p><a class="create-lpa button" href="<?= $this->url('login') ?>" role="button">Sign in</a></p>
         </div>
     </li>
+    <?php endif;?>
 </ul>
 
 <h2>Before you begin</h2>
