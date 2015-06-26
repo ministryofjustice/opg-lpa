@@ -30,14 +30,14 @@ class AboutYou implements ServiceLocatorAwareInterface, ServiceDataInputInterfac
 
         $client = $this->getServiceLocator()->get('ProxyOldApiClient');
 
-        $response = $client->get( "http://accounts.local/query?email=".$emailAddress );
+        $response = $client->get( "https://accountv1-01/query?email=".$emailAddress );
         $response = $response->json();
 
         if( !isset($response['id']) || empty($response['id']) ){
             return false;
         }
 
-        $response = $client->get( "http://accounts.local/account/".$response['id'] );
+        $response = $client->get( "https://accountv1-01/account/".$response['id'] );
 
         $this->details = $details = $response->json();
 
