@@ -6,7 +6,7 @@ use Application\Controller\AbstractBaseController;
 
 class RegisterController extends AbstractBaseController {
 
-    protected $contentHeader = 'confirm-partial.phtml';
+    protected $contentHeader = 'blank-header-partial.phtml';
 
     /**
      * Register a new account.
