@@ -30,10 +30,10 @@ class CompleteController extends AbstractLpaController
                 (($payment->reducedFeeReceivesBenefits === true) && ($payment->reducedFeeAwardedDamages === true)) ||
                 ($payment->method == Payment::PAYMENT_TYPE_CHEQUE))
         {
-            $viewModel->setTemplate('application/complete/pay-by-cheque.phtml');
+            $viewModel->setTemplate('application/complete/complete.phtml');
         }
         else {
-            $viewModel->setTemplate('application/complete/pay-by-card.phtml');
+            $viewModel->setTemplate('application/complete/online-payment-complete.phtml');
         }
         
         return $viewModel;

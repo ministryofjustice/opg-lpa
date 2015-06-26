@@ -1,10 +1,11 @@
 <div class="accordion-content">
 
-<h2>Registration documents</h2>
-<p><a id="registration_fm_lnk" class="pdf_dl_lnk" href="<?= $this->lp1Url ?>" target="_blank">Download the pre-filled registration form (PDF)</a></p>
+<h2>LPA form</h2>
+<p><a id="registration_fm_lnk" class="pdf_dl_lnk" href="<?= $this->lp1Url ?>" target="_blank">Download the LPA form (PDF)</a></p>
 
 <?php if(isset($this->lpa120Url)): ?>
- 	<p><a id="notification_lnk" class="pdf_dl_lnk" href="<?= $this->lpa120Url ?>" target="_blank">Download the fee remission form (PDF)</a></p>
+  	<h2>Remission form</h2>
+    <p><a id="notification_lnk" class="pdf_dl_lnk" href="<?= $this->lpa120Url ?>" target="_blank">Download the fee remission form (PDF)</a></p>
 <?php endif;?>
 
 <?php if(isset($this->lp3Url)): ?>
