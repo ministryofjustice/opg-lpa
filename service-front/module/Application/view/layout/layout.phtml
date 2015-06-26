@@ -165,7 +165,6 @@
             <script src="<?= $this->staticAssetPath('/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'); ?>"></script>
             <script src="<?= $this->staticAssetPath('/assets/v1/js/application.js') ?>"></script>
             <?php echo $this->headScript()?>
-            <?php if (false /* @todo $this->environment() == 'production'*/) : ?>
             <script>
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -174,16 +173,9 @@
                 
                 ga('create', 'UA-33184303-1', { 'allowLinker': true });
                 
-                var type = document.getElementById('lpa-type');
-                
-                if (type && type.className.match(/complete/i)) {
-                    type = type.innerHTML.match(/(health|welfare)/i) ? 'health and welfare' : 'property and financial';
-                    ga('set', 'dimension1', type);
-                }
-                
                 ga('send', 'pageview');
+                
                 GOVUK.performance.stageprompt.setupForGoogleAnalytics();
             </script>
-            <?php endif;?>
         </body>
     </html>
