@@ -41,6 +41,7 @@ class CompleteController extends AbstractLpaController
     
     public function viewDocsAction()
     {
+        $this->layout()->contentHeader = 'blank-header-partial.phtml';
         return new ViewModel($this->getViewParams());
     }
     
