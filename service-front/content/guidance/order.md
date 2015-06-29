@@ -20,7 +20,7 @@
 	* People_Replacement attorneys.md
 * Certificate providers
 	* People_Certificate providers.md
-* People to be told
+* People to notify
 	* People_People to be told.md
 * Instructions and preferences
 	* Decisions_Restrictions and guidance.md

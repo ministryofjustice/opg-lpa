@@ -1,4 +1,5 @@
 # Replacement attorneys
+
 Replacement attorneys are people you choose to step in if one of your original attorneys can no longer make decisions on your behalf.
 
 A replacement attorney will step in if one of your attorneys:
@@ -29,6 +30,7 @@ Without replacements:
 If your LPA can't be used and you don't have mental capacity, someone you know will have to apply to the Court of Protection to get the power to act on your behalf – this can be expensive and take a long time.
 
 ## When a replacement attorney steps in
+
 A replacement attorney can only act if the original attorney they're replacing is permanently unable to make decisions for one of the reasons above.
 
 A replacement attorney:
