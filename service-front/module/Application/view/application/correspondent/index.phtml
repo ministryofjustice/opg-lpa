@@ -87,41 +87,33 @@ $form->prepare();
             <div class="option group">
 
                 <?= $formLabel->openTag($contactByPost) . $this->formElement($contactByPost) . $contactByPost->getOption('label') . $formLabel->closeTag(); ?>
-
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($contactByPost) ?>
-                </p>
-
+                
+                <?= $this->formElementErrors($contactByPost) ?>
+            
             </div>
 
             <div class="form_element">
 
                 <?= $formLabel->openTag($contactByPhone) . $this->formElement($contactByPhone) . $contactByPhone->getOption('label') . $formLabel->closeTag(); ?>
-
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($contactByPhone) ?>
-                </p>
-
+                
+                <?= $this->formElementErrors($contactByPhone) ?>
+                        
             </div>
 
             <div class="form_element">
 
                 <?= $formLabel->openTag($contactByEmail) . $this->formElement($contactByEmail) . $contactByEmail->getOption('label') . $formLabel->closeTag(); ?>
-
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($contactByEmail) ?>
-                </p>
-
+                
+                <?= $this->formElementErrors($contactByEmail) ?>
+                        
             </div>
 
             <div class="option group">
 
                 <?= $formLabel->openTag($contactInWelsh) . $this->formElement($contactInWelsh) . $contactInWelsh->getOption('label') . $formLabel->closeTag(); ?>
-
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($contactInWelsh) ?>
-                </p>
-
+                
+                <?= $this->formElementErrors($contactInWelsh) ?>
+            
             </div>
 
         </fieldset>

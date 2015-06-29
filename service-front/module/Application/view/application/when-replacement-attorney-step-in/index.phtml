@@ -78,9 +78,7 @@
             
             <?= $this->formElement($when)?>
             
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($when) ?>
-            </p>
+            <?= $this->formElementErrors($when) ?>
             
         </div>
         
@@ -88,12 +86,10 @@
 			<p class="hint">
 		  	Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice. <a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Not sure what to put?</a>
 			</p>
-			<p>
-                <?= $this->formElement($whenDetails)?>
-            </p>
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($whenDetails) ?>
-            </p>
+			
+            <?= $this->formElement($whenDetails)?>
+            
+            <?= $this->formElementErrors($whenDetails) ?>
 		</div>
 
 		<div class="accordion-actions group">
