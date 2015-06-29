@@ -19,7 +19,11 @@ class AccessController extends AbstractActionController {
 
         $endpoint = $this->params('endpoint');
 
-        if( is_string($endpoint) ){
+        if( $endpoint === 'timeout' ){
+
+            return $this->redirect()->toRoute( 'login', [ 'state' => 'timeout' ] );
+
+        } elseif( is_string($endpoint) ){
 
             return $this->redirect()->toRoute( $endpoint );
 
