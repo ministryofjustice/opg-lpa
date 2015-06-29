@@ -66,9 +66,7 @@
             <div class="emphasised option group">
                 <?= $this->formElement($type)?>
                 
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($type) ?>
-                </p>
+                <?= $this->formElementErrors($type) ?>
                 <?php if($isChangeAllowed == false): ?>
                 <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a <?= ($this->lpa->document->type == Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW)?'Property  and financial affairs':'Health and welfare' ?> LPA based on the current one, click <a href="<?= $this->cloneUrl ?>">here</a>.</p>
                 <?php endif;?>
