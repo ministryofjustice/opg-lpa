@@ -1,6 +1,1 @@
-<?=$this->params['idx'] ?>. 
-<?php if($this->params['values'] == '' ):?>
-    There are no replacement attorneys
-<?php else:?>
-    The replacement attorneys <?= $this->params['values'] ?>
-<?php endif;?>
+<?=$this->params['idx'] ?>. <?php if($this->params['values'] == '' ):?>There are no replacement attorneys<?php else:?>The replacement attorneys <?= $this->params['values'] ?><?php endif;?>
