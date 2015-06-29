@@ -51,7 +51,7 @@ class CorrespondentForm extends AbstractActorForm
     
     public function init ()
     {
-        $this->setName('correspondent');
+        $this->setName('form-correspondent');
         
         parent::init();
     }

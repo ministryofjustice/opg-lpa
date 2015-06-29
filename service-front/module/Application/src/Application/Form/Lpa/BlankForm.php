@@ -7,7 +7,7 @@ class BlankForm extends AbstractActorForm
     
     public function init ()
     {
-        $this->setName('blank');
+        $this->setName('form-blank');
         
         parent::init();
     }

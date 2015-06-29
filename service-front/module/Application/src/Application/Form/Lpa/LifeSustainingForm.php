@@ -31,7 +31,7 @@ class LifeSustainingForm extends AbstractForm
         
     public function init ()
     {
-        $this->setName('life-sustaining');
+        $this->setName('form-life-sustaining');
         
         parent::init();
     }

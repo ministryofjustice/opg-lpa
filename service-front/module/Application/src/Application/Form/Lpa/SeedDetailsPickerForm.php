@@ -34,7 +34,7 @@ class SeedDetailsPickerForm extends AbstractForm
             $this->formElements['pick-details']['options']['value_options'][$idx] = $actor['label'];
         }
         
-        $this->setName('seed-details-picker');
+        $this->setName('form-seed-details-picker');
         
         parent::init();
     }

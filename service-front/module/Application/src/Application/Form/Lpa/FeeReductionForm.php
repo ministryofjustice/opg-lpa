@@ -32,7 +32,7 @@ class FeeReductionForm extends AbstractForm
     
     public function init()
     {
-        $this->setName('fee-reduction');
+        $this->setName('form-fee-reduction');
         parent::init();
     }
     

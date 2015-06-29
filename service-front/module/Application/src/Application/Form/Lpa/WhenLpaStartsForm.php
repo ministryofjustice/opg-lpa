@@ -27,7 +27,7 @@ class WhenLpaStartsForm extends AbstractForm
     
     public function init ()
     {
-        $this->setName('when-lpa-starts');
+        $this->setName('form-when-lpa-starts');
         
         parent::init();
     }

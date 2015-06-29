@@ -25,7 +25,7 @@ class PaymentForm extends AbstractForm
         // The email value is only used for sending to payment gateway, therefore it is not validated by model.
         $this->formElements['email']['validators'] = [new EmailAddress()];
         
-        $this->setName('payment');
+        $this->setName('form-payment');
         
         parent::init();
     }

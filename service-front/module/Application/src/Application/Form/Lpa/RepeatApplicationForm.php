@@ -31,7 +31,7 @@ class RepeatApplicationForm extends AbstractForm
     
     public function init()
     {
-        $this->setName('repeat-application');
+        $this->setName('form-repeat-application');
         parent::init();
     }
     

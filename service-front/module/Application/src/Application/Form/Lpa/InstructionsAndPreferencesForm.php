@@ -19,7 +19,7 @@ class InstructionsAndPreferencesForm extends AbstractForm
     
     public function init ()
     {
-        $this->setName('instructions-and-preferences');
+        $this->setName('form-instructions-and-preferences');
         
         parent::init();
     }

@@ -44,7 +44,7 @@ class BenefitsForm extends AbstractForm
     
     public function init()
     {
-        $this->setName('benefits');
+        $this->setName('form-benefits');
         parent::init();
     }
     

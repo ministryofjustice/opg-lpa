@@ -10,7 +10,7 @@ class CorrespondenceFieldset extends Fieldset //implements InputFilterProviderIn
     
     public function __construct()
     {
-        parent::__construct('correspondence');
+        parent::__construct('fieldset-correspondence');
         $this->setHydrator(new ClassMethodsHydrator(false))
             ->setObject(new Correspondence());
         

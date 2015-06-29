@@ -61,7 +61,7 @@ class WhoAreYouForm extends AbstractForm
     
     public function init ()
     {
-        $this->setName('who-are-you');
+        $this->setName('form-who-are-you');
         
         parent::init();
     }

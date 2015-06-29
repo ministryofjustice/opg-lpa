@@ -39,7 +39,7 @@ class TrustCorporationForm extends AbstractActorForm
     
     public function init ()
     {
-        $this->setName('trust-corporation');
+        $this->setName('form-trust-corporation');
         
         parent::init();
     }

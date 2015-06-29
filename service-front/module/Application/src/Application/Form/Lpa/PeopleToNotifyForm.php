@@ -34,7 +34,7 @@ class PeopleToNotifyForm extends AbstractActorForm
     
     public function init ()
     {
-        $this->setName('people-to-notify');
+        $this->setName('form-people-to-notify');
         
         parent::init();
     }

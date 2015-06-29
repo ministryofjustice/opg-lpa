@@ -44,7 +44,7 @@ class CorrespondentSwitcherForm extends AbstractForm
         
         $this->formElements['switch-to-type']['options']['value_options']['other'] = 'Other';
         
-        $this->setName('correspondent-selector');
+        $this->setName('form-correspondent-selector');
         
         parent::init();
     }
