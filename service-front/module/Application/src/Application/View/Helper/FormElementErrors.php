@@ -5,7 +5,7 @@ use Zend\Form\ElementInterface;
 
 class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
 {
-    public function __invoke(ElementInterface $element = null, array $attributes = array())
+    public function __invoke(ElementInterface $element = null, array $attributes = array(), array $messageOverrideMap = [])
     {
         if (!$element) {
             return $this;
@@ -16,9 +16,21 @@ class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
         $this->setMessageSeparatorString('<br>');
 
         if (count($element->getMessages()) > 0) {
+            
+            $messages = $element->getMessages();
+            
+            foreach ($messages as $key => &$message) {
+                if (array_key_exists($key, $messageOverrideMap)) {
+                    $message = $messageOverrideMap[$key];
+                }
+            }
+            
+            $element->setMessages($messages);
+            
             echo '<div class="form-element-errors">';
             echo $this->render($element, $attributes);
             echo '</div>';
+
         }
 
     }
