@@ -77,9 +77,7 @@ $form->prepare();
         <div class="emphasised option group">
             <?= $this->formElement($isRepeatApplication) ?>
 
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($isRepeatApplication) ?>
-            </p>
+            <?= $this->formElementErrors($isRepeatApplication) ?>
         </div>
 
         <div class="js-case-number emphasised option group">
@@ -90,9 +88,7 @@ $form->prepare();
             <p>By clicking on the Save and continue button, you confirm that the Office of the Public Guardian has told you
                 that you can apply to make a repeat application for £55 within 3 months.</p>
 
-            <p class='form-element-errors'>
-                <?= $this->formElementErrors($repeatCaseNumber) ?>
-            </p>
+            <?= $this->formElementErrors($repeatCaseNumber) ?>
         </div>
 
         <div class="accordion-actions">

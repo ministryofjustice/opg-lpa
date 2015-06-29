@@ -86,18 +86,14 @@
                 <?= $formLabel->openTag($receivesBenefits) . $receivesBenefits->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($receivesBenefits)?>
                 
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($receivesBenefits) ?>
-                </p>
+                <?= $this->formElementErrors($receivesBenefits) ?>
             </div>
             
             <div class="emphasised option group">
                 <?= $formLabel->openTag($reducedFeeAwardedDamages) . $reducedFeeAwardedDamages->getOption('label') . $formLabel->closeTag(); ?>
                 <?= $this->formElement($reducedFeeAwardedDamages)?>
                 
-                <p class='form-element-errors'>
-                    <?= $this->formElementErrors($reducedFeeAwardedDamages) ?>
-                </p>
+                <?= $this->formElementErrors($reducedFeeAwardedDamages) ?>
             </div>
             
             <div class="accordion-actions">
