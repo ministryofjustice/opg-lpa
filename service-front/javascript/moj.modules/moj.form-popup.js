@@ -91,7 +91,7 @@
       });
 
       // hide use button and switch button
-      $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
+      $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
 
     },
 

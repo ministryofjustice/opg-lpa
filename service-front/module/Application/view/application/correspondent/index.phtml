@@ -1,5 +1,10 @@
 <?php
-$form = $this->formErrorTextExchange($this->form, []);
+
+$form = $this->formErrorTextExchange($this->form, [
+    'correspondence' => [
+        "at-least-one-option-needs-to-be-selected" => "Cheese",
+    ],
+]);
 
 $csrf = $form->get($form->csrfName());
 
@@ -68,9 +73,13 @@ $form->prepare();
 
         <?= $this->formElement($csrf) ?>
         <?= $this->formElementErrors($csrf) ?>
-        
-        <?= $this->formElementErrors($correspondence) ?>
-        
+
+        <?= $this->formElementErrors($correspondence, 
+            [], 
+            // explicit override for the message
+            ['at-least-one-option-needs-to-be-selected' => 'Please select at least one option']) 
+        ?>
+
         <fieldset style="clear:both;">
 
             <p>You can choose more than one.</p>

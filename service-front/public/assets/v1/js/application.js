@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-06-19 */
+/*! opg-lpa-2 2015-06-29 */
 /*!
 
  handlebars v1.1.2
@@ -3584,7 +3584,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       });
 
       // hide use button and switch button
-      $('#seed-details-picker, #correspondent-selector').find('input[type=submit]').hide();
+      $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
 
     },
 

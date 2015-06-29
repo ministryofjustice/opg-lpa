@@ -19,6 +19,17 @@ return array(
                 ],
             ],
 
+            'proxy-redirect-timeout' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/timeout',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'timeout'
+                    ],
+                ],
+            ],
 
             'proxy-redirect-details' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
