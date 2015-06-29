@@ -20,7 +20,7 @@ A certificate provider must be 18 or over and either:
 * someone who has known you well personally for at least 2 years, or
 * someone with the relevant professional skills and expertise to be able to confirm the things listed above
 
-'People to be told' can be certificate providers. See more about [people to be told](/help/#topic-people-to-be-told).
+'People to notify' can be certificate providers. See more about [people to notify](/help/#topic-people-to-be-told).
 
 ### Someone who has known you well for at least 2 years
 
@@ -56,6 +56,6 @@ The certificate provider must not be:
 
 ### Related help topics
 
-* [People to be told](/help/#topic-people-to-be-told)
+* [People to notify](/help/#topic-people-to-be-told)
 * [Signing the LPA](/help/#topic-signing-the-lpa)
 * [Registering the LPA](/help/#topic-registering-the-lpa)
