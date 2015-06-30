@@ -78,6 +78,13 @@ class Module{
      * If we're past 'tokenExpiresAt', then we query the Auth service to check the token's state. If it's still
      * valid we update 'tokenExpiresAt'. Otherwise we clear the user's identity form the session.
      *
+     * IGNORE ALL OF THE ABOVE ^^^ #TODO
+     *
+     * This now checks the token on every request otherwise we have no method of knowing if the user has
+     * logged in on another browser. We need to find a new way of checking this, then hopefully we can
+     * re-enable lazy checking.
+     *
+     *
      * We don't deal with forcing the user to re-authenticate here as they
      * may be accessing a page that does not require authentication.
      *
@@ -93,7 +100,7 @@ class Module{
         if ( ($identity = $auth->getIdentity()) != null ) {
 
             // If we're beyond the original time we expected the token to expire...
-            if( (new DateTime) > $identity->tokenExpiresAt() ){
+            //if( (new DateTime) > $identity->tokenExpiresAt() ){
 
                 // Get the tokens details...
                 $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
@@ -111,7 +118,7 @@ class Module{
 
                 }
 
-            } // if we're beyond tokenExpiresAt
+            //} // if we're beyond tokenExpiresAt
 
         } // if we have an identity
 
