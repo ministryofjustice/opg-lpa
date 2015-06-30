@@ -45,7 +45,15 @@ class AccessController extends AbstractActionController {
 
         //-----
 
-        $client = $this->getServiceLocator()->get('ProxyClient');
+        try {
+
+            $client = $this->getServiceLocator()->get('ProxyClient');
+
+        } catch ( \RuntimeException $e ){
+            // A RuntimeException is generally a timeout issue.
+            return $this->redirect()->toRoute( 'login', [ 'state' => 'timeout' ] );
+        }
+
 
         // Get the path the user is requesting...
         $path = $this->getRequest()->getUri()->getPath();
