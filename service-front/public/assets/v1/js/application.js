@@ -4848,19 +4848,19 @@ $(document).ready(function () {
 
   // Who is applying to register?
 
-  $("[name='whoIsMakingThisApplication']").change(function(){
-    if($(this).val() == 'attorneys' ){
-        $('.attorney-applicant input:checkbox').prop('checked', true);
-    } else {
-        $('.attorney-applicant input:checkbox').prop('checked', false);
-    }
-  })
+  $("[name='whoIsRegistering']").change(function(){
+	    if($(this).val() == 'donor' ){
+	        $('.attorney-applicant input:checkbox').prop('checked', false);
+	    } else {
+	        $('.attorney-applicant input:checkbox').prop('checked', true);
+	    }
+  });
 
   $(".attorney-applicant input").change(function(){
     if($(".attorney-applicant input").is(':checked')){
-      $("input[name='whoIsMakingThisApplication'][value='attorneys']").prop('checked', true);
+      $("input[name='whoIsRegistering'][value!='donor']").prop('checked', true);
     } else {
-      $("input[name='whoIsMakingThisApplication'][value='donor']").prop('checked', true);
+      $("input[name='whoIsRegistering'][value='donor']").prop('checked', true);
     }
   });
 
