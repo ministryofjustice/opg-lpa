@@ -83,9 +83,9 @@ class Dashboard implements ServiceLocatorAwareInterface {
         $cache = $this->getServiceLocator()->get('ProxyCache');
 
         // If we've cached that the user has no v1 LPAs...
-        if( $useCache && (bool)$cache->getItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId ) === true ){
-            return array();
-        }
+        //if( $useCache && (bool)$cache->getItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId ) === true ){
+        //    return array();
+        //}
 
         //--------------------------------------------------------------
         // Check if we've cached a list of v1 LPAs
@@ -127,7 +127,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
         if( !isset($array['lpa']) || count($array['lpa']) == 0 ){
 
             if( $config['cache-no-lpas'] ){
-                $cache->setItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId, true );
+                //$cache->setItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId, true );
             }
 
             return array();

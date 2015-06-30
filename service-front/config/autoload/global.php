@@ -98,8 +98,7 @@ return array(
 
     'worldpay' => [
 
-        'test_mode' => true,
-        'url' => 'https://secure-test.worldpay.com/wcc/purchase',
+        'test_mode' => false,
         'currency' => 'GBP',
         'cart_id' => 'LPAv2',
         'log' => false,
