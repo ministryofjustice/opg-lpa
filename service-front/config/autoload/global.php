@@ -113,7 +113,7 @@ return array(
 
         // Should we cache the fact there are no v1 LPAs in a user's account.
         // Should be TRUE in production.
-        'cache-no-lpas' => false,
+        'cache-no-lpas' => true,
 
         // Should we allow new v1 LPAs to be created.
         // Should be FALSE in production.

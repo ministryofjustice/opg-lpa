@@ -75,7 +75,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         $hashedUserId = $this->getHashedUserId();
 
-        $session = $this->getSession();
+        //$session = $this->getSession();
 
         //--------------------------------------------------------------
         // Check if we've cached that the user has no v1 LPAs
@@ -90,9 +90,9 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Check if we've cached a list of v1 LPAs
 
-        if( $useCache && isset($session->lpas) && is_array($session->lpas) ){
-            return $session->lpas;
-        }
+        //if( $useCache && isset($session->lpas) && is_array($session->lpas) ){
+            #return $session->lpas; #TODO - do we want to bring this abck in?
+        //}
 
         //--------------------------------------------------------------
         // Return a list of LPAs from v1 API
@@ -135,6 +135,8 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         //--------------------------------------------------------------
         // Map the returned LPAs to a standard data structure
+
+        $result = array();
 
         foreach( $array['lpa'] as $k=>$lpa ){
             
@@ -225,7 +227,9 @@ class Dashboard implements ServiceLocatorAwareInterface {
         //--------------------------------------------------------------
         // Cache the generated list of v1 LPAs
 
-        $session->lpas = $result;
+        //if( $useCache ){
+            #$session->lpas = $result; #TODO - do we want to bring this abck in?
+        //}
 
         //----------------
 
