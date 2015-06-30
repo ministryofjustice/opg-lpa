@@ -2590,19 +2590,19 @@ article .next.steps .form-download {
 article .inner {
   padding: 0; }
 
-#content.lpa.created .progress-indicator {
+.inner.lpa.created .progress-indicator {
   display: none; }
-#content.lpa.created #global-nav {
+.inner.lpa.created #global-nav {
   border-bottom: 0; }
-#content.lpa.created .LPA-details {
+.inner.lpa.created .LPA-details {
   display: none; }
-#content.lpa.created .paragraph-block {
+.inner.lpa.created .paragraph-block {
   padding: 0 10em 0 2em; }
-#content.lpa.created .next-step-section {
+.inner.lpa.created .next-step-section {
   margin: 4em 2em 3em 2em; }
-  #content.lpa.created .next-step-section p {
+  .inner.lpa.created .next-step-section p {
     margin-bottom: 2em; }
-  #content.lpa.created .next-step-section a.button, #content.lpa.created .next-step-section .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane #content.lpa.created .next-step-section a.ui-priority-primary {
+  .inner.lpa.created .next-step-section a.button, .inner.lpa.created .next-step-section .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .inner.lpa.created .next-step-section a.ui-priority-primary {
     font-family: "nta", Arial, sans-serif;
     font-size: 24px;
     line-height: 1.25;
@@ -2611,7 +2611,7 @@ article .inner {
     padding-left: 1.5em;
     padding-right: 1.5em; }
     @media (max-width: 640px) {
-      #content.lpa.created .next-step-section a.button, #content.lpa.created .next-step-section .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane #content.lpa.created .next-step-section a.ui-priority-primary {
+      .inner.lpa.created .next-step-section a.button, .inner.lpa.created .next-step-section .ui-datepicker .ui-datepicker-buttonpane a.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .inner.lpa.created .next-step-section a.ui-priority-primary {
         font-size: 20px;
         line-height: 1.2; } }
 
