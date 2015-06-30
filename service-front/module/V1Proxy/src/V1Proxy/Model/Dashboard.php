@@ -207,7 +207,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
                 }
 
                 if( isset($registration['is-complete']) && $registration['is-complete'] == 'yes' ){
-                    $obj->status = 'Complete';
+                    $obj->status = 'Completed';
                 }
 
             } // if
