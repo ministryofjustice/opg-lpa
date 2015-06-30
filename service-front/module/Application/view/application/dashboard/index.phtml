@@ -114,7 +114,7 @@
                 <td>
                     <div class="lpa-actions">
                         <a class="button"
-                           href="/forward/<?= ($lpa->status == 'Complete') ? 'completed' : 'lpa' ?>/<?= sprintf("%010d", $lpa->id) ?>"><?= ($lpa->status == 'Complete') ? 'View LPA' : 'Continue' ?></a>
+                           href="/forward/<?php if($lpa->status == 'Complete') echo 'completed'; elseif($lpa->status == 'Signed') echo 'registered'; elseif($lpa->status == 'Created') echo 'created'; else echo 'lpa'; ?>/<?= sprintf("%010d", $lpa->id) ?>"><?= ($lpa->status == 'Complete') ? 'View LPA' : 'Continue' ?></a>
                         <a class="button-warning delete-lpa" href="/service/delete/<?= sprintf("%010d", $lpa->id) ?>">Delete</a>
                     </div>
                 </td>
