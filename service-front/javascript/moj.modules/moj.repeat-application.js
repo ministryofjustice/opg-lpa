@@ -95,11 +95,11 @@
     initialiseEvents: function () {
       var self = this;
 
-      $('form#repeat-application').on('change', 'input[type="radio"]', function (evt) {
+      $('form#form-repeat-application').on('change', 'input[type="radio"]', function (evt) {
         self.onRepeatApplicationFormChangeHandler(evt);
       });
 
-      $('form#repeat-application').on('click', 'input[type="submit"]', function (evt) {
+      $('form#form-repeat-application').on('click', 'input[type="submit"]', function (evt) {
         self.onRepeatApplicationFormClickHandler(evt);
       });
 
