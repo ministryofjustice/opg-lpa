@@ -160,7 +160,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
 
         if( !( $this->user instanceof Identity ) ){
 
-            $this->flashMessenger()->addWarningMessage('You need to sign in before continuing');
+            $this->flashMessenger()->addWarningMessage('Your session has expired. Please sign in again to continue.');
 
             //---
 
