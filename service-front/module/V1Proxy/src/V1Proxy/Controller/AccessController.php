@@ -66,6 +66,11 @@ class AccessController extends AbstractActionController {
             throw new RuntimeException("Invalid path");
         }
 
+        // Prevent a user cloning a new v1 LPA.
+        if( $path == '/forward/clonelpa' && !$config['allow-v1-laps-to-be-created'] ){
+            throw new RuntimeException("Invalid path");
+        }
+
         $options = array( 'headers' => array() );
 
         //---
