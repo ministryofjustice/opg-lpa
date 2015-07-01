@@ -16,6 +16,7 @@ use Zend\View\Helper\ServerUrl;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class PaymentController extends AbstractLpaController
 {
@@ -32,6 +33,9 @@ class PaymentController extends AbstractLpaController
         
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
+        // session container for storing online payment email address 
+        $container = new Container('paymentEmail');
+        
         // make payment by cheque
         if($this->params()->fromQuery('pay-by-cheque')) {
         
@@ -47,6 +51,13 @@ class PaymentController extends AbstractLpaController
         
             // to complete page
             return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+            
+        }
+        elseif($this->params()->fromQuery('retry') && 
+            ($lpa->payment->method = Payment::PAYMENT_TYPE_CARD) && 
+            ($container->email != null)) {
+            
+            return $this->payOnline($lpa);
         }
         
         // Payment form page
@@ -68,31 +79,15 @@ class PaymentController extends AbstractLpaController
                 }
                 
                 // set paymentEmail in session container.
-                $container = new Container('paymentEmail');
                 $container->email = $form->getData()['email'];
                 
-                // init online payment
-                $paymentService = $this->getServiceLocator()->get('Payment');
-                
-                $options = $paymentService->getOptions($lpa);
-                
-                $response = 
-                    $paymentService
-                         ->getGateway()
-                         ->purchase($options)
-                         ->send();
-                
-                $paymentGatewayBaseUrl = $response->getData()->reference;
-                
-                $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
-                
-                $this->redirect()->toUrl($redirectUrl);
-                
-                return $this->getResponse();
+                return $this->payOnline($lpa);
                 
             } // if($form->isValid())
         }
         else {
+            // when landing on payment page, show the payment form
+            
             $data = [];
             if($this->getLpa()->payment instanceof Payment) {
                 $data['method'] =  $this->getLpa()->payment->method;
@@ -129,9 +124,8 @@ class PaymentController extends AbstractLpaController
         // send email
         $communicationService = $this->getServiceLocator()->get('Communication');
         $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
-        return $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
         
-        return $this->getResponse();
+        return $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
     }
     
     /**
@@ -173,7 +167,7 @@ class PaymentController extends AbstractLpaController
     public function failureAction()
     {
         return new ViewModel([
-                'feeUrl' => $this->url()->fromRoute('lpa/fee', ['lpa-id'=>$this->getLpa()->id]),
+                'retryUrl' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['retry'=>true]]),
                 'paymentUrl' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id]),
         ]);
     }
@@ -181,7 +175,7 @@ class PaymentController extends AbstractLpaController
     public function cancelAction()
     {
         return new ViewModel([
-                'feeUrl' => $this->url()->fromRoute('lpa/fee', ['lpa-id'=>$this->getLpa()->id]),
+                'retryUrl' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['retry'=>true]]),
                 'paymentUrl' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id]),
         ]);
     }
@@ -229,5 +223,27 @@ class PaymentController extends AbstractLpaController
             'lpa/payment/return/' . $type,
             ['lpa-id' => $this->getLpa()->id]
         );
+    }
+    
+    private function payOnline(Lpa $lpa)
+    {
+        // init online payment
+        $paymentService = $this->getServiceLocator()->get('Payment');
+        
+        $options = $paymentService->getOptions($lpa);
+        
+        $response = $paymentService
+            ->getGateway()
+            ->purchase($options)
+            ->send();
+        
+        $paymentGatewayBaseUrl = $response->getData()->reference;
+        
+        $redirectUrl = $this->getRedirectUrl($paymentGatewayBaseUrl);
+        
+        $this->redirect()->toUrl($redirectUrl);
+        
+        return $this->getResponse();
+        
     }
 }

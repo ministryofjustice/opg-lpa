@@ -15,7 +15,7 @@ use Application\Model\Service\Signatures\DateCheck;
 
 class DateCheckController extends AbstractLpaController
 {
-    protected $contentHeader = 'registration-partial.phtml';
+    protected $contentHeader = 'blank-header-partial.phtml';
     
     public function indexAction()
     {

@@ -24,12 +24,12 @@ $form->prepare();
             <?= $this->partialloop('application/people-to-notify/partials/people-to-notify.phtml', $this->peopleToNotify)?>
             
             <?php if(isset($this->addRoute)):?>
-                <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add another 'person to be told'</a></p>
+                <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add another 'person to be notified'</a></p>
             <?php endif;?>
             
         <?php else: ?>
         
-		    <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add a 'person to be told'</a></p>
+		    <p><a class="add button js-form-popup" data-form="notifiedperson1" href="<?= $this->addRoute ?>" role="button">Add a 'person to be notified'</a></p>
 		    
         <?php endif;?>
         
