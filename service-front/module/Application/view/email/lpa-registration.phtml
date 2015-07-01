@@ -7,6 +7,10 @@
 	</p>
 	
 	<p>Reference number <?= $this->cellStyles(\Opg\Lpa\DataModel\Lpa\Formatter::id($this->lpa->id)) ?></p>
+	
+	<?php if($this->lpa->payment->reference != null):?>
+	<p>Payment reference number: <?= $this->cellStyles($this->lpa->payment->reference) ?></p>
+	<?php endif;?>
 
 	<p>The registration form must be printed and signed.  The registration form cover sheet explains what you need to do.</p>
 
