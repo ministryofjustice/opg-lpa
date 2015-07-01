@@ -123,7 +123,7 @@ class PaymentController extends AbstractLpaController
         
         // send email
         $communicationService = $this->getServiceLocator()->get('Communication');
-        $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+        $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
         
         return $this->redirect()->toRoute('lpa/complete', ['lpa-id'=>$this->getLpa()->id]);
     }
