@@ -1,18 +1,14 @@
 <?php 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 
-$form = $this->formErrorTextExchange($this->form, []);
+$form = $this->formErrorTextExchange($this->form, [
+    'whoIsRegistering' => [
+        'allowed-values:1' => 'Please select the person who is registering the LPA',
+    ],
+]);
 
 $form->setAttributes(['class'=>'form']);
 $csrf       = $form->get($form->csrfName());
-
-$errorMessageOverrideMap = [
-    'whoIsRegistering' => [
-        'allowed-values:donor,Array' => 'You must select either the donor one or more of the attorneys'
-    ],
-];
-
-$form = $this->formErrorTextExchange($form, $errorMessageOverrideMap);
 
 $whoIsRegistering = $form->get('whoIsRegistering');
 $whoIsRegisteringValueOptions = $whoIsRegistering->getOptions()['value_options'];
