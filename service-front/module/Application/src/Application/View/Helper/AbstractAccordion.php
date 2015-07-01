@@ -229,7 +229,7 @@ abstract class AbstractAccordion extends AbstractHelper
     protected function payment()
     {
         if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
-            return 'Application fee: £'.$this->lpa->payment->amount. ' (Payment method: '.$this->lpa->payment->method.')';
+            return 'Application fee: £'.sprintf('%.2f', $this->lpa->payment->amount). ' (Payment method: '.$this->lpa->payment->method.')';
         }
     }
     

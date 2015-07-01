@@ -3,7 +3,7 @@
     
     <div class="next-step-section">
 
-        <h2>Thank you for your payment of &pound;<?= $this->paymentAmount ?></h2>
+        <h2>Thank you for your payment of &pound;<?= sprintf('%.2f', $this->paymentAmount) ?></h2>
         
         <h3>Your payment reference number is: <?= $this->paymentReferenceNo ?></h3>
         

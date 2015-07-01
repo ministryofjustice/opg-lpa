@@ -32,9 +32,9 @@ $form = $this->formErrorTextExchange($this->form, []);
         <div class="section-intro">
             
             <?php if($this->lpa->payment->amount == Calculator::STANDARD_FEE):?>
-            <h2>Application fee: £<?= $this->lpa->payment->amount ?></h2>
+            <h2>Application fee: £<?= sprintf('%.2f', $this->lpa->payment->amount) ?></h2>
             <?php else:?>
-            <h2>Reduced fee: £<?= $this->lpa->payment->amount ?></h2>
+            <h2>Reduced fee: £<?= sprintf('%.2f', $this->lpa->payment->amount) ?></h2>
             <?php endif;?>
 
             <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
