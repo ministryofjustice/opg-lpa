@@ -73,7 +73,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
         if($totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
             $crossLineParams = array(array());
             for($i=Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i>=1; $i--) {
-                $crossLineParams[0][] = 'additional-applicant-'.(Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i);
+                $crossLineParams[0][] = 'additional-applicant-'.(Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i) . '-' . (($this->lpa->document->type == Document::LPA_TYPE_PF)?'pf':'hw');
             }
             $this->drawCrossLines($filePath, $crossLineParams);
         }
