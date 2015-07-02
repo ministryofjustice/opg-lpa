@@ -79,8 +79,10 @@ class FeeReductionController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
                 }
                 
-                $communicationService = $this->getServiceLocator()->get('Communication');
-                $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+                if(!$lpa->payment->amount) {
+                    $communicationService = $this->getServiceLocator()->get('Communication');
+                    $communicationService->sendRegistrationCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+                }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
             }
