@@ -191,6 +191,15 @@ return [
                             ],
                         ],
                     ],
+                    'elb' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/elb',
+                            'defaults' => [
+                                'action'     => 'elb',
+                            ],
+                        ],
+                    ],
                     'pingdom' => [
                         'type'    => 'Segment',
                         'options' => [
