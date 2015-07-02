@@ -28,7 +28,7 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicantSignature');
             
-            $additionalApplicantSignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP1_AdditionalApplicantSignature.pdf");
+            $additionalApplicantSignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
             
             $formData = [];
             

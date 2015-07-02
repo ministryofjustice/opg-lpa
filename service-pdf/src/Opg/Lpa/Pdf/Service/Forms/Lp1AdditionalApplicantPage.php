@@ -29,7 +29,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicant');
             
-            $additionalApplicant = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LP1_AdditionalApplicant.pdf");
+            $additionalApplicant = PdfProcessor::getPdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicant.pdf":"/LP1H_AdditionalApplicant.pdf"));
+            
             $formData = array();
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
                 
