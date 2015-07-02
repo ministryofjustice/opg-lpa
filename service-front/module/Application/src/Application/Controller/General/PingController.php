@@ -14,6 +14,21 @@ class PingController extends AbstractBaseController {
         return new ViewModel();
     }
 
+    /**
+     * Endpoint for the AWS ELB.
+     * All we're checking is that PHP can be called and a 200 returned.
+     */
+    public function elbAction(){
+
+        $response = $this->getResponse();
+
+        //$response->setStatusCode(500);
+        $response->setContent('Happy face');
+
+        return $response;
+
+    } // function
+
     public function jsonAction(){
 
         $result = $this->getServiceLocator()->get('SiteStatus')->check();
