@@ -17,9 +17,9 @@ return [
             ], // home
 
             'ping' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/ping',
+                    'route' => '/ping[/:action]',
                     'defaults' => [
                         'controller' => 'Application\Controller\Ping',
                         'action'     => 'index',

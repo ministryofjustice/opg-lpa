@@ -15,6 +15,22 @@ use Zend\View\Model\JsonModel;
  */
 class PingController extends AbstractActionController {
 
+    /**
+     * Endpoint for the AWS ELB.
+     * All we're checking is that PHP can be called and a 200 returned.
+     */
+    public function elbAction(){
+
+        $response = $this->getResponse();
+
+        //$response->setStatusCode(500);
+        $response->setContent('Happy face');
+
+        return $response;
+
+    } // function
+
+
     public function indexAction(){
 
         $allOk = true;
