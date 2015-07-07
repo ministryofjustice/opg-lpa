@@ -66,6 +66,20 @@ return array(
             'database' => 0, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
         ],
 
+        'dynamodb' => [
+            'client' => [
+                'version' => '2012-08-10',
+                'region' => 'eu-west-1',
+                'credentials' => [
+                    'key'    => null,
+                    'secret' => null
+                ]
+            ],
+            'settings' => [
+                'table_name' => 'lpa-sessions',
+            ],
+        ],
+
         'encryption' => [
             'enabled' => true,
             // Key MUST be a 32 character ASCII string
