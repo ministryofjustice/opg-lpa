@@ -45,8 +45,9 @@ return array(
             'hash_function' => 'sha512',
             'hash_bits_per_character' => 5,
 
-            // Only allow the cookie to be sent over https
-            'cookie_secure' => false, # TODO - change to true once we have SSL on dev.
+            // Only allow the cookie to be sent over https, if we're using HTTPS.
+            #TODO - Once Vagrant is fixed, we should ALWAYS be over HTTPS.
+            'cookie_secure' => (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ),
 
             // Prevent cookie from being accessed from JavaScript
             'cookie_httponly' => true,
