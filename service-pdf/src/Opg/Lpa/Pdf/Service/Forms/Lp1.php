@@ -115,13 +115,13 @@ abstract class Lp1 extends AbstractForm
             $this->mergerIntermediateFilePaths($generatedCs1);
         }
         
-        // generate a CS2 page if attorneys act depend on a special decision.
+        // generate a CS2 page if how attorneys making decisions depends on a special arrangement.
         if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
             $generatedCs2 = (new Cs2($this->lpa, self::CONTENT_TYPE_ATTORNEY_DECISIONS, $this->lpa->document->primaryAttorneyDecisions->howDetails))->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
         }
         
-        // generate a CS2 page if replacement attorneys decision differ to standard arrangement.
+        // generate a CS2 page if how replacement attorneys decisions differs to the default arrangement.
         $content = "";
         if( ((count($this->lpa->document->primaryAttorneys) == 1) 
                 || ((count($this->lpa->document->primaryAttorneys) > 1) && ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)))  
@@ -135,8 +135,8 @@ abstract class Lp1 extends AbstractForm
                     $content = "Replacement attorneys are to act jointly for some decisions and jointly and severally for others, as below:\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                    $content = "Replacement attorneys are to act jointly\r\n";
-                    // this is default
+                    // default arrangement
+                    //$content = "Replacement attorneys are to act jointly\r\n";
                     break;
             }
         }
@@ -145,7 +145,8 @@ abstract class Lp1 extends AbstractForm
                 
                 switch($this->lpa->document->replacementAttorneyDecisions->when) {
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
-                        $content = "Replacement attorney to step in as soon as one original attorney can no longer act\r\n";
+                        // default arrangement, as per how primary attorneys making decision arrangement
+                        //$content = "Replacement attorney to step in as soon as one original attorney can no longer act\r\n";
                         break;
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
                         $content = "Replacement attorney to step in only when none of the original attorneys can act\r\n";
@@ -167,7 +168,8 @@ abstract class Lp1 extends AbstractForm
                             $content .= "Replacement attorneys are to act joint for some decisions, joint and several for other decisions, as below:\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                            $content .= "Replacement attorneys are to act jointly\r\n";
+                            // default arrangement
+                            //$content .= "Replacement attorneys are to act jointly\r\n";
                             break;
                     }
                 }
@@ -299,9 +301,53 @@ abstract class Lp1 extends AbstractForm
             $this->pdfFormData['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
         }
         
-        if(($noOfReplacementAttorneys > 1) && ($this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) &&
-            ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)) {
-                $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+        // checkbox for replacement decisions are not taking the default arrangement.
+        if($noOfPrimaryAttorneys == 1) {
+            
+            if(($noOfReplacementAttorneys > 1) && 
+                (($this->lpa->document->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) ||
+                    ($this->lpa->document->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS))) {
+                    
+                    $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+            }
+        }
+        elseif($noOfPrimaryAttorneys > 1) {
+            
+            switch($this->lpa->document->primaryAttorneyDecisions->how) {
+                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
+                     if($noOfReplacementAttorneys == 1) { 
+                        if(($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) ||
+                            ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS)) {
+                            
+                            $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+                        }
+                    }
+                    elseif($noOfReplacementAttorneys > 1) {
+                        if($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                            
+                            $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+                        }
+                        elseif($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
+                            if(($this->lpa->document->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) ||
+                                ($this->lpa->document->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS)) {
+                                
+                                $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+                            }
+                        }
+                    }
+                    
+                    break;
+                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
+                    if($noOfReplacementAttorneys > 1) {
+                        if(($this->lpa->document->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) ||
+                            ($this->lpa->document->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS)) {
+                        
+                            $this->pdfFormData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
+                        }
+                    }
+                    break;
+            }
+            
         }
         
         /**
