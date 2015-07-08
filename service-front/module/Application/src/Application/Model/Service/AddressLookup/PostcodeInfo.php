@@ -235,18 +235,17 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
         
         $components = $this->addToArrayIfNotEmpty($components, $address->getOrganisationName());
         $components = $this->addToArrayIfNotEmpty($components, $address->getDepartmentName());
-        
-        if ($address->getPoBoxNumber() != '') {
-            $components[] = 'PO BOX ' . $address->getPoBoxNumber();
-        }
-        
-        $components = $this->addToArrayIfNotEmpty($components, $address->getBuildingName());
         $components = $this->addToArrayIfNotEmpty($components, $address->getSubBuildingName());
+        $components = $this->addToArrayIfNotEmpty($components, $address->getBuildingName());
         $components = $this->addToArrayIfNotEmpty($components, $address->getBuildingNumber());
         $components = $this->addToArrayIfNotEmpty($components, $address->getThoroughfareName());
         $components = $this->addToArrayIfNotEmpty($components, $address->getDoubleDependentLocality());
         $components = $this->addToArrayIfNotEmpty($components, $address->getDependentLocality());
         $components = $this->addToArrayIfNotEmpty($components, $address->getPostTown());
+        
+        if ($address->getPoBoxNumber() != '') {
+            $components[] = 'PO BOX ' . $address->getPoBoxNumber();
+        }
         
         return $components;
 
