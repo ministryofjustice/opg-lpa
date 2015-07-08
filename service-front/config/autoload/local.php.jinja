@@ -15,6 +15,18 @@ return array(
             ],
         ],
 
+        'dynamodb' => [
+            'client' => [
+                'credentials' => [
+                    'key'    => '{{pillar['session']['dynamodb']['key']}}',
+                    'secret' => '{{pillar['session']['dynamodb']['secret']}}',
+                ]
+            ],
+            'settings' => [
+                'table_name' => '{{pillar['session']['dynamodb']['table']}}',
+            ],
+        ],
+
     ], // session
 
     'csrf' => [

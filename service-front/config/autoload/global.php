@@ -77,7 +77,7 @@ return array(
                 ]
             ],
             'settings' => [
-                'table_name' => 'lpa-sessions',
+                'table_name' => null,
             ],
         ],
 
