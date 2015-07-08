@@ -71,13 +71,9 @@ return array(
             'client' => [
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => [
-                    'key'    => null,
-                    'secret' => null
-                ]
             ],
             'settings' => [
-                'table_name' => null,
+                'table_name' => 'lpa-sessions-testing',
             ],
         ],
 
