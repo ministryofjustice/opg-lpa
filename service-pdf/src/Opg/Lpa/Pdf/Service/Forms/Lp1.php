@@ -169,7 +169,7 @@ abstract class Lp1 extends AbstractForm
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                             // default arrangement
-                            //$content .= "Replacement attorneys are to act jointly\r\n";
+                            $content = "";
                             break;
                     }
                 }
