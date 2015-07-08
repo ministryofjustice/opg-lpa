@@ -4038,6 +4038,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
       $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode'));
       
+      this.toggleAddressType('postal');
     },
 
     queryEnter: function (e) {
