@@ -32,7 +32,10 @@ class PostcodeController extends AbstractAuthenticatedController {
                 return [
                     'id' => $addr['Id'],
                     'description' => $addr['StreetAddress'].' '.$addr['Place'],
-                    'detail' => $addr['Detail'],
+                    'line1' => $addr['Detail']['line1'],
+                    'line2' => $addr['Detail']['line2'],
+                    'line3' => $addr['Detail']['line3'],
+                    'postcode' => $addr['Detail']['postcode'],
                 ];
             }, $result );
 

@@ -88,10 +88,15 @@
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-        val = $el.val();
+      val = $el.val();
+      
+      var $selectedOption = $el.find(":selected");
+      
+      $('#addr1').val($selectedOption.data('line1'));
+      $('#addr2').val($selectedOption.data('line2'));
+      $('#addr3').val($selectedOption.data('line3'));
+      $('#postcode').val($selectedOption.data('postcode'));
 
-      $el.spinner();
-      this.findAddress(val);
     },
 
     queryEnter: function (e) {
