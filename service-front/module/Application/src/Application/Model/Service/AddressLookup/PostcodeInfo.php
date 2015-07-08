@@ -241,9 +241,8 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
         }
         
         $components = $this->addToArrayIfNotEmpty($components, $address->getBuildingName());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getSubBuildingName());
         
-        $buildingNumber = $address->getBuildingNumber();
+        $buildingNumber = rtrim(trim($address->getBuildingNumber() . ', ' . $address->getSubBuildingName()), ',');
         
         $components = $this->addToArrayIfNotEmpty($components, $buildingNumber);
         
