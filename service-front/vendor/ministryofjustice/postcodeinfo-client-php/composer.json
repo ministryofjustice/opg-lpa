@@ -1,0 +1,19 @@
+{
+	"name": "ministryofjustice/postcodeinfo-client-php",
+    "description": "PHP API Client wrapper for MoJ Postcode Info API",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "^5.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*",
+        "phpspec/phpspec": "~2.0"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {"MinistryOfJustice\\PostcodeInfo\\Client\\": "src/MinistryOfJustice/PostcodeInfo/Client/"}
+    }
+}
