@@ -31,7 +31,7 @@ class PostcodeController extends AbstractAuthenticatedController {
             $v1Format = array_map( function($addr){
                 return [
                     'id' => $addr['Id'],
-                    'description' => $addr['StreetAddress'].' '.$addr['Place'],
+                    'description' => $addr['Summary'],
                     'line1' => $addr['Detail']['line1'],
                     'line2' => $addr['Detail']['line2'],
                     'line3' => $addr['Detail']['line3'],

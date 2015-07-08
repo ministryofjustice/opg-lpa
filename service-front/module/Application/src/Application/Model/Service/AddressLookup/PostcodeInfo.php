@@ -46,8 +46,7 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
             
             $addressArray[] = [
                 'Id' => $addressId,
-                'StreetAddress' => trim($this->getStreetAddress($address)),
-                'Place' => trim($this->getPlace($address)),
+                'Summary' => trim($this->getSummary($address)),
                 'Detail' => $this->getAddressLines($address),
             ];
             
@@ -166,67 +165,11 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
 
     } // function
     
-    private function getStreetAddress(Address $address)
+    private function getSummary(Address $address)
     {
-        $streetAddress = '';
-    
-        $streetAddress = $this->addWithSpaceIfNotEmpty($streetAddress, $address->getOrganisationName());
-        $streetAddress = $this->addWithSpaceIfNotEmpty($streetAddress, $address->getDepartmentName());
-        $streetAddress = $this->addWithSpaceIfNotEmpty($streetAddress, $address->getBuildingName());
-        $streetAddress = $this->addWithSpaceIfNotEmpty($streetAddress, $address->getSubBuildingName());
-        $streetAddress = $this->addWithSpaceIfNotEmpty($streetAddress, $address->getBuildingNumber());
-        $streetAddress = $this->addWithSpaceIfNotEmpty($streetAddress, $address->getThoroughfareName());
+        $addressComponents = $this->getAddressComponents($address);
         
-        return $streetAddress;
-    }
-    
-    private function getPlace(Address $address)
-    {
-        $place = '';
-        
-        $place = $this->addWithSpaceIfNotEmpty($place, $address->getPostTown());
-        
-        $postcodeParts = explode(' ', $address->getPostcode());
-        
-        $place = $this->addWithSpaceIfNotEmpty($place, $postcodeParts[0]);
-        
-        return $place;
-    }
-    
-    /**
-     * A helper function to append an address element to
-     * an existing address if the element is not empty
-     *
-     * @param string $masterStr
-     * @param string $candidateStr
-     * 
-     * @return string
-     */
-    private function addWithSpaceIfNotEmpty($masterStr, $candidateStr)
-    {
-        if (trim($candidateStr) != '') {
-            $masterStr .= ' ' . $candidateStr;
-        }
-    
-        return $masterStr;
-    }
-    
-    /**
-     * A helper function to add an address element to
-     * an array if the element is not empty
-     *
-     * @param array $array
-     * @param string $candidateStr
-     * 
-     * @return array
-     */
-    private function addToArrayIfNotEmpty(array $array, $candidateStr)
-    {
-        if (trim($candidateStr) != '') {
-            $array[] = $candidateStr;
-        }
-    
-        return $array;
+        return implode(', ', $addressComponents);
     }
     
     /**
