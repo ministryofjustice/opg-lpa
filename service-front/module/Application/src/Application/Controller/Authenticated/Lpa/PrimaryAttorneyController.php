@@ -217,31 +217,41 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     
     public function deleteAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
+        
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         $deletionFlag = true;
-        if(array_key_exists($attorneyIdx, $this->getLpa()->document->primaryAttorneys)) {
-            $attorneyId = $this->getLpa()->document->primaryAttorneys[$attorneyIdx]->id;
+        if(array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
+            
+            // check primaryAttorneySecisions::how
+            if((count($lpa->document->primaryAttorneys) <= 2) &&
+                ($lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) &&
+                ($lpa->document->primaryAttorneyDecisions->how != null)) {
+                    $lpa->document->primaryAttorneyDecisions->how = null;
+                    $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $lpa->document->primaryAttorneyDecisions);
+            }
+            
+            $attorneyId = $lpa->document->primaryAttorneys[$attorneyIdx]->id;
             
             // check whoIsRegistering
-            if(is_array($this->getLpa()->document->whoIsRegistering)) {
-                foreach($this->getLpa()->document->whoIsRegistering as $idx=>$aid) {
+            if(is_array($lpa->document->whoIsRegistering)) {
+                foreach($lpa->document->whoIsRegistering as $idx=>$aid) {
                     if($aid == $attorneyId) {
-                        unset($this->getLpa()->document->whoIsRegistering[$idx]);
-                        if(count($this->getLpa()->document->whoIsRegistering) == 0) {
-                            $this->getLpa()->document->whoIsRegistering = null;
+                        unset($lpa->document->whoIsRegistering[$idx]);
+                        if(count($lpa->document->whoIsRegistering) == 0) {
+                            $lpa->document->whoIsRegistering = null;
                         }
                         
-                        $this->getLpaApplicationService()->setWhoIsRegistering($lpaId, $this->getLpa()->document->whoIsRegistering);
+                        $this->getLpaApplicationService()->setWhoIsRegistering($lpa->id, $lpa->document->whoIsRegistering);
                         break;
                     }
                 }
             }
             
             // delete attorney
-            if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpaId, $attorneyId)) {
-                throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+            if(!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa->id, $attorneyId)) {
+                throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
             $deletionFlag = true;
         }
@@ -256,7 +266,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
         else {
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
         }
     }
     
