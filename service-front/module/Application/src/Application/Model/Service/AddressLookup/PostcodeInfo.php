@@ -229,25 +229,42 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
         return $array;
     }
     
-    private function getAddressComponents($address)
+    /**
+     * Return an array of address elements from a string that is
+     * delimited by the \n character
+     * 
+     * We remove the postcode from the end of the array
+     * 
+     * @param Address $address
+     * @return array
+     */
+    private function getAddressComponents(Address $address)
     {
-        $components = [];
+        $components = explode("\n", $address->getFormattedAddress());
         
-        $components = $this->addToArrayIfNotEmpty($components, $address->getOrganisationName());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getDepartmentName());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getSubBuildingName());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getBuildingName());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getBuildingNumber());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getThoroughfareName());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getDoubleDependentLocality());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getDependentLocality());
-        $components = $this->addToArrayIfNotEmpty($components, $address->getPostTown());
+        return $this->removePostcodeFromArray($components, $address->getPostcode());
+    }
+    
+    /**
+     * Remove the postcode from the array, if it is the last element
+     * 
+     * @param array $array
+     * @param string $postcode
+     * 
+     * @return array
+     */
+    private function removePostcodeFromArray($array, $postcode) {
         
-        if ($address->getPoBoxNumber() != '') {
-            $components[] = 'PO BOX ' . $address->getPoBoxNumber();
+        // We expect the last element to be the postcode which we don't want
+        // We'll confirm that it is the postcode and then remove it from the array
+        $postcodeFromComponents = strtolower(str_replace(' ', $array[count($array)-1]));
+        $postcodeFromAddress = strtolower(str_replace(' ', $postcode));
+        
+        if ($postcodeFromAddress == $postcodeFromComponents) {
+            array_pop($array);
         }
         
-        return $components;
-
+        return $array;
+         
     }
 } // class
