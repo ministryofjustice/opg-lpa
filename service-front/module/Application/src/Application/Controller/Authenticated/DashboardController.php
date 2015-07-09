@@ -142,6 +142,13 @@ class DashboardController extends AbstractAuthenticatedController
                 // This will return an empty array if the user has no v1 LPAs.
                 $v1Lpas = $this->getServiceLocator()->get('ProxyDashboard')->getLpas();
 
+                if( is_array($v1Lpas) ){
+
+                    // Merge the v1 LPAs into the v2 list.
+                    $lpas = array_merge($lpas, $v1Lpas);
+
+                }
+
             } catch( \RuntimeException $e ){
 
                 // Runtime errors are caused by a v1 / v2 auth token mismatch.
@@ -151,10 +158,7 @@ class DashboardController extends AbstractAuthenticatedController
 
             }
 
-            // Merge the v1 LPAs into the v2 list.
-            $lpas = array_merge($lpas, $v1Lpas);
-
-        }
+        } // if
 
         // end #v1Code
 
