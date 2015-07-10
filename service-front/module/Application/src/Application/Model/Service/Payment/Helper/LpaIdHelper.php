@@ -13,6 +13,11 @@ class LpaIdHelper
      */
     public static function constructWorldPayTransactionId($lpaId)
     {
+        return self::padLpaId($lpaId) . '-' . time();
+    }
+    
+    public static function padLpaId($lpaId)
+    {
         if (strlen($lpaId) > self::LPA_ID_LENGTH) {
             throw new \Exception('LPA ID is too long');
         }

@@ -17,40 +17,56 @@ class PaymentTest extends AbstractHttpControllerTestCase
         parent::setUp();
     }
     
-    public function testConstructLpaIdWithStringWhenZeroesNeeded()
+    public function testPadLpaIdWithStringWhenZeroesNeeded()
     {
         $this->assertEquals(
-            LpaIdHelper::constructWorldPayTransactionId('123'),
+            LpaIdHelper::padLpaId('123'),
             '00000000123'
         );
     }
     
-    public function testConstructLpaIdWithIntegerWhenZeroesNeeded()
+    public function testPadLpaIdWithIntegerWhenZeroesNeeded()
     {
         $this->assertEquals(
-            LpaIdHelper::constructWorldPayTransactionId(123),
+            LpaIdHelper::padLpaId(123),
             '00000000123'
         );
     }
     
-    public function testConstructLpaIdWhenNoZeroesNeeded()
+    public function testPadLpaIdWhenNoZeroesNeeded()
     {
         $this->assertEquals(
-            LpaIdHelper::constructWorldPayTransactionId('12345678901'),
+            LpaIdHelper::padLpaId('12345678901'),
             '12345678901'
         );
     }
     
-    public function testConstructLpaIdWhenLpaIdIsTooBig()
+    public function testPadLpaIdWhenLpaIdIsTooBig()
     {
         $exceptionThrown = false;
         try {
-            $paddedId = LpaIdHelper::constructWorldPayTransactionId('123456789011');
+            $paddedId = LpaIdHelper::padLpaId('123456789011');
         } catch (\Exception $e) {
             $exceptionThrown = true;
         }
         
         $this->assertTrue($exceptionThrown);
+    }
+    
+    public function testConstructWorldPayId()
+    {
+        $id = LpaIdHelper::constructWorldPayTransactionId('123');
+        
+        $parts = explode('-', $id);
+        
+        $this->assertTrue(count($parts) == 2);
+        
+        $this->assertEquals(
+            '00000000123',
+            $parts[0]
+        );
+        
+        $this->assertTrue(is_numeric($parts[1]));
     }
     
     /**
