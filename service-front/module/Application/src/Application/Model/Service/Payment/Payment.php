@@ -7,6 +7,7 @@ use Omnipay\Omnipay;
 use Omnipay\Common\CreditCard;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment as PaymentEntity;
 use Zend\Session\Container;
+use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
 class Payment implements ServiceLocatorAwareInterface {
 
@@ -131,13 +132,15 @@ class Payment implements ServiceLocatorAwareInterface {
             'amount' => $lpa->payment->amount,
             'currency' => $config['currency'],
             'description' => 'LPA for ' . $donorName,
-            'transactionId' => $lpa->id . '-' . time(),
+            'transactionId' => LpaIdHelper::constructWorldPayTransactionId($lpa->id),
             'card' => new CreditCard([
                 'email' => $container->email,
             ]),
             'token' => $config['api_token_secret'],
         ];
-    
+        
         return $options;  
     }
+    
+
 }
