@@ -39,7 +39,8 @@ return array(
                 'region' => 'eu-west-1',
             ],
             'settings' => [
-                'bucket_name' => 'opg-lpa-pdf-cache-dev',
+                'ACL' => 'private',
+                'Bucket' => 'opg-lpa-pdf-cache-dev',
             ],
         ),
 
