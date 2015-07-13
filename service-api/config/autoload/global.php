@@ -54,6 +54,7 @@ return array(
     ],
 
     'pdf' => [
+
         'encryption' => [
             // Keys MUST be a 32 character ASCII string
             'keys' => [
@@ -65,6 +66,22 @@ return array(
                 'mode' => 'cbc',
             ],
         ],
+
+        'cache' => [
+            's3' => [
+
+                'client' => [
+                    'version' => '2006-03-01',
+                    'region' => 'eu-west-1',
+                ],
+                'settings' => [
+                    'Bucket' => 'opg-lpa-pdf-cache-dev',
+                ],
+
+            ], // S3
+
+        ], // cache
+
     ], // pdf
 
 );
