@@ -13,6 +13,5 @@ return array(
     'Raven_' => array($vendorDir . '/raven/raven/lib'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
-    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
 );

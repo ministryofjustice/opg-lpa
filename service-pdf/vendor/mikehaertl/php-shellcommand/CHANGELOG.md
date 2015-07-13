@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.0.7
+
+ * Issue #6: Solve `proc_open()` pipe configuration for both, Windows / Linux
+
+## 1.0.6
+
+ * Undid `proc_open()` changes as it broke error capturing
+
 ## 1.0.5
 
  * Improve `proc_open()` pipe configuration

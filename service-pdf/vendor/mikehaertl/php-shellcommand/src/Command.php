@@ -7,7 +7,7 @@ namespace mikehaertl\shellcommand;
  * This class represents a shell command.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.0.5
+ * @version 1.0.7
  * @license http://www.opensource.org/licenses/MIT
  */
 class Command
@@ -283,7 +283,7 @@ class Command
         } else {
             $descriptors = array(
                 1   => array('pipe','w'),
-                2   => array('pipe','a'),
+                2   => array('pipe', $this->getIsWindows() ? 'a' : 'w'),
             );
             $process = proc_open($command, $descriptors, $pipes, $this->procCwd, $this->procEnv, $this->procOptions);
 
@@ -309,6 +309,14 @@ class Command
         $this->_executed = true;
 
         return true;
+    }
+
+    /**
+     * @return bool whether we are on a Windows OS
+     */
+    public function getIsWindows()
+    {
+        return strncasecmp(PHP_OS, 'WIN', 3)===0;
     }
 
     /**
