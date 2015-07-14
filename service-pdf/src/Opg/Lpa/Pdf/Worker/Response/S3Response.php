@@ -77,7 +77,7 @@ class S3Response implements ResponseInterface
         $file = $this->config['settings'] + [
             'Key' => (string)$this->docId,
             'Body' => $encryptedData,
-            ];
+        ];
 
         //---
 

@@ -15,7 +15,7 @@ class ResqueWorker extends AbstractWorker {
      * @return \Opg\Lpa\Pdf\Service\ResponseInterface
      */
     protected function getResponseObject( $docId ){
-        return new Response\RedisResponse( $docId );
+        return new Response\S3Response( $docId );
     }
 
     public function perform(){
