@@ -19,6 +19,18 @@ return array(
                 ],
             ],
 
+            'proxy-redirect-login' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/user/login',
+                    'defaults' => [
+                        'controller' => 'V1Proxy\Controller\Access',
+                        'action'     => 'redirect',
+                        'endpoint'   => 'login'
+                    ],
+                ],
+            ],
+
             'proxy-redirect-timeout' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [

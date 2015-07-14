@@ -73,26 +73,15 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         $config = $this->getServiceLocator()->get('Config')['v1proxy'];
 
-        $hashedUserId = $this->getHashedUserId();
-
-        //$session = $this->getSession();
+        $session = new Container('V1ProxyLpaCache');
 
         //--------------------------------------------------------------
         // Check if we've cached that the user has no v1 LPAs
 
-        $cache = $this->getServiceLocator()->get('ProxyCache');
-
         // If we've cached that the user has no v1 LPAs...
-        //if( $useCache && (bool)$cache->getItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId ) === true ){
-        //    return array();
-        //}
-
-        //--------------------------------------------------------------
-        // Check if we've cached a list of v1 LPAs
-
-        //if( $useCache && isset($session->lpas) && is_array($session->lpas) ){
-            #return $session->lpas; #TODO - do we want to bring this abck in?
-        //}
+        if( $useCache && $config['cache-no-lpas'] && isset($session->noLpas) && $session->noLpas === true ){
+            return array();
+        }
 
         //--------------------------------------------------------------
         // Return a list of LPAs from v1 API
@@ -122,12 +111,12 @@ class Dashboard implements ServiceLocatorAwareInterface {
         $json = json_encode( $xml );
         
         $array = json_decode($json,TRUE);
-        
-        // If no LPAs were found, cache that fact...
+
         if( !isset($array['lpa']) || count($array['lpa']) == 0 ){
 
-            if( $config['cache-no-lpas'] ){
-                //$cache->setItem( self::USER_HAS_NO_V1_LPAS . $hashedUserId, true );
+            // Cache the lack of a result...
+            if( $config['cache-no-lpas'] && is_null($query) ){
+                $session->noLpas = true;
             }
 
             return array();
@@ -224,14 +213,7 @@ class Dashboard implements ServiceLocatorAwareInterface {
 
         } // foreach
 
-        //--------------------------------------------------------------
-        // Cache the generated list of v1 LPAs
-
-        //if( $useCache ){
-            #$session->lpas = $result; #TODO - do we want to bring this abck in?
-        //}
-
-        //----------------
+        //---
 
         return $result;
     }
@@ -242,28 +224,9 @@ class Dashboard implements ServiceLocatorAwareInterface {
      */
     public function clearLpaCacheForUser(){
 
-        $session = $this->getSession();
-
-        unset($session->lpas);
-
-    }
-
-    private function getSession(){
-        return new Container('V1ProxyLpaCache');
-    }
-
-    /**
-     * Conceal user ids in the cache by using a hash.
-     *
-     * @return string
-     */
-    private function getHashedUserId(){
-
-        $auth = $this->getServiceLocator()->get('AuthenticationService');
-
-        if (!$auth->hasIdentity()) { throw new \RuntimeException('V1Proxy Authentication error: no Identity'); }
-
-        return hash( 'sha256', $auth->getIdentity()->id() );
+        // As we no longer cache, this method isn't needed.
+        // It's left however to avoid removing calls to it.
+        // (they will all go when v1 is thrown away)
 
     }
 
