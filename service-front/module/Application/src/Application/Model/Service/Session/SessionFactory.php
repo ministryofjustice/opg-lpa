@@ -8,9 +8,8 @@ use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 
 use Zend\Session\Exception\RuntimeException;
-use Zend\Session\SaveHandler\Cache as CacheSaveHandler;
 
-use Zend\Cache\StorageFactory as CacheStorageFactory;
+use Aws\DynamoDb\DynamoDbClient;
 
 /**
  * Create the SessionManager for use throughout the LPA frontend.
@@ -59,20 +58,20 @@ class SessionFactory implements FactoryInterface {
         ini_set( 'session.cookie_domain', $hostname );
 
         //----------------------------------------
-        // Setup Redis as the save handler
+        // Setup the DynamoDb Client
 
-        $redis = CacheStorageFactory::factory([
-            'adapter' => [
-                'name' => 'redis',
-                'options' => $config['redis'],
-            ]
-        ]);
+        $dynamoDb = new DynamoDbClient( $config['dynamodb']['client'] );
+
 
         //----------------------------------------
-        // Setup the save handler
+        // Setup the DynamoDb save handler
 
+        if( $config['encryption']['enabled'] !== true ){
 
-        if( $config['encryption']['enabled'] === true ){
+            // Use the standard SaveHandler...
+            $saveHandler = SaveHandler\DynamoDB::fromClient( $dynamoDb, $config['dynamodb']['settings'] );
+
+        } else {
 
             $key = $config['encryption']['key'];
 
@@ -93,28 +92,25 @@ class SessionFactory implements FactoryInterface {
             $blockCipher->setKey( $key );
 
             // Output raw binary (as opposed to base64).
-            // It's smaller and Redis is fine with it.
-            $blockCipher->setBinaryOutput( true );
+            // I want to enable this, but Amazon's  driver only supports strings at present.
+            //$blockCipher->setBinaryOutput( true );
 
             //---
 
-            $saveHandler = new SaveHandler\EncryptedCache( $redis, $blockCipher );
+            $saveHandler = SaveHandler\EncryptedDynamoDB::fromClient( $dynamoDb, $config['dynamodb']['settings'] );
 
-        } else {
+            $saveHandler->setBlockCipher( $blockCipher );
 
-            // Else if encryption is not enabled, just use the normal Cache Save Handler
-            $saveHandler = new CacheSaveHandler( $redis );
+        } // if
 
-        }
-
-        //----------------------------------------
+        //-------------------------------
 
         $manager = new SessionManager();
 
         $manager->setSaveHandler($saveHandler);
 
         return $manager;
-
+        
     } // function
 
 } // class
