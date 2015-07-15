@@ -95,7 +95,7 @@
       $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
       $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
       $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
-      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode'));
+      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
       
       this.toggleAddressType('postal');
     },

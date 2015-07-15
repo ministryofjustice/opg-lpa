@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-07-08 */
+/*! opg-lpa-2 2015-07-15 */
 /*!
 
  handlebars v1.1.2
@@ -4036,7 +4036,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
       $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
       $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
-      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode'));
+      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
       
       this.toggleAddressType('postal');
     },
@@ -4378,7 +4378,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           if (countAddr < 2) {
             allPopulated = false;
           }
-
 
           $submitBtn.attr('disabled', !allPopulated);
         }
