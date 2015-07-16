@@ -74,6 +74,10 @@ return array(
             ],
             'settings' => [
                 'table_name' => 'lpa-sessions-testing',
+
+                // Time before a session can be garbage collected.
+                // (time since the session was last used)
+                'session_lifetime' => (60 * 60 * 6), // 6 hours
             ],
         ],
 
