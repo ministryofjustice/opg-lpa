@@ -4,6 +4,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 $form = $this->formErrorTextExchange($this->form, [
     'whoIsRegistering' => [
         'allowed-values:1' => 'Please select the person who is registering the LPA',
+        'allowed-values:donor,Array' => 'Please select the person who is registering the LPA',
     ],
 ]);
 
