@@ -40,8 +40,15 @@ class Module{
             }
         });
 
-        // Only bootstrap the session if it's *not* PHPUnit.
-        if(!strstr($e->getApplication()->getServiceManager()->get('Request')->getServer('SCRIPT_NAME'), 'phpunit')) {
+        //---
+
+        $request = $e->getApplication()->getServiceManager()->get('Request');
+
+        // Only bootstrap the session if it's *not* PHPUnit AND is not a healthcheck.
+        if(
+            !strstr( $request->getServer('SCRIPT_NAME'), 'phpunit' ) &&
+            !in_array( $request->getUri()->getPath(), [ '/ping/elb', '/ping/json' ] ))
+        {
             $this->bootstrapSession($e);
             $this->bootstrapIdentity($e);
         }
