@@ -26,7 +26,7 @@ return array(
             'ttl' => (60 * 60 * 24 * 28), // 28 days
             'namespace' => 'admin',
             'server' => [
-                'host' => 'redisfront.local',
+                'host' => 'redisfront',
                 'port' => 6379
             ],
             'database' => 1, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
@@ -60,7 +60,7 @@ return array(
             'ttl' => (60 * 60 * 24 * 7), // 7 days
             'namespace' => 'session',
             'server' => [
-                'host' => 'redisfront.local',
+                'host' => 'redisfront',
                 'port' => 6379
             ],
             'database' => 0, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
@@ -123,7 +123,7 @@ return array(
             'ttl' => (86400 * 365), // 365 days; leave room for delays.
             'namespace' => 'v1proxy',
             'server' => [
-                'host' => 'redisfront.local',
+                'host' => 'redisfront',
                 'port' => 6379
             ],
             'database' => 2, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
