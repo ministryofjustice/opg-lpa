@@ -46,14 +46,22 @@ return array(
             'hash_bits_per_character' => 5,
 
             // Only allow the cookie to be sent over https, if we're using HTTPS.
-            #TODO - Once Vagrant is fixed, we should ALWAYS be over HTTPS.
-            'cookie_secure' => (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ),
+            'cookie_secure' => true,
 
             // Prevent cookie from being accessed from JavaScript
             'cookie_httponly' => true,
 
             // Don't accept uninitialized session IDs
             'use_strict_mode' => true,
+
+            // Time before a session can be garbage collected.
+            // (time since the session was last used)
+            'gc_maxlifetime' => (60 * 60 * 6), // 6 hours
+
+            // The probability of GC running is gc_probability/gc_divisor
+            // We only allow GC to run between 1 & 6 am GMT
+            'gc_probability' => ( gmdate('G') > 1 && gmdate('G') < 6 ) ? 1 : 0,
+            'gc_divisor' => 5,
         ],
 
         'redis' => [
@@ -74,10 +82,6 @@ return array(
             ],
             'settings' => [
                 'table_name' => 'lpa-sessions-testing',
-
-                // Time before a session can be garbage collected.
-                // (time since the session was last used)
-                'session_lifetime' => (60 * 60 * 6), // 6 hours
             ],
         ],
 
