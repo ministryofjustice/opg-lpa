@@ -243,8 +243,8 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      * This checks the status of the PDF document that represents the LPA (and form type).
      *
      * The result can be:
-     * - It's not in the queue (because it's not be requested to be)
-     * - It's in the queue ready fro processing.
+     * - It's not in the queue (because it has not been added)
+     * - It's in the queue ready for processing.
      * - It's ready to be downloaded.
      *
      * @param $type
@@ -256,11 +256,11 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        // Check if the file already exists in teh cache.
+        // Check if the file already exists in the cache.
 
         $exists = $this->redis()->exists( self::REDIS_FILE_PREFIX . $ident );
 
-        // If the PDF is currently cached in redis...
+        // If the PDF is currently cached...
         if( $exists ){
 
             // Clean up the tracking id as it's no longer useful...

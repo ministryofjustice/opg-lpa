@@ -18,6 +18,7 @@
         "ext-redis": ">=2.2.4",
         "ext-mongo": ">=1.4.5",
         "zendframework/zendframework": "2.4.*",
+        "aws/aws-sdk-php": "3.0.*",
         "chrisboulton/php-resque": "dev-master#c335bc3",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
