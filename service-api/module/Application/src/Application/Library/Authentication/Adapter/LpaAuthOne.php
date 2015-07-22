@@ -44,7 +44,7 @@ class LpaAuthOne implements AdapterInterface {
 
             $client = new GuzzleClient();
 
-            $response = $client->get('http://auth.local/tokeninfo', [ 'query' => [
+            $response = $client->get('https://authv1/tokeninfo', [ 'query' => [
                 'access_token' => $this->token
             ] ] );
 
