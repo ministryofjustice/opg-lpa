@@ -16,6 +16,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Controller\AbstractLpaActorController;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class ReplacementAttorneyController extends AbstractLpaActorController
 {
@@ -234,6 +235,16 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
         
         if( array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys) ) {
+            
+            if(count($lpa->document->replacementAttorneys) <= 2) {
+                if($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+                    $lpa->document->replacementAttorneyDecisions->how = null;
+                    $lpa->document->replacementAttorneyDecisions->when = null;
+                    $lpa->document->replacementAttorneyDecisions->howDetails = null;
+                    $lpa->document->replacementAttorneyDecisions->whenDetails = null;
+                    $this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+                }
+            }
             
             // persist data to the api
             if(!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {

@@ -16,6 +16,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Zend\View\Model\JsonModel;
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
 {
@@ -224,12 +225,21 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $deletionFlag = true;
         if(array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
             
-            // check primaryAttorneySecisions::how
-            if((count($lpa->document->primaryAttorneys) <= 2) &&
-                ($lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) &&
-                ($lpa->document->primaryAttorneyDecisions->how != null)) {
-                    $lpa->document->primaryAttorneyDecisions->how = null;
-                    $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $lpa->document->primaryAttorneyDecisions);
+            // check primaryAttorneyDecisions::how and replacementAttorneyDecisions::when
+            if(count($lpa->document->primaryAttorneys) <= 2) {
+                if(($lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) &&
+                    ($lpa->document->primaryAttorneyDecisions->how != null)) {
+                        $lpa->document->primaryAttorneyDecisions->how = null;
+                        $lpa->document->primaryAttorneyDecisions->howDetails = null;
+                        $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $lpa->document->primaryAttorneyDecisions);
+                }
+                
+                if(($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) &&
+                    ($lpa->document->replacementAttorneyDecisions->when != null)) {
+                        $lpa->document->replacementAttorneyDecisions->when = null;
+                        $lpa->document->replacementAttorneyDecisions->whenDetails = null;
+                        $this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+                }
             }
             
             $attorneyId = $lpa->document->primaryAttorneys[$attorneyIdx]->id;

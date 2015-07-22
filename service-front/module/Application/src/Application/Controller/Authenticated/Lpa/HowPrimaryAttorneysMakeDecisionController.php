@@ -12,6 +12,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
 {
@@ -56,8 +57,32 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                 }
                 
                 if(($decisions->how !== $howAttorneysAct) || ($decisions->howDetails !== $howDetails)) {
+                    
                     $decisions->how = $howAttorneysAct;
                     $decisions->howDetails = $howDetails;
+                    
+                    $changed  = false;
+                    if($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+                        
+                        // all replacements step in arrangement shall be removed or reentered. 
+                        if($lpa->document->replacementAttorneyDecisions->when != null) {
+                            $lpa->document->replacementAttorneyDecisions->when = null;
+                            $lpa->document->replacementAttorneyDecisions->whenDetails = null;
+                            $changed = true;
+                        }
+                        
+                        // if primary decision changed to depends, all replacement decisions will follow default arrangement.
+                        if(($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) && 
+                            ($lpa->document->replacementAttorneyDecisions->how != null)) {
+                                $lpa->document->replacementAttorneyDecisions->how = null;
+                                $lpa->document->replacementAttorneyDecisions->howDetails = null;
+                                $changed = true;
+                        }
+                    }
+                    
+                    if($changed) {
+                        $this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+                    }
                     
                     // persist data
                     if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $decisions)) {
