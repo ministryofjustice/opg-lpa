@@ -16,6 +16,20 @@ return array(
 
         ),
 
+        's3Response'=>array(
+{% if 'key' in pillar['pdf']['cache']['s3'] and 'secret' in pillar['pdf']['cache']['s3'] %}
+            'client' => [
+                'credentials' => [
+                    'key'    => '{{pillar['pdf']['cache']['s3']['key']}}',
+                    'secret' => '{{pillar['pdf']['cache']['s3']['secret']}}',
+                ]
+            ],
+{% endif %}
+            'settings' => [
+                'Bucket' => '{{pillar['pdf']['cache']['s3']['bucket']}}',
+            ],
+        ),
+
     ),
 
     'log' => [

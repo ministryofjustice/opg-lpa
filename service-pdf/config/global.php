@@ -40,7 +40,7 @@ return array(
             ],
             'settings' => [
                 'ACL' => 'private',
-                'Bucket' => 'opg-lpa-pdf-cache-dev',
+                'Bucket' => null,
             ],
         ),
 
