@@ -41,6 +41,7 @@ return array(
     ], // db
 
     'pdf' => [
+
         'encryption' => [
             // Keys MUST be a 32 character ASCII string
             'keys' => [
@@ -48,6 +49,24 @@ return array(
                 'document'  => '{{pillar['pdf']['encryption']['key']['document']}}',   // Key for generated PDFs in the file store
             ],
         ],
+
+
+        'cache' => [
+            's3' => [
+                'settings' => [
+                    'Bucket' => '{{pillar['pdf']['cache']['s3']['bucket']}}',
+                ],
+{% if 'key' in pillar['pdf']['cache']['s3'] and 'secret' in pillar['pdf']['cache']['s3'] %}
+                'client' => [
+                    'credentials' => [
+                        'key'    => '{{pillar['pdf']['cache']['s3']['key']}}',
+                        'secret' => '{{pillar['pdf']['cache']['s3']['secret']}}',
+                    ]
+                ],
+{% endif %}
+            ], // S3
+        ], // cache
+
     ], // pdf
 
 );
