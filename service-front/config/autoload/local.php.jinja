@@ -19,7 +19,7 @@ return array(
             'settings' => [
                 'table_name' => '{{pillar['session']['dynamodb']['table']}}',
             ],
-{% if 'key' in pillar['session']['dynamodb']] and 'secret' in pillar['session']['dynamodb']] %}
+{% if 'key' in pillar['session']['dynamodb'] and 'secret' in pillar['session']['dynamodb'] %}
             'client' => [
                 'credentials' => [
                     'key'    => '{{pillar['session']['dynamodb']['key']}}',
