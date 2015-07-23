@@ -61,7 +61,7 @@ return array(
             // The probability of GC running is gc_probability/gc_divisor
             // We only allow GC to run between 1 & 6 am GMT
             'gc_probability' => ( gmdate('G') > 1 && gmdate('G') < 6 ) ? 1 : 0,
-            'gc_divisor' => 5,
+            'gc_divisor' => 10,
         ],
 
         'redis' => [
