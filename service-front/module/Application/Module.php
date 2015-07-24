@@ -17,6 +17,7 @@ use Opg\Lpa\Logger\Logger;
 use Zend\Cache\StorageFactory;
 
 use Zend\View\Model\ViewModel;
+use Application\Adapter\DynamoDbKeyValueStore;
 
 class Module{
     
@@ -187,16 +188,12 @@ class Module{
                 },
                 
                 'Cache' => function ( ServiceLocatorInterface $sm ) {
-                    $config = $sm->get('config')['admin'];
                     
-                    $redisAdapter = StorageFactory::factory([
-                        'adapter' => [
-                            'name' => 'redis',
-                            'options' => $config['redis'],
-                        ]
-                    ]);
+                    $config = $sm->get('config')['admin']['dynamodb'];
                     
-                    return $redisAdapter;
+                    $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
+                    
+                    return $dynamoDbAdapter;
                 }
 
             ], // factories
