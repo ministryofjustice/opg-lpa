@@ -55,13 +55,13 @@ return array(
             'use_strict_mode' => true,
 
             // Time before a session can be garbage collected.
-            // (time since the session was last used)
-            'gc_maxlifetime' => (60 * 60 * 6), // 6 hours
+            // (time since the session was last accessed)
+            'gc_maxlifetime' => (60 * 60 * 3), // 3 hours
 
             // The probability of GC running is gc_probability/gc_divisor
             // We only allow GC to run between 1 & 6 am GMT
             'gc_probability' => ( gmdate('G') > 1 && gmdate('G') < 6 ) ? 1 : 0,
-            'gc_divisor' => 10,
+            'gc_divisor' => 20,
         ],
 
         'redis' => [
