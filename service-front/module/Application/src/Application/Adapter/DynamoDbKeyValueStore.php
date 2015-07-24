@@ -2,17 +2,86 @@
 namespace Application\Adapter;
 
 use Zend\Cache\Storage\StorageInterface;
+use Aws\DynamoDb\DynamoDbClient;
 
+/**
+ * An adapter to use DynamoDB as a simple key/value store
+ */
 class DynamoDbKeyValueStore implements StorageInterface
 {
+    
+    /**
+     * The AWS client
+     * 
+     * @var Aws\DynamoDb\DynamoDbClient
+     */
+    private $client;
+
+    /**
+     * The name of the table holding the key/value store
+     * 
+     * @var string
+     */
+    private $tableName;
     
     /**
      * Constructor
      * 
      * @param array $config
+     * 
+     * [
+     *      'settings' => [
+     *          'table_name' => 'my-table',
+     *      ],
+     *      'client' => [
+     *          [
+     *              'version' => '2012-08-10',
+     *              'region' => 'eu-west-1',
+     *              'credentials' => [
+     *                  'key'    => '',
+     *                  'secret' => '',
+     *              ],
+     *          ],
+     *      ],
+     *  ]
      */
     public function __construct(array $config)
     {
+        $this->client = new DynamoDbClient($config['client']);
+        
+        $this->tableName = $config['settings']['table_name'];
+        
+    }
+    
+    /* (non-PHPdoc)
+     * @see \Zend\Cache\Storage\StorageInterface::setItem()
+     */
+    public function setItem($key, $value)
+    {
+        $result = $this->client->putItem(array(
+            'TableName' => $this->tableName,
+            'Item' => array(
+                'id'      => array('S' => $key),
+                'value'   => array('S' => $value),
+            )
+        ));
+    
+    }
+    
+    /* (non-PHPdoc)
+     * @see \Zend\Cache\Storage\StorageInterface::getItem()
+     */
+    public function getItem($key, & $success = null, & $casToken = null)
+    {
+        $result = $this->client->getItem(array(
+            'TableName' => $this->tableName,
+            'Key' => array(
+                'id'      => array('S' => $key),
+            )
+        ));
+        
+        return $result['Item']['value']['S'];
+    
     }
     
      /* (non-PHPdoc)
@@ -65,16 +134,6 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getCapabilities()
     {
-        // TODO Auto-generated method stub
-        
-    }
-
-     /* (non-PHPdoc)
-     * @see \Zend\Cache\Storage\StorageInterface::getItem()
-     */
-    public function getItem($key, & $success = null, & $casToken = null)
-    {
-        return 'I am a test.';
         // TODO Auto-generated method stub
         
     }
@@ -182,15 +241,6 @@ class DynamoDbKeyValueStore implements StorageInterface
      * @see \Zend\Cache\Storage\StorageInterface::replaceItems()
      */
     public function replaceItems(array $keyValuePairs)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-     /* (non-PHPdoc)
-     * @see \Zend\Cache\Storage\StorageInterface::setItem()
-     */
-    public function setItem($key, $value)
     {
         // TODO Auto-generated method stub
         
