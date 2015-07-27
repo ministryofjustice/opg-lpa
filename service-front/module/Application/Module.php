@@ -132,7 +132,7 @@ class Module{
         return [
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
-                'AddressLookup' => 'PostcodeAnywhere',
+                'AddressLookup' => 'PostcodeInfo',
                 'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
@@ -149,13 +149,14 @@ class Module{
                 'ApplicationList'       => 'Application\Model\Service\Lpa\ApplicationList',
                 'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
                 'Communication'         => 'Application\Model\Service\Lpa\Communication',
-                'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
+                'PostcodeInfo'          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
                 'SiteStatus'            => 'Application\Model\Service\System\Status',
             ],
             'factories' => [
-                'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
-                'ApiClient'         => 'Application\Model\Service\Lpa\ApiClientFactory',
-                'EmailPhpRenderer'  => 'Application\Model\Service\Mail\View\Renderer\PhpRendererFactory',
+                'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
+                'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
+                'PostcodeInfoClient'    => 'Application\Model\Service\PostcodeInfo\PostcodeInfoClientFactory',
+                'EmailPhpRenderer'      => 'Application\Model\Service\Mail\View\Renderer\PhpRendererFactory',
 
                 // Access via 'MailTransport'
                 'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',

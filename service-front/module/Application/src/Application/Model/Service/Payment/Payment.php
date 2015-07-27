@@ -137,7 +137,9 @@ class Payment implements ServiceLocatorAwareInterface {
             ]),
             'token' => $config['api_token_secret'],
         ];
-    
+        
         return $options;  
     }
+    
+
 }

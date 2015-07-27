@@ -5,7 +5,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
 /**
- * FormFlowChecker test case.
+ * Payment test case.
  */
 class PaymentTest extends AbstractHttpControllerTestCase
 {

@@ -88,10 +88,16 @@
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-        val = $el.val();
-
-      $el.spinner();
-      this.findAddress(val);
+      val = $el.val();
+      
+      var $selectedOption = $el.find(":selected");
+      
+      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
+      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
+      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
+      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
+      
+      this.toggleAddressType('postal');
     },
 
     queryEnter: function (e) {
@@ -149,17 +155,6 @@
         this.$wrap.find('.js-PostcodeLookup__search-results').focus();
       }
       this.$wrap.find('.js-PostcodeLookup__search-btn').spinner('off');
-    },
-
-    findAddress: function (query) {
-      $.ajax({
-        url: this.settings.addressSearchUrl,
-        data: {addressid: parseInt($.trim(query), 10)},
-        dataType: 'json',
-        timeout: 10000,
-        cache: true,
-        success: this.addressSuccess
-      });
     },
 
     addressSuccess: function (response) {
