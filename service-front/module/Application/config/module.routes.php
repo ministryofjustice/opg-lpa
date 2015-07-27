@@ -237,6 +237,17 @@ return [
                 ],
             ],
 
+            'postcode-lookup-method' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/admin/postcode-lookup-method',
+                    'defaults' => [
+                        'controller' => 'Authenticated\AdminController',
+                        'action'     => 'postcode-lookup-method',
+                    ],
+                ],
+            ],
+            
             'postcode' => [
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
