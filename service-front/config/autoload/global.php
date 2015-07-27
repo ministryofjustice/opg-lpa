@@ -105,6 +105,18 @@ return array(
             'key' => null,
         ], //sendgrid
 
+        'sender' => [
+                'default' => [
+                        'name' => 'Office of the Public Guardian',
+                        'address' => 'opg@lastingpowerofattorney.service.gov.uk',
+                ],
+                
+                'feedback' => [
+                        'name' => 'User Feedback',
+                        'address' => 'opg@lastingpowerofattorney.service.gov.uk',
+                ],
+        ], // opg email sender
+        
     ], // email
 
     'address' => [
