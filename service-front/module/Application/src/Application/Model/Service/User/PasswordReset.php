@@ -129,7 +129,8 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message = new MailMessage();
 
-        $message->addFrom('opg@lastingpowerofattorney.service.gov.uk', 'Office of the Public Guardian');
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo( $email );
 
@@ -182,7 +183,8 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message = new MailMessage();
 
-        $message->addFrom('opg@lastingpowerofattorney.service.gov.uk', 'Office of the Public Guardian');
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo( $email );
 
