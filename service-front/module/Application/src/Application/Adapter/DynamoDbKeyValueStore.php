@@ -3,6 +3,7 @@ namespace Application\Adapter;
 
 use Zend\Cache\Storage\StorageInterface;
 use Aws\DynamoDb\DynamoDbClient;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 
 /**
  * An adapter to use DynamoDB as a simple key/value store
@@ -62,7 +63,7 @@ class DynamoDbKeyValueStore implements StorageInterface
             'TableName' => $this->tableName,
             'Item' => array(
                 'id'      => array('S' => $key),
-                'value'   => array('S' => $value),
+                'value'   => array('B' => $value),
             )
         ));
     
@@ -80,7 +81,7 @@ class DynamoDbKeyValueStore implements StorageInterface
             )
         ));
         
-        return $result['Item']['value']['S'];
+        return $result['Item']['value']['B'];
     
     }
     
@@ -89,8 +90,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function addItem($key, $value)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -98,8 +98,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function addItems(array $keyValuePairs)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -107,8 +106,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function checkAndSetItem($token, $key, $value)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -116,8 +114,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function decrementItem($key, $value)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -125,8 +122,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function decrementItems(array $keyValuePairs)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -134,8 +130,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getCapabilities()
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -143,8 +138,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getItems(array $keys)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -152,8 +146,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getMetadata($key)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -161,8 +154,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getMetadatas(array $keys)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -170,8 +162,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getOptions()
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -179,8 +170,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function hasItem($key)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -188,8 +178,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function hasItems(array $keys)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -197,8 +186,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function incrementItem($key, $value)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -206,8 +194,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function incrementItems(array $keyValuePairs)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -215,8 +202,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function removeItem($key)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -224,8 +210,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function removeItems(array $keys)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -233,8 +218,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function replaceItem($key, $value)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -242,8 +226,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function replaceItems(array $keyValuePairs)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -251,8 +234,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function setItems(array $keyValuePairs)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -260,8 +242,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function setOptions($options)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -269,8 +250,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function touchItem($key)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -278,8 +258,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function touchItems(array $keys)
     {
-        // TODO Auto-generated method stub
-        
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
 }
