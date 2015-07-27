@@ -23,7 +23,7 @@ class SendgridController extends AbstractBaseController
         $config = $this->getServiceLocator()->get('config');
         $messageService->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
         
-        $userEmail = $this->params()->fromQuery('from');
+        $userEmail = $this->request->getPost('from');
         
         if(!$userEmail) {
             return $this->getResponse();
