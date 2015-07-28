@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-06-30 */
+/*! opg-lpa-2 2015-07-28 */
 /*!
 
  handlebars v1.1.2
@@ -4237,7 +4237,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
-      $submitBtn.attr('disabled', $('#address-addr1', $form).val() === '');
+      $submitBtn.attr('disabled', $('#address-address1', $form).val() === '');
 
       // Listen for changes to form
       $form
