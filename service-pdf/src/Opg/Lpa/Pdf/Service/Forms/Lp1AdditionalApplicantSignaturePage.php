@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Config\Config;
+use mikehaertl\pdftk\Pdf as PdftkInstance;
 
 class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 {
@@ -28,7 +29,7 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicantSignature');
             
-            $additionalApplicantSignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
+            $additionalApplicantSignaturePage = new PdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
             
             $formData = [];
             

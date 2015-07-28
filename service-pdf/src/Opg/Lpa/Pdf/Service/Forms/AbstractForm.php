@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use ZendPdf\PdfDocument as ZendPdfDocument;
 
 abstract class AbstractForm
 {
@@ -199,7 +200,7 @@ abstract class AbstractForm
     protected function drawCrossLines($filePath, $params)
     {
         // draw cross lines
-        $pdf = PdfProcessor::load($filePath);
+        $pdf = ZendPdfDocument::load($filePath);
         foreach($params as $pageNo => $blockNames) {
             $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
             foreach($blockNames as $blockName) {
@@ -343,17 +344,6 @@ abstract class AbstractForm
             $string .= "\r\n";
         }
         return $string;
-    }
-    
-    public function print_hex($text)
-    {
-        $chunks = str_split($text, 21);
-        foreach($chunks as $str) {
-            for ($i = 0; $i < strlen($str); $i++) {
-                echo '0x'.dechex(ord($str[$i])).' ';
-            }
-            echo "\t\t", $str.PHP_EOL;
-        }
     }
     
     /**

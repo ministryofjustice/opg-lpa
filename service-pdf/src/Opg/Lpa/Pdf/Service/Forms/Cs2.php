@@ -3,6 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
+use mikehaertl\pdftk\Pdf as PdftkInstance;
 
 class Cs2 extends AbstractForm
 {
@@ -57,7 +58,7 @@ class Cs2 extends AbstractForm
                     $cs2Continued = '(Continued)';
             }
             
-            $cs2 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
+            $cs2 = new PdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
             $cs2->fillForm(array(
                     $this->contentType  => self::CHECK_BOX_ON,
                     'cs2-content'       => $this->getContentForBox($pageNo, $this->content, $this->contentType),

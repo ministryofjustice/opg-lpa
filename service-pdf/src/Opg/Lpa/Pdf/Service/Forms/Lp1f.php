@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
+use mikehaertl\pdftk\Pdf as PdftkInstance;
 
 class Lp1f extends Lp1
 {
@@ -18,7 +19,7 @@ class Lp1f extends Lp1
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1F');
         
-        $this->pdf = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1F.pdf');
+        $this->pdf = new PdftkInstance($this->pdfTemplatePath.'/LP1F.pdf');
     }
     
     protected function dataMapping()

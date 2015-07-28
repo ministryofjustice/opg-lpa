@@ -12,6 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
+use mikehaertl\pdftk\Pdf as PdftkInstance;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -547,7 +548,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        $pdf = PdfProcessor::getPdftkInstance();
+        $pdf = new PdftkInstance();
         
         $fileTag = $lp1FileTag = 'B';
         if(isset($this->interFileStack['LP1']) && isset($this->interFileStack['Coversheet'])) {

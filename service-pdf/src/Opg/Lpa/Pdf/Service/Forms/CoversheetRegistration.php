@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use mikehaertl\pdftk\Pdf as PdftkInstance;
 
 class CoversheetRegistration extends AbstractForm
 {
@@ -14,7 +15,7 @@ class CoversheetRegistration extends AbstractForm
     {
         $filePath = $this->registerTempFile('Coversheet');
         
-        $coversheetRegistration = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1_CoversheetRegistration.pdf');
+        $coversheetRegistration = new PdftkInstance($this->pdfTemplatePath.'/LP1_CoversheetRegistration.pdf');
         
         $coversheetRegistration->fillForm(
             array(

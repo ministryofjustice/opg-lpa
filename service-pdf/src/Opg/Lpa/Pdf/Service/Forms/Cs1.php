@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\Pdf\Config\Config;
+use mikehaertl\pdftk\Pdf as PdftkInstance;
 
 class Cs1 extends AbstractForm
 {
@@ -115,7 +116,7 @@ class Cs1 extends AbstractForm
             
             if($pIdx == 1) {
                 $filePath = $this->registerTempFile('CS1');
-                $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                $cs1 = new PdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
                 
                 $cs1->fillForm($formData)
                     ->flatten()
@@ -125,7 +126,7 @@ class Cs1 extends AbstractForm
         
         if($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $cs1 = new PdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
             
             $cs1->fillForm($formData)
                 ->flatten()
