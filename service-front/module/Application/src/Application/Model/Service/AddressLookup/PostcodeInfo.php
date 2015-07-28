@@ -200,8 +200,8 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
         
         // We expect the last element to be the postcode which we don't want
         // We'll confirm that it is the postcode and then remove it from the array
-        $postcodeFromComponents = strtolower(str_replace(' ', $array[count($array)-1]));
-        $postcodeFromAddress = strtolower(str_replace(' ', $postcode));
+        $postcodeFromComponents = strtolower(str_replace(' ', '', $array[count($array)-1]));
+        $postcodeFromAddress = strtolower(str_replace(' ', '', $postcode));
         
         if ($postcodeFromAddress == $postcodeFromComponents) {
             array_pop($array);
