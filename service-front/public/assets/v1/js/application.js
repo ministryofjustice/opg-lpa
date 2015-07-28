@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-07-15 */
+/*! opg-lpa-2 2015-07-28 */
 /*!
 
  handlebars v1.1.2
@@ -3944,6 +3944,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 (function () {
   'use strict';
+  
+  // will be populated with either "mojDs" or "postcodeAnywhere" following
+  // initial call to F/E postcode endpoint
+  var postcodeService = null;
 
   // Define the class
   var PostcodeLookup = function (el) {
@@ -4031,13 +4035,18 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var $el = $(e.target),
       val = $el.val();
       
-      var $selectedOption = $el.find(":selected");
-      
-      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
-      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
-      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
-      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
-      
+      if (postcodeService == 'mojDs') {
+          var $selectedOption = $el.find(":selected");
+
+	      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
+	      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
+	      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
+	      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
+      } else {
+    	  $el.spinner();
+          this.findAddress(val);
+      }
+	      
       this.toggleAddressType('postal');
     },
 
@@ -4088,6 +4097,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       } else {
         // successful
+    	  
+    	postcodeService = response.postcodeService;
+    	
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -4098,6 +4110,17 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       this.$wrap.find('.js-PostcodeLookup__search-btn').spinner('off');
     },
 
+    findAddress: function (query) {
+        $.ajax({
+          url: this.settings.addressSearchUrl,
+          data: {addressid: parseInt($.trim(query), 10)},
+          dataType: 'json',
+          timeout: 10000,
+          cache: true,
+          success: this.addressSuccess
+        });
+      },
+      
     addressSuccess: function (response) {
       this.populateFields(response);
     },
@@ -4378,6 +4401,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           if (countAddr < 2) {
             allPopulated = false;
           }
+
 
           $submitBtn.attr('disabled', !allPopulated);
         }
