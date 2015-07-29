@@ -216,17 +216,39 @@ class AccordionIdxTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $helperReturns);
     }
 
-    public function testFee ()
+    public function testFeeReduction ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
         
-        $helperReturns = $this->getAccordion('lpa/fee')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa);
         
+        $this->assertEquals(5, $helperReturns);
+    }
+
+    public function testRepeatApplication ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
+    
+        $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke($lpa);
+    
         $this->assertEquals(4, $helperReturns);
     }
 
+    public function testPayment ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
+    
+        $helperReturns = $this->getAccordion('lpa/payment')->__invoke($lpa);
+    
+        $this->assertEquals(6, $helperReturns);
+    }
+    
     private function getAccordion ($routeName)
     {
         $accordion = $this->getMockBuilder(
