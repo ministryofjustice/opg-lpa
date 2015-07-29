@@ -24,9 +24,9 @@ return array(
         'redis' => [
             // Set a default (longish) Redis TTL to protect against long term stale data.
             'ttl' => (60 * 60 * 24 * 28), // 28 days
-            'namespace' => 'session',
+            'namespace' => 'admin',
             'server' => [
-                'host' => 'redisfront.local',
+                'host' => 'redisfront',
                 'port' => 6379
             ],
             'database' => 1, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
@@ -46,14 +46,22 @@ return array(
             'hash_bits_per_character' => 5,
 
             // Only allow the cookie to be sent over https, if we're using HTTPS.
-            #TODO - Once Vagrant is fixed, we should ALWAYS be over HTTPS.
-            'cookie_secure' => (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ),
+            'cookie_secure' => true,
 
             // Prevent cookie from being accessed from JavaScript
             'cookie_httponly' => true,
 
             // Don't accept uninitialized session IDs
             'use_strict_mode' => true,
+
+            // Time before a session can be garbage collected.
+            // (time since the session was last accessed)
+            'gc_maxlifetime' => (60 * 60 * 3), // 3 hours
+
+            // The probability of GC running is gc_probability/gc_divisor
+            // We only allow GC to run between 1 & 6 am GMT
+            'gc_probability' => ( gmdate('G') > 3 && gmdate('G') < 6 ) ? 1 : 0,
+            'gc_divisor' => 20,
         ],
 
         'redis' => [
@@ -61,7 +69,7 @@ return array(
             'ttl' => (60 * 60 * 24 * 7), // 7 days
             'namespace' => 'session',
             'server' => [
-                'host' => 'redisfront.local',
+                'host' => 'redisfront',
                 'port' => 6379
             ],
             'database' => 0, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
@@ -74,10 +82,6 @@ return array(
             ],
             'settings' => [
                 'table_name' => 'lpa-sessions-testing',
-
-                // Time before a session can be garbage collected.
-                // (time since the session was last used)
-                'session_lifetime' => (60 * 60 * 6), // 6 hours
             ],
         ],
 
@@ -91,7 +95,7 @@ return array(
 
     'csrf' => [
         // Salt used for generating csrf tokens
-        'salt' => 'csrf-secret',
+        'salt' => null,
     ],
 
     'email' => [
@@ -101,6 +105,18 @@ return array(
             'key' => null,
         ], //sendgrid
 
+        'sender' => [
+                'default' => [
+                        'name' => 'Office of the Public Guardian',
+                        'address' => 'opg@lastingpowerofattorney.service.gov.uk',
+                ],
+                
+                'feedback' => [
+                        'name' => 'User Feedback',
+                        'address' => 'opg@lastingpowerofattorney.service.gov.uk',
+                ],
+        ], // opg email sender
+        
     ], // email
 
     'address' => [
@@ -138,7 +154,7 @@ return array(
             'ttl' => (86400 * 365), // 365 days; leave room for delays.
             'namespace' => 'v1proxy',
             'server' => [
-                'host' => 'redisfront.local',
+                'host' => 'redisfront',
                 'port' => 6379
             ],
             'database' => 2, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.

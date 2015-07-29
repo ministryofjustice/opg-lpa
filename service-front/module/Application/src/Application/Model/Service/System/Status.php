@@ -98,7 +98,7 @@ class Status implements ServiceLocatorAwareInterface {
             $client->setDefaultOption('exceptions', false);
 
             $response = $client->get(
-                'http://front.local/manage/availability?healthcheck=1',
+                'https://frontv1-01/manage/availability?healthcheck=1',
                 ['connect_timeout' => 5, 'timeout' => 20]
             );
 

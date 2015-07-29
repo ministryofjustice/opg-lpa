@@ -4271,7 +4271,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
-      $submitBtn.attr('disabled', $('#address-addr1', $form).val() === '');
+      $submitBtn.attr('disabled', $('#address-address1', $form).val() === '');
 
       // Listen for changes to form
       $form

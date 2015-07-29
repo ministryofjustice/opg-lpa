@@ -78,6 +78,17 @@ return [
                 ],
             ], // send-feedback
             
+            'sendgrid-bounce' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/email/bounce',
+                    'defaults' => [
+                        'controller' => 'General\SendgridController',
+                        'action'     => 'bounce',
+                    ],
+                ],
+            ], // sendgrid-bounce
+            
             'guidance' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [

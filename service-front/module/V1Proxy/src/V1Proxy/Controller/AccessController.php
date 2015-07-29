@@ -129,12 +129,12 @@ class AccessController extends AbstractActionController {
 
             //---
 
-            $response = $client->post( 'http://front.local' . $path, $options );
+            $response = $client->post( 'https://frontv1-01' . $path, $options );
 
         } else {
 
             // otherwise assume GET. No others methods are allowed.
-            $response = $client->get( 'http://front.local' . $path, $options );
+            $response = $client->get( 'https://frontv1-01' . $path, $options );
 
             // If we're deleting an LPA, clear the cache.
             if(preg_match("/^\/service\/delete/", $path)) {
