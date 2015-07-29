@@ -13,10 +13,15 @@ class PostcodeController extends AbstractAuthenticatedController {
      */
     protected $excludeFromAboutYouCheck = true;
 
-
     public function indexAction(){
 
-        $service = $this->getServiceLocator()->get('AddressLookup');
+        $usingMojDsdPostcodeService = $this->cache()->getItem('use-new-postcode-lookup-method') == 1;
+        
+        if ($usingMojDsdPostcodeService) {
+            $service = $this->getServiceLocator()->get('AddressLookupMoj');
+        } else {
+            $service = $this->getServiceLocator()->get('AddressLookupPostcodeAnywhere');
+        }
         
         //-----------------------
         // Postcode lookup
@@ -27,8 +32,6 @@ class PostcodeController extends AbstractAuthenticatedController {
 
             $result = $service->lookupPostcode( $postcode );
             
-            $usingMojDsdPostcodeService = $this->cache()->getItem('use-new-postcode-lookup-method') == 1;
-           
             // Map the result to match the format from v1.
             $v1Format = array_map( function($addr) use ($usingMojDsdPostcodeService) {
                 

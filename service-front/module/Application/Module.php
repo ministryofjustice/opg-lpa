@@ -132,7 +132,8 @@ class Module{
         return [
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
-                'AddressLookup' => 'PostcodeInfo',
+                'AddressLookupMoj' => 'PostcodeInfo',
+                'AddressLookupPostcodeAnywhere' => 'PostcodeAnywhere',
                 'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
@@ -150,6 +151,7 @@ class Module{
                 'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
                 'Communication'         => 'Application\Model\Service\Lpa\Communication',
                 'PostcodeInfo'          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
+                'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
                 'SiteStatus'            => 'Application\Model\Service\System\Status',
             ],
             'factories' => [
