@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.4.5 (2015-07-28)
+
+- [7: Ensure Required, AllowEmpty validation combo works](https://github.com/zendframework/zend-inputfilter/pull/7)
+
+## 2.4.4 (2015-07-21)
+
+- Fix count increment on insert in PriorityList
+
 ## 2.4.2 (2015-05-11)
 
 - [7503: Mail header - boundary issue (related to ZF2015-04)](https://github.com/zendframework/zf2/issues/7503)

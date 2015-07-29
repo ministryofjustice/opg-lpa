@@ -148,13 +148,25 @@ class ApiProblemTest extends TestCase
 
     public function testCanPassArbitraryDetailsToConstructor()
     {
-        $problem = new ApiProblem(400, 'Invalid input', 'http://example.com/api/problem/400', 'Invalid entity', array('foo' => 'bar'));
+        $problem = new ApiProblem(
+            400,
+            'Invalid input',
+            'http://example.com/api/problem/400',
+            'Invalid entity',
+            array('foo' => 'bar')
+        );
         $this->assertEquals('bar', $problem->foo);
     }
 
     public function testArraySerializationIncludesArbitraryDetails()
     {
-        $problem = new ApiProblem(400, 'Invalid input', 'http://example.com/api/problem/400', 'Invalid entity', array('foo' => 'bar'));
+        $problem = new ApiProblem(
+            400,
+            'Invalid input',
+            'http://example.com/api/problem/400',
+            'Invalid entity',
+            array('foo' => 'bar')
+        );
         $array   = $problem->toArray();
         $this->assertArrayHasKey('foo', $array);
         $this->assertEquals('bar', $array['foo']);
@@ -162,7 +174,13 @@ class ApiProblemTest extends TestCase
 
     public function testArbitraryDetailsShouldNotOverwriteRequiredFieldsInArraySerialization()
     {
-        $problem = new ApiProblem(400, 'Invalid input', 'http://example.com/api/problem/400', 'Invalid entity', array('title' => 'SHOULD NOT GET THIS'));
+        $problem = new ApiProblem(
+            400,
+            'Invalid input',
+            'http://example.com/api/problem/400',
+            'Invalid entity',
+            array('title' => 'SHOULD NOT GET THIS')
+        );
         $array   = $problem->toArray();
         $this->assertArrayHasKey('title', $array);
         $this->assertEquals('Invalid entity', $array['title']);
@@ -196,5 +214,27 @@ class ApiProblemTest extends TestCase
         $payload    = $apiProblem->toArray();
         $this->assertArrayHasKey('foo', $payload);
         $this->assertEquals('bar', $payload['foo']);
+    }
+
+    public function invalidStatusCodes()
+    {
+        return array(
+            '-1'  => array(-1),
+            '0'   => array(0),
+            '7'   => array(7),  // reported
+            '14'  => array(14), // observed
+            '600' => array(600),
+        );
+    }
+
+    /**
+     * @dataProvider invalidStatusCodes
+     * @group zf-apigility-118
+     */
+    public function testInvalidHttpStatusCodesAreCastTo500($code)
+    {
+        $e = new \Exception('Testing', $code);
+        $problem = new ApiProblem($code, $e);
+        $this->assertEquals(500, $problem->status);
     }
 }

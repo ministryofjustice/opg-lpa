@@ -1599,7 +1599,6 @@ return array(
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'ZFTest\\ApiProblem\\ApiProblemResponseTest' => $vendorDir . '/zfcampus/zf-api-problem/test/ApiProblemResponseTest.php',
     'ZFTest\\ApiProblem\\ApiProblemTest' => $vendorDir . '/zfcampus/zf-api-problem/test/ApiProblemTest.php',
-    'ZFTest\\ApiProblem\\Bootstrap' => $vendorDir . '/zfcampus/zf-api-problem/test/Bootstrap.php',
     'ZFTest\\ApiProblem\\Listener\\ApiProblemListenerTest' => $vendorDir . '/zfcampus/zf-api-problem/test/Listener/ApiProblemListenerTest.php',
     'ZFTest\\ApiProblem\\Listener\\RenderErrorListenerTest' => $vendorDir . '/zfcampus/zf-api-problem/test/Listener/RenderErrorListenerTest.php',
     'ZFTest\\ApiProblem\\Listener\\SendApiProblemResponseListenerTest' => $vendorDir . '/zfcampus/zf-api-problem/test/Listener/SendApiProblemResponseListenerTest.php',
