@@ -44,7 +44,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
     
-        $this->assertFalse(DateCheck::checkDates($dates));
+        $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
     }
     
     public function testCertificateProviderSignsAfterOneOfTheAttorneys()
@@ -58,7 +58,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
     
-        $this->assertFalse(DateCheck::checkDates($dates));
+        $this->assertEquals(DateCheck::checkDates($dates), 'The Certificate Provider must sign the LPA before the attorneys.');
     }
     
     public function testDonorSignsAfterEveryoneElse()
@@ -72,7 +72,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
     
-        $this->assertFalse(DateCheck::checkDates($dates));
+        $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
     }
     
     public function testOneAttorneySignsBeforeEveryoneElse()
@@ -86,7 +86,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
     
-        $this->assertFalse(DateCheck::checkDates($dates));
+        $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
     }
     
     public function testExceptionNotThrownWhenCorrectFormatPassed()
