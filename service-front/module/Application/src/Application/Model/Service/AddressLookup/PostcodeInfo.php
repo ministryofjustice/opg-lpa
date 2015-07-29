@@ -33,7 +33,7 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
         $postcodeInfoClient = $this->getServiceLocator()->get('PostcodeInfoClient');
         
         $postcodeObj = $postcodeInfoClient->lookupPostcode($postcode);
-
+        
         if (!$postcodeObj->isValid()) {
             return [];
         }

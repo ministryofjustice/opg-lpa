@@ -16,7 +16,6 @@ class PostcodeController extends AbstractAuthenticatedController {
 
     public function indexAction(){
 
-        
         $service = $this->getServiceLocator()->get('AddressLookup');
         
         //-----------------------
@@ -29,7 +28,6 @@ class PostcodeController extends AbstractAuthenticatedController {
             $result = $service->lookupPostcode( $postcode );
             
             $usingMojDsdPostcodeService = $this->cache()->getItem('use-new-postcode-lookup-method') == 1;
-            
            
             // Map the result to match the format from v1.
             $v1Format = array_map( function($addr) use ($usingMojDsdPostcodeService) {
@@ -37,16 +35,16 @@ class PostcodeController extends AbstractAuthenticatedController {
                 if ($usingMojDsdPostcodeService) {
                     return [
                         'id' => $addr['Id'],
-                        'description' => $addr['StreetAddress'].' '.$addr['Place'],
-                    ];
-                } else {
-                    return [
-                        'id' => $addr['Id'],
                         'description' => $addr['Summary'],
                         'line1' => $addr['Detail']['line1'],
                         'line2' => $addr['Detail']['line2'],
                         'line3' => $addr['Detail']['line3'],
                         'postcode' => $addr['Detail']['postcode'],
+                    ];
+                } else {
+                    return [
+                        'id' => $addr['Id'],
+                        'description' => $addr['StreetAddress'].' '.$addr['Place'],
                     ];
                 }
             }, $result );
