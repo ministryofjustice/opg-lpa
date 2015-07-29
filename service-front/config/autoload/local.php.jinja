@@ -20,6 +20,8 @@ return array(
                 'table_name' => '{{pillar['session']['dynamodb']['table']}}',
             ],
         ],
+        
+
 
     ], // session
 
@@ -35,6 +37,21 @@ return array(
 
             ],
         ],
+        
+        'dynamodb' => [
+            'settings' => [
+                'table_name' => '',
+            ],
+            'client' => [
+                    'version' => '',
+                    'region' => '',
+                    'credentials' => [
+                        'key'    => '',
+                        'secret' => '',
+                    ],
+            ],
+        ],
+        
         'accounts' => [
 {% for name, admin_email_address in pillar['admin_accounts'].iteritems() %}
     "{{ admin_email_address }}",
