@@ -241,7 +241,7 @@ class DashboardController extends AbstractAuthenticatedController
      *
      * @return bool|\Zend\Http\Response
      */
-    protected function checkAuthenticated(){
+    protected function checkAuthenticated( $allowRedirect = true ){
 
         return parent::checkAuthenticated( false );
 
