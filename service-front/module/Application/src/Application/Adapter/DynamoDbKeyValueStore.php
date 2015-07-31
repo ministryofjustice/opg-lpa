@@ -59,14 +59,30 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function setItem($key, $value)
     {
+        $key = array('S' => $key);
+        
+        if (empty($value)) {
+            $value = array('NULL' => true);
+        } else {
+            $value = array('B' => $value);
+        }
+        
         $result = $this->client->putItem(array(
             'TableName' => $this->tableName,
             'Item' => array(
-                'id'      => array('S' => $key),
-                'value'   => array('B' => $value),
+                'id'      => $key,
+                'value'   => $value,
             )
         ));
     
+    }
+    
+    /* (non-PHPdoc)
+     * @see \Zend\Cache\Storage\StorageInterface::removeItem()
+     */
+    public function removeItem($key)
+    {
+        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
     
     /* (non-PHPdoc)
@@ -193,14 +209,6 @@ class DynamoDbKeyValueStore implements StorageInterface
      * @see \Zend\Cache\Storage\StorageInterface::incrementItems()
      */
     public function incrementItems(array $keyValuePairs)
-    {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
-    }
-
-     /* (non-PHPdoc)
-     * @see \Zend\Cache\Storage\StorageInterface::removeItem()
-     */
-    public function removeItem($key)
     {
         throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
