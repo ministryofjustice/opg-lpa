@@ -201,7 +201,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         )
                 ), $helperReturns);
@@ -250,7 +250,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -306,7 +306,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'is Dr Lilly Simpson'
+                                        'values' => 'The attorney is Dr Lilly Simpson'
                                 )
                         )
                 ), $helperReturns);
@@ -355,7 +355,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -373,7 +373,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         )
                 ), $helperReturns);
@@ -421,7 +421,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -439,7 +439,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -496,7 +496,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -514,7 +514,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -577,7 +577,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -595,7 +595,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -649,7 +649,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -667,7 +667,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         )
                 ), $helperReturns);
@@ -715,7 +715,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -733,7 +733,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -807,7 +807,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -825,7 +825,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -936,13 +936,13 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                 ), $helperReturns);
     }
 
-    public function testFee ()
+    public function testRepeatApplication ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
         
-        $helperReturns = $this->getAccordion('lpa/fee')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke($lpa);
         $this->assertEquals(
                 array(
                         0 => array(
@@ -978,6 +978,118 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                 ), $helperReturns);
     }
 
+    public function testFeeReduction ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->completedAt = new \DateTime();
+    
+        $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'applicant.phtml',
+                                'routeName' => 'lpa/applicant',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => array(
+                                                'who' => 'attorney',
+                                                'name' => 'Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        )
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'correspondent.phtml',
+                                'routeName' => 'lpa/correspondent',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Mrs Annabella Collier'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'who-are-you.phtml',
+                                'routeName' => 'lpa/who-are-you',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'Who was using the LPA tool answered'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'repeat-application.phtml',
+                                'routeName' => 'lpa/repeat-application',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'I’m making a repeat application',
+                                )
+                        ),
+                        
+                ), $helperReturns);
+    }
+
+    public function testPayment ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->completedAt = new \DateTime();
+    
+        $helperReturns = $this->getAccordion('lpa/payment')->__invoke($lpa);
+        $this->assertEquals(
+                array(
+                        0 => array(
+                                'name' => 'applicant.phtml',
+                                'routeName' => 'lpa/applicant',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 1,
+                                        'values' => array(
+                                                'who' => 'attorney',
+                                                'name' => 'Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        )
+                                )
+                        ),
+                        1 => array(
+                                'name' => 'correspondent.phtml',
+                                'routeName' => 'lpa/correspondent',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 2,
+                                        'values' => 'Mrs Annabella Collier'
+                                )
+                        ),
+                        2 => array(
+                                'name' => 'who-are-you.phtml',
+                                'routeName' => 'lpa/who-are-you',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 3,
+                                        'values' => 'Who was using the LPA tool answered'
+                                )
+                        ),
+                        3 => array(
+                                'name' => 'repeat-application.phtml',
+                                'routeName' => 'lpa/repeat-application',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 4,
+                                        'values' => 'I’m making a repeat application',
+                                )
+                        ),
+                        4 => array(
+                                'name' => 'fee-reduction.phtml',
+                                'routeName' => 'lpa/fee-reduction',
+                                'lpaId' => $lpa->id,
+                                'params' => array(
+                                        'idx' => 5,
+                                        'values' => 'I am applying for reduced fee',
+                                )
+                        ),
+                ), $helperReturns);
+    }
+    
     private function getAccordion ($routeName)
     {
         $accordion = $this->getMockBuilder(

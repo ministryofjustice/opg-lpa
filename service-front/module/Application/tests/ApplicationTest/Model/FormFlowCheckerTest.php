@@ -16,6 +16,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Application\Model\Service\Lpa\Metadata;
+use Opg\Lpa\DataModel\AbstractData;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 
 /**
  * FormFlowChecker test case.
@@ -442,6 +444,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->addPrimaryAttorney(2);
         $this->setPrimaryAttorneysMakeDecisionDepends();
+        $this->addReplacementAttorney(0);
         $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
         $this->addReplacementAttorney();
         $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
@@ -679,9 +682,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteInstructionsFallback()
     {
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
-        
         $this->addCertificateProvider();
         $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
     }
@@ -707,12 +707,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     {
         $this->setLpaCreated();
         $this->assertEquals('lpa/download', $this->checker->getNearestAccessibleRoute('lpa/download', 'lp1'));
-    }
-    
-    public function testRouteRegister()
-    {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/register', $this->checker->getNearestAccessibleRoute('lpa/register'));
     }
     
     public function testRouteApplicant()
@@ -750,7 +744,7 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteCorrespondentEditFallback()
     {
-        $this->setLpaApplicant();
+        $this->setLpaCreated();
         $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
     }
     
@@ -766,36 +760,52 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/correspondent', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
     }
     
-    public function testRouteFee()
+    public function testRouteRepeatApplication()
     {
         $this->setWhoAreYouAnswered();
-        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/fee'));
+        $this->assertEquals('lpa/repeat-application', $this->checker->getNearestAccessibleRoute('lpa/repeat-application'));
     }
     
-    public function testRouteFeeFallback()
+    public function testRouteRepeatApplicationFallback()
     {
         $this->setLpaCorrespondent();
-        $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/fee'));
+        $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/repeat-application'));
+    }
+    
+    public function testRouteFeeReduction()
+    {
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/fee-reduction', $this->checker->getNearestAccessibleRoute('lpa/fee-reduction'));
+    }
+    
+    public function testRouteFeeReductionFallback()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->assertEquals('lpa/repeat-application', $this->checker->getNearestAccessibleRoute('lpa/fee-reduction'));
     }
     
     public function testRouteComplete()
     {
-        $this->setWhoAreYouAnswered();
-        $this->lpa->payment = new Payment();
+        $this->setPayment();
+        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
-        $this->lpa->payment->amount = null;
+        $this->lpa->payment->reducedFeeReceivesBenefits = null;
+        $this->lpa->payment->reducedFeeLowIncome = null;
         $this->lpa->payment->reducedFeeUniversalCredit = true;
+        Calculator::calculate($this->lpa);
         $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
-        $this->lpa->payment->amount = 0.0;
+        $this->lpa->payment->reducedFeeReceivesBenefits = true;
+        $this->lpa->payment->reducedFeeAwardedDamages = true;
         $this->lpa->payment->reducedFeeUniversalCredit = null;
+        Calculator::calculate($this->lpa);
         $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
-        $this->lpa->payment->amount = 100;
+        $this->lpa->payment = new Payment();
+        Calculator::calculate($this->lpa);
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
         $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
-        $this->lpa->payment->amount = 100;
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $this->lpa->payment->reference = "PAYMENT RECEIVED";
         $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
@@ -804,13 +814,13 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     
     public function testRouteCompleteFallback()
     {
-        $this->setWhoAreYouAnswered();
-        $this->lpa->payment = new Payment();
-        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/complete'));
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/fee-reduction', $this->checker->getNearestAccessibleRoute('lpa/complete'));
         
-        $this->lpa->payment->amount = 100;
+        $this->setPayment();
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/complete'));
+        $this->lpa->payment->reference = null;
+        $this->assertEquals('lpa/payment', $this->checker->getNearestAccessibleRoute('lpa/complete'));
     }
     
     public function testRouteViewDocs()
@@ -823,7 +833,8 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
     public function testRouteViewDocsFallback()
     {
         $this->setPayment();
-        $this->assertEquals('lpa/fee', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
+        $this->lpa->payment->reference = null;
+        $this->assertEquals('lpa/payment', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
     }
     
     public function testReturnToFormType()
@@ -925,12 +936,25 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
     }
 
-    public function testReturnToFee()
+    public function testReturnToRepeatApplication()
     {
-        $this->setPayment();
-        $this->assertEquals('lpa/fee', $this->checker->backToForm());
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
+    }
+    
+    public function testReturnToFeeReduction()
+    {
+        $this->setFeeReduction();
+        $this->assertEquals('lpa/fee-reduction', $this->checker->backToForm());
     }
 
+    public function testReturnToPayment()
+    {
+        $this->setPayment();
+        $this->lpa->payment->reference = null;
+        $this->assertEquals('lpa/payment', $this->checker->backToForm());
+    }
+    
     public function testReturnToViewDocs()
     {
         $this->setPayment();
@@ -943,12 +967,30 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     private function setPayment()
     {
-        $this->setWhoAreYouAnswered();
-        $this->lpa->payment = new Payment();
-        $this->lpa->payment->amount = 100;
+        $this->setFeeReduction();
+        Calculator::calculate($this->lpa);
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $this->lpa->payment->reference = "PAYMENT RECEIVED";
     }
+    
+    private function setFeeReduction()
+    {
+        $this->setRepeatApplication();
+        $this->lpa->payment = new Payment([
+                'reducedFeeReceivesBenefits' => false,
+                'reducedFeeAwardedDamages' => null,
+                'reducedFeeLowIncome' => true,
+                'reducedFeeUniversalCredit' => null,
+        ]);
+    }
+    
+    private function setRepeatApplication()
+    {
+        $this->setWhoAreYouAnswered();
+        $this->lpa->repeatCaseNumber = '123456';
+        $this->lpa->metadata['repeat-application-confirmed'] = 1;
+    }
+    
     private function setWhoAreYouAnswered()
     {
         $this->setLpaCorrespondent();
@@ -985,8 +1027,13 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
             $this->addCertificateProvider();
         }
         
-        for($i=0; $i<$count; $i++) {
-            $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
+        if($count === 0) {
+            $this->lpa->metadata['people-to-notify-confirmed'] = 1;
+        }
+        else {
+            for($i=0; $i<$count; $i++) {
+                $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
+            }
         }
     }
 
@@ -1074,8 +1121,13 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
             $this->addPrimaryAttorney();
         }
         
-        for($i=0; $i<$count; $i++) {
-            $this->lpa->document->replacementAttorneys[] = new Human();
+        if($count === 0) {
+            $this->lpa->metadata['replacement-attorneys-confirmed'] = 1;
+        }
+        else {
+            for($i=0; $i<$count; $i++) {
+                $this->lpa->document->replacementAttorneys[] = new Human();
+            }
         }
     }
     

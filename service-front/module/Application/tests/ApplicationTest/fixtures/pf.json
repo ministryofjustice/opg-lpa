@@ -1,16 +1,19 @@
 {
     "id": 74739653105,
-    "createdAt": "2015-01-02T16:01:03+00:00",
-    "updatedAt": "2015-01-11T03:36:01+00:00",
+    "startedAt": "2015-07-22T10:41:44.028000+0000",
+    "createdAt": "2015-07-22T10:51:39.310000+0000",
+    "updatedAt": "2015-07-28T11:41:05.596000+0000",
+    "completedAt": null,
     "user": "7942ebc4b2c4626b452e76371e7da0a1",
     "repeatCaseNumber": 62907134,
     "payment": {
         "reducedFeeReceivesBenefits": true,
         "reducedFeeAwardedDamages": true,
-        "reducedFeeLowIncome": false,
-        "reducedFeeUniversalCredit": true,
+        "reducedFeeLowIncome": null,
+        "reducedFeeUniversalCredit": null,
         "amount": null,
-        "method": null
+        "method": "card",
+        "reference": null
     },
     "whoAreYouAnswered": true,
     "locked": true,
@@ -214,6 +217,8 @@
         }
     },
     "metadata": {
-        "people-to-notify-confirmed": true
+        "replacement-attorneys-confirmed": true,
+        "people-to-notify-confirmed": true,
+        "repeat-application-confirmed": true
     }
 }

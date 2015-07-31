@@ -62,7 +62,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
+                                        'values' => 'The attorneys are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
                                 )
                         ),
                         4 => array(
@@ -80,7 +80,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
+                                        'values' => 'The replacement attorneys are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
                                 )
                         ),
                         6 => array(
@@ -137,7 +137,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
+                                        'values' => 'The attorneys are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
                                 )
                         ),
                         4 => array(
@@ -155,7 +155,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
+                                        'values' => 'The replacement attorneys are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
                                 )
                         ),
                         6 => array(
@@ -204,7 +204,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
+                                        'values' => 'The attorneys are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
                                 )
                         ),
                         4 => array(
@@ -222,7 +222,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
+                                        'values' => 'The replacement attorneys are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
                                 )
                         ),
                         6 => array(
@@ -271,7 +271,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
+                                        'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
                                 )
                         ),
                         4 => array(
@@ -289,7 +289,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -365,7 +365,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -432,7 +432,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 6,
-                                        'values' => 'are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
+                                        'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
                                 )
                         ),
                         6 => array(
@@ -823,14 +823,34 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 )
                         ),
                         3 => array(
-                                'name' => 'fee.phtml',
-                                'routeName' => 'lpa/fee',
+                                'name' => 'repeat-application.phtml',
+                                'routeName' => 'lpa/repeat-application',
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'Payment'
+                                        'values' => "I’m making a repeat application"
                                 )
-                        )
+                        ),
+                        4 => array (
+                                'name' => 'fee-reduction.phtml',
+                                'routeName' => 'lpa/fee-reduction',
+                                'lpaId' => 99999999,
+                                'params' =>
+                                array (
+                                        'idx' => 5,
+                                        'values' => 'I am applying for reduced fee',
+                                ),
+                        ),
+                        5 => array (
+                            'name' => 'payment.phtml',
+                            'routeName' => 'lpa/payment',
+                            'lpaId' => 99999999,
+                            'params' => 
+                                array (
+                                  'idx' => 6,
+                                  'values' => 'Application fee: £0.00 (Payment method: card)',
+                                ),
+                        ),
                 ), $helperReturns);
     }
 
@@ -855,14 +875,34 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 )
                         ),
                         3 => array(
-                                'name' => 'fee.phtml',
-                                'routeName' => 'lpa/fee',
+                                'name' => 'repeat-application.phtml',
+                                'routeName' => 'lpa/repeat-application',
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'Payment'
+                                        'values' => 'I’m making a repeat application'
                                 )
-                        )
+                        ),
+                        4 => array (
+                                'name' => 'fee-reduction.phtml',
+                                'routeName' => 'lpa/fee-reduction',
+                                'lpaId' => 99999999,
+                                'params' =>
+                                array (
+                                        'idx' => 5,
+                                        'values' => 'I am applying for reduced fee',
+                                ),
+                        ),
+                        5 => array (
+                            'name' => 'payment.phtml',
+                            'routeName' => 'lpa/payment',
+                            'lpaId' => 99999999,
+                            'params' => 
+                                array (
+                                  'idx' => 6,
+                                  'values' => 'Application fee: £0.00 (Payment method: card)',
+                                ),
+                        ),
                 ), $helperReturns);
     }
 
@@ -878,39 +918,114 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
                 array(
                         3 => array(
-                                'name' => 'fee.phtml',
-                                'routeName' => 'lpa/fee',
+                                'name' => 'repeat-application.phtml',
+                                'routeName' => 'lpa/repeat-application',
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 4,
-                                        'values' => 'Payment'
+                                        'values' => 'I’m making a repeat application'
                                 )
-                        )
+                        ),
+                        4 => array (
+                            'name' => 'fee-reduction.phtml',
+                            'routeName' => 'lpa/fee-reduction',
+                            'lpaId' => 99999999,
+                            'params' => 
+                                array (
+                                  'idx' => 5,
+                                  'values' => 'I am applying for reduced fee',
+                                ),
+                        ),
+                        5 => array (
+                            'name' => 'payment.phtml',
+                            'routeName' => 'lpa/payment',
+                            'lpaId' => 99999999,
+                            'params' => 
+                                array (
+                                  'idx' => 6,
+                                  'values' => 'Application fee: £0.00 (Payment method: card)',
+                                ),
+                        ),
                 ), $helperReturns);
     }
-
-    public function testFee ()
+    
+    public function testRepeatApplication ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
+    
+        $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke(
+                $lpa);
+    
+        $this->assertEquals(
+                array(
+                        4 => array (
+                                'name' => 'fee-reduction.phtml',
+                                'routeName' => 'lpa/fee-reduction',
+                                'lpaId' => 99999999,
+                                'params' =>
+                                array (
+                                        'idx' => 5,
+                                        'values' => 'I am applying for reduced fee',
+                                ),
+                        ),
+                        5 => array (
+                            'name' => 'payment.phtml',
+                            'routeName' => 'lpa/payment',
+                            'lpaId' => 99999999,
+                            'params' => 
+                                array (
+                                  'idx' => 6,
+                                  'values' => 'Application fee: £0.00 (Payment method: card)',
+                                ),
+                        ),
+                ), $helperReturns);
+    }
+    
+    public function testFeeReduction ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
         
-        $helperReturns = $this->getAccordion('lpa/fee')->__invoke($lpa);
+        $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa);
         
-        $this->assertEquals([], $helperReturns);
+        $this->assertEquals([
+                5 => array (
+                        'name' => 'payment.phtml',
+                        'routeName' => 'lpa/payment',
+                        'lpaId' => 99999999,
+                        'params' =>
+                        array (
+                                'idx' => 6,
+                                'values' => 'Application fee: £0.00 (Payment method: card)',
+                        ),
+                ),
+        ], $helperReturns);
     }
 
+    public function testPayment ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
+    
+        $helperReturns = $this->getAccordion('lpa/payment')->__invoke($lpa);
+    
+        $this->assertEquals([], $helperReturns);
+    }
+    
     private function getAccordion ($routeName)
     {
-        $accordion = $this->getMockBuilder(
-                'Application\View\Helper\AccordionBottom')
-            ->setMethods(array(
-                'getRouteName'
-        ))
+        $accordion = $this->getMockBuilder('Application\View\Helper\AccordionBottom')
+            ->setMethods(array('getRouteName'))
             ->getMock();
+        
         $accordion->expects($this->any())
             ->method('getRouteName')
             ->willReturn($routeName);
+        
         return $accordion;
     }
 }
