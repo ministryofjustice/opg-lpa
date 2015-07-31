@@ -24,7 +24,7 @@ $contactByPost->setAttributes( ['id' => 'contactByPhone'] );
 $contactByEmail->setOptions( ['label' => "Email ".(($this->correspondent['contactEmail'])?'('.$this->correspondent['contactEmail'].')':'<a href="'.$this->editRoute.'" class="js-form-popup">Add email address</a>'), 'use_hidden_element' => true] );
 $contactByPost->setAttributes( ['id' => 'contactByEmail'] );
 
-$contactInWelsh->setOptions( ['label' => "Welsh", 'use_hidden_element' => true] );
+$contactInWelsh->setOptions( ['label' => "In Welsh", 'use_hidden_element' => true] );
 $contactInWelsh->setAttributes( ['id' => 'contactInWelsh'] );
 
 $submit     = $form->get('submit');
