@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use mikehaertl\pdftk\Pdf as PdftkInstance;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lpa120 extends AbstractForm
 {
@@ -36,7 +36,7 @@ class Lpa120 extends AbstractForm
                 throw new \RuntimeException("LPA120 is not available for this LPA.");
             }
         
-        $pdf = new PdftkInstance($this->basePdfTemplate);
+        $pdf = PdftkInstance::getInstance($this->basePdfTemplate);
         
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
         

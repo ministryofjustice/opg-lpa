@@ -3,7 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use mikehaertl\pdftk\Pdf as PdftkInstance;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Cs4 extends AbstractForm
 {
@@ -19,7 +19,7 @@ class Cs4 extends AbstractForm
     {
         $filePath = $this->registerTempFile('CS4');
         
-        $cs2 = new PdftkInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
+        $cs2 = PdftkInstance::getInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
         
         $cs2->fillForm(
             array(

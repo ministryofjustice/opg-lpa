@@ -7,7 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Config\Config;
-use mikehaertl\pdftk\Pdf as PdftkInstance;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3 extends AbstractForm
 {
@@ -61,7 +61,7 @@ class Lp3 extends AbstractForm
      */
     protected function generateStandardForm(NotifiedPerson $peopleToNotify)
     {
-        $pdf = new PdftkInstance($this->basePdfTemplate);
+        $pdf = PdftkInstance::getInstance($this->basePdfTemplate);
         
         $filePath = $this->registerTempFile('LP3');
         
@@ -170,7 +170,7 @@ class Lp3 extends AbstractForm
             return;
         }
         
-        $pdf = new PdftkInstance();
+        $pdf = PdftkInstance::getInstance();
     
         $intPdfHandle = 'A';
         foreach($this->interFileStack['LP3'] as $lp3Path) {
@@ -191,7 +191,7 @@ class Lp3 extends AbstractForm
                 $intPdfHandle++;
             }
         } // endfor
-    
+        
         $pdf->saveAs($this->generatedPdfFilePath);
     } // function mergePdfs()
 } // class Lp3
