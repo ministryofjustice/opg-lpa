@@ -82,7 +82,14 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function removeItem($key)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        $key = array('S' => $key);
+        
+        $result = $this->client->deleteItem(array(
+            'TableName' => $this->tableName,
+            'Key' => array(
+                'id'      => $key,
+            )
+        ));
     }
     
     /* (non-PHPdoc)

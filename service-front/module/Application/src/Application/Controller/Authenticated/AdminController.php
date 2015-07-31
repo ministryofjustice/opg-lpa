@@ -71,7 +71,11 @@ class AdminController extends AbstractAuthenticatedController
             $form->setData($post);
             
             if ($form->isValid()) {
-                $this->cache()->setItem('system-message', $post['message']);
+                if (empty($post['message'])) {
+                    $this->cache()->removeItem('system-message');
+                } else {
+                    $this->cache()->setItem('system-message', $post['message']);
+                }
                 
                 return $this->redirect()->toRoute('home');
             }
