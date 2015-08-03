@@ -16,7 +16,7 @@ class PostcodeInfoClientFactory implements FactoryInterface {
      */
     public function createService(ServiceLocatorInterface $serviceLocator){
 
-        $config = $serviceLocator->get('config')['postcode_info_client'];
+        $config = $serviceLocator->get('config')['address']['postcode_info'];
         
         $client = new PostcodeInfoClient(
             $config['token'],

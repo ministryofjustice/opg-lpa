@@ -21,6 +21,7 @@ return array(
     ],
 
     'admin' => [
+
         'redis' => [
             // Set a default (longish) Redis TTL to protect against long term stale data.
             'ttl' => (60 * 60 * 24 * 28), // 28 days
@@ -31,7 +32,18 @@ return array(
             ],
             'database' => 1, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
         ],
-    ],
+
+        'dynamodb' => [
+            'client' => [
+                'version' => '2012-08-10',
+                'region' => 'eu-west-1',
+            ],
+            'settings' => [
+                'table_name' => 'lpa-properties-testing',
+            ],
+        ],
+
+    ], // admin
     
     'session' => [
 

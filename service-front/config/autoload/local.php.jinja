@@ -48,16 +48,16 @@ return array(
         
         'dynamodb' => [
             'settings' => [
-                'table_name' => '',
+                'table_name' => '{{pillar['admin']['dynamodb']['table']}}',
             ],
+{% if 'key' in pillar['admin']['dynamodb'] and 'secret' in pillar['admin']['dynamodb'] %}
             'client' => [
-                    'version' => '',
-                    'region' => '',
-                    'credentials' => [
-                        'key'    => '',
-                        'secret' => '',
-                    ],
+                'credentials' => [
+                    'key'    => '{{pillar['admin']['dynamodb']['key']}}',
+                    'secret' => '{{pillar['admin']['dynamodb']['secret']}}',
+                ]
             ],
+{% endif %}
         ],
         
         'accounts' => [
