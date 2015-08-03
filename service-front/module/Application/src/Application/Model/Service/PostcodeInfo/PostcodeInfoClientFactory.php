@@ -20,7 +20,7 @@ class PostcodeInfoClientFactory implements FactoryInterface {
         
         $client = new PostcodeInfoClient(
             $config['token'],
-            $config['api_uri']
+            $config['uri']
         );
         
         return $client;
