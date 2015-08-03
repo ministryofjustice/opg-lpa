@@ -1,4 +1,4 @@
-/*! opg-lpa-2 2015-07-28 */
+/*! opg-lpa-2 2015-08-03 */
 /*!
 
  handlebars v1.1.2
@@ -4184,7 +4184,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     formEvents: function (i, el) {
-      console.log('count ' + i);
+      if (window && window.console) {
+      	window.console.log('count ' + i);
+      }
       var $form = $(el),
         $submitBtn = $('input[type="submit"]', $form),
         donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
@@ -4599,7 +4601,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     selector: '#lpa-type',
 
     init: function () {
-      console.log('RepeatApplication');
+      if (window && window.console) {
+    	  window.console.log('RepeatApplication');
+      }
 
       _.bindAll(this, 'render');
       this.cacheEls();
