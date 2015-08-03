@@ -80,10 +80,23 @@ return array(
         'api_uri' => "{{pillar['endpoints']['api']}}",
         'auth_uri' => "{{pillar['endpoints']['auth']}}",
     ], // api_client
+
+    'address' => [
+
+        'postcodeanywhere' => [
+            'key' => "{{pillar['postcode']['license_key']}}",
+        ],
+
+        'postcode_info => [
+            'uri' => "{{pillar['postcode-info']['endpoint']}}",
+            'token' => "{{pillar['postcode-info']['token']}}",
+        ],
+
+    ], // address
     
     'postcode_info_client' => [
-        'api_uri' => "{{pillar['endpoints']['postcode_info']}}",
-        'token' => "{{pillar['postcode_info']['auth']}}",
+        'api_uri' => "{{pillar['postcode-info']['endpoint']}}",
+        'token' => "{{pillar['postcode-info']['token']}}",
     ], // postcode_info_client
     
     'log' => [
