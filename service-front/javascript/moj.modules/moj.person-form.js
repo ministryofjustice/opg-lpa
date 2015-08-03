@@ -34,7 +34,9 @@
     },
 
     formEvents: function (i, el) {
-      console.log('count ' + i);
+      if (window && window.console) {
+      	window.console.log('count ' + i);
+      }
       var $form = $(el),
         $submitBtn = $('input[type="submit"]', $form),
         donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
