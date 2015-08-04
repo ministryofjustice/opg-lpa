@@ -2,7 +2,15 @@
 
 
     <div class="next-step-section">
-
+        
+        <?php if (!$this->isPaymentSkipped): ?>
+       
+            <h2>Thank you for your payment of &pound;<?= sprintf('%.2f', $this->paymentAmount) ?></h2>
+       
+            <h3>Your payment reference number is: <?= $this->paymentReferenceNo ?></h3>
+           
+        <?php endif; ?>
+        
         <h2>Print and sign your LPA</h2>
 
         <p class="block">You’re now ready to print and sign your LPA document, before you send it to the Office of the
