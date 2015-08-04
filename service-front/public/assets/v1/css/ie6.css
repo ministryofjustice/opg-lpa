@@ -2678,7 +2678,7 @@ article .inner {
     .toolbar .tool:last-child {
       margin-right: 0; }
     .toolbar .tool__search {
-      width: 60%;
+      width: 62%;
       position: relative; }
       .toolbar .tool__search input[type="text"] {
         float: left;
@@ -2687,7 +2687,7 @@ article .inner {
         line-height: 1.25;
         font-weight: 400;
         text-transform: none;
-        width: 73%;
+        width: 55%;
         margin-left: 0; }
         @media (max-width: 640px) {
           .toolbar .tool__search input[type="text"] {
@@ -2706,9 +2706,11 @@ article .inner {
           .toolbar .tool__search .button, .toolbar .tool__search .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__search .ui-priority-primary {
             font-size: 20px;
             line-height: 1.2; } }
+      .toolbar .tool__search #clear {
+        margin-left: 1em; }
     .toolbar .tool__create {
       float: right;
-      width: 32%;
+      width: 30%;
       padding: 18px; }
       .toolbar .tool__create .button, .toolbar .tool__create .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__create .ui-priority-primary {
         font-family: "nta", Arial, sans-serif;
@@ -2716,8 +2718,8 @@ article .inner {
         line-height: 1.25;
         font-weight: 400;
         text-transform: none;
-        padding-left: 3em;
-        padding-right: 3em; }
+        padding-left: 2.5em;
+        padding-right: 2.5em; }
         @media (max-width: 640px) {
           .toolbar .tool__create .button, .toolbar .tool__create .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .toolbar .tool__create .ui-priority-primary {
             font-size: 20px;

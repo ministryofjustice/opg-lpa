@@ -52,11 +52,9 @@
             <input type="text" name="search"
                    placeholder="LPA no, donor's first or last name"
                    value="<?php echo isset($this->freeText) ? $this->escapeHtmlAttr( $this->freeText ) : ''; ?>"/>
-            <input class="add button button" type="submit" value="Search"/>
+            <a class="add button" id="clear" href='<?php echo $this->url('user/dashboard') ?>' role="button">Clear</a>
+            <input class="add button" type="submit" value="Search"/>
         </form>
-    </div>
-    <div class="tool tool__clear">
-        <a class="add button" href='<?php echo $this->url('user/dashboard/create-lpa') ?>' role="button">Clear</a>
     </div>
     <div class="tool tool__create">
         <a class="add button" href='<?php echo $this->url('user/dashboard/create-lpa') ?>' role="button">Create a new LPA</a>
