@@ -15,7 +15,7 @@
     }
 
     &__search {
-      width: 60%;
+      width: 50%;
       position: relative;
 
       input[type="text"] {
@@ -33,9 +33,21 @@
       }
     }
 
+    &__clear {
+      float: right;
+      width: 17%;
+      padding: 18px;
+
+      .button {
+        @include core-24();
+        padding-left: 3em;
+        padding-right: 3em;
+      }
+    }
+    
     &__create {
       float: right;
-      width: 32%;
+      width: 25%;
       padding: 18px;
 
       .button {
