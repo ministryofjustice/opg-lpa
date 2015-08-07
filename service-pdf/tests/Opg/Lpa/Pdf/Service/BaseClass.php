@@ -9,6 +9,8 @@ use Opg\Lpa\Pdf\Service\PdftkInstance;
 use Opg\Lpa\Pdf\Service\Forms\Lp1h;
 use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\Pdf\Service\Forms\Lp1;
 
 class BaseClass extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +52,7 @@ class BaseClass extends \PHPUnit_Framework_TestCase
         
     }
     
-    protected function getFormDataFromPdf($type)
+    protected function extractFormDataFromPdf($type)
     {
         // generate PDF
         switch($type) {
@@ -102,7 +104,111 @@ class BaseClass extends \PHPUnit_Framework_TestCase
 
         return $formData;
     }
-
+    
+    protected function getTrustCorp($attorneys)
+    {
+        foreach($attorneys as $attorney) {
+            if($attorney instanceof TrustCorporation) {
+                return $attorney;
+            }
+        }
+    
+        return null;
+    }
+    
+    protected function deleteTrustCorp($type = null)
+    {
+        if($type) {
+            $i = 0;
+            foreach($this->lpa->document->{$type.'Attorneys'} as $attorney) {
+                if($attorney instanceof TrustCorporation) {
+                    unset($this->lpa->document->{$type.'Attorneys'}[$i]);
+                    break;
+                }
+                $i++;
+            }
+        }
+        else {
+            $i = 0;
+            foreach($this->lpa->document->primaryAttorneys as $attorney) {
+                if($attorney instanceof TrustCorporation) {
+                    unset($this->lpa->document->primaryAttorneys[$i]);
+                    break;
+                }
+                $i++;
+            }
+            
+            $i = 0;
+            foreach($this->lpa->document->replacementAttorneys as $attorney) {
+                if($attorney instanceof TrustCorporation) {
+                    unset($this->lpa->document->replacementAttorneys[$i]);
+                    break;
+                }
+                $i++;
+            }
+        }
+    }
+    
+    protected function getHumanAttorneys($type = null)
+    {
+        if($type) {
+            $attorneys = $this->lpa->document->{$type.'Attorneys'};
+        }
+        else {
+            $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
+        }
+        
+        $i = 0;
+        foreach($attorneys as $attorney) {
+            if($attorney instanceof TrustCorporation) {
+                unset($attorneys[$i]);
+                break;
+            }
+            $i++;
+        }
+        
+        return $attorneys;
+    }
+    
+    protected function getAdditionalPeopleForCS1()
+    {
+        $attorneys=[];
+        $replacements=[];
+        $notified=[];
+        
+        if(count($this->lpa->document->primaryAttorneys) > Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            foreach($this->lpa->document->primaryAttorneys as $attorney) {
+                if($attorney instanceof TrustCorporation) {
+                    array_unshift($attorneys, $attorney);
+                }
+                else {
+                    $attorneys[] = $attorney;
+                }
+            }
+            
+            for($i=0; $i<Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM; $i++) array_shift($attorneys);
+        }
+        
+        if(count($this->lpa->document->replacementAttorneys) > Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) {
+            foreach($this->lpa->document->replacementAttorneys as $attorney) {
+                if($attorney instanceof TrustCorporation) {
+                    array_unshift($replacements, $attorney);
+                }
+                else {
+                    $replacements[] = $attorney;
+                }
+            }
+            for($i=0; $i<Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM; $i++) array_shift($replacements);
+        }
+        
+        if(count($this->lpa->document->peopleToNotify) > Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+            $notified = $this->lpa->document->peopleToNotify;
+            for($i=0; $i<Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM; $i++) array_shift($notified);
+        }
+        
+        return ['primaryAttorney'=>$attorneys, 'replacementAttorney'=>$replacements, 'peopleToNotify'=>$notified];
+    }
+    
     /**
      * Cleans up the environment after running a test.
      */
