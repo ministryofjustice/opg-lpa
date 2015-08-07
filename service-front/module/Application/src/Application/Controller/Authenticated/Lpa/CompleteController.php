@@ -21,20 +21,11 @@ class CompleteController extends AbstractLpaController
     
     public function indexAction()
     {
-        $viewParams = $this->getViewParams();
+        $viewModel = new ViewModel(
+            $this->getViewParams()
+        );
         
-        $viewModel = new ViewModel($viewParams);
-        
-        $payment = $this->getLpa()->payment;
-        if(($payment->reducedFeeUniversalCredit === true) ||
-                (($payment->reducedFeeReceivesBenefits === true) && ($payment->reducedFeeAwardedDamages === true)) ||
-                ($payment->method == Payment::PAYMENT_TYPE_CHEQUE))
-        {
-            $viewModel->setTemplate('application/complete/complete.phtml');
-        }
-        else {
-            $viewModel->setTemplate('application/complete/online-payment-complete.phtml');
-        }
+        $viewModel->setTemplate('application/complete/complete.phtml');
         
         return $viewModel;
     }
@@ -48,6 +39,13 @@ class CompleteController extends AbstractLpaController
     private function getViewParams()
     {
         $lpa = $this->getLpa();
+
+        $payment = $this->getLpa()->payment;
+        
+        $isPaymentSkipped = 
+            (($payment->reducedFeeUniversalCredit === true) ||
+            (($payment->reducedFeeReceivesBenefits === true) && ($payment->reducedFeeAwardedDamages === true)) ||
+            ($payment->method == Payment::PAYMENT_TYPE_CHEQUE));
         
         $viewParams = [
                 'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp1']),
@@ -56,6 +54,7 @@ class CompleteController extends AbstractLpaController
                 'paymentAmount'      => $lpa->payment->amount,
                 'paymentReferenceNo' => $lpa->payment->reference,
                 'hasRemission'       => ($this->getFlowChecker()->isEligibleForFeeReduction()),
+                'isPaymentSkipped'   => $isPaymentSkipped,
         ];
         
         if(count($lpa->document->peopleToNotify) > 0) {
