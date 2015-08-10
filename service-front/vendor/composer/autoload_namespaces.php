@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ZendXml' => array($vendorDir . '/zendframework/zendxml/library'),
+    'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),

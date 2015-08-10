@@ -16,7 +16,16 @@ class RegisterController extends AbstractBaseController {
     public function indexAction(){
 
         $check = $this->preventAuthenticatedUser();
-        if( $check !== true ){ return $check; }
+        
+        if( $check !== true ) {
+            
+            $this->log->info(
+                'Authenticated user attempted to access registration page',
+                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            );
+            
+            return $check; 
+        }
 
         //---
 

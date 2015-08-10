@@ -17,6 +17,11 @@ class Delete implements ServiceLocatorAwareInterface {
      */
     public function delete(){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Deleting user and all their LPAs', 
+            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+        );
+        
         return $this->getServiceLocator()->get('ApiClient')->deleteUserAndAllTheirLpas();
 
     } // function

@@ -17,6 +17,8 @@ class Register implements ServiceLocatorAwareInterface {
 
     public function registerAccount( $email, $password, callable $routeCallback ){
 
+        $this->getServiceLocator()->get('Logger')->info('Account registration attempt for ' . $email);
+        
         $client = $this->getServiceLocator()->get('ApiClient');
 
         $activationToken = $client->registerAccount( strtolower($email), $password );
@@ -83,10 +85,18 @@ class Register implements ServiceLocatorAwareInterface {
 
         try {
 
+            $this->getServiceLocator()->get('Logger')->info(
+                'Sending account registration email to ' . $email
+            );
+            
             $this->getServiceLocator()->get('MailTransport')->send($message);
 
         } catch ( \Exception $e ){
 
+            $this->getServiceLocator()->get('Logger')->info(
+                'FAILED: Sending account registration email to ' . $email
+            );
+            
             return "failed-sending-email";
 
         }
@@ -114,6 +124,16 @@ class Register implements ServiceLocatorAwareInterface {
          */
         $success = $client->activateAccount( $token );
 
+        if ($success) {
+            $this->getServiceLocator()->get('Logger')->info(
+                'Account activation attempt with token ' . $token . ' was successful, or was already activated'
+            );
+        } else {
+            $this->getServiceLocator()->get('Logger')->info(
+                'Account activation attempt with token ' . $token . ' failed'
+            );
+        }
+        
         return $success;
 
     } // function
