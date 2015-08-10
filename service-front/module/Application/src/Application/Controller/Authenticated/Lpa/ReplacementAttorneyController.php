@@ -236,7 +236,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         
         if( array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys) ) {
             
-            if(count($lpa->document->replacementAttorneys) <= 2) {
+            if(count($this->getLpa()->document->replacementAttorneys) <= 2) {
                 if($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
                     $lpa->document->replacementAttorneyDecisions->how = null;
                     $lpa->document->replacementAttorneyDecisions->when = null;
