@@ -17,11 +17,6 @@ class Lp1fTest extends BaseClass
 
     public function testLP1()
     {
-//         echo htmlentities("£27.5",ENT_HTML5).PHP_EOL;
-//         echo html_entity_decode('&pound;').PHP_EOL;
-//         echo html_entity_decode('&#163;').PHP_EOL;
-//         echo '&#'.ord('£').PHP_EOL;
-//         exit;
         // create PDF, then extract form data
         $formData = $this->extractFormDataFromPdf('LP1');
         
