@@ -43,6 +43,8 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
 
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
 
+        $this->log()->info('Request to ' . get_class($this), $identity->toArray());
+        
         //----------------------------------------------------------------------
         // Check if they've singed in since the T&C's changed...
 
