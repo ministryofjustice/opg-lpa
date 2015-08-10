@@ -17,6 +17,11 @@ class Lp1fTest extends BaseClass
 
     public function testLP1()
     {
+//         echo htmlentities("£27.5",ENT_HTML5).PHP_EOL;
+//         echo html_entity_decode('&pound;').PHP_EOL;
+//         echo html_entity_decode('&#163;').PHP_EOL;
+//         echo '&#'.ord('£').PHP_EOL;
+//         exit;
         // create PDF, then extract form data
         $formData = $this->extractFormDataFromPdf('LP1');
         
@@ -698,5 +703,73 @@ class Lp1fTest extends BaseClass
         $this->assertArrayNotHasKey('see_continuation_sheet_3', $formData);
     }
     
+    public function testPayByCardForRepeatApplication()
+    {
+        $today = new \DateTime();
+        $this->lpa->payment->reducedFeeReceivesBenefits=false;
+        $this->lpa->payment->reducedFeeAwardedDamages=null;
+        $this->lpa->payment->reducedFeeLowIncome = true;
+        $this->lpa->payment->reducedFeeUniversalCredit = null;
+        $this->lpa->payment->amount = 27.5;
+        $this->lpa->payment->method = 'card';
+        $this->lpa->payment->date = $today;
+        $this->lpa->payment->reference = '12345678';
+        $this->lpa->repeatCaseNumber = '98765432';
+        
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        $this->assertEquals('card', $formData['pay-by']);
+        $this->assertEquals('NOT REQUIRED.', $formData['lpa-payment-phone-number']);
+        $this->assertEquals('On', $formData['is-repeat-application']);
+        $this->assertEquals('98765432', $formData['repeat-application-case-number']);
+        $this->assertEquals('12345678', $formData['lpa-payment-reference']);
+        $this->assertEquals("£27.50", html_entity_decode($formData['lpa-payment-amount']));
+        $this->assertEquals($today->format('d'), $formData['lpa-payment-date-day']);
+        $this->assertEquals($today->format('m'), $formData['lpa-payment-date-month']);
+        $this->assertEquals($today->format('Y'), $formData['lpa-payment-date-year']);
+    }
+
+    public function testPayByCheque()
+    {
+        $today = new \DateTime();
+        $this->lpa->payment->reducedFeeReceivesBenefits=false;
+        $this->lpa->payment->reducedFeeAwardedDamages=null;
+        $this->lpa->payment->reducedFeeLowIncome = true;
+        $this->lpa->payment->reducedFeeUniversalCredit = null;
+        $this->lpa->payment->amount = 55;
+        $this->lpa->payment->method = 'cheque';
+        $this->lpa->payment->date = $today;
+    
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        $this->assertEquals('cheque', $formData['pay-by']);
+        $this->assertArrayNotHasKey('lpa-payment-phone-number', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-reference', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-date-day', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-date-month', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-date-year', $formData);
+    }
+
+    public function testExemption()
+    {
+        $today = new \DateTime();
+        $this->lpa->payment->reducedFeeReceivesBenefits=true;
+        $this->lpa->payment->reducedFeeAwardedDamages=true;
+        $this->lpa->payment->reducedFeeLowIncome = null;
+        $this->lpa->payment->reducedFeeUniversalCredit = null;
+        $this->lpa->payment->amount = 0;
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->date = null;
+    
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        $this->assertArrayNotHasKey('pay-by', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-phone-number', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-reference', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-date-day', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-date-month', $formData);
+        $this->assertArrayNotHasKey('lpa-payment-date-year', $formData);
+    }
     
 }

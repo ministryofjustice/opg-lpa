@@ -85,8 +85,8 @@
             "contactByPost": false,
             "contactInWelsh": false
         },
-        "instruction": "test",
-        "preference": "",
+        "instruction": "Maecenas posuere augue sed purus malesuada dapibus.",
+        "preference": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         "certificateProvider": {
             "name": {
                 "title": "Mr",
