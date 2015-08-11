@@ -25,7 +25,7 @@ class Lp1fTest extends BaseClass
         $this->assertArrayNotHasKey('lpa-type', $formData);
         
         // test footer
-        $this->assertEquals(Config::getInstance()['footer']['lp1f']['instrument'], $formData['footer_instrument_right']);
+        $this->assertEquals(Config::getInstance()['footer']['lp1f']['instrument'], $formData['footer-instrument-right']);
         
         // test donor fields (section 1)
         $this->assertEquals($this->lpa->document->donor->name->title, $formData['lpa-document-donor-name-title']);
@@ -102,7 +102,7 @@ class Lp1fTest extends BaseClass
         
         // test attorneys act jointly and severally (section 3)
         if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-            $this->assertEquals('jointly-and-severally', $formData['how-attorneys-act']);
+            $this->assertEquals('jointly-attorney-severally', $formData['how-attorneys-act']);
         }
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
@@ -257,17 +257,12 @@ class Lp1fTest extends BaseClass
             
             foreach($humanAttorneys as $attorney) {
                 
-                if($autoIncrementNo) {
-                    $prefixIdx = $autoIncrementNo.'.';
-                }
-                else {
-                    $prefixIdx = '';
-                }
+                $prefixIdx = $autoIncrementNo?($autoIncrementNo.'.'):'';
                 
                 $this->assertEquals($attorney->name->title, $formData[$prefixIdx.'signature-attorney-name-title']);
                 $this->assertEquals($attorney->name->first, $formData[$prefixIdx.'signature-attorney-name-first']);
                 $this->assertEquals($attorney->name->last, $formData[$prefixIdx.'signature-attorney-name-last']);
-                $this->assertEquals(Config::getInstance()['footer']['lp1f']['instrument'], $formData[$prefixIdx.'footer_instrument_right-pf']);
+                $this->assertEquals(Config::getInstance()['footer']['lp1f']['instrument'], $formData[$prefixIdx.'footer-instrument-right-additional']);
                 $autoIncrementNo++;
             }
             
@@ -304,7 +299,7 @@ class Lp1fTest extends BaseClass
                 $this->assertEquals($person->address->postcode, $formData[$prefixIdx.'cs1-'.$personIdx.'-address-postcode']);
                 
                 $this->assertEquals((string)$this->lpa->document->donor->name, $formData[$prefixIdx.'cs1-donor-full-name']);
-                $this->assertEquals(Config::getInstance()['footer']['cs1'], $formData[$prefixIdx.'cs1-footer_right']);
+                $this->assertEquals(Config::getInstance()['footer']['cs1'], $formData[$prefixIdx.'cs1-footer-right']);
                 
                 if($type != "peopleToNotify") {
                     
@@ -338,7 +333,7 @@ class Lp1fTest extends BaseClass
         //@todo can be more generic
         $this->assertEquals('how-replacement-attorneys-step-in', $formData['cs2-is']);
         $this->assertEquals($this->lpa->document->donor->name, $formData['cs2-donor-full-name']);
-        $this->assertEquals(Config::getInstance()['footer']['cs2'], $formData['cs2-footer_right']);
+        $this->assertEquals(Config::getInstance()['footer']['cs2'], $formData['cs2-footer-right']);
         $this->assertEquals('', $formData['cs2-continued']);
         $this->assertTrue(strstr($formData['cs2-content'], 'Replacement attorneys to step in only when none of the original attorneys can act') !== false);
         
@@ -346,20 +341,20 @@ class Lp1fTest extends BaseClass
         
         // test continuation sheet 3
         $this->assertEquals($this->lpa->document->donor->name, $formData['cs3-donor-full-name']);
-        $this->assertEquals(Config::getInstance()['footer']['cs3'], $formData['cs3-footer_right']);
+        $this->assertEquals(Config::getInstance()['footer']['cs3'], $formData['cs3-footer-right']);
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
         // test continuation sheet 4
         $trust = $this->getTrustCorp($this->lpa->document->primaryAttorneys);
         $this->assertEquals($trust->number, $formData['cs4-trust-corporation-company-registration-number']);
-        $this->assertEquals(Config::getInstance()['footer']['cs4'], $formData['cs4-footer_right']);
+        $this->assertEquals(Config::getInstance()['footer']['cs4'], $formData['cs4-footer-right']);
         
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
         // test footers for registration pages 
-        $this->assertEquals(Config::getInstance()['footer']['lp1f']['registration'], $formData[$autoIncrementNo.'.footer_registration_right']);
+        $this->assertEquals(Config::getInstance()['footer']['lp1f']['registration'], $formData['footer-registration-right']);
         
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
