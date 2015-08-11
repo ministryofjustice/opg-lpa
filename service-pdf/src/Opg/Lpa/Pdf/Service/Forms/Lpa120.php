@@ -138,8 +138,7 @@ class Lpa120 extends AbstractForm
                         $this->lpa->document->donor->address->address3,
                         $this->lpa->document->donor->address->postcode
                 )),
-                'lpa-type-property-and-financial-affairs' => ($this->lpa->document->type==Document::LPA_TYPE_PF)?self::CHECK_BOX_ON:null,
-                'lpa-type-health-and-welfare'             => ($this->lpa->document->type==Document::LPA_TYPE_HW)?self::CHECK_BOX_ON:null,
+                'lpa-type' => ($this->lpa->document->type==Document::LPA_TYPE_PF)?'property-and-financial-affairs':'health-and-welfare',
                 'is-repeat-application'     => ($this->lpa->repeatCaseNumber===null)?null:self::CHECK_BOX_ON,
                 'case-number'               => $this->lpa->repeatCaseNumber,
                 'applicant-type'             => $applicantType,

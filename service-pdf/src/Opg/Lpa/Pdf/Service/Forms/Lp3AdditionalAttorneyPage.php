@@ -33,14 +33,8 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
             $filePath = $this->registerTempFile('AdditionalAttorneys');
             
             $pdfFormData = array();
-            if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-                $pdfFormData['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
-            }
-            elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
-                $pdfFormData['attorneys-act-jointly'] = self::CHECK_BOX_ON;
-            }
-            elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                $pdfFormData['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
+            if($this->lpa->document->primaryAttorneyDecisions->how != null) {
+                $pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
             }
             
             $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
@@ -66,7 +60,7 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                 }
             }
             
-            $pdfFormData['footer_right'] = Config::getInstance()['footer']['lp3'];
+            $pdfFormData['footer-right-additional'] = Config::getInstance()['footer']['lp3'];
             
             $additionalAttorneyPage = PdftkInstance::getInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage

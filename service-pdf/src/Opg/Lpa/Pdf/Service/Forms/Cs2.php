@@ -60,11 +60,11 @@ class Cs2 extends AbstractForm
             
             $cs2 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
             $cs2->fillForm(array(
-                    $this->contentType  => self::CHECK_BOX_ON,
+                    'cs2-is'            => $this->contentType,
                     'cs2-content'       => $this->getContentForBox($pageNo, $this->content, $this->contentType),
-                    'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
+                    'cs2-donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
                     'cs2-continued'     => $cs2Continued,
-                    'footer_right'    => Config::getInstance()['footer']['cs2'],
+                    'cs2-footer-right'      => Config::getInstance()['footer']['cs2'],
             ))
             ->flatten()
             ->saveAs($filePath);

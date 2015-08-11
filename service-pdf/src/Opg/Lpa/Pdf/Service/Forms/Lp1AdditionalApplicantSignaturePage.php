@@ -34,10 +34,10 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
             $formData = [];
             
             if($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
             }
             else {
-                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
             }
             
             $additionalApplicantSignaturePage->fillForm($formData)

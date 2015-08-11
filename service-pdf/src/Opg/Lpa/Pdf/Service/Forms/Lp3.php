@@ -81,6 +81,7 @@ class Lp3 extends AbstractForm
             }
             $this->drawCrossLines($filePath, $crossLineParams);
         }
+        
     } // function generateStandardForm()
     
     /**
@@ -90,74 +91,67 @@ class Lp3 extends AbstractForm
      */
     protected function dataMapping(NotifiedPerson $peopleToNotify)
     {
-        $this->pdfFormData['lpa-document-peopleToNotify-name-title']         = $peopleToNotify->name->title;
-        $this->pdfFormData['lpa-document-peopleToNotify-name-first']         = $peopleToNotify->name->first;
-        $this->pdfFormData['lpa-document-peopleToNotify-name-last']          = $peopleToNotify->name->last;
-        $this->pdfFormData['lpa-document-peopleToNotify-address-address1']   = $peopleToNotify->address->address1;
-        $this->pdfFormData['lpa-document-peopleToNotify-address-address2']   = $peopleToNotify->address->address2;
-        $this->pdfFormData['lpa-document-peopleToNotify-address-address3']   = $peopleToNotify->address->address3;
-        $this->pdfFormData['lpa-document-peopleToNotify-address-postcode']   = $peopleToNotify->address->postcode;
+        $pdfFormData = [];
+        $pdfFormData['lpa-document-peopleToNotify-name-title']         = $peopleToNotify->name->title;
+        $pdfFormData['lpa-document-peopleToNotify-name-first']         = $peopleToNotify->name->first;
+        $pdfFormData['lpa-document-peopleToNotify-name-last']          = $peopleToNotify->name->last;
+        $pdfFormData['lpa-document-peopleToNotify-address-address1']   = $peopleToNotify->address->address1;
+        $pdfFormData['lpa-document-peopleToNotify-address-address2']   = $peopleToNotify->address->address2;
+        $pdfFormData['lpa-document-peopleToNotify-address-address3']   = $peopleToNotify->address->address3;
+        $pdfFormData['lpa-document-peopleToNotify-address-postcode']   = $peopleToNotify->address->postcode;
         
-        $this->pdfFormData['lpa-document-donor-name-title']         = $this->lpa->document->donor->name->title;
-        $this->pdfFormData['lpa-document-donor-name-first']         = $this->lpa->document->donor->name->first;
-        $this->pdfFormData['lpa-document-donor-name-last']          = $this->lpa->document->donor->name->last;
-        $this->pdfFormData['lpa-document-donor-address-address1']   = $this->lpa->document->donor->address->address1;
-        $this->pdfFormData['lpa-document-donor-address-address2']   = $this->lpa->document->donor->address->address2;
-        $this->pdfFormData['lpa-document-donor-address-address3']   = $this->lpa->document->donor->address->address3;
-        $this->pdfFormData['lpa-document-donor-address-postcode']   = $this->lpa->document->donor->address->postcode;
+        $pdfFormData['lpa-document-donor-name-title']         = $this->lpa->document->donor->name->title;
+        $pdfFormData['lpa-document-donor-name-first']         = $this->lpa->document->donor->name->first;
+        $pdfFormData['lpa-document-donor-name-last']          = $this->lpa->document->donor->name->last;
+        $pdfFormData['lpa-document-donor-address-address1']   = $this->lpa->document->donor->address->address1;
+        $pdfFormData['lpa-document-donor-address-address2']   = $this->lpa->document->donor->address->address2;
+        $pdfFormData['lpa-document-donor-address-address3']   = $this->lpa->document->donor->address->address3;
+        $pdfFormData['lpa-document-donor-address-postcode']   = $this->lpa->document->donor->address->postcode;
         
         if($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->pdfFormData['donor-is-applicant'] = self::CHECK_BOX_ON;
+            $pdfFormData['who-is-applicant'] = 'donor';
         }
         else {
-            $this->pdfFormData['attorney-is-applicant'] = self::CHECK_BOX_ON;
+            $pdfFormData['who-is-applicant'] = 'attorney';
         }
         
         if($this->lpa->document->type == Document::LPA_TYPE_PF) {
-            $this->pdfFormData['lpa-type-property-and-financial-affairs'] = self::CHECK_BOX_ON;
+            $pdfFormData['lpa-type'] = 'property-and-financial-affairs';
         }
         elseif($this->lpa->document->type == Document::LPA_TYPE_HW) {
-            $this->pdfFormData['lpa-type-health-and-welfare'] = self::CHECK_BOX_ON;
+            $pdfFormData['lpa-type'] = 'health-and-welfare';
         }
         
         if(count($this->lpa->document->primaryAttorneys) == 1) {
-            $this->pdfFormData['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
+            $pdfFormData['how-attorneys-act'] = 'only-one-attorney-appointed';
         }
         
         if($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-                $this->pdfFormData['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
-            }
-            elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
-                $this->pdfFormData['attorneys-act-jointly'] = self::CHECK_BOX_ON;
-            }
-            elseif($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                $this->pdfFormData['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
-            }
+            $pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
         
         $i=0;
         foreach($this->lpa->document->primaryAttorneys as $attorney) {
             if($attorney instanceof TrustCorporation) {
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name;
             }
             else {
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-title'] = $attorney->name->title;
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $attorney->name->first;
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name->last;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-title'] = $attorney->name->title;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $attorney->name->first;
+                $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name->last;
             }
             
-            $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address1'] = $attorney->address->address1;
-            $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address2'] = $attorney->address->address2;
-            $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address3'] = $attorney->address->address3;
-            $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $attorney->address->postcode;
+            $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address1'] = $attorney->address->address1;
+            $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address2'] = $attorney->address->address2;
+            $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address3'] = $attorney->address->address3;
+            $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $attorney->address->postcode;
             
             if(++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) break;
         }
         
-        $this->pdfFormData['footer_right'] = Config::getInstance()['footer']['lp3'];
+        $pdfFormData['footer-right'] = Config::getInstance()['footer']['lp3'];
         
-        return $this->pdfFormData;
+        return $pdfFormData;
     } // function dataMapping()
 
     /**
@@ -171,7 +165,7 @@ class Lp3 extends AbstractForm
         }
         
         $pdf = PdftkInstance::getInstance();
-    
+        
         $intPdfHandle = 'A';
         foreach($this->interFileStack['LP3'] as $lp3Path) {
             $pdf->addFile($lp3Path, $intPdfHandle);

@@ -277,21 +277,10 @@ abstract class Lp1 extends AbstractForm
          * attorney decision section (section 3)
          */
         if($noOfPrimaryAttorneys == 1) {
-            $this->pdfFormData['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['how-attorneys-act'] = 'only-one-attorney-appointed';
         }
-        
-        if( $this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions ) {
-            switch($this->lpa->document->primaryAttorneyDecisions->how) {
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                    $this->pdfFormData['attorneys-act-jointly'] = self::CHECK_BOX_ON;
-                    break;
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $this->pdfFormData['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
-                    break;
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $this->pdfFormData['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
-                    break;
-            }
+        elseif( $this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions ) {
+            $this->pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
         
         /**
@@ -426,10 +415,10 @@ abstract class Lp1 extends AbstractForm
          * Applicant (Section 12)
          */
         if($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->pdfFormData['donor-is-applicant'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['who-is-applicant'] = 'donor';
         }
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
-            $this->pdfFormData['attorney-is-applicant'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['who-is-applicant'] = 'attorney';
             $i = 0;
             foreach($this->lpa->document->whoIsRegistering as $attorneyId) {
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
@@ -455,11 +444,11 @@ abstract class Lp1 extends AbstractForm
         if($this->lpa->document->correspondent instanceof Correspondence) {
             switch($this->lpa->document->correspondent->who) {
                 case Correspondence::WHO_DONOR:
-                    $this->pdfFormData['donor-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['who-is-correspondent'] = 'donor';
                     $this->drawingTargets[17] = ['correspondent-empty-name-address'];
                     break;
                 case Correspondence::WHO_ATTORNEY:
-                    $this->pdfFormData['attorney-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['who-is-correspondent'] = 'attorney';
                     if($this->lpa->document->correspondent->name instanceof Name) {
                         $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                         $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
@@ -469,7 +458,7 @@ abstract class Lp1 extends AbstractForm
                     $this->drawingTargets[17] = ['correspondent-empty-address'];
                     break;
                 case Correspondence::WHO_OTHER:
-                    $this->pdfFormData['other-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['who-is-correspondent'] = 'other';
                     $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                     $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
                     $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
@@ -513,12 +502,12 @@ abstract class Lp1 extends AbstractForm
         
         if($this->lpa->payment instanceof Payment) {
             // payment method
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-                $this->pdfFormData['pay-by-card'] = self::CHECK_BOX_ON;
-                $this->pdfFormData['lpa-payment-phone-number'] = "NOT REQUIRED. PAYMENT MADE ONLINE.";
+            if($this->lpa->payment->method) {
+                $this->pdfFormData['pay-by'] = $this->lpa->payment->method;
             }
-            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                $this->pdfFormData['pay-by-cheque'] = self::CHECK_BOX_ON;
+            
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+                $this->pdfFormData['lpa-payment-phone-number'] = "NOT REQUIRED.";
             }
             
             // apply to pay reduced fee

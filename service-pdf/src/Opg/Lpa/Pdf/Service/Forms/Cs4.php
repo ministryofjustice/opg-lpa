@@ -24,7 +24,7 @@ class Cs4 extends AbstractForm
         $cs2->fillForm(
             array(
                     'cs4-trust-corporation-company-registration-number' => $this->companyNumber,
-                    'footer_right'    => Config::getInstance()['footer']['cs4'],
+                    'cs4-footer-right'    => Config::getInstance()['footer']['cs4'],
             ))
         ->flatten()
         ->saveAs($filePath);

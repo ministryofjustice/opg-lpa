@@ -13,10 +13,10 @@ abstract class AbstractForm
     
     const CROSS_LINE_WIDTH = 10;
     
-    const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'cs2-is-decisions';
-    const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'cs2-is-how-replacement-attorneys-step-in';
-    const CONTENT_TYPE_PREFERENCES                  = 'cs2-is-preferences';
-    const CONTENT_TYPE_INSTRUCTIONS                 = 'cs2-is-instructions';
+    const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'decisions';
+    const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'how-replacement-attorneys-step-in';
+    const CONTENT_TYPE_PREFERENCES                  = 'preferences';
+    const CONTENT_TYPE_INSTRUCTIONS                 = 'instructions';
     
     /**
      *

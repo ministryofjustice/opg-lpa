@@ -83,12 +83,12 @@ class Cs1 extends AbstractForm
             
             if($pIdx == 0) {
                 $formData = [
-                    'donor-full-name' => $this->fullName($this->lpa->document->donor->name),
-                    'footer_right'    => Config::getInstance()['footer']['cs1'], 
+                    'cs1-donor-full-name' => $this->fullName($this->lpa->document->donor->name),
+                    'cs1-footer-right'    => Config::getInstance()['footer']['cs1'], 
                 ];
             }
             
-            $formData['cs1-'.$pIdx.'-is-'.$actor['type']] = self::CHECK_BOX_ON;
+            $formData['cs1-'.$pIdx.'-is'] = $actor['type'];
             
             if($actor['person']->name instanceof Name) {
                 $formData['cs1-'.$pIdx.'-name-title'] = $actor['person']->name->title;

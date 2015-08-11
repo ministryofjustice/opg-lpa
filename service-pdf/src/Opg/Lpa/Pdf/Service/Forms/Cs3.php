@@ -20,8 +20,8 @@ class Cs3 extends AbstractForm
         $cs3 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
     
         $cs3->fillForm(array(
-                'donor-full-name' => $this->fullName($this->lpa->document->donor->name),
-                'footer_right'    => Config::getInstance()['footer']['cs3'],
+                'cs3-donor-full-name' => $this->fullName($this->lpa->document->donor->name),
+                'cs3-footer-right'    => Config::getInstance()['footer']['cs3'],
         ))
         ->flatten()
         ->saveAs($filePath);

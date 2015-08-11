@@ -136,8 +136,8 @@ class Lp1h extends Lp1
             }
         }
         
-        $this->pdfFormData['footer_instrument_right'] = Config::getInstance()['footer']['lp1h']['instrument'];
-        $this->pdfFormData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
+        $this->pdfFormData['footer-instrument-right'] = Config::getInstance()['footer']['lp1h']['instrument'];
+        $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1h']['registration'];
         
         return $this->pdfFormData;
     } // function dataMapping()

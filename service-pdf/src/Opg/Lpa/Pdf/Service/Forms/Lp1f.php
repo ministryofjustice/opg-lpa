@@ -106,10 +106,10 @@ class Lp1f extends Lp1
         if ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
             if ($this->lpa->document->primaryAttorneyDecisions->when ==
                      PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW) {
-                $this->pdfFormData['attorneys-may-make-decisions-when-lpa-registered'] = 'On';
+                $this->pdfFormData['when-attorneys-may-make-decisions'] = 'when-lpa-registered';
             } elseif ($this->lpa->document->primaryAttorneyDecisions->when ==
                      PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY) {
-                $this->pdfFormData['attorneys-may-make-decisions-when-donor-lost-mental-capacity'] = 'On';
+                $this->pdfFormData['when-attorneys-may-make-decisions'] = 'when-donor-lost-mental-capacity';
             }
         }
         
@@ -160,8 +160,8 @@ class Lp1f extends Lp1
             }
         }
         
-        $this->pdfFormData['footer_instrument_right'] = Config::getInstance()['footer']['lp1f']['instrument'];
-        $this->pdfFormData['footer_registration_right'] = Config::getInstance()['footer']['lp1f']['registration'];
+        $this->pdfFormData['footer-instrument-right'] = Config::getInstance()['footer']['lp1f']['instrument'];
+        $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1f']['registration'];
         
         return $this->pdfFormData;
     } // function dataMapping();
