@@ -11,6 +11,9 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Elements\Address;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\AbstractData;
 
 class Lp1fTest extends BaseClass
 {
@@ -212,12 +215,6 @@ class Lp1fTest extends BaseClass
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
-        // test donor signature when donor cannot sign (section 9)
-        $this->assertEquals('see continuation sheet 3', $formData['see_continuation_sheet_3']);
-        
-        
-        /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
-        
         // test certificate provider (section 10)
         $this->assertEquals($this->lpa->document->certificateProvider->name->title, $formData['lpa-document-certificateProvider-name-title']);
         $this->assertEquals($this->lpa->document->certificateProvider->name->first, $formData['lpa-document-certificateProvider-name-first']);
@@ -359,7 +356,7 @@ class Lp1fTest extends BaseClass
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
-        // test (section 12)
+        // test applicant (section 12)
         if($this->lpa->document->whoIsRegistering == 'donor') {
             $this->assertEquals('donor', $formData['who-is-applicant']);
         }
@@ -388,48 +385,6 @@ class Lp1fTest extends BaseClass
                         $prefixIdx = $autoIncrementNo++ . '.';
                     }
                 }
-                
-            }
-            
-        }
-        
-        /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
-        
-        // test correspondent (section 13)
-        $this->assertEquals($this->lpa->document->correspondent->who, $formData['who-is-correspondent']);
-        
-        if($this->lpa->document->correspondent->who != 'donor') {
-            if($this->lpa->document->correspondent->name instanceof Name) {
-                $this->assertEquals($this->lpa->document->correspondent->name->title, $formData['correspondent-title']);
-                $this->assertEquals($this->lpa->document->correspondent->name->first, $formData['correspondent-first']);
-                $this->assertEquals($this->lpa->document->correspondent->name->last, $formData['correspondent-last']);
-            }
-            
-            $this->assertEquals($this->lpa->document->correspondent->company, $formData['correspondent-company']);
-            
-            if($this->lpa->document->correspondent->who == 'other') {
-                $this->assertEquals($this->lpa->document->correspondent->address->address1, $formData['correspondent-address-address1']);
-                $this->assertEquals($this->lpa->document->correspondent->address->address2, $formData['correspondent-address-address2']);
-                $this->assertEquals($this->lpa->document->correspondent->address->address3, $formData['correspondent-address-address3']);
-                $this->assertEquals($this->lpa->document->correspondent->address->postcode, $formData['correspondent-address-postcode']);
-            }
-            
-            if($this->lpa->document->correspondent->email instanceof EmailAddress) {
-                $this->assertEquals($this->lpa->document->correspondent->email->address, $formData['correspondent-email-address']);
-                $this->assertEquals('On', $formData['correspondent-contact-by-email']);
-            }
-            
-            if($this->lpa->document->correspondent->phone instanceof PhoneNumber) {
-                $this->assertEquals($this->lpa->document->correspondent->phone->number, $formData['correspondent-phone-number']);
-                $this->assertEquals('On', $formData['correspondent-contact-by-phone']);
-            }
-
-            if($this->lpa->document->correspondent->contactByPost) {
-                $this->assertEquals('On', $formData['correspondent-contact-by-Post']);
-            }
-            
-            if($this->lpa->document->correspondent->contactInWelsh) {
-                $this->assertEquals('On', $formData['correspondent-contact-in-welsh']);
             }
         }
         
@@ -463,6 +418,18 @@ class Lp1fTest extends BaseClass
                 $this->assertEquals('On', $formData['is-repeat-application']);
                 $this->assertEquals($this->lpa->repeatCaseNumber, $formData['repeat-application-case-number']);
             }
+        }
+        
+        
+        /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
+        
+        // test (section 15)
+        if(is_array($this->lpa->document->whoIsRegistering) && 
+                (count($this->lpa->document->whoIsRegistering) > Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)) {
+            for($i=0; $i<ceil((count($this->lpa->document->whoIsRegistering) - Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM)/Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM); $i++) {
+                $prefix = ($i+$autoIncrementNo).'.';
+            }
+            $this->assertEquals(Config::getInstance()['footer']['lp1f']['registration'], $formData[$prefix.'footer-registration-right-additional']);
         }
     }
     
@@ -691,6 +658,121 @@ class Lp1fTest extends BaseClass
         $formData = $this->extractFormDataFromPdf('LP1');
         
         $this->assertArrayNotHasKey('see_continuation_sheet_3', $formData);
+    }
+    
+    public function testDonorCanNotSign()
+    {
+        $this->lpa->document->donor->canSign = false;
+    
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+    
+        $this->assertEquals('see continuation sheet 3', $formData['see_continuation_sheet_3']);
+    }
+    
+    public function testCorrespondentIsDonorAndContactByEmailAndPhone()
+    {
+        $this->lpa->document->correspondent = new Correspondence([
+                'who' => 'donor',
+                'email' => new EmailAddress(['address'=>'test@mail.net']),
+                'phone' => new PhoneNumber(['number'=>'012345678']),
+        ]);
+        
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        $this->assertEquals('donor', $formData['who-is-correspondent']);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-name-title', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-name-first', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-name-last', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-company', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-address1', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-address2', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-address3', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-postcode', $formData);
+        
+        $this->assertEquals($this->lpa->document->correspondent->email->address, $formData['lpa-document-correspondent-email-address']);
+        $this->assertEquals('On', $formData['correspondent-contact-by-email']);
+        
+        $this->assertEquals($this->lpa->document->correspondent->phone->number, $formData['lpa-document-correspondent-phone-number']);
+        $this->assertEquals('On', $formData['correspondent-contact-by-phone']);
+        
+        $this->assertArrayNotHasKey('correspondent-contact-by-post', $formData);
+        $this->assertArrayNotHasKey('correspondent-contact-in-welsh', $formData);
+        
+    }
+
+    public function testCorrespondentIsAttorneyAndContactByPostAndInWelsh()
+    {
+        $this->lpa->document->correspondent = new Correspondence([
+                'who' => 'attorney',
+                'name' => new Name(['title'=>'Mr','first'=>'Cindy', 'last'=>'Clark']),
+                'address' => new Address(['address1'=>'123 Brook Street','address2'=>'Purley', 'postcode'=>'CR1 4AQ']),
+                'contactByPost' => true,
+                'contactInWelsh' => true
+        ]);
+        
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        
+        $this->assertEquals('attorney', $formData['who-is-correspondent']);
+        $this->assertEquals($this->lpa->document->correspondent->name->title, $formData['lpa-document-correspondent-name-title']);
+        $this->assertEquals($this->lpa->document->correspondent->name->first, $formData['lpa-document-correspondent-name-first']);
+        $this->assertEquals($this->lpa->document->correspondent->name->last, $formData['lpa-document-correspondent-name-last']);
+        $this->assertEquals(null, $formData['lpa-document-correspondent-company']);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-address1', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-address2', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-address3', $formData);
+        $this->assertArrayNotHasKey('lpa-document-correspondent-address-postcode', $formData);
+        
+        $this->assertArrayNotHasKey('lpa-document-correspondent-email-address', $formData);
+        $this->assertArrayNotHasKey('correspondent-contact-by-email', $formData);
+    
+        $this->assertArrayNotHasKey('lpa-document-correspondent-phone-number', $formData);
+        $this->assertArrayNotHasKey('correspondent-contact-by-phone', $formData);
+    
+        $this->assertEquals('On', $formData['correspondent-contact-by-post']);
+        $this->assertEquals('On', $formData['correspondent-contact-in-welsh']);
+    
+    }
+    
+
+    public function testCorrespondentIsOther()
+    {
+        $this->lpa->document->correspondent = new Correspondence([
+                'who' => 'other',
+                'name' => new Name(['title'=>'Mr','first'=>'Cindy', 'last'=>'Clark']),
+                'company' => 'Trust Corp',
+                'address' => new Address(['address1'=>'123 Brook Street','address2'=>'Purley', 'postcode'=>'CR1 4AQ']),
+                'email' => new EmailAddress(['address'=>'email@email.net']),
+                'phone' => new PhoneNumber(['number'=>'012345678']),
+                'contactByPost' => true,
+        ]);
+    
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        $this->assertEquals('other', $formData['who-is-correspondent']);
+        $this->assertEquals($this->lpa->document->correspondent->name->title, $formData['lpa-document-correspondent-name-title']);
+        $this->assertEquals($this->lpa->document->correspondent->name->first, $formData['lpa-document-correspondent-name-first']);
+        $this->assertEquals($this->lpa->document->correspondent->name->last, $formData['lpa-document-correspondent-name-last']);
+        $this->assertEquals($this->lpa->document->correspondent->company, $formData['lpa-document-correspondent-company']);
+    
+        $this->assertEquals($this->lpa->document->correspondent->address->address1, $formData['lpa-document-correspondent-address-address1']);
+        $this->assertEquals($this->lpa->document->correspondent->address->address2, $formData['lpa-document-correspondent-address-address2']);
+        $this->assertEquals($this->lpa->document->correspondent->address->address3, $formData['lpa-document-correspondent-address-address3']);
+        $this->assertEquals($this->lpa->document->correspondent->address->postcode, $formData['lpa-document-correspondent-address-postcode']);
+    
+        $this->assertEquals($this->lpa->document->correspondent->email->address, $formData['lpa-document-correspondent-email-address']);
+        $this->assertEquals('On', $formData['correspondent-contact-by-email']);
+        
+        $this->assertEquals($this->lpa->document->correspondent->phone->number, $formData['lpa-document-correspondent-phone-number']);
+        $this->assertEquals('On', $formData['correspondent-contact-by-phone']);
+        
+        $this->assertEquals('On', $formData['correspondent-contact-by-post']);
+        $this->assertArrayNotHasKey('correspondent-contact-in-welsh', $formData);
+    
     }
     
     public function testPayByCardForRepeatApplication()
