@@ -93,8 +93,8 @@ class Register implements ServiceLocatorAwareInterface {
 
         } catch ( \Exception $e ){
 
-            $this->getServiceLocator()->get('Logger')->info(
-                'FAILED: Sending account registration email to ' . $email
+            $this->getServiceLocator()->get('Logger')->err(
+                'Failed to send account registration email to ' . $email
             );
             
             return "failed-sending-email";

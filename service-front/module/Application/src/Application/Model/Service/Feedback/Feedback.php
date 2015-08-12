@@ -17,6 +17,11 @@ class Feedback implements ServiceLocatorAwareInterface
         //-------------------------------
         // Send the email
         
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending feedback email',
+            $data
+        );
+        
         $message = new MailMessage();
         
         $config = $this->getServiceLocator()->get('config');
@@ -58,6 +63,11 @@ class Feedback implements ServiceLocatorAwareInterface
         
         } catch ( \Exception $e ){
         
+            $this->getServiceLocator()->get('Logger')->err(
+                'Failed to send feedback email',
+                $data
+            );
+            
             return "failed-sending-email";
         
         }
