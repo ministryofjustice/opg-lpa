@@ -152,10 +152,7 @@ $(document).ready(function () {
       firstDay: 1,
       autoSize:true,
       changeMonth:true,
-      changeYear:true,
-      beforeShow: function(input, inst) {
-          inst.dpDiv.css({marginTop: -input.offsetHeight + 'px', marginLeft: input.offsetWidth + 'px'});
-      }
+      changeYear:true
     }
   );
 
