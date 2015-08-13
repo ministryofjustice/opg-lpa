@@ -52,7 +52,7 @@ class BaseClass extends \PHPUnit_Framework_TestCase
         
     }
     
-    protected function extractFormDataFromPdf($type)
+    protected function extractFormDataFromPdf($type, $savePath=null)
     {
         // generate PDF
         switch($type) {
@@ -77,6 +77,10 @@ class BaseClass extends \PHPUnit_Framework_TestCase
         }
         else {
             $this->fail('Failed generating PDF');
+        }
+        
+        if($savePath) {
+            copy ($filePath, $savePath.'/'.time().'.pdf');
         }
         
         // retrieve form data from Generated PDF
