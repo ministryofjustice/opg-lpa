@@ -15,7 +15,7 @@
         {
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-logger"
-        },
+        }
     ],
     "require": {
         "php": ">=5.4.0",
