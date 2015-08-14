@@ -53,6 +53,13 @@ abstract class Lp1 extends AbstractForm
      */
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Lp1',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $this->generateStandardForm();
         $this->generateAdditionalPages();
         $this->generateCoversheets();
@@ -67,6 +74,13 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateStandardForm()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Standard Form',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         // register a randem generated temp file path, and store it $interFileStack.
         $filePath = $this->registerTempFile('LP1');
         
@@ -90,6 +104,13 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Additional Pages',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $cs1ActorTypes = [];
         
         // CS1 is to be generated when number of attorneys that are larger than what is available on standard form.
@@ -225,6 +246,13 @@ abstract class Lp1 extends AbstractForm
     
     protected function generateCoversheets()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Coversheets',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         if($this->generateInstrumentOnly) {
             $coversheetInstrument = (new CoversheetInstrument($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($coversheetInstrument);

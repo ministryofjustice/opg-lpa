@@ -19,6 +19,13 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
     
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Lpa Additional Applicant Signature Page',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $totalApplicantSignatures = count($this->lpa->document->whoIsRegistering);
         $totalAdditionalApplicantSignatures = $totalApplicantSignatures - Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
         $totalAdditionalApplicantSignaturePages = ceil($totalAdditionalApplicantSignatures/Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);

@@ -17,6 +17,13 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
     
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Lp3 Additional Attorney Page',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfAttorneys <= Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             return;

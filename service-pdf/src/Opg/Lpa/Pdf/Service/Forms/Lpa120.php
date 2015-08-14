@@ -27,6 +27,13 @@ class Lpa120 extends AbstractForm
      */
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Lpa120',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         // check eligibility for exemption or remission.
         if(!$this->lpa->repeatCaseNumber &&
             !$this->lpa->payment->reducedFeeLowIncome && 

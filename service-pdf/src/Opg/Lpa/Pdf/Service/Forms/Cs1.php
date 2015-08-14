@@ -34,6 +34,13 @@ class Cs1 extends AbstractForm
      */
     public function __construct(Lpa $lpa, $actorTypes)
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Cs1',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         parent::__construct($lpa);
         
         $this->actorTypes = $actorTypes;

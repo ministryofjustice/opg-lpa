@@ -16,6 +16,13 @@ class Cs4 extends AbstractForm
     
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Cs4',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $filePath = $this->registerTempFile('CS4');
         
         $cs2 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');

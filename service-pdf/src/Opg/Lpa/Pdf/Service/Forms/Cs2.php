@@ -30,6 +30,13 @@ class Cs2 extends AbstractForm
      */
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Cs2',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $cs2Continued = '';
         $formatedContentLength = strlen($this->flattenTextContent($this->content));
         if(($this->contentType == self::CONTENT_TYPE_ATTORNEY_DECISIONS) || ($this->contentType == self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN)) {

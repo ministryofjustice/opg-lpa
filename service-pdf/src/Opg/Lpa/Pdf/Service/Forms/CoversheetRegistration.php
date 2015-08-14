@@ -12,6 +12,13 @@ class CoversheetRegistration extends AbstractForm
     
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Coversheet Registration',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $filePath = $this->registerTempFile('Coversheet');
         
         $coversheetRegistration = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1_CoversheetRegistration.pdf');

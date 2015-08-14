@@ -14,6 +14,13 @@ class Cs3 extends AbstractForm
     
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Cs3',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $filePath = $this->registerTempFile('CS3');
     
         $cs3 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");

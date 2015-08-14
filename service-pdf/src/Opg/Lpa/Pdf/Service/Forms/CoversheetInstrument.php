@@ -12,6 +12,13 @@ class CoversheetInstrument extends AbstractForm
     
     public function generate()
     {
+        $this->getServiceLocator()->get('Logger')->info(
+            'Generating Coversheet Instrument',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $filePath = $this->registerTempFile('Coversheet');
         
         $coversheetInstrument = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1_CoversheetInstrument.pdf');
