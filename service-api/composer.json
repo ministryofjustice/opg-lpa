@@ -15,6 +15,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-logger"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
         }
     ],
     "require": {
@@ -26,6 +30,7 @@
         "chrisboulton/php-resque": "dev-master#c335bc3",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
+        "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",

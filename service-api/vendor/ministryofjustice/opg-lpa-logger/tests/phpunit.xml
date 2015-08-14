@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true">
+    <testsuite name="LoggerTest">
+        <directory>./OpgTest/Lpa/Logger</directory>
+    </testsuite>
+</phpunit>
+

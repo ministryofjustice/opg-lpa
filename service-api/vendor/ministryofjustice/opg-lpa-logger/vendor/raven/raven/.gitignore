@@ -1,0 +1,5 @@
+*.lock
+package.xml
+/vendor
+.idea
+bin/phpunit
