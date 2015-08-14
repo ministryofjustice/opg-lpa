@@ -11,7 +11,11 @@
         {
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-common"
-        }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
+        },
     ],
     "require": {
         "php": ">=5.4.0",
@@ -24,6 +28,7 @@
         "zfcampus/zf-api-problem": "1.0.*",
         "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
+        "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "colinmollenhour/credis": "^1.2",
         "ministryofjustice/opg-lpa-datamodels": "1.0.6",
         "zf-commons/zfc-rbac": "~2.4"
