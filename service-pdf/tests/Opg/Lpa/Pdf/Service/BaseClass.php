@@ -39,6 +39,18 @@ class BaseClass extends \PHPUnit_Framework_TestCase
                         __DIR__.'/fixtures/base-lpa.json'));
         
         $config = Config::getInstance();
+
+        if(!\file_exists($config['service']['assets']['template_path_on_ram_disk'])) {
+            \mkdir($config['service']['assets']['template_path_on_ram_disk'], 0777, true);
+        }
+        
+        foreach(glob($config['service']['assets']['source_template_path'].'/*.pdf') as $pdf_source) {
+            $pathInfo = pathinfo($pdf_source);
+        
+            if(!\file_exists($config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'])) {
+                copy($pdf_source, $config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename']);
+            }
+        }
         
         $mockPdftkInstance = $this->getMockBuilder('mikehaertl\pdftk\Pdf')
             ->setMethods(['flatten'])
