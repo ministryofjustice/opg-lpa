@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\Logger\Logger;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
@@ -20,7 +21,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
     
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Lp1 Additional Attorney Signature Page',
             [
                 'lpaId' => $this->lpa->id

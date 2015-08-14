@@ -12,6 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
+use Opg\Lpa\Logger\Logger;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -53,7 +54,7 @@ abstract class Lp1 extends AbstractForm
      */
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Lp1',
             [
                 'lpaId' => $this->lpa->id
@@ -74,7 +75,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateStandardForm()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Standard Form',
             [
                 'lpaId' => $this->lpa->id
@@ -104,7 +105,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Additional Pages',
             [
                 'lpaId' => $this->lpa->id
@@ -246,7 +247,7 @@ abstract class Lp1 extends AbstractForm
     
     protected function generateCoversheets()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Coversheets',
             [
                 'lpaId' => $this->lpa->id

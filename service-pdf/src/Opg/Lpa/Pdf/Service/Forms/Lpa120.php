@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\Logger\Logger;
 
 class Lpa120 extends AbstractForm
 {
@@ -27,7 +28,7 @@ class Lpa120 extends AbstractForm
      */
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Lpa120',
             [
                 'lpaId' => $this->lpa->id

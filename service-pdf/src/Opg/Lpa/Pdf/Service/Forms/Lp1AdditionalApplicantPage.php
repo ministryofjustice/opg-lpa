@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Logger\Logger;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
 {
@@ -20,7 +21,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
     
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Lpa Additional Applicant Page',
             [
                 'lpaId' => $this->lpa->id

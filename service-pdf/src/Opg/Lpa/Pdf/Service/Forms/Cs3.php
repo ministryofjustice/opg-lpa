@@ -3,6 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Logger\Logger;
 
 class Cs3 extends AbstractForm
 {
@@ -14,7 +15,7 @@ class Cs3 extends AbstractForm
     
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Cs3',
             [
                 'lpaId' => $this->lpa->id

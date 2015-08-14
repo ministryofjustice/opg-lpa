@@ -2,6 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Logger\Logger;
 
 class CoversheetInstrument extends AbstractForm
 {
@@ -12,7 +13,7 @@ class CoversheetInstrument extends AbstractForm
     
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Coversheet Instrument',
             [
                 'lpaId' => $this->lpa->id

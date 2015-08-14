@@ -12,7 +12,7 @@ use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 use Opg\Lpa\DataModel\Lpa\StateChecker;
-
+use Opg\Lpa\Logger\Logger;
 
 class Generator implements GeneratorInterface {
 
@@ -50,7 +50,7 @@ class Generator implements GeneratorInterface {
         if( $this->lpa->validate()->hasErrors() ){
             // The LPA is invalid.
             
-            $this->getServiceLocator()->get('Logger')->info(
+            Logger::getInstance()->info(
                 'LPA failed validation in PDF generator',
                 [
                     'lpaId' => $this->lpa->id
@@ -108,7 +108,7 @@ class Generator implements GeneratorInterface {
         if($pdf->generate()) {
             $filePath = $pdf->getPdfFilePath();
             
-            $this->getServiceLocator()->get('Logger')->info(
+            Logger::getInstance()->info(
                 'PDF Filepath is ' . $filePath,
                 [
                     'lpaId' => $this->lpa->id
@@ -144,7 +144,7 @@ class Generator implements GeneratorInterface {
         // check if 
         if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'])) {
             
-            $this->getServiceLocator()->get('Logger')->info(
+            Logger::getInstance()->info(
                 'Making template path on RAM disk',
                 [
                     'lpaId' => $this->lpa->id
@@ -161,7 +161,7 @@ class Generator implements GeneratorInterface {
                 
                 $dest = $this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'];
                 
-                $this->getServiceLocator()->get('Logger')->info(
+                Logger::getInstance()->info(
                     'Copying PDF source to RAM disk',
                     [
                         'lpaId' => $this->lpa->id,

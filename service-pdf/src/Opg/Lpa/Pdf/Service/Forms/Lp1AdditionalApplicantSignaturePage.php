@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Logger\Logger;
 
 class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 {
@@ -19,7 +20,7 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
     
     public function generate()
     {
-        $this->getServiceLocator()->get('Logger')->info(
+        Logger::getInstance()->info(
             'Generating Lpa Additional Applicant Signature Page',
             [
                 'lpaId' => $this->lpa->id
