@@ -20,6 +20,8 @@ class AuthenticationListener {
 
     public function authenticate( MvcEvent $e ){
 
+        $log = $e->getApplication()->getServiceManager()->get('Logger');
+        
         $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
 
         /*
@@ -30,15 +32,23 @@ class AuthenticationListener {
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
         $token = $e->getRequest()->getHeader('X-AuthOne');
-
+        
         if (!$token) {
 
             // No token; set Guest....
             $auth->getStorage()->write( new Identity\Guest() );
+            
+            $log->info(
+                'No token, guest set in Authentication Listener'
+            );
 
         } else {
 
             $token = trim($token->getFieldValue());
+            
+            $log->info(
+                'Authentication attempt with ' . $token
+            );
 
             $authAdapter = new Adapter\LpaAuthOne( $token );
 
@@ -46,6 +56,10 @@ class AuthenticationListener {
             $result = $auth->authenticate($authAdapter);
 
             if( AuthenticationResult::SUCCESS !== $result->getCode() ){
+                $log->info(
+                    'Authentication success'
+                );
+                
                 return new ApiProblemResponse( new ApiProblem( 401, 'Invalid authentication token' ) );
             }
 
