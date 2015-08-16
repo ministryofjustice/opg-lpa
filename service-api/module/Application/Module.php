@@ -26,8 +26,6 @@ use PhlyMongo\MongoCollectionFactory;
 use PhlyMongo\MongoConnectionFactory;
 use PhlyMongo\MongoDbFactory;
 use Application\Library\ApiProblem\ApiProblem;
-use Zend\Di\ServiceLocatorInterface;
-
 
 class Module {
 
@@ -172,8 +170,8 @@ class Module {
                 'MongoDB-Default-stats-who' => new MongoCollectionFactory('whoAreYou', 'MongoDB-Default'),
                 
                 // Logger
-                'Logger' => function ( ServiceLocatorInterface $sm ) {
-                    $logger = new Logger();
+                'Logger' => function ( $sm ) {
+                    $logger = new \Opg\Lpa\Logger\Logger();
                     $logConfig = $sm->get('config')['log'];
                     
                     $logger->setFileLogPath($logConfig['path']);
