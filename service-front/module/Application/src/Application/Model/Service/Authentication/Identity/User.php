@@ -109,5 +109,12 @@ class User {
         }
 
     } // function
+    
+    /**
+     * Return this identity as a JSON string
+     */
+    public function toArray() {
+        return get_object_vars($this);
+    }
 
 } // class

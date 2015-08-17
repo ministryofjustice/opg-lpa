@@ -29,6 +29,11 @@ class Details implements ServiceLocatorAwareInterface {
      */
     public function updateAllDetails( ServiceDataInputInterface $details ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Updating user details',
+            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+        );
+        
         $client = $this->getServiceLocator()->get('ApiClient');
 
         //---
@@ -67,6 +72,11 @@ class Details implements ServiceLocatorAwareInterface {
      */
     public function updateEmailAddress( ServiceDataInputInterface $details ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Updating email address to ' . $details->getDataForModel()['email'],
+            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+        );
+        
         $client = $this->getServiceLocator()->get('ApiClient');
 
         $result = $client->updateAuthEmail( strtolower($details->getDataForModel()['email']) );
@@ -99,6 +109,11 @@ class Details implements ServiceLocatorAwareInterface {
      */
     public function updatePassword( ServiceDataInputInterface $details ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Updating password',
+            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+        );
+        
         $client = $this->getServiceLocator()->get('ApiClient');
 
         $result = $client->updateAuthPassword( $details->getDataForModel()['password'] );

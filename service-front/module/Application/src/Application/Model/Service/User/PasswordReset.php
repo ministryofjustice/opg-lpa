@@ -17,6 +17,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
     public function requestPasswordResetEmail( $email, callable $fpRouteCallback, callable $activateRouteCallback ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'User requested password reset email'
+        );
+        
         $client = $this->getServiceLocator()->get('ApiClient');
 
         $resetToken = $client->requestPasswordReset( strtolower( $email ) );
@@ -71,6 +75,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
     public function setNewPassword( $restToken, $password ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Setting new password following password reset'
+        );
+        
         $authToken = $this->getAuthTokenFromRestToken( $restToken );
 
         if( !is_string( $authToken ) ){
@@ -127,6 +135,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
     private function sendResetEmail( $email, $callbackUrl ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending password reset email'
+        );
+        
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
@@ -181,6 +193,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
     private function sendActivateEmail( $email, $callbackUrl ){
 
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending account activation email'
+        );
+        
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');

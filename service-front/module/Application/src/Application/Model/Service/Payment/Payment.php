@@ -27,6 +27,15 @@ class Payment implements ServiceLocatorAwareInterface {
         $payment = $lpa->payment;
         $payment->reference = str_replace($prefix, '', $params['orderKey']);
         $payment->date = new \DateTime('today');
+
+        $this->getServiceLocator()->get('Logger')->info(
+            'Updating LPA with payment information',
+            array_merge(
+                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
+                $payment,
+                ['LPA ID' => $lpaId]
+            )
+        );
         
         //Payment amount and method has been set on fee page
         //$payment->amount = intval($params['paymentAmount']);
@@ -68,6 +77,15 @@ class Payment implements ServiceLocatorAwareInterface {
                 'expected match with regex ' . $regexString
             );
         }
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'Order key verified',
+            array_merge(
+                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
+                $params,
+                ['LPA ID' => $lpaId]
+            )
+        );
     }
     
     /**
@@ -93,6 +111,14 @@ class Payment implements ServiceLocatorAwareInterface {
                 'Worldpay MAC string not verified: ' . $params['mac'] . ' expected ' . $md5Mac
             );
         }
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'MAC string verified',
+            array_merge(
+                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
+                $params
+            )
+        );
     }
     
     /**
