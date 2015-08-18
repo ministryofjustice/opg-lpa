@@ -18,14 +18,14 @@ class DownloadController extends AbstractLpaController
     {
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
         
-        $this->log()->info('PDF type is ' . $pdfType);
+        $this->log()->info('PDF type is ' . $pdfType, ['lpaId' => $this->getLpa()->id]);
         
         // check PDF availability. return a nice error if unavailable.
         if((($pdfType == 'lpa120') && !$this->getFlowChecker()->canGenerateLPA120())
                 || (($pdfType == 'lp3') && !$this->getFlowChecker()->canGenerateLP3())
                 || (($pdfType == 'lpa1') && !$this->getFlowChecker()->canGenerateLP1())) {
             
-            $this->log()->info('PDF not available');
+            $this->log()->info('PDF not available', ['lpaId' => $this->getLpa()->id]);
                     
             return new ViewModel();
         }
@@ -34,14 +34,14 @@ class DownloadController extends AbstractLpaController
 
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
         
-        $this->log()->info('PDF status is ' . $details['status']);
+        $this->log()->info('PDF status is ' . $details['status'], ['lpaId' => $this->getLpa()->id]);
         
         if ($details['status'] == 'in-queue') {
             return false;
         }
         else {
             
-            $this->log()->info('Delivering PDF');
+            $this->log()->info('Delivering PDF', ['lpaId' => $this->getLpa()->id]);
             
             header('Content-disposition: inline; filename="Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf"');
             header('Content-Type: application/pdf');
