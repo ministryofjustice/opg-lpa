@@ -3,6 +3,10 @@
 
 (function () {
   'use strict';
+  
+  // will be populated with either "mojDs" or "postcodeAnywhere" following
+  // initial call to F/E postcode endpoint
+  var postcodeService = null;
 
   // Define the class
   var PostcodeLookup = function (el) {
@@ -88,10 +92,21 @@
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-        val = $el.val();
+      val = $el.val();
+      
+      if (postcodeService == 'mojDs') {
+          var $selectedOption = $el.find(":selected");
 
-      $el.spinner();
-      this.findAddress(val);
+	      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
+	      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
+	      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
+	      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
+      } else {
+    	  $el.spinner();
+          this.findAddress(val);
+      }
+	      
+      this.toggleAddressType('postal');
     },
 
     queryEnter: function (e) {
@@ -141,6 +156,9 @@
         }
       } else {
         // successful
+    	  
+    	postcodeService = response.postcodeService;
+    	
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -152,16 +170,16 @@
     },
 
     findAddress: function (query) {
-      $.ajax({
-        url: this.settings.addressSearchUrl,
-        data: {addressid: parseInt($.trim(query), 10)},
-        dataType: 'json',
-        timeout: 10000,
-        cache: true,
-        success: this.addressSuccess
-      });
-    },
-
+        $.ajax({
+          url: this.settings.addressSearchUrl,
+          data: {addressid: parseInt($.trim(query), 10)},
+          dataType: 'json',
+          timeout: 10000,
+          cache: true,
+          success: this.addressSuccess
+        });
+      },
+      
     addressSuccess: function (response) {
       this.populateFields(response);
     },

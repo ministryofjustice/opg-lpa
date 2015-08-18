@@ -17,6 +17,7 @@ use Opg\Lpa\Logger\Logger;
 use Zend\Cache\StorageFactory;
 
 use Zend\View\Model\ViewModel;
+use Application\Adapter\DynamoDbKeyValueStore;
 
 class Module{
     
@@ -138,7 +139,8 @@ class Module{
         return [
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
-                'AddressLookup' => 'PostcodeAnywhere',
+                'AddressLookupMoj' => 'PostcodeInfo',
+                'AddressLookupPostcodeAnywhere' => 'PostcodeAnywhere',
                 'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
@@ -155,13 +157,15 @@ class Module{
                 'ApplicationList'       => 'Application\Model\Service\Lpa\ApplicationList',
                 'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
                 'Communication'         => 'Application\Model\Service\Lpa\Communication',
+                'PostcodeInfo'          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
                 'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
                 'SiteStatus'            => 'Application\Model\Service\System\Status',
             ],
             'factories' => [
-                'SessionManager'    => 'Application\Model\Service\Session\SessionFactory',
-                'ApiClient'         => 'Application\Model\Service\Lpa\ApiClientFactory',
-                'EmailPhpRenderer'  => 'Application\Model\Service\Mail\View\Renderer\PhpRendererFactory',
+                'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
+                'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
+                'PostcodeInfoClient'    => 'Application\Model\Service\PostcodeInfo\PostcodeInfoClientFactory',
+                'EmailPhpRenderer'      => 'Application\Model\Service\Mail\View\Renderer\PhpRendererFactory',
 
                 // Access via 'MailTransport'
                 'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',
@@ -194,16 +198,12 @@ class Module{
                 },
                 
                 'Cache' => function ( ServiceLocatorInterface $sm ) {
-                    $config = $sm->get('config')['admin'];
                     
-                    $redisAdapter = StorageFactory::factory([
-                        'adapter' => [
-                            'name' => 'redis',
-                            'options' => $config['redis'],
-                        ]
-                    ]);
+                    $config = $sm->get('config')['admin']['dynamodb'];
                     
-                    return $redisAdapter;
+                    $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
+                    
+                    return $dynamoDbAdapter;
                 }
 
             ], // factories

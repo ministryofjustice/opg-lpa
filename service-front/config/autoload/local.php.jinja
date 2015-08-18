@@ -28,6 +28,8 @@ return array(
             ],
 {% endif %}
         ],
+        
+
 
     ], // session
 
@@ -43,20 +45,27 @@ return array(
 
             ],
         ],
+        
+        'dynamodb' => [
+            'settings' => [
+                'table_name' => '{{pillar['admin']['dynamodb']['table']}}',
+            ],
+{% if 'key' in pillar['admin']['dynamodb'] and 'secret' in pillar['admin']['dynamodb'] %}
+            'client' => [
+                'credentials' => [
+                    'key'    => '{{pillar['admin']['dynamodb']['key']}}',
+                    'secret' => '{{pillar['admin']['dynamodb']['secret']}}',
+                ]
+            ],
+{% endif %}
+        ],
+        
         'accounts' => [
 {% for name, admin_email_address in pillar['admin_accounts'].iteritems() %}
     "{{ admin_email_address }}",
 {% endfor %}
         ],
     ],
-
-    'address' => [
-
-        'postcodeanywhere' => [
-            'key' => "{{pillar['postcode']['license_key']}}",
-        ],
-
-    ], // address
 
     'email' => [
 
@@ -71,6 +80,19 @@ return array(
         'api_uri' => "{{pillar['endpoints']['api']}}",
         'auth_uri' => "{{pillar['endpoints']['auth']}}",
     ], // api_client
+
+    'address' => [
+
+        'postcodeanywhere' => [
+            'key' => "{{pillar['postcode']['license_key']}}",
+        ],
+
+        'postcode_info' => [
+            'uri' => "{{pillar['postcode-info']['endpoint']}}",
+            'token' => "{{pillar['postcode-info']['token']}}",
+        ],
+
+    ], // address
     
     'log' => [
         'path' => '{{pillar['apps']['opg-lpa-front2']['log-dir']}}/application.log',

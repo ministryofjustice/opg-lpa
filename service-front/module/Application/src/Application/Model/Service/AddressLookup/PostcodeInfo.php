@@ -7,53 +7,53 @@ use GuzzleHttp\Client as GuzzleClient;
 
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\I18n\Validator\PostCode;
+use MinistryOfJustice;
+use MinistryOfJustice\PostcodeInfo\Client\Address;
 
 /**
  * Postcode and address lookup from Postcode Anywhere.
  *
- * Class PostcodeAnywhere
+ * Class PostcodeInfo
  * @package Application\Model\Service\AddressLookup
  */
-class PostcodeAnywhere implements ServiceLocatorAwareInterface {
+class PostcodeInfo implements ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
-
-    //---
-
-    /**
-     * Endpoint for Postcode -> Address lookups (returned as JSON).
-     */
-    const END_POINT_POSTCODE = 'https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws';
-
-    const END_POINT_ADDRESS = 'https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/RetrieveById/v1.30/json3.ws';
-
-    //---
-
+    
     /**
      * Return a list of addresses for a given postcode.
      *
      * @param $postcode string A UK postcode
      * @return array Address list
      */
-    public function lookupPostcode( $postcode ){
+    public function lookupPostcode( $postcode )
+    {
 
-        $response = $this->client()->get( self::END_POINT_POSTCODE, [
-            'query' => [
-                'Postcode' => $postcode,
-            ]
-        ]);
-
-        if( $response->getStatusCode() != 200 ){
-            return array();
+        $postcodeInfoClient = $this->getServiceLocator()->get('PostcodeInfoClient');
+        
+        $postcodeObj = $postcodeInfoClient->lookupPostcode($postcode);
+        
+        if (!$postcodeObj->isValid()) {
+            return [];
         }
 
-        $result = $response->json();
-
-        if( !isset($result['Items']) ){
-            return array();
+        $addressArray = [];
+        
+        foreach ($postcodeObj->getAddresses() as $address) {
+            
+            $addressId = $address->getUprn();
+            
+            $addressArray[] = [
+                'Id' => $addressId,
+                'Summary' => trim($this->getSummary($address)),
+                'Detail' => $this->getAddressLines($address),
+            ];
+            
+            
         }
 
-        return $result['Items'];
+        return $addressArray;
 
         /**
          * Example response format:
@@ -65,6 +65,12 @@ class PostcodeAnywhere implements ServiceLocatorAwareInterface {
                 string(29) "Apartment 201 8 Walworth Road"
                 ["Place"]=>
                 string(10) "London SE1"
+                ["Detail"]=> [
+                    'line1' => string
+                    'line2' => string
+                    'line3' => string
+                    'postcode' => string
+                ]
             }
             [1]=> array(3) {
                 ["Id"]=>
@@ -73,42 +79,26 @@ class PostcodeAnywhere implements ServiceLocatorAwareInterface {
                 string(29) "Apartment 202 8 Walworth Road"
                 ["Place"]=>
                 string(10) "London SE1"
+                ["Detail"]=> [
+                    'line1' => string
+                    'line2' => string
+                    'line3' => string
+                    'postcode' => string
+                ]
             }
          */
 
     } // function
 
-    public function lookupAddress( $addressId ){
-
-        $response = $this->client()->get( self::END_POINT_ADDRESS, [
-            'query' => [
-                'Id' => $addressId,
-            ]
-        ]);
-
-        if( $response->getStatusCode() != 200 ){
-            return array();
-        }
-
-        $result = $response->json();
-
-        if( !isset($result['Items']) || count($result['Items']) < 1 ){
-            return array();
-        }
-
-        $address = array_pop($result['Items']);
+    public function getAddressLines( Address $address ) {
 
         //----------------------------------------------
         // Convert address to 3 lines plus a postcode
 
-        // Pull out the relevant keys...
-        $components = array_intersect_key( $address, array_flip([ 'Company', 'Line1', 'Line2', 'Line3', 'Line4', 'Line5', 'PostTown', 'County', ]) );
-
-        // Strip out empty values...
-        $components = array_values(array_filter($components, function($v){ return !empty($v); }));
-
+        $components = $this->getAddressComponents($address);
+        
         $count = count($components);
-
+        
         //-----------------------------------------------------------------------
         // Convert address to 3 lines plus a postcode
 
@@ -135,10 +125,10 @@ class PostcodeAnywhere implements ServiceLocatorAwareInterface {
             if(  ($count % 3) == 1  ) { $numOnLine[3]++; }
 
         }
-
+        
         //--
 
-        $result = array();
+        $result = [];
 
         // Populate the 3 lines.
         for( $i = 1; $i <= 3; $i++ ){
@@ -156,9 +146,9 @@ class PostcodeAnywhere implements ServiceLocatorAwareInterface {
         } // for
 
         //---
-
-        $result['postcode'] = $address['Postcode'];
-
+        
+        $result['postcode'] = $address->getPostcode();
+        
         //---
 
         /**
@@ -174,30 +164,50 @@ class PostcodeAnywhere implements ServiceLocatorAwareInterface {
         return $result;
 
     } // function
-
+    
+    private function getSummary(Address $address)
+    {
+        $addressComponents = $this->getAddressComponents($address);
+        
+        return implode(', ', $addressComponents);
+    }
+    
     /**
-     * Return a Guzzle Client pre-configured with a Postcode Anywhere Key.
-     *
-     * @return GuzzleClient
+     * Return an array of address elements from a string that is
+     * delimited by the \n character
+     * 
+     * We remove the postcode from the end of the array
+     * 
+     * @param Address $address
+     * @return array
      */
-    private function client(){
-
-        $config = $this->getServiceLocator()->get('Config');
-
-        if( !isset( $config['address']['postcodeanywhere']['key'] ) ){
-            throw new RuntimeException('No key set for Postcode Anywhere');
+    private function getAddressComponents(Address $address)
+    {
+        $components = explode("\n", $address->getFormattedAddress());
+        
+        return $this->removePostcodeFromArray($components, $address->getPostcode());
+    }
+    
+    /**
+     * Remove the postcode from the array, if it is the last element
+     * 
+     * @param array $array
+     * @param string $postcode
+     * 
+     * @return array
+     */
+    private function removePostcodeFromArray($array, $postcode) {
+        
+        // We expect the last element to be the postcode which we don't want
+        // We'll confirm that it is the postcode and then remove it from the array
+        $postcodeFromComponents = strtolower(str_replace(' ', '', $array[count($array)-1]));
+        $postcodeFromAddress = strtolower(str_replace(' ', '', $postcode));
+        
+        if ($postcodeFromAddress == $postcodeFromComponents) {
+            array_pop($array);
         }
-
-        $key = $config['address']['postcodeanywhere']['key'];
-
-        //---
-
-        $client = new GuzzleClient;
-
-        $client->setDefaultOption( 'query/Key', $key );
-
-        return $client;
-
-    } // function
-
+        
+        return $array;
+         
+    }
 } // class

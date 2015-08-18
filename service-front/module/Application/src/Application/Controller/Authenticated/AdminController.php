@@ -6,6 +6,7 @@ use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Zend\Mvc\MvcEvent;
 use Application\Form\Admin\SystemMessageForm;
+use Application\Form\Admin\PostcodeLookupMethodForm;
 
 class AdminController extends AbstractAuthenticatedController
 {
@@ -70,7 +71,11 @@ class AdminController extends AbstractAuthenticatedController
             $form->setData($post);
             
             if ($form->isValid()) {
-                $this->cache()->setItem('system-message', $post['message']);
+                if (empty($post['message'])) {
+                    $this->cache()->removeItem('system-message');
+                } else {
+                    $this->cache()->setItem('system-message', $post['message']);
+                }
                 
                 return $this->redirect()->toRoute('home');
             }
@@ -82,5 +87,29 @@ class AdminController extends AbstractAuthenticatedController
         
         return new ViewModel(['form'=>$form]);
 
+    }
+    
+    public function postcodeLookupMethodAction()
+    {
+        $form = new PostcodeLookupMethodForm();
+    
+        if ($this->request->isPost()) {
+            $post = $this->request->getPost();
+    
+            $form->setData($post);
+    
+            if ($form->isValid()) {
+                $this->cache()->setItem('use-new-postcode-lookup-method', $post['use-new-postcode-lookup-method']);
+    
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            $messageElement = $form->get('use-new-postcode-lookup-method');
+            $currentValue = $this->cache()->getItem('use-new-postcode-lookup-method');
+            $messageElement->setValue($currentValue);
+        }
+    
+        return new ViewModel(['form'=>$form]);
+    
     }
 }

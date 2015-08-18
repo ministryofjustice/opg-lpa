@@ -3112,6 +3112,22 @@ function program1(depth0,data) {
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.id); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
+    + "\" data-line1=\"";
+  if (stack1 = helpers.line1) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.line1); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" data-line2=\"";
+  if (stack1 = helpers.line2) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.line2); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" data-line3=\"";
+  if (stack1 = helpers.line3) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.line3); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" data-postcode=\"";
+  if (stack1 = helpers.postcode) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.postcode); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
     + "\">";
   if (stack1 = helpers.description) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.description); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
@@ -3928,6 +3944,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 (function () {
   'use strict';
+  
+  // will be populated with either "mojDs" or "postcodeAnywhere" following
+  // initial call to F/E postcode endpoint
+  var postcodeService = null;
 
   // Define the class
   var PostcodeLookup = function (el) {
@@ -4013,10 +4033,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     resultsChanged: function (e) {
       var $el = $(e.target),
-        val = $el.val();
+      val = $el.val();
+      
+      if (postcodeService == 'mojDs') {
+          var $selectedOption = $el.find(":selected");
 
-      $el.spinner();
-      this.findAddress(val);
+	      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
+	      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
+	      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
+	      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
+      } else {
+    	  $el.spinner();
+          this.findAddress(val);
+      }
+	      
+      this.toggleAddressType('postal');
     },
 
     queryEnter: function (e) {
@@ -4066,6 +4097,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       } else {
         // successful
+    	  
+    	postcodeService = response.postcodeService;
+    	
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -4077,16 +4111,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     findAddress: function (query) {
-      $.ajax({
-        url: this.settings.addressSearchUrl,
-        data: {addressid: parseInt($.trim(query), 10)},
-        dataType: 'json',
-        timeout: 10000,
-        cache: true,
-        success: this.addressSuccess
-      });
-    },
-
+        $.ajax({
+          url: this.settings.addressSearchUrl,
+          data: {addressid: parseInt($.trim(query), 10)},
+          dataType: 'json',
+          timeout: 10000,
+          cache: true,
+          success: this.addressSuccess
+        });
+      },
+      
     addressSuccess: function (response) {
       this.populateFields(response);
     },
