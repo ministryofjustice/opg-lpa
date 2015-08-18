@@ -4,7 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Pdf\Logger\Logger;
 
 class Lp3AdditionalAttorneyPage extends AbstractForm
 {

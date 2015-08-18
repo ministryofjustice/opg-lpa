@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Pdf\Logger\Logger;
 
 class Lpa120 extends AbstractForm
 {

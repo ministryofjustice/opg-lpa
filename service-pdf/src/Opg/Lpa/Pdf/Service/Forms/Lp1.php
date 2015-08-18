@@ -12,7 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Pdf\Logger\Logger;
 
 abstract class Lp1 extends AbstractForm
 {

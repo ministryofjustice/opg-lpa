@@ -12,7 +12,7 @@ use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 use Opg\Lpa\DataModel\Lpa\StateChecker;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Pdf\Logger\Logger;
 
 class Generator implements GeneratorInterface {
 

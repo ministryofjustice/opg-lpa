@@ -4,7 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Pdf\Logger\Logger;
 
 class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 {
