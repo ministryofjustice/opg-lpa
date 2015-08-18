@@ -13,7 +13,8 @@
         }
     },
     "require": {
-        "php": ">=5.3.23"
+        "php": ">=5.5",
+        "container-interop/container-interop": "~1.0"
     },
     "require-dev": {
         "zendframework/zend-di": "~2.5",
@@ -29,8 +30,8 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.5-dev",
-            "dev-develop": "2.6-dev"
+            "dev-master": "2.6-dev",
+            "dev-develop": "2.7-dev"
         }
     },
     "autoload-dev": {
