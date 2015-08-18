@@ -56,7 +56,11 @@ abstract class AbstractWorker {
 
         } catch (Exception $e){
 
-            echo "${docId}: PDF generation failed with exception: ", $e->getMessage(),"\n";
+            $message = "${docId}: PDF generation failed with exception: " . $e->getMessage();
+            
+            Logger::getInstance()->info($message);
+            
+            echo $message . "\n";
 
         }
 
