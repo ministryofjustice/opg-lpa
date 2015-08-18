@@ -25,11 +25,18 @@ abstract class AbstractWorker {
      */
     public function run( $docId, $type, $lpa ){
 
-        Logger::getInstance()->info("${docId}: Generating PDF\n", ['lpaId' => $lpa->id]);
+        $lpaDecode = json_decode($lpa);
+        if (property_exists($lpaDecode, 'id')) {
+            $lpaId = $lpaDecode->id;
+        } else {
+            throw new \Exception('Missing field: id fo docId ' . $docId);
+        }
+        
+        Logger::getInstance()->info("${docId}: Generating PDF\n", ['lpaId' => $lpaId]);
         
         try {
 
-            Logger::getInstance()->info("Creating LPA document from JSON", ['lpaId' => $lpa->id]);
+            Logger::getInstance()->info("Creating LPA document from JSON", ['lpaId' => $lpaId]);
             
             // Instantiate an LPA document from the JSON
             $lpaObj = new Lpa( $lpa );
@@ -37,12 +44,12 @@ abstract class AbstractWorker {
             // Create and config the $response object.
             $response = $this->getResponseObject( $docId );
 
-            Logger::getInstance()->info("Creating generator", ['lpaId' => $lpa->id]);
+            Logger::getInstance()->info("Creating generator", ['lpaId' => $lpaId]);
             
             // Create an instance of the PDF generator service.
             $generator = new Generator( $type, $lpaObj, $response );
 
-            Logger::getInstance()->info("Starting PDF generation", ['lpaId' => $lpa->id]);
+            Logger::getInstance()->info("Starting PDF generation", ['lpaId' => $lpaId]);
             
             // Run the process.
             $result = $generator->generate();
@@ -51,26 +58,26 @@ abstract class AbstractWorker {
             if ($result === true) {
 
                 // All is good.
-                $this->logAndShow($lpa, "${docId}: PDF successfully generated");
+                $this->logAndShow($lpaId, "${docId}: PDF successfully generated");
 
             } else {
 
                 // Else there was an error.
-                $this->logAndShow($lpa, "${docId}: PDF generation failed: $result");
+                $this->logAndShow($lpaId, "${docId}: PDF generation failed: $result");
 
             }
 
         } catch (Exception $e){
 
-            $this->logAndShow($lpa, "${docId}: PDF generation failed with exception: " . $e->getMessage());
+            $this->logAndShow($lpaId, "${docId}: PDF generation failed with exception: " . $e->getMessage());
             
         }
 
     } // function
     
-    private function logAndShow($lpa, $message) {
+    private function logAndShow($lpaId, $message) {
         
-        Logger::getInstance()->info($message, ['lpaId' => $lpa->id]);
+        Logger::getInstance()->info($message, ['lpaId' => $lpaId]);
         
         echo $message . "\n";
         
