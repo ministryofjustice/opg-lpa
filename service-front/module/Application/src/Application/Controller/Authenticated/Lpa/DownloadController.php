@@ -40,6 +40,9 @@ class DownloadController extends AbstractLpaController
             return false;
         }
         else {
+            
+            $this->log()->info('Delivering PDF');
+            
             header('Content-disposition: inline; filename="Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf"');
             header('Content-Type: application/pdf');
             
