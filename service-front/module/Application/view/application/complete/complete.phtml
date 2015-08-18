@@ -2,11 +2,11 @@
 
 
     <div class="next-step-section">
-
+        
         <?php if (!$this->isPaymentSkipped): ?>
-        
+       
             <h2>Thank you for your payment of &pound;<?= sprintf('%.2f', $this->paymentAmount) ?></h2>
-        
+       
             <h3>Your payment reference number is: <?= $this->paymentReferenceNo ?></h3>
             
         <?php endif; ?>
