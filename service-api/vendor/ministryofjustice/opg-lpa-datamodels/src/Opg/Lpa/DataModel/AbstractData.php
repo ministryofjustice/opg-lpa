@@ -153,7 +153,16 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @return ValidatorResponse
      */
     public function validateAllGroups(){
-        return $this->validate( array(), [ 'Default', 'require-actor-ids' ] );
+        return $this->validate( array(), [ 'Default', 'required-at-api', 'required-at-pdf' ] );
+    }
+
+    /**
+     * Calls validate(), including all validations needed at the API level.
+     *
+     * @return ValidatorResponse
+     */
+    public function validateForApi(){
+        return $this->validate( array(), [ 'Default', 'required-at-api' ] );
     }
 
     /**

@@ -15,10 +15,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-logger"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
         }
     ],
     "require": {
@@ -35,7 +31,7 @@
         "guzzlehttp/guzzle": "^5.1.0",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "colinmollenhour/credis": "^1.2",
-        "ministryofjustice/opg-lpa-datamodels": "1.0.6",
+        "ministryofjustice/opg-lpa-datamodels": "1.1.0",
         "zf-commons/zfc-rbac": "~2.4"
     },
     "require-dev": {
