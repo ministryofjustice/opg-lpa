@@ -18,17 +18,24 @@ class DownloadController extends AbstractLpaController
     {
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
         
+        $this->log()->info('PDF type is ' . $pdfType);
+        
         // check PDF availability. return a nice error if unavailable.
         if((($pdfType == 'lpa120') && !$this->getFlowChecker()->canGenerateLPA120())
                 || (($pdfType == 'lp3') && !$this->getFlowChecker()->canGenerateLP3())
                 || (($pdfType == 'lpa1') && !$this->getFlowChecker()->canGenerateLP1())) {
             
+            $this->log()->info('PDF not available');
+                    
             return new ViewModel();
         }
         
         $this->layout('layout/download.phtml');
 
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
+        
+        $this->log()->info('PDF status is ' . $details['status']);
+        
         if ($details['status'] == 'in-queue') {
             return false;
         }
