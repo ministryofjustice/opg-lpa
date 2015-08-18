@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 {
@@ -36,15 +37,15 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicantSignature');
             
-            $additionalApplicantSignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
+            $additionalApplicantSignaturePage = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
             
             $formData = [];
             
             if($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
             }
             else {
-                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
             }
             
             $additionalApplicantSignaturePage->fillForm($formData)

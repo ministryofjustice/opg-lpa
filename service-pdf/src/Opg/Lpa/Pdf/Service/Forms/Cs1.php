@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Cs1 extends AbstractForm
 {
@@ -90,12 +91,12 @@ class Cs1 extends AbstractForm
             
             if($pIdx == 0) {
                 $formData = [
-                    'donor-full-name' => $this->fullName($this->lpa->document->donor->name),
-                    'footer_right'    => Config::getInstance()['footer']['cs1'], 
+                    'cs1-donor-full-name' => $this->fullName($this->lpa->document->donor->name),
+                    'cs1-footer-right'    => Config::getInstance()['footer']['cs1'], 
                 ];
             }
             
-            $formData['cs1-'.$pIdx.'-is-'.$actor['type']] = self::CHECK_BOX_ON;
+            $formData['cs1-'.$pIdx.'-is'] = $actor['type'];
             
             if($actor['person']->name instanceof Name) {
                 $formData['cs1-'.$pIdx.'-name-title'] = $actor['person']->name->title;
@@ -123,7 +124,7 @@ class Cs1 extends AbstractForm
             
             if($pIdx == 1) {
                 $filePath = $this->registerTempFile('CS1');
-                $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                $cs1 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
                 
                 $cs1->fillForm($formData)
                     ->flatten()
@@ -133,7 +134,7 @@ class Cs1 extends AbstractForm
         
         if($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            $cs1 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $cs1 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
             
             $cs1->fillForm($formData)
                 ->flatten()

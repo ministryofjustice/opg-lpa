@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
 {
@@ -37,7 +38,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             
             $filePath = $this->registerTempFile('AdditionalApplicant');
             
-            $additionalApplicant = PdfProcessor::getPdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicant.pdf":"/LP1H_AdditionalApplicant.pdf"));
+            $additionalApplicant = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicant.pdf":"/LP1H_AdditionalApplicant.pdf"));
             
             $formData = array();
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
@@ -62,13 +63,13 @@ class Lp1AdditionalApplicantPage extends AbstractForm
                 }
             } // endfor
             
-            $formData['attorney-is-applicant'] = self::CHECK_BOX_ON;
+            $formData['who-is-applicant'] = 'attorney';
             
             if($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
             }
             else {
-                $formData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
             }
             
             $additionalApplicant->fillForm($formData)

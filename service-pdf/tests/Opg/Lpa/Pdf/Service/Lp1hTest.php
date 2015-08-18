@@ -1,29 +1,20 @@
 <?php
+namespace OpgTest\Lpa\Pdf\Service;
 
-namespace Opg\Lpa\Pdf\Service;
-
-use mikehaertl\pdftk\pdf;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-
-class Lp1hTest extends \PHPUnit_Framework_TestCase
+use Opg\Lpa\Pdf\Config\Config;
+class Lp1hTest extends BaseClass
 {
-    /**
-     * Prepares the environment before running a test.
-     */
-    protected function setUp()
+    public function testPdfFooter()
     {
-        parent::setUp();
-    }
-    
-    public function testPopulate()
-    {
-    }
-    
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
+        $this->lpa->document->type = 'health-and-welfare';
+        $this->lpa->document->whoIsRegistering = 'donor';
+        $this->deleteTrustCorp('primary');
+        
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        // test footer
+        $this->assertEquals(Config::getInstance()['footer']['lp1h']['instrument'], $formData['footer-instrument-right']);
+        
     }
 }

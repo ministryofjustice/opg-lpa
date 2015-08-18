@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Cs4 extends AbstractForm
 {
@@ -26,12 +27,12 @@ class Cs4 extends AbstractForm
         
         $filePath = $this->registerTempFile('CS4');
         
-        $cs2 = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
+        $cs2 = PdftkInstance::getInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
         
         $cs2->fillForm(
             array(
                     'cs4-trust-corporation-company-registration-number' => $this->companyNumber,
-                    'footer_right'    => Config::getInstance()['footer']['cs4'],
+                    'cs4-footer-right'    => Config::getInstance()['footer']['cs4'],
             ))
         ->flatten()
         ->saveAs($filePath);

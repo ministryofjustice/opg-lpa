@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
@@ -43,13 +44,12 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
             
             $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF)?'lp1f':'lp1h';
-            $attorneySignaturePage = PdfProcessor::getPdftkInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
+            $attorneySignaturePage = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
             $attorneySignaturePage->fillForm(array(
                     'signature-attorney-name-title' => $attorney->name->title,
                     'signature-attorney-name-first' => $attorney->name->first,
                     'signature-attorney-name-last'  => $attorney->name->last,
-                    'footer_instrument_right-pf'    => ($this->lpa->document->type == Document::LPA_TYPE_PF)?Config::getInstance()['footer'][$lpaType]['instrument']:null,
-                    'footer_instrument_right-hw'    => ($this->lpa->document->type == Document::LPA_TYPE_HW)?Config::getInstance()['footer'][$lpaType]['instrument']:null,
+                    'footer-instrument-right-additional'    => Config::getInstance()['footer'][$lpaType]['instrument'],
             ))
             ->flatten()
             ->saveAs($filePath);

@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp1f extends Lp1
 {
@@ -18,7 +19,7 @@ class Lp1f extends Lp1
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1F');
         
-        $this->pdf = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1F.pdf');
+        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP1F.pdf');
     }
     
     protected function dataMapping()
@@ -105,10 +106,10 @@ class Lp1f extends Lp1
         if ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
             if ($this->lpa->document->primaryAttorneyDecisions->when ==
                      PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW) {
-                $this->pdfFormData['attorneys-may-make-decisions-when-lpa-registered'] = 'On';
+                $this->pdfFormData['when-attorneys-may-make-decisions'] = 'when-lpa-registered';
             } elseif ($this->lpa->document->primaryAttorneyDecisions->when ==
                      PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY) {
-                $this->pdfFormData['attorneys-may-make-decisions-when-donor-lost-mental-capacity'] = 'On';
+                $this->pdfFormData['when-attorneys-may-make-decisions'] = 'when-donor-lost-mental-capacity';
             }
         }
         
@@ -159,8 +160,8 @@ class Lp1f extends Lp1
             }
         }
         
-        $this->pdfFormData['footer_instrument_right'] = Config::getInstance()['footer']['lp1f']['instrument'];
-        $this->pdfFormData['footer_registration_right'] = Config::getInstance()['footer']['lp1f']['registration'];
+        $this->pdfFormData['footer-instrument-right'] = Config::getInstance()['footer']['lp1f']['instrument'];
+        $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1f']['registration'];
         
         return $this->pdfFormData;
     } // function dataMapping();
