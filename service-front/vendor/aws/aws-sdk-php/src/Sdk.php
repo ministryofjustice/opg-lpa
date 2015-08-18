@@ -53,7 +53,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.2.5';
+    const VERSION = '3.2.6';
 
     /** @var array Arguments for creating clients */
     private $args;
@@ -76,7 +76,7 @@ class Sdk
         }
     }
 
-    public function __call($name, array $args = [])
+    public function __call($name, array $args)
     {
         if (strpos($name, 'create') === 0) {
             return $this->createClient(
