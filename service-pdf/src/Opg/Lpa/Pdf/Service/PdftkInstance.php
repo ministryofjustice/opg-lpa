@@ -3,6 +3,16 @@ namespace Opg\Lpa\Pdf\Service;
 
 use mikehaertl\pdftk\Pdf;
 
+/**
+ * A factory class for creating pdftk instance.
+ * 
+ * Most part of this code (from line 22) are for unit testing.
+ * The setPdftkInstance() is called by unit tests in the setup() method to
+ * inject a new mock object. The mocck object is then stored in the static $instance
+ * property. So when pdf generator need a new instance of pdftk object, the mock object
+ * is deeply cloned by serializtion followed by unserializtion, to make sure a
+ * new mock object is returned.
+ */
 class PdftkInstance {
     
     static $instance = null;
