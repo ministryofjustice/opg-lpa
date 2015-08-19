@@ -58,6 +58,9 @@ abstract class AbstractForm
     
     /**
      * Store cross line strokes parameters.
+     * The array index is the page number of pdf document, 
+     * and value is array of cross line param keys.
+     * 
      * @var array
      */
     protected $drawingTargets = array();
@@ -334,6 +337,27 @@ abstract class AbstractForm
         }
         
     }
+    
+    protected function nextTag($tag)
+    {
+        $cols = str_split(strrev($tag), 1);
+        for($i=0; $i<count($cols); $i++) {
+            if($cols[$i] == 'Z') {
+                $cols[$i] = 'A';
+                
+                if($i == count($cols) - 1) {
+                    return 'A'.strrev(implode('', $cols));
+                }
+            }
+            else {
+                $cols[$i]++;
+                break;
+            }
+        }
+        
+        return strrev(implode('', $cols));
+    }
+    
     
     protected function linewrap($string, $width, $break="\r\n", $cut=false)
     {

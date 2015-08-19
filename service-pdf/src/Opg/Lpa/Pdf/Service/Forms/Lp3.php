@@ -287,15 +287,15 @@ class Lp3 extends AbstractForm
         
         $pdf = PdftkInstance::getInstance();
         
-        $filePointer = 'A';
+        $fileTag = 'A';
         if(array_key_exists('LP3', $this->interFileStack)) {
             $pdf->addFile($this->interFileStack['LP3'][0], 'A');
             if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
-                $pdf->cat(1, 3, $filePointer);
+                $pdf->cat(1, 3, $fileTag);
                 foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
-                    $filePointer++;
-                    $pdf->addFile($additionalPage, $filePointer);
-                    $pdf->cat(1, null, $filePointer);
+                    $fileTag = $this->nextTag($fileTag);
+                    $pdf->addFile($additionalPage, $fileTag);
+                    $pdf->cat(1, null, $fileTag);
                 }
                 $pdf->cat(4, null, 'A');
             }
@@ -304,36 +304,41 @@ class Lp3 extends AbstractForm
             foreach($this->interFileStack['LP3-1'] as $lp3Path) {
                 
                 // attach page one
-                $pdf->addFile($lp3Path, $filePointer);
+                $pdf->addFile($lp3Path, $fileTag);
                 
                 // add page one
-                $pdf->cat(1, null, $filePointer);
+                $pdf->cat(1, null, $fileTag);
                 
                 // attach page two
-                $pdf->addFile($this->interFileStack['LP3-2'][0], ++$filePointer);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($this->interFileStack['LP3-2'][0], $fileTag);
                 
                 // add page two
-                $pdf->cat(1, null, $filePointer);
+                $pdf->cat(1, null, $fileTag);
                 
                 // attach page three
-                $pdf->addFile($this->interFileStack['LP3-3'][0], ++$filePointer);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($this->interFileStack['LP3-3'][0], $fileTag);
                 
                 // add page three
-                $pdf->cat(1, null, $filePointer);
+                $pdf->cat(1, null, $fileTag);
                 
                 if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
                     foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
-                        $filePointer++;
-                        $pdf->addFile($additionalPage, $filePointer);
-                        $pdf->cat(1, null, $filePointer);
+                        $fileTag = $this->nextTag($fileTag);
+                        $pdf->addFile($additionalPage, $fileTag);
+                        $pdf->cat(1, null, $fileTag);
                     }
                 }
                 
                 // attach page four
-                $pdf->addFile($this->interFileStack['LP3-4'][0], ++$filePointer);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($this->interFileStack['LP3-4'][0], $fileTag);
                 
                 // add page four
-                $pdf->cat(1, null, $filePointer++);
+                $pdf->cat(1, null, $fileTag);
+                
+                $fileTag = $this->nextTag($fileTag);
                 
             } // endfor
         }

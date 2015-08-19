@@ -557,7 +557,8 @@ abstract class Lp1 extends AbstractForm
         // Section 11 - additional attorneys signature
         if(isset($this->interFileStack['AdditionalAttorneySignature'])) {
             foreach($this->interFileStack['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
-                $pdf->addFile($additionalAttorneySignature, ++$fileTag);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($additionalAttorneySignature, $fileTag);
                 
                 // add an additional attorney signature page
                 $pdf->cat(1, null, $fileTag);
@@ -567,7 +568,8 @@ abstract class Lp1 extends AbstractForm
         // Continuation Sheet 1
         if(isset($this->interFileStack['CS1'])) {
             foreach ($this->interFileStack['CS1'] as $cs1) {
-                $pdf->addFile($cs1, ++$fileTag);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($cs1, $fileTag);
         
                 // add a CS1 page
                 $pdf->cat(1, null, $fileTag);
@@ -577,7 +579,8 @@ abstract class Lp1 extends AbstractForm
         // Continuation Sheet 2
         if(isset($this->interFileStack['CS2'])) {
             foreach ($this->interFileStack['CS2'] as $cs2) {
-                $pdf->addFile($cs2, ++$fileTag);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($cs2, $fileTag);
         
                 // add a CS2 page
                 $pdf->cat(1, null, $fileTag);
@@ -586,7 +589,8 @@ abstract class Lp1 extends AbstractForm
         
         // Continuation Sheet 3
         if(isset($this->interFileStack['CS3'])) {
-            $pdf->addFile($this->interFileStack['CS3'], ++$fileTag);
+            $fileTag = $this->nextTag($fileTag);
+            $pdf->addFile($this->interFileStack['CS3'], $fileTag);
         
             // add a CS3 page
             $pdf->cat(1, null, $fileTag);
@@ -594,7 +598,8 @@ abstract class Lp1 extends AbstractForm
         
         // Continuation Sheet 4
         if(isset($this->interFileStack['CS4'])) {
-            $pdf->addFile($this->interFileStack['CS4'], ++$fileTag);
+            $fileTag = $this->nextTag($fileTag);
+            $pdf->addFile($this->interFileStack['CS4'], $fileTag);
         
             // add a CS4 page
             $pdf->cat(1, null, $fileTag);
@@ -609,7 +614,8 @@ abstract class Lp1 extends AbstractForm
             // Section 12 additional applicants
             if(isset($this->interFileStack['AdditionalApplicant'])) {
                 foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
-                    $pdf->addFile($additionalApplicant, ++$fileTag);
+                    $fileTag = $this->nextTag($fileTag);
+                    $pdf->addFile($additionalApplicant, $fileTag);
                     
                     // add an additional applicant page
                     $pdf->cat(1, null, $fileTag);
@@ -622,7 +628,8 @@ abstract class Lp1 extends AbstractForm
             // Section 15 - additional applicants signature
             if(isset($this->interFileStack['AdditionalApplicantSignature'])) {
                 foreach($this->interFileStack['AdditionalApplicantSignature'] as $additionalApplicantSignature) {
-                    $pdf->addFile($additionalApplicantSignature, ++$fileTag);
+                    $fileTag = $this->nextTag($fileTag);
+                    $pdf->addFile($additionalApplicantSignature, $fileTag);
                     
                     // add an additional applicant signature page
                     $pdf->cat(1, null, $fileTag);
