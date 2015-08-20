@@ -19,7 +19,7 @@ class RegisterController extends AbstractBaseController {
         
         if( $check !== true ) {
             
-            $this->log->info(
+            $this->log()->info(
                 'Authenticated user attempted to access registration page',
                 $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
             );
