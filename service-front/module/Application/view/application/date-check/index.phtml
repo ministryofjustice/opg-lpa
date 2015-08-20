@@ -1,6 +1,18 @@
-<?php
-    use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+<section id="signature-dates" class='section current'>
+	<h2 class='accordion-header'>When was the LPA signed?</h2>
+
+<?php if ($this->dateError === ''): ?>
+	<div style="background-repeat: no-repeat; background-position: 10px 50%; border-left:6px solid #28A197; margin-top:1em; margin-bottom:2em; padding:1em 1em 1em 1.5em; font-size:1.5em; background-color:#EBF5F4; background-image:url('/assets/v1/images/icon/progress-tick.png')">
+    	The LPA was signed in the correct order.
+    	<a class="button" style='float: right;' href="/user/dashboard" role="button">Return to dashboard</a>
+	</div>
+	
+	<p>
+	This page is optional. It can be used to verify that your LPA has been signed in the correct order before sending it to us.
+	</p>
     
+<?php else:
+
     $form = $this->formErrorTextExchange($this->form, []);
     
     $donorElement = $form->get('sign-date-donor');
@@ -32,14 +44,7 @@
     $form->prepare();
 ?>
 
-<section id="signature-dates" class='section current'>
-	<h2 class='accordion-header'>When was the LPA signed?</h2>
 	<?php if (isset($this->dateError)): ?>
-    	<?php if ($this->dateError == '') : ?>
-    	<div style="border:2px solid green; margin-top:1em; padding:1em; color:#ffffff; font-size:1.5em; background-color:#00bb00">
-    	The LPA was signed in the correct order.
-    	</div>
-    	<?php else: ?>
     	<div style="border:2px solid red; margin-top:1em; padding:1em; color:#ffffff; font-size:1.5em; background-color:#bb0000">
     	There was a problem with the order in which the LPA was signed. 
     	<br>
@@ -48,7 +53,6 @@
     	Please see the <a href="/help/#topic-signing-the-lpa" style="color:#ffffff" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">guidance</a> on signing and, if necessary,
     	<a href="<?= $this->url( 'lpa/view-docs', [ 'lpa-id'=>$lpa->id ] )?>">reprint</a> and re-sign your LPA.
     	</div>
-    	<?php endif; ?>
     <?php endif; ?>
 	<div class='accordion-content'>
 	
@@ -104,7 +108,7 @@
   			<h3><?= $attorney->name ?> (attorney)</h3>
 				<p class="date-field">
 			<label for="attorney_0">
-			     <?php if($attorney instanceof Human): ?> This person signed Section 11 of the LPA on <?php else:?>This corporation signed Continuation Sheet 4 of the LPA on<?php endif;?>
+			     <?php if($attorney instanceof Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human): ?> This person signed Section 11 of the LPA on <?php else:?>This corporation signed Continuation Sheet 4 of the LPA on<?php endif;?>
 			     <?= $this->formElement($primaryAttorneyElements[$idx]) ?>
                  <?= $this->formElementErrors($primaryAttorneyElements[$idx]) ?>
             </label>
@@ -121,7 +125,7 @@
   			<h3><?= $attorney->name ?> (replacement attorney)</h3>
 				<p class="date-field">
 			<label for="attorney_0">
-			     <?php if($attorney instanceof Human): ?> This person signed Section 11 of the LPA on <?php else:?>This corporation signed Continuation Sheet 4 of the LPA on<?php endif;?> 
+			     <?php if($attorney instanceof Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human): ?> This person signed Section 11 of the LPA on <?php else:?>This corporation signed Continuation Sheet 4 of the LPA on<?php endif;?> 
 			     <?= $this->formElement($replacementAttorneyElements[$idx]) ?>
                  <?= $this->formElementErrors($replacementAttorneyElements[$idx]) ?>
             </label>
@@ -141,4 +145,7 @@
     <?= $this->form()->closeTag(); ?>
 
 	</div>
+
+<?php endif; ?>
+
 </section>
