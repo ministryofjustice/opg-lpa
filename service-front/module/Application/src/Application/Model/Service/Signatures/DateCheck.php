@@ -27,10 +27,12 @@ class DateCheck implements ServiceLocatorAwareInterface
      */
     public static function checkDates($dates)
     {
+        /*
         $this->getServiceLocator()->get('Logger')->info(
             'User checking dates ' . print_r($dates, true), 
             $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
         );
+        */
         
         $donor = self::convertUkDateToTimestamp($dates['donor']);
         $certificateProvider = self::convertUkDateToTimestamp($dates['certificate-provider']);
@@ -52,11 +54,13 @@ class DateCheck implements ServiceLocatorAwareInterface
         if ($certificateProvider > $minAttorneyDate) {
             return 'The Certificate Provider must sign the LPA before the attorneys.';
         }
-        
+
+        /*
         $this->getServiceLocator()->get('Logger')->info(
             'Dates are all good',
             $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
         );
+        */
         
         return true;
     }
