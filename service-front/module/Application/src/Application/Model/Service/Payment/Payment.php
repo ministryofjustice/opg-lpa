@@ -33,7 +33,7 @@ class Payment implements ServiceLocatorAwareInterface {
             array_merge(
                 $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
                 $payment,
-                ['LPA ID' => $lpaId]
+                ['LPA ID' => $lpa->id]
             )
         );
         
