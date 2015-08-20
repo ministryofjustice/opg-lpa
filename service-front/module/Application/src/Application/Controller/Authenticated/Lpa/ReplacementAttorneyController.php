@@ -237,12 +237,12 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         if( array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys) ) {
             
             if(count($this->getLpa()->document->replacementAttorneys) <= 2) {
-                if($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                    $lpa->document->replacementAttorneyDecisions->how = null;
-                    $lpa->document->replacementAttorneyDecisions->when = null;
-                    $lpa->document->replacementAttorneyDecisions->howDetails = null;
-                    $lpa->document->replacementAttorneyDecisions->whenDetails = null;
-                    $this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+                if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+                    $this->getLpa()->document->replacementAttorneyDecisions->how = null;
+                    $this->getLpa()->document->replacementAttorneyDecisions->when = null;
+                    $this->getLpa()->document->replacementAttorneyDecisions->howDetails = null;
+                    $this->getLpa()->document->replacementAttorneyDecisions->whenDetails = null;
+                    $this->getLpaApplicationService()->setReplacementAttorneyDecisions($this->getLpa()->id, $this->getLpa()->document->replacementAttorneyDecisions);
                 }
             }
             

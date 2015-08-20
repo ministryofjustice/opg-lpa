@@ -22,7 +22,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
     public function indexAction()
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
-        
+
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
@@ -62,26 +62,26 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                     $decisions->howDetails = $howDetails;
                     
                     $changed  = false;
-                    if($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+                    if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
                         
                         // all replacements step in arrangement shall be removed or reentered. 
-                        if($lpa->document->replacementAttorneyDecisions->when != null) {
-                            $lpa->document->replacementAttorneyDecisions->when = null;
-                            $lpa->document->replacementAttorneyDecisions->whenDetails = null;
+                        if($this->getLpa()->document->replacementAttorneyDecisions->when != null) {
+                            $this->getLpa()->document->replacementAttorneyDecisions->when = null;
+                            $this->getLpa()->document->replacementAttorneyDecisions->whenDetails = null;
                             $changed = true;
                         }
                         
                         // if primary decision changed to depends, all replacement decisions will follow default arrangement.
                         if(($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) && 
-                            ($lpa->document->replacementAttorneyDecisions->how != null)) {
-                                $lpa->document->replacementAttorneyDecisions->how = null;
-                                $lpa->document->replacementAttorneyDecisions->howDetails = null;
+                            ($this->getLpa()->document->replacementAttorneyDecisions->how != null)) {
+                                $this->getLpa()->document->replacementAttorneyDecisions->how = null;
+                                $this->getLpa()->document->replacementAttorneyDecisions->howDetails = null;
                                 $changed = true;
                         }
                     }
                     
                     if($changed) {
-                        $this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+                        $this->getLpaApplicationService()->setReplacementAttorneyDecisions($this->getLpa()->id, $this->getLpa()->document->replacementAttorneyDecisions);
                     }
                     
                     // persist data
