@@ -227,7 +227,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     protected function getUserDetailsAsArray()
     {
         $userDetails = $this->getUserDetails()->flatten();
-        if($userDetails['dob-date']) {
+        if(array_key_exists('dob-date', $userDetails)) {
             $userDetails['dob-date'] = [
                 'day'   => $this->getUserDetails()->dob->date->format('d'),
                 'month' => $this->getUserDetails()->dob->date->format('m'),
