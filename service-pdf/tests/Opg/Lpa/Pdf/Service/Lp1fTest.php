@@ -13,7 +13,6 @@ use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Elements\Address;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\AbstractData;
 
 class Lp1fTest extends BaseClass
 {
@@ -76,6 +75,10 @@ class Lp1fTest extends BaseClass
             $this->assertEquals($attorney->address->address3, $formData['lpa-document-primaryAttorneys-'.$pdfAttorneyIdx.'-address-address3']);
             $this->assertEquals($attorney->address->postcode, $formData['lpa-document-primaryAttorneys-'.$pdfAttorneyIdx.'-address-postcode']);
             
+            if($attorney->email instanceof EmailAddress) {
+                $this->assertEquals($attorney->email->address, str_replace('&#10;','',$formData['lpa-document-primaryAttorneys-'.$pdfAttorneyIdx.'-email-address']));
+            }
+            
             // skip trust corporation for dob and name fields 
             if(($trust !== null) && ($attorney->id == $trust->id)) {
                 continue;
@@ -91,22 +94,11 @@ class Lp1fTest extends BaseClass
             $this->assertEquals($attorney->name->first, $formData['lpa-document-primaryAttorneys-'.$pdfAttorneyIdx.'-name-first']);
             $this->assertEquals($attorney->name->last,  $formData['lpa-document-primaryAttorneys-'.$pdfAttorneyIdx.'-name-last']);
             
-            if($attorney->email instanceof EmailAddress) {
-                $this->assertEquals($attorney->email->address, str_replace('&#10;','',$formData['lpa-document-primaryAttorneys-'.$pdfAttorneyIdx.'-email-address']));
-            }
-            
             $pdfAttorneyIdx++;
         }
         
         unset($trust, $pdfAttorneyIdx, $attorney);
         
-        
-        /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
-        
-        // test attorneys act jointly and severally (section 3)
-        if($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-            $this->assertEquals('jointly-attorney-severally', $formData['how-attorneys-act']);
-        }
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
@@ -163,18 +155,6 @@ class Lp1fTest extends BaseClass
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
-        // test when can primary attorneys make decisions (section 5)
-        
-        if($this->lpa->document->primaryAttorneyDecisions->when == 'no-capacity') {
-            $this->assertEquals('when-donor-lost-mental-capacity', $formData['when-attorneys-may-make-decisions']);
-        }
-        else {
-            $this->assertEquals('when-lpa-registered', $formData['when-attorneys-may-make-decisions']);
-        }
-    
-        
-        /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
-        
         // test people to notify (section 6)
         $pdfNotifiedPersonIdx = 0;
         foreach($this->lpa->document->peopleToNotify as $notifiedPerson) {
@@ -202,15 +182,6 @@ class Lp1fTest extends BaseClass
         }
         
         unset($pdfNotifiedPersonIdx, $notifiedPerson);
-        
-        
-        /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
-        
-        // test Preferences and instructions (section 7)
-        $this->assertEquals($this->lpa->document->preference, trim(str_replace('&#10;','',$formData['lpa-document-preference'])));
-        $this->assertEquals($this->lpa->document->instruction, trim(str_replace('&#10;','',$formData['lpa-document-instruction'])));
-        $this->assertArrayNotHasKey('has-more-preferences', $formData);
-        $this->assertArrayNotHasKey('has-more-instructions', $formData);
         
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
@@ -323,6 +294,7 @@ class Lp1fTest extends BaseClass
         }
         
         unset($cs2Persons, $type, $person, $persons, $needMoreCs1, $personNumber, $extraCs1Pages, $prefixIdx);
+        
         
         /*\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\*/
         
@@ -446,29 +418,59 @@ class Lp1fTest extends BaseClass
         $this->assertEquals(($this->lpa->document->type=='property-and-financial')?'property and financial affairs.':'health and welfare.', $formData['lpa-type']);
     }
     
-    public function testAttorneysActJointly()
+    /**
+     * test Section 3
+     */
+    public function testAttorneysActJointlySeveraly()
     {
+        if(count($this->lpa->document->primaryAttorneys) < 2) return;
+        
         // set attorneys make decisions jointly
-        $this->lpa->document->primaryAttorneyDecisions->how = 'jointly';
+        $this->lpa->document->primaryAttorneyDecisions->how = PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY;
         
         // create PDF, then extract form data
         $formData = $this->extractFormDataFromPdf('LP1');
         
-        $this->assertEquals('jointly', $formData['how-attorneys-act']);
+        $this->assertEquals(PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY, $formData['how-attorneys-act']);
+    }
+
+    /**
+     * test Section 3
+     */
+    public function testAttorneysActJointly()
+    {
+        if(count($this->lpa->document->primaryAttorneys) < 2) return;
+    
+        // set attorneys make decisions jointly
+        $this->lpa->document->primaryAttorneyDecisions->how = PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY;
+    
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+    
+        $this->assertEquals(PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY, $formData['how-attorneys-act']);
     }
     
+    /**
+     * test Section 3
+     */
     public function testAttorneysActDependsOnDecisions()
     {
+        if(count($this->lpa->document->primaryAttorneys) < 2) return;
+        
         // set attorneys make decisions depends
-        $this->lpa->document->primaryAttorneyDecisions->how = 'depends';
+        $this->lpa->document->primaryAttorneyDecisions->how = PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS;
         $this->lpa->document->primaryAttorneyDecisions->howDetails = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
     
         // create PDF, then extract form data
         $formData = $this->extractFormDataFromPdf('LP1');
         
-        $this->assertEquals('depends', $formData['how-attorneys-act']);
+        $this->assertEquals(PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS, $formData['how-attorneys-act']);
+        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit', str_replace('&#10;', '', trim($formData['cs2-content'])));
     }
 
+    /**
+     * test Section 3
+     */
     public function testOnlyOneAttorneyAppointed()
     {
         // set only one attorney appointed
@@ -534,6 +536,9 @@ class Lp1fTest extends BaseClass
         
     }
     
+    /**
+     * Test section 4
+     */
     public function testReplacementAttorneysFollowDefaultArrangement()
     {
         $this->lpa->document->replacementAttorneyDecisions->when = 'first';
@@ -546,6 +551,9 @@ class Lp1fTest extends BaseClass
         $this->assertArrayNotHasKey('change-how-replacement-attorneys-step-in', $formData);
     }
     
+    /**
+     * Test section 4
+     */
     public function testLpaHasOneReplacementAttorney()
     {
         $this->lpa->document->replacementAttorneys = [$this->lpa->document->replacementAttorneys[0]];
@@ -582,6 +590,9 @@ class Lp1fTest extends BaseClass
         
     }
     
+    /**
+     * Test section 4
+     */
     public function testTrustCorpIsReplacementAttorney()
     {
         $trustCorp = $this->getTrustCorp($this->lpa->document->primaryAttorneys);
@@ -596,6 +607,37 @@ class Lp1fTest extends BaseClass
         $this->assertEquals('On', $formData['replacement-attorney-0-is-trust-corporation']);
     }
     
+    /**
+     * Test section 5
+     */
+    public function testAttorneyCanMakeDecisionWhenDonorHasNoMentalCapacity()
+    {
+        $this->lpa->document->primaryAttorneyDecisions->when = PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY;
+        
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        $this->assertEquals('when-donor-lost-mental-capacity', $formData['when-attorneys-may-make-decisions']);
+        
+    }
+
+    /**
+     * Test section 5
+     */
+    public function testAttorneyCanMakeDecisionRightNow()
+    {
+        $this->lpa->document->primaryAttorneyDecisions->when = PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW;
+    
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+    
+        $this->assertEquals('when-lpa-registered', $formData['when-attorneys-may-make-decisions']);
+    
+    }
+    
+    /**
+     * Test section 6
+     */
     public function testLpaHasOnePeopleToNotify()
     {
         $this->lpa->document->peopleToNotify = [$this->lpa->document->peopleToNotify[0]];
@@ -638,6 +680,26 @@ class Lp1fTest extends BaseClass
         $this->assertArrayNotHasKey('lpa-document-peopleToNotify-3-address-postcode', $formData);
     }
     
+    /**
+     * Test section 7
+     */
+    public function testPreferenceAndInstruction()
+    {
+        $this->lpa->document->preference = "Maecenas posuere augue sed purus malesuada dapibus.";
+        $this->lpa->document->instruction = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+        
+        // create PDF, then extract form data
+        $formData = $this->extractFormDataFromPdf('LP1');
+        
+        $this->assertEquals($this->lpa->document->preference, trim(str_replace('&#10;','',$formData['lpa-document-preference'])));
+        $this->assertEquals($this->lpa->document->instruction, trim(str_replace('&#10;','',$formData['lpa-document-instruction'])));
+        $this->assertArrayNotHasKey('has-more-preferences', $formData);
+        $this->assertArrayNotHasKey('has-more-instructions', $formData);
+    }
+
+    /**
+     * Test section 7
+     */
     public function testPreferenceAndInstructionNeedMoreSpace()
     {
         $this->lpa->document->instruction = str_repeat(implode(' ', range('a','z'))."\r\n", 20);
@@ -649,7 +711,10 @@ class Lp1fTest extends BaseClass
         $this->assertEquals('On', $formData['has-more-instructions']);
         $this->assertEquals('On', $formData['has-more-preferences']);
     }
-    
+
+    /**
+     * Test section 9
+     */
     public function testDonorCanSign()
     {
         $this->lpa->document->donor->canSign = true;
@@ -660,6 +725,9 @@ class Lp1fTest extends BaseClass
         $this->assertArrayNotHasKey('see_continuation_sheet_3', $formData);
     }
     
+    /**
+     * Test section 9
+     */
     public function testDonorCanNotSign()
     {
         $this->lpa->document->donor->canSign = false;
@@ -670,6 +738,9 @@ class Lp1fTest extends BaseClass
         $this->assertEquals('see continuation sheet 3', $formData['see_continuation_sheet_3']);
     }
     
+    /**
+     * Test section 13
+     */
     public function testCorrespondentIsDonorAndContactByEmailAndPhone()
     {
         $this->lpa->document->correspondent = new Correspondence([
@@ -702,6 +773,9 @@ class Lp1fTest extends BaseClass
         
     }
 
+    /**
+     * Test section 13
+     */
     public function testCorrespondentIsAttorneyAndContactByPostAndInWelsh()
     {
         $this->lpa->document->correspondent = new Correspondence([
@@ -737,7 +811,9 @@ class Lp1fTest extends BaseClass
     
     }
     
-
+    /**
+     * Test section 13
+     */
     public function testCorrespondentIsOther()
     {
         $this->lpa->document->correspondent = new Correspondence([
@@ -775,6 +851,9 @@ class Lp1fTest extends BaseClass
     
     }
     
+    /**
+     * Test section 14
+     */
     public function testPayByCardForRepeatApplication()
     {
         $today = new \DateTime();
@@ -801,6 +880,9 @@ class Lp1fTest extends BaseClass
         $this->assertEquals($today->format('Y'), $formData['lpa-payment-date-year']);
     }
 
+    /**
+     * Test section 14
+     */
     public function testPayByCheque()
     {
         $today = new \DateTime();
@@ -822,6 +904,9 @@ class Lp1fTest extends BaseClass
         $this->assertArrayNotHasKey('lpa-payment-date-year', $formData);
     }
 
+    /**
+     * Test section 14
+     */
     public function testExemption()
     {
         $today = new \DateTime();
