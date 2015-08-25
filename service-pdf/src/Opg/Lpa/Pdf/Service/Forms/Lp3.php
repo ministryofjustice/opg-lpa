@@ -85,7 +85,7 @@ class Lp3 extends AbstractForm
         $filePath = $this->registerTempFile('LP3');
         
         // populate forms
-        $mappings = $this->dataMapping($this->lpa->document->peopleToNotify[0]);
+        $mappings = $this->dataMapping( current($this->lpa->document->peopleToNotify) );
         
         $pdf->fillForm($mappings)
             ->flatten()
