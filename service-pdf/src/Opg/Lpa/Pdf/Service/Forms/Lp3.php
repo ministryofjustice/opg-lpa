@@ -46,9 +46,15 @@ class Lp3 extends AbstractForm
             $this->generateSingleNotificationPdf();
         }
         else {
-            // generate standard notification letters for each people to be notified.
-            for($i=0; $i<count($this->lpa->document->peopleToNotify); $i++) {
-                $this->generatePageOnePdf($this->lpa->document->peopleToNotify[$i]);
+
+            // Loop over each person, adding a page for them.
+            foreach($this->lpa->document->peopleToNotify as $peopleToNotify) {
+
+                if( $peopleToNotify instanceof NotifiedPerson ){
+                    // Generate a standard notification letter for each person to be notified.
+                    $this->generatePageOnePdf( $peopleToNotify );
+                }
+
             }
             
             $this->generatePageTwoPdf();
