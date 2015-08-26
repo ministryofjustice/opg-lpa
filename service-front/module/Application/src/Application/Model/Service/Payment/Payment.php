@@ -28,6 +28,7 @@ class Payment implements ServiceLocatorAwareInterface {
         $payment->reference = str_replace($prefix, '', $params['orderKey']);
         $payment->date = new \DateTime('today');
 
+        /*
         $this->getServiceLocator()->get('Logger')->info(
             'Updating LPA with payment information',
             array_merge(
@@ -36,6 +37,7 @@ class Payment implements ServiceLocatorAwareInterface {
                 ['LPA ID' => $lpa->id]
             )
         );
+        */
         
         //Payment amount and method has been set on fee page
         //$payment->amount = intval($params['paymentAmount']);
