@@ -21,11 +21,6 @@ class Communication implements ServiceLocatorAwareInterface {
     use ServiceLocatorAwareTrait;
 
     //---
-
-    public function sendInstrumentCompleteEmail( Lpa $lpa, $signinUrl )
-    {
-        return $this->sendEmail('email/lpa-instrument.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to sign', 'opg-lpa-complete-instrument');
-    }
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl)
     {
