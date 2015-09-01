@@ -51,6 +51,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      *              ],
      *          ],
      *      ],
+     *      'keyPrefix' => 'stack-name',
      *  ]
      */
     public function __construct(array $config)
