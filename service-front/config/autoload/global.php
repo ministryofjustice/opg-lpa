@@ -9,6 +9,11 @@ return array(
         'cache' => ( !is_null($commit) ) ? abs( crc32( $commit ) ) : time(),
     ],
 
+    'stack' => [
+        'name' => 'local',
+        'environment' => 'dev',
+    ],
+
     'terms' => [
         // The date and time the terms were last updated.
         // Users who have not logged in since this date will see the 'T&Cs updated' page.

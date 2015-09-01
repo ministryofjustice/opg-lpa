@@ -2,6 +2,11 @@
 
 return array(
 
+    'stack' => [
+        'name' => '{{grains['opg_stackname']}}',
+        'environment' => '{{pillar['environment']}}',
+    ],
+
     'session' => [
 
         'encryption' => [
