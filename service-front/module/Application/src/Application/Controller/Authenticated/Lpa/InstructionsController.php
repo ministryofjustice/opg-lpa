@@ -41,12 +41,6 @@ class InstructionsController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set LPA preferences for id: '.$lpaId);
                 }
                 
-                // send email
-                if($this->getLpa()->createdAt === null) {
-                    $communicationService = $this->getServiceLocator()->get('Communication');
-                    $communicationService->sendInstrumentCompleteEmail($this->getLpa(), $this->url()->fromRoute('lpa/created', ['lpa-id' => $lpaId], ['force_canonical' => true]));
-                }
-                
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
