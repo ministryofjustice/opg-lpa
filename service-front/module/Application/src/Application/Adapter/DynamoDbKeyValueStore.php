@@ -59,7 +59,7 @@ class DynamoDbKeyValueStore implements StorageInterface
 
         $this->tableName = $config['settings']['table_name'];
 
-        $this->keyPrefix = $config['keyPrefix'];
+        $this->keyPrefix = ( isset($config['keyPrefix']) ) ? $config['keyPrefix'] : 'default';
 
     }
 
