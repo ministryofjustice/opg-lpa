@@ -16,6 +16,7 @@ return array(
     'Opg\\Lpa\\Logger\\' => array($vendorDir . '/ministryofjustice/opg-lpa-logger/src/Opg/Lpa/Logger'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Opg\\Lpa\\Api\\Client\\' => array($vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client'),
+    'MinistryOfJustice\\PostcodeInfo\\Client\\' => array($vendorDir . '/ministryofjustice/postcodeinfo-client-php/src/MinistryOfJustice/PostcodeInfo/Client'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
