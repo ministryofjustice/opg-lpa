@@ -24,6 +24,13 @@ class DynamoDbKeyValueStore implements StorageInterface
      * @var string
      */
     private $tableName;
+
+    /**
+     * The namespace to prefix keys with.
+     *
+     * @var string
+     */
+    private $keyPrefix;
     
     /**
      * Constructor
@@ -49,9 +56,23 @@ class DynamoDbKeyValueStore implements StorageInterface
     public function __construct(array $config)
     {
         $this->client = new DynamoDbClient($config['client']);
-        
+
         $this->tableName = $config['settings']['table_name'];
-        
+
+        $this->keyPrefix = $config['keyPrefix'];
+
+    }
+
+    /**
+     * Returns the passed key, prefixed with a namespace.
+     *
+     * @param $key
+     * @return string
+     */
+    private function formatKey( $key ){
+
+        return "{$this->keyPrefix}/{$key}";
+
     }
     
     /* (non-PHPdoc)
@@ -59,7 +80,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function setItem($key, $value)
     {
-        $key = array('S' => $key);
+        $key = array('S' => $this->formatKey($key));
         
         if (empty($value)) {
             $value = array('NULL' => true);
@@ -82,7 +103,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function removeItem($key)
     {
-        $key = array('S' => $key);
+        $key = array('S' => $this->formatKey($key));
         
         $result = $this->client->deleteItem(array(
             'TableName' => $this->tableName,
@@ -100,7 +121,7 @@ class DynamoDbKeyValueStore implements StorageInterface
         $result = $this->client->getItem(array(
             'TableName' => $this->tableName,
             'Key' => array(
-                'id'      => array('S' => $key),
+                'id'      => array('S' => $this->formatKey($key)),
             )
         ));
         
