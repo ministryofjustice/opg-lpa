@@ -30,7 +30,8 @@
         "ext-dom": "*",
         "ext-simplexml": "*",
         "phpunit/phpunit": "~4.0",
-        "behat/behat": "~3.0"
+        "behat/behat": "~3.0",
+        "aws/aws-php-sns-message-validator": "^1.0"
     },
     "suggest": {
         "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages",
@@ -51,5 +52,10 @@
         "branch-alias": {
             "dev-master": "3.0-dev"
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "make compile-json"
+        ]
     }
 }

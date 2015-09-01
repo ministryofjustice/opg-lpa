@@ -225,7 +225,7 @@ class AboutYou extends AbstractForm {
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'min' => 5,
+                        'min' => 1,
                         'max' => 8,
                         'messages' => [
                             Validator\StringLength::TOO_SHORT => "must be at least %min% characters",
