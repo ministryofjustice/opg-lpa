@@ -200,6 +200,8 @@ class Module{
                 'Cache' => function ( ServiceLocatorInterface $sm ) {
                     
                     $config = $sm->get('config')['admin']['dynamodb'];
+
+                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
                     
                     $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
                     
