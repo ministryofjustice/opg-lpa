@@ -2,7 +2,7 @@
 <head></head>
 <body>
 	<p>
-		Thank you for completing the online part of the registration process for <strong><?= $this->lpa->document->donor->name ?>'s
+		Thank you for completing the LPA online for <strong><?= $this->lpa->document->donor->name ?>'s
 		lasting power of attorney (LPA) for <?= (($this->lpa->document->type==Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF)?"property and financial affairs":"health and welfare") ?></strong>.
 	</p>
 	
@@ -12,13 +12,13 @@
 	<p>Payment reference number: <?= $this->cellStyles($this->lpa->payment->reference) ?></p>
 	<?php endif;?>
 
-	<p>The registration form must be printed and signed.  The registration form cover sheet explains what you need to do.</p>
+	<p>If you haven't already you should print off the LPA and sign before sending it to the OPG. Instructions on the order people must sign are on the cover sheet of the LPA.</p>
 
 	<div style='width:500px;margin-left:40px'>
 		<strong><a href="<?=$this->signinUrl ?>">Sign in to download the registration form</a></strong>
 	</div>
 	
-	<p>If the donor is applying for an exemption or reduction of the fee, you'll need to download and sign the fee remission form too. </p>
+	<p>If the donor is applying for an exemption or reduction of the fee, you'll need to download and sign the fee remission form too. (- do we need this? if so should be have mention of the notie letters too? and advise they will all be there if they are needed?)</p>
 	
 	<p>
 	If you have paid the LPA registration fee but not sent in the LPA form to be registered, we will send you a reminder email 20 days after payment. If we have still not received the LPA 40 days after the payment date, we will refund the fee to the account it was paid from.
