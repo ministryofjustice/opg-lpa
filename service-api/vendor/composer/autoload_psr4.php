@@ -15,6 +15,7 @@ return array(
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'PhlyMongo\\' => array($vendorDir . '/phly/phly-mongo/src'),
     'PhlyMongoTest\\' => array($vendorDir . '/phly/phly-mongo/test'),
+    'Opg\\Lpa\\Logger\\' => array($vendorDir . '/ministryofjustice/opg-lpa-logger/src/Opg/Lpa/Logger'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),

@@ -27,7 +27,6 @@ use PhlyMongo\MongoConnectionFactory;
 use PhlyMongo\MongoDbFactory;
 use Application\Library\ApiProblem\ApiProblem;
 
-
 class Module {
 
     public function onBootstrap(MvcEvent $e){
@@ -37,33 +36,14 @@ class Module {
         $moduleRouteListener->attach($eventManager);
         //$sharedEvents = $eventManager->getSharedManager();
 
-
         // Setup authentication listener...
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [ new AuthenticationListener, 'authenticate' ], 500);
 
-
-        /**
-         * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
-         * TODO - move to its own listener class.
-         */
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, function(MvcEvent $e){
-
-            // Marshall an ApiProblem and view model based on the exception
-            $exception = $e->getParam('exception');
-
-            if ($exception instanceof ApiProblemExceptionInterface) {
-
-                $problem = new ApiProblem( $exception->getCode(), $exception->getMessage() );
-
-                $e->stopPropagation();
-                $response = new ApiProblemResponse($problem);
-                $e->setResponse($response);
-                return $response;
-
-            }
-
-        }, 200); // attach
-
+        // Register error handler for dispatch and render errors
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+        
+       
 
     } // function
 
@@ -188,6 +168,17 @@ class Module {
                 'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
                 'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
                 'MongoDB-Default-stats-who' => new MongoCollectionFactory('whoAreYou', 'MongoDB-Default'),
+                
+                // Logger
+                'Logger' => function ( $sm ) {
+                    $logger = new \Opg\Lpa\Logger\Logger();
+                    $logConfig = $sm->get('config')['log'];
+                    
+                    $logger->setFileLogPath($logConfig['path']);
+                    $logger->setSentryUri($logConfig['sentry-uri']);
+                    
+                    return $logger;
+                },
 
             ], // factories
         ];
@@ -206,5 +197,32 @@ class Module {
             ),
         );
     } // function
+    
+    /**
+     * Use our logger to send this exception to its various destinations
+     * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
+     *
+     * @param MvcEvent $e
+     */
+    public function handleError(MvcEvent $e)
+    {
+        // Marshall an ApiProblem and view model based on the exception
+        $exception = $e->getParam('exception');
+    
+        if ($exception instanceof ApiProblemExceptionInterface) {
+    
+            $problem = new ApiProblem( $exception->getCode(), $exception->getMessage() );
+    
+            $e->stopPropagation();
+            $response = new ApiProblemResponse($problem);
+            $e->setResponse($response);
+            
+            $logger = $e->getApplication()->getServiceManager()->get('Logger');
+            $logger->err($exception->getMessage());
+            
+            return $response;
+    
+        }
+    }
 
 } // class

@@ -39,6 +39,11 @@ return array(
         ], // resque
 
     ], // db
+    
+    'log' => [
+        'path' => '/var/log/opg-lpa-api2/application.log',
+        'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
+    ], // log
 
     'pdf' => [
 

@@ -62,17 +62,24 @@ class PingController extends AbstractActionController {
             $allOk = $allOk && $queue;
 
         } catch( \Exception $e ){
+            
             $allOk = false;
         }
 
-
-        //---
-
-        return new JsonModel([
+        $results = [
             'ok' => $allOk,
             'database' => (isset($mongoOK))?$mongoOK:false,
             'queue' => (isset($queue))?$queue:false,
-        ]);
+        ];
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'PingController results',
+            $results
+        );
+        
+        //---
+
+        return new JsonModel($results);
 
     }
 

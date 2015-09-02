@@ -17,8 +17,11 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 use Application\Library\Authorization\UnauthorizedException;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
+use Application\Traits\LogTrait;
 
 abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwareInterface {
+
+    use LogTrait;
 
     const TYPE_SINGULAR = 'singular';
     const TYPE_COLLECTION = 'collections';
@@ -86,6 +89,8 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         if( is_null($userId) && $this->getRouteUser() != null ){
             $userId = $this->getRouteUser()->userId();
+            
+            $this->info('Access allowed for user', ['userid' => $userId]);
         }
 
         if (!$this->getAuthorizationService()->isGranted('authenticated')) {
@@ -107,6 +112,8 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
      */
     protected function updateLpa( Lpa $lpa ){
 
+        $this->info('Updating LPA', ['lpaid' => $lpa->id]);
+        
         // Should already have been checked, but no harm checking again.
         $this->checkAccess();
 
@@ -137,11 +144,19 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         if( $isCreated ){
 
+            $this->info('LPA exists in database', ['lpaid' => $lpa->id]);
+            
             if( !($lpa->createdAt instanceof \DateTime) ){
+                
+                $this->info('Setting created time for existing LPA', ['lpaid' => $lpa->id]);
+                
                 $lpa->createdAt = new DateTime();
             }
 
         } else {
+            
+            $this->info('LPA does not exist in database', ['lpaid' => $lpa->id]);
+            
             $lpa->createdAt = null;
         }
 
@@ -152,11 +167,18 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         if( $isCompleted ){
 
+            $this->info('LPA is complete', ['lpaid' => $lpa->id]);
+            
             if( !($lpa->completedAt instanceof \DateTime) ){
+                $this->info('Setting completed time for existing LPA', ['lpaid' => $lpa->id]);
+                
                 $lpa->completedAt = new DateTime();
             }
 
         } else {
+            
+            $this->info('LPA is not complete', ['lpaid' => $lpa->id]);
+            
             $lpa->completedAt = null;
         }
 
@@ -166,7 +188,14 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         $searchField = null;
 
         if( $lpa->document->donor != null ){
+            
             $searchField = (string)$lpa->document->donor->name;
+            
+            $this->info('Setting search field', [
+                    'lpaid' => $lpa->id,
+                    'searchField' => $searchField,
+                ]
+            );
         }
 
         //--------------------------------------------------------
@@ -176,6 +205,12 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         // Record the time we updated the document.
         $lpa->updatedAt = new DateTime();
 
+        $this->info('Setting updated time', [
+                'lpaid' => $lpa->id,
+                'updatedAt' => $lpa->updatedAt,
+            ]
+        );
+        
         // updatedAt is included in the query so that data isn't overwritten
         // if the Document has changed since this process loaded it.
         $result = $collection->update(
@@ -189,6 +224,12 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         if( $result['nModified'] !== 1 ){
             throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
         }
+        
+        $this->info('LPA updated successfully', [
+               'lpaid' => $lpa->id,
+               'updatedAt' => $lpa->updatedAt,
+            ]
+        );
 
     } // function
 

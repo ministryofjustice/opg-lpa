@@ -7,11 +7,12 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'ZfcRbac\\' => array($vendorDir . '/zf-commons/zfc-rbac/src'),
-    'ZendXml' => array($vendorDir . '/zendframework/zendxml/library'),
+    'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Resque' => array($vendorDir . '/chrisboulton/php-resque/lib'),
     'Rbac\\' => array($vendorDir . '/zfr/rbac/src'),
+    'Raven_' => array($vendorDir . '/raven/raven/lib'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Nocarrier' => array($vendorDir . '/nocarrier/hal/src'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
