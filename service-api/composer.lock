@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f94d1c63edc943fdc7a3165b2cf1f15c",
+    "hash": "30df43f52ee8c7e3cd39e76dae7d56db",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -551,16 +551,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.1.0",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "e32a8b9cfd85d87752ea893f043ae1567660e7c2"
+                "reference": "d120c4b50232e440e54166ef21b8bd041b54b894"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/e32a8b9cfd85d87752ea893f043ae1567660e7c2",
-                "reference": "e32a8b9cfd85d87752ea893f043ae1567660e7c2",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d120c4b50232e440e54166ef21b8bd041b54b894",
+                "reference": "d120c4b50232e440e54166ef21b8bd041b54b894",
                 "shasum": ""
             },
             "require": {
@@ -570,6 +570,7 @@
                 "symfony/validator": "2.6.*"
             },
             "require-dev": {
+                "phpspec/phpspec": "~2.0",
                 "phpunit/phpunit": "4.3.*"
             },
             "type": "library",
@@ -583,10 +584,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.0",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.2",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-07-29 13:33:43"
+            "time": "2015-09-02 11:01:47"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -1904,20 +1905,20 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.6",
+            "version": "2.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "18dfbcb81d05e2296c0bcddd4db96cade75e6f42"
+                "reference": "5e2645ad49d196e020b85598d7c97e482725786a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/18dfbcb81d05e2296c0bcddd4db96cade75e6f42",
-                "reference": "18dfbcb81d05e2296c0bcddd4db96cade75e6f42",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/5e2645ad49d196e020b85598d7c97e482725786a",
+                "reference": "5e2645ad49d196e020b85598d7c97e482725786a",
                 "shasum": ""
             },
             "require": {
-                "doctrine/instantiator": "~1.0,>=1.0.2",
+                "doctrine/instantiator": "^1.0.2",
                 "php": ">=5.3.3",
                 "phpunit/php-text-template": "~1.2",
                 "sebastian/exporter": "~1.2"
@@ -1956,7 +1957,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-07-10 06:54:24"
+            "time": "2015-08-19 09:14:08"
         },
         {
             "name": "sebastian/comparator",

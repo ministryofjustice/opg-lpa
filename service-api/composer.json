@@ -26,12 +26,11 @@
         "chrisboulton/php-resque": "dev-master#c335bc3",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
-        "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "colinmollenhour/credis": "^1.2",
-        "ministryofjustice/opg-lpa-datamodels": "1.1.0",
+        "ministryofjustice/opg-lpa-datamodels": "1.1.2",
         "zf-commons/zfc-rbac": "~2.4"
     },
     "require-dev": {
