@@ -49,13 +49,19 @@ class SessionFactory implements FactoryInterface {
         //----------------------------------------
         // Set the cookie domain
 
-        // This is requirement of the GDS service checker
+        // Only if it's not a Console request.
+        if( !( $serviceLocator->get('Request') instanceof \Zend\Console\Request ) ){
 
-        // Get the hostname of the current request
-        $hostname = $serviceLocator->get('Request')->getUri()->getHost();
+            // This is requirement of the GDS service checker
 
-        // and set it as the domain cookie.
-        ini_set( 'session.cookie_domain', $hostname );
+            // Get the hostname of the current request
+            $hostname = $serviceLocator->get('Request')->getUri()->getHost();
+
+            // and set it as the domain cookie.
+            ini_set( 'session.cookie_domain', $hostname );
+
+        }
+
 
         //----------------------------------------
         // Setup the DynamoDb Client

@@ -99,6 +99,10 @@ return array(
             ],
             'settings' => [
                 'table_name' => 'lpa-sessions-testing',
+                'batch_config' => [
+                    // Sleep before each flush to rate limit the garbage collection.
+                    'before' => function(){ sleep(2); },
+                ]
             ],
         ],
 
