@@ -45,15 +45,19 @@ class Module{
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        // Only bootstrap the session if it's *not* PHPUnit AND is not a healthcheck.
-        if(
-            !strstr( $request->getServer('SCRIPT_NAME'), 'phpunit' ) &&
-            !in_array( $request->getUri()->getPath(), [ '/ping/elb', '/ping/json' ] ))
-        {
-            $this->bootstrapSession($e);
-            $this->bootstrapIdentity($e);
+        if( !($request instanceof \Zend\Console\Request) ){
+
+            // Only bootstrap the session if it's *not* PHPUnit AND is not a healthcheck.
+            if(
+                !strstr( $request->getServer('SCRIPT_NAME'), 'phpunit' ) &&
+                !in_array( $request->getUri()->getPath(), [ '/ping/elb', '/ping/json' ] ))
+            {
+                $this->bootstrapSession($e);
+                $this->bootstrapIdentity($e);
+            }
+
         }
-        
+
     } // function
 
     /**
