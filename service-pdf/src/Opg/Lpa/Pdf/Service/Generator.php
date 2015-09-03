@@ -12,7 +12,7 @@ use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 use Opg\Lpa\DataModel\Lpa\StateChecker;
-
+use Opg\Lpa\Pdf\Logger\Logger;
 
 class Generator implements GeneratorInterface {
 
@@ -40,7 +40,7 @@ class Generator implements GeneratorInterface {
     }
 
     /**
-     * Returns bool true iff the document was successfully generated and passed to $response->save().
+     * Returns bool true if the document was successfully generated and passed to $response->save().
      * Otherwise returns a string describing the error is returned.
      *
      * @return bool|string
@@ -49,6 +49,14 @@ class Generator implements GeneratorInterface {
 
         if( $this->lpa->validate()->hasErrors() ){
             // The LPA is invalid.
+            
+            Logger::getInstance()->info(
+                'LPA failed validation in PDF generator',
+                [
+                    'lpaId' => $this->lpa->id
+                ]
+            );
+            
             throw new RuntimeException('LPA failed validation');
         }
         
@@ -99,6 +107,13 @@ class Generator implements GeneratorInterface {
         
         if($pdf->generate()) {
             $filePath = $pdf->getPdfFilePath();
+            
+            Logger::getInstance()->info(
+                'PDF Filepath is ' . $filePath,
+                [
+                    'lpaId' => $this->lpa->id
+                ]
+            );
         }
         else {
             return false;
@@ -128,6 +143,14 @@ class Generator implements GeneratorInterface {
     {
         // check if 
         if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'])) {
+            
+            Logger::getInstance()->info(
+                'Making template path on RAM disk',
+                [
+                    'lpaId' => $this->lpa->id
+                ]
+            );
+            
             \mkdir($this->config['service']['assets']['template_path_on_ram_disk'], 0777, true);
         }
         
@@ -135,7 +158,18 @@ class Generator implements GeneratorInterface {
             $pathInfo = pathinfo($pdf_source);
             
             if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'])) {
-                copy($pdf_source, $this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename']);
+                
+                $dest = $this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'];
+                
+                Logger::getInstance()->info(
+                    'Copying PDF source to RAM disk',
+                    [
+                        'lpaId' => $this->lpa->id,
+                        'destination' => $dest,
+                    ]
+                );
+                
+                copy($pdf_source, $dest);
             }
         }
     }

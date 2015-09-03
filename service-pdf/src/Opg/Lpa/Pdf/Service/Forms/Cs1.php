@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Cs1 extends AbstractForm
@@ -35,6 +36,13 @@ class Cs1 extends AbstractForm
      */
     public function __construct(Lpa $lpa, $actorTypes)
     {
+        Logger::getInstance()->info(
+            'Generating Cs1',
+            [
+                'lpaId' => $lpa->id
+            ]
+        );
+        
         parent::__construct($lpa);
         
         $this->actorTypes = $actorTypes;

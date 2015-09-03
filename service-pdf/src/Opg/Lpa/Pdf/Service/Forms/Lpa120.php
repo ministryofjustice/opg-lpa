@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lpa120 extends AbstractForm
@@ -28,6 +29,13 @@ class Lpa120 extends AbstractForm
      */
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Lpa120',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         // check eligibility for exemption or remission.
         if(!$this->lpa->repeatCaseNumber &&
             !$this->lpa->payment->reducedFeeLowIncome && 

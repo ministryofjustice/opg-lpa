@@ -3,6 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Cs2 extends AbstractForm
@@ -31,6 +32,13 @@ class Cs2 extends AbstractForm
      */
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Cs2',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $cs2Continued = '';
         $formatedContentLength = strlen($this->flattenTextContent($this->content));
         if(($this->contentType == self::CONTENT_TYPE_ATTORNEY_DECISIONS) || ($this->contentType == self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN)) {

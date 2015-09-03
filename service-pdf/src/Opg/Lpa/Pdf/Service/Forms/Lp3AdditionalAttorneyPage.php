@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3AdditionalAttorneyPage extends AbstractForm
@@ -18,6 +19,13 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
     
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Lp3 Additional Attorney Page',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfAttorneys <= Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             return;
