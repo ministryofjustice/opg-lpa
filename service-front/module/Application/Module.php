@@ -17,7 +17,9 @@ use Opg\Lpa\Logger\Logger;
 use Zend\Cache\StorageFactory;
 
 use Zend\View\Model\ViewModel;
+
 use Application\Adapter\DynamoDbKeyValueStore;
+use Application\Model\Service\System\DynamoCronLock;
 
 class Module{
     
@@ -210,7 +212,18 @@ class Module{
                     $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
                     
                     return $dynamoDbAdapter;
-                }
+                },
+
+                'DynamoCronLock' => function ( ServiceLocatorInterface $sm ) {
+
+                    $config = $sm->get('config')['cron']['lock']['dynamodb'];
+
+                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
+
+                    $dynamoDbAdapter = new DynamoCronLock($config);
+
+                    return $dynamoDbAdapter;
+                },
 
             ], // factories
         ];

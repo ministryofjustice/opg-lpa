@@ -38,6 +38,28 @@ return array(
 
     ], // session
 
+    'cron' => [
+
+        'lock' => [
+
+            'dynamodb' => [
+                'settings' => [
+                    'table_name' => '{{pillar['cronlock']['dynamodb']['table']}}',
+                ],
+{% if 'key' in pillar['cronlock']['dynamodb'] and 'secret' in pillar['cronlock']['dynamodb'] %}
+                'client' => [
+                    'credentials' => [
+                        'key'    => '{{pillar['cronlock']['dynamodb']['key']}}',
+                        'secret' => '{{pillar['cronlock']['dynamodb']['secret']}}',
+                    ]
+                ],
+{% endif %}
+            ],
+
+        ], // lock
+
+    ], // cron
+
     'csrf' => [
         // Salt used for generating csrf tokens
         'salt' => '{{pillar['csrf']['salt']}}'
