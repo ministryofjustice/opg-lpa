@@ -49,6 +49,24 @@ return array(
         ],
 
     ], // admin
+
+    'cron' => [
+
+        'lock' => [
+
+            'dynamodb' => [
+                'client' => [
+                    'version' => '2012-08-10',
+                    'region' => 'eu-west-1',
+                ],
+                'settings' => [
+                    'table_name' => 'lpa-locks-testing',
+                ],
+            ],
+
+        ], // lock
+
+    ], // cron
     
     'session' => [
 
