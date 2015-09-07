@@ -94,7 +94,7 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'address'   => $correspondent->address,
-                            'email'     => $correspondent->email,
+                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$correspondent->email:null,
                             'phone'     => null,
                             'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
                             'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
