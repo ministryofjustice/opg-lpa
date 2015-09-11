@@ -37,7 +37,7 @@ class PostcodeController extends AbstractAuthenticatedController {
         if( isset($postcode) ){
             $result = $service->lookupPostcode( $postcode );
             
-            if (true) {
+            if ($usingMojDsdPostcodeService && count($result) == 0) {
                 // Drop through to use PostcodeAnywhere if no result from DSD service
                 // In addition to providing an a ray of hope that the address may still
                 // be found, it also makes sure that the return structure is always the 
