@@ -27,3 +27,20 @@ License
 -------
 
 The Lasting Power of Attorney Data Models are released under the MIT license, a copy of which can be found in ``LICENSE``.
+
+Tests
+-----
+
+## Create
+
+        bin/phpspec desc Opg/Lpa/DataModel/Lpa/Elements/PhoneNumber
+
+## Run
+
+### Suite
+
+        bin/phpspec run --format=pretty -vvv --stop-on-failure
+
+### Single spec file
+
+        bin/phpspec run spec/Opg/Lpa/DataModel/Lpa/Elements/AddressSpec.php
