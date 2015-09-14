@@ -3,6 +3,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Cs3 extends AbstractForm
@@ -15,6 +16,13 @@ class Cs3 extends AbstractForm
     
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Cs3',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $filePath = $this->registerTempFile('CS3');
     
         $cs3 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");

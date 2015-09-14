@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
@@ -21,6 +22,13 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
     
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Lp1 Additional Attorney Signature Page',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
         
         $skipped=0;

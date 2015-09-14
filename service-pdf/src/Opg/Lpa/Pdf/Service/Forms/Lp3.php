@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3 extends AbstractForm
@@ -36,6 +37,13 @@ class Lp3 extends AbstractForm
      */
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Lp3',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         // will not generate pdf if there's no people to notify
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify == 0) {
