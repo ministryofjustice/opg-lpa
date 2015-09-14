@@ -37,7 +37,7 @@ class Feedback implements ServiceLocatorAwareInterface
         
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-registration');
+        $message->addCategory('opg-lpa-feedback');
         
         $data['sentTime'] = date('Y/m/d H:i:s');
         //---
