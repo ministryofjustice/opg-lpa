@@ -58,7 +58,7 @@ class Address extends AbstractData {
         // This could be improved, but we'd need to be very careful not to block valid postcodes.
         $metadata->addPropertyConstraints('postcode', [
             new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'min' => 5, 'max' => 8 ]),
+            new Assert\Length([ 'min' => 1, 'max' => 8 ]),
         ]);
 
         //---

@@ -2,6 +2,12 @@
 /composer.phar
 vendor/
 
+bin/
+
+.settings/
+.buildpath
+.project
+
 /.idea/
 
 /test.php

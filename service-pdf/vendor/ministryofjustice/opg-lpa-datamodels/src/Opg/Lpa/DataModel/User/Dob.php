@@ -1,6 +1,8 @@
 <?php
 namespace Opg\Lpa\DataModel\User;
 
+use DateTime, RuntimeException;
+
 use Opg\Lpa\DataModel\AbstractData;
 
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -44,8 +46,19 @@ class Dob extends AbstractData {
 
         switch( $property ){
             case 'date':
-                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
-        }
+
+                if($v instanceof DateTime || is_null($v)){ return $v; }
+
+                if( is_string($v) ){
+                    $date = date_parse_from_format( DateTime::ISO8601, $v);
+                    if( !checkdate( @$date['month'], @$date['day'], @$date['year'] ) ){
+                        throw new RuntimeException("Invalid date: $v. Date must exist and be in ISO-8601 format.");
+                    }
+                }
+
+                return new DateTime( $v );
+
+        } // switch
 
         // else...
         return parent::map( $property, $v );

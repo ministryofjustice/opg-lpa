@@ -10,7 +10,11 @@
         "egulias/email-validator": "1.2.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*"
+        "phpunit/phpunit": "4.3.*",
+        "phpspec/phpspec": "~2.0"
+    },
+    "config": {
+        "bin-dir": "bin"
     },
     "autoload": {
         "psr-4": {"Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"}
