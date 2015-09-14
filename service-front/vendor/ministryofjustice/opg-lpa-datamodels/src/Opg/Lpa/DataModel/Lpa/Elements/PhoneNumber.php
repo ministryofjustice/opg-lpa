@@ -30,7 +30,9 @@ class PhoneNumber extends AbstractData {
         $metadata->addPropertyConstraints('number', [
             new Assert\NotBlank,
             new Assert\Regex([
-                'pattern' => '/^[+]?([\d]{0,3})?[\(\.\-\s]?([\d]{1,3})[\)\.\-\s]*(([\d]{3,5})[\.\-\s]?([\d]{4})|([\d]{2}[\.\-\s]?){4})$/',
+                // a fairly loose regex, it allows for country codes plus between
+                // 8 and 15 numbers/spaces
+                'pattern' => '/^[+|0]?[0-9 ]{8,15}$/',
                 'message' => 'invalid-phone-number',
             ]),
         ]);
