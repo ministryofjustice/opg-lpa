@@ -53,6 +53,7 @@ class Status implements ServiceLocatorAwareInterface {
         //-----------------------------------
         // Check Redis (sessions)
 
+        /*
         $result['sessions'] = array( 'ok' => false );
 
         try {
@@ -67,7 +68,7 @@ class Status implements ServiceLocatorAwareInterface {
             }
 
         } catch ( Exception $e ){}
-
+        */
 
         //-----------------------------------
 
