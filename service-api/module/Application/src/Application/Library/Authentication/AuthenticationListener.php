@@ -56,11 +56,19 @@ class AuthenticationListener {
             $result = $auth->authenticate($authAdapter);
 
             if( AuthenticationResult::SUCCESS !== $result->getCode() ){
+
                 $log->info(
-                    'Authentication success'
+                    'Authentication failed'
                 );
                 
                 return new ApiProblemResponse( new ApiProblem( 401, 'Invalid authentication token' ) );
+
+            } else {
+
+                $log->info(
+                    'Authentication success'
+                );
+
             }
 
         }
