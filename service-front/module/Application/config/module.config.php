@@ -97,6 +97,18 @@ return [
     'console' => [
         'router' => [
             'routes' => [
+
+                'dynamo-session-gc' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'dynamo-session-gc',
+                        'defaults' => [
+                            'controller' => 'Console\SessionsController',
+                            'action'     => 'gc'
+                        ],
+                    ],
+                ],
+
             ],
         ],
     ],

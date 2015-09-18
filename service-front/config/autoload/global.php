@@ -49,6 +49,24 @@ return array(
         ],
 
     ], // admin
+
+    'cron' => [
+
+        'lock' => [
+
+            'dynamodb' => [
+                'client' => [
+                    'version' => '2012-08-10',
+                    'region' => 'eu-west-1',
+                ],
+                'settings' => [
+                    'table_name' => 'lpa-locks-testing',
+                ],
+            ],
+
+        ], // lock
+
+    ], // cron
     
     'session' => [
 
@@ -76,8 +94,7 @@ return array(
             'gc_maxlifetime' => (60 * 60 * 3), // 3 hours
 
             // The probability of GC running is gc_probability/gc_divisor
-            // We only allow GC to run between 2:00 - 2:59 am GMT
-            'gc_probability' => ( gmdate('G') == 2 ) ? 1 : 0,
+            'gc_probability' => 0,
             'gc_divisor' => 20,
         ],
 
@@ -99,6 +116,10 @@ return array(
             ],
             'settings' => [
                 'table_name' => 'lpa-sessions-testing',
+                'batch_config' => [
+                    // Sleep before each flush to rate limit the garbage collection.
+                    'before' => function(){ sleep(1); },
+                ]
             ],
         ],
 
