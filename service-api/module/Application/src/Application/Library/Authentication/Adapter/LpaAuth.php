@@ -19,13 +19,28 @@ use Application\Library\Authentication\Identity;
  */
 class LpaAuth implements AdapterInterface {
 
+    /**
+     * The token to authenticate.
+     *
+     * @var string
+     */
     private $token;
+
+    /**
+     * The endpoint (domain and path) to authenticate against.
+     *
+     * @var string
+     */
+    private $authEndpoint;
+
+    //-------------------------------
 
     /**
      * Sets username and password for authentication
      */
-    public function __construct( $token ){
+    public function __construct( $token, $authEndpoint ){
         $this->token = $token;
+        $this->authEndpoint = $authEndpoint;
     }
 
     /**
@@ -44,7 +59,7 @@ class LpaAuth implements AdapterInterface {
 
             $client = new GuzzleClient();
 
-            $response = $client->post('https://authv2/v1/authenticate', [
+            $response = $client->post( $this->authEndpoint , [
                 'body' => [
                     'Token' => $this->token,
                 ]
@@ -65,7 +80,6 @@ class LpaAuth implements AdapterInterface {
             throw $e;
         } catch (Exception $e){
             // Do nothing, allow Result::FAILURE to be returned.
-            var_dump($e->getMessage());
         }
 
         // Don't leave the token lying around...

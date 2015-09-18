@@ -24,6 +24,8 @@ class AuthenticationListener {
         
         $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
 
+        $config = $e->getApplication()->getServiceManager()->get('Config');
+
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
          * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
@@ -50,7 +52,7 @@ class AuthenticationListener {
                 'Authentication attempt with ' . $token
             );
 
-            $authAdapter = new Adapter\LpaAuth( $token );
+            $authAdapter = new Adapter\LpaAuth( $token, $config['authentication']['endpoint'] );
 
             // If successful, the identity will be persisted for the request.
             $result = $auth->authenticate($authAdapter);
