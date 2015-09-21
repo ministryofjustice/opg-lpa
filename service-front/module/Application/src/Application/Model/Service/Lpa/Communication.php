@@ -24,10 +24,25 @@ class Communication implements ServiceLocatorAwareInterface {
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        $this->sendDelayedSurveyEmail();
         
-        $sendAt = time() + (71 * 3600); // In seventy one hours' time. That's almost three days.
-        $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
+        return $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        
+    }
+    
+    private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
+        
+        $startTimestamp = strtotime('2015-09-22');
+        $endTimestamp = $startTimestamp + (7 * 24 * 3600); // One week
+        
+        $now = time();
+        
+        if (true) { // temporary for testing @todo - remove and replace with line below
+        //if ($now > $startTimestamp && $now <= $endTimestamp) {
+        
+            $sendAt = time() + (5 * 60); // In seventy one hours' time. That's almost three days.
+            $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
+        }
     }
     
     private function sendEmail($emailTemplate, Lpa $lpa, $signinUrl, $subject, $category, $sendAt = null)
