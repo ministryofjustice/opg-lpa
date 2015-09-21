@@ -13,6 +13,7 @@ use Application\Controller\AbstractLpaActorController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Zend\View\Model\JsonModel;
+use Application\Model\Service\Lpa\Communication;
 
 class DonorController extends AbstractLpaActorController
 {

@@ -16,7 +16,7 @@ class AboutYouController extends AbstractAuthenticatedController {
 
 
     public function indexAction(){
-
+        
         $result = $this->process();
 
         if( $result === true ){
