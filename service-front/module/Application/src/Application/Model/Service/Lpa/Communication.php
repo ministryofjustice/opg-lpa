@@ -24,7 +24,7 @@ class Communication implements ServiceLocatorAwareInterface {
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        $this->sendDelayedSurveyEmail();
+        $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
         return $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
         
@@ -32,15 +32,19 @@ class Communication implements ServiceLocatorAwareInterface {
     
     private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
         
-        $startTimestamp = strtotime('2015-09-22');
-        $endTimestamp = $startTimestamp + (7 * 24 * 3600); // One week
+        $startDate = '2015-09-21';
+        $durationSeconds = 7 * 24 * 3600; // 1 week
+        $emailDelaySeconds = 7 * 3600; // 71 hours
+        
+        $startTimestamp = strtotime($startDate);
+        $endTimestamp = $startTimestamp + $durationSeconds;
         
         $now = time();
         
         if (true) { // temporary for testing @todo - remove and replace with line below
         //if ($now > $startTimestamp && $now <= $endTimestamp) {
         
-            $sendAt = time() + (5 * 60); // In seventy one hours' time. That's almost three days.
+            $sendAt = time() + $emailDelaySeconds;
             $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
         }
     }
