@@ -142,6 +142,14 @@ class SendGrid implements TransportInterface {
                 } // foreach
 
             } // if
+            
+            if( is_callable( [ $message, 'getSendAt' ] ) ) {
+                $sendAt = $message->getSendAt();
+                if ($sendAt) {
+                    $email->setSendAt($sendAt);
+                }
+            } // if
+            
 
         } // if
 
