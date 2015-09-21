@@ -6,6 +6,8 @@ use Exception;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
+use Aws\DynamoDb\DynamoDbClient;
+
 use GuzzleHttp\Client as GuzzleClient;
 
 /**
@@ -32,6 +34,12 @@ class Status implements ServiceLocatorAwareInterface {
         $result = array();
 
         //-----------------------------------
+        // DynamoDB
+
+        $result['dynamo'] = $this->dynamo();
+
+
+        //-----------------------------------
         // Check API 2
 
         $result['api'] = $this->api();
@@ -48,28 +56,7 @@ class Status implements ServiceLocatorAwareInterface {
 
         }
         // end #v1Code
-
-
-        //-----------------------------------
-        // Check Redis (sessions)
-
-        /*
-        $result['sessions'] = array( 'ok' => false );
-
-        try {
-
-            $config = $this->getServiceLocator()->get('Config')['session']['redis']['server'];
-
-            $redis = new \Redis();
-            $redis->connect( $config['host'], $config['port'] );
-
-            if( $redis->ping() == '+PONG' ){
-                $result['sessions']['ok'] = true;
-            }
-
-        } catch ( Exception $e ){}
-        */
-
+        
         //-----------------------------------
 
         $ok = true;
@@ -126,6 +113,107 @@ class Status implements ServiceLocatorAwareInterface {
             } // if
 
         } catch (Exception $e) { /* Don't throw exceptions; we just return ok==false */ }
+
+        return $result;
+
+    } // function
+
+    //------------------------------------------------------------------------
+
+    private function dynamo(){
+
+        $result = array('ok' => false, 'details' => [
+            'sessions' => false,
+            'properties' => false,
+            'locks' => false,
+        ]);
+
+        //------------------
+        // Sessions
+
+        try {
+
+            $config = $this->getServiceLocator()->get('Config')['session']['dynamodb'];
+
+            $client = new DynamoDbClient( $config['client'] );
+
+            $details = $client->describeTable([
+                'TableName' => $config['settings']['table_name']
+            ]);
+
+            if(
+                $details['@metadata']['statusCode'] === 200 &&
+                in_array( $details['Table']['TableStatus'], ['ACTIVE','UPDATING'] )
+            ){
+
+                // Table is okay
+                $result['details']['sessions'] = true;
+
+            }
+
+        } catch ( Exception $e ){}
+
+
+        //------------------
+        // Properties
+
+        try {
+
+            $config = $this->getServiceLocator()->get('Config')['admin']['dynamodb'];
+
+            $client = new DynamoDbClient( $config['client'] );
+
+            $details = $client->describeTable([
+                'TableName' => $config['settings']['table_name']
+            ]);
+
+            if(
+                $details['@metadata']['statusCode'] === 200 &&
+                in_array( $details['Table']['TableStatus'], ['ACTIVE','UPDATING'] )
+            ){
+
+                // Table is okay
+                $result['details']['properties'] = true;
+
+            }
+
+        } catch ( Exception $e ){}
+
+
+
+        //------------------
+        // Locks
+
+        try {
+
+            $config = $this->getServiceLocator()->get('Config')['cron']['lock']['dynamodb'];
+
+            $client = new DynamoDbClient( $config['client'] );
+
+            $details = $client->describeTable([
+                'TableName' => $config['settings']['table_name']
+            ]);
+
+            if(
+                $details['@metadata']['statusCode'] === 200 &&
+                in_array( $details['Table']['TableStatus'], ['ACTIVE','UPDATING'] )
+            ){
+
+                // Table is okay
+                $result['details']['locks'] = true;
+
+            }
+
+        } catch ( Exception $e ){}
+
+        //----
+
+        // ok is true if and only if all values in details are true.
+        $result['ok'] = array_reduce(
+            $result['details'],
+            function( $carry , $item ){ return $carry && $item; },
+            true // initial
+        );
 
         return $result;
 
