@@ -12,6 +12,12 @@ use Zend\Mail\Message as ZFMessage;
 class Message extends ZFMessage {
 
     private $categories = array();
+    
+    /**
+     * A timestamp indicating when to send the message.
+     * If null, send immediately.
+     */
+    private $sendAt;
 
     public function __construct(){
 
@@ -29,6 +35,22 @@ class Message extends ZFMessage {
 
     public function getCategories(){
         return $this->categories;
+    }
+    
+    /**
+     * @return $sendAt
+     */
+    public function getSendAt()
+    {
+        return $this->sendAt;
+    }
+    
+    /**
+     * @param number $sendAt
+     */
+    public function setSendAt($sendAt)
+    {
+        $this->sendAt = $sendAt;
     }
 
 } // class
