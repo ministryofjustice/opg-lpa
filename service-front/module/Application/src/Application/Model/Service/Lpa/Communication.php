@@ -32,7 +32,7 @@ class Communication implements ServiceLocatorAwareInterface {
     
     private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
         
-        $startDate = '2015-09-21';
+        $startDate = '2015-09-22';
         $durationSeconds = 7 * 24 * 3600; // 1 week
         $emailDelaySeconds = 71 * 3600; // 71 hours
         
@@ -41,8 +41,7 @@ class Communication implements ServiceLocatorAwareInterface {
         
         $now = time();
         
-        if (true) { // temporary for testing @todo - remove and replace with line below
-        //if ($now > $startTimestamp && $now <= $endTimestamp) {
+        if ($now > $startTimestamp && $now <= $endTimestamp) {
         
             $sendAt = time() + $emailDelaySeconds;
             $sendAt = time() + 900;
