@@ -22,13 +22,34 @@ class Communication implements ServiceLocatorAwareInterface {
 
     //---
     
-    public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl)
+    public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
+        $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
         return $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        
     }
     
-    private function sendEmail($emailTemplate, Lpa $lpa, $signinUrl, $subject, $category)
+    private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
+        
+        $startDate = '2015-09-21';
+        $durationSeconds = 7 * 24 * 3600; // 1 week
+        $emailDelaySeconds = 7 * 3600; // 71 hours
+        
+        $startTimestamp = strtotime($startDate);
+        $endTimestamp = $startTimestamp + $durationSeconds;
+        
+        $now = time();
+        
+        if (true) { // temporary for testing @todo - remove and replace with line below
+        //if ($now > $startTimestamp && $now <= $endTimestamp) {
+        
+            $sendAt = time() + $emailDelaySeconds;
+            $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
+        }
+    }
+    
+    private function sendEmail($emailTemplate, Lpa $lpa, $signinUrl, $subject, $category, $sendAt = null)
     {
     
         //-------------------------------
@@ -37,19 +58,21 @@ class Communication implements ServiceLocatorAwareInterface {
         $message = new MailMessage();
         
         $config = $this->getServiceLocator()->get('config');
+        
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
         
         $userSession = $this->getServiceLocator()->get('UserDetailsSession');
         
         $message->addTo( $userSession->user->email->address );
-
+        
         $message->setSubject( $subject );
-
+        
         //---
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
         $message->addCategory($category);
+        $message->setSendAt($sendAt);
 
         //---
 
