@@ -150,6 +150,7 @@ class SendGrid implements TransportInterface {
             $sendAt = $message->getSendAt();
             if ($sendAt) {
                 $email->setSendAt($sendAt);
+                $email->setDate( date('r', $sendAt) );
             }
         } // if
 
