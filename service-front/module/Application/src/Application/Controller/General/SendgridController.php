@@ -18,10 +18,12 @@ class SendgridController extends AbstractBaseController
     public function bounceAction()
     {
 
+        $blackHoleAddress = 'blackhole@lastingpowerofattorney.service.gov.uk';
+
         $originalToAddress = $this->request->getPost('to');
 
         // If sent to this address, don't respond.
-        if( $originalToAddress === 'blackhole@lastingpowerofattorney.service.gov.uk' ){
+        if( !is_string($originalToAddress) || strpos( strtolower($originalToAddress), $blackHoleAddress ) !== false ){
             return $this->getResponse();
         }
 
@@ -30,7 +32,7 @@ class SendgridController extends AbstractBaseController
         $messageService = new MessageService();
         
         $config = $this->getServiceLocator()->get('config');
-        $messageService->addFrom('blackhole@lastingpowerofattorney.service.gov.uk', $config['email']['sender']['default']['name']);
+        $messageService->addFrom($blackHoleAddress, $config['email']['sender']['default']['name']);
 
         $userEmail = $this->request->getPost('from');
         
