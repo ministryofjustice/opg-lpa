@@ -44,7 +44,6 @@ class Communication implements ServiceLocatorAwareInterface {
         if ($now > $startTimestamp && $now <= $endTimestamp) {
         
             $sendAt = time() + $emailDelaySeconds;
-            $sendAt = time() + 900;
             $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
         }
     }
