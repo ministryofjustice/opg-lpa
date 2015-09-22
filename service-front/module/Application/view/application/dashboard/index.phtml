@@ -88,7 +88,7 @@
                         <a class="button"
                            href="/lpa/<?= $lpa->id ?>"><?= ($lpa->progress == 'Completed') ? 'View LPA' : 'Continue' ?></a>
 
-                        <?php if ($lpa->progress == 'Completed'): ?>
+                        <?php if ($lpa->progress == 'Completed' || $lpa->progress == 'Created'): ?>
                             <a class="button-secondary" href="/lpa/<?= $lpa->id ?>/date-check">Check dates</a>
                         <?php endif; ?>
 
