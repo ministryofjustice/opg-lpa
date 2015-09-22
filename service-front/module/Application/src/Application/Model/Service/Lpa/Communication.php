@@ -34,7 +34,7 @@ class Communication implements ServiceLocatorAwareInterface {
         
         $startDate = '2015-09-21';
         $durationSeconds = 7 * 24 * 3600; // 1 week
-        $emailDelaySeconds = 7 * 3600; // 71 hours
+        $emailDelaySeconds = 71 * 3600; // 71 hours
         
         $startTimestamp = strtotime($startDate);
         $endTimestamp = $startTimestamp + $durationSeconds;
@@ -45,6 +45,7 @@ class Communication implements ServiceLocatorAwareInterface {
         //if ($now > $startTimestamp && $now <= $endTimestamp) {
         
             $sendAt = time() + $emailDelaySeconds;
+            $sendAt = time() + 900;
             $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
         }
     }
