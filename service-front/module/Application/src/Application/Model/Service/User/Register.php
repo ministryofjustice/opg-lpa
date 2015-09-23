@@ -126,11 +126,11 @@ class Register implements ServiceLocatorAwareInterface {
 
         if ($success) {
             $this->getServiceLocator()->get('Logger')->info(
-                'Account activation attempt with token ' . $token . ' was successful, or was already activated'
+                'Account activation attempt with token was successful, or was already activated'
             );
         } else {
             $this->getServiceLocator()->get('Logger')->info(
-                'Account activation attempt with token ' . $token . ' failed'
+                'Account activation attempt with token failed'
             );
         }
         
