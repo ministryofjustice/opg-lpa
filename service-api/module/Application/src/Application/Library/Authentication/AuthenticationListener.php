@@ -47,7 +47,7 @@ class AuthenticationListener {
             $token = trim($token->getFieldValue());
             
             $log->info(
-                'Authentication attempt with ' . $token
+                'Authentication attempt - token supplied'
             );
 
             $authAdapter = new Adapter\LpaAuthOne( $token );
