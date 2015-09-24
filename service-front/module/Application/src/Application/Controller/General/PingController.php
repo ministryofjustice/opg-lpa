@@ -22,7 +22,6 @@ class PingController extends AbstractBaseController {
 
         $response = $this->getResponse();
 
-        //$response->setStatusCode(500);
         $response->setContent('Happy face');
 
         return $response;
