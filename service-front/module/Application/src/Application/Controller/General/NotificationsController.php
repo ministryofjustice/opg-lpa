@@ -1,7 +1,7 @@
 <?php
 namespace Application\Controller\General;
 
-use DateTime;
+use DateTime, DateTimeZone;
 
 use Application\Controller\AbstractBaseController;
 
@@ -81,10 +81,10 @@ class NotificationsController extends AbstractBaseController {
 
         //---
 
-        $sendAt = new DateTime('today 1pm');
+        $sendAt = new DateTime('today 11am', new DateTimeZone('Europe/London'));
 
         // If now is before the time above, defer delivery of the email until that time...
-        if( $sendAt->getTimestamp() > time() ){
+        if( $sendAt->getTimestamp() > time() ) {
             $email->setSendAt( $sendAt->getTimestamp() );
         }
 
