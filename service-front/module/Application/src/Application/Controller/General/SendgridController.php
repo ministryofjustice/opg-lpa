@@ -35,6 +35,10 @@ class SendgridController extends AbstractBaseController
         $messageService->addFrom($blackHoleAddress, $config['email']['sender']['default']['name']);
 
         $userEmail = $this->request->getPost('from');
+
+        $messageService->addCategory('opg');
+        $messageService->addCategory('opg-lpa');
+        $messageService->addCategory('opg-lpa-autoresponse');
         
         if(!$userEmail) {
             return $this->getResponse();
