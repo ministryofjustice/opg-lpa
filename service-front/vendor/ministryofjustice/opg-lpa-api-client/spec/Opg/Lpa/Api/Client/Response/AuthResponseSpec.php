@@ -12,25 +12,25 @@ class AuthResponseSpec extends ObjectBehavior
         $this->shouldHaveType('Opg\Lpa\Api\Client\Response\AuthResponse');
     }
     
-    function it_exchanges_json_correctly_on_error()
-    {
-        $json = '{"failure_count": 1,"error_description": "resource owner credentials are invalid"}';
-        
-        $this->exchangeJson($json);
-        
-        $this->getFailureCount()->shouldReturn(1);
-        $this->getErrorDescription()->shouldReturn("resource owner credentials are invalid");
-    }
-    
     function it_exchanges_json_correctly_on_success()
     {
-        $json = '{"access_token": "3cc93de098b7217eeb36251ffe22ffb1","expires_in": 4500,"token_type": "bearer","last_login": 1420649745}';
+        $json = '
+        {
+  "userId": "3f4e575332eb82eeece2312141a24add",
+  "username": "test@example.com",
+  "last_login": "2015-09-15T14:32:55+0000",
+  "token": "d57fa9a990c29612eb4029519bb1c572bc4341d0a1a03f5bf7564b678e4aca61",
+  "expiresIn": 4500,
+  "expiresAt": "2015-09-15T16:00:38+0000"
+}';
     
         $this->exchangeJson($json);
     
-        $this->getToken()->shouldReturn('3cc93de098b7217eeb36251ffe22ffb1');
+        $this->getUserId()->shouldReturn('3f4e575332eb82eeece2312141a24add');
+        $this->getToken()->shouldReturn('d57fa9a990c29612eb4029519bb1c572bc4341d0a1a03f5bf7564b678e4aca61');
         $this->getExpiresIn()->shouldReturn(4500);
-        $this->getTokenType()->shouldReturn('bearer');
-        $this->getLastLogin()->shouldReturn(1420649745);
+        $this->getUsername()->shouldReturn('test@example.com');
+        $this->getLastLogin()->shouldReturn("2015-09-15T14:32:55+0000");
+        $this->getExpiresAt()->shouldReturn('2015-09-15T16:00:38+0000');
     }
 }

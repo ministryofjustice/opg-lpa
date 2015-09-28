@@ -1,6 +1,8 @@
 OPG LPA API Client
 ==================
 
+This version of the API client works with the LPA v2 Auth Server and no longer works with the LPA v1 Auth Server.
+
 A client wrapper for the OPG LPA REST API (opg-lpa-api)
 
 Add to project using Composer
