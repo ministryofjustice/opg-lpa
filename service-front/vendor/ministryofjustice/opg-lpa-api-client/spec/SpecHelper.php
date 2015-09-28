@@ -12,7 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 date_default_timezone_set('UTC');
 
-const TEST_AUTH_EMAIL = 'phpSpecTestAccount7000@example.com';
+const TEST_AUTH_EMAIL = 'phpSpecTestAccount222512312@example.com';
 const TEST_AUTH_PASSWORD = 'phpSpec$12Password';
 
 destroyAndRecreateTestUser();
@@ -27,6 +27,7 @@ function destroyAndRecreateTestUser()
     );
     
     if ($authResponse->isAuthenticated()) {
+
         $success = $apiClient->deleteUserAndAllTheirLpas();
         
         if (!$success) {
@@ -36,13 +37,14 @@ function destroyAndRecreateTestUser()
     }
     
     $activationToken = $apiClient->registerAccount(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-
+    
     $apiClient->activateAccount($activationToken);
     
     $authResponse = $apiClient->authenticate(
         TEST_AUTH_EMAIL,
         TEST_AUTH_PASSWORD
     ); 
+    
 }
 
 function getTestUserToken()
