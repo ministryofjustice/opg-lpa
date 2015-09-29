@@ -109,9 +109,11 @@ class Details implements ServiceLocatorAwareInterface {
      */
     public function updatePassword( ServiceDataInputInterface $details ){
 
+        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        
         $this->getServiceLocator()->get('Logger')->info(
             'Updating password',
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            $identity->toArray()
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
@@ -128,8 +130,12 @@ class Details implements ServiceLocatorAwareInterface {
             return 'unknown-error';
 
         } // if
-        
-        $client->setToken($result);
+
+        // Update the identity with the new token to avoid being
+        // logged out after the redirect. We don't need to update the token
+        // on the API client because this will happen on the next request
+        // when it reads it from the identity.
+        $identity->setToken($result);
         
         return true;
 
