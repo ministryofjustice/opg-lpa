@@ -12,7 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 date_default_timezone_set('UTC');
 
-const TEST_AUTH_EMAIL = 'phpSpecTestAccount222512312@example.com';
+const TEST_AUTH_EMAIL = 'phpSpecTestAccount2222512312@example.com';
 const TEST_AUTH_PASSWORD = 'phpSpec$12Password';
 
 destroyAndRecreateTestUser();
@@ -141,7 +141,6 @@ function data_User()
     $address->address1 = '1 Kingston Hill';
     $address->address2 = 'Bastown';
     $address->postcode = 'KN12 2PL';
-    $address->country = 'GB';
 
     $user->dob = $dob;
     $user->name = $name;

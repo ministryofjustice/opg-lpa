@@ -5,6 +5,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 use Application\Model\Service\ServiceDataInputInterface;
+use Opg\Lpa\Api\Client\Client;
 
 class Details implements ServiceLocatorAwareInterface {
 
@@ -115,16 +116,21 @@ class Details implements ServiceLocatorAwareInterface {
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthPassword( $details->getDataForModel()['password'] );
+        $result = $client->updateAuthPassword(
+            $details->getDataForModel()['password_current'],
+            $details->getDataForModel()['password'] 
+        );
 
         //---
 
-        if( $result !== true ){
+        if( !is_string($result) ){
 
             return 'unknown-error';
 
         } // if
-
+        
+        $client->setToken($result);
+        
         return true;
 
     } // function
