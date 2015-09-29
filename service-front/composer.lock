@@ -767,12 +767,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "4cadaa1720d7dffffa45e03ecdda2bd266234e2c"
+                "reference": "043d169198e39e36f2bf2054b03dbd401c5ed16c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/4cadaa1720d7dffffa45e03ecdda2bd266234e2c",
-                "reference": "4cadaa1720d7dffffa45e03ecdda2bd266234e2c",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/043d169198e39e36f2bf2054b03dbd401c5ed16c",
+                "reference": "043d169198e39e36f2bf2054b03dbd401c5ed16c",
                 "shasum": ""
             },
             "require": {
@@ -798,7 +798,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/LPA-1237/Auth2",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-09-21 10:10:09"
+            "time": "2015-09-29 12:33:48"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",

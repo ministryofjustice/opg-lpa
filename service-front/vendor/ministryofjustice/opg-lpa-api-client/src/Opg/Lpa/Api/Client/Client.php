@@ -618,24 +618,35 @@ class Client
      *
      * (The auth service will also validate this, but not return meaningful error messages)
      *
+     * @param string $currentPassword
      * @param string $newPassword
      * 
-     * @return boolean
+     * @return string The new user auth token
      */
     public function updateAuthPassword(
+        $currentPassword,
         $newPassword
     )
     {
-        $response = $this->client()->post( $this->authBaseUri . '/users/' . $this->getEmail() . '/put', [
-            'body' => ['new_password' => $newPassword],
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/' . $this->getUserId() . '/password', [
+            'body' => [
+                'CurrentPassword' => $currentPassword,
+                'NewPassword' => $newPassword
+            ],
             'headers' => ['Token' => $this->getToken()]
         ]);
         
-        if ($response->getStatusCode() != 204) {
+        if ($response->getStatusCode() != 200) {
             return $this->log($response, false);
         }
         
-        return true;
+        $body = $response->json();
+        
+        if (!isset($body['token'])) {
+            return $this->log($response, false);
+        }
+        
+        return $body['token'];
     }
     
     /**
