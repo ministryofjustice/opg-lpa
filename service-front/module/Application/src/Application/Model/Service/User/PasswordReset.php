@@ -79,31 +79,17 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             'Setting new password following password reset'
         );
         
-        $authToken = $this->getAuthTokenFromRestToken( $restToken );
-
-        if( !is_string( $authToken ) ){
-            // error
-            return false;
-        }
-
-        //---
-
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        // Set the new auth token on this client.
-        $client->setToken( $authToken );
-
-        $result = $client->updateAuthPassword( $password );
-
-        //---
-
-        if( $result !== true ){
+        $result = $client->updateAuthPasswordWithToken( $restToken, $password );
+        
+        if ($result !== true) {
 
             // Error...
             $body = $client->getLastContent();
 
-            if( isset($body['error_description']) ){
-                return $body['error_description'];
+            if( isset($body['detail']) ){
+                return $body['detail'];
             }
 
             return "unknown-error";
