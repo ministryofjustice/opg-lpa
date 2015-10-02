@@ -23,6 +23,11 @@
             <?php if ($this->isSearch): ?>
                 <p>Your search has found these results</p>
             <?php else: ?>
+                <?php if ($this->hasV1Lpas): ?>
+                    <p style="background-color: #ffbf47; padding: 10px;">
+                        We are going to delete all your old v1 LPAs!
+                    </p>
+                <?php endif; ?>
                 <p>On this page you'll find all the LPAs that you've created. As well as creating a new LPA from
                     scratch, you can:</p>
                 <div>
