@@ -5,7 +5,11 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 use Application\Model\Service\ServiceDataInputInterface;
-use Opg\Lpa\Api\Client\Client;
+
+use Zend\Mime\Message as MimeMessage;
+use Zend\Mime\Part as MimePart;
+
+use Application\Model\Service\Mail\Message as MailMessage;
 
 class Details implements ServiceLocatorAwareInterface {
 
@@ -111,9 +115,60 @@ class Details implements ServiceLocatorAwareInterface {
     } // function
     
     function sendActivateNewEmailEmail( $currentAddress, $activateUrl ) {
-        echo 'Going to send to ' . $currentAddress . ' with URL: ' . $activateUrl;
-        die;
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending new email verification email'
+        );
+        
+        $message = new MailMessage();
+        
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
+        
+        $message->addTo( $currentAddress );
+        
+        $message->setSubject( 'Password reset request' );
+        
+        //---
+        
+        $message->addCategory('opg');
+        $message->addCategory('opg-lpa');
+        $message->addCategory('opg-lpa-newemail-verification');
+        
+        //---
+        
+        // Load the content from the view and merge in our variables...
+        $viewModel = new \Zend\View\Model\ViewModel();
+        $viewModel->setTemplate( 'email/new-email-verify.phtml' )->setVariables([
+            'callback' => $activateUrl,
+        ]);
+        
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        
+        //---
+        
+        $html = new MimePart( $content );
+        $html->type = "text/html";
+        
+        $body = new MimeMessage();
+        $body->setParts([$html]);
+        
+        $message->setBody($body);
+        
+        //--------------------
+        
+        try {
+        
+            $this->getServiceLocator()->get('MailTransport')->send($message);
+        
+        } catch ( \Exception $e ){
+        
+            return "failed-sending-email";
+        
+        }
+        
         return true;
+        
     }
 
     /**
