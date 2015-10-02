@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1d0d9b01ac70ea83c381997592c433b8ebe10e19"
+                "reference": "ca3dd59d394d2320d94eec4d50e6fdff7cac477d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d0d9b01ac70ea83c381997592c433b8ebe10e19",
-                "reference": "1d0d9b01ac70ea83c381997592c433b8ebe10e19",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ca3dd59d394d2320d94eec4d50e6fdff7cac477d",
+                "reference": "ca3dd59d394d2320d94eec4d50e6fdff7cac477d",
                 "shasum": ""
             },
             "require": {
@@ -81,7 +81,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-09-24 22:08:14"
+            "time": "2015-10-01 21:39:32"
         },
         {
             "name": "doctrine/lexer",
@@ -767,12 +767,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "043d169198e39e36f2bf2054b03dbd401c5ed16c"
+                "reference": "6a93c407fd5d9906d860f964224f855ac98f7dc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/043d169198e39e36f2bf2054b03dbd401c5ed16c",
-                "reference": "043d169198e39e36f2bf2054b03dbd401c5ed16c",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/6a93c407fd5d9906d860f964224f855ac98f7dc8",
+                "reference": "6a93c407fd5d9906d860f964224f855ac98f7dc8",
                 "shasum": ""
             },
             "require": {
@@ -798,7 +798,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/LPA-1237/Auth2",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2015-09-29 12:33:48"
+            "time": "2015-10-02 12:50:12"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -2229,16 +2229,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.7",
+            "version": "2.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "5e2645ad49d196e020b85598d7c97e482725786a"
+                "reference": "ac8e7a3db35738d56ee9a76e78a4e03d97628983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/5e2645ad49d196e020b85598d7c97e482725786a",
-                "reference": "5e2645ad49d196e020b85598d7c97e482725786a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/ac8e7a3db35738d56ee9a76e78a4e03d97628983",
+                "reference": "ac8e7a3db35738d56ee9a76e78a4e03d97628983",
                 "shasum": ""
             },
             "require": {
@@ -2281,7 +2281,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-08-19 09:14:08"
+            "time": "2015-10-02 06:51:40"
         },
         {
             "name": "sebastian/comparator",

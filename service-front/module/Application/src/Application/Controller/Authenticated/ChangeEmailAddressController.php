@@ -50,12 +50,16 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
-                $result = $service->updateEmailAddress( $form );
-
+                $emailConfirmCallback = function( $token ) {
+                    return $this->url()->fromRoute('user/change-email-address/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
+                };
+                
+                $result = $service->requestEmailUpdate( $form, $emailConfirmCallback, $currentAddress );
+                
                 //---
 
                 if( $result === true ){
-
+                    
                     /**
                      * When removing v1, the whole if statement below can be deleted.
                      *
@@ -81,7 +85,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
                     $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
                     unset($detailsContainer->user);
 
-                    $this->flashMessenger()->addSuccessMessage('Your new email address has been saved. Please remember to use this new email address to sign in from now on.');
+                    $this->flashMessenger()->addSuccessMessage('Before we can update your email address, please click the link in the verification email we have just sent you.');
 
                     return $this->redirect()->toRoute( 'user/about-you' );
 
@@ -100,4 +104,9 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
         return new ViewModel( compact( 'form', 'error', 'pageTitle', 'currentAddress' ) );
     }
 
+    public function callbackAction()
+    {
+        echo $this->params()->fromRoute('token');
+        die;
+    }
 }

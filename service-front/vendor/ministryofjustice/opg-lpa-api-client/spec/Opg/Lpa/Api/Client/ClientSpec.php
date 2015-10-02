@@ -9,6 +9,29 @@ use ZendPdf\PdfDocument;
 
 class ClientSpec extends ObjectBehavior
 {
+    function it_will_get_an_email_update_token()
+    {
+        $this->beConstructedWith(getTestUserToken());
+        $newEmail = 'deleteme-' . uniqid() . '@example.com';
+    
+        $this->requestEmailUpdate($newEmail)->shouldBeAToken();
+    }
+    
+    function it_will_update_an_account_email_on_the_auth_server()
+    {
+        $this->beConstructedWith(getTestUserToken());
+    
+        $newEmail = 'deleteme-' . uniqid() . '@example.com';
+         
+        $token = $this->requestEmailUpdate($newEmail);
+    
+        $this->updateAuthEmail($token)->shouldBe(true);
+         
+        $this->authenticate($newEmail, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(true);
+    
+        destroyAndRecreateTestUser();
+    }
+    
     function it_will_update_a_password_for_an_authenticated_user()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
@@ -113,29 +136,6 @@ class ClientSpec extends ObjectBehavior
         $this->getMetaData($lpaId)['test-meta']->shouldBe('data');
         $this->deleteMetaData($lpaId)->shouldBe(true);
         $this->getMetaData($lpaId)->shouldBe(null);
-    }
-    
-    function it_will_get_an_email_update_token()
-    {
-        $this->beConstructedWith(getTestUserToken());
-        $newEmail = 'deleteme-' . uniqid() . '@example.com';
-    
-        $this->requestEmailUpdate($newEmail)->shouldBeAToken();
-    }
-    
-    function it_will_update_an_account_email_on_the_auth_server()
-    {
-        $this->beConstructedWith(getTestUserToken());
-    
-        $newEmail = 'deleteme-' . uniqid() . '@example.com';
-         
-        $token = $this->requestEmailUpdate($newEmail);
-    
-        $this->updateAuthEmail($token)->shouldBe(true);
-         
-        $this->authenticate($newEmail, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(true);
-    
-        destroyAndRecreateTestUser();
     }
     
     function it_can_get_a_list_of_pdfs()
@@ -1134,7 +1134,7 @@ class ClientSpec extends ObjectBehavior
     {
         return [
             'beAToken' => function($subject) {
-                return is_string($subject) && strlen($subject) == 64;
+                return is_string($subject) && strlen($subject) > 0 && strlen($subject) % 32 == 0;
             },
             'beAPositiveInteger' => function($subject) {
                 return is_numeric($subject) && $subject > 0;

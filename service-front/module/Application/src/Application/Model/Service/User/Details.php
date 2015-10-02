@@ -70,36 +70,51 @@ class Details implements ServiceLocatorAwareInterface {
      * @param ServiceDataInputInterface $details
      * @return bool|string
      */
-    public function updateEmailAddress( ServiceDataInputInterface $details ){
-
+    public function requestEmailUpdate( ServiceDataInputInterface $details, $activateEmailCallback, $currentAddress ){
+        
+        $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
+        
         $this->getServiceLocator()->get('Logger')->info(
-            'Updating email address to ' . $details->getDataForModel()['email'],
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            'Requesting email update to new email: ' . $details->getDataForModel()['email'],
+            $identityArray    
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthEmail( strtolower($details->getDataForModel()['email']) );
+        $updateToken = $client->requestEmailUpdate( strtolower($details->getDataForModel()['email']) );
 
         //---
 
-        if( $result !== true ){
+        if( !is_string($updateToken) ){
 
-            // There was an error...
+            // Error...
+            $body = $client->getLastContent();
 
-            $error = $client->getLastContent();
-
-            if( isset($error['error_description']) && $error['error_description'] == 'email address is already registered' ){
-                return 'address-already-registered';
-            } else {
-                return 'unknown-error';
+            if( isset($body['detail']) ){
+                switch ($body['detail']) {
+                    case 'User already has this email' : 
+                        return 'user-already-has-email';
+                    case 'Email already exists for another user': 
+                        return 'email-already-exists';
+                    default: 
+                        return 'unknown-error';
+                }
             }
 
+            return "unknown-error";
+            
         } // if
 
-        return true;
+        return $this->sendActivateNewEmailEmail( $currentAddress, $activateEmailCallback( $updateToken ) );
+
 
     } // function
+    
+    function sendActivateNewEmailEmail( $currentAddress, $activateUrl ) {
+        echo 'Going to send to ' . $currentAddress . ' with URL: ' . $activateUrl;
+        die;
+        return true;
+    }
 
     /**
      * Update the user's password.

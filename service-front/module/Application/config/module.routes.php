@@ -334,6 +334,21 @@ return [
                                 'action'     => 'index',
                             ],
                         ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'callback' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/callback/:token',
+                                    'constraints' => [
+                                        'token' => '[a-f0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action'     => 'reset-password',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ], // change-email-address
 
                     'change-password' => [
