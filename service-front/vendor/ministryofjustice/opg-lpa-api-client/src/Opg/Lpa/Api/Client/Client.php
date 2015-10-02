@@ -571,11 +571,20 @@ class Client
         $response = $this->client()->get( $this->authBaseUri . '/v1/users/' . $this->getUserId() . '/email/' . $newEmailAddress, [
             'headers' => ['Token' => $this->getToken()]
         ]);
-    
+
         if ($response->getStatusCode() != 200) {
-            return $this->log($response, false);
+            
+            $data = $response->json();
+            
+            $this->log($response, false);
+                
+            if (isset($data['detail'])) {
+                return $data;
+            }
+            
+            return false;
         }
-    
+        
         $data = $response->json();
         
         if ( !isset($data['token']) ){
