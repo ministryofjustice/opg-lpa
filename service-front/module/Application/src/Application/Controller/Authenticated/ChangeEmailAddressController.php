@@ -85,9 +85,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
                     $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
                     unset($detailsContainer->user);
 
-                    $this->flashMessenger()->addSuccessMessage('Before we can update your email address, please click the link in the verification email we have just sent you.');
-
-                    return $this->redirect()->toRoute( 'user/about-you' );
+                    return (new ViewModel( ['email'=>$form->getData()['email']] ))->setTemplate('application/change-email-address/email-sent');
 
                 } else {
                     $error = $result;
