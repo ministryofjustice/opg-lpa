@@ -339,12 +339,12 @@ return [
                             'callback' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/callback/:token',
+                                    'route'    => '/verify[/:token]',
                                     'constraints' => [
                                         'token' => '[a-f0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'reset-password',
+                                        'action'     => 'verify',
                                     ],
                                 ],
                             ],
