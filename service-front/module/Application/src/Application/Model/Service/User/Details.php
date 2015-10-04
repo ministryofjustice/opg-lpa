@@ -10,6 +10,7 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
+use Opg\Lpa\Api\Client\Client;
 
 class Details implements ServiceLocatorAwareInterface {
 
@@ -109,12 +110,12 @@ class Details implements ServiceLocatorAwareInterface {
             
         } // if
 
-        return $this->sendActivateNewEmailEmail( $currentAddress, $activateEmailCallback( $updateToken ) );
+        return $this->sendActivateNewEmailEmail( $details->getDataForModel()['email'], $activateEmailCallback( $updateToken ) );
 
 
     } // function
     
-    function sendActivateNewEmailEmail( $currentAddress, $activateUrl ) {
+    function sendActivateNewEmailEmail( $newEmailAddress, $activateUrl ) {
         
         $this->getServiceLocator()->get('Logger')->info(
             'Sending new email verification email'
@@ -125,9 +126,9 @@ class Details implements ServiceLocatorAwareInterface {
         $config = $this->getServiceLocator()->get('config');
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
         
-        $message->addTo( $currentAddress );
+        $message->addTo( $newEmailAddress );
         
-        $message->setSubject( 'Password reset request' );
+        $message->setSubject( 'Please verify your new email address' );
         
         //---
         
@@ -140,7 +141,7 @@ class Details implements ServiceLocatorAwareInterface {
         // Load the content from the view and merge in our variables...
         $viewModel = new \Zend\View\Model\ViewModel();
         $viewModel->setTemplate( 'email/new-email-verify.phtml' )->setVariables([
-            'callback' => $activateUrl,
+            'activateUrl' => $activateUrl,
         ]);
         
         $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
@@ -169,6 +170,17 @@ class Details implements ServiceLocatorAwareInterface {
         
         return true;
         
+    }
+    
+    function updateEmailUsingToken( $emailUpdateToken ) {
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'Updating email using token'
+        );
+        
+        $client = $this->getServiceLocator()->get('ApiClient');
+        
+        return $client->updateAuthEmail( $emailUpdateToken );
     }
 
     /**

@@ -102,9 +102,20 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
         return new ViewModel( compact( 'form', 'error', 'pageTitle', 'currentAddress' ) );
     }
 
-    public function callbackAction()
+    public function verifyAction()
     {
-        echo $this->params()->fromRoute('token');
-        die;
+        $token = $this->params()->fromRoute('token');
+        
+        $service = $this->getServiceLocator()->get('AboutYouDetails');
+        
+        if ($service->updateEmailUsingToken( $token ) === true) {
+            $message = 'Your email address was succesfully updated';
+        } else {
+            $message = 'There was an error updating your email address';
+        }
+        
+        $this->flashMessenger()->addErrorMessage($message);
+        return $this->redirect()->toRoute( 'user/about-you' );
+
     }
 }
