@@ -110,6 +110,14 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
         
         if ($service->updateEmailUsingToken( $token ) === true) {
             $message = 'Your email address was succesfully updated';
+            
+            $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+            
+            if( isset($detailsContainer->user) ) {
+                unset($detailsContainer->user);
+            }
+            
+            
         } else {
             $message = 'There was an error updating your email address';
         }
