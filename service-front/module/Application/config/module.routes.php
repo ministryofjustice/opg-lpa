@@ -336,14 +336,16 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'callback' => [
+                            'verify' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/verify[/:token]',
+                                    'route'    => '/verify[/:userId][/:token]',
                                     'constraints' => [
+                                        'userId' => '[a-f0-9]+',
                                         'token' => '[a-f0-9]+',
                                     ],
                                     'defaults' => [
+                                        'controller' => 'General\VerifyEmailAddressController',
                                         'action'     => 'verify',
                                     ],
                                 ],
