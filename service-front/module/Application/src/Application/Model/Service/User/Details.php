@@ -73,9 +73,18 @@ class Details implements ServiceLocatorAwareInterface {
      * Update the user's email address.
      *
      * @param ServiceDataInputInterface $details
+     * @param Callback function $activateEmailCallback
+     * @param string $currentAddress
+     * @param string $userId
+     * 
      * @return bool|string
      */
-    public function requestEmailUpdate( ServiceDataInputInterface $details, $activateEmailCallback, $currentAddress ){
+    public function requestEmailUpdate( 
+        ServiceDataInputInterface $details, 
+        $activateEmailCallback, 
+        $currentAddress, 
+        $userId 
+    ){
         
         $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
         
@@ -110,7 +119,7 @@ class Details implements ServiceLocatorAwareInterface {
             
         } // if
 
-        return $this->sendActivateNewEmailEmail( $details->getDataForModel()['email'], $activateEmailCallback( $updateToken ) );
+        return $this->sendActivateNewEmailEmail( $details->getDataForModel()['email'], $activateEmailCallback( $userId, $updateToken ) );
 
 
     } // function
@@ -172,7 +181,7 @@ class Details implements ServiceLocatorAwareInterface {
         
     }
     
-    function updateEmailUsingToken( $emailUpdateToken ) {
+    function updateEmailUsingToken( $userId, $emailUpdateToken ) {
         
         $this->getServiceLocator()->get('Logger')->info(
             'Updating email using token'
@@ -180,13 +189,10 @@ class Details implements ServiceLocatorAwareInterface {
         
         $client = $this->getServiceLocator()->get('ApiClient');
         
-        $success = $client->updateAuthEmail( $emailUpdateToken );
+        $client instanceof Client;
+        $success = $client->updateAuthEmail( $userId, $emailUpdateToken );
         
-        if (!$success) {
-            return false;
-        }
-        
-       return true;
+        return $success === true;
     }
 
     /**

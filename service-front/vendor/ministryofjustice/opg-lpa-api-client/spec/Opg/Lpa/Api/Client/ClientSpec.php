@@ -9,6 +9,114 @@ use ZendPdf\PdfDocument;
 
 class ClientSpec extends ObjectBehavior
 {
+    function it_can_create_an_account_through_the_auth_server()
+    {
+        $this->registerAccount(
+            'deleteme-' . uniqid() . '@example.com',
+            'P$ssword' . uniqid()
+        )->shouldBeAToken();
+    }
+    
+    function it_will_return_a_registration_error_on_bad_email()
+    {
+        $this->registerAccount(
+            'deleteme-' . uniqid() . 'example.com',
+            'P$ssword' . uniqid()
+        );
+         
+        $this->getLastStatusCode()->shouldBe(400);
+        $this->getLastContent()['detail']->shouldBe('invalid-username');
+    }
+    
+    function it_will_report_an_email_already_exists_error()
+    {
+        $email = 'deleteme-' . uniqid() . '@example.com';
+         
+        $this->registerAccount(
+            $email,
+            'P$assword' . uniqid()
+        )->shouldBeAToken();
+         
+        $this->registerAccount(
+            $email,
+            'P$assword' . uniqid()
+        );
+         
+        $this->getLastStatusCode()->shouldBe(400);
+         
+        $this->getLastContent()['detail']->shouldBe('username-already-exists');
+    }
+    
+    function it_can_activate_a_registered_account()
+    {
+        $activationToken = $this->registerAccount(
+            'deleteme-' . uniqid() . '@example.com',
+            'P$ssword' . uniqid()
+        );
+         
+        $this->activateAccount($activationToken)->shouldBe(true);
+    }
+     
+    function it_will_not_activate_when_given_a_bad_token()
+    {
+        $this->activateAccount('IAmABadToken')->shouldBe(false);
+    }
+    
+    function it_will_log_an_activation_failure()
+    {
+        $this->activateAccount('IAmABadToken')->shouldBe(false);
+    
+        $this->getLastStatusCode()->shouldBe(400);
+    }
+    
+    /**
+     * This one takes a long time - re-instate it to test pagination
+     * from the API - perhaps by changing the pagination in the API to
+     * something smaller and changing the number of applications
+     * tested here.
+     *
+     * To reinstate, remove the "skipped" from the function name
+     */
+    function skipped_it_can_combine_several_pages_of_applications_into_a_single_array()
+    {
+        $numApplications = 900;
+         
+        destroyAndRecreateTestUser();
+         
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+         
+        for ($i=0; $i<$numApplications; $i++) {
+            $this->createApplication();
+        }
+         
+        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
+    }
+    
+    function skipped_it_will_eventually_find_a_pdf_ready_for_download()
+    {
+        $lpaId = getANewCompletedLpa($this);
+    
+        $pdfType = 'lpa120';
+    
+        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('in-queue');
+    
+        // now we simulate the polling mechanism
+        $startTime = time();
+        while ($this->getPdfDetails($lpaId, $pdfType)['status'] == 'in-queue') {
+            $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBeEitherReadyOrQueued();
+        } while (time() - $startTime < 60 && $this->getPdfDetails($lpaId, $pdfType)['status'] == 'in-queue');
+    
+        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('ready');
+        $this->getPdfDetails($lpaId, $pdfType)['type']->shouldBe($pdfType);
+    
+        $stream = $this->getPdf($lpaId, $pdfType)->shouldBeAPdfStream();
+    }
+    
+    function skipped_it_can_get_auth_server_stats()
+    {
+        $stats = $this->getAuthStats()->shouldBeTheAuthStatsArray();
+    }
+    
     function it_will_get_an_email_update_token()
     {
         $this->beConstructedWith(getTestUserToken());
@@ -1022,114 +1130,6 @@ class ClientSpec extends ObjectBehavior
         $this->setAboutMe(data_User())->shouldBe(true);
     }
      
-    function it_can_create_an_account_through_the_auth_server()
-    {
-        $this->registerAccount(
-            'deleteme-' . uniqid() . '@example.com',
-            'password' . uniqid()
-        )->shouldBeAToken();
-    }
-    
-    function it_will_return_a_registration_error_on_bad_email()
-    {
-        $this->registerAccount(
-            'deleteme-' . uniqid() . 'example.com',
-            'password' . uniqid()
-        );
-         
-        $this->getLastStatusCode()->shouldBe(400);
-        $this->getLastContent()['detail']->shouldBe('invalid-username');
-    }
-    
-    function it_will_report_an_email_already_exists_error()
-    {
-        $email = 'deleteme-' . uniqid() . '@example.com';
-         
-        $this->registerAccount(
-            $email,
-            'P$assword' . uniqid()
-        )->shouldBeAToken();
-         
-        $this->registerAccount(
-            $email,
-            'P$assword' . uniqid()
-        );
-         
-        $this->getLastStatusCode()->shouldBe(400);
-         
-        $this->getLastContent()['detail']->shouldBe('username-already-exists');
-    }
-    
-    function it_can_activate_a_registered_account()
-    {
-        $activationToken = $this->registerAccount(
-            'deleteme-' . uniqid() . '@example.com',
-            'P$ssword' . uniqid()
-        );
-         
-        $this->activateAccount($activationToken)->shouldBe(true);
-    }
-     
-    function it_will_not_activate_when_given_a_bad_token()
-    {
-        $this->activateAccount('IAmABadToken')->shouldBe(false);
-    }
-    
-    function it_will_log_an_activation_failure()
-    {
-        $this->activateAccount('IAmABadToken')->shouldBe(false);
-    
-        $this->getLastStatusCode()->shouldBe(400);
-    }
-    
-    /**
-     * This one takes a long time - re-instate it to test pagination
-     * from the API - perhaps by changing the pagination in the API to
-     * something smaller and changing the number of applications
-     * tested here.
-     *
-     * To reinstate, remove the "skipped" from the function name
-     */
-    function skipped_it_can_combine_several_pages_of_applications_into_a_single_array()
-    {
-        $numApplications = 900;
-         
-        destroyAndRecreateTestUser();
-         
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-         
-        for ($i=0; $i<$numApplications; $i++) {
-            $this->createApplication();
-        }
-         
-        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
-    }
-    
-    function skipped_it_will_eventually_find_a_pdf_ready_for_download()
-    {
-        $lpaId = getANewCompletedLpa($this);
-    
-        $pdfType = 'lpa120';
-    
-        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('in-queue');
-    
-        // now we simulate the polling mechanism
-        $startTime = time();
-        while ($this->getPdfDetails($lpaId, $pdfType)['status'] == 'in-queue') {
-            $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBeEitherReadyOrQueued();
-        } while (time() - $startTime < 60 && $this->getPdfDetails($lpaId, $pdfType)['status'] == 'in-queue');
-    
-        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('ready');
-        $this->getPdfDetails($lpaId, $pdfType)['type']->shouldBe($pdfType);
-    
-        $stream = $this->getPdf($lpaId, $pdfType)->shouldBeAPdfStream();
-    }
-    
-    function skipped_it_can_get_auth_server_stats()
-    {
-        $stats = $this->getAuthStats()->shouldBeTheAuthStatsArray();
-    }
-    
     public function getMatchers()
     {
         return [

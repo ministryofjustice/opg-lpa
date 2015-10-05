@@ -11,6 +11,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
     {
 
         $currentAddress = (string)$this->getUserDetails()->email;
+        $userId = (string)$this->getUserDetails()->id;
 
         //----------------------
 
@@ -50,11 +51,16 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
-                $emailConfirmCallback = function( $token ) {
-                    return $this->url()->fromRoute('user/change-email-address/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
+                $emailConfirmCallback = function( $userId, $token ) {
+                    return $this->url()->fromRoute('user/change-email-address/verify', [ 
+                            'userId'=>$userId,
+                            'token'=>$token,
+                        ], 
+                        [ 'force_canonical' => true ] 
+                    );
                 };
                 
-                $result = $service->requestEmailUpdate( $form, $emailConfirmCallback, $currentAddress );
+                $result = $service->requestEmailUpdate( $form, $emailConfirmCallback, $currentAddress, $userId );
                 
                 //---
 
@@ -100,30 +106,5 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
         $pageTitle = 'Change your sign-in email address';
 
         return new ViewModel( compact( 'form', 'error', 'pageTitle', 'currentAddress' ) );
-    }
-
-    public function verifyAction()
-    {
-        $token = $this->params()->fromRoute('token');
-        
-        $service = $this->getServiceLocator()->get('AboutYouDetails');
-        
-        if ($service->updateEmailUsingToken( $token ) === true) {
-            $message = 'Your email address was succesfully updated';
-            
-            $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
-            
-            if( isset($detailsContainer->user) ) {
-                unset($detailsContainer->user);
-            }
-            
-            
-        } else {
-            $message = 'There was an error updating your email address';
-        }
-        
-        $this->flashMessenger()->addErrorMessage($message);
-        return $this->redirect()->toRoute( 'user/about-you' );
-
     }
 }
