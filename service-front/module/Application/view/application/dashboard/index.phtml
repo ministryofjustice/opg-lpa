@@ -1,6 +1,3 @@
-<?php if ($this->lastLogin) : ?>
-    <div style="float:right;">You were last signed in on <?= $this->lastLogin ?></div>
-<?php endif; ?>
 
 <?php if ($this->message): ?>
 
@@ -46,6 +43,10 @@
 <?php endif; ?>
 
 <div class="toolbar toolbar__dashboard">
+
+    <?php if ($this->user['lastLogin']) : ?>
+        <p style="text-align: right;">You were last signed in on <?= $this->user['lastLogin']->format('j F Y \a\t g:ia') ?></p>
+    <?php endif; ?>
 
     <div class="tool tool__search">
         <form action="<?= $this->url('user/dashboard') ?>" method="GET">
