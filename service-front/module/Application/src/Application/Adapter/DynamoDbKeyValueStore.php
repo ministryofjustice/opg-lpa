@@ -1,6 +1,8 @@
 <?php
 namespace Application\Adapter;
 
+use Exception;
+
 use Zend\Cache\Storage\StorageInterface;
 use Aws\DynamoDb\DynamoDbClient;
 use Symfony\Component\Intl\Exception\NotImplementedException;
@@ -119,15 +121,25 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getItem($key, & $success = null, & $casToken = null)
     {
-        $result = $this->client->getItem(array(
-            'TableName' => $this->tableName,
-            'Key' => array(
-                'id'      => array('S' => $this->formatKey($key)),
-            )
-        ));
-        
-        return $result['Item']['value']['B'];
-    
+        try {
+
+            $result = $this->client->getItem(array(
+                'TableName' => $this->tableName,
+                'Key' => array(
+                    'id'      => array('S' => $this->formatKey($key)),
+                )
+            ));
+
+            $success = true;
+
+            return $result['Item']['value']['B'];
+
+        } catch (Exception $e){}
+
+        $success = false;
+
+        return null;
+
     }
     
      /* (non-PHPdoc)
