@@ -119,6 +119,8 @@ class Details implements ServiceLocatorAwareInterface {
             
         } // if
 
+        $this->sendNotifyNewEmailEmail( $currentAddress, $details->getDataForModel()['email'] );
+        
         return $this->sendActivateNewEmailEmail( $details->getDataForModel()['email'], $activateEmailCallback( $userId, $updateToken ) );
 
 
@@ -179,6 +181,63 @@ class Details implements ServiceLocatorAwareInterface {
         
         return true;
         
+    }
+    
+    function sendNotifyNewEmailEmail( $oldEmailAddress, $newEmailAddress ) {
+    
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending new email confirmation email'
+        );
+    
+        $message = new MailMessage();
+    
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
+    
+        $message->addTo( $oldEmailAddress );
+    
+        $message->setSubject( 'Your email address has been updated' );
+    
+        //---
+    
+        $message->addCategory('opg');
+        $message->addCategory('opg-lpa');
+        $message->addCategory('opg-lpa-newemail-confirmation');
+    
+        //---
+    
+        // Load the content from the view and merge in our variables...
+        $viewModel = new \Zend\View\Model\ViewModel();
+        $viewModel->setTemplate( 'email/new-email-notify.phtml' )->setVariables([
+            'newEmailAddress' => $newEmailAddress,
+        ]);
+    
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+    
+        //---
+    
+        $html = new MimePart( $content );
+        $html->type = "text/html";
+    
+        $body = new MimeMessage();
+        $body->setParts([$html]);
+    
+        $message->setBody($body);
+    
+        //--------------------
+    
+        try {
+    
+            $this->getServiceLocator()->get('MailTransport')->send($message);
+    
+        } catch ( \Exception $e ){
+    
+            return "failed-sending-email";
+    
+        }
+    
+        return true;
+    
     }
     
     function updateEmailUsingToken( $userId, $emailUpdateToken ) {
