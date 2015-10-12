@@ -32,7 +32,7 @@ class Communication implements ServiceLocatorAwareInterface {
     
     private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
         
-        $startDate = '2015-09-22';
+        $startDate = '2015-10-12';
         $durationSeconds = 7 * 24 * 3600; // 1 week
         $emailDelaySeconds = 71 * 3600; // 71 hours
         
