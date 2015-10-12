@@ -5016,7 +5016,10 @@ $(document).ready(function () {
     $(this).closest('form').data('dirty', true);
   });
 
-
+  $('body').on('change', '#form-correspondent input', function () {
+	$('#switch-to-type').val('other');
+  });
+  
   // ====================================================================================
   // POPULATE WITH TEST DATA SCRIPTS
 
@@ -5060,7 +5063,6 @@ $(document).ready(function () {
           populateDate('input#notifiedPerson_' + i, dateString);
       }
   });
-
 
   // ====================================================================================
   // Emphasised checkbox and radio button label styles
