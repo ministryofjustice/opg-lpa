@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\Service\Authentication\Adapter;
 
-use DateTime;
+use DateTime, DateTimeZone;
 
 use Opg\Lpa\Api\Client\Client as ApiClient;
 

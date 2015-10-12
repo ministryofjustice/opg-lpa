@@ -58,7 +58,7 @@ class DashboardController extends AbstractAuthenticatedController
             'user' => [
                 'id' => $this->getUser()->id(),
                 'token' => $this->getUser()->token(),
-                'lastLogin' => $this->getUser()->lastLogin(),
+                'lastLogin' => $this->getUser()->lastLogin()->setTimezone( new \DateTimeZone( 'Europe/London' ) ),
             ],
             'pageTitle' => 'Your LPAs',
         ]);
