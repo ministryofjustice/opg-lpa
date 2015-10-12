@@ -34,8 +34,8 @@ class CorrespondentSwitcherForm extends AbstractForm
     public function init ()
     {
         $this->formElements['switch-to-type']['options']['value_options'] = [
-                'donor' => (string)$this->lpa->document->donor->name . ' (The donor)',
                 'me'    => (string)$this->user->name . ' (Myself)',
+                'donor' => (string)$this->lpa->document->donor->name . ' (The donor)',
         ];
         
         foreach($this->lpa->document->primaryAttorneys as $attorney) {
