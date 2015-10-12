@@ -54,6 +54,11 @@ class User {
         $this->token = $token;
         $this->lastLogin = $lastLogin;
 
+        // If $lastLogin's TS is zero, they have not logged in before, so last login is now.
+        if($this->lastLogin->getTimestamp() === 0){
+            $this->lastLogin = new DateTime();
+        }
+
         $this->tokenExpiresIn( $expiresIn );
 
         if( $isAdmin === true ){
