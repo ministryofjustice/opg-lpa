@@ -55,7 +55,7 @@ class User {
         $this->lastLogin = $lastLogin;
 
         // If $lastLogin's TS is zero, they have not logged in before, so last login is now.
-        if($this->lastLogin->getTimestamp() === 0){
+        if( $this->lastLogin < new DateTime("-5 years") ){
             $this->lastLogin = new DateTime();
         }
 
