@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\Service\Authentication\Adapter;
 
-use DateTime;
+use DateTime, DateTimeZone;
 
 use Opg\Lpa\Api\Client\Client as ApiClient;
 
@@ -85,7 +85,7 @@ class LpaApiClient implements AdapterInterface {
             $response->getUserId(),
             $response->getToken(),
             $response->getExpiresIn(),
-            (new DateTime())->setTimestamp( $response->getLastLogin() )
+            (new DateTime())->setTimestamp( $response->getLastLogin() )->setTimezone( new DateTimeZone( 'Europe/London' ) )
         );
 
         return new Result( Result::SUCCESS, $identity );
