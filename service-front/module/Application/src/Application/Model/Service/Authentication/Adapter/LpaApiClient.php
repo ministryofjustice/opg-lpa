@@ -85,7 +85,7 @@ class LpaApiClient implements AdapterInterface {
             $response->getUserId(),
             $response->getToken(),
             $response->getExpiresIn(),
-            (new DateTime())->setTimestamp( $response->getLastLogin() )->setTimezone( new DateTimeZone( 'Europe/London' ) )
+            (new DateTime())->setTimestamp( $response->getLastLogin() )
         );
 
         return new Result( Result::SUCCESS, $identity );
