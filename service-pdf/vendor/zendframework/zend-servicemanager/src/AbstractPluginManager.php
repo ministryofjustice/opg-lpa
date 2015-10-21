@@ -62,10 +62,9 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
     public function __construct(ConfigInterface $configuration = null)
     {
         parent::__construct($configuration);
-        $self = $this;
-        $this->addInitializer(function ($instance) use ($self) {
+        $this->addInitializer(function ($instance) {
             if ($instance instanceof ServiceLocatorAwareInterface) {
-                $instance->setServiceLocator($self);
+                $instance->setServiceLocator($this);
             }
         });
     }
@@ -99,7 +98,7 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
      * @throws Exception\ServiceNotCreatedException
      * @throws Exception\RuntimeException
      */
-    public function get($name, $options = array(), $usePeeringServiceManagers = true)
+    public function get($name, $options = [], $usePeeringServiceManagers = true)
     {
         $isAutoInvokable = false;
 
@@ -239,7 +238,7 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
         }
 
         if ($factory instanceof FactoryInterface) {
-            $instance = $this->createServiceViaCallback(array($factory, 'createService'), $canonicalName, $requestedName);
+            $instance = $this->createServiceViaCallback([$factory, 'createService'], $canonicalName, $requestedName);
         } elseif (is_callable($factory)) {
             $instance = $this->createServiceViaCallback($factory, $canonicalName, $requestedName);
         } else {

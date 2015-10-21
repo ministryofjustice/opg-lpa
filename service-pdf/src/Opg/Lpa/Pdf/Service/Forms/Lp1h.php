@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp1h extends Lp1
 {
@@ -16,7 +17,7 @@ class Lp1h extends Lp1
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1H');
         
-        $this->pdf = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1H.pdf');
+        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP1H.pdf');
         
     }
     
@@ -135,8 +136,8 @@ class Lp1h extends Lp1
             }
         }
         
-        $this->pdfFormData['footer_instrument_right'] = Config::getInstance()['footer']['lp1h']['instrument'];
-        $this->pdfFormData['footer_registration_right'] = Config::getInstance()['footer']['lp1h']['registration'];
+        $this->pdfFormData['footer-instrument-right'] = Config::getInstance()['footer']['lp1h']['instrument'];
+        $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1h']['registration'];
         
         return $this->pdfFormData;
     } // function dataMapping()

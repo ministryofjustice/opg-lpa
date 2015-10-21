@@ -5,6 +5,8 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lpa120 extends AbstractForm
 {
@@ -27,6 +29,13 @@ class Lpa120 extends AbstractForm
      */
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Lpa120',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         // check eligibility for exemption or remission.
         if(!$this->lpa->repeatCaseNumber &&
             !$this->lpa->payment->reducedFeeLowIncome && 
@@ -35,7 +44,7 @@ class Lpa120 extends AbstractForm
                 throw new \RuntimeException("LPA120 is not available for this LPA.");
             }
         
-        $pdf = PdfProcessor::getPdftkInstance($this->basePdfTemplate);
+        $pdf = PdftkInstance::getInstance($this->basePdfTemplate);
         
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
         
@@ -137,8 +146,7 @@ class Lpa120 extends AbstractForm
                         $this->lpa->document->donor->address->address3,
                         $this->lpa->document->donor->address->postcode
                 )),
-                'lpa-type-property-and-financial-affairs' => ($this->lpa->document->type==Document::LPA_TYPE_PF)?self::CHECK_BOX_ON:null,
-                'lpa-type-health-and-welfare'             => ($this->lpa->document->type==Document::LPA_TYPE_HW)?self::CHECK_BOX_ON:null,
+                'lpa-type' => ($this->lpa->document->type==Document::LPA_TYPE_PF)?'property-and-financial-affairs':'health-and-welfare',
                 'is-repeat-application'     => ($this->lpa->repeatCaseNumber===null)?null:self::CHECK_BOX_ON,
                 'case-number'               => $this->lpa->repeatCaseNumber,
                 'applicant-type'             => $applicantType,

@@ -35,7 +35,7 @@ class Logger extends ZendLogger
         );
     }
     
-    public function addWriter($logWriter)
+    public function addWriter($logWriter, $priority = 1, array $options = NULL)
     {
         $logWriter->setFormatter($this->formatter);
         parent::addWriter($logWriter);

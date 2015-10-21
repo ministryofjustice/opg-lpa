@@ -12,6 +12,8 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
+use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -53,6 +55,13 @@ abstract class Lp1 extends AbstractForm
      */
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Lp1',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $this->generateStandardForm();
         $this->generateAdditionalPages();
         $this->generateCoversheets();
@@ -67,6 +76,13 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateStandardForm()
     {
+        Logger::getInstance()->info(
+            'Generating Standard Form',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         // register a randem generated temp file path, and store it $interFileStack.
         $filePath = $this->registerTempFile('LP1');
         
@@ -90,6 +106,13 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
+        Logger::getInstance()->info(
+            'Generating Additional Pages',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $cs1ActorTypes = [];
         
         // CS1 is to be generated when number of attorneys that are larger than what is available on standard form.
@@ -225,6 +248,13 @@ abstract class Lp1 extends AbstractForm
     
     protected function generateCoversheets()
     {
+        Logger::getInstance()->info(
+            'Generating Coversheets',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         if($this->generateInstrumentOnly) {
             $coversheetInstrument = (new CoversheetInstrument($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($coversheetInstrument);
@@ -276,21 +306,10 @@ abstract class Lp1 extends AbstractForm
          * attorney decision section (section 3)
          */
         if($noOfPrimaryAttorneys == 1) {
-            $this->pdfFormData['only-one-attorney-appointed'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['how-attorneys-act'] = 'only-one-attorney-appointed';
         }
-        
-        if( $this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions ) {
-            switch($this->lpa->document->primaryAttorneyDecisions->how) {
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                    $this->pdfFormData['attorneys-act-jointly'] = self::CHECK_BOX_ON;
-                    break;
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $this->pdfFormData['attorneys-act-jointly-and-severally'] = self::CHECK_BOX_ON;
-                    break;
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $this->pdfFormData['attorneys-act-upon-decisions'] = self::CHECK_BOX_ON;
-                    break;
-            }
+        elseif( $this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions ) {
+            $this->pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
         
         /**
@@ -425,10 +444,10 @@ abstract class Lp1 extends AbstractForm
          * Applicant (Section 12)
          */
         if($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->pdfFormData['donor-is-applicant'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['who-is-applicant'] = 'donor';
         }
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
-            $this->pdfFormData['attorney-is-applicant'] = self::CHECK_BOX_ON;
+            $this->pdfFormData['who-is-applicant'] = 'attorney';
             $i = 0;
             foreach($this->lpa->document->whoIsRegistering as $attorneyId) {
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
@@ -454,11 +473,11 @@ abstract class Lp1 extends AbstractForm
         if($this->lpa->document->correspondent instanceof Correspondence) {
             switch($this->lpa->document->correspondent->who) {
                 case Correspondence::WHO_DONOR:
-                    $this->pdfFormData['donor-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['who-is-correspondent'] = 'donor';
                     $this->drawingTargets[17] = ['correspondent-empty-name-address'];
                     break;
                 case Correspondence::WHO_ATTORNEY:
-                    $this->pdfFormData['attorney-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['who-is-correspondent'] = 'attorney';
                     if($this->lpa->document->correspondent->name instanceof Name) {
                         $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                         $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
@@ -468,7 +487,7 @@ abstract class Lp1 extends AbstractForm
                     $this->drawingTargets[17] = ['correspondent-empty-address'];
                     break;
                 case Correspondence::WHO_OTHER:
-                    $this->pdfFormData['other-is-correspondent'] = self::CHECK_BOX_ON;
+                    $this->pdfFormData['who-is-correspondent'] = 'other';
                     $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                     $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
                     $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
@@ -512,12 +531,12 @@ abstract class Lp1 extends AbstractForm
         
         if($this->lpa->payment instanceof Payment) {
             // payment method
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-                $this->pdfFormData['pay-by-card'] = self::CHECK_BOX_ON;
-                $this->pdfFormData['lpa-payment-phone-number'] = "NOT REQUIRED. PAYMENT MADE ONLINE.";
+            if($this->lpa->payment->method) {
+                $this->pdfFormData['pay-by'] = $this->lpa->payment->method;
             }
-            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                $this->pdfFormData['pay-by-cheque'] = self::CHECK_BOX_ON;
+            
+            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
+                $this->pdfFormData['lpa-payment-phone-number'] = "NOT REQUIRED.";
             }
             
             // apply to pay reduced fee
@@ -547,7 +566,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        $pdf = PdfProcessor::getPdftkInstance();
+        $pdf = PdftkInstance::getInstance();
         
         $fileTag = $lp1FileTag = 'B';
         if(isset($this->interFileStack['LP1']) && isset($this->interFileStack['Coversheet'])) {
@@ -567,7 +586,8 @@ abstract class Lp1 extends AbstractForm
         // Section 11 - additional attorneys signature
         if(isset($this->interFileStack['AdditionalAttorneySignature'])) {
             foreach($this->interFileStack['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
-                $pdf->addFile($additionalAttorneySignature, ++$fileTag);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($additionalAttorneySignature, $fileTag);
                 
                 // add an additional attorney signature page
                 $pdf->cat(1, null, $fileTag);
@@ -577,7 +597,8 @@ abstract class Lp1 extends AbstractForm
         // Continuation Sheet 1
         if(isset($this->interFileStack['CS1'])) {
             foreach ($this->interFileStack['CS1'] as $cs1) {
-                $pdf->addFile($cs1, ++$fileTag);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($cs1, $fileTag);
         
                 // add a CS1 page
                 $pdf->cat(1, null, $fileTag);
@@ -587,7 +608,8 @@ abstract class Lp1 extends AbstractForm
         // Continuation Sheet 2
         if(isset($this->interFileStack['CS2'])) {
             foreach ($this->interFileStack['CS2'] as $cs2) {
-                $pdf->addFile($cs2, ++$fileTag);
+                $fileTag = $this->nextTag($fileTag);
+                $pdf->addFile($cs2, $fileTag);
         
                 // add a CS2 page
                 $pdf->cat(1, null, $fileTag);
@@ -596,7 +618,8 @@ abstract class Lp1 extends AbstractForm
         
         // Continuation Sheet 3
         if(isset($this->interFileStack['CS3'])) {
-            $pdf->addFile($this->interFileStack['CS3'], ++$fileTag);
+            $fileTag = $this->nextTag($fileTag);
+            $pdf->addFile($this->interFileStack['CS3'], $fileTag);
         
             // add a CS3 page
             $pdf->cat(1, null, $fileTag);
@@ -604,7 +627,8 @@ abstract class Lp1 extends AbstractForm
         
         // Continuation Sheet 4
         if(isset($this->interFileStack['CS4'])) {
-            $pdf->addFile($this->interFileStack['CS4'], ++$fileTag);
+            $fileTag = $this->nextTag($fileTag);
+            $pdf->addFile($this->interFileStack['CS4'], $fileTag);
         
             // add a CS4 page
             $pdf->cat(1, null, $fileTag);
@@ -619,7 +643,8 @@ abstract class Lp1 extends AbstractForm
             // Section 12 additional applicants
             if(isset($this->interFileStack['AdditionalApplicant'])) {
                 foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
-                    $pdf->addFile($additionalApplicant, ++$fileTag);
+                    $fileTag = $this->nextTag($fileTag);
+                    $pdf->addFile($additionalApplicant, $fileTag);
                     
                     // add an additional applicant page
                     $pdf->cat(1, null, $fileTag);
@@ -632,7 +657,8 @@ abstract class Lp1 extends AbstractForm
             // Section 15 - additional applicants signature
             if(isset($this->interFileStack['AdditionalApplicantSignature'])) {
                 foreach($this->interFileStack['AdditionalApplicantSignature'] as $additionalApplicantSignature) {
-                    $pdf->addFile($additionalApplicantSignature, ++$fileTag);
+                    $fileTag = $this->nextTag($fileTag);
+                    $pdf->addFile($additionalApplicantSignature, $fileTag);
                     
                     // add an additional applicant signature page
                     $pdf->cat(1, null, $fileTag);

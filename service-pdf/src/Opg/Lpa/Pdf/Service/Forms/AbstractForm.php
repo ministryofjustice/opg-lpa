@@ -5,6 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use ZendPdf\PdfDocument as ZendPdfDocument;
 
 abstract class AbstractForm
 {
@@ -12,10 +13,10 @@ abstract class AbstractForm
     
     const CROSS_LINE_WIDTH = 10;
     
-    const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'cs2-is-decisions';
-    const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'cs2-is-how-replacement-attorneys-step-in';
-    const CONTENT_TYPE_PREFERENCES                  = 'cs2-is-preferences';
-    const CONTENT_TYPE_INSTRUCTIONS                 = 'cs2-is-instructions';
+    const CONTENT_TYPE_ATTORNEY_DECISIONS           = 'decisions';
+    const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'how-replacement-attorneys-step-in';
+    const CONTENT_TYPE_PREFERENCES                  = 'preferences';
+    const CONTENT_TYPE_INSTRUCTIONS                 = 'instructions';
     
     /**
      *
@@ -57,6 +58,9 @@ abstract class AbstractForm
     
     /**
      * Store cross line strokes parameters.
+     * The array index is the page number of pdf document, 
+     * and value is array of cross line param keys.
+     * 
      * @var array
      */
     protected $drawingTargets = array();
@@ -199,7 +203,7 @@ abstract class AbstractForm
     protected function drawCrossLines($filePath, $params)
     {
         // draw cross lines
-        $pdf = PdfProcessor::load($filePath);
+        $pdf = ZendPdfDocument::load($filePath);
         foreach($params as $pageNo => $blockNames) {
             $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
             foreach($blockNames as $blockName) {
@@ -334,6 +338,27 @@ abstract class AbstractForm
         
     }
     
+    protected function nextTag($tag)
+    {
+        $cols = str_split(strrev($tag), 1);
+        for($i=0; $i<count($cols); $i++) {
+            if($cols[$i] == 'Z') {
+                $cols[$i] = 'A';
+                
+                if($i == count($cols) - 1) {
+                    return 'A'.strrev(implode('', $cols));
+                }
+            }
+            else {
+                $cols[$i]++;
+                break;
+            }
+        }
+        
+        return strrev(implode('', $cols));
+    }
+    
+    
     protected function linewrap($string, $width, $break="\r\n", $cut=false)
     {
         $array = explode("\r\n", $string);
@@ -343,17 +368,6 @@ abstract class AbstractForm
             $string .= "\r\n";
         }
         return $string;
-    }
-    
-    public function print_hex($text)
-    {
-        $chunks = str_split($text, 21);
-        foreach($chunks as $str) {
-            for ($i = 0; $i < strlen($str); $i++) {
-                echo '0x'.dechex(ord($str[$i])).' ';
-            }
-            echo "\t\t", $str.PHP_EOL;
-        }
     }
     
     /**

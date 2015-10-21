@@ -2,6 +2,8 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class CoversheetRegistration extends AbstractForm
 {
@@ -12,9 +14,16 @@ class CoversheetRegistration extends AbstractForm
     
     public function generate()
     {
+        Logger::getInstance()->info(
+            'Generating Coversheet Registration',
+            [
+                'lpaId' => $this->lpa->id
+            ]
+        );
+        
         $filePath = $this->registerTempFile('Coversheet');
         
-        $coversheetRegistration = PdfProcessor::getPdftkInstance($this->pdfTemplatePath.'/LP1_CoversheetRegistration.pdf');
+        $coversheetRegistration = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP1_CoversheetRegistration.pdf');
         
         $coversheetRegistration->fillForm(
             array(

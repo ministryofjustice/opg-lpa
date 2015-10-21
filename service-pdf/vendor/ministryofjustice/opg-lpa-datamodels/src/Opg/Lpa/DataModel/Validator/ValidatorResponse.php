@@ -12,7 +12,7 @@ use ArrayObject;
 class ValidatorResponse extends ArrayObject implements ValidatorResponseInterface {
 
     /**
-     * Return true iff this response contains one or more errors. False otherwise.
+     * Return true if this response contains one or more errors. False otherwise.
      *
      * @return bool
      */

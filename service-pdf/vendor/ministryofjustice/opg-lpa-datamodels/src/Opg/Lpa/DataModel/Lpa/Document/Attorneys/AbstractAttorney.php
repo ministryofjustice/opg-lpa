@@ -35,7 +35,7 @@ abstract class AbstractAttorney extends AbstractData {
     public static function loadValidatorMetadata(ClassMetadata $metadata){
 
         $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank([ 'groups' => ['require-actor-ids'] ]),
+            new Assert\NotBlank([ 'groups' => ['required-at-api'] ]),
             new Assert\Type([ 'type' => 'int' ]),
         ]);
 
