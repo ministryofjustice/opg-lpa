@@ -20,7 +20,11 @@ class AuthenticationListener {
 
     public function authenticate( MvcEvent $e ){
 
+        $log = $e->getApplication()->getServiceManager()->get('Logger');
+        
         $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
+
+        $config = $e->getApplication()->getServiceManager()->get('Config');
 
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
@@ -29,27 +33,49 @@ class AuthenticationListener {
          *
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
-        $token = $e->getRequest()->getHeader('X-AuthOne');
-
+        $token = $e->getRequest()->getHeader('Token');
+        
         if (!$token) {
 
             // No token; set Guest....
             $auth->getStorage()->write( new Identity\Guest() );
+            
+            $log->info(
+                'No token, guest set in Authentication Listener'
+            );
 
         } else {
 
             $token = trim($token->getFieldValue());
+            
+            $log->info(
+                'Authentication attempt with ' . $token
+            );
 
-            $authAdapter = new Adapter\LpaAuthOne( $token );
+            $authAdapter = new Adapter\LpaAuth( $token, $config['authentication']['endpoint'] );
 
             // If successful, the identity will be persisted for the request.
             $result = $auth->authenticate($authAdapter);
 
             if( AuthenticationResult::SUCCESS !== $result->getCode() ){
+
+                $log->info(
+                    'Authentication failed'
+                );
+                
                 return new ApiProblemResponse( new ApiProblem( 401, 'Invalid authentication token' ) );
+
+            } else {
+
+                $log->info(
+                    'Authentication success'
+                );
+
+                // On SUCCESS, we don't return anything (as we're in a Listener).
+
             }
 
-        }
+        } // if token
 
     } // function
 

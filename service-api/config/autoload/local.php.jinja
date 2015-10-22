@@ -2,6 +2,15 @@
 
 return array(
 
+    'authentication' => [
+        // 'endpoint' => '{{pillar['endpoints']['auth']}}/v1/authenticate', # Enable when endpoint is moved to v2
+    ],
+
+    'log' => [
+        'path' => '{{pillar['apps']['opg-lpa-api2']['log-dir']}}/application.log',
+        'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
+    ], // log
+
     'db' => [
 
         'mongo' => [
@@ -39,6 +48,11 @@ return array(
         ], // resque
 
     ], // db
+    
+    'log' => [
+        'path' => '/var/log/opg-lpa-api2/application.log',
+        'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
+    ], // log
 
     'pdf' => [
 

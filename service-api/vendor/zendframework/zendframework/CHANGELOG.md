@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2.4.7 (2015-08-11)
+
+- [15: validateInputs must allow ArrayAccess for $data](https://github.com/zendframework/zend-inputfilter/pull/15)
+
+## 2.4.6 (2015-08-03)
+
+- [10: Take fallback value into account](https://github.com/zendframework/zend-inputfilter/pull/10)
+
+## 2.4.5 (2015-07-28)
+
+- [7: Ensure Required, AllowEmpty validation combo works](https://github.com/zendframework/zend-inputfilter/pull/7)
+
+## 2.4.4 (2015-07-21)
+
+- [9: Fix count increment on insert in PriorityList](https://github.com/zendframework/zend-stdlib/pull/9)
+
 ## 2.4.2 (2015-05-11)
 
 - [7503: Mail header - boundary issue (related to ZF2015-04)](https://github.com/zendframework/zf2/issues/7503)

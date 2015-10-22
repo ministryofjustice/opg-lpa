@@ -68,7 +68,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $validation = $attorney->validateAllGroups();
+        $validation = $attorney->validateForApi();
 
         if( $validation->hasErrors() ){
             return new ValidationApiProblem( $validation );
@@ -185,7 +185,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
                 //---
 
-                $validation = $attorney->validateAllGroups();
+                $validation = $attorney->validateForApi();
 
                 if( $validation->hasErrors() ){
                     return new ValidationApiProblem( $validation );

@@ -210,8 +210,7 @@ class BaseInputFilter implements
      */
     public function isValid($context = null)
     {
-        $data = $this->getRawValues();
-        if (null === $data) {
+        if (null === $this->data) {
             throw new Exception\RuntimeException(sprintf(
                 '%s: no data present to validate!',
                 __METHOD__
@@ -219,18 +218,18 @@ class BaseInputFilter implements
         }
 
         $inputs = $this->validationGroup ?: array_keys($this->inputs);
-        return $this->validateInputs($inputs, $data, $context);
+        return $this->validateInputs($inputs, $this->data, $context);
     }
 
     /**
      * Validate a set of inputs against the current data
      *
-     * @param  array      $inputs
-     * @param  array      $data
+     * @param  array $inputs
+     * @param  array|ArrayAccess $data
      * @param  mixed|null $context
      * @return bool
      */
-    protected function validateInputs(array $inputs, array $data = array(), $context = null)
+    protected function validateInputs(array $inputs, $data = array(), $context = null)
     {
         // backwards compatibility
         if (empty($data)) {
@@ -242,9 +241,40 @@ class BaseInputFilter implements
         $valid               = true;
 
         foreach ($inputs as $name) {
-            $input      = $this->inputs[$name];
+            $input       = $this->inputs[$name];
+            $hasFallback = ($input instanceof Input && $input->hasFallback());
 
-            // make sure we have a value (empty) for validation of context
+            // If the value is required, not present in the data set, and
+            // has no fallback, validation fails.
+            if (!array_key_exists($name, $data)
+                && $input instanceof InputInterface
+                && $input->isRequired()
+                && !$hasFallback
+            ) {
+                $input->setErrorMessage('Value is required');
+                $this->invalidInputs[$name] = $input;
+
+                if ($input->breakOnFailure()) {
+                    return false;
+                }
+
+                $valid = false;
+                continue;
+            }
+
+            // If the value is required, not present in the data set, and
+            // has a fallback, validation passes, and we set the input
+            // value to the fallback.
+            if (!array_key_exists($name, $data)
+                && $input instanceof InputInterface
+                && $input->isRequired()
+                && $hasFallback
+            ) {
+                $input->setValue($input->getFallbackValue());
+                continue;
+            }
+
+            // Make sure we have a value (empty) for validation of context
             if (!array_key_exists($name, $data)) {
                 $data[$name] = null;
             }
