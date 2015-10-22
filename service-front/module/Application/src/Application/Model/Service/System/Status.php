@@ -38,12 +38,15 @@ class Status implements ServiceLocatorAwareInterface {
 
         $result['dynamo'] = $this->dynamo();
 
-
         //-----------------------------------
         // Check API 2
 
         $result['api'] = $this->api();
 
+        //-----------------------------------
+        // Check Auth 2
+
+        $result['auth'] = $this->auth();
 
         //-----------------------------------
         // Check v1 (#v1Code)
@@ -234,6 +237,44 @@ class Status implements ServiceLocatorAwareInterface {
 
             $response = $client->get(
                 $config['api_uri'] . '/ping',
+                ['connect_timeout' => 5, 'timeout' => 10]
+            );
+
+            // There should be no JSON if we don't get a 200, so return.
+            if ($response->getStatusCode() != 200) {
+                return $result;
+            }
+
+            //---
+
+            $result['details']['200'] = true;
+
+            $api = $response->json();
+
+            $result['ok'] = $api['ok'];
+            $result['details'] = $result['details'] + $api;
+
+        } catch( Exception $e ){ /* Don't throw exceptions; we just return ok==false */ }
+
+        return $result;
+
+    } // function
+
+    //------------------------------------------------------------------------
+
+    private function auth(){
+
+        $result = array( 'ok'=> false, 'details'=>array( '200'=>false ) );
+
+        try {
+
+            $config = $this->getServiceLocator()->get('config')['api_client'];
+
+            $client = new GuzzleClient();
+            $client->setDefaultOption('exceptions', false);
+
+            $response = $client->get(
+                $config['auth_uri'] . '/ping',
                 ['connect_timeout' => 5, 'timeout' => 10]
             );
 
