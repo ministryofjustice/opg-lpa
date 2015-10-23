@@ -22,13 +22,22 @@ class DateCheckController extends AbstractLpaController
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', ['lpa'=>$lpa]);
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', [
+            'lpa'=>$lpa,
+        ]);
         
-        $viewParams = [];
+        $fromPage = $this->params()->fromRoute('from-page');
+        
+        if ($fromPage == 'complete') {
+            $returnRoute = $this->url()->fromRoute('lpa/complete', ['lpa-id' => $lpa->get('id')]);
+        } else {
+            $returnRoute = $this->url()->fromRoute('user/dashboard');
+        }
         
         if($this->request->isPost()) {
             
             $post = $this->request->getPost();
+            $returnRoute = $post['returnRoute'];
             
             $form->setData($post);
             
@@ -57,6 +66,7 @@ class DateCheckController extends AbstractLpaController
         }
                 
         $viewParams['form'] = $form;
+        $viewParams['returnRoute'] = $returnRoute;
         
         return new ViewModel($viewParams);
     }
