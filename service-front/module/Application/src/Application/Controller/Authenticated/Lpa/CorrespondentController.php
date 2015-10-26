@@ -201,6 +201,8 @@ class CorrespondentController extends AbstractLpaController
                         ]));
                     }
                     
+                    $correspondent->set('isEdited', true);
+                    
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, $correspondent)) {
                         throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
                     }
