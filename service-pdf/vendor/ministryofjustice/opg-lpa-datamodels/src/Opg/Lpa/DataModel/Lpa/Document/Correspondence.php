@@ -64,6 +64,11 @@ class Correspondence extends AbstractData {
      */
     protected $contactInWelsh;
 
+    /**
+     * @var bool Set to true if any default values have been manually overridden
+     */
+    protected $contactDetailsEnteredManually;
+    
     //------------------------------------------------
 
     public static function loadValidatorMetadata(ClassMetadata $metadata){

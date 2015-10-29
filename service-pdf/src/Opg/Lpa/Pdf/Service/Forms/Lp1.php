@@ -474,17 +474,43 @@ abstract class Lp1 extends AbstractForm
             switch($this->lpa->document->correspondent->who) {
                 case Correspondence::WHO_DONOR:
                     $this->pdfFormData['who-is-correspondent'] = 'donor';
-                    $this->drawingTargets[17] = ['correspondent-empty-name-address'];
+                    
+                    if ($this->lpa->document->correspondent->contactDetailsEnteredManually === true) {
+                        $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
+                        $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
+                        $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
+                        $this->pdfFormData['lpa-document-correspondent-address-address1'] = $this->lpa->document->correspondent->address->address1;
+                        $this->pdfFormData['lpa-document-correspondent-address-address2'] = $this->lpa->document->correspondent->address->address2;
+                        $this->pdfFormData['lpa-document-correspondent-address-address3'] = $this->lpa->document->correspondent->address->address3;
+                        $this->pdfFormData['lpa-document-correspondent-address-postcode'] = $this->lpa->document->correspondent->address->postcode;
+                    } else {
+                        $this->drawingTargets[17] = ['correspondent-empty-name-address'];
+                    }
                     break;
                 case Correspondence::WHO_ATTORNEY:
+                    $isAddressCrossedOut = true;
+                    
                     $this->pdfFormData['who-is-correspondent'] = 'attorney';
                     if($this->lpa->document->correspondent->name instanceof Name) {
                         $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                         $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
                         $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
+                        
+                        if ($this->lpa->document->correspondent->contactDetailsEnteredManually === true) {
+                            $this->pdfFormData['lpa-document-correspondent-address-address1'] = $this->lpa->document->correspondent->address->address1;
+                            $this->pdfFormData['lpa-document-correspondent-address-address2'] = $this->lpa->document->correspondent->address->address2;
+                            $this->pdfFormData['lpa-document-correspondent-address-address3'] = $this->lpa->document->correspondent->address->address3;
+                            $this->pdfFormData['lpa-document-correspondent-address-postcode'] = $this->lpa->document->correspondent->address->postcode;
+                            $isAddressCrossedOut = false;
+                        }
                     }
+                    
+                    if ($isAddressCrossedOut) {
+                        $this->drawingTargets[17] = ['correspondent-empty-address'];
+                    }
+                    
                     $this->pdfFormData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;
-                    $this->drawingTargets[17] = ['correspondent-empty-address'];
+                    
                     break;
                 case Correspondence::WHO_OTHER:
                     $this->pdfFormData['who-is-correspondent'] = 'other';
