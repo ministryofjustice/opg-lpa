@@ -4,6 +4,7 @@ namespace Aws;
 /**
  * Builds AWS clients based on configuration settings.
  *
+ * @method \Aws\ApiGateway\ApiGatewayClient createApiGateway(array $args = [])
  * @method \Aws\AutoScaling\AutoScalingClient createAutoScaling(array $args = [])
  * @method \Aws\CloudFormation\CloudFormationClient createCloudFormation(array $args = [])
  * @method \Aws\CloudFront\CloudFrontClient createCloudFront(array $args = [])
@@ -64,7 +65,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.9.1';
+    const VERSION = '3.9.2';
 
     /** @var array Arguments for creating clients */
     private $args;

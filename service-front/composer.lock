@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7187895243de531fcd8915dee6512347",
-    "content-hash": "816533feb46afa9d17944f95a16e7377",
+    "hash": "adb6d43f98155d025a90d68ac9053ef2",
+    "content-hash": "1f62396315a3efc280545e94852f32ac",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.9.1",
+            "version": "3.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "adee5c36163f953331f290e7ca5393cf037d81bd"
+                "reference": "a06a225abbaf465d1640305c85f7c830e3c43ecf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/adee5c36163f953331f290e7ca5393cf037d81bd",
-                "reference": "adee5c36163f953331f290e7ca5393cf037d81bd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a06a225abbaf465d1640305c85f7c830e3c43ecf",
+                "reference": "a06a225abbaf465d1640305c85f7c830e3c43ecf",
                 "shasum": ""
             },
             "require": {
@@ -82,7 +82,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-10-26 19:38:48"
+            "time": "2015-10-29 20:17:13"
         },
         {
             "name": "doctrine/lexer",
@@ -803,7 +803,7 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.1.5",
+            "version": "v1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
