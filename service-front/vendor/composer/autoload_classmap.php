@@ -6,6 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Aws\\ApiGateway\\ApiGatewayClient' => $vendorDir . '/aws/aws-sdk-php/src/ApiGateway/ApiGatewayClient.php',
+    'Aws\\ApiGateway\\Exception\\ApiGatewayException' => $vendorDir . '/aws/aws-sdk-php/src/ApiGateway/Exception/ApiGatewayException.php',
     'Aws\\Api\\AbstractModel' => $vendorDir . '/aws/aws-sdk-php/src/Api/AbstractModel.php',
     'Aws\\Api\\ApiProvider' => $vendorDir . '/aws/aws-sdk-php/src/Api/ApiProvider.php',
     'Aws\\Api\\DateTimeResult' => $vendorDir . '/aws/aws-sdk-php/src/Api/DateTimeResult.php',

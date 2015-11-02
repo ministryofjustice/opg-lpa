@@ -205,7 +205,7 @@ class CorrespondentController extends AbstractLpaController
                     }
                     
                     // Let the PDF module know that we can't rely on the default donor or attorney values any more
-                    $correspondent->set('isEdited', true);
+                    $correspondent->set('contactDetailsEnteredManually', true);
                     
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, $correspondent)) {
                         throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
