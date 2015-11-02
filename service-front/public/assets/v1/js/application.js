@@ -4796,7 +4796,7 @@ lpa.updateSelectbox = function (el, value) {
 (function() {
     if ( !$('#lpa-type').hasClass('current') && $('section.current').offset() != undefined ) {
         setTimeout(function() {
-            if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) != 'lpa-type') {
+            if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) != 'type') {
                 window.scrollTo(0, $('section.current').offset().top - 107);
             }
         }, 200);
