@@ -23,7 +23,7 @@
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "^2.0.2",
         "zendframework/zend-crypt": "^2.3.4",
-        "ministryofjustice/opg-lpa-datamodels": "1.1.5",
+        "ministryofjustice/opg-lpa-datamodels": "1.1.6",
         "ministryofjustice/opg-lpa-logger": "^1.0.4"
     },
     "require-dev": {

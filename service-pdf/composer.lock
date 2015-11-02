@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9a71ac74f5369740457d240b8eb730f4",
-    "content-hash": "de1c05005f7a75a60b8e933257d0fe37",
+    "hash": "ddb914f1aaeda61072c8e94444ff94aa",
+    "content-hash": "7e679c30824514feb677f472b632712b",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -599,7 +599,7 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.1.5",
+            "version": "v1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
