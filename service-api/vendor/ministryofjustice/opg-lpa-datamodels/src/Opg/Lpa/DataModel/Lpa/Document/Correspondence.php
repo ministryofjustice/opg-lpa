@@ -65,9 +65,9 @@ class Correspondence extends AbstractData {
     protected $contactInWelsh;
 
     /**
-     * @var bool Set to true if any default values have been updated
+     * @var bool Set to true if any default values have been manually overridden
      */
-    protected $isEdited;
+    protected $contactDetailsEnteredManually;
     
     //------------------------------------------------
 
