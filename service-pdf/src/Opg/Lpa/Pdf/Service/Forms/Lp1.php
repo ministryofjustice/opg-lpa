@@ -46,6 +46,8 @@ abstract class Lp1 extends AbstractForm
         $stateChecker = new StateChecker($lpa);
         
         $this->generateInstrumentOnly = !$stateChecker->isStateCompleted();
+
+        $this->generateInstrumentOnly = false;
     }
     
     /**
@@ -592,31 +594,42 @@ abstract class Lp1 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        $pdf = PdftkInstance::getInstance();
-        
+        $instrument = PdftkInstance::getInstance();
+        $registration = PdftkInstance::getInstance();
+
         $fileTag = $lp1FileTag = 'B';
         if(isset($this->interFileStack['LP1']) && isset($this->interFileStack['Coversheet'])) {
-            $pdf->addFile($this->interFileStack['Coversheet'], 'A');
-            $pdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
+            $instrument->addFile($this->interFileStack['Coversheet'], 'A');
+            $instrument->addFile($this->interFileStack['LP1'], $lp1FileTag);
+
+            $registration->addFile($this->interFileStack['Coversheet'], 'A');
+            $registration->addFile($this->interFileStack['LP1'], $lp1FileTag);
         }
         else {
             throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
         }
+
+        //-----------------------------------------------------
+        // Cover section
         
         // add cover sheet
-        $pdf->cat(1, 'end', 'A');
+        $instrument->cat(1, 'end', 'A');
+
+
+        //-----------------------------------------------------
+        // Instrument section
         
         // add page 1-15
-        $pdf->cat(1, 15, $lp1FileTag);
+        $instrument->cat(1, 15, $lp1FileTag);
         
         // Section 11 - additional attorneys signature
         if(isset($this->interFileStack['AdditionalAttorneySignature'])) {
             foreach($this->interFileStack['AdditionalAttorneySignature'] as $additionalAttorneySignature) {
                 $fileTag = $this->nextTag($fileTag);
-                $pdf->addFile($additionalAttorneySignature, $fileTag);
+                $instrument->addFile($additionalAttorneySignature, $fileTag);
                 
                 // add an additional attorney signature page
-                $pdf->cat(1, null, $fileTag);
+                $instrument->cat(1, null, $fileTag);
             }
         }
 
@@ -624,10 +637,10 @@ abstract class Lp1 extends AbstractForm
         if(isset($this->interFileStack['CS1'])) {
             foreach ($this->interFileStack['CS1'] as $cs1) {
                 $fileTag = $this->nextTag($fileTag);
-                $pdf->addFile($cs1, $fileTag);
+                $instrument->addFile($cs1, $fileTag);
         
                 // add a CS1 page
-                $pdf->cat(1, null, $fileTag);
+                $instrument->cat(1, null, $fileTag);
             }
         }
         
@@ -635,64 +648,79 @@ abstract class Lp1 extends AbstractForm
         if(isset($this->interFileStack['CS2'])) {
             foreach ($this->interFileStack['CS2'] as $cs2) {
                 $fileTag = $this->nextTag($fileTag);
-                $pdf->addFile($cs2, $fileTag);
+                $instrument->addFile($cs2, $fileTag);
         
                 // add a CS2 page
-                $pdf->cat(1, null, $fileTag);
+                $instrument->cat(1, null, $fileTag);
             }
         }
         
         // Continuation Sheet 3
         if(isset($this->interFileStack['CS3'])) {
             $fileTag = $this->nextTag($fileTag);
-            $pdf->addFile($this->interFileStack['CS3'], $fileTag);
+            $instrument->addFile($this->interFileStack['CS3'], $fileTag);
         
             // add a CS3 page
-            $pdf->cat(1, null, $fileTag);
+            $instrument->cat(1, null, $fileTag);
         }
         
         // Continuation Sheet 4
         if(isset($this->interFileStack['CS4'])) {
             $fileTag = $this->nextTag($fileTag);
-            $pdf->addFile($this->interFileStack['CS4'], $fileTag);
+            $instrument->addFile($this->interFileStack['CS4'], $fileTag);
         
             // add a CS4 page
-            $pdf->cat(1, null, $fileTag);
+            $instrument->cat(1, null, $fileTag);
         }
+
+        //-----------------------------------------------------
+        // Registration section
         
         // skip adding LPA registration pages if only instrument pdf is to be generated
         if(!$this->generateInstrumentOnly) {
             
             // add page 16, 17
-            $pdf->cat(16, 17, $lp1FileTag);
+            $registration->cat(16, 17, $lp1FileTag);
             
             // Section 12 additional applicants
             if(isset($this->interFileStack['AdditionalApplicant'])) {
                 foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
                     $fileTag = $this->nextTag($fileTag);
-                    $pdf->addFile($additionalApplicant, $fileTag);
+                    $registration->addFile($additionalApplicant, $fileTag);
                     
                     // add an additional applicant page
-                    $pdf->cat(1, null, $fileTag);
+                    $registration->cat(1, null, $fileTag);
                 }
             }
             
             // add page 18, 19, 20
-            $pdf->cat(18, 20, $lp1FileTag);
+            $registration->cat(18, 20, $lp1FileTag);
             
             // Section 15 - additional applicants signature
             if(isset($this->interFileStack['AdditionalApplicantSignature'])) {
                 foreach($this->interFileStack['AdditionalApplicantSignature'] as $additionalApplicantSignature) {
                     $fileTag = $this->nextTag($fileTag);
-                    $pdf->addFile($additionalApplicantSignature, $fileTag);
+                    $registration->addFile($additionalApplicantSignature, $fileTag);
                     
                     // add an additional applicant signature page
-                    $pdf->cat(1, null, $fileTag);
+                    $registration->cat(1, null, $fileTag);
                 }
             }
         }
+
+        //---
+
+        $registration = new \mikehaertl\pdftk\Pdf( $registration );
+        $registration->stamp( $this->pdfTemplatePath.'/RegistrationWatermark.pdf' );
+
+        $fileTag = $this->nextTag($fileTag);
+        $instrument->addFile($registration, $fileTag);
+        $instrument->cat(1, 'end', $fileTag);
+
+        //---
         
-        $pdf->saveAs($this->generatedPdfFilePath);
-        
+        //$instrument->saveAs($this->generatedPdfFilePath);
+        $instrument->saveAs($this->generatedPdfFilePath);
+
     } // function mergePdfs()
 } // class Lp1
