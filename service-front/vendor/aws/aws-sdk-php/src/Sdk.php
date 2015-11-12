@@ -4,6 +4,7 @@ namespace Aws;
 /**
  * Builds AWS clients based on configuration settings.
  *
+ * @method \Aws\ApiGateway\ApiGatewayClient createApiGateway(array $args = [])
  * @method \Aws\AutoScaling\AutoScalingClient createAutoScaling(array $args = [])
  * @method \Aws\CloudFormation\CloudFormationClient createCloudFormation(array $args = [])
  * @method \Aws\CloudFront\CloudFrontClient createCloudFront(array $args = [])
@@ -32,13 +33,19 @@ namespace Aws;
  * @method \Aws\ElasticBeanstalk\ElasticBeanstalkClient createElasticBeanstalk(array $args = [])
  * @method \Aws\ElasticLoadBalancing\ElasticLoadBalancingClient createElasticLoadBalancing(array $args = [])
  * @method \Aws\ElasticTranscoder\ElasticTranscoderClient createElasticTranscoder(array $args = [])
+ * @method \Aws\ElasticsearchService\ElasticsearchServiceClient createElasticsearchService(array $args = [])
  * @method \Aws\Emr\EmrClient createEmr(array $args = [])
+ * @method \Aws\Firehose\FirehoseClient createFirehose(array $args = [])
  * @method \Aws\Glacier\GlacierClient createGlacier(array $args = [])
  * @method \Aws\Iam\IamClient createIam(array $args = [])
+ * @method \Aws\Inspector\InspectorClient createInspector(array $args = [])
+ * @method \Aws\Iot\IotClient createIot(array $args = [])
+ * @method \Aws\IotDataPlane\IotDataPlaneClient createIotDataPlane(array $args = [])
  * @method \Aws\Kinesis\KinesisClient createKinesis(array $args = [])
  * @method \Aws\Kms\KmsClient createKms(array $args = [])
  * @method \Aws\Lambda\LambdaClient createLambda(array $args = [])
  * @method \Aws\MachineLearning\MachineLearningClient createMachineLearning(array $args = [])
+ * @method \Aws\MarketplaceCommerceAnalytics\MarketplaceCommerceAnalyticsClient createMarketplaceCommerceAnalytics(array $args = [])
  * @method \Aws\OpsWorks\OpsWorksClient createOpsWorks(array $args = [])
  * @method \Aws\Rds\RdsClient createRds(array $args = [])
  * @method \Aws\Redshift\RedshiftClient createRedshift(array $args = [])
@@ -53,11 +60,12 @@ namespace Aws;
  * @method \Aws\Sts\StsClient createSts(array $args = [])
  * @method \Aws\Support\SupportClient createSupport(array $args = [])
  * @method \Aws\Swf\SwfClient createSwf(array $args = [])
+ * @method \Aws\Waf\WafClient createWaf(array $args = [])
  * @method \Aws\WorkSpaces\WorkSpacesClient createWorkSpaces(array $args = [])
  */
 class Sdk
 {
-    const VERSION = '3.5.0';
+    const VERSION = '3.10.0';
 
     /** @var array Arguments for creating clients */
     private $args;
