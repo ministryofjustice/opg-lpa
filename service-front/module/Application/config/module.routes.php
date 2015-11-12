@@ -547,12 +547,13 @@ return [
                         ],
                     ],
                     'date-check' => [
-                        'type' => 'Literal',
+                        'type' => 'Segment',
                         'options' => [
-                            'route'    => '/date-check',
+                            'route'    => '/date-check[/:from-page]',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\DateCheckController',
                                 'action'     => 'index',
+                                'from-page'  => 'dashboard',
                             ],
                         ],
                     ],

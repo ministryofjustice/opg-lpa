@@ -7,7 +7,23 @@ class CorrespondentForm extends AbstractActorForm
 {
     protected $formElements = [
             'who'        => [
-                    'type' => 'Hidden',
+                    'type' => 'Select',
+                    'options' => [
+                        'value_options' => [
+                            'donor' => [
+                                'value' => 'donor',
+                                'label' => 'Donor',
+                            ],
+                            'attorney' => [
+                                'value' => 'attorney',
+                                'label' => 'Attorney',
+                            ],
+                            'other' => [
+                                'value' => 'other',
+                                'label' => 'Other',
+                            ]
+                        ],
+                    ],
             ],
             'name-title' => [
                     'type' => 'Text',

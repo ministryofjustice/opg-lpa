@@ -195,11 +195,17 @@ class CorrespondentController extends AbstractLpaController
                         $correspondent = new Correspondence($correspondentForm->getModelDataFromValidatedForm());
                     }
                     else {
+                        // If correspondent has been previously saved,
+                        // merge form data with non-form data from current record
+                        
                         $correspondent = new Correspondence(array_merge($correspondentForm->getModelDataFromValidatedForm(), [
                                 'contactByPost'  => $this->getLpa()->document->correspondent->contactByPost,
                                 'contactInWelsh' => $this->getLpa()->document->correspondent->contactInWelsh,
                         ]));
                     }
+                    
+                    // Let the PDF module know that we can't rely on the default donor or attorney values any more
+                    $correspondent->set('contactDetailsEnteredManually', true);
                     
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, $correspondent)) {
                         throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);

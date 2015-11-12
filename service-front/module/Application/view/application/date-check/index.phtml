@@ -4,7 +4,8 @@
 <?php if ($this->dateError === ''): ?>
 	<div style="background-repeat: no-repeat; background-position: 10px 50%; border-left:6px solid #28A197; margin-top:1em; margin-bottom:2em; padding:1em 1em 1em 1.5em; font-size:1.5em; background-color:#EBF5F4; background-image:url('/assets/v1/images/icon/progress-tick.png')">
     	The LPA was signed in the correct order.
-    	<a class="button" style='float: right;' href="/user/dashboard" role="button">Return to dashboard</a>
+    	<?php $buttonText = strpos($this->returnRoute, 'dashboard') === false ? 'Return to your LPA' : 'Return to dashboard'; ?>
+    	<a class="button" style='float: right;' href="<?= $this->returnRoute; ?>" role="button"><?= $buttonText ?></a>
 	</div>
 	
 	<p>
@@ -64,6 +65,8 @@
 
 
 	<?= $this->form()->openTag($form); ?>
+	
+	<input type="hidden" name="returnRoute" value="<?= $this->returnRoute; ?>">
     
     <?= $this->formElement($csrf) ?>
     <?= $this->formElementErrors($csrf) ?>

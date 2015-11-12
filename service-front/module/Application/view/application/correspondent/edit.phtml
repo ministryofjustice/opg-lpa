@@ -37,6 +37,8 @@
     $email      = $form->get('email-address');
     $phone      = $form->get('phone-number');
     
+    $who->setOptions(['label' => 'Role']);
+    
     $title->setOptions( ['label' => 'Title'] );
     $title->setAttributes(['id'=>'name-title']);
     $firstname->setOptions( ['label' => 'First names'] );
@@ -85,6 +87,16 @@
 
 <fieldset>
 
+    <div class="form_element">
+    
+        <?= $formLabel->openTag() . $who->getOption('label') . $formLabel->closeTag(); ?>
+        
+        <?= $this->formElement($who) ?>
+        
+        <?= $this->formElementErrors($who) ?>
+    
+    </div>
+    
     <div class="form_element">
     
         <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
@@ -205,7 +217,5 @@
 <input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
 <button name="cancel" id="form-cancel" type="button" class="button-secondary">Cancel</button>
 </p>
-
-<?= $this->formhidden($who) ?>
 
 <?= $this->form()->closeTag(); ?>

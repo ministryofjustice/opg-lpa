@@ -50,7 +50,7 @@ class CompleteController extends AbstractLpaController
         $viewParams = [
                 'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp1']),
                 'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$lpa->id]),
-                'dateCheckUrl'       => $this->url()->fromRoute('lpa/date-check', ['lpa-id'=>$lpa->id]),
+                'dateCheckUrl'       => $this->url()->fromRoute('lpa/date-check', ['lpa-id'=>$lpa->id, 'from-page'=>'complete']),
                 'correspondentName'  => (($lpa->document->correspondent->name instanceof Name)?$lpa->document->correspondent->name:$lpa->document->correspondent->company),
                 'paymentAmount'      => $lpa->payment->amount,
                 'paymentReferenceNo' => $lpa->payment->reference,
