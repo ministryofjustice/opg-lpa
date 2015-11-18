@@ -6,7 +6,32 @@ use Opg\Lpa\Logger\Logger;
 
 class LoggerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testMessageLogging()
+    public function testMessageLoggingWithSns()
+    {
+        $message1 = 'Hello world';
+        $message2 = 'Hello again';
+        $message3 = 'I am warning you';
+        $message4 = 'EMERGENCY!';
+
+        $logger = new Logger();
+        
+        // Create sentry.key file in /tests to test sending to Sentry
+        // It should be ignored by .gitignore
+        if (file_exists('sns.credentials')) {
+            $config = require('sns.credentials');
+            $logger->setSnsCredentials(
+                $config['client'],
+                $config['endpoints']
+            );
+        }
+    
+        $logger->alert($message1);
+        $logger->err($message2);
+        $logger->warn($message3);
+        $logger->emerg($message4);
+    }
+    
+    public function testMessageLoggingWithSentry()
     {
         $filename = '/tmp/logger-test-' . uniqid() . '.temp';
         
