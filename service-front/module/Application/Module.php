@@ -32,6 +32,7 @@ class Module{
         // Register error handler for dispatch and render errors
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
         
         register_shutdown_function(function () {
             $error = error_get_last();
@@ -275,6 +276,26 @@ class Module{
 
         return $config;
 
+    }
+    
+    public function preRender(MvcEvent $e)
+    {
+        $children = $e->getViewModel()->getChildren();
+        
+        $twig = false;
+        foreach ($children as $child) {
+            
+            if (file_exists('module/Application/view/' . $child->getTemplate() . '.twig')) {
+                $twig = true;
+                break;
+            }
+            
+        }
+        
+        if ($twig) {
+            $e->getViewModel()->setTemplate('layout/twig/layout');
+        }
+        
     }
     
     /**
