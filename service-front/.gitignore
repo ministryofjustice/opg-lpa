@@ -10,6 +10,6 @@ nbproject
 *.iml
 .sass-cache/*
 node_modules/*
-bower_downloads/*
+assets/bower/*
 vendor/zendframework/*
 public/nocommit/*
