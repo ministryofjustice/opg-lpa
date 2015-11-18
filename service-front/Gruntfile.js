@@ -9,10 +9,13 @@ module.exports = function (grunt) {
         sass: {
             dev: {
                 options: {
-                    loadPath: 'assets/bower/govuk_elements/govuk/public/sass'
+                    loadPath: [
+                        'assets/bower/govuk_elements/govuk/public/sass',
+                        'assets/bower/govuk_elements/public/sass'
+                    ]
                 },
                 files: {
-                    'public/assets/v2/css/main.css': 'assets/sass/main.scss',
+                    'public/assets/v2/css/application.css': 'assets/sass/application.scss',
                     'public/assets/v2/css/govuk-template.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template.scss',
                     'public/assets/v2/css/govuk-template-ie8.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie8.scss',
                     'public/assets/v2/css/govuk-template-ie7.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie7.scss',
