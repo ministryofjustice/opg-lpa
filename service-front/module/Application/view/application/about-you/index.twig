@@ -1,11 +1,7 @@
 {% extends 'application/about-you/form.twig' %}
 
-{% block header %}
+{% block aboutyouheader %}
 
-<p>Update your details.</p>
+I am the form header - I change depending on whether this is the first time you are using me or not.
 
-<p><a href="<?= $this->url('user/change-password') ?>">Change Password</a></p>
-<p><a href="<?= $this->url('user/change-email-address') ?>">Change Email Address</a></p>
-<p><a href="<?= $this->url('user/delete') ?>">Delete Account</a></p>
-
-{% endblock header %}
+{% endblock aboutyouheader %}
