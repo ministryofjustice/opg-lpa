@@ -28,7 +28,7 @@
     },
     "require": {
         "php": ">=5.3.2",
-        "guzzle/http": "~3.1",
+        "guzzle/guzzle": "~3.9",
         "symfony/http-foundation": "~2.1"
     },
     "require-dev": {
@@ -71,26 +71,7 @@
             "TargetPay_Directebanking",
             "TargetPay_Ideal",
             "TargetPay_Mrcash",
-            "TwoCheckout",
-            "WorldPay",
-            "Alipay Bank",
-            "AliPay Dual Func",
-            "Alipay Express",
-            "Alipay Mobile Express",
-            "Alipay Secured",
-            "Alipay Wap Express",
-            "Cybersource",
-            "DataCash",
-            "Ecopayz",
-            "Neteller",
-            "Pacnet",
-            "PaymentSense",
-            "Realex Remote",
-            "SecPay (PayPoint.net)",
-            "Sisow",
-            "Skrill",
-            "YandexMoney",
-            "YandexMoneyIndividual"
+            "WorldPay"
         ]
     }
 }

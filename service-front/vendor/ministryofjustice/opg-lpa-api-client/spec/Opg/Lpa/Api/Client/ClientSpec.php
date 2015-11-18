@@ -9,176 +9,116 @@ use ZendPdf\PdfDocument;
 
 class ClientSpec extends ObjectBehavior
 {
-    function it_can_create_an_account_through_the_auth_server()
+    function it_is_initializable()
     {
-        $this->registerAccount(
-            'deleteme-' . uniqid() . '@example.com',
-            'P$ssword' . uniqid()
-        )->shouldBeAToken();
+        $this->shouldHaveType('Opg\Lpa\Api\Client\Client');
     }
     
-    function it_will_return_a_registration_error_on_bad_email()
-    {
-        $this->registerAccount(
-            'deleteme-' . uniqid() . 'example.com',
-            'P$ssword' . uniqid()
-        );
-         
-        $this->getLastStatusCode()->shouldBe(400);
-        $this->getLastContent()['detail']->shouldBe('invalid-username');
-    }
-    
-    function it_will_report_an_email_already_exists_error()
-    {
-        $email = 'deleteme-' . uniqid() . '@example.com';
-         
-        $this->registerAccount(
-            $email,
-            'P$assword' . uniqid()
-        )->shouldBeAToken();
-         
-        $this->registerAccount(
-            $email,
-            'P$assword' . uniqid()
-        );
-         
-        $this->getLastStatusCode()->shouldBe(400);
-         
-        $this->getLastContent()['detail']->shouldBe('username-already-exists');
-    }
-    
-    function it_can_activate_a_registered_account()
-    {
-        $activationToken = $this->registerAccount(
-            'deleteme-' . uniqid() . '@example.com',
-            'P$ssword' . uniqid()
-        );
-         
-        $this->activateAccount($activationToken)->shouldBe(true);
-    }
-     
-    function it_will_not_activate_when_given_a_bad_token()
-    {
-        $this->activateAccount('IAmABadToken')->shouldBe(false);
-    }
-    
-    function it_will_log_an_activation_failure()
-    {
-        $this->activateAccount('IAmABadToken')->shouldBe(false);
-    
-        $this->getLastStatusCode()->shouldBe(400);
-    }
-    
-    /**
-     * This one takes a long time - re-instate it to test pagination
-     * from the API - perhaps by changing the pagination in the API to
-     * something smaller and changing the number of applications
-     * tested here.
-     *
-     * To reinstate, remove the "skipped" from the function name
-     */
-    function skipped_it_can_combine_several_pages_of_applications_into_a_single_array()
-    {
-        $numApplications = 900;
-         
-        destroyAndRecreateTestUser();
-         
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-         
-        for ($i=0; $i<$numApplications; $i++) {
-            $this->createApplication();
-        }
-         
-        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
-    }
-    
-    function skipped_it_will_eventually_find_a_pdf_ready_for_download()
-    {
-        $lpaId = getANewCompletedLpa($this);
-    
-        $pdfType = 'lpa120';
-    
-        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('in-queue');
-    
-        // now we simulate the polling mechanism
-        $startTime = time();
-        while ($this->getPdfDetails($lpaId, $pdfType)['status'] == 'in-queue') {
-            $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBeEitherReadyOrQueued();
-        } while (time() - $startTime < 60 && $this->getPdfDetails($lpaId, $pdfType)['status'] == 'in-queue');
-    
-        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('ready');
-        $this->getPdfDetails($lpaId, $pdfType)['type']->shouldBe($pdfType);
-    
-        $stream = $this->getPdf($lpaId, $pdfType)->shouldBeAPdfStream();
-    }
-    
-    function skipped_it_can_get_auth_server_stats()
+    function it_can_get_auth_server_stats()
     {
         $stats = $this->getAuthStats()->shouldBeTheAuthStatsArray();
     }
     
-    function it_will_get_an_email_update_token()
-    {
-        $this->beConstructedWith(getTestUserToken());
-        $newEmail = 'deleteme-' . uniqid() . '@example.com';
-    
-        $this->requestEmailUpdate($newEmail)->shouldBeAToken();
-    }
-    
-    function it_will_update_an_account_email_on_the_auth_server()
-    {
-        $this->beConstructedWith(getTestUserToken());
-    
-        $newEmail = 'deleteme-' . uniqid() . '@example.com';
-         
-        $token = $this->requestEmailUpdate($newEmail);
-    
-        $this->updateAuthEmail($token)->shouldBe(true);
-         
-        $this->authenticate($newEmail, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(true);
-    
-        destroyAndRecreateTestUser();
-    }
-    
-    function it_will_update_a_password_for_an_authenticated_user()
+    function it_can_set_and_get_and_delete_metadata()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         
-        $password = 'Test$N3wTestPassword';
+        $lpaId = $this->createApplication();
         
-        $this->updateAuthPassword(TEST_AUTH_PASSWORD, $password)->shouldBeAToken();
-        
-        // Check we can login with the new password.
-        $this->authenticate(TEST_AUTH_EMAIL, $password)->isAuthenticated()->shouldBe(true);
-        
-        // Delete the new account (as it now has the 'wrong' password)
-        $this->deleteUserAndAllTheirLpas( $this->getToken() );
-        
-        destroyAndRecreateTestUser();
-        
+        $this->setMetaData($lpaId, ['test-meta' => 'data'])->shouldBe(true);
+        $this->getMetaData($lpaId)['test-meta']->shouldBe('data');
+        $this->deleteMetaData($lpaId)->shouldBe(true);
+        $this->getMetaData($lpaId)->shouldBe(null);
     }
     
-    function it_will_return_the_username_when_given_a_valid_token()
+    function it_can_set_and_get_the_lpa_seed()
+    {
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+        
+        $lpaId = $this->createApplication();
+        $seed1 = $this->createApplication();
+        $seed2 = $this->createApplication();
+                
+        $this->setSeed($lpaId, $seed1)->shouldBe(true);
+        $this->getSeedDetails($lpaId)['seed']->shouldBe($seed1);
+        $this->setSeed($lpaId, $seed2)->shouldBe(true);
+        $this->getSeedDetails($lpaId)['seed']->shouldBe($seed2);
+    }
+    
+    function it_will_eventually_find_a_pdf_ready_for_download()
+    {
+        $lpaId = getANewCompletedLpa($this);
+        
+        $pdfType = 'lpa120';
+    
+        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('in-queue');
+        
+        // now we simulate the polling mechanism
+        // frustratingly I can't make PHPSpec allow us to check
+        // the status, so I just wait for a while
+        $startTime = time();
+        do {
+            $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBeEitherReadyOrQueued();
+            $secondsElapsed = time() - $startTime;
+        } while ($secondsElapsed < 10);
+        
+        $this->getPdfDetails($lpaId, $pdfType)['status']->shouldBe('ready');
+        $this->getPdfDetails($lpaId, $pdfType)['type']->shouldBe($pdfType);
+        
+        $stream = $this->getPdf($lpaId, $pdfType)->shouldBeAPdfStream();
+    }
+
+    function it_can_get_a_list_of_pdfs()
+    {
+        $numApplications = 3;
+         
+        destroyAndRecreateTestUser();
+         
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+
+        $lpaIds = [];
+        for ($i=0; $i<$numApplications; $i++) {
+            $lpaId[] = $this->createApplication();
+        }
+         
+        $this->getPdfList($lpaId[0])->shouldHaveCount(3);
+        $this->getPdfList($lpaId[1])[0]->shouldHaveCount(4);
+        $this->getPdfList($lpaId[2])[0]['type']->shouldBe('lpa120');
+    }
+    
+    function it_can_be_constructed_from_an_auth_token_then_update_an_account_email_on_the_auth_server()
+    {
+        $this->beConstructedWith(getTestUserToken());
+        $newEmail = 'deleteme-' . uniqid() . '@example.com';
+         
+        $this->updateAuthEmail(
+            $newEmail
+        )->shouldBe(true);
+         
+        $this->authenticate($newEmail, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(true);
+        
+        destroyAndRecreateTestUser();
+    }
+
+    function it_can_authenticate_against_the_auth_server()
     {
         $email = 'deleteme-' . uniqid() . '@example.com';
-        $password = 'Test$' . uniqid();
+        $password = uniqid();
          
         $activationToken = $this->registerAccount($email, $password);
          
         $this->activateAccount($activationToken)->shouldBe(true);
-         
-        $authToken = $this->authenticate(
+    
+        $this->authenticate(
             $email,
             $password
-        )->getToken();
-         
-        $this->getEmailFromToken($authToken)->shouldBe($email);
+        )->isAuthenticated()->shouldBe(true);
     }
-     
+    
     function it_can_delete_an_account()
     {
         $email = 'deleteme-' . uniqid() . '@example.com';
-        $password = 'Test$' . uniqid();
+        $password = uniqid();
          
         $activationToken = $this->registerAccount($email, $password);
          
@@ -196,22 +136,11 @@ class ClientSpec extends ObjectBehavior
             $password
         )->isAuthenticated()->shouldBe(false);
          
-        $this->getLastStatusCode()->shouldBe(401);
-    }
-    
-    function it_can_authenticate_against_the_auth_server()
-    {
-        $email = 'deleteme-' . uniqid() . '@example.com';
-        $password = 'Test$' . uniqid();
-         
-        $activationToken = $this->registerAccount($email, $password);
-    
-        $this->activateAccount($activationToken)->shouldBe(true);
-    
-        $this->authenticate(
-            $email,
-            $password
-        )->isAuthenticated()->shouldBe(true);
+        $this->getLastStatusCode()->shouldBe(400);
+        $this->getLastContent()->shouldBe([
+            'error' => 'invalid_request',
+            'error_description' => 'user not found'
+        ]);
     }
     
     function it_can_create_a_new_application()
@@ -219,51 +148,7 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $this->createApplication()->shouldBeAPositiveInteger();
     }
-    
-    function it_can_set_and_get_the_lpa_seed()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-    
-        $lpaId = $this->createApplication();
-        $seed1 = $this->createApplication();
-        $seed2 = $this->createApplication();
-    
-        $this->setSeed($lpaId, $seed1)->shouldBe(true);
-        $this->getSeedDetails($lpaId)['seed']->shouldBe($seed1);
-        $this->setSeed($lpaId, $seed2)->shouldBe(true);
-        $this->getSeedDetails($lpaId)['seed']->shouldBe($seed2);
-    }
-    
-    function it_can_set_and_get_and_delete_metadata()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-    
-        $lpaId = $this->createApplication();
-    
-        $this->setMetaData($lpaId, ['test-meta' => 'data'])->shouldBe(true);
-        $this->getMetaData($lpaId)['test-meta']->shouldBe('data');
-        $this->deleteMetaData($lpaId)->shouldBe(true);
-        $this->getMetaData($lpaId)->shouldBe(null);
-    }
-    
-    function it_can_get_a_list_of_pdfs()
-    {
-        $numApplications = 3;
-         
-        destroyAndRecreateTestUser();
-         
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-    
-        $lpaIds = [];
-        for ($i=0; $i<$numApplications; $i++) {
-            $lpaId[] = $this->createApplication();
-        }
-         
-        $this->getPdfList($lpaId[0])->shouldHaveCount(3);
-        $this->getPdfList($lpaId[1])[0]->shouldHaveCount(4);
-        $this->getPdfList($lpaId[2])[0]['type']->shouldBe('lpa120');
-    }
-    
+     
     function it_can_be_constructed_from_an_auth_token_then_create_an_application()
     {
         $this->beConstructedWith(getTestUserToken());
@@ -450,19 +335,45 @@ class ClientSpec extends ObjectBehavior
         $this->getReplacementAttorney($lpaId, 1)->name->first->shouldBe('Henry');
         $this->getReplacementAttorney($lpaId, 2)->name->first->shouldBe('Beth');
     }
+     
+    //--------------------------------------------------------------
+    // Password Reset
+    
     
     function it_will_return_a_password_reset_token(){
+    
         $this->requestPasswordReset( TEST_AUTH_EMAIL )->shouldBeString();
+    
+        // A second request straight away should return false
+        $this->requestPasswordReset( TEST_AUTH_EMAIL )->shouldBe(false);
+    
         destroyAndRecreateTestUser();
+    
     }
     
-    function it_will_set_a_new_auth_password_using_a_password_reset_token(){
+    function it_will_return_a_auth_token_from_reset_token(){
     
         $token = $this->requestPasswordReset( TEST_AUTH_EMAIL );
     
-        $password = 'Test$N3wTestPassword';
+        $this->requestPasswordResetAuthToken( $token )->shouldBeString();
     
-        $this->updateAuthPasswordWithToken( $token, $password )->shouldBe(true);
+        destroyAndRecreateTestUser();
+    
+    }
+    
+    function it_will_set_a_new_password_from_a_reset_auth_token(){
+    
+        $token = $this->requestPasswordReset( TEST_AUTH_EMAIL );
+    
+        $token = $this->requestPasswordResetAuthToken( $token );
+    
+        // Use the generated token...
+        $this->setToken( $token );
+    
+        $password = 'N3wTestPassword';
+    
+        // ... to se the new password.
+        $this->updateAuthPassword( $password )->shouldBe(true);
     
         // Check we can login with the new password.
         $this->authenticate(TEST_AUTH_EMAIL, $password)->isAuthenticated()->shouldBe(true);
@@ -483,6 +394,7 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->getWhoIsRegistering($lpaId)->shouldBe(null);
     }
+    
     
     function it_can_set_and_get_the_lpa_who_is_registering_when_it_is_a_donor()
     {
@@ -862,7 +774,7 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->getPrimaryAttorneyDecisions($lpaId)->shouldBe(null);
     }
-    
+     
     function it_can_set_and_get_and_update_the_primary_attorney_decisions()
     {
         $decisions = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions');
@@ -881,7 +793,9 @@ class ClientSpec extends ObjectBehavior
     
         $decisions3->canSustainLife = true;
         $this->setPrimaryAttorneyDecisions($lpaId, $decisions3)->shouldBe(true);
-
+        $this->updatePrimaryAttorneyDecisions($lpaId, ['canSustainLife'=>false])->shouldBe(true);
+        $decisions3->canSustainLife = false;
+        $this->getPrimaryAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions3->toJson());
     }
      
     function it_can_delete_the_primary_attorney_decisions()
@@ -1114,7 +1028,7 @@ class ClientSpec extends ObjectBehavior
         $this->deleteApplication(uniqid(), true)->shouldBe(true);
         $this->getLastStatusCode()->shouldBe(404);
     }
-         
+     
     function it_can_retrieve_about_me_details()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
@@ -1130,11 +1044,171 @@ class ClientSpec extends ObjectBehavior
         $this->setAboutMe(data_User())->shouldBe(true);
     }
      
+    function it_can_create_an_account_through_the_auth_server()
+    {
+        $this->registerAccount(
+            'deleteme-' . uniqid() . '@example.com',
+            'password' . uniqid()
+        )->shouldBeAnActivationToken();
+    }
+     
+    function it_will_return_a_registration_error_on_bad_email()
+    {
+        $this->registerAccount(
+            'deleteme-' . uniqid() . 'example.com',
+            'password' . uniqid()
+        );
+         
+        $this->getLastStatusCode()->shouldBe(400);
+        $this->getLastContent()->shouldBe([
+            'error'=>'invalid_request',
+            'error_description'=>'username is not a valid email address'
+        ]);
+    }
+     
+    function it_will_report_an_email_already_exists_error()
+    {
+        $email = 'deleteme-' . uniqid() . '@example.com';
+         
+        $this->registerAccount(
+            $email,
+            'password' . uniqid()
+        )->shouldBeAnActivationToken();
+         
+        $this->registerAccount(
+            $email,
+            'password' . uniqid()
+        );
+         
+        $this->getLastStatusCode()->shouldBe(400);
+         
+        $this->getLastContent()->shouldBe([
+            'error'=>'invalid_request',
+            'error_description'=>'email address is already registered'
+        ]);
+    }
+     
+    function it_can_activate_a_registered_account()
+    {
+        $activationToken = $this->registerAccount(
+            'deleteme-' . uniqid() . '@example.com',
+            'password' . uniqid()
+        );
+         
+        $this->activateAccount($activationToken)->shouldBe(true);
+    }
+     
+    function it_will_not_activate_when_given_a_bad_token()
+    {
+        $this->activateAccount('IAmABadToken')->shouldBe(false);
+    }
+     
+    function it_will_log_an_activation_failure()
+    {
+        $this->activateAccount('IAmABadToken')->shouldBe(false);
+         
+        // @todo - this is what the auth server currently returns on a bad token
+        // we should investigate what it should return - is the auth server
+        // working correctly?
+        $this->getLastStatusCode()->shouldBe(500);
+        $this->getLastContent()->shouldBe('An error occurred during execution; please try again later.');
+    }
+     
+    function it_can_update_an_account_email_on_the_auth_server()
+    {
+        $email = 'deleteme-' . uniqid() . '@example.com';
+        $newEmail = 'deleteme-' . uniqid() . '@example.com';
+        $password = 'password' . uniqid();
+         
+        $activationToken = $this->registerAccount(
+            $email,
+            $password
+        );
+         
+        $this->activateAccount($activationToken)->shouldBe(true);
+         
+        $authResponse = $this->authenticate(
+            $email,
+            $password
+        );
+         
+        $this->updateAuthEmail(
+            $newEmail
+        )->shouldBe(true);
+         
+        $this->authenticate($newEmail, $password)->isAuthenticated()->shouldBe(true);
+    }
+     
+    function it_can_update_an_account_password_on_the_auth_server()
+    {
+        $email = 'deleteme-' . uniqid() . '@example.com';
+        $newPassword = 'password' . uniqid();
+        $password = 'password' . uniqid();
+         
+        $activationToken = $this->registerAccount(
+            $email,
+            $password
+        );
+         
+        $this->activateAccount($activationToken)->shouldBe(true);
+         
+        $authResponse = $this->authenticate(
+            $email,
+            $password
+        );
+         
+        $this->updateAuthPassword(
+            $newPassword
+        )->shouldBe(true);
+         
+        $this->authenticate($email, $newPassword)->isAuthenticated()->shouldBe(true);
+    }
+     
+    function it_will_return_the_username_when_given_a_valid_token()
+    {
+        $email = 'deleteme-' . uniqid() . '@example.com';
+        $password = uniqid();
+         
+        $activationToken = $this->registerAccount($email, $password);
+         
+        $this->activateAccount($activationToken)->shouldBe(true);
+         
+        $authToken = $this->authenticate(
+            $email,
+            $password
+        )->getToken();
+         
+        $this->getEmailFromToken($authToken)->shouldBe($email);
+    }
+     
+    /**
+     * This one takes a long time - re-instate it to test pagination
+     * from the API - perhaps by changing the pagination in the API to
+     * something smaller and changing the number of applications
+     * tested here.
+     *
+     * To reinstate, remove the "skipped_" from the function name
+     */
+    function skipped_it_can_combine_several_pages_of_applications_into_a_single_array()
+    {
+        $numApplications = 900;
+         
+        destroyAndRecreateTestUser();
+         
+        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
+         
+        for ($i=0; $i<$numApplications; $i++) {
+            $this->createApplication();
+        }
+         
+        $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
+    }
+    
     public function getMatchers()
     {
         return [
-            'beAToken' => function($subject) {
-                return is_string($subject) && strlen($subject) > 0 && strlen($subject) % 32 == 0;
+            'beAnActivationToken' => function($subject) {
+                return preg_match('/^[a-z0-9]{32}$/', $subject) !== false;
             },
             'beAPositiveInteger' => function($subject) {
                 return is_numeric($subject) && $subject > 0;
