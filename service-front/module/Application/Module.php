@@ -278,21 +278,33 @@ class Module{
 
     }
     
+    /**
+     * Look at the child view of the layout. If we detect that there is
+     * a ".twig" file that will be picked up by the Twig module for rendering,
+     * then change the current layout to be the ".twig" layout.
+     * 
+     * @param MvcEvent $e
+     */
     public function preRender(MvcEvent $e)
     {
         $children = $e->getViewModel()->getChildren();
         
-        $twig = false;
+        $twigWillBeUsed = false;
+
+        // $children is an array but we only really expect one child
         foreach ($children as $child) {
             
+            // the template name will be something like 'application/about-you/index' - with
+            // no suffix. We look in the directory where we know the .phtml file will be
+            // located and see if there is a .twig file (which would take precedence over it)
             if (file_exists('module/Application/view/' . $child->getTemplate() . '.twig')) {
-                $twig = true;
+                $twigWillBeUsed = true;
                 break;
             }
             
         }
         
-        if ($twig) {
+        if ($twigWillBeUsed) {
             $e->getViewModel()->setTemplate('layout/twig/layout');
         }
         
