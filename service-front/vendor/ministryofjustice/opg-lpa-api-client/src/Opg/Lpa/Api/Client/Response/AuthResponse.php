@@ -22,11 +22,18 @@ class AuthResponse
     private $userId;
     
     /**
-     * The user identity
-     *
+     * How many times in a row that this email has failed to authenticate
+     * 
+     * @var number
+     */
+    private $failureCount;
+    
+    /**
+     * The error returned, it any
+     * 
      * @var string
      */
-    private $username;
+    private $errorDescription;
 
     /**
      * The authentication token
@@ -43,13 +50,6 @@ class AuthResponse
     private $expiresIn;
     
     /**
-     * Date and time of expiry
-     *
-     * @var string
-     */
-    private $expiresAt;
-    
-    /**
      * The last time this user logged in
      * 
      * @var number Timestamp
@@ -57,11 +57,11 @@ class AuthResponse
     private $lastLogin;
     
     /**
-     * The error description, if any
+     * The token type, e.g. "bearer"
      * 
      * @var string
      */
-    private $errorDescription;
+    private $tokenType;
 
     /**
      * @return string
@@ -80,6 +80,24 @@ class AuthResponse
     }
     
     /**
+     * @return member variable $errorDescription
+     */
+    public function getErrorDescription()
+    {
+        return $this->errorDescription;
+    }
+
+    /**
+     * @param string $errorDescription
+     * @return AuthResponse Returns itself.
+     */
+    public function setErrorDescription($errorDescription)
+    {
+        $this->errorDescription = $errorDescription;
+        return $this;
+    }
+
+    /**
      * @return member variable $token
      */
     public function getToken()
@@ -93,6 +111,22 @@ class AuthResponse
     public function setToken($token)
     {
         $this->token = $token;
+    }
+
+    /**
+     * @return member variable $failureCount
+     */
+    public function getFailureCount()
+    {
+        return $this->failureCount;
+    }
+
+    /**
+     * @param number $failureCount
+     */
+    public function setFailureCount($failureCount)
+    {
+        $this->failureCount = $failureCount;
     }
 
     /**
@@ -112,22 +146,6 @@ class AuthResponse
     }
 
     /**
-     * @return member variable $expiresAt
-     */
-    public function getExpiresAt()
-    {
-        return $this->expiresAt;
-    }
-    
-    /**
-     * @param string $expiresAt
-     */
-    public function setExpiresAt($expiresIn)
-    {
-        $this->expiresAt = $expiresIn;
-    }
-    
-    /**
      * @return member variable $lastLogin
      */
     public function getLastLogin()
@@ -136,44 +154,27 @@ class AuthResponse
     }
 
     /**
-     * @param string $lastLogin
+     * @param number $lastLogin
      */
     public function setLastLogin($lastLogin)
     {
         $this->lastLogin = $lastLogin;
     }
-    
+
     /**
-     * @return the $username
+     * @return member variable $tokenType
      */
-    public function getUsername()
+    public function getTokenType()
     {
-        return $this->username;
+        return $this->tokenType;
     }
-    
+
     /**
-     * @param string $username
+     * @param string $tokenType
      */
-    public function setUsername($username)
+    public function setTokenType($tokenType)
     {
-        $this->username = $username;
-    }
-    
-    /**
-     * @return the $errorDescription
-     */
-    public function getErrorDescription()
-    {
-        return $this->errorDescription;
-    }
-    
-    /**
-     * @param string $errorDescription
-     */
-    public function setErrorDescription($errorDescription)
-    {
-        $this->errorDescription = $errorDescription;
-        return $this;
+        $this->tokenType = $tokenType;
     }
     
     public function isAuthenticated()
@@ -189,12 +190,13 @@ class AuthResponse
     public function getArrayCopy()
     {
         return [
-            'userId' => $this->userId,
-            'token' => $this->token,
+            'user_id' => $this->userId,
+            'error_description' => $this->errorDescription,
+            'access_token' => $this->token,
             'last_login' => $this->lastLogin,
+            'failure_count' => $this->failureCount,
             'expires_in' => $this->expiresIn,
-            'expires_at' => $this->expiresAt,
-            'username' => $this->username,
+            'token_type' => $this->tokenType,
         ];
     }
     
@@ -205,12 +207,12 @@ class AuthResponse
      */
     public function exchangeArray(array $array)
     {
-        $this->userId = isset($array['userId']) ? $array['userId'] : null;
-        $this->token = isset($array['token']) ? $array['token'] : null;
+        $this->errorDescription = isset($array['error_description']) ? $array['error_description'] : null;
+        $this->token = isset($array['access_token']) ? $array['access_token'] : null;
         $this->lastLogin = isset($array['last_login']) ? $array['last_login'] : null;
-        $this->username = isset($array['username']) ? $array['username'] : null;
-        $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
-        $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
+        $this->failureCount = isset($array['failure_count']) ? $array['failure_count'] : null;
+        $this->expiresIn = isset($array['expires_in']) ? $array['expires_in'] : null;
+        $this->tokenType = isset($array['token_type']) ? $array['token_type'] : null;
     }
 
 }
