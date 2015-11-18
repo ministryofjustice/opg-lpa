@@ -1,0 +1,11 @@
+{% extends 'application/about-you/form.twig' %}
+
+{% block header %}
+
+<p>Update your details.</p>
+
+<p><a href="<?= $this->url('user/change-password') ?>">Change Password</a></p>
+<p><a href="<?= $this->url('user/change-email-address') ?>">Change Email Address</a></p>
+<p><a href="<?= $this->url('user/delete') ?>">Delete Account</a></p>
+
+{% endblock header %}

@@ -27,7 +27,7 @@ class AboutYouController extends AbstractAuthenticatedController {
 
         $result['form']->setAttribute( 'action', $this->url()->fromRoute('user/about-you') );
 
-        return $result;
+        return new ViewModel($result);
 
     } // function
 
