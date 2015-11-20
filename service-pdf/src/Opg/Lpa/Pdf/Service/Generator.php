@@ -56,6 +56,8 @@ class Generator implements GeneratorInterface {
                     'lpaId' => $this->lpa->id
                 ]
             );
+
+            var_dump($this->lpa->validate());
             
             throw new RuntimeException('LPA failed validation');
         }

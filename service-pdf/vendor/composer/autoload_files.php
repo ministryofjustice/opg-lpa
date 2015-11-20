@@ -7,8 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/functions.php',
-    $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
     $vendorDir . '/guzzlehttp/psr7/src/functions_include.php',
+    $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
     $vendorDir . '/mtdowling/jmespath.php/src/JmesPath.php',
     $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
     $vendorDir . '/aws/aws-sdk-php/src/functions.php',

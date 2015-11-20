@@ -33,11 +33,11 @@ abstract class Lp1 extends AbstractForm
      * @var PDFTK pdf object
      */
     protected $pdf;
-    
+
     /**
-     * @var bool
+     * @var bool There or not the registration section of teh LPA is complete.
      */
-    protected $generateInstrumentOnly;
+    private $registrationIsComplete;
     
     public function __construct(Lpa $lpa)
     {
@@ -45,7 +45,8 @@ abstract class Lp1 extends AbstractForm
         
         $stateChecker = new StateChecker($lpa);
         
-        $this->generateInstrumentOnly = !$stateChecker->isStateCompleted();
+        $this->registrationIsComplete = $stateChecker->isStateCompleted();
+
     }
     
     /**
@@ -255,7 +256,7 @@ abstract class Lp1 extends AbstractForm
             ]
         );
         
-        if($this->generateInstrumentOnly) {
+        if( !$this->registrationIsComplete ) {
             $coversheetInstrument = (new CoversheetInstrument($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($coversheetInstrument);
         }
@@ -474,17 +475,43 @@ abstract class Lp1 extends AbstractForm
             switch($this->lpa->document->correspondent->who) {
                 case Correspondence::WHO_DONOR:
                     $this->pdfFormData['who-is-correspondent'] = 'donor';
-                    $this->drawingTargets[17] = ['correspondent-empty-name-address'];
+                    
+                    if ($this->lpa->document->correspondent->contactDetailsEnteredManually === true) {
+                        $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
+                        $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
+                        $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
+                        $this->pdfFormData['lpa-document-correspondent-address-address1'] = $this->lpa->document->correspondent->address->address1;
+                        $this->pdfFormData['lpa-document-correspondent-address-address2'] = $this->lpa->document->correspondent->address->address2;
+                        $this->pdfFormData['lpa-document-correspondent-address-address3'] = $this->lpa->document->correspondent->address->address3;
+                        $this->pdfFormData['lpa-document-correspondent-address-postcode'] = $this->lpa->document->correspondent->address->postcode;
+                    } else {
+                        $this->drawingTargets[17] = ['correspondent-empty-name-address'];
+                    }
                     break;
                 case Correspondence::WHO_ATTORNEY:
+                    $isAddressCrossedOut = true;
+                    
                     $this->pdfFormData['who-is-correspondent'] = 'attorney';
                     if($this->lpa->document->correspondent->name instanceof Name) {
                         $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                         $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
                         $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
+                        
+                        if ($this->lpa->document->correspondent->contactDetailsEnteredManually === true) {
+                            $this->pdfFormData['lpa-document-correspondent-address-address1'] = $this->lpa->document->correspondent->address->address1;
+                            $this->pdfFormData['lpa-document-correspondent-address-address2'] = $this->lpa->document->correspondent->address->address2;
+                            $this->pdfFormData['lpa-document-correspondent-address-address3'] = $this->lpa->document->correspondent->address->address3;
+                            $this->pdfFormData['lpa-document-correspondent-address-postcode'] = $this->lpa->document->correspondent->address->postcode;
+                            $isAddressCrossedOut = false;
+                        }
                     }
+                    
+                    if ($isAddressCrossedOut) {
+                        $this->drawingTargets[17] = ['correspondent-empty-address'];
+                    }
+                    
                     $this->pdfFormData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;
-                    $this->drawingTargets[17] = ['correspondent-empty-address'];
+                    
                     break;
                 case Correspondence::WHO_OTHER:
                     $this->pdfFormData['who-is-correspondent'] = 'other';
@@ -567,18 +594,29 @@ abstract class Lp1 extends AbstractForm
     protected function mergePdfs()
     {
         $pdf = PdftkInstance::getInstance();
-        
+        $registrationPdf = PdftkInstance::getInstance();
+
         $fileTag = $lp1FileTag = 'B';
         if(isset($this->interFileStack['LP1']) && isset($this->interFileStack['Coversheet'])) {
             $pdf->addFile($this->interFileStack['Coversheet'], 'A');
             $pdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
+
+            $registrationPdf->addFile($this->interFileStack['Coversheet'], 'A');
+            $registrationPdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
         }
         else {
             throw new \UnexpectedValueException('LP1 pdf was not generated before merging pdf intermediate files');
         }
+
+        //-----------------------------------------------------
+        // Cover section
         
         // add cover sheet
         $pdf->cat(1, 'end', 'A');
+
+
+        //-----------------------------------------------------
+        // Instrument section
         
         // add page 1-15
         $pdf->cat(1, 15, $lp1FileTag);
@@ -633,40 +671,67 @@ abstract class Lp1 extends AbstractForm
             // add a CS4 page
             $pdf->cat(1, null, $fileTag);
         }
-        
-        // skip adding LPA registration pages if only instrument pdf is to be generated
-        if(!$this->generateInstrumentOnly) {
-            
-            // add page 16, 17
-            $pdf->cat(16, 17, $lp1FileTag);
-            
-            // Section 12 additional applicants
-            if(isset($this->interFileStack['AdditionalApplicant'])) {
-                foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
-                    $fileTag = $this->nextTag($fileTag);
-                    $pdf->addFile($additionalApplicant, $fileTag);
-                    
-                    // add an additional applicant page
-                    $pdf->cat(1, null, $fileTag);
-                }
-            }
-            
-            // add page 18, 19, 20
-            $pdf->cat(18, 20, $lp1FileTag);
-            
-            // Section 15 - additional applicants signature
-            if(isset($this->interFileStack['AdditionalApplicantSignature'])) {
-                foreach($this->interFileStack['AdditionalApplicantSignature'] as $additionalApplicantSignature) {
-                    $fileTag = $this->nextTag($fileTag);
-                    $pdf->addFile($additionalApplicantSignature, $fileTag);
-                    
-                    // add an additional applicant signature page
-                    $pdf->cat(1, null, $fileTag);
-                }
+
+
+        //-----------------------------------------------------
+        // Registration section
+
+        // Use a different instance for the rest of the registration
+        // pages so that (if needed) we can apply a stamp to them.
+
+        // Add the registration coversheet.
+        $registrationPdf->cat(16, null, $lp1FileTag);
+
+        $registrationPdf->cat(17, null, $lp1FileTag);
+
+        // Section 12 additional applicants
+        if(isset($this->interFileStack['AdditionalApplicant'])) {
+            foreach($this->interFileStack['AdditionalApplicant'] as $additionalApplicant) {
+                $fileTag = $this->nextTag($fileTag);
+                $registrationPdf->addFile($additionalApplicant, $fileTag);
+
+                // add an additional applicant page
+                $registrationPdf->cat(1, null, $fileTag);
             }
         }
-        
+
+        // add page 18, 19, 20
+        $registrationPdf->cat(18, 20, $lp1FileTag);
+
+        // Section 15 - additional applicants signature
+        if(isset($this->interFileStack['AdditionalApplicantSignature'])) {
+            foreach($this->interFileStack['AdditionalApplicantSignature'] as $additionalApplicantSignature) {
+                $fileTag = $this->nextTag($fileTag);
+                $registrationPdf->addFile($additionalApplicantSignature, $fileTag);
+
+                // add an additional applicant signature page
+                $registrationPdf->cat(1, null, $fileTag);
+            }
+        }
+
+        //---
+
+        /**
+         * If the registration section of the LPA isn't complete, we add the warning stamp.
+         */
+        if( !$this->registrationIsComplete ){
+
+            $registrationPdf = new \mikehaertl\pdftk\Pdf( $registrationPdf );
+            $registrationPdf->stamp( $this->pdfTemplatePath.'/RegistrationWatermark.pdf' );
+
+        }
+
+        //-----------
+
+        // Merge the registration section in...
+        $fileTag = $this->nextTag($fileTag);
+        $pdf->addFile($registrationPdf, $fileTag);
+        $pdf->cat(1, 'end', $fileTag);
+
+        //---
+
         $pdf->saveAs($this->generatedPdfFilePath);
-        
+
     } // function mergePdfs()
+
 } // class Lp1

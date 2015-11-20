@@ -25,7 +25,7 @@ return array(
 
         'redisResponse'=>array(
 
-            'host' => 'redisback.local',
+            'host' => 'redisback',
             'port' => 6379,
 
             // The number of files that can be stored in Redis.

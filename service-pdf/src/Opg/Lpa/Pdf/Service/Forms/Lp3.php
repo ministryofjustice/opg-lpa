@@ -243,9 +243,7 @@ class Lp3 extends AbstractForm
         $pdfFormData = [];
         if(count($this->lpa->document->primaryAttorneys) == 1) {
             $pdfFormData['how-attorneys-act'] = 'only-one-attorney-appointed';
-        }
-    
-        if($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+        } elseif ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
             $pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
     
