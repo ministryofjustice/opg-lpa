@@ -676,13 +676,11 @@ abstract class Lp1 extends AbstractForm
         //-----------------------------------------------------
         // Registration section
 
-        // Add the registration coversheet.
-        $pdf->cat(16, null, $lp1FileTag);
-
-        //---
-
         // Use a different instance for the rest of the registration
         // pages so that (if needed) we can apply a stamp to them.
+
+        // Add the registration coversheet.
+        $registrationPdf->cat(16, null, $lp1FileTag);
 
         $registrationPdf->cat(17, null, $lp1FileTag);
 
