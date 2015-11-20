@@ -81,7 +81,7 @@
                     </a>
                 </div>
             </div>
-            {# <?php if ($this->routeName() != 'home') : ?>
+            {% if not routeName() == 'home' %}
             <div class="header-proposition">
                 <div class="content">
                     <nav id="proposition-menu">
@@ -89,7 +89,7 @@
                     </nav>
                 </div>
             </div>
-            <?php endif; ?> #}
+            {% endif %}
         </div>
     </header>
 
