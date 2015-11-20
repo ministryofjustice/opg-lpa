@@ -23,7 +23,7 @@
             <div class="column-half">
                 {# <?php if (!$this->identity()) : ?> #}
                     <p>
-                        <a class="button" href="<?= $this->url('register') ?>" role="button">Create an account now</a>
+                        <a class="button" href="{{ url('register') }}" role="button">Create an account now</a>
                     </p>
                  {# <?php else: ?>
                     <p><a class="create-lpa button" href="<?= $this->url('user/dashboard/create-lpa') ?>" role="button">Create an LPA now</a></p>
@@ -65,7 +65,7 @@
             </div>
 
             <div class="column-half">
-                <p><a class="create-lpa button" href="<?= $this->url('login') ?>" role="button">Sign in</a></p>
+                <p><a class="create-lpa button" href="{{ url('login') }}" role="button">Sign in</a></p>
             </div>
 
         </div>
