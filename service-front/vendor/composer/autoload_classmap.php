@@ -78,6 +78,7 @@ return array(
     'Aws\\CodePipeline\\CodePipelineClient' => $vendorDir . '/aws/aws-sdk-php/src/CodePipeline/CodePipelineClient.php',
     'Aws\\CodePipeline\\Exception\\CodePipelineException' => $vendorDir . '/aws/aws-sdk-php/src/CodePipeline/Exception/CodePipelineException.php',
     'Aws\\CognitoIdentity\\CognitoIdentityClient' => $vendorDir . '/aws/aws-sdk-php/src/CognitoIdentity/CognitoIdentityClient.php',
+    'Aws\\CognitoIdentity\\CognitoIdentityProvider' => $vendorDir . '/aws/aws-sdk-php/src/CognitoIdentity/CognitoIdentityProvider.php',
     'Aws\\CognitoIdentity\\Exception\\CognitoIdentityException' => $vendorDir . '/aws/aws-sdk-php/src/CognitoIdentity/Exception/CognitoIdentityException.php',
     'Aws\\CognitoSync\\CognitoSyncClient' => $vendorDir . '/aws/aws-sdk-php/src/CognitoSync/CognitoSyncClient.php',
     'Aws\\CognitoSync\\Exception\\CognitoSyncException' => $vendorDir . '/aws/aws-sdk-php/src/CognitoSync/Exception/CognitoSyncException.php',
