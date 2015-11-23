@@ -48,8 +48,6 @@
     <meta content="/browse/family" name="x-section-link">
     <meta content="local_transaction" name="x-section-format">
 
-    {# echo $this->headMeta() #}
-
     <!--[if gt IE 8]><!--><link href="/assets/v2/css/application.css" media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
 
     <!--[if IE 6]><link href="/assets/v2/css/application-ie6.css" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
@@ -60,8 +58,6 @@
     Govuk Elements doesn't come with any print styles, so I'm leaving this out for now.
     <link href="/assets/v1/css/print.css" media="print" rel="stylesheet" type="text/css" />
     #}
-
-    {# echo $this->headLink() #}
 
 </head>
 
@@ -176,7 +172,7 @@
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>
     <script src="/assets/v1/js/application.js"></script>
-    {# <?php echo $this->headScript()?> #}
+    
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
