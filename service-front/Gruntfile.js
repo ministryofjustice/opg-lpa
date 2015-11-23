@@ -16,6 +16,9 @@ module.exports = function (grunt) {
         },
         files: {
           'public/assets/v2/css/application.css': 'assets/sass/application.scss',
+          'public/assets/v2/css/application-ie8.css': 'assets/sass/application-ie8.scss',
+          'public/assets/v2/css/application-ie7.css': 'assets/sass/application-ie7.scss',
+          'public/assets/v2/css/application-ie6.css': 'assets/sass/application-ie6.scss',
           'public/assets/v2/css/govuk-template.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template.scss',
           'public/assets/v2/css/govuk-template-ie8.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie8.scss',
           'public/assets/v2/css/govuk-template-ie7.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie7.scss',
