@@ -3,7 +3,7 @@ module.exports = function (grunt) {
     watch: {
       scss: {
         files: 'assets/**/*.scss',
-        tasks: ['sass']
+        tasks: ['sass', 'replace:image_url']
       }
     },
     sass: {
@@ -27,6 +27,16 @@ module.exports = function (grunt) {
         }
       }
     },
+    replace: {
+      image_url: {
+        src: ['public/assets/v2/css/*.css'],
+        dest: 'public/assets/v2/css/',
+        replacements: [{
+          from: 'image-url',
+          to: 'url'
+        }]
+      }
+    },
     scsslint: {
       allFiles: [
         'assets/sass/*.scss',
@@ -43,7 +53,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-scss-lint');
+  grunt.loadNpmTasks('grunt-text-replace');
 
   // define default task
   grunt.registerTask('default', ['watch']);
+  grunt.registerTask('build', ['sass', 'replace:image_url']);
 };
