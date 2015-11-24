@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=5.5",
-        "guzzlehttp/guzzle": ">=5.3|~6.0.1|~6.1",
+        "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1",
         "guzzlehttp/psr7": "~1.0",
         "guzzlehttp/promises": "~1.0",
         "mtdowling/jmespath.php": "~2.2"
@@ -30,11 +30,16 @@
         "ext-dom": "*",
         "ext-simplexml": "*",
         "phpunit/phpunit": "~4.0",
-        "behat/behat": "~3.0"
+        "behat/behat": "~3.0",
+        "doctrine/cache": "~1.4",
+        "aws/aws-php-sns-message-validator": "~1.0",
+        "nette/neon": "^2.3",
+        "andrewsville/php-token-reflection": "^1.4"
     },
     "suggest": {
         "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages",
-        "ext-curl": "To send requests using cURL"
+        "ext-curl": "To send requests using cURL",
+        "doctrine/cache": "To use the DoctrineCacheAdapter"
     },
     "autoload": {
         "psr-4": {
@@ -45,11 +50,17 @@
     "autoload-dev": {
         "psr-4": {
             "Aws\\Test\\": "tests/"
-        }
+        },
+        "classmap": ["build/"]
     },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "make compile-json"
+        ]
     }
 }

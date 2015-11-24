@@ -14,12 +14,128 @@ use Aws\RetryMiddleware;
 use Aws\S3\Exception\S3Exception;
 use Aws\ResultInterface;
 use Aws\CommandInterface;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
  * Client used to interact with **Amazon Simple Storage Service (Amazon S3)**.
+ *
+ * @method \Aws\Result abortMultipartUpload(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise abortMultipartUploadAsync(array $args = [])
+ * @method \Aws\Result completeMultipartUpload(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise completeMultipartUploadAsync(array $args = [])
+ * @method \Aws\Result copyObject(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise copyObjectAsync(array $args = [])
+ * @method \Aws\Result createBucket(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createBucketAsync(array $args = [])
+ * @method \Aws\Result createMultipartUpload(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createMultipartUploadAsync(array $args = [])
+ * @method \Aws\Result deleteBucket(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketAsync(array $args = [])
+ * @method \Aws\Result deleteBucketCors(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketCorsAsync(array $args = [])
+ * @method \Aws\Result deleteBucketLifecycle(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketLifecycleAsync(array $args = [])
+ * @method \Aws\Result deleteBucketPolicy(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketPolicyAsync(array $args = [])
+ * @method \Aws\Result deleteBucketReplication(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketReplicationAsync(array $args = [])
+ * @method \Aws\Result deleteBucketTagging(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketTaggingAsync(array $args = [])
+ * @method \Aws\Result deleteBucketWebsite(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBucketWebsiteAsync(array $args = [])
+ * @method \Aws\Result deleteObject(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteObjectAsync(array $args = [])
+ * @method \Aws\Result deleteObjects(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteObjectsAsync(array $args = [])
+ * @method \Aws\Result getBucketAcl(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketAclAsync(array $args = [])
+ * @method \Aws\Result getBucketCors(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketCorsAsync(array $args = [])
+ * @method \Aws\Result getBucketLifecycle(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketLifecycleAsync(array $args = [])
+ * @method \Aws\Result getBucketLifecycleConfiguration(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketLifecycleConfigurationAsync(array $args = [])
+ * @method \Aws\Result getBucketLocation(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketLocationAsync(array $args = [])
+ * @method \Aws\Result getBucketLogging(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketLoggingAsync(array $args = [])
+ * @method \Aws\Result getBucketNotification(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketNotificationAsync(array $args = [])
+ * @method \Aws\Result getBucketNotificationConfiguration(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketNotificationConfigurationAsync(array $args = [])
+ * @method \Aws\Result getBucketPolicy(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketPolicyAsync(array $args = [])
+ * @method \Aws\Result getBucketReplication(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketReplicationAsync(array $args = [])
+ * @method \Aws\Result getBucketRequestPayment(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketRequestPaymentAsync(array $args = [])
+ * @method \Aws\Result getBucketTagging(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketTaggingAsync(array $args = [])
+ * @method \Aws\Result getBucketVersioning(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketVersioningAsync(array $args = [])
+ * @method \Aws\Result getBucketWebsite(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBucketWebsiteAsync(array $args = [])
+ * @method \Aws\Result getObject(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getObjectAsync(array $args = [])
+ * @method \Aws\Result getObjectAcl(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getObjectAclAsync(array $args = [])
+ * @method \Aws\Result getObjectTorrent(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getObjectTorrentAsync(array $args = [])
+ * @method \Aws\Result headBucket(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise headBucketAsync(array $args = [])
+ * @method \Aws\Result headObject(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise headObjectAsync(array $args = [])
+ * @method \Aws\Result listBuckets(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listBucketsAsync(array $args = [])
+ * @method \Aws\Result listMultipartUploads(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listMultipartUploadsAsync(array $args = [])
+ * @method \Aws\Result listObjectVersions(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listObjectVersionsAsync(array $args = [])
+ * @method \Aws\Result listObjects(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listObjectsAsync(array $args = [])
+ * @method \Aws\Result listParts(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listPartsAsync(array $args = [])
+ * @method \Aws\Result putBucketAcl(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketAclAsync(array $args = [])
+ * @method \Aws\Result putBucketCors(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketCorsAsync(array $args = [])
+ * @method \Aws\Result putBucketLifecycle(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketLifecycleAsync(array $args = [])
+ * @method \Aws\Result putBucketLifecycleConfiguration(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketLifecycleConfigurationAsync(array $args = [])
+ * @method \Aws\Result putBucketLogging(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketLoggingAsync(array $args = [])
+ * @method \Aws\Result putBucketNotification(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketNotificationAsync(array $args = [])
+ * @method \Aws\Result putBucketNotificationConfiguration(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketNotificationConfigurationAsync(array $args = [])
+ * @method \Aws\Result putBucketPolicy(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketPolicyAsync(array $args = [])
+ * @method \Aws\Result putBucketReplication(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketReplicationAsync(array $args = [])
+ * @method \Aws\Result putBucketRequestPayment(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketRequestPaymentAsync(array $args = [])
+ * @method \Aws\Result putBucketTagging(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketTaggingAsync(array $args = [])
+ * @method \Aws\Result putBucketVersioning(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketVersioningAsync(array $args = [])
+ * @method \Aws\Result putBucketWebsite(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putBucketWebsiteAsync(array $args = [])
+ * @method \Aws\Result putObject(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putObjectAsync(array $args = [])
+ * @method \Aws\Result putObjectAcl(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putObjectAclAsync(array $args = [])
+ * @method \Aws\Result restoreObject(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise restoreObjectAsync(array $args = [])
+ * @method \Aws\Result uploadPart(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise uploadPartAsync(array $args = [])
+ * @method \Aws\Result uploadPartCopy(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise uploadPartCopyAsync(array $args = [])
  */
 class S3Client extends AwsClient
 {
@@ -275,8 +391,40 @@ class S3Client extends AwsClient
      * @see Aws\S3\MultipartUploader for more info about multipart uploads.
      * @return ResultInterface Returns the result of the upload.
      */
-    public function upload($bucket, $key, $body, $acl = 'private', array $options = [])
-    {
+    public function upload(
+        $bucket,
+        $key,
+        $body,
+        $acl = 'private',
+        array $options = []
+    ) {
+        return $this
+            ->uploadAsync($bucket, $key, $body, $acl, $options)
+            ->wait();
+    }
+
+    /**
+     * Upload a file, stream, or string to a bucket asynchronously.
+     *
+     * @param string $bucket  Bucket to upload the object.
+     * @param string $key     Key of the object.
+     * @param mixed  $body    Object data to upload. Can be a
+     *                        StreamInterface, PHP stream resource, or a
+     *                        string of data to upload.
+     * @param string $acl     ACL to apply to the object (default: private).
+     * @param array  $options Options used to configure the upload process.
+     *
+     * @see self::upload
+     * @return PromiseInterface     Returns a promise that will be fulfilled
+     *                              with the result of the upload.
+     */
+    public function uploadAsync(
+        $bucket,
+        $key,
+        $body,
+        $acl = 'private',
+        array $options = []
+    ) {
         // Prepare the options.
         static $defaults = [
             'before_upload' => null,
@@ -300,7 +448,7 @@ class S3Client extends AwsClient
                 'bucket' => $bucket,
                 'key'    => $key,
                 'acl'    => $acl
-            ] + $options))->upload();
+            ] + $options))->promise();
         } else {
             // Perform a regular PutObject operation.
             $command = $this->getCommand('PutObject', [
@@ -312,8 +460,122 @@ class S3Client extends AwsClient
             if (is_callable($options['before_upload'])) {
                 $options['before_upload']($command);
             }
-            return $this->execute($command);
+            return $this->executeAsync($command);
         }
+    }
+
+    /**
+     * Copy an object of any size to a different location.
+     *
+     * If the upload size exceeds the maximum allowable size for direct S3
+     * copying, a multipart copy will be used.
+     *
+     * The options array accepts the following options:
+     *
+     * - before_upload: (callable) Callback to invoke before any upload
+     *   operations during the upload process. The callback should have a
+     *   function signature like `function (Aws\Command $command) {...}`.
+     * - concurrency: (int, default=int(5)) Maximum number of concurrent
+     *   `UploadPart` operations allowed during a multipart upload.
+     * - params: (array, default=array([])) Custom parameters to use with the
+     *   upload. For single uploads, they must correspond to those used for the
+     *   `CopyObject` operation. For multipart uploads, they correspond to the
+     *   parameters of the `CreateMultipartUpload` operation.
+     * - part_size: (int) Part size to use when doing a multipart upload.
+     *
+     * @param string $fromBucket    Bucket where the copy source resides.
+     * @param string $fromKey       Key of the copy source.
+     * @param string $destBucket    Bucket to which to copy the object.
+     * @param string $destKey       Key to which to copy the object.
+     * @param string $acl           ACL to apply to the copy (default: private).
+     * @param array  $options       Options used to configure the upload process.
+     *
+     * @see Aws\S3\MultipartCopy for more info about multipart uploads.
+     * @return ResultInterface Returns the result of the copy.
+     */
+    public function copy(
+        $fromBucket,
+        $fromKey,
+        $destBucket,
+        $destKey,
+        $acl = 'private',
+        array $options = []
+    ) {
+        return $this
+            ->copyAsync($fromBucket, $fromKey, $destBucket, $destKey, $acl, $options)
+            ->wait();
+    }
+
+    /**
+     * Copy an object of any size to a different location asynchronously.
+     *
+     * @param string $fromBucket    Bucket where the copy source resides.
+     * @param string $fromKey       Key of the copy source.
+     * @param string $destBucket    Bucket to which to copy the object.
+     * @param string $destKey       Key to which to copy the object.
+     * @param string $acl           ACL to apply to the copy (default: private).
+     * @param array  $options       Options used to configure the upload process.
+     *
+     * @see self::copy for more info about the parameters above.
+     * @return PromiseInterface     Returns a promise that will be fulfilled
+     *                              with the result of the copy.
+     */
+    public function copyAsync(
+        $fromBucket,
+        $fromKey,
+        $destBucket,
+        $destKey,
+        $acl = 'private',
+        array $options = []
+    ) {
+        // Prepare the options.
+        static $defaults = [
+            'before_upload' => null,
+            'concurrency'   => 5,
+            'mup_threshold' => MultipartUploader::PART_MAX_SIZE,
+            'params'        => [],
+            'part_size'     => null,
+            'version_id'    => null,
+        ];
+
+        return Promise\coroutine($this->doCopyAsync(
+            ['Bucket' => $fromBucket, 'Key' => $fromKey],
+            ['Bucket' => $destBucket, 'Key' => $destKey],
+            $acl,
+            $options + $defaults
+        ));
+    }
+
+    private function doCopyAsync(
+        array $source,
+        array $destination,
+        $acl,
+        array $options
+    ) {
+        return function () use ($source, $destination, $acl, $options) {
+            $sourcePath = '/' . $source['Bucket'] . '/' . rawurlencode($source['Key']);
+            if ($options['version_id']) {
+                $sourcePath .= "?versionId={$options['version_id']}";
+                $source['VersionId'] = $options['version_id'];
+            }
+
+            $objectStats = (yield $this->headObjectAsync($source));
+
+            if ($objectStats['ContentLength'] > $options['mup_threshold']) {
+                $mup = new MultipartCopy($this, $sourcePath, $destination + [
+                    'source_metadata' => $objectStats,
+                    'acl' => $acl,
+                ] + $options);
+
+                yield $mup->promise();
+            } else {
+                yield $this->copyObjectAsync($options + $destination + [
+                    'ACL'               => $acl,
+                    'MetadataDirective' => 'COPY',
+                    'CopySource'        => $sourcePath,
+                ] + $options['params']);
+            }
+        };
     }
 
     /**
@@ -430,13 +692,17 @@ class S3Client extends AwsClient
      */
     private function getLocationConstraintMiddleware()
     {
-        return function (callable $handler) {
-            return function (Command $command, $request = null) use ($handler) {
+        $region = $this->getRegion();
+        return static function (callable $handler) use ($region) {
+            return function (Command $command, $request = null) use ($handler, $region) {
                 if ($command->getName() === 'CreateBucket') {
-                    $region = $this->getRegion();
-                    if ($region === 'us-east-1') {
+                    $locationConstraint = isset($command['CreateBucketConfiguration']['LocationConstraint'])
+                        ? $command['CreateBucketConfiguration']['LocationConstraint']
+                        : null;
+
+                    if ($locationConstraint === 'us-east-1') {
                         unset($command['CreateBucketConfiguration']);
-                    } else {
+                    } elseif ('us-east-1' !== $region && empty($locationConstraint)) {
                         $command['CreateBucketConfiguration'] = ['LocationConstraint' => $region];
                     }
                 }
@@ -453,7 +719,7 @@ class S3Client extends AwsClient
      */
     private function getSaveAsParameter()
     {
-        return function (callable $handler) {
+        return static function (callable $handler) {
             return function (Command $command, $request = null) use ($handler) {
                 if ($command->getName() === 'GetObject' && isset($command['SaveAs'])) {
                     $command['@http']['sink'] = $command['SaveAs'];
@@ -473,15 +739,27 @@ class S3Client extends AwsClient
         }
 
         $decider = RetryMiddleware::createDefaultDecider($value);
-        $decider = function ($retries, $request, $result, $error) use ($decider) {
-            if ($decider($retries, $request, $result, $error)) {
+        $decider = function ($retries, $command, $request, $result, $error) use ($decider, $value) {
+            $maxRetries = null !== $command['@retries']
+                ? $command['@retries']
+                : $value;
+
+            if ($decider($retries, $command, $request, $result, $error)) {
                 return true;
-            } elseif ($error instanceof AwsException) {
-                return $error->getResponse()
-                    && strpos(
+            } elseif ($error instanceof AwsException
+                && $retries < $maxRetries
+            ) {
+                if ($error->getResponse()) {
+                    return strpos(
                         $error->getResponse()->getBody(),
                         'Your socket connection to the server'
                     ) !== false;
+                } elseif ($error->getPrevious() instanceof RequestException) {
+                    // All commands except CompleteMultipartUpload are
+                    // idempotent and may be retried without worry if a
+                    // networking error has occurred.
+                    return $command->getName() !== 'CompleteMultipartUpload';
+                }
             }
             return false;
         };
@@ -494,7 +772,16 @@ class S3Client extends AwsClient
     public static function _applyApiProvider($value, array &$args, HandlerList $list)
     {
         ClientResolver::_apply_api_provider($value, $args, $list);
-        $args['parser'] = new GetBucketLocationParser($args['parser']);
+        $args['parser'] = new GetBucketLocationParser(
+            new AmbiguousSuccessParser(
+                new RetryableMalformedResponseParser(
+                    $args['parser'],
+                    $args['exception_class']
+                ),
+                $args['error_parser'],
+                $args['exception_class']
+            )
+        );
     }
 
     /**
