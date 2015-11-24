@@ -8,10 +8,6 @@
     selector: '#lpa-type',
 
     init: function () {
-      if (window && window.console) {
-    	  window.console.log('RepeatApplication');
-      }
-
       _.bindAll(this, 'render');
       this.cacheEls();
       this.bindEvents();

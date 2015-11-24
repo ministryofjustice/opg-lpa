@@ -100,8 +100,9 @@
 
     <main id="content" role="main">
         {# <?= $this->accountInfo(); ?> #}
-        {# <?= $this->pageHeaders(); ?> #}
-        <h1 class="heading-xlarge">Make a lasting power of attorney</h1>
+        <h1 class="heading-xlarge">
+            {% block pageTitle %} Make a lasting power of attorney {% endblock %}
+        </h1>
                             
         {#
         <?php if(isset($this->contentHeader)): ?>
