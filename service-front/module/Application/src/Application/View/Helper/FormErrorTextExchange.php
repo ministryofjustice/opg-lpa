@@ -41,7 +41,7 @@ class FormErrorTextExchange extends AbstractHelper
      * @param Form $form
      * @return Form
      */
-    public function __invoke(&$form, $overrideMap)
+    public function __invoke($form, $overrideMap)
     {
         $overrideMap = array_merge_recursive(
             $this->commonFieldMap,

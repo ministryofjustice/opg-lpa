@@ -2,7 +2,7 @@
 
 {% block content %}
 
-{{ formErrorTextExchange(form, []) ? '' }}
+{% set form = formErrorTextExchange(form, []) %}
 
 {{ form.setAttribute('class', 'form') ? '' }}
 
@@ -52,13 +52,13 @@
                 <h1 id="error-heading">There was a problem submitting the form</h1>
                 <p>Because of the following problems:</p>
                 <ol>
-                    {{ formLinkedErrorList(form) ? '' }}
+                    {{ formLinkedErrorList(form) }}
                 </ol>
             </div>
         {% endif %}
 
         <div class="group">
-            {{ formLabel.openTag }} {{ email.getOption('label') }} {{ formLabel.closeTag }}
+            {{ formLabel.openTag|raw }} {{ email.getOption('label') }} {{ formLabel.closeTag }}
             {{ formElement(email) }}
             {{ formElementErrors(email) }}
         </div>
