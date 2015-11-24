@@ -1,5 +1,68 @@
 # CHANGELOG
 
+## 2.4.9 (2015-11-23)
+
+### SECURITY UPDATES
+
+- **ZF2015-09**: `Zend\Captcha\Word` generates a "word" for a CAPTCHA challenge
+  by selecting a sequence of random letters from a character set. Prior to this
+  vulnerability announcement, the selection was performed using PHP's internal
+  `array_rand()` function. This function does not generate sufficient entropy
+  due to its usage of `rand()` instead of more cryptographically secure methods
+  such as `openssl_pseudo_random_bytes()`. This could potentially lead to
+  information disclosure should an attacker be able to brute force the random
+  number generation. This release contains a patch that replaces the
+  `array_rand()` calls to use `Zend\Math\Rand::getInteger()`, which provides
+  better RNG.
+- **ZF2015-10**: `Zend\Crypt\PublicKey\Rsa\PublicKey` has a call to `openssl_public_encrypt()`
+  which used PHP's default `$padding` argument, which specifies
+  `OPENSSL_PKCS1_PADDING`, indicating usage of PKCS1v1.5 padding. This padding
+  has a known vulnerability, the
+  [Bleichenbacher's chosen-ciphertext attack](http://crypto.stackexchange.com/questions/12688/can-you-explain-bleichenbachers-cca-attack-on-pkcs1-v1-5),
+  which can be used to recover an RSA private key. This release contains a patch
+  that changes the padding argument to use `OPENSSL_PKCS1_OAEP_PADDING`.
+
+  Users upgrading to this version may have issues decrypting previously stored
+  values, due to the change in padding. If this occurs, you can pass the
+  constant `OPENSSL_PKCS1_PADDING` to a new `$padding` argument in
+  `Zend\Crypt\PublicKey\Rsa::encrypt()` and `decrypt()` (though typically this
+  should only apply to the latter):
+
+  ```php
+  $decrypted = $rsa->decrypt($data, $key, $mode, OPENSSL_PKCS1_PADDING);
+  ```
+
+  where `$rsa` is an instance of `Zend\Crypt\PublicKey\Rsa`.
+
+  (The `$key` and `$mode` argument defaults are `null` and
+  `Zend\Crypt\PublicKey\Rsa::MODE_AUTO`, if you were not using them previously.)
+
+  We recommend re-encrypting any such values using the new defaults.
+
+## 2.4.8 (2015-09-15)
+
+- [zend-validator/25: validate against DateTimeImmutable instead of DateTimeInterface](https://github.com/zendframework/zend-validator/pull/25)
+- [zend-validator/35: treat 0.0 as non-empty, restoring pre-2.4 behavior](https://github.com/zendframework/zend-validator/pull/35)
+- [zend-inputfilter/26: deprecate "magic" logic for auto-attaching NonEmpty validators in favor of explicit attachment](https://github.com/zendframework/zend-inputfilter/pull/26)
+- [zend-inputfilter/22: ensure fallback values work as per pre-2.4 behavior](https://github.com/zendframework/zend-inputfilter/pull/22)
+- [zend-inputfilter/31: update the InputFilterInterface::add() docblock to match implementations](https://github.com/zendframework/zend-inputfilter/pull/31)
+- [zend-inputfilter/25: Fix how missing optoinal fields are validated to match pre 2.4.0 behavior](https://github.com/zendframework/zend-inputfilter/pull/26)
+- [zend-form/12: deprecate AllowEmpty and ContinueIfEmpty annotations, per zend-inputfilter#26](https://github.com/zendframework/zend-form/pull/12)
+- [zend-form/9: fix typos in aria attribute names of AbstractHelper](https://github.com/zendframework/zend-form/pull/9)
+- [zend-mail/26: fixes the ContentType header to properly handle encoded parameter values](https://github.com/zendframework/zend-mail/pull/26)
+- [zend-mail/11: fixes the Sender header to allow mailbox addresses without TLDs](https://github.com/zendframework/zend-mail/pull/11)
+- [zend-mail/24: fixes parsing of messages that contain an initial blank line before headers](https://github.com/zendframework/zend-mail/pull/24)
+- [zend-http/23: fixes the SetCookie header to allow multiline values (as they are always encoded)](https://github.com/zendframework/zend-http/pull/23)
+- [zend-mvc/27: fixes DefaultRenderingStrategy errors due to controllers returning non-view model results](https://github.com/zendframework/zend-mvc/pull/27)
+
+### SECURITY UPDATES
+
+- **ZF2015-07**: The filesystem storage adapter of `Zend\Cache` was creating
+  directories with a liberal umask that could lead to local arbitrary code
+  execution and/or local privilege escalation. This release contains a patch
+  that ensures the directories are created using permissions of 0775 and files
+  using 0664 (essentially umask 0002). 
+
 ## 2.4.7 (2015-08-11)
 
 - [15: validateInputs must allow ArrayAccess for $data](https://github.com/zendframework/zend-inputfilter/pull/15)

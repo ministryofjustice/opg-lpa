@@ -63,6 +63,7 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
             array('test@email^'),
             array('test@email%'),
             array('test@email$'),
+            array('test@email.com.au'),
         );
     }
 
@@ -123,6 +124,8 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
             array('test@email>'),
             array('test@email<'),
             array('test@email{'),
+            array('test@email.com]'),
+            array('test@ema[il.com'),
         );
     }
 
@@ -152,6 +155,11 @@ class EmailValidatorTest extends \PHPUnit_Framework_TestCase
             array(EmailValidator::ERR_DOT_END, 'example@localhost.'),
             array(EmailValidator::ERR_DOT_END, 'example.@example.co.uk'),
             array(EmailValidator::ERR_UNCLOSEDCOMMENT, '(example@localhost'),
+            array(EmailValidator::ERR_UNOPENEDCOMMENT, 'comment)example@localhost'),
+            array(EmailValidator::ERR_UNOPENEDCOMMENT, 'example(comment))@localhost'),
+            array(EmailValidator::ERR_UNOPENEDCOMMENT, 'example@comment)localhost'),
+            array(EmailValidator::ERR_UNOPENEDCOMMENT, 'example@localhost(comment))'),
+            array(EmailValidator::ERR_UNOPENEDCOMMENT, 'example@(comment))example.com'),
             array(EmailValidator::ERR_UNCLOSEDQUOTEDSTR, '"example@localhost'),
             array(EmailValidator::ERR_EXPECTING_ATEXT, 'exa"mple@localhost'),
             //This was the original. But atext is not allowed after \n
