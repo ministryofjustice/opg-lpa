@@ -4,41 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1bfc68dfcf704c827e1d67640c67e26c",
-    "content-hash": "708a6b62c39174ebb0b8032b31587f4a",
+    "hash": "63bed098078f50ac211d79a12bdd796f",
+    "content-hash": "4e1da30ebc42c8d4a9b168b89dc69a4b",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.0.7",
+            "version": "3.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0d0cd3866c7c2b8d95a26a2e047c46a2a16e1d3e"
+                "reference": "4f8e06728536a593bb8fdaead3ee4f6e7000f78e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d0cd3866c7c2b8d95a26a2e047c46a2a16e1d3e",
-                "reference": "0d0cd3866c7c2b8d95a26a2e047c46a2a16e1d3e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4f8e06728536a593bb8fdaead3ee4f6e7000f78e",
+                "reference": "4f8e06728536a593bb8fdaead3ee4f6e7000f78e",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": ">=5.3|~6.0.1|~6.1",
+                "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1",
                 "guzzlehttp/promises": "~1.0",
                 "guzzlehttp/psr7": "~1.0",
                 "mtdowling/jmespath.php": "~2.2",
                 "php": ">=5.5"
             },
             "require-dev": {
+                "andrewsville/php-token-reflection": "^1.4",
+                "aws/aws-php-sns-message-validator": "~1.0",
                 "behat/behat": "~3.0",
+                "doctrine/cache": "~1.4",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
                 "ext-spl": "*",
+                "nette/neon": "^2.3",
                 "phpunit/phpunit": "~4.0"
             },
             "suggest": {
+                "doctrine/cache": "To use the DoctrineCacheAdapter",
                 "ext-curl": "To send requests using cURL",
                 "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
             },
@@ -78,7 +83,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-07-07 19:54:50"
+            "time": "2015-11-24 01:59:29"
         },
         {
             "name": "chrisboulton/php-resque",
@@ -631,6 +636,82 @@
             "time": "2015-11-13 16:11:28"
         },
         {
+            "name": "monolog/monolog",
+            "version": "1.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "dc5150cc608f2334c72c3b6a553ec9668a4156b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/dc5150cc608f2334c72c3b6a553ec9668a4156b0",
+                "reference": "dc5150cc608f2334c72c3b6a553ec9668a4156b0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "psr/log": "~1.0"
+            },
+            "provide": {
+                "psr/log-implementation": "1.0.0"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^2.4.9",
+                "doctrine/couchdb": "~1.0@dev",
+                "graylog2/gelf-php": "~1.0",
+                "php-console/php-console": "^3.1.3",
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "2.3.0",
+                "raven/raven": "~0.8",
+                "ruflin/elastica": ">=0.90 <3.0",
+                "swiftmailer/swiftmailer": "~5.3",
+                "videlalvaro/php-amqplib": "~2.4"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+                "ext-mongo": "Allow sending log messages to a MongoDB server",
+                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "php-console/php-console": "Allow sending log messages to Google Chrome",
+                "raven/raven": "Allow sending log messages to a Sentry server",
+                "rollbar/rollbar": "Allow sending log messages to Rollbar",
+                "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
+                "videlalvaro/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.15.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Monolog\\": "src/Monolog"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+            "homepage": "http://github.com/Seldaek/monolog",
+            "keywords": [
+                "log",
+                "logging",
+                "psr-3"
+            ],
+            "time": "2015-07-12 13:54:09"
+        },
+        {
             "name": "mtdowling/jmespath.php",
             "version": "2.2.0",
             "source": {
@@ -732,6 +813,38 @@
                 "xml"
             ],
             "time": "2014-11-24 11:48:52"
+        },
+        {
+            "name": "nsmithuk/dynamo-queue-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NSmithUK/dynamo-queue-php.git",
+                "reference": "42cc8d4a1900ad625ff2752f74d72a2231d5a880"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NSmithUK/dynamo-queue-php/zipball/42cc8d4a1900ad625ff2752f74d72a2231d5a880",
+                "reference": "42cc8d4a1900ad625ff2752f74d72a2231d5a880",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.2",
+                "ext-pcntl": "*",
+                "monolog/monolog": "~1.15.0",
+                "php": ">=5.5",
+                "psr/log": "~1.0",
+                "wp-cli/php-cli-tools": "0.10.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DynamoQueue\\": "src/DynamoQueue/",
+                    "DynamoQueueTests\\": "tests/DynamoQueue/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2015-08-07 11:39:19"
         },
         {
             "name": "phly/phly-mongo",
@@ -1191,6 +1304,56 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2015-07-01 19:58:06"
+        },
+        {
+            "name": "wp-cli/php-cli-tools",
+            "version": "v0.10.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-cli/php-cli-tools.git",
+                "reference": "037a010441a5c220cd1df26cdc9b20ad73408356"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-cli/php-cli-tools/zipball/037a010441a5c220cd1df26cdc9b20ad73408356",
+                "reference": "037a010441a5c220cd1df26cdc9b20ad73408356",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "cli": "lib/"
+                },
+                "files": [
+                    "lib/cli/cli.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Logsdon",
+                    "email": "jlogsdon@php.net",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Daniel Bachhuber",
+                    "email": "daniel@handbuilt.co",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Console utilities for PHP",
+            "homepage": "http://github.com/wp-cli/php-cli-tools",
+            "keywords": [
+                "cli",
+                "console"
+            ],
+            "time": "2015-08-10 12:46:19"
         },
         {
             "name": "zendframework/zendframework",
@@ -2336,7 +2499,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "chrisboulton/php-resque": 20
+        "chrisboulton/php-resque": 20,
+        "nsmithuk/dynamo-queue-php": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

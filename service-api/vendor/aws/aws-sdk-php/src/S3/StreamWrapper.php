@@ -515,6 +515,9 @@ class StreamWrapper
      */
     public function rename($path_from, $path_to)
     {
+        // PHP will not allow rename across wrapper types, so we can safely
+        // assume $path_from and $path_to have the same protocol
+        $this->initProtocol($path_from);
         $partsFrom = $this->withPath($path_from);
         $partsTo = $this->withPath($path_to);
         $this->clearCacheKey($path_from);
@@ -526,20 +529,22 @@ class StreamWrapper
         }
 
         return $this->boolCall(function () use ($partsFrom, $partsTo) {
+            $options = $this->getOptions(true);
             // Copy the object and allow overriding default parameters if
             // desired, but by default copy metadata
-            $this->getClient()->copyObject($this->getOptions(true) + [
-                'Bucket'            => $partsTo['Bucket'],
-                'Key'               => $partsTo['Key'],
-                'MetadataDirective' => 'COPY',
-                'CopySource'        => '/' . $partsFrom['Bucket'] . '/'
-                                           . rawurlencode($partsFrom['Key']),
-            ]);
+            $this->getClient()->copy(
+                $partsFrom['Bucket'],
+                $partsFrom['Key'],
+                $partsTo['Bucket'],
+                $partsTo['Key'],
+                isset($options['acl']) ? $options['acl'] : 'private',
+                $options
+            );
             // Delete the original object
             $this->getClient()->deleteObject([
                 'Bucket' => $partsFrom['Bucket'],
                 'Key'    => $partsFrom['Key']
-            ] + $this->getOptions(true));
+            ] + $options);
             return true;
         });
     }

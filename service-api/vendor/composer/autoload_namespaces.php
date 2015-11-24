@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'cli' => array($vendorDir . '/wp-cli/php-cli-tools/lib'),
     'ZfcRbac\\' => array($vendorDir . '/zf-commons/zfc-rbac/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
