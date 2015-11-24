@@ -1,4 +1,4 @@
-// Reusables module for LPA
+// Person Form module for LPA
 // Dependencies: moj, _, jQuery
 
 (function () {
