@@ -4,6 +4,7 @@ namespace Aws;
 /**
  * Builds AWS clients based on configuration settings.
  *
+ * @method \Aws\ApiGateway\ApiGatewayClient createApiGateway(array $args = [])
  * @method \Aws\AutoScaling\AutoScalingClient createAutoScaling(array $args = [])
  * @method \Aws\CloudFormation\CloudFormationClient createCloudFormation(array $args = [])
  * @method \Aws\CloudFront\CloudFrontClient createCloudFront(array $args = [])
@@ -13,14 +14,18 @@ namespace Aws;
  * @method \Aws\CloudTrail\CloudTrailClient createCloudTrail(array $args = [])
  * @method \Aws\CloudWatch\CloudWatchClient createCloudWatch(array $args = [])
  * @method \Aws\CloudWatchLogs\CloudWatchLogsClient createCloudWatchLogs(array $args = [])
+ * @method \Aws\CodeCommit\CodeCommitClient createCodeCommit(array $args = [])
  * @method \Aws\CodeDeploy\CodeDeployClient createCodeDeploy(array $args = [])
+ * @method \Aws\CodePipeline\CodePipelineClient createCodePipeline(array $args = [])
  * @method \Aws\CognitoIdentity\CognitoIdentityClient createCognitoIdentity(array $args = [])
  * @method \Aws\CognitoSync\CognitoSyncClient createCognitoSync(array $args = [])
  * @method \Aws\ConfigService\ConfigServiceClient createConfigService(array $args = [])
  * @method \Aws\DataPipeline\DataPipelineClient createDataPipeline(array $args = [])
+ * @method \Aws\DeviceFarm\DeviceFarmClient createDeviceFarm(array $args = [])
  * @method \Aws\DirectConnect\DirectConnectClient createDirectConnect(array $args = [])
  * @method \Aws\DirectoryService\DirectoryServiceClient createDirectoryService(array $args = [])
  * @method \Aws\DynamoDb\DynamoDbClient createDynamoDb(array $args = [])
+ * @method \Aws\DynamoDbStreams\DynamoDbStreamsClient createDynamoDbStreams(array $args = [])
  * @method \Aws\Ec2\Ec2Client createEc2(array $args = [])
  * @method \Aws\Ecs\EcsClient createEcs(array $args = [])
  * @method \Aws\Efs\EfsClient createEfs(array $args = [])
@@ -28,13 +33,19 @@ namespace Aws;
  * @method \Aws\ElasticBeanstalk\ElasticBeanstalkClient createElasticBeanstalk(array $args = [])
  * @method \Aws\ElasticLoadBalancing\ElasticLoadBalancingClient createElasticLoadBalancing(array $args = [])
  * @method \Aws\ElasticTranscoder\ElasticTranscoderClient createElasticTranscoder(array $args = [])
+ * @method \Aws\ElasticsearchService\ElasticsearchServiceClient createElasticsearchService(array $args = [])
  * @method \Aws\Emr\EmrClient createEmr(array $args = [])
+ * @method \Aws\Firehose\FirehoseClient createFirehose(array $args = [])
  * @method \Aws\Glacier\GlacierClient createGlacier(array $args = [])
  * @method \Aws\Iam\IamClient createIam(array $args = [])
+ * @method \Aws\Inspector\InspectorClient createInspector(array $args = [])
+ * @method \Aws\Iot\IotClient createIot(array $args = [])
+ * @method \Aws\IotDataPlane\IotDataPlaneClient createIotDataPlane(array $args = [])
  * @method \Aws\Kinesis\KinesisClient createKinesis(array $args = [])
  * @method \Aws\Kms\KmsClient createKms(array $args = [])
  * @method \Aws\Lambda\LambdaClient createLambda(array $args = [])
  * @method \Aws\MachineLearning\MachineLearningClient createMachineLearning(array $args = [])
+ * @method \Aws\MarketplaceCommerceAnalytics\MarketplaceCommerceAnalyticsClient createMarketplaceCommerceAnalytics(array $args = [])
  * @method \Aws\OpsWorks\OpsWorksClient createOpsWorks(array $args = [])
  * @method \Aws\Rds\RdsClient createRds(array $args = [])
  * @method \Aws\Redshift\RedshiftClient createRedshift(array $args = [])
@@ -49,11 +60,12 @@ namespace Aws;
  * @method \Aws\Sts\StsClient createSts(array $args = [])
  * @method \Aws\Support\SupportClient createSupport(array $args = [])
  * @method \Aws\Swf\SwfClient createSwf(array $args = [])
+ * @method \Aws\Waf\WafClient createWaf(array $args = [])
  * @method \Aws\WorkSpaces\WorkSpacesClient createWorkSpaces(array $args = [])
  */
 class Sdk
 {
-    const VERSION = '3.0.7';
+    const VERSION = '3.11.2';
 
     /** @var array Arguments for creating clients */
     private $args;
@@ -76,7 +88,7 @@ class Sdk
         }
     }
 
-    public function __call($name, array $args = [])
+    public function __call($name, array $args)
     {
         if (strpos($name, 'create') === 0) {
             return $this->createClient(

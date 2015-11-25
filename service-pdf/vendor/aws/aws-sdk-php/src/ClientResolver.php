@@ -11,6 +11,7 @@ use Aws\Endpoint\EndpointProvider;
 use Aws\Credentials\CredentialProvider;
 use GuzzleHttp\Promise;
 use InvalidArgumentException as IAE;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * @internal Resolves a hash of client arguments to construct a client.
@@ -56,6 +57,7 @@ class ClientResolver
             'type'  => 'value',
             'valid' => ['string'],
             'doc'   => 'The full URI of the webservice. This is only required when connecting to a custom endpoint (e.g., a local version of S3).',
+            'fn'    => [__CLASS__, '_apply_endpoint'],
         ],
         'region' => [
             'type'     => 'value',
@@ -103,7 +105,7 @@ class ClientResolver
         ],
         'credentials' => [
             'type'    => 'value',
-            'valid'   => ['Aws\Credentials\CredentialsInterface', 'array', 'bool', 'callable'],
+            'valid'   => [CredentialsInterface::class, CacheInterface::class, 'array', 'bool', 'callable'],
             'doc'     => 'Specifies the credentials used to sign requests. Provide an Aws\Credentials\CredentialsInterface object, an associative array of "key", "secret", and an optional "token" key, `false` to use null credentials, or a callable credentials provider used to create credentials or return null. See Aws\\Credentials\\CredentialProvider for a list of built-in credentials providers. If no credentials are provided, the SDK will attempt to load them from the environment.',
             'fn'      => [__CLASS__, '_apply_credentials'],
             'default' => [CredentialProvider::class, 'defaultProvider'],
@@ -146,7 +148,14 @@ class ClientResolver
             'doc'      => 'A handler that accepts a command object, request object and returns a promise that is fulfilled with an Aws\ResultInterface object or rejected with an Aws\Exception\AwsException. A handler does not accept a next handler as it is terminal and expected to fulfill a command. If no handler is provided, a default Guzzle handler will be utilized.',
             'fn'       => [__CLASS__, '_apply_handler'],
             'default'  => [__CLASS__, '_default_handler']
-        ]
+        ],
+        'ua_append' => [
+            'type'     => 'value',
+            'valid'    => ['string', 'array'],
+            'doc'      => 'Provide a string or array of strings to send in the User-Agent header.',
+            'fn'       => [__CLASS__, '_apply_user_agent'],
+            'default'  => [],
+        ],
     ];
 
     /**
@@ -293,7 +302,7 @@ class ClientResolver
             . "provided for \"{$name}\". Expected {$expected}, but got "
             . describe_type($provided) . "\n\n"
             . $this->getArgMessage($name);
-        throw new \InvalidArgumentException($msg);
+        throw new IAE($msg);
     }
 
     /**
@@ -350,6 +359,8 @@ class ClientResolver
                 new Credentials('', '')
             );
             $args['config']['signature_version'] = 'anonymous';
+        } elseif ($value instanceof CacheInterface) {
+            $args['credentials'] = CredentialProvider::defaultProvider($args);
         } else {
             throw new IAE('Credentials must be an instance of '
                 . 'Aws\Credentials\CredentialsInterface, an associative '
@@ -439,6 +450,45 @@ class ClientResolver
             $args['error_parser'],
             $args['exception_class']
         );
+    }
+
+    public static function _apply_user_agent($value, array &$args, HandlerList $list)
+    {
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+
+        $value = array_map('strval', $value);
+
+        array_unshift($value, 'aws-sdk-php/' . Sdk::VERSION);
+        $args['ua_append'] = $value;
+
+        $list->appendBuild(static function (callable $handler) use ($value) {
+            return function (
+                CommandInterface $command,
+                RequestInterface $request
+            ) use ($handler, $value) {
+                return $handler($command, $request->withHeader(
+                    'User-Agent',
+                    implode(' ', array_merge(
+                        $value,
+                        $request->getHeader('User-Agent')
+                    ))
+                ));
+            };
+        });
+    }
+
+    public static function _apply_endpoint($value, array &$args, HandlerList $list)
+    {
+        $parts = parse_url($value);
+        if (empty($parts['scheme']) || empty($parts['host'])) {
+            throw new IAE(
+                'Endpoints must be full URIs and include a scheme and host'
+            );
+        }
+
+        $args['endpoint'] = $value;
     }
 
     public static function _default_endpoint_provider()

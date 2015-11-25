@@ -520,81 +520,6 @@
         ]
     },
     {
-        "name": "aws/aws-sdk-php",
-        "version": "3.0.7",
-        "version_normalized": "3.0.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/aws/aws-sdk-php.git",
-            "reference": "0d0cd3866c7c2b8d95a26a2e047c46a2a16e1d3e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d0cd3866c7c2b8d95a26a2e047c46a2a16e1d3e",
-            "reference": "0d0cd3866c7c2b8d95a26a2e047c46a2a16e1d3e",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": ">=5.3|~6.0.1|~6.1",
-            "guzzlehttp/promises": "~1.0",
-            "guzzlehttp/psr7": "~1.0",
-            "mtdowling/jmespath.php": "~2.2",
-            "php": ">=5.5"
-        },
-        "require-dev": {
-            "behat/behat": "~3.0",
-            "ext-dom": "*",
-            "ext-json": "*",
-            "ext-openssl": "*",
-            "ext-pcre": "*",
-            "ext-simplexml": "*",
-            "ext-spl": "*",
-            "phpunit/phpunit": "~4.0"
-        },
-        "suggest": {
-            "ext-curl": "To send requests using cURL",
-            "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
-        },
-        "time": "2015-07-07 19:54:50",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Aws\\": "src/"
-            },
-            "files": [
-                "src/functions.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Amazon Web Services",
-                "homepage": "http://aws.amazon.com"
-            }
-        ],
-        "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
-        "homepage": "http://aws.amazon.com/sdkforphp",
-        "keywords": [
-            "amazon",
-            "aws",
-            "cloud",
-            "dynamodb",
-            "ec2",
-            "glacier",
-            "s3",
-            "sdk"
-        ]
-    },
-    {
         "name": "container-interop/container-interop",
         "version": "1.1.0",
         "version_normalized": "1.1.0.0",
@@ -2374,5 +2299,309 @@
         ],
         "description": "Symfony Validator Component",
         "homepage": "https://symfony.com"
+    },
+    {
+        "name": "monolog/monolog",
+        "version": "1.15.0",
+        "version_normalized": "1.15.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Seldaek/monolog.git",
+            "reference": "dc5150cc608f2334c72c3b6a553ec9668a4156b0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/dc5150cc608f2334c72c3b6a553ec9668a4156b0",
+            "reference": "dc5150cc608f2334c72c3b6a553ec9668a4156b0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0",
+            "psr/log": "~1.0"
+        },
+        "provide": {
+            "psr/log-implementation": "1.0.0"
+        },
+        "require-dev": {
+            "aws/aws-sdk-php": "^2.4.9",
+            "doctrine/couchdb": "~1.0@dev",
+            "graylog2/gelf-php": "~1.0",
+            "php-console/php-console": "^3.1.3",
+            "phpunit/phpunit": "~4.5",
+            "phpunit/phpunit-mock-objects": "2.3.0",
+            "raven/raven": "~0.8",
+            "ruflin/elastica": ">=0.90 <3.0",
+            "swiftmailer/swiftmailer": "~5.3",
+            "videlalvaro/php-amqplib": "~2.4"
+        },
+        "suggest": {
+            "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+            "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+            "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+            "ext-mongo": "Allow sending log messages to a MongoDB server",
+            "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+            "php-console/php-console": "Allow sending log messages to Google Chrome",
+            "raven/raven": "Allow sending log messages to a Sentry server",
+            "rollbar/rollbar": "Allow sending log messages to Rollbar",
+            "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
+            "videlalvaro/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib"
+        },
+        "time": "2015-07-12 13:54:09",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.15.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Monolog\\": "src/Monolog"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jordi Boggiano",
+                "email": "j.boggiano@seld.be",
+                "homepage": "http://seld.be"
+            }
+        ],
+        "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+        "homepage": "http://github.com/Seldaek/monolog",
+        "keywords": [
+            "log",
+            "logging",
+            "psr-3"
+        ]
+    },
+    {
+        "name": "wp-cli/php-cli-tools",
+        "version": "v0.10.5",
+        "version_normalized": "0.10.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wp-cli/php-cli-tools.git",
+            "reference": "037a010441a5c220cd1df26cdc9b20ad73408356"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wp-cli/php-cli-tools/zipball/037a010441a5c220cd1df26cdc9b20ad73408356",
+            "reference": "037a010441a5c220cd1df26cdc9b20ad73408356",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">= 5.3.0"
+        },
+        "time": "2015-08-10 12:46:19",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "cli": "lib/"
+            },
+            "files": [
+                "lib/cli/cli.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "James Logsdon",
+                "email": "jlogsdon@php.net",
+                "role": "Developer"
+            },
+            {
+                "name": "Daniel Bachhuber",
+                "email": "daniel@handbuilt.co",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "Console utilities for PHP",
+        "homepage": "http://github.com/wp-cli/php-cli-tools",
+        "keywords": [
+            "cli",
+            "console"
+        ]
+    },
+    {
+        "name": "aws/aws-sdk-php",
+        "version": "3.11.2",
+        "version_normalized": "3.11.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/aws/aws-sdk-php.git",
+            "reference": "4f8e06728536a593bb8fdaead3ee4f6e7000f78e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4f8e06728536a593bb8fdaead3ee4f6e7000f78e",
+            "reference": "4f8e06728536a593bb8fdaead3ee4f6e7000f78e",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1",
+            "guzzlehttp/promises": "~1.0",
+            "guzzlehttp/psr7": "~1.0",
+            "mtdowling/jmespath.php": "~2.2",
+            "php": ">=5.5"
+        },
+        "require-dev": {
+            "andrewsville/php-token-reflection": "^1.4",
+            "aws/aws-php-sns-message-validator": "~1.0",
+            "behat/behat": "~3.0",
+            "doctrine/cache": "~1.4",
+            "ext-dom": "*",
+            "ext-json": "*",
+            "ext-openssl": "*",
+            "ext-pcre": "*",
+            "ext-simplexml": "*",
+            "ext-spl": "*",
+            "nette/neon": "^2.3",
+            "phpunit/phpunit": "~4.0"
+        },
+        "suggest": {
+            "doctrine/cache": "To use the DoctrineCacheAdapter",
+            "ext-curl": "To send requests using cURL",
+            "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
+        },
+        "time": "2015-11-24 01:59:29",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Aws\\": "src/"
+            },
+            "files": [
+                "src/functions.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Amazon Web Services",
+                "homepage": "http://aws.amazon.com"
+            }
+        ],
+        "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
+        "homepage": "http://aws.amazon.com/sdkforphp",
+        "keywords": [
+            "amazon",
+            "aws",
+            "cloud",
+            "dynamodb",
+            "ec2",
+            "glacier",
+            "s3",
+            "sdk"
+        ]
+    },
+    {
+        "name": "nsmithuk/dynamo-queue-php",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/NSmithUK/dynamo-queue-php.git",
+            "reference": "9877ffff23b9d4dd0e270968ba534c092ad83036"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/NSmithUK/dynamo-queue-php/zipball/9877ffff23b9d4dd0e270968ba534c092ad83036",
+            "reference": "9877ffff23b9d4dd0e270968ba534c092ad83036",
+            "shasum": ""
+        },
+        "require": {
+            "aws/aws-sdk-php": "^3.2",
+            "ext-pcntl": "*",
+            "monolog/monolog": "~1.15.0",
+            "php": ">=5.5",
+            "psr/log": "~1.0",
+            "wp-cli/php-cli-tools": "0.10.*"
+        },
+        "time": "2015-11-25 13:24:09",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "DynamoQueue\\": "src/DynamoQueue/",
+                "DynamoQueueTests\\": "tests/DynamoQueue/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/"
+    },
+    {
+        "name": "zendframework/zend-filter",
+        "version": "2.5.1",
+        "version_normalized": "2.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/zend-filter.git",
+            "reference": "93e6990a198e6cdd811064083acac4693f4b29ae"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/zend-filter/zipball/93e6990a198e6cdd811064083acac4693f4b29ae",
+            "reference": "93e6990a198e6cdd811064083acac4693f4b29ae",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.23",
+            "zendframework/zend-stdlib": "~2.5"
+        },
+        "require-dev": {
+            "fabpot/php-cs-fixer": "1.7.*",
+            "phpunit/phpunit": "~4.0",
+            "zendframework/zend-config": "~2.5",
+            "zendframework/zend-crypt": "~2.5",
+            "zendframework/zend-i18n": "~2.5",
+            "zendframework/zend-loader": "~2.5",
+            "zendframework/zend-servicemanager": "~2.5",
+            "zendframework/zend-uri": "~2.5"
+        },
+        "suggest": {
+            "zendframework/zend-crypt": "Zend\\Crypt component",
+            "zendframework/zend-i18n": "Zend\\I18n component",
+            "zendframework/zend-servicemanager": "Zend\\ServiceManager component",
+            "zendframework/zend-uri": "Zend\\Uri component for UriNormalize filter"
+        },
+        "time": "2015-06-03 15:32:01",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.5-dev",
+                "dev-develop": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Zend\\Filter\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "provides a set of commonly needed data filters",
+        "homepage": "https://github.com/zendframework/zend-filter",
+        "keywords": [
+            "filter",
+            "zf2"
+        ]
     }
 ]
