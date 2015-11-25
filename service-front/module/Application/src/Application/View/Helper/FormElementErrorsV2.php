@@ -3,7 +3,7 @@ namespace Application\View\Helper;
 
 use Zend\Form\ElementInterface;
 
-class FormElementErrors_v2 extends \Zend\Form\View\Helper\FormElementErrors_v2
+class FormElementErrorsV2 extends \Zend\Form\View\Helper\FormElementErrors
 {
     public function __invoke(ElementInterface $element = null, array $attributes = array(), array $messageOverrideMap = [])
     {
