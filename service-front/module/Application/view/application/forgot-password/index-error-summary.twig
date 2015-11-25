@@ -5,7 +5,7 @@
     <ol class="error-summary-list">
         {{ formLinkedErrorList(form) ? '' }}
 
-        {% if error %}
+        {% if error is not empty %}
             <li>
                 <a href="">
                 {% if error == 'RECEIVED_IN_LAST_5_MINUTES' %}
