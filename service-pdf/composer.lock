@@ -258,16 +258,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "1.2.10",
+            "version": "1.2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "de448a30fa78f2dc93889be529e875a13c6034ac"
+                "reference": "04c6cdf9871140b80947c87db7770c0dd9c75c7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/de448a30fa78f2dc93889be529e875a13c6034ac",
-                "reference": "de448a30fa78f2dc93889be529e875a13c6034ac",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/04c6cdf9871140b80947c87db7770c0dd9c75c7c",
+                "reference": "04c6cdf9871140b80947c87db7770c0dd9c75c7c",
                 "shasum": ""
             },
             "require": {
@@ -307,20 +307,20 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-10-11 22:34:23"
+            "time": "2015-11-11 03:28:32"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.1.0",
+            "version": "6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "66fd14b4d0b8f2389eaf37c5458608c7cb793a81"
+                "reference": "c6851d6e48f63b69357cbfa55bca116448140e0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/66fd14b4d0b8f2389eaf37c5458608c7cb793a81",
-                "reference": "66fd14b4d0b8f2389eaf37c5458608c7cb793a81",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/c6851d6e48f63b69357cbfa55bca116448140e0c",
+                "reference": "c6851d6e48f63b69357cbfa55bca116448140e0c",
                 "shasum": ""
             },
             "require": {
@@ -369,7 +369,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-09-08 17:36:26"
+            "time": "2015-11-23 00:47:50"
         },
         {
             "name": "guzzlehttp/promises",
@@ -424,16 +424,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "4ef919b0cf3b1989523138b60163bbcb7ba1ff7e"
+                "reference": "4d0bdbe1206df7440219ce14c972aa57cc5e4982"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4ef919b0cf3b1989523138b60163bbcb7ba1ff7e",
-                "reference": "4ef919b0cf3b1989523138b60163bbcb7ba1ff7e",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4d0bdbe1206df7440219ce14c972aa57cc5e4982",
+                "reference": "4d0bdbe1206df7440219ce14c972aa57cc5e4982",
                 "shasum": ""
             },
             "require": {
@@ -478,7 +478,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2015-08-15 19:32:36"
+            "time": "2015-11-03 01:34:55"
         },
         {
             "name": "mikehaertl/php-pdftk",
@@ -639,19 +639,20 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "7da24b496b09511b6cfb933ba5b5a50b10157a9b"
+                "reference": "db4b063fdfef4e59d47f217556ed08ff1a40131e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/7da24b496b09511b6cfb933ba5b5a50b10157a9b",
-                "reference": "7da24b496b09511b6cfb933ba5b5a50b10157a9b",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/db4b063fdfef4e59d47f217556ed08ff1a40131e",
+                "reference": "db4b063fdfef4e59d47f217556ed08ff1a40131e",
                 "shasum": ""
             },
             "require": {
+                "aws/aws-sdk-php": "^3.0",
                 "php": ">=5.4.0",
                 "raven/raven": "0.11.0",
                 "zendframework/zend-log": "^2.3.7"
@@ -671,10 +672,10 @@
             ],
             "description": "Common logger component for OPG LPA modules",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.0.4",
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.0.5",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2015-08-10 13:24:47"
+            "time": "2015-11-13 16:11:28"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -872,7 +873,7 @@
         },
         {
             "name": "symfony/intl",
-            "version": "v2.6.11",
+            "version": "v2.6.12",
             "target-dir": "Symfony/Component/Intl",
             "source": {
                 "type": "git",
@@ -948,16 +949,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v2.7.6",
+            "version": "v2.7.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "6ccd9289ec1c71d01a49d83480de3b5293ce30c8"
+                "reference": "e4ecb9c3ba1304eaf24de15c2d7a428101c1982f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/6ccd9289ec1c71d01a49d83480de3b5293ce30c8",
-                "reference": "6ccd9289ec1c71d01a49d83480de3b5293ce30c8",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/e4ecb9c3ba1304eaf24de15c2d7a428101c1982f",
+                "reference": "e4ecb9c3ba1304eaf24de15c2d7a428101c1982f",
                 "shasum": ""
             },
             "require": {
@@ -986,7 +987,10 @@
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\Translation\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1004,20 +1008,20 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-27 15:38:06"
+            "time": "2015-11-18 13:41:01"
         },
         {
             "name": "symfony/validator",
-            "version": "v2.6.11",
+            "version": "v2.6.12",
             "target-dir": "Symfony/Component/Validator",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Validator.git",
+                "url": "https://github.com/symfony/validator.git",
                 "reference": "fccfab79928e612eedca96dcf3a9e8efd2ee495f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Validator/zipball/fccfab79928e612eedca96dcf3a9e8efd2ee495f",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/fccfab79928e612eedca96dcf3a9e8efd2ee495f",
                 "reference": "fccfab79928e612eedca96dcf3a9e8efd2ee495f",
                 "shasum": ""
             },
@@ -1080,20 +1084,20 @@
         },
         {
             "name": "zendframework/zend-crypt",
-            "version": "2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-crypt.git",
-                "reference": "15537e8e438a98923f05c40c45c162342ea8235a"
+                "reference": "b7a5f99f530e7f77762e3eb4011ed1029ffc062f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-crypt/zipball/15537e8e438a98923f05c40c45c162342ea8235a",
-                "reference": "15537e8e438a98923f05c40c45c162342ea8235a",
+                "url": "https://api.github.com/repos/zendframework/zend-crypt/zipball/b7a5f99f530e7f77762e3eb4011ed1029ffc062f",
+                "reference": "b7a5f99f530e7f77762e3eb4011ed1029ffc062f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.23",
+                "php": ">=5.5",
                 "zendframework/zend-math": "~2.5",
                 "zendframework/zend-servicemanager": "~2.5",
                 "zendframework/zend-stdlib": "~2.5"
@@ -1127,7 +1131,7 @@
                 "crypt",
                 "zf2"
             ],
-            "time": "2015-06-03 15:32:00"
+            "time": "2015-11-23 16:35:19"
         },
         {
             "name": "zendframework/zend-hydrator",
@@ -2246,16 +2250,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.6",
+            "version": "v2.7.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d"
+                "reference": "4cfcd7a9fceba662b3c036b7d9a91f6197af046c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/eca9019c88fbe250164affd107bc8057771f3f4d",
-                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/4cfcd7a9fceba662b3c036b7d9a91f6197af046c",
+                "reference": "4cfcd7a9fceba662b3c036b7d9a91f6197af046c",
                 "shasum": ""
             },
             "require": {
@@ -2270,7 +2274,10 @@
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\Yaml\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2288,7 +2295,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-11 09:39:48"
+            "time": "2015-11-18 13:41:01"
         }
     ],
     "aliases": [],

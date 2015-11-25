@@ -44,7 +44,7 @@ abstract class Scrypt
             if ($length < 16) {
                 throw new Exception\InvalidArgumentException("Key length is too low, must be greater or equal to 16");
             }
-            return self::hex2bin(scrypt($password, $salt, $n, $r, $p, $length));
+            return hex2bin(scrypt($password, $salt, $n, $r, $p, $length));
         }
 
         $b = Pbkdf2::calc('sha256', $password, $salt, 1, $p * 128 * $r);
@@ -69,7 +69,7 @@ abstract class Scrypt
     protected static function scryptROMix($b, $n, $r)
     {
         $x = $b;
-        $v = array();
+        $v = [];
         for ($i = 0; $i < $n; $i++) {
             $v[$i] = $x;
             $x = self::scryptBlockMix($x, $r);
@@ -122,7 +122,7 @@ abstract class Scrypt
      */
     protected static function salsa208Core32($b)
     {
-        $b32 = array();
+        $b32 = [];
         for ($i = 0; $i < 16; $i++) {
             list(, $b32[$i]) = unpack("V", substr($b, $i * 4, 4));
         }
@@ -215,7 +215,7 @@ abstract class Scrypt
      */
     protected static function salsa208Core64($b)
     {
-        $b32 = array();
+        $b32 = [];
         for ($i = 0; $i < 16; $i++) {
             list(, $b32[$i]) = unpack("V", substr($b, $i * 4, 4));
         }
@@ -317,24 +317,5 @@ abstract class Scrypt
         }
         list(, $n) = unpack($v, substr($b, -64));
         return $n;
-    }
-
-    /**
-     * Convert hex string in a binary string
-     *
-     * @param  string $hex
-     * @return string
-     */
-    protected static function hex2bin($hex)
-    {
-        if (PHP_VERSION_ID >= 50400) {
-            return hex2bin($hex);
-        }
-        $len    = strlen($hex);
-        $result = '';
-        for ($i = 0; $i < $len; $i+=2) {
-            $result .= chr(hexdec($hex[$i] . $hex[$i+1]));
-        }
-        return $result;
     }
 }
