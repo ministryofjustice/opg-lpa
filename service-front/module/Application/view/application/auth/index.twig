@@ -48,7 +48,7 @@
         <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ email.getAttribute('id') }}">
                 <span class="form-label-bold">{{ email.getOption('label') }}</span>
-                {{ formElementErrors(email) }}
+                {{ formElementErrorsV2(email) }}
             </label>
             {{ formElement(email) }}
         </div>
@@ -56,7 +56,7 @@
         <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ password.getAttribute('id') }}">
                 <span class="form-label-bold">{{ password.getOption('label') }}</span>
-                {{ formElementErrors(password) }}
+                {{ formElementErrorsV2(password) }}
             </label>
             {{ formElement(password) }}
         </div>
