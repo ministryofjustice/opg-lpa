@@ -17,8 +17,21 @@
 {% set email = form.get('email') %}
 {% set password = form.get('password') %}
 
-{{ email.setAttributes({id: 'email', autocomplete: 'off', class: 'form-control'}).setOptions( {label: 'Email address'} ) ? '' }}
-{{ password.setAttributes({id: 'password_current', autocomplete: 'off', class: 'form-control'}).setOptions( {label: 'Password'} ) ? '' }}
+{{ email.setAttributes({
+    id: 'email',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setOptions({ label: 'Email address' }) ? '' }}
+
+{{ password.setAttributes({
+    id: 'password_current',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? '' }}
+
+{{ password.setOptions( { label: 'Password' }) ? '' }}
 
 {{ form.prepare() ? '' }}
 
