@@ -1,0 +1,25 @@
+{% if (error is not empty or form.getMessages|length > 0) %}
+<div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting the form</h1>
+    <p>Because of the following problems:</p>
+    <ol class="error-summary-list">
+        {{ formLinkedErrorList(form) ? '' }}
+
+        {% if error %}
+            <li>
+                <a href="">
+                {% if error == 'RECEIVED_IN_LAST_5_MINUTES' %}
+                    You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake.
+                {% elseif error == 'ACCOUNT_NOT_FOUND' %}
+                    We could not find an account for this email address.
+                {% elseif error == 'ACCOUNT_NOT_ACTIVE' %}
+                    You need to activate your account before you reset your password.
+                {% else %}
+                    {{ error }}
+                {% endif %}
+                </a>
+            </li>
+        {% endif %}
+    </ol>
+</div>
+{% endif %}

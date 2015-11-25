@@ -1,8 +1,8 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{# {% block errorSummary %}
-    {% include 'application/auth/error-summary.twig' %}
-{% endblock %} #}
+{% block errorSummary %}
+    {% include 'application/forgot-password/index-error-summary.twig' %}
+{% endblock %}
 
 {% block pageTitle %}
     Reset your password
@@ -33,58 +33,37 @@
 
 {{ form.prepare() ? '' }}
 
-<p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
-
-<div class="form">
-
-    {{ form().openTag( form )|raw }}
-
-        {{ formElement(form.get( form.csrfName )) }}
-
-        {% if (error is not empty or form.getMessages|length > 0) %}
-            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
-            <h1 id="error-heading">There was a problem submitting the form</h1>
-            <p>Because of the following problems:</p>
-            <ol>
-            	{{ formLinkedErrorList(form) ? '' }}
-
-                {% if error %}
-                    <li><a href="">
-                        {% if error == 'RECEIVED_IN_LAST_5_MINUTES' %}
-                            You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake.
-                        {% elseif error == 'ACCOUNT_NOT_FOUND' %}
-                            We could not find an account for this email address.
-                        {% elseif error == 'ACCOUNT_NOT_ACTIVE' %}
-                            You need to activate your account before you reset your password.
-                        {% else %}
-                        	{{ error }}
-						{% endif %}                    
-                    </a></li>
-                {% endif %}
-            </ol>
-            </div>
-        {% endif %}
-
-        <div class="group">
-            {{ formLabel.openTag|raw }} {{ email.getOption('label') }} {{ formLabel.closeTag }}
-            {{ formElement(email) }}
-            {{ formElementErrors(email) }}
-        </div>
-
-        <div class="group">
-            {{ formLabel.openTag|raw }} {{ email_confirm.getOption('label') }} {{ formLabel.closeTag }}
-            {{ formElement(email_confirm) }}
-            {{ formElementErrors(email_confirm) }}
-        </div>
-        
-        <div class="action group">
-            <p class="action group">
-                <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
-            </p>
-        </div>
-
-    {{ form().closeTag|raw }}
-
+<div class="text">
+    <p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
 </div>
+
+{{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    <fieldset>
+        <legend class="visuallyhidden">Reset your password</legend>
+
+        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email.getAttribute('id') }}">
+                <span class="form-label-bold">{{ email.getOption('label') }}</span>
+                {{ formElementErrorsV2(email) }}
+            </label>
+            {{ formElement(email) }}
+        </div>
+
+        <div class="form-group {{ email_confirm.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email_confirm.getAttribute('id') }}">
+                <span class="form-label-bold">{{ email_confirm.getOption('label') }}</span>
+                {{ formElementErrorsV2(email_confirm) }}
+            </label>
+            {{ formElement(email_confirm) }}
+        </div>
+
+    </fieldset>
+    
+    <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
+
+{{ form().closeTag|raw }}
 
 {% endblock content %}
