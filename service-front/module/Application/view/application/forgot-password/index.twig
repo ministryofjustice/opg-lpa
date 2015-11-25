@@ -48,7 +48,7 @@
             <ol>
             	{{ formLinkedErrorList(form) ? '' }}
 
-                {% if error %}
+                {% if error is not empty %}
                     <li><a href="">
                         {% if error == 'RECEIVED_IN_LAST_5_MINUTES' %}
                             You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake.
