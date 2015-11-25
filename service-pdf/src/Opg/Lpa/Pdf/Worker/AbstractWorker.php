@@ -25,12 +25,22 @@ abstract class AbstractWorker {
      */
     public function run( $docId, $type, $lpa ){
 
-        $lpaDecode = json_decode($lpa);
-        if (property_exists($lpaDecode, 'id')) {
-            $lpaId = $lpaDecode->id;
+        if( is_array($lpa) && isset($lpa['id']) ){
+
+            $lpaId = $lpa['id'];
+
         } else {
-            throw new \Exception('Missing field: id fo docId ' . $docId);
+
+            $lpaDecode = json_decode($lpa);
+            if (property_exists($lpaDecode, 'id')) {
+                $lpaId = $lpaDecode->id;
+            } else {
+                throw new \Exception('Missing field: id fo docId ' . $docId);
+            }
+
         }
+
+        //---
         
         Logger::getInstance()->info("${docId}: Generating PDF\n", ['lpaId' => $lpaId]);
         
