@@ -86,6 +86,16 @@ return array(
 
         ], // cache
 
+        'DynamoQueue' => [
+            'settings' => [
+                'table_name' => null,
+            ],
+            'client' => [
+                'version' => '2012-08-10',
+                'region' => 'eu-west-1',
+            ],
+        ], // DynamoQueue
+
     ], // pdf
 
 );
