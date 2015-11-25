@@ -17,10 +17,11 @@
 {% set email = form.get('email') %}
 {% set password = form.get('password') %}
 
-{{ email.setAttributes({id: 'email', autocomplete: 'off'}).setOptions( {label: 'Email address'} ) ? '' }}
-{{ password.setAttributes({id: 'password_current', autocomplete: 'off'}).setOptions( {label: 'Password'} ) ? '' }}
+{{ email.setAttributes({id: 'email', autocomplete: 'off', class: 'form-control'}).setOptions( {label: 'Email address'} ) ? '' }}
+{{ password.setAttributes({id: 'password_current', autocomplete: 'off', class: 'form-control'}).setOptions( {label: 'Password'} ) ? '' }}
 
 {{ form.prepare() ? '' }}
+
 
 <p>Sign in or <a href="{{ url('register') }}">create an account</a> to get started.</p>
 
@@ -30,26 +31,31 @@
 
     <fieldset>
         <legend class="visuallyhidden">Sign in</legend>
-        <div class="form-group">
-            {{ formLabel.openTag|raw }} {{ email.getOption('label') }} {{ formLabel.closeTag }}
+
+        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email.getAttribute('id') }}">
+                <span class="form-label-bold">{{ email.getOption('label') }}</span>
+                {{ formElementErrors(email) }}
+            </label>
             {{ formElement(email) }}
-            {{ formElementErrors(email) }}
         </div>
 
-        <div class="form-group">
-        	{{ formLabel.openTag }} {{ password.getOption('label') }} {{ formLabel.closeTag }}
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                <span class="form-label-bold">{{ password.getOption('label') }}</span>
+                {{ formElementErrors(password) }}
+            </label>
             {{ formElement(password) }}
-            {{ formElementErrors(password) }}
         </div>
-    </fieldset>
 
+    </fieldset>
 
     <input type="submit" name="submit" id="signin-form-submit" value="Sign in" class="button">
 
 {{ form().closeTag|raw }}
 
-<p class="action group">
-    <a href="{{ url('forgot-password') }}" type="submit" name="forgotpw" id="forgotpw-submit" class="link-style">Forgotten your password?</a>
+<p>
+    <a href="{{ url('forgot-password') }}">Forgotten your password?</a>
 </p>
 
 {% endblock content %}
