@@ -96,7 +96,7 @@ $queue->enqueue( $processor, $message )
 Where
 
 * **processor** is the Processor the Worker will use to execute the job. By default in PHP, this should be a full classname (including namespace) of a class that implements the `ProcessorInterface`, that is accessible via the autoloader within the Worker.
-* **message** is a string containing the message/instruction to be passed to the Worker. For rich data is recommended this is a JSON string. Binary data is also supported for if you wish to compress and/or encrypt the data.
+* **message** is a string containing the message/instruction to be passed to the Worker. For rich data we recommend this is a JSON string. Binary data is also supported for if you wish to compress and/or encrypt the data.
 
 For example:
 
@@ -125,4 +125,4 @@ This can be aided by:
 
 Job Processing Order
 ------------
-To aid scalability DynamoQueue supports distributing jobs across partitions. In DynamoQueue’s default configuration of a single partition, jobs are processed in exactly the order they were added to the queue. When more than partition is used jobs are processed in approximately the order they added. The greater the number of partitions used, the lower the correlation between when they were added and when they are processed.
+To aid scalability DynamoQueue supports distributing jobs across partitions. In DynamoQueue’s default configuration of a single partition, jobs are processed in exactly the order they were added to the queue. When more than one partition is used jobs are processed in approximately the order they were added. The greater the number of partitions used, the lower the correlation between when they were added and when they are processed.

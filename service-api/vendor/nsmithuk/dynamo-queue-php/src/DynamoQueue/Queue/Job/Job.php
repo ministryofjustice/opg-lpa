@@ -1,7 +1,9 @@
 <?php
 namespace DynamoQueue\Queue\Job;
 
-class Job {
+use DynamoQueue\AbstractJob;
+
+class Job extends AbstractJob {
 
     /**
      * @var string The job's unique identifier.

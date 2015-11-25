@@ -820,12 +820,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/NSmithUK/dynamo-queue-php.git",
-                "reference": "42cc8d4a1900ad625ff2752f74d72a2231d5a880"
+                "reference": "6880bf0322d01784f0af77eb8a9b4ae6f8b1118b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NSmithUK/dynamo-queue-php/zipball/42cc8d4a1900ad625ff2752f74d72a2231d5a880",
-                "reference": "42cc8d4a1900ad625ff2752f74d72a2231d5a880",
+                "url": "https://api.github.com/repos/NSmithUK/dynamo-queue-php/zipball/6880bf0322d01784f0af77eb8a9b4ae6f8b1118b",
+                "reference": "6880bf0322d01784f0af77eb8a9b4ae6f8b1118b",
                 "shasum": ""
             },
             "require": {
@@ -844,7 +844,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2015-08-07 11:39:19"
+            "time": "2015-11-25 10:53:38"
         },
         {
             "name": "phly/phly-mongo",
