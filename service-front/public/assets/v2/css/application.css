@@ -1447,4 +1447,81 @@ ol {
   background: #28a197;
   text-align: center; }
 
+#popup.timeout {
+  width: 500px; }
+  #popup.timeout .timeout-body {
+    padding: 25px; }
+    #popup.timeout .timeout-body ul {
+      margin: 0; }
+
+.noscroll {
+  position: relative;
+  overflow: hidden; }
+
+.popover-mask {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  z-index: 60;
+  overflow-y: auto; }
+
+#popup {
+  display: none;
+  clear: both;
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+  width: 80%;
+  background-color: #fff;
+  margin: 4em auto 20em auto;
+  padding: 0 0 0.5em;
+  border: 0.5em solid #222;
+  overflow: hidden; }
+  #popup .close {
+    margin: 0;
+    position: absolute;
+    z-index: 2;
+    top: 0.5em;
+    right: 0.5em; }
+    #popup .close a {
+      background-color: transparent;
+      background-image: url(https://assets.digital.cabinet-office.gov.uk/static/close-d05b62d4287151f959ffdcf2387898f7.png);
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      display: block;
+      margin: 0;
+      height: 2em;
+      width: 2em;
+      text-indent: -9999px;
+      overflow: hidden; }
+      #popup .close a:hover {
+        background-color: #bfbfbf; }
+  #popup .header {
+    border-bottom: 1px solid #d5e8f3;
+    padding: 1em 2em;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 400;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      #popup .header {
+        font-size: 19px;
+        line-height: 1.31579; } }
+    #popup .header h1, #popup .header h2, #popup .header h3, #popup .header p {
+      margin: 0; }
+  #popup .action {
+    clear: both;
+    border-top: 1px solid #d5e8f3;
+    padding: 1em; }
+
 /*# sourceMappingURL=application.css.map */

@@ -1,1 +1,10 @@
+// GOVUK Elements
 @import 'main';
+
+// Patterns
+@import 'patterns/popup';
+
+// ===========================================================
+// GENERIC POPUP
+// ===========================================================
+@include popup(80%);
