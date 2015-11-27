@@ -4,6 +4,7 @@
     "dependencies": {
         "jquery": "~1.*.*",
         "govuk_template": "git://github.com/alphagov/govuk_template.git#0.16.0",
-        "govuk_elements": "git://github.com/alphagov/govuk_elements.git#0.1.0"
+        "govuk_elements": "git://github.com/alphagov/govuk_elements.git#0.1.0",
+        "stageprompt": "git://github.com/alphagov/stageprompt.git#2.1.0"
     }
 }
