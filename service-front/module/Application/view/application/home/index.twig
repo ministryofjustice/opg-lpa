@@ -21,13 +21,13 @@
             </div>
 
             <div class="column-half">
-                {# <?php if (!$this->identity()) : ?> #}
+                {% if (identity() is not empty) %}
                     <p>
                         <a class="button" href="{{ url('register') }}" role="button">Create an account now</a>
                     </p>
-                 {# <?php else: ?>
+                {% else %}
                     <p><a class="create-lpa button" href="<?= $this->url('user/dashboard/create-lpa') ?>" role="button">Create an LPA now</a></p>
-                <?php endif; ?> #}
+                {% endif %}
                 <details>
                     <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form">
                         <span class="summary">What you'll need to complete the form</span>
@@ -55,7 +55,7 @@
 
     <hr>
 
-    {# <?php if (!$this->identity()) : ?> #}
+    {% if (identity() is not empty) %}
     <li>
         <div class="grid-row">
             
@@ -71,7 +71,7 @@
         </div>
 
     </li>
-    {# <?php endif;?> #}
+    {% endif %}
 </ul>
 
 <hr>
