@@ -49,8 +49,12 @@ module.exports = function (grunt) {
         }]
       }
     },
-    // Join the files
+
+    // Join the JS files
     concat: {
+      options: {
+        sourceMap: true
+      },
       dist: {
         src: [
           // Vendor Scripts
@@ -99,6 +103,7 @@ module.exports = function (grunt) {
         nonull: true
       }
     },
+
     // lint js files
     jshint: {
       options: {
@@ -111,6 +116,17 @@ module.exports = function (grunt) {
         'assets/js/lpa/**/*.js',
         'assets/js/main.js'
       ]
+    },
+
+    // Minify for production
+    uglify: {
+      options: {
+        sourceMap: true
+      },
+      build: {
+        src: 'public/assets/v2/js/application.js',
+        dest: 'public/assets/v2/js/application.min.js'
+      }
     }
   });
 
@@ -121,6 +137,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // define default task
   grunt.registerTask('default', ['watch']);
