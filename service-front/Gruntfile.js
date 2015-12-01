@@ -2,12 +2,20 @@ module.exports = function (grunt) {
   'use strict';
 
   grunt.initConfig({
+
+    // watching sass and js (as they need post tasks)
     watch: {
       scss: {
-        files: 'assets/**/*.scss',
+        files: 'assets/sass/**/*.scss',
         tasks: ['sass', 'replace:image_url']
+      },
+      js: {
+        files: 'assets/js/**/*.js',
+        tasks: ['concat']
       }
     },
+
+    // sass files to compile
     sass: {
       dev: {
         options: {
@@ -30,6 +38,7 @@ module.exports = function (grunt) {
       }
     },
 
+    // lint scss files
     scsslint: {
       allFiles: [
         'assets/sass/*.scss'
@@ -41,9 +50,10 @@ module.exports = function (grunt) {
       }
     },
 
+    // replacing a compass depended helper within govuk template css
     replace: {
       image_url: {
-        src: ['public/assets/v2/css/*.css'],
+        src: ['public/assets/v2/css/govuk-template*.css'],
         dest: 'public/assets/v2/css/',
         replacements: [{
           from: 'image-url',
@@ -52,7 +62,7 @@ module.exports = function (grunt) {
       }
     },
 
-    // Minifying the css
+    // minifying the css
     cssmin: {
       options: {
         sourceMap: true
@@ -68,7 +78,7 @@ module.exports = function (grunt) {
       }
     },
 
-    // Join the JS files
+    // join the JS files
     concat: {
       options: {
         sourceMap: true
@@ -136,7 +146,7 @@ module.exports = function (grunt) {
       ]
     },
 
-    // Minify for production
+    // minify for production
     uglify: {
       options: {
         sourceMap: true
@@ -144,6 +154,24 @@ module.exports = function (grunt) {
       build: {
         src: 'public/assets/v2/js/application.js',
         dest: 'public/assets/v2/js/application.min.js'
+      }
+    },
+
+    // refreshes browser on scss, js & twig changes
+    // runs a mini-server on localhost:3000 as a proxy on vagrant box
+    browserSync: {
+      dev: {
+        bsFiles: {
+          src: [
+            'public/assets/v2/css/application.css',
+            'public/assets/v2/js/application.js',
+            'module/Application/view/**/*.twig'
+          ]
+        },
+        options: {
+          watchTask: true,
+          proxy: "https://192.168.33.103/home"
+        }
       }
     }
   });
@@ -157,10 +185,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-browser-sync');
 
-  // define default task
+  // define tasks
   grunt.registerTask('default', ['watch']);
   grunt.registerTask('compile', ['sass', 'replace:image_url']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('compress', ['cssmin', 'uglify']);
+  grunt.registerTask('refresh', ['browserSync', 'watch']);
 };
