@@ -160,6 +160,7 @@ module.exports = function (grunt) {
 
   // define default task
   grunt.registerTask('default', ['watch']);
-  grunt.registerTask('build', ['sass', 'replace:image_url']);
+  grunt.registerTask('compile', ['sass', 'replace:image_url']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
+  grunt.registerTask('compress', ['cssmin', 'uglify']);
 };
