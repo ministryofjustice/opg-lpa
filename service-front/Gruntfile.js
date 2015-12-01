@@ -29,6 +29,7 @@ module.exports = function (grunt) {
         }
       }
     },
+
     scsslint: {
       allFiles: [
         'assets/sass/*.scss'
@@ -39,6 +40,7 @@ module.exports = function (grunt) {
         colorizeOutput: true
       }
     },
+
     replace: {
       image_url: {
         src: ['public/assets/v2/css/*.css'],
@@ -46,6 +48,22 @@ module.exports = function (grunt) {
         replacements: [{
           from: 'image-url',
           to: 'url'
+        }]
+      }
+    },
+
+    // Minifying the css
+    cssmin: {
+      options: {
+        sourceMap: true
+      },
+      target: {
+        files: [{
+          expand: true,
+          cwd: 'public/assets/v2/css',
+          src: ['*.css', '!*.min.css'],
+          dest: 'public/assets/v2/css',
+          ext: '.min.css'
         }]
       }
     },
@@ -138,6 +156,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // define default task
   grunt.registerTask('default', ['watch']);
