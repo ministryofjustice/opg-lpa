@@ -21,7 +21,7 @@
             </div>
 
             <div class="column-half">
-                {% if (identity() is not empty) %}
+                {% if (identity() is empty) %}
                     <p>
                         <a class="button" href="{{ url('register') }}" role="button">Create an account now</a>
                     </p>
@@ -55,7 +55,7 @@
 
     <hr>
 
-    {% if (identity() is not empty) %}
+    {% if (identity() is empty) %}
     <li>
         <div class="grid-row">
             
