@@ -57,6 +57,28 @@ abstract class AbstractClient {
 
 
     //---------------------------------------------------------------------------------------
+    // Job management functions
+
+    /**
+     * Removes the passed jobId from the queue.
+     *
+     * @param $id
+     * @return bool True if the item existed and was deleted. False otherwise.
+     */
+    public function dequeue( $id ){
+
+        $result = $this->client->deleteItem([
+            'TableName'      => $this->config['table_name'],
+            'Key'            => ['id' => ['S' => $id]],
+            'ReturnValues'   => 'ALL_OLD',
+        ]);
+
+        // Attributes will be populated iff the item existed.
+        return isset($result['Attributes']);
+
+    } // function
+
+    //---------------------------------------------------------------------------------------
     // Table management functions
 
     /**
