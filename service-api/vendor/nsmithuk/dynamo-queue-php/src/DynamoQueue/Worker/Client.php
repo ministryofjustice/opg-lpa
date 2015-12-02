@@ -222,6 +222,8 @@ class Client extends AbstractClient {
     /**
      * Updates the passed job with the passed state.
      *
+     * Note: we can only change a job's state if its current state is 'processing'.
+     *
      * @param Job $job
      * @param $state
      */
