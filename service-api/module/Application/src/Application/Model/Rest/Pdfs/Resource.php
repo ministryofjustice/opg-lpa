@@ -25,12 +25,9 @@ use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+use Aws\S3\S3Client;
 
-    /**
-     * Prefix for Redis keys of blobs (files).
-     */
-    const REDIS_FILE_PREFIX = 'pdf2:files:blob:';
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     /**
      * Prefix for Redis keys of blobs (files).
@@ -43,6 +40,11 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      * @var null|Credis_Client The redis client.
      */
     private $redis;
+
+    /**
+     * @var S3Client
+     */
+    private $s3Client;
 
     //--------------------------
 
@@ -75,6 +77,27 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $this->redis = new Credis_Client( $config['host'], $config['port'], $timeout = null, $persistent = '', $db = 1);
 
         return $this->redis;
+
+    }
+
+    /**
+     * Returns a configured instance of the AWS S3 client.
+     *
+     * @return S3Client
+     */
+    protected function getS3Client(){
+
+        if( $this->s3Client instanceof S3Client ){
+            return $this->s3Client;
+        }
+
+        //---
+
+        $config = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['client'];
+
+        $this->s3Client = new S3Client( $config );
+
+        return $this->s3Client;
 
     }
 
@@ -254,11 +277,26 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $ident = $this->getPdfIdent( $type );
 
-        //---
-
+        //-----------------------------------
         // Check if the file already exists in the cache.
 
-        $exists = $this->redis()->exists( self::REDIS_FILE_PREFIX . $ident );
+        $bucketConfig = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['settings'];
+
+        // By default assume it doesn't...
+        $exists = false;
+
+        try {
+
+            $this->getS3Client()->headObject($bucketConfig + [
+                    'Key' => $ident,
+            ]);
+
+            // If we get here it exists...
+            $exists = true;
+
+        } catch( \Aws\S3\Exception\S3Exception $e ){}
+
+        //---
 
         // If the PDF is currently cached...
         if( $exists ){
@@ -269,7 +307,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
             return Entity::STATUS_READY;
         }
 
-        //---
+        //-------------
 
         // Check if we have a resque tracking id for this file...
         $trackingId = $this->redis()->get( self::REDIS_TRACKING_PREFIX . $ident );
@@ -348,8 +386,8 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         // Store the tracking id in redis.
         $this->redis()->set( self::REDIS_TRACKING_PREFIX . $ident, $trackingId );
 
-        // Expire the tracking after 24 hours.
-        $this->redis()->expire( self::REDIS_TRACKING_PREFIX . $ident, ( 60 * 60 * 24 ) );
+        // Expire the tracking after an hour, just to ensure we never have stale data.
+        $this->redis()->expire( self::REDIS_TRACKING_PREFIX . $ident, ( 60 * 60  ) );
 
     } // function
 
@@ -359,11 +397,24 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $file = $this->redis()->get( self::REDIS_FILE_PREFIX . $ident );
+        $bucketConfig = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['settings'];
 
-        if( is_bool($file) ){
+        try {
+
+            $file = $this->getS3Client()->getObject($bucketConfig + [
+                    'Key' => $ident,
+            ]);
+
+
+        } catch( \Aws\S3\Exception\S3Exception $e ){
+
             return false;
+
         }
+
+        //---
+
+        $file = $file['Body']->getContents();
 
         //-------------------------------------
         // Decrypt the PDF

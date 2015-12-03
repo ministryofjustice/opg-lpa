@@ -24,6 +24,8 @@ class AuthenticationListener {
         
         $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
 
+        $config = $e->getApplication()->getServiceManager()->get('Config');
+
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
          * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
@@ -31,7 +33,7 @@ class AuthenticationListener {
          *
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
-        $token = $e->getRequest()->getHeader('X-AuthOne');
+        $token = $e->getRequest()->getHeader('Token');
         
         if (!$token) {
 
@@ -50,7 +52,7 @@ class AuthenticationListener {
                 'Authentication attempt - token supplied'
             );
 
-            $authAdapter = new Adapter\LpaAuthOne( $token );
+            $authAdapter = new Adapter\LpaAuth( $token, $config['authentication']['endpoint'] );
 
             // If successful, the identity will be persisted for the request.
             $result = $auth->authenticate($authAdapter);
@@ -69,9 +71,11 @@ class AuthenticationListener {
                     'Authentication success'
                 );
 
+                // On SUCCESS, we don't return anything (as we're in a Listener).
+
             }
 
-        }
+        } // if token
 
     } // function
 

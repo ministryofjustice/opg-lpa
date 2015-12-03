@@ -6,6 +6,10 @@
  */
 return array(
 
+    'authentication' => [
+        'endpoint' => 'https://authv2/v1/authenticate',
+    ],
+
     'db' => [
 
         'mongo' => [
