@@ -23,12 +23,12 @@ class Client
     /**
      * The base URI for the API
      */
-    private $apiBaseUri;
+    private $apiBaseUri = 'https://apiv2';
     
     /**
      * The base URI for the auth server
      */
-    private $authBaseUri;
+    private $authBaseUri = 'https://authv2';
     
     /**
      * The API auth token
@@ -159,10 +159,11 @@ class Client
         $password
     )
     {
-        $response = $this->client()->post( $this->authBaseUri . '/users' ,[
+
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users' ,[
             'body' => [
-                'username' => strtolower($email),
-                'password' => $password,
+                'Username' => strtolower($email),
+                'Password' => $password,
             ]
         ]);
         
@@ -177,6 +178,7 @@ class Client
         }
         
         $this->log($response, true);
+        
         return $jsonDecode->activation_token;
     }
     
@@ -303,9 +305,9 @@ class Client
         $activationToken
     )
     {
-        $response = $this->client()->post( $this->authBaseUri . '/users/activate' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/activate' ,[
             'body' => [
-                'activation_token' => $activationToken,
+                'Token' => $activationToken,
             ]
         ]);
         
@@ -336,29 +338,24 @@ class Client
         //-------------------------
         // Authenticate the user
 
-        $response = $this->client()->post( $this->authBaseUri . '/token' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/v1/authenticate' ,[
             'body' => [
-                'username' => strtolower($email),
-                'password' => $password,
-                'grant_type' => 'password',
+                'Username' => strtolower($email),
+                'Password' => $password,
             ]
         ]);
 
         if( $response->getStatusCode() != 200 ){
             $this->log($response, false);
-
+            
             $json = $response->json();
 
-            if( isset($json['error_description']) && $json['error_description'] == 'account locked' ){
+            if( isset($json['detail']) && $json['detail'] == 'account-locked/max-login-attempts' ){
                 return $authResponse->setErrorDescription( "locked" );
             }
 
-            if( isset($json['error_description']) && $json['error_description'] == 'account is not activated' ){
+            if( isset($json['detail']) && $json['detail'] == 'account-not-active' ){
                 return $authResponse->setErrorDescription( "not-activated" );
-            }
-
-            if( isset($json['failure_count']) ){
-                return $authResponse->setErrorDescription( "incorrect-".(int)$json['failure_count'] );
             }
 
             return $authResponse->setErrorDescription( "authentication-failed" );
@@ -470,7 +467,7 @@ class Client
         $response = $this->client()->delete( $this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-AuthOne' => $this->getToken(),
+                'Token' => $this->getToken(),
             ],
         ]);
         
@@ -489,17 +486,18 @@ class Client
      */
     public function deleteUserAndAllTheirLpas()
     {
+
         $success = $this->deleteAllLpas();
         
         if (!$success) {
             return false;
         }
-        
-        $response = $this->client()->get( $this->authBaseUri . '/deregister', [
+
+        $response = $this->client()->delete( $this->authBaseUri . '/v1/users/' . $this->getUserId(), [
             'headers' => ['Token' => $this->getToken()]
         ]);
         
-        if ($response->getStatusCode() != 200) {
+        if ($response->getStatusCode() != 204) {
             return $this->log($response, false);
         }
         
@@ -515,65 +513,102 @@ class Client
     public function requestPasswordReset( $email )
     {
 
-        $response = $this->client()->post( $this->authBaseUri . '/pwreset' ,[
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/password-reset' ,[
             'body' => [
-                'email' => strtolower($email),
+                'Username' => strtolower($email),
             ]
         ]);
 
         if( $response->getStatusCode() != 200 ){
             return $this->log($response, false);
-
         }
 
         $data = $response->json();
 
-        if( !isset( $data['success'] ) || $data['success'] != true || !isset($data['pw_reset_id']) ){
+        if( !isset( $data['token'] ) ){
             return $this->log($response, false);
         }
 
-        return $data['pw_reset_id'];
+        return $data['token'];
     }
-
-
+    
     /**
-     * Exchanges a password reset token for a auth token (which can then be used to reset the user's password).
+     * Update the password using a password reset token.
      *
-     * @param $resetToken string Token supplied by requestPasswordReset()
-     * @return bool|string Returns false on an error or the auth token on success.
+     * @param string $token
+     * $param string $newPassword
+     * 
+     * @return bool|string Returns true on success, false otherwise
      */
-    public function requestPasswordResetAuthToken( $resetToken ){
-
-        $response = $this->client()->get( $this->authBaseUri . '/pwreset/' . $resetToken );
-
-        if( $response->getStatusCode() != 200 ){
+    public function updateAuthPasswordWithToken( $token, $newPassword )
+    {
+    
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/password-reset-update' ,[
+            'body' => [
+                'Token' => strtolower($token),
+                'NewPassword' => $newPassword,
+            ]
+        ]);
+    
+        if( $response->getStatusCode() != 204 ){
             return $this->log($response, false);
         }
-
-        $data = $response->json();
-
-        if ( !isset($data['access_token']) ){
-            return $this->log($response, false);
-        }
-
-        return $data['access_token'];
-
+    
+        return true;
     }
     
     /**
      * Update auth email
      *
      * @param string $newEmail
+     *
+     * @return boolean
+     */
+    public function requestEmailUpdate(
+        $newEmailAddress
+    )
+    {
+        $response = $this->client()->get( $this->authBaseUri . '/v1/users/' . $this->getUserId() . '/email/' . $newEmailAddress, [
+            'headers' => ['Token' => $this->getToken()]
+        ]);
+
+        if ($response->getStatusCode() != 200) {
+            
+            $data = $response->json();
+            
+            $this->log($response, false);
+                
+            if (isset($data['detail'])) {
+                return $data;
+            }
+            
+            return false;
+        }
+        
+        $data = $response->json();
+        
+        if ( !isset($data['token']) ){
+            return $this->log($response, false);
+        }
+        
+        return $data['token'];
+    }
+    
+    /**
+     * Update auth email
+     *
+     * @param string $userId
+     * @param string $newEmail
      * 
      * @return boolean
      */
     public function updateAuthEmail(
-        $newEmail
+        $userId,
+        $emailUpdateToken
     )
     {
-        $response = $this->client()->post( $this->authBaseUri . '/users/' . $this->getEmail() . '/put', [
-            'body' => ['new_email' => strtolower($newEmail) ],
-            'headers' => ['Token' => $this->getToken()]
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/' . $userId . '/email', [
+            'body' => ['emailUpdateToken' => $emailUpdateToken]
         ]);
         
         if ($response->getStatusCode() != 204) {
@@ -593,24 +628,35 @@ class Client
      *
      * (The auth service will also validate this, but not return meaningful error messages)
      *
+     * @param string $currentPassword
      * @param string $newPassword
      * 
-     * @return boolean
+     * @return string The new user auth token
      */
     public function updateAuthPassword(
+        $currentPassword,
         $newPassword
     )
     {
-        $response = $this->client()->post( $this->authBaseUri . '/users/' . $this->getEmail() . '/put', [
-            'body' => ['new_password' => $newPassword],
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/' . $this->getUserId() . '/password', [
+            'body' => [
+                'CurrentPassword' => $currentPassword,
+                'NewPassword' => $newPassword
+            ],
             'headers' => ['Token' => $this->getToken()]
         ]);
         
-        if ($response->getStatusCode() != 204) {
+        if ($response->getStatusCode() != 200) {
             return $this->log($response, false);
         }
         
-        return true;
+        $body = $response->json();
+        
+        if (!isset($body['token'])) {
+            return $this->log($response, false);
+        }
+        
+        return $body['token'];
     }
     
     /**
@@ -875,22 +921,6 @@ class Client
         return $helper->setResource($primaryAttorneyDecisions->toJson());
     }
 
-    /**
-     * Update (patch) the primary attorney decisions
-     *
-     * @param string $lpaId
-     * @param Array $primaryAttorneyDecisions
-     * @return boolean
-     */
-    public function updatePrimaryAttorneyDecisions(
-        $lpaId,
-        Array $primaryAttorneyDecisions
-    )
-    {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
-        return $helper->updateResource( json_encode($primaryAttorneyDecisions) );
-    }
-    
     /**
      * Delete the primary attorney decisions
      *
@@ -1624,10 +1654,10 @@ class Client
      */
     public function getAuthStats( ){
     
-        $response = $this->client()->get( $this->authBaseUri . '/admin/stats' );
+        $response = $this->client()->get( $this->authBaseUri . '/stats' );
     
         $code = $response->getStatusCode();
-    
+        
         if ($code != 200) {
             return $this->log($response, false);
         }

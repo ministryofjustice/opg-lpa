@@ -1,10 +1,16 @@
 <?php
+
+$modules = array('Application');
+
+// Only include the V1Proxy if < the cutoff date (2016-01-01).
+#if ( (new \DateTime) < (new \DateTime('2016-01-01')) ){
+if ( (new \DateTime) < (new \DateTime('2015-12-11')) ){
+    $modules[] = 'V1Proxy';
+}
+
 return array(
     // This should be an array of module namespaces used in the application.
-    'modules' => array(
-        'Application',
-        'V1Proxy',
-    ),
+    'modules' => $modules,
 
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(

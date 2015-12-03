@@ -46,7 +46,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
             //---
 
             if ($form->isValid()) {
-
+                
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
                 $result = $service->updatePassword( $form );

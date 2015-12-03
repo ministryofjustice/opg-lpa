@@ -6,6 +6,12 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 use Application\Model\Service\ServiceDataInputInterface;
 
+use Zend\Mime\Message as MimeMessage;
+use Zend\Mime\Part as MimePart;
+
+use Application\Model\Service\Mail\Message as MailMessage;
+use Opg\Lpa\Api\Client\Client;
+
 class Details implements ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
@@ -67,38 +73,186 @@ class Details implements ServiceLocatorAwareInterface {
      * Update the user's email address.
      *
      * @param ServiceDataInputInterface $details
+     * @param Callback function $activateEmailCallback
+     * @param string $currentAddress
+     * @param string $userId
+     * 
      * @return bool|string
      */
-    public function updateEmailAddress( ServiceDataInputInterface $details ){
-
+    public function requestEmailUpdate( 
+        ServiceDataInputInterface $details, 
+        $activateEmailCallback, 
+        $currentAddress, 
+        $userId 
+    ){
+        
+        $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
+        
         $this->getServiceLocator()->get('Logger')->info(
-            'Updating email address to ' . $details->getDataForModel()['email'],
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            'Requesting email update to new email: ' . $details->getDataForModel()['email'],
+            $identityArray    
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthEmail( strtolower($details->getDataForModel()['email']) );
+        $updateToken = $client->requestEmailUpdate( strtolower($details->getDataForModel()['email']) );
 
         //---
 
-        if( $result !== true ){
+        if( !is_string($updateToken) ){
 
-            // There was an error...
+            // Error...
+            $body = $client->getLastContent();
 
-            $error = $client->getLastContent();
-
-            if( isset($error['error_description']) && $error['error_description'] == 'email address is already registered' ){
-                return 'address-already-registered';
-            } else {
-                return 'unknown-error';
+            if( isset($body['detail']) ){
+                switch ($body['detail']) {
+                    case 'User already has this email' : 
+                        return 'user-already-has-email';
+                    case 'Email already exists for another user': 
+                        return 'email-already-exists';
+                    default: 
+                        return 'unknown-error';
+                }
             }
 
+            return "unknown-error";
+            
         } // if
 
-        return true;
+        $this->sendNotifyNewEmailEmail( $currentAddress, $details->getDataForModel()['email'] );
+        
+        return $this->sendActivateNewEmailEmail( $details->getDataForModel()['email'], $activateEmailCallback( $userId, $updateToken ) );
+
 
     } // function
+    
+    function sendActivateNewEmailEmail( $newEmailAddress, $activateUrl ) {
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending new email verification email'
+        );
+        
+        $message = new MailMessage();
+        
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
+        
+        $message->addTo( $newEmailAddress );
+        
+        $message->setSubject( 'Please verify your new email address' );
+        
+        //---
+        
+        $message->addCategory('opg');
+        $message->addCategory('opg-lpa');
+        $message->addCategory('opg-lpa-newemail-verification');
+        
+        //---
+        
+        // Load the content from the view and merge in our variables...
+        $viewModel = new \Zend\View\Model\ViewModel();
+        $viewModel->setTemplate( 'email/new-email-verify.phtml' )->setVariables([
+            'activateUrl' => $activateUrl,
+        ]);
+        
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        
+        //---
+        
+        $html = new MimePart( $content );
+        $html->type = "text/html";
+        
+        $body = new MimeMessage();
+        $body->setParts([$html]);
+        
+        $message->setBody($body);
+        
+        //--------------------
+        
+        try {
+        
+            $this->getServiceLocator()->get('MailTransport')->send($message);
+        
+        } catch ( \Exception $e ){
+        
+            return "failed-sending-email";
+        
+        }
+        
+        return true;
+        
+    }
+    
+    function sendNotifyNewEmailEmail( $oldEmailAddress, $newEmailAddress ) {
+    
+        $this->getServiceLocator()->get('Logger')->info(
+            'Sending new email confirmation email'
+        );
+    
+        $message = new MailMessage();
+    
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
+    
+        $message->addTo( $oldEmailAddress );
+    
+        $message->setSubject( 'You requested a change to your email address' );
+    
+        //---
+    
+        $message->addCategory('opg');
+        $message->addCategory('opg-lpa');
+        $message->addCategory('opg-lpa-newemail-confirmation');
+    
+        //---
+    
+        // Load the content from the view and merge in our variables...
+        $viewModel = new \Zend\View\Model\ViewModel();
+        $viewModel->setTemplate( 'email/new-email-notify.phtml' )->setVariables([
+            'newEmailAddress' => $newEmailAddress,
+        ]);
+    
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+    
+        //---
+    
+        $html = new MimePart( $content );
+        $html->type = "text/html";
+    
+        $body = new MimeMessage();
+        $body->setParts([$html]);
+    
+        $message->setBody($body);
+    
+        //--------------------
+    
+        try {
+    
+            $this->getServiceLocator()->get('MailTransport')->send($message);
+    
+        } catch ( \Exception $e ){
+    
+            return "failed-sending-email";
+    
+        }
+    
+        return true;
+    
+    }
+    
+    function updateEmailUsingToken( $userId, $emailUpdateToken ) {
+        
+        $this->getServiceLocator()->get('Logger')->info(
+            'Updating email using token'
+        );
+        
+        $client = $this->getServiceLocator()->get('ApiClient');
+        
+        $client instanceof Client;
+        $success = $client->updateAuthEmail( $userId, $emailUpdateToken );
+        
+        return $success === true;
+    }
 
     /**
      * Update the user's password.
@@ -108,23 +262,34 @@ class Details implements ServiceLocatorAwareInterface {
      */
     public function updatePassword( ServiceDataInputInterface $details ){
 
+        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        
         $this->getServiceLocator()->get('Logger')->info(
             'Updating password',
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            $identity->toArray()
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthPassword( $details->getDataForModel()['password'] );
+        $result = $client->updateAuthPassword(
+            $details->getDataForModel()['password_current'],
+            $details->getDataForModel()['password'] 
+        );
 
         //---
 
-        if( $result !== true ){
+        if( !is_string($result) ){
 
             return 'unknown-error';
 
         } // if
 
+        // Update the identity with the new token to avoid being
+        // logged out after the redirect. We don't need to update the token
+        // on the API client because this will happen on the next request
+        // when it reads it from the identity.
+        $identity->setToken($result);
+        
         return true;
 
     } // function
