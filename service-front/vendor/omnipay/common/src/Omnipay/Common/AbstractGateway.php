@@ -17,6 +17,30 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
  * throughout the Omnipay system.  It enforces implementation of
  * the GatewayInterface interface and defines various common attibutes
  * and methods that all gateways should have.
+ *
+ * Example:
+ *
+ * <code>
+ *   // Initialise the gateway
+ *   $gateway->initialize(...);
+ *
+ *   // Get the gateway parameters.
+ *   $parameters = $gateway->getParameters();
+ *
+ *   // Create a credit card object
+ *   $card = new CreditCard(...);
+ *
+ *   // Do an authorisation transaction on the gateway
+ *   if ($gateway->supportsAuthorize()) {
+ *       $gateway->authorize(...);
+ *   } else {
+ *       throw new \Exception('Gateway does not support authorize()');
+ *   }
+ * </code>
+ *
+ * For further code examples see the *omnipay-example* repository on github.
+ *
+ * @see GatewayInterface
  */
 abstract class AbstractGateway implements GatewayInterface
 {
@@ -48,11 +72,22 @@ abstract class AbstractGateway implements GatewayInterface
         $this->initialize();
     }
 
+    /**
+     * Get the short name of the Gateway
+     *
+     * @return string
+     */
     public function getShortName()
     {
         return Helper::getGatewayShortName(get_class($this));
     }
 
+    /**
+     * Initialize this gateway with default parameters
+     *
+     * @param  array $parameters
+     * @return $this
+     */
     public function initialize(array $parameters = array())
     {
         $this->parameters = new ParameterBag;
@@ -71,43 +106,72 @@ abstract class AbstractGateway implements GatewayInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getDefaultParameters()
     {
         return array();
     }
 
+    /**
+     * @return array
+     */
     public function getParameters()
     {
         return $this->parameters->all();
     }
 
-    protected function getParameter($key)
+    /**
+     * @param  string $key
+     * @return mixed
+     */
+    public function getParameter($key)
     {
         return $this->parameters->get($key);
     }
 
-    protected function setParameter($key, $value)
+    /**
+     * @param  string $key
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function setParameter($key, $value)
     {
         $this->parameters->set($key, $value);
 
         return $this;
     }
 
+    /**
+     * @return boolean
+     */
     public function getTestMode()
     {
         return $this->getParameter('testMode');
     }
 
+    /**
+     * @param  boolean $value
+     * @return $this
+     */
     public function setTestMode($value)
     {
         return $this->setParameter('testMode', $value);
     }
 
+    /**
+     * @return string
+     */
     public function getCurrency()
     {
         return strtoupper($this->getParameter('currency'));
     }
 
+    /**
+     * @param  string $value
+     * @return $this
+     */
     public function setCurrency($value)
     {
         return $this->setParameter('currency', $value);
@@ -184,6 +248,16 @@ abstract class AbstractGateway implements GatewayInterface
     }
 
     /**
+     * Supports AcceptNotification
+     *
+     * @return boolean True if this gateway supports the acceptNotification() method
+     */
+    public function supportsAcceptNotification()
+    {
+        return method_exists($this, 'acceptNotification');
+    }
+
+    /**
      * Supports CreateCard
      *
      * @return boolean True if this gateway supports the create() method
@@ -214,7 +288,34 @@ abstract class AbstractGateway implements GatewayInterface
     }
 
     /**
-     * Create and initialize a request object using existing parameters from this gateway
+     * Create and initialize a request object
+     *
+     * This function is usually used to create objects of type
+     * Omnipay\Common\Message\AbstractRequest (or a non-abstract subclass of it)
+     * and initialise them with using existing parameters from this gateway.
+     *
+     * Example:
+     *
+     * <code>
+     *   class MyRequest extends \Omnipay\Common\Message\AbstractRequest {};
+     *
+     *   class MyGateway extends \Omnipay\Common\AbstractGateway {
+     *     function myRequest($parameters) {
+     *       $this->createRequest('MyRequest', $parameters);
+     *     }
+     *   }
+     *
+     *   // Create the gateway object
+     *   $gw = Omnipay::create('MyGateway');
+     *
+     *   // Create the request object
+     *   $myRequest = $gw->myRequest($someParameters);
+     * </code>
+     *
+     * @see \Omnipay\Common\Message\AbstractRequest
+     * @param string $class The request class name
+     * @param array $parameters
+     * @return \Omnipay\Common\Message\AbstractRequest
      */
     protected function createRequest($class, array $parameters)
     {
@@ -223,6 +324,11 @@ abstract class AbstractGateway implements GatewayInterface
         return $obj->initialize(array_replace($this->getParameters(), $parameters));
     }
 
+    /**
+     * Get the global default HTTP client.
+     *
+     * @return HttpClient
+     */
     protected function getDefaultHttpClient()
     {
         return new HttpClient(
@@ -233,6 +339,11 @@ abstract class AbstractGateway implements GatewayInterface
         );
     }
 
+    /**
+     * Get the global default HTTP request.
+     *
+     * @return HttpRequest
+     */
     protected function getDefaultHttpRequest()
     {
         return HttpRequest::createFromGlobals();
