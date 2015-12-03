@@ -5,6 +5,7 @@ use Zend\Log\Logger as ZendLogger;
 use Zend\Log\Writer\Stream;
 use Opg\Lpa\Logger\Formatter\Logstash;
 use Opg\Lpa\Logger\Writer\Sentry;
+use Opg\Lpa\Logger\Writer\Sns;
 
 /**
  * class Logger
@@ -32,6 +33,13 @@ class Logger extends ZendLogger
     {
         $this->addWriter(
             new Sentry($sentryUri)
+        );
+    }
+    
+    public function setSnsCredentials($clientConfig, $endpoints) {
+        
+        $this->addWriter(
+            new Sns($clientConfig, $endpoints)
         );
     }
     

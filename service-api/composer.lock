@@ -138,16 +138,16 @@
         },
         {
             "name": "colinmollenhour/credis",
-            "version": "1.5",
+            "version": "1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/colinmollenhour/credis.git",
-                "reference": "7bd47b61fc3dad28aa881de45c71026256ad27cc"
+                "reference": "409edfd0ea81f5cb74afbdb86df54890c207b5e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/7bd47b61fc3dad28aa881de45c71026256ad27cc",
-                "reference": "7bd47b61fc3dad28aa881de45c71026256ad27cc",
+                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/409edfd0ea81f5cb74afbdb86df54890c207b5e4",
+                "reference": "409edfd0ea81f5cb74afbdb86df54890c207b5e4",
                 "shasum": ""
             },
             "require": {
@@ -173,7 +173,7 @@
             ],
             "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
             "homepage": "https://github.com/colinmollenhour/credis",
-            "time": "2014-11-13 18:40:25"
+            "time": "2015-11-28 01:20:04"
         },
         {
             "name": "doctrine/lexer",
@@ -231,16 +231,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "1.2.10",
+            "version": "1.2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "de448a30fa78f2dc93889be529e875a13c6034ac"
+                "reference": "04c6cdf9871140b80947c87db7770c0dd9c75c7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/de448a30fa78f2dc93889be529e875a13c6034ac",
-                "reference": "de448a30fa78f2dc93889be529e875a13c6034ac",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/04c6cdf9871140b80947c87db7770c0dd9c75c7c",
+                "reference": "04c6cdf9871140b80947c87db7770c0dd9c75c7c",
                 "shasum": ""
             },
             "require": {
@@ -280,7 +280,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-10-11 22:34:23"
+            "time": "2015-11-11 03:28:32"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -393,16 +393,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "4ef919b0cf3b1989523138b60163bbcb7ba1ff7e"
+                "reference": "4d0bdbe1206df7440219ce14c972aa57cc5e4982"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4ef919b0cf3b1989523138b60163bbcb7ba1ff7e",
-                "reference": "4ef919b0cf3b1989523138b60163bbcb7ba1ff7e",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4d0bdbe1206df7440219ce14c972aa57cc5e4982",
+                "reference": "4d0bdbe1206df7440219ce14c972aa57cc5e4982",
                 "shasum": ""
             },
             "require": {
@@ -447,7 +447,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2015-08-15 19:32:36"
+            "time": "2015-11-03 01:34:55"
         },
         {
             "name": "guzzlehttp/ringphp",
@@ -592,19 +592,20 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "7da24b496b09511b6cfb933ba5b5a50b10157a9b"
+                "reference": "db4b063fdfef4e59d47f217556ed08ff1a40131e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/7da24b496b09511b6cfb933ba5b5a50b10157a9b",
-                "reference": "7da24b496b09511b6cfb933ba5b5a50b10157a9b",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/db4b063fdfef4e59d47f217556ed08ff1a40131e",
+                "reference": "db4b063fdfef4e59d47f217556ed08ff1a40131e",
                 "shasum": ""
             },
             "require": {
+                "aws/aws-sdk-php": "^3.0",
                 "php": ">=5.4.0",
                 "raven/raven": "0.11.0",
                 "zendframework/zend-log": "^2.3.7"
@@ -624,10 +625,10 @@
             ],
             "description": "Common logger component for OPG LPA modules",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.0.4",
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.0.5",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2015-08-10 13:24:47"
+            "time": "2015-11-13 16:11:28"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -982,7 +983,7 @@
         },
         {
             "name": "symfony/intl",
-            "version": "v2.6.11",
+            "version": "v2.6.12",
             "target-dir": "Symfony/Component/Intl",
             "source": {
                 "type": "git",
@@ -1057,30 +1058,87 @@
             "time": "2015-07-23 02:17:26"
         },
         {
-            "name": "symfony/translation",
-            "version": "v2.7.6",
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/translation.git",
-                "reference": "6ccd9289ec1c71d01a49d83480de3b5293ce30c8"
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "0b6a8940385311a24e060ec1fe35680e17c74497"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/6ccd9289ec1c71d01a49d83480de3b5293ce30c8",
-                "reference": "6ccd9289ec1c71d01a49d83480de3b5293ce30c8",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/0b6a8940385311a24e060ec1fe35680e17c74497",
+                "reference": "0b6a8940385311a24e060ec1fe35680e17c74497",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2015-11-04 20:28:58"
+        },
+        {
+            "name": "symfony/translation",
+            "version": "v2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/translation.git",
+                "reference": "6772657767649fc3b31df12705194fb4af11ef98"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/6772657767649fc3b31df12705194fb4af11ef98",
+                "reference": "6772657767649fc3b31df12705194fb4af11ef98",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9",
+                "symfony/polyfill-mbstring": "~1.0"
             },
             "conflict": {
                 "symfony/config": "<2.7"
             },
             "require-dev": {
                 "psr/log": "~1.0",
-                "symfony/config": "~2.7",
-                "symfony/intl": "~2.4",
-                "symfony/yaml": "~2.2"
+                "symfony/config": "~2.8",
+                "symfony/intl": "~2.4|~3.0.0",
+                "symfony/yaml": "~2.2|~3.0.0"
             },
             "suggest": {
                 "psr/log": "To use logging capability in translator",
@@ -1090,13 +1148,16 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\Translation\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1114,20 +1175,20 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-27 15:38:06"
+            "time": "2015-11-18 13:45:00"
         },
         {
             "name": "symfony/validator",
-            "version": "v2.6.11",
+            "version": "v2.6.12",
             "target-dir": "Symfony/Component/Validator",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Validator.git",
+                "url": "https://github.com/symfony/validator.git",
                 "reference": "fccfab79928e612eedca96dcf3a9e8efd2ee495f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Validator/zipball/fccfab79928e612eedca96dcf3a9e8efd2ee495f",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/fccfab79928e612eedca96dcf3a9e8efd2ee495f",
                 "reference": "fccfab79928e612eedca96dcf3a9e8efd2ee495f",
                 "shasum": ""
             },
@@ -1190,16 +1251,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.4.8",
+            "version": "2.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "04909f4ad9f922a602bd4ad6a5d8e6837014af6c"
+                "reference": "4d096d15d01d46b03a69fff00576b31789246364"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/04909f4ad9f922a602bd4ad6a5d8e6837014af6c",
-                "reference": "04909f4ad9f922a602bd4ad6a5d8e6837014af6c",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/4d096d15d01d46b03a69fff00576b31789246364",
+                "reference": "4d096d15d01d46b03a69fff00576b31789246364",
                 "shasum": ""
             },
             "require": {
@@ -1303,7 +1364,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-09-15 17:14:50"
+            "time": "2015-11-23 17:34:23"
         },
         {
             "name": "zendframework/zendxml",
@@ -1352,16 +1413,16 @@
         },
         {
             "name": "zf-commons/zfc-rbac",
-            "version": "v2.5.2",
+            "version": "v2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ZF-Commons/zfc-rbac.git",
-                "reference": "8046ed9683739ac227ca4f8da7318c2ea330589f"
+                "reference": "64b9318217cee56ed6ea3dc13a8ca7c949585579"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ZF-Commons/zfc-rbac/zipball/8046ed9683739ac227ca4f8da7318c2ea330589f",
-                "reference": "8046ed9683739ac227ca4f8da7318c2ea330589f",
+                "url": "https://api.github.com/repos/ZF-Commons/zfc-rbac/zipball/64b9318217cee56ed6ea3dc13a8ca7c949585579",
+                "reference": "64b9318217cee56ed6ea3dc13a8ca7c949585579",
                 "shasum": ""
             },
             "require": {
@@ -1424,7 +1485,7 @@
                 "rbac",
                 "zf2"
             ],
-            "time": "2015-05-29 10:13:14"
+            "time": "2015-09-09 03:15:04"
         },
         {
             "name": "zfcampus/zf-api-problem",
@@ -2077,16 +2138,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.2",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44"
+                "reference": "6e7133793a8e5a5714a551a8324337374be209df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6324c907ce7a52478eeeaede764f48733ef5ae44",
-                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6e7133793a8e5a5714a551a8324337374be209df",
+                "reference": "6e7133793a8e5a5714a551a8324337374be209df",
                 "shasum": ""
             },
             "require": {
@@ -2123,7 +2184,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-08-03 06:14:51"
+            "time": "2015-12-02 08:37:27"
         },
         {
             "name": "sebastian/exporter",
@@ -2281,16 +2342,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.6",
+            "version": "v2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d"
+                "reference": "f79824187de95064a2f5038904c4d7f0227fedb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/eca9019c88fbe250164affd107bc8057771f3f4d",
-                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/f79824187de95064a2f5038904c4d7f0227fedb5",
+                "reference": "f79824187de95064a2f5038904c4d7f0227fedb5",
                 "shasum": ""
             },
             "require": {
@@ -2299,13 +2360,16 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\Yaml\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2323,7 +2387,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-11 09:39:48"
+            "time": "2015-11-30 12:35:10"
         }
     ],
     "aliases": [],
