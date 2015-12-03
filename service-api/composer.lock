@@ -585,7 +585,7 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.5",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.6",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
             "time": "2015-10-29 09:57:21"
