@@ -16,6 +16,7 @@ return array(
     'Zend\\Log\\' => array($vendorDir . '/zendframework/zend-log/src'),
     'Zend\\Hydrator\\' => array($vendorDir . '/zendframework/zend-hydrator/src'),
     'Zend\\Crypt\\' => array($vendorDir . '/zendframework/zend-crypt/src'),
+    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
