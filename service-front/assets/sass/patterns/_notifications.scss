@@ -1,0 +1,18 @@
+.application-notice {
+  position: relative;
+  padding-left: 50px;
+
+  .icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+  }
+
+  p {
+    font-weight: 600;
+    a {
+      font-weight: 600;
+    }
+  }
+}

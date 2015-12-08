@@ -1,11 +1,17 @@
+// Settings
+@import 'settings/variables';
+
 // GOVUK Elements
 @import 'main';
 
-// Patterns
+// Utilities
 @import 'utilities/helpers';
-@import 'patterns/popup';
 
-// ===========================================================
-// GENERIC POPUP
-// ===========================================================
+// Patterns
+@import 'patterns/popup';
+@import 'patterns/notifications';
+
+// -- Initialize patterns
+
+// Generic popup
 @include popup(80%);
