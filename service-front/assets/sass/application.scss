@@ -8,6 +8,7 @@
 @import 'utilities/helpers';
 
 // Patterns
+@import 'patterns/global-nav';
 @import 'patterns/popup';
 @import 'patterns/notifications';
 
@@ -15,3 +16,6 @@
 
 // Generic popup
 @include popup(80%);
+
+// Global navigation
+@include global-nav;

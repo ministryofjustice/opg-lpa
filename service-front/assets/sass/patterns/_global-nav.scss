@@ -1,0 +1,40 @@
+// GLOBAL NAVIGATION
+
+@mixin global-nav{
+  #global-nav {
+    border-bottom: 1px solid $border-colour;
+    overflow: hidden;
+    
+    @include media(tablet){
+      text-align: right;
+    }
+
+    nav {
+      @include core-16;
+      @include media(mobile) {
+        padding: 6px 0;
+      }
+      a,
+      .user{
+        padding: 6px 0;
+        @include media(tablet) {
+          padding: 10px 8px;
+        }
+      }
+
+      a {
+        display: block;
+        @include media(tablet){
+          display: inline-block;
+        }
+      }
+
+      li {
+        display: block;
+        @include media(tablet){
+          display: inline;
+        }
+      }
+    }
+  }
+}

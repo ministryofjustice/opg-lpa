@@ -1554,4 +1554,41 @@ ol {
       #popup .close a:hover {
         background-color: #bfbfbf; }
 
+#global-nav {
+  border-bottom: 1px solid #bfc1c3;
+  overflow: hidden; }
+  @media (min-width: 641px) {
+    #global-nav {
+      text-align: right; } }
+  #global-nav nav {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 400;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      #global-nav nav {
+        font-size: 16px;
+        line-height: 1.25; } }
+    @media (max-width: 640px) {
+      #global-nav nav {
+        padding: 6px 0; } }
+    #global-nav nav a,
+    #global-nav nav .user {
+      padding: 6px 0; }
+      @media (min-width: 641px) {
+        #global-nav nav a,
+        #global-nav nav .user {
+          padding: 10px 8px; } }
+    #global-nav nav a {
+      display: block; }
+      @media (min-width: 641px) {
+        #global-nav nav a {
+          display: inline-block; } }
+    #global-nav nav li {
+      display: block; }
+      @media (min-width: 641px) {
+        #global-nav nav li {
+          display: inline; } }
+
 /*# sourceMappingURL=application.css.map */
