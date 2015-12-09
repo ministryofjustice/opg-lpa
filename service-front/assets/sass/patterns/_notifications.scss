@@ -1,18 +1,12 @@
-.application-notice {
+.notice {
   position: relative;
   padding-left: 50px;
+  padding-top: 2px;
 
   .icon {
     position: absolute;
     top: 0;
     left: 0;
     background-size: cover;
-  }
-
-  p {
-    font-weight: 600;
-    a {
-      font-weight: 600;
-    }
   }
 }

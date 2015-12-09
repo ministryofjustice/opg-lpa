@@ -1493,18 +1493,15 @@ ol {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
-.application-notice {
+.notice {
   position: relative;
-  padding-left: 50px; }
-  .application-notice .icon {
+  padding-left: 50px;
+  padding-top: 2px; }
+  .notice .icon {
     position: absolute;
     top: 0;
     left: 0;
     background-size: cover; }
-  .application-notice p {
-    font-weight: 600; }
-    .application-notice p a {
-      font-weight: 600; }
 
 .noscroll {
   position: relative;

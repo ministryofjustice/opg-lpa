@@ -16,9 +16,11 @@ class SystemMessage extends AbstractHelper
         
         if ($message != '') {
             echo <<<SYSMESS
-            <div class="application-notice">
-              <span class="icon icon-important"></span>
-              <p>$message</p>
+            <div class="notice">
+              <i class="icon icon-important"></i>
+              <p>
+                <strong class="bold-small">$message</strong>
+              </p>
             </div>
 SYSMESS;
         }
