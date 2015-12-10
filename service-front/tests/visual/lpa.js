@@ -1,11 +1,21 @@
+// Setup
+
+var baseDomain = '192.168.33.103/'; // Local
+//var baseDomain = 'front2-staging.lpa.opg.digital'; // Staging
+var basePath = 'https://' + baseDomain;
+
+var paths = {};
+paths.home = 'home';
+paths.login = 'login';
+paths.passwordReset = 'forgot-password';
+
 /*
 	Require and initialise PhantomCSS module
 	Paths are relative to CasperJs directory
 */
 
 var fs = require( 'fs' );
-var path = fs.absolute( fs.workingDirectory + '/phantomcss.js' );
-var phantomcss = require( path );
+var phantomcss = require( fs.absolute( fs.workingDirectory + '/phantomcss.js' ) );
 
 casper.test.begin( 'LPA tests', function ( test ) {
 
@@ -15,7 +25,7 @@ casper.test.begin( 'LPA tests', function ( test ) {
 		casper: casper,
 		libraryRoot: fs.absolute( fs.workingDirectory + '' ),
 		screenshotRoot: fs.absolute( fs.workingDirectory + '/screenshots' ),
-		failedComparisonsRoot: fs.absolute( fs.workingDirectory + '/demo/failures' ),
+		failedComparisonsRoot: fs.absolute( fs.workingDirectory + '/failures' ),
 		addLabelToFailedImage: false,
 		/*
 		screenshotRoot: '/screenshots',
@@ -51,51 +61,58 @@ casper.test.begin( 'LPA tests', function ( test ) {
 	casper.on( 'resource.error', function ( err ) {
 		casper.log( 'Resource load error: ' + err, 'warning' );
 	} );
+
 	/*
 		The test scenario
 	*/
-	var testUrl = 'https://192.168.33.103/home';
-	//casper.start('https://frontv2-staging.lpa.opg.digital/home'); // staging
-	casper.start(testUrl); // local 
+	casper.start();
 
-	//asper.setHttpAuth('opg', '4UDt8Wx1j7imsFX');
+	//casper.setHttpAuth('opg', '4UDt8Wx1j7imsFX'); // Required for staging
 
+	// Desktop Screenshots (1024)
+	var screensize = 'desktop';
 	casper.then(function(){
-		casper.viewport(1024,768)
+		casper.viewport(1024,768);
 	});
-	casper.thenOpen(testUrl, function(){
-		casper.wait(5000);
+	casper.thenOpen(basePath + paths.home, function(){
+		phantomcss.screenshot( '#global-header', 'header_' + screensize );
+		phantomcss.screenshot( '#footer', 'footer_' + screensize );
+		phantomcss.screenshot( '#content', paths.home + '_content_' + screensize );
 	});
 
-	casper.then( function () {
-		phantomcss.screenshot( '#global-header', 'desktop home header' );
-		phantomcss.screenshot( '#footer', 'desktop home footer' );
-	} );
+	casper.thenOpen(basePath + paths.login, function(){
+		phantomcss.screenshot( '#content', paths.login + '_content_' + screensize );
+	});
 
+	casper.thenOpen(basePath + paths.passwordReset, function(){
+		phantomcss.screenshot( '#content', paths.passwordReset + '_content_' + screensize );
+	});
+
+	// Mobile Screenshots (380)
+	var screensize = 'mobile';
+	casper.then(function(){
+		casper.viewport(380,600);
+	});
+	casper.thenOpen(basePath + paths.home, function(){
+		phantomcss.screenshot( '#global-header', 'header_' + screensize );
+		phantomcss.screenshot( '#footer', 'footer_' + screensize );
+		phantomcss.screenshot( '#content', paths.home + '_content_' + screensize );
+	});
+
+	casper.thenOpen(basePath + paths.login, function(){
+		phantomcss.screenshot( '#content', paths.login + '_content_' + screensize );
+	});
+
+	casper.thenOpen(basePath + paths.passwordReset, function(){
+		phantomcss.screenshot( '#content', paths.passwordReset + '_content_' + screensize );
+	});
+
+
+	// Compare
 	casper.then( function now_check_the_screenshots() {
 		phantomcss.compareAll();
 		// compare screenshots
 	} );
-
-
-	casper.then(function(){
-		casper.viewport(380,600)
-	});
-	casper.thenOpen(testUrl, function(){
-		casper.wait(5000);
-	});
-
-	casper.then( function () {
-		phantomcss.screenshot( '#global-header', 'mobile home header' );
-		phantomcss.screenshot( '#footer', 'mobile home footer' );
-	} );
-
-	casper.then( function now_check_the_screenshots() {
-		phantomcss.compareAll();
-		// compare screenshots
-	} );
-
-
 
 	/*
 	Casper runs tests
