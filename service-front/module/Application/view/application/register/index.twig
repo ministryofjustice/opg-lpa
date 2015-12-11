@@ -1,0 +1,136 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/register/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block pageTitle %}
+    Sign up
+{% endblock %}
+
+{% block content %}
+
+{% set form = formErrorTextExchange(form, []) %}
+{#
+This is missing in the line above:
+    'terms' => ["must be checked" => "Please tick this checkbox"]
+
+Doesn't work in twig
+#}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+
+{% set email = form.get('email') %}
+{% set email_confirm = form.get('email_confirm') %}
+{% set password = form.get('password') %}
+{% set password_confirm = form.get('password_confirm') %}
+{% set terms = form.get('terms') %}
+
+{{ email.setAttributes({
+    id: 'email',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email_confirm.setAttributes({
+    id: 'email_confirm',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ password.setAttributes({
+    id: 'password',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ password_confirm.setAttributes({
+    id: 'password_confirm',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ terms.setAttributes({
+    id: 'terms'
+}) ? ''}}
+
+{{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
+{{ email_confirm.setOptions( { label: 'Re-enter your email address' }) ? '' }}
+{{ password.setOptions( { label: 'Password' }) ? '' }}
+{{ password_confirm.setOptions( { label: 'Confirm Password' }) ? '' }}
+{{ terms.setOptions( { label: 'I agree to the terms and conditions and privacy policy' }) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+{{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    <div class="text">
+        <p>You need to give your email address and create a password. This is so you can make, save and retrieve LPAs.</p>
+        <p>You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
+        <p>If you already have an account please <a href="{{ url('login') }}">sign in</a>.</p>
+    </div>
+
+
+    <fieldset>
+        <legend class="heading-medium">Email</legend>
+
+        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email.getAttribute('id') }}">
+                {{ email.getOption('label') }}
+                {{ formElementErrorsV2(email) }}
+            </label>
+            {{ formElement(email) }}
+        </div>
+
+        <div class="form-group {{ email_confirm.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email_confirm.getAttribute('id') }}">
+                {{ email_confirm.getOption('label') }}
+                {{ formElementErrorsV2(email_confirm) }}
+            </label>
+            {{ formElement(email_confirm) }}
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend class="heading-medium">Password</legend>
+        <p>Your password has to be at least 8 characters long and must contain at least 1 lower-case letter, 1 capital letter and 1 number. Never share your password with anyone.</p>
+
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+        </div>
+
+        <div class="form-group {{ password_confirm.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password_confirm.getAttribute('id') }}">
+                {{ password_confirm.getOption('label') }}
+                {{ formElementErrorsV2(password_confirm) }}
+            </label>
+            {{ formElement(password_confirm) }}
+        </div>
+    </fieldset>
+
+    <hr>
+
+    <fieldset>
+        <legend class="visuallyhidden">Terms</legend>
+        <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
+
+        <div class="form-group {{ terms.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ terms.getAttribute('id') }}">
+                {{ terms.getOption('label') }}
+                {{ formElementErrorsV2(terms) }}
+            </label>
+            {{ formElement(terms) }}
+        </div>
+    </fieldset>
+
+    <input type="submit" name="submit" id="signin-form-submit" value="Sign up" class="button">
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}
