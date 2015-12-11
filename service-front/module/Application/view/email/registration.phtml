@@ -1,35 +1,40 @@
-
-<html>
-<head></head>
-<body>
-
-<p>Thank you for registering to use the digital LPA tool.</p>
-
-<p><strong>Use this link to activate and start using your account:</strong></p>
-
-<div style='width:500px;margin-left:40px'>
-    <a href="<?= $this->callback ?>"><?= $this->escapehtml($this->callback) ?></a>
-</div>
-
-<p>If the link doesn't work, copy it into your browser's address bar.  The link will expire in 24 hours.</p>
-
-<strong>You must activate your account before you can create a lasting power of attorney (LPA).</strong>
-
-<p>You must activate your account within 24 hours. If you don't, the account will be automatically deleted and you'll have to register again.</p>
-
-<p>This is an automatic email - please don't reply to this address. If you need to contact us you can:</p>
-
-<div>
-    <p>Email <a href='mailto:customerservices@PublicGuardian.gsi.gov.uk'>customerservices@PublicGuardian.gsi.gov.uk</a></p>
-    <p>Call <strong>0300 456 0300</strong><br/>Monday to Friday (except Wednesday) 9am to 5pm<br/>Wednesday 10am to 5pm</p>
-    <p>Textphone  <strong>0115 934 2778</strong></p>
-</div>
-
-<br/><br/>
-
-<p><strong style="font-size:1.2em">Office of the Public Guardian</strong></p>
-<p>PO Box 16185, Birmingham B2 2WH</p>
-<p><a href="https://www.lastingpowerofattorney.service.gov.uk/home">www.lastingpowerofattorney.service.gov.uk</a></p>
-
+<?php echo $this->partial('email/partials/header.phtml'); ?>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="margin-bottom: 19px; margin-top: 19px;">
+    <tr>
+        <td width="100%">
+            <table width="580" cellpadding="0" cellspacing="0" border="0" align="center">
+                <tr>
+                    <td width="75%">
+                        <img src="https://neil-files-tmp.s3-eu-west-1.amazonaws.com/email-images/opg-logo-v1.png" alt="OPG" border="0">
+                        <h1 style="font-size: 36px; line-height: 1.315; font-weight: 700; margin: 20px 0 26px 0;">
+                            Activate Account
+                        </h1>
+                        <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
+                            Thank you for registering to use the digital LPA tool.
+                        </p>
+                        <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
+                            <strong>Use this link to activate and start using your account:</strong>
+                        </p>
+                        <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
+                            <!-- URLs have white-space: nowrap so that they don't wrap -->
+                            <a style="white-space: nowrap; color: #005ea5" href="<?= $this->callback ?>"><?= $this->escapehtml($this->callback) ?></a>
+                        </p>
+                        <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
+                            If the link doesn't work, copy it into your browser's address bar.  The link will expire in 24 hours.
+                        </p>
+                        <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
+                            <strong>You must activate your account before you can create a lasting power of attorney (LPA).</strong>
+                        </p>
+                        <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
+                            This is an automatic email - please don't reply to this address.
+                        </p>
+                        <?php echo $this->partial('email/partials/footer.phtml'); ?>
+                    </td>
+                    <td width="25%">&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
