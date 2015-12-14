@@ -8,6 +8,8 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
+use ZfcTwig\View\TwigRenderer;
+use ZfcTwig\View\TwigResolver;
 
 class PasswordReset implements ServiceLocatorAwareInterface {
 
@@ -143,14 +145,11 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/password-reset.phtml' )->setVariables([
+        $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig');
+        $content = $template->render([
             'callback' => $callbackUrl,
         ]);
-
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-
+        
         //---
 
         $html = new MimePart( $content );

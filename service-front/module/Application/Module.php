@@ -225,6 +225,16 @@ class Module{
 
                     return $dynamoDbAdapter;
                 },
+                
+                'TwigEmailRenderer' => function ( ServiceLocatorInterface $sm ) {
+                 
+                    $loader = new \Twig_Loader_Filesystem('module/Application/view/email');
+                    
+                    $env = new \Twig_Environment($loader);
+                    
+                    return $env;
+                    
+                }
 
             ], // factories
         ];
