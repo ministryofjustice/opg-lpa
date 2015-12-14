@@ -66,10 +66,12 @@ class Register implements ServiceLocatorAwareInterface {
         //---
 
         // Load the content from the view and merge in our variables...
-        $content = $this->getServiceLocator()->get('EmailPhpRenderer')->render('registration', [
-            // Use the passed callback to load the URL (the model should not be aware of how this is generated)
+        $viewModel = new \Zend\View\Model\ViewModel();
+        $viewModel->setTemplate( 'email/registration.phtml' )->setVariables([
             'callback' => $routeCallback( $activationToken ),
         ]);
+        
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
 
         //---
 
