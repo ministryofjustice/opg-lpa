@@ -1,0 +1,89 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/change-email-address/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block pageTitle %}
+    Change your sign-in email address
+{% endblock %}
+
+{% block content %}
+
+{% set form = formErrorTextExchange(form, []) %}
+
+{% set password = form.get('password_current') %}
+{% set email = form.get('email') %}
+{% set email_confirm = form.get('email_confirm') %}
+
+{{ password.setAttributes({
+    id: 'password_current',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ password.setOptions({ label: 'Your account password' }) ? '' }}
+
+{{ email.setAttributes({
+    id: 'email',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setOptions({ label: 'New email address' }) ? '' }}
+
+{{ email_confirm.setAttributes({
+    id: 'email_confirm',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email_confirm.setOptions({ label: 'Re-enter new email address' }) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+{{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    <fieldset>
+        <legend class="visuallyhidden">Change email address</legend>
+
+        <div class="form-group">
+            <label class="form-label" for="email_current">
+                <span class="form-label-bold">Current email address</span>
+            </label>
+            <input type="text" name="email_current" id="email_current" autocomplete="off" class="form-control disabled" value="<?= $this->escapeHtmlAttr($this->currentAddress) ?>" disabled="disabled">
+        </div>
+
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                <span class="form-label-bold">{{ password.getOption('label') }}</span>
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+        </div>
+
+        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email.getAttribute('id') }}">
+                <span class="form-label-bold">{{ email.getOption('label') }}</span>
+                {{ formElementErrorsV2(email) }}
+            </label>
+            {{ formElement(email) }}
+        </div>
+
+        <div class="form-group {{ email_confirm.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ email_confirm.getAttribute('id') }}">
+                <span class="form-label-bold">{{ email_confirm.getOption('label') }}</span>
+                {{ formElementErrorsV2(email_confirm) }}
+            </label>
+            {{ formElement(email_confirm) }}
+        </div>
+
+    </fieldset>
+
+    <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}

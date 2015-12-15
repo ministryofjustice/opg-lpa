@@ -1,0 +1,15 @@
+{% if (error is not empty or form.getMessages|length > 0) %}
+    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+        <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting the form</h1>
+        <p>Because of the following problems:</p>
+        <ol class="error-summary-list">
+            {{ formLinkedErrorList(form) ? '' }}
+
+            {% if error is not empty %}
+                <li><a href="">
+                {{ error }}
+                </a></li>
+            {% endif %}
+        </ol>
+    </div>
+{% endif %}
