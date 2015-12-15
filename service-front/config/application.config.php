@@ -3,8 +3,7 @@
 $modules = array('Application');
 
 // Only include the V1Proxy if < the cutoff date (2016-01-01).
-#if ( (new \DateTime) < (new \DateTime('2016-01-01')) ){
-if ( (new \DateTime) < (new \DateTime('2015-12-11')) ){
+if ( (new \DateTime) < (new \DateTime('2016-01-01')) ){
     $modules[] = 'V1Proxy';
 }
 
