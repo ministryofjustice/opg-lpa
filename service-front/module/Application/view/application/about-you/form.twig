@@ -18,83 +18,59 @@
     {% set address3 = form.get('address-address3') %}
     {% set postcode = form.get('address-postcode') %}
 
-    {{ title.setAttributes({id: 'title'}).setOptions({label: 'title'}).setLabelAttributes({id:'title-label'}) ? ''}}
+    {{ title.setAttributes({id: 'title'}).setOptions({label: 'Title'}).setLabelAttributes({id:'title-label'}) ? ''}}
     {{ firstName.setAttributes({id: 'firstname'}).setOptions({label: 'First names'}) ? ''}}
     {{ lastName.setAttributes({id: 'surname'}).setOptions({label: 'Last name'}) ? ''}}
     
-    $dayOfBirth->setAttributes([ 'id' => 'dob-day' ])->setLabel('Day');
-    $monthOfBirth->setAttributes([ 'id' => 'dob-month' ])->setLabel('Month');
-    $yearOfBirth->setAttributes([ 'id' => 'dob-year' ])->setLabel('Year');
+    {{ lastName.setAttributes({id: 'dob-day'}).setLabel('Day') ? ''}}
+    {{ lastName.setAttributes({id: 'dob-month'}).setLabel('Month') ? ''}}
+    {{ lastName.setAttributes({id: 'dob-year'}).setLabel('Year') ? ''}}
     
-    $address1->setAttributes([ 'id' => 'addr1' ])->setLabel('Address line 1');
-    $address2->setAttributes([ 'id' => 'addr2' ])->setLabel('Address line 2');
-    $address3->setAttributes([ 'id' => 'addr3' ])->setLabel('Address line 3');
-    $postcode->setAttributes([ 'id' => 'postcode' ])->setLabel('Postcode');
+    {{ address1.setAttributes({id: 'addr1'}).setLabel('Address line 1') ? ''}}
+    {{ address2.setAttributes({id: 'addr2'}).setLabel('Address line 2') ? ''}}
+    {{ address3.setAttributes({id: 'addr3'}).setLabel('Address line 3') ? ''}}
+    {{ postcode.setAttributes({id: 'postcode'}).setLabel('Postcode') ? ''}}
     
-    $form->prepare();
-    
-    //---
-    
-    $formLabel = $this->plugin('formLabel');
-    
-    ?>
+    {{ form.prepare() ? '' }}
     
     <div class="about-you-form">
     
-        <?= $this->form()->openTag( $form->setAttribute( 'class', 'form' ) ); ?>
+        {{ form().openTag( form )|raw }}
     
-        <?= $this->formElement($form->get($form->csrfName())) ?>
-    
-        <? if (isset($this->error) || count($form->getMessages()) > 0) { ?>
-            <div class="validation-summary group" role="alert" aria-labelledby="error-heading" tabindex="-1">
-                <h1 id="error-heading">There was a problem submitting the form</h1>
-                <p>Because of the following problems:</p>
-                <ol>
-                    <?php
-                    $this->formLinkedErrorList($form);
-    
-                    if (isset($this->error)) {
-                        echo '<li><a href="">';
-                        switch($this->error){
-                            default:
-                                echo $this->escapehtml( $this->error );
-                        }
-                        echo '</a></li>';
-                    }
-                    ?>
-                </ol>
-            </div>
-        <? } ?>
+        {{ formElement(form.get( form.csrfName )) }}
     
         <fieldset>
-            <legend>Name</legend>
+            <legend class="visuallyhidden">Name</legend>
     
-            <? $element = $title; ?>
-            <div class="group">
-                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($element) ?>
-                <?= $this->formElementErrors($element) ?>
+            <div class="form-group {{ title.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ title.getAttribute('id') }}">
+                    {{ title.getOption('label') }}
+                    {{ formElementErrorsV2(title) }}
+                </label>
+                {{ formElement(title) }}
             </div>
     
-            <? $element = $firstName; ?>
-            <div class="group">
-                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($element) ?>
-                <?= $this->formElementErrors($element) ?>
+            <div class="form-group {{ firstName.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ firstName.getAttribute('id') }}">
+                    {{ firstName.getOption('label') }}
+                    {{ formElementErrorsV2(firstName) }}
+                </label>
+                {{ formElement(firstName) }}
             </div>
-    
-            <? $element = $lastName; ?>
-            <div class="group">
-                <?= $formLabel->openTag() . $element->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($element) ?>
-                <?= $this->formElementErrors($element) ?>
+            
+            <div class="form-group {{ lastName.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ lastName.getAttribute('id') }}">
+                    {{ lastName.getOption('label') }}
+                    {{ formElementErrorsV2(lastName) }}
+                </label>
+                {{ formElement(lastName) }}
             </div>
-    
+            
         </fieldset>
     
         <fieldset>
-            <div class="group">
-                <legend>Date of birth</legend>
+
+                <legend class="visuallyhidden">Date of birth</legend>
                 <p>For example, 08 04 <?= date('Y')-18 ?></p>
     
                 <? $element = $dayOfBirth; ?>
@@ -133,7 +109,6 @@
                     ?>
                 </div>
     
-            </div>
         </fieldset>
     
         <fieldset class="js-PostcodeLookup">
@@ -195,7 +170,8 @@
             <input type="submit" name="save" id="save" value="Save and continue" class="button aboutyou">
         </p>
     
-        <?= $this->form()->closeTag(); ?>
+        {{ form().closeTag|raw }}
+        
     </div>
 
 {% endblock content %}
