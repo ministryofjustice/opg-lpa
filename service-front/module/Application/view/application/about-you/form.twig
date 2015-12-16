@@ -70,98 +70,70 @@
     
         <fieldset>
 
-                <legend class="visuallyhidden">Date of birth</legend>
-                <p>For example, 08 04 <?= date('Y')-18 ?></p>
-    
-                <? $element = $dayOfBirth; ?>
-                <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-day">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
-    
-                <? $element = $monthOfBirth; ?>
-                <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-month">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
-    
-                <? $element = $yearOfBirth; ?>
-                <div class="<?= $this->elementGroupClass($element); ?> form-group form-group-year">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
+            <legend class="visuallyhidden">Date of birth</legend>
+            <p>For example, 08 04 <?= date('Y')-18 ?></p>
+                
+			<div class="form-group {{ dayOfBirth.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ dayOfBirth.getAttribute('id') }}">
+                    {{ dayOfBirth.getOption('label') }}
+                    {{ formElementErrorsV2(dayOfBirth) }}
+                </label>
+                {{ formElement(dayOfBirth) }}
+            </div>
+            
+            <div class="form-group {{ monthOfBirth.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ monthOfBirth.getAttribute('id') }}">
+                    {{ monthOfBirth.getOption('label') }}
+                    {{ formElementErrorsV2(monthOfBirth) }}
+                </label>
+                {{ formElement(monthOfBirth) }}
+            </div>
+            
+            <div class="form-group {{ yearOfBirth.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ yearOfBirth.getAttribute('id') }}">
+                    {{ yearOfBirth.getOption('label') }}
+                    {{ formElementErrorsV2(yearOfBirth) }}
+                </label>
+                {{ formElement(yearOfBirth) }}
+            </div>
     
         </fieldset>
     
         <fieldset class="js-PostcodeLookup">
-            <legend>Address</legend>
+            <legend class="visuallyhidden">Address</legend>
             <div class="js-PostcodeLookup__postal-add">
     
-                <? $element = $address1; ?>
-                <div class="<?= $this->elementGroupClass($element); ?>">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
+            <div class="form-group {{ address1.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ address1.getAttribute('id') }}">
+                    {{ address1.getOption('label') }}
+                    {{ formElementErrorsV2(address1) }}
+                </label>
+                {{ formElement(address1) }}
+            </div>
     
-                <? $element = $address2; ?>
-                <div class="<?= $this->elementGroupClass($element); ?>">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
+            <div class="form-group {{ address2.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ address2.getAttribute('id') }}">
+                    {{ address2.getOption('label') }}
+                    {{ formElementErrorsV2(address2) }}
+                </label>
+                {{ formElement(address2) }}
+            </div>
     
-                <? $element = $address3; ?>
-                <div class="<?= $this->elementGroupClass($element); ?>">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
+            <div class="form-group {{ address3.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ address3.getAttribute('id') }}">
+                    {{ address3.getOption('label') }}
+                    {{ formElementErrorsV2(address3) }}
+                </label>
+                {{ formElement(address3) }}
+            </div>
     
-                <? $element = $postcode; ?>
-                <div class="<?= $this->elementGroupClass($element); ?>">
-                    <?=
-                    $this->formLabel($element).
-                    $formLabel->openTag().
-                    $element->getOption('label').
-                    $this->formElementErrors($element).
-                    $this->formInput($element).
-                    $formLabel->closeTag()
-                    ?>
-                </div>
+            <div class="form-group {{ postcode.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ postcode.getAttribute('id') }}">
+                    {{ postcode.getOption('label') }}
+                    {{ formElementErrorsV2(postcode) }}
+                </label>
+                {{ formElement(postcode) }}
+            </div>
     
             </div>
         </fieldset>
