@@ -4,6 +4,10 @@
     {% include 'application/about-you/partials/form-error-summary.twig' %}
 {% endblock %}
 
+{% block pageTitle %}
+    Your details
+{% endblock %}
+
 {% block content %}
 
 	{% block aboutyouheader %}{% endblock aboutyouheader %}
@@ -22,30 +26,30 @@
     {% set address3 = form.get('address-address3') %}
     {% set postcode = form.get('address-postcode') %}
 
-    {{ title.setAttributes({id: 'title'}).setOptions({label: 'Title'}).setLabelAttributes({id:'title-label'}) ? ''}}
-    {{ firstName.setAttributes({id: 'firstname'}).setOptions({label: 'First names'}) ? ''}}
-    {{ lastName.setAttributes({id: 'surname'}).setOptions({label: 'Last name'}) ? ''}}
+    {{ title.setAttributes({id: 'title', class: 'form-control'}).setOptions({label: 'Title'}).setLabelAttributes({id:'title-label'}) ? ''}}
+    {{ firstName.setAttributes({id: 'firstname', class: 'form-control'}).setOptions({label: 'First names'}) ? ''}}
+    {{ lastName.setAttributes({id: 'surname', class: 'form-control'}).setOptions({label: 'Last name'}) ? ''}}
     
-    {{ lastName.setAttributes({id: 'dob-day'}).setLabel('Day') ? ''}}
-    {{ lastName.setAttributes({id: 'dob-month'}).setLabel('Month') ? ''}}
-    {{ lastName.setAttributes({id: 'dob-year'}).setLabel('Year') ? ''}}
+    {{ dayOfBirth.setAttributes({id: 'dob-day'}).setLabel('Day') ? ''}}
+    {{ monthOfBirth.setAttributes({id: 'dob-month'}).setLabel('Month') ? ''}}
+    {{ yearOfBirth.setAttributes({id: 'dob-year'}).setLabel('Year') ? ''}}
     
-    {{ address1.setAttributes({id: 'addr1'}).setLabel('Address line 1') ? ''}}
-    {{ address2.setAttributes({id: 'addr2'}).setLabel('Address line 2') ? ''}}
-    {{ address3.setAttributes({id: 'addr3'}).setLabel('Address line 3') ? ''}}
-    {{ postcode.setAttributes({id: 'postcode'}).setLabel('Postcode') ? ''}}
+    {{ address1.setAttributes({id: 'addr1', class: 'form-control'}).setOptions({label: 'Address line 1'}) ? ''}}
+    {{ address2.setAttributes({id: 'addr2', class: 'form-control'}).setOptions({label: 'Address line 2'}) ? ''}}
+    {{ address3.setAttributes({id: 'addr3', class: 'form-control'}).setOptions({label: 'Address line 3'}) ? ''}}
+    {{ postcode.setAttributes({id: 'postcode', class: 'form-control'}).setOptions({label: 'Postcode'}) ? ''}}
     
     {{ form.prepare() ? '' }}
     
-    <div class="about-you-form">
-    
-        {{ form().openTag( form )|raw }}
-    
+    {{ form().openTag( form )|raw }}
+
         {{ formElement(form.get( form.csrfName )) }}
-    
+
+        <h2 class="heading-medium">What is your name?</h2>
+
         <fieldset>
             <legend class="visuallyhidden">Name</legend>
-    
+
             <div class="form-group {{ title.getMessages|length >0 ? 'error'}}">
                 <label class="form-label" for="{{ title.getAttribute('id') }}">
                     {{ title.getOption('label') }}
@@ -53,7 +57,7 @@
                 </label>
                 {{ formElement(title) }}
             </div>
-    
+
             <div class="form-group {{ firstName.getMessages|length >0 ? 'error'}}">
                 <label class="form-label" for="{{ firstName.getAttribute('id') }}">
                     {{ firstName.getOption('label') }}
@@ -71,83 +75,82 @@
             </div>
             
         </fieldset>
-    
-        <fieldset>
 
+        <h2 class="heading-medium">What is your date of birth?</h2>
+
+        <fieldset>
             <legend class="visuallyhidden">Date of birth</legend>
-            <p>For example, 08 04 <?= date('Y')-18 ?></p>
+
+            <div class="form-date">
+                <p class="form-hint">For example, 08 04 <?= date('Y')-18 ?></p>
                 
-			<div class="form-group {{ dayOfBirth.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ dayOfBirth.getAttribute('id') }}">
-                    {{ dayOfBirth.getOption('label') }}
-                    {{ formElementErrorsV2(dayOfBirth) }}
-                </label>
-                {{ formElement(dayOfBirth) }}
+                <div class="form-group form-group-day">
+                    <label for="dob-day">Day</label>
+                    <input class="form-control" id="dob-day" name="dob-day" type="number" pattern="[0-9]*" min="0" max="31">
+                </div>
+
+                <div class="form-group form-group-month">
+                    <label for="dob-month">Month</label>
+                    <input class="form-control" id="dob-month" name="dob-month" type="number" pattern="[0-9]*" min="0" max="12">
+                </div>
+
+                <div class="form-group form-group-year">
+                    <label for="dob-year">Year</label>
+                    <input class="form-control" id="dob-year" name="dob-year" type="number" pattern="[0-9]*" min="0" max="2014">
+                </div>
+                
+                {{ formElementErrorsV2(yearOfBirth) }}
+                {{ formElementErrorsV2(monthOfBirth) }}
+                {{ formElementErrorsV2(dayOfBirth) }}
             </div>
-            
-            <div class="form-group {{ monthOfBirth.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ monthOfBirth.getAttribute('id') }}">
-                    {{ monthOfBirth.getOption('label') }}
-                    {{ formElementErrorsV2(monthOfBirth) }}
-                </label>
-                {{ formElement(monthOfBirth) }}
-            </div>
-            
-            <div class="form-group {{ yearOfBirth.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ yearOfBirth.getAttribute('id') }}">
-                    {{ yearOfBirth.getOption('label') }}
-                    {{ formElementErrorsV2(yearOfBirth) }}
-                </label>
-                {{ formElement(yearOfBirth) }}
-            </div>
-    
+
         </fieldset>
-    
+
+        <h2 class="heading-medium">What is your address?</h2>
+
         <fieldset class="js-PostcodeLookup">
             <legend class="visuallyhidden">Address</legend>
+
             <div class="js-PostcodeLookup__postal-add">
-    
-            <div class="form-group {{ address1.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ address1.getAttribute('id') }}">
-                    {{ address1.getOption('label') }}
-                    {{ formElementErrorsV2(address1) }}
-                </label>
-                {{ formElement(address1) }}
+
+                <div class="form-group {{ address1.getMessages|length >0 ? 'error'}}">
+                    <label class="form-label" for="{{ address1.getAttribute('id') }}">
+                        {{ address1.getOption('label') }}
+                        {{ formElementErrorsV2(address1) }}
+                    </label>
+                    {{ formElement(address1) }}
+                </div>
+
+                <div class="form-group {{ address2.getMessages|length >0 ? 'error'}}">
+                    <label class="form-label" for="{{ address2.getAttribute('id') }}">
+                        {{ address2.getOption('label') }}
+                        {{ formElementErrorsV2(address2) }}
+                    </label>
+                    {{ formElement(address2) }}
+                </div>
+
+                <div class="form-group {{ address3.getMessages|length >0 ? 'error'}}">
+                    <label class="form-label" for="{{ address3.getAttribute('id') }}">
+                        {{ address3.getOption('label') }}
+                        {{ formElementErrorsV2(address3) }}
+                    </label>
+                    {{ formElement(address3) }}
+                </div>
+
+                <div class="form-group {{ postcode.getMessages|length >0 ? 'error'}}">
+                    <label class="form-label" for="{{ postcode.getAttribute('id') }}">
+                        {{ postcode.getOption('label') }}
+                        {{ formElementErrorsV2(postcode) }}
+                    </label>
+                    {{ formElement(postcode) }}
+                </div>
+
             </div>
-    
-            <div class="form-group {{ address2.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ address2.getAttribute('id') }}">
-                    {{ address2.getOption('label') }}
-                    {{ formElementErrorsV2(address2) }}
-                </label>
-                {{ formElement(address2) }}
-            </div>
-    
-            <div class="form-group {{ address3.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ address3.getAttribute('id') }}">
-                    {{ address3.getOption('label') }}
-                    {{ formElementErrorsV2(address3) }}
-                </label>
-                {{ formElement(address3) }}
-            </div>
-    
-            <div class="form-group {{ postcode.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ postcode.getAttribute('id') }}">
-                    {{ postcode.getOption('label') }}
-                    {{ formElementErrorsV2(postcode) }}
-                </label>
-                {{ formElement(postcode) }}
-            </div>
-    
-            </div>
+
         </fieldset>
-    
-        <p class="action group">
-            <input type="submit" name="save" id="save" value="Save and continue" class="button aboutyou">
-        </p>
-    
-        {{ form().closeTag|raw }}
-        
-    </div>
+
+        <input type="submit" name="save" id="save" class="button" value="Save and continue">
+
+    {{ form().closeTag|raw }}
 
 {% endblock content %}
