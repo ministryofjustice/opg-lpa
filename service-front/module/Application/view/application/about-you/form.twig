@@ -1,5 +1,9 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block errorSummary %}
+    {% include 'application/about-you/partials/form-error-summary.twig' %}
+{% endblock %}
+
 {% block content %}
 
 	{% block aboutyouheader %}{% endblock aboutyouheader %}
