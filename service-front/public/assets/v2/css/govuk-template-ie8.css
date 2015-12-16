@@ -123,19 +123,6 @@ a:hover {
 a:active {
   color: #2e8aca; }
 
-a[rel="external"]:after {
-  background-image: url("external-links/external-link.png");
-  background-repeat: no-repeat; }
-  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
-    a[rel="external"]:after {
-      background-image: url("external-links/external-link-24x24.png");
-      background-size: 12px 400px; } }
-a[rel="external"]:after {
-  content: "    ";
-  background-position: right 6px; }
-a[rel="external"]:hover:after {
-  background-position: right -382px; }
-
 .external-link:after {
   content: "        ";
   background-position: right 0px; }

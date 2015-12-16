@@ -35,6 +35,10 @@
 .js-enabled .js-hidden {
   display: none; }
 
+a[rel="external"] {
+  background-image: url("/public/images/external-links/external-link.png");
+  background-repeat: no-repeat; }
+
 /* Borrowed from http://meyerweb.com/eric/tools/css/reset/ */
 div, span,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
