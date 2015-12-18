@@ -58,7 +58,7 @@
       $select = $('<select>', {
         'id': $text.attr('id') + '__select',
         'name': $text.attr('id') + '__select',
-        'class': 'js-TitleSwitch-select'
+        'class': 'js-TitleSwitch-select form-control'
       });
       // add options
       $.each(this.options, function (name, value) {
