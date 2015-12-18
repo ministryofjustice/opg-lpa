@@ -7,8 +7,8 @@ input[disabled="disabled"] {
 
 .form-date {
 	margin-bottom: 30px;
+	overflow: hidden;
 	&.error {
-		overflow: hidden;
 		.form-control {
 			border: 2px solid $grey-1;
 		}

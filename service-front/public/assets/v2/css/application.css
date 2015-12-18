@@ -1456,11 +1456,10 @@ input[disabled="disabled"] {
   opacity: .5; }
 
 .form-date {
-  margin-bottom: 30px; }
-  .form-date.error, .form-date.error .form-date.error {
-    overflow: hidden; }
-    .form-date.error .form-control {
-      border: 2px solid #6f777b; }
+  margin-bottom: 30px;
+  overflow: hidden; }
+  .form-date.error .form-control {
+    border: 2px solid #6f777b; }
 
 .form-group-day.error, .form-date.error .form-group-day.error,
 .form-group-month.error,
