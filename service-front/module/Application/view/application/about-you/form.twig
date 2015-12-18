@@ -30,9 +30,32 @@
     {{ firstName.setAttributes({id: 'firstname', class: 'form-control'}).setOptions({label: 'First names'}) ? ''}}
     {{ lastName.setAttributes({id: 'surname', class: 'form-control'}).setOptions({label: 'Last name'}) ? ''}}
     
-    {{ dayOfBirth.setAttributes({id: 'dob-day'}).setLabel('Day') ? ''}}
-    {{ monthOfBirth.setAttributes({id: 'dob-month'}).setLabel('Month') ? ''}}
-    {{ yearOfBirth.setAttributes({id: 'dob-year'}).setLabel('Year') ? ''}}
+    {{ dayOfBirth.setAttributes({
+        id: 'dob-day',
+        type: 'number',
+        class: 'form-control',
+        min: '0',
+        max: '31',
+        pattern: '[0-9]*'
+    }).setLabel('Day') ? ''}}
+
+    {{ monthOfBirth.setAttributes({
+        id: 'dob-month',
+        type: 'number',
+        class: 'form-control',
+        min: '0',
+        max: '12',
+        pattern: '[0-9]*'
+    }).setLabel('Month') ? ''}}
+
+    {{ yearOfBirth.setAttributes({
+        id: 'dob-year',
+        type: 'number',
+        class: 'form-control',
+        min: '0',
+        max: '2014',
+        pattern: '[0-9]*'
+    }).setLabel('Year') ? ''}}
     
     {{ address1.setAttributes({id: 'addr1', class: 'form-control'}).setOptions({label: 'Address line 1'}) ? ''}}
     {{ address2.setAttributes({id: 'addr2', class: 'form-control'}).setOptions({label: 'Address line 2'}) ? ''}}
@@ -81,27 +104,27 @@
         <fieldset>
             <legend class="visuallyhidden">Date of birth</legend>
 
-            <div class="form-date">
+            <div class="form-date {{ dayOfBirth.getMessages|length >0 or monthOfBirth.getMessages|length >0 or yearOfBirth.getMessages|length >0 ? 'error'}}">
                 <p class="form-hint">For example, 08 04 <?= date('Y')-18 ?></p>
-                
-                <div class="form-group form-group-day">
-                    <label for="dob-day">Day</label>
-                    <input class="form-control" id="dob-day" name="dob-day" type="number" pattern="[0-9]*" min="0" max="31">
-                </div>
 
-                <div class="form-group form-group-month">
-                    <label for="dob-month">Month</label>
-                    <input class="form-control" id="dob-month" name="dob-month" type="number" pattern="[0-9]*" min="0" max="12">
-                </div>
-
-                <div class="form-group form-group-year">
-                    <label for="dob-year">Year</label>
-                    <input class="form-control" id="dob-year" name="dob-year" type="number" pattern="[0-9]*" min="0" max="2014">
-                </div>
-                
                 {{ formElementErrorsV2(yearOfBirth) }}
                 {{ formElementErrorsV2(monthOfBirth) }}
                 {{ formElementErrorsV2(dayOfBirth) }}
+
+                <div class="form-group form-group-day {{ dayOfBirth.getMessages|length >0 ? 'error'}}">
+                    <label for="dob-day">Day</label>
+                    {{ formElement(dayOfBirth) }}
+                </div>
+
+                <div class="form-group form-group-month {{ monthOfBirth.getMessages|length >0 ? 'error'}}">
+                    <label for="dob-month">Month</label>
+                    {{ formElement(monthOfBirth) }}
+                </div>
+
+                <div class="form-group form-group-year {{ yearOfBirth.getMessages|length >0 ? 'error'}}">
+                    <label for="dob-year">Year</label>
+                    {{ formElement(yearOfBirth) }}
+                </div>
             </div>
 
         </fieldset>
