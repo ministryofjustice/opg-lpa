@@ -234,6 +234,16 @@ class Module{
                     
                     return $env;
                     
+                },
+                
+                'TwigViewRenderer' => function ( ServiceLocatorInterface $sm ) {
+                 
+                    $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
+                    
+                    $env = new \Twig_Environment($loader);
+                    
+                    return $env;
+                
                 }
 
             ], // factories

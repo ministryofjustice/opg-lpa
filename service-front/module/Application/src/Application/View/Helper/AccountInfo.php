@@ -45,6 +45,11 @@ class AccountInfo extends AbstractHelper
             );
         }
         
-        echo $this->view->partial('application/account-info/account-info.phtml', $params);
+        if ($auth->hasIdentity()) {
+            $template = $this->view->getHelperPluginManager()->getServiceLocator()->get('TwigViewRenderer')->loadTemplate('account-info/account-info.twig');
+            $content = $template->render($params);
+        
+            echo $content;
+        }
     }
 }

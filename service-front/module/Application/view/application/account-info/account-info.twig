@@ -1,0 +1,14 @@
+<div class="js-toggle-nav" id="global-nav">
+
+  <div class="inner">
+    <nav role="navigation" class="content">
+      <ul id="navigation">
+        <li class="user">{{ name }}: </li>
+		{% for key,value in links %}
+          <li><a href="{{ value['url'] }}">{{ value['text'] }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+
+</div>
