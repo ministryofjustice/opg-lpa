@@ -26,7 +26,7 @@ class Communication implements ServiceLocatorAwareInterface {
     {
         $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
-        return $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
         
     }
     
@@ -44,7 +44,7 @@ class Communication implements ServiceLocatorAwareInterface {
         if ($now > $startTimestamp && $now <= $endTimestamp) {
         
             $sendAt = time() + $emailDelaySeconds;
-            $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
+            $this->sendEmail('feedback-survey.twig', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
         }
     }
     
@@ -75,11 +75,7 @@ class Communication implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate($emailTemplate)->setVariables(['lpa' => $lpa, 'signinUrl' => $signinUrl]);
-        
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate($emailTemplate)->render(['lpa' => $lpa, 'signinUrl' => $signinUrl]);
 
         //---
 

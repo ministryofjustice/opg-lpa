@@ -145,8 +145,7 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         //---
 
-        $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig');
-        $content = $template->render([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig')->render([
             'callback' => $callbackUrl,
         ]);
         
@@ -200,13 +199,9 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/password-reset-not-active.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset-not-active.twig')->render([
             'callback' => $callbackUrl,
         ]);
-
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
 
         //---
 

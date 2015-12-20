@@ -54,11 +54,8 @@ class SendgridController extends AbstractBaseController
         
         //---
         
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate('email/bounce.phtml');
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('bounce.twig')->render([]);
         
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
         
         //---
         

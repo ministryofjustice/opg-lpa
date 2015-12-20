@@ -42,8 +42,7 @@ class Feedback implements ServiceLocatorAwareInterface
         $data['sentTime'] = date('Y/m/d H:i:s');
         //---
         
-        // Load the content from the view and merge in our variables...
-        $content = $this->getServiceLocator()->get('EmailPhpRenderer')->render('feedback', $data);
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('feedback.twig')->render($data);
         
         //---
         

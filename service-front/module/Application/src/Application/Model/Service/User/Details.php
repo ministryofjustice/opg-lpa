@@ -149,13 +149,9 @@ class Details implements ServiceLocatorAwareInterface {
         
         //---
         
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/new-email-verify.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-verify.twig')->render([
             'activateUrl' => $activateUrl,
         ]);
-        
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
         
         //---
         
@@ -206,14 +202,10 @@ class Details implements ServiceLocatorAwareInterface {
     
         //---
     
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/new-email-notify.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-notify.twig')->render([
             'newEmailAddress' => $newEmailAddress,
         ]);
-    
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-    
+        
         //---
     
         $html = new MimePart( $content );

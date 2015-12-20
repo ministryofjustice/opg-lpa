@@ -46,16 +46,14 @@ class NotificationsController extends AbstractBaseController {
 
         //--
 
-        $viewModel = new ViewModel();
-
         switch($posts['Type']){
             case '1-week-notice':
                 $email->setSubject( 'If you still need your lasting power of attorney online account, please sign back in in the next seven days' );
-                $viewModel->setTemplate('email/notification-1-week-notice.phtml');
+                $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('notification-1-week-notice.twig');
                 break;
             case '1-month-notice':
                 $email->setSubject( 'Do you still need your lasting power of attorney online account?' );
-                $viewModel->setTemplate('email/notification-1-month-notice.phtml');
+                $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('notification-1-month-notice.twig');
                 break;
             default:
                 $response = $this->getResponse();
@@ -67,7 +65,7 @@ class NotificationsController extends AbstractBaseController {
 
         //---
 
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        $content = $template->render([]);
 
         //---
 
