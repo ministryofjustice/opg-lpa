@@ -13,7 +13,7 @@
 </p>
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0;">
     <!-- URLs have white-space: nowrap so that they don't wrap -->
-    <a style="white-space: nowrap; color: #005ea5" href="<?= $this->callback ?>"><?= $this->escapehtml($this->callback) ?></a>
+    <a style="white-space: nowrap; color: #005ea5" href="{{ callback }}">{{ callback|raw }}</a>
 </p>
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
     If the link doesn't work, copy it into your browser's address bar.  The link will expire in 24 hours.
