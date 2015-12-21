@@ -65,14 +65,10 @@ class Register implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/registration.phtml' )->setVariables([
-            'callback' => $routeCallback( $activationToken ),
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('registration.twig')->render(
+            ['callback' => $routeCallback( $activationToken ),
         ]);
         
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-
         //---
 
         $html = new MimePart( $content );
