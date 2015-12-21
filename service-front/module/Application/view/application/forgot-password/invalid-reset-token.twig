@@ -1,7 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Invalid password link
+    That password link doesn't work
 {% endblock %}
 
 {% block content %}
@@ -11,10 +11,10 @@
     <p>This might be because you've:</p>
     <ul class="list list-bullet">
         <li>already used this link</li>
-        <li>asked for another link since</li>
+        <li>tried to change your password again since</li>
         <li>changed the link</li>
     </ul>
-    <p><a href="{{ url('forgot-password') }}">Ask for a new link</a> so you can reset your password.</p>
+    <p><a href="{{ url('forgot-password') }}">Get a new link</a> to reset your password.</p>
 </div>
 
 {% endblock content %}
