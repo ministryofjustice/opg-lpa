@@ -11,9 +11,17 @@ class StaticAssetPath extends AbstractHelper {
         $this->assetsVersion = $assetsVersion;
     }
 
-    public function __invoke($path){
+    public function __invoke( $path, array $options = array() ){
 
         $path = str_replace( '/assets/', "/assets/{$this->assetsVersion}/", $path );
+
+        // Should '.min' be include before the file extension.
+        if( isset($options['minify']) && $options['minify'] === true ){
+
+            $lastDot = strrpos($path, '.');
+            $path = substr( $path, 0, $lastDot ) . '.min' . substr( $path, $lastDot );
+
+        }
 
         return $path;
 
