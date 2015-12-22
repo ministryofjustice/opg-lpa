@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="text">
-	<p>You are about to delete your account. Doing so will permanently remove all your LPAs and personal details from our system.</p>
+	<p class="lede">You are about to delete your account. Doing so will permanently remove all your LPAs and personal details from our system.</p>
 	<p><a href="{{ url('user/delete', {'action': 'confirm'}) }}">Yes, continue deleting my account</a></p>
 	<p><a href="{{ url( 'user/dashboard' ) }}">No, return to my LPAs</a></p>
 </div>
