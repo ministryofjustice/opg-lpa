@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8cb696cfb43db1403a783c432436fd80",
-    "content-hash": "56fd8c0aed633fb24a2f600f07a4bf90",
+    "hash": "89b99ab1901101dba711554256081c36",
+    "content-hash": "fcc2eac69f92c69b3e998b496d323eea",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -608,7 +608,7 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "dev-LPA-1237/Auth2",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
@@ -2763,7 +2763,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ministryofjustice/opg-lpa-api-client": 20,
         "zf-commons/zfc-twig": 20
     },
     "prefer-stable": true,

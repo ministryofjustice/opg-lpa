@@ -33,10 +33,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             // Error...
             $body = $client->getLastContent();
 
-            if( $body['reason'] == 'ACCOUNT_NOT_ACTIVE' && isset($body['id']) ){
+            if( isset($body['activation_token']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['id'] ) );
+                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
 
             }elseif( isset($body['reason']) ){
 

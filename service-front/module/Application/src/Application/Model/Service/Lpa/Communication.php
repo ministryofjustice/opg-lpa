@@ -24,12 +24,15 @@ class Communication implements ServiceLocatorAwareInterface {
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
+        //$this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
         return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
         
     }
-    
+
+    /**
+     * Disabled by commenting out above.
+     */
     private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
         
         $startDate = '2015-10-12';
@@ -41,7 +44,8 @@ class Communication implements ServiceLocatorAwareInterface {
         
         $now = time();
         
-        if ($now > $startTimestamp && $now <= $endTimestamp) {
+        // Uncomment the second part of the condition to re-enabled time limit
+        if ($now > $startTimestamp /* && $now <= $endTimestamp */) {
         
             $sendAt = time() + $emailDelaySeconds;
             $this->sendEmail('feedback-survey.twig', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
