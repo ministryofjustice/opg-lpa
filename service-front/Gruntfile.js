@@ -20,8 +20,9 @@ module.exports = function (grunt) {
       dev: {
         options: {
           loadPath: [
-          'assets/bower/govuk_elements/govuk/public/sass',
-          'assets/bower/govuk_elements/public/sass'
+          'assets/bower/govuk_frontend_toolkit/stylesheets',
+          'assets/bower/govuk_template/source/assets/stylesheets',
+          'assets/bower/govuk_elements/public/sass',
           ]
         },
         files: {
@@ -29,10 +30,6 @@ module.exports = function (grunt) {
           'public/assets/v2/css/application-ie8.css': 'assets/sass/application-ie8.scss',
           'public/assets/v2/css/application-ie7.css': 'assets/sass/application-ie7.scss',
           'public/assets/v2/css/application-ie6.css': 'assets/sass/application-ie6.scss',
-          'public/assets/v2/css/govuk-template.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template.scss',
-          'public/assets/v2/css/govuk-template-ie8.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie8.scss',
-          'public/assets/v2/css/govuk-template-ie7.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie7.scss',
-          'public/assets/v2/css/govuk-template-ie6.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-ie6.scss',
           'public/assets/v2/css/govuk-template-print.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-print.scss'
         }
       }
@@ -53,7 +50,7 @@ module.exports = function (grunt) {
     // replacing a compass depended helper within govuk template css
     replace: {
       image_url: {
-        src: ['public/assets/v2/css/govuk-template*.css'],
+        src: ['public/assets/v2/css/*.css'],
         dest: 'public/assets/v2/css/',
         replacements: [{
           from: 'image-url',

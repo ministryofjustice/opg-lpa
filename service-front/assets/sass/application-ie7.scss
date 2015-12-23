@@ -1,1 +1,27 @@
+// Settings
+@import 'settings/variables';
+
+// GOVUK Template
+@import 'govuk-template-ie7.scss';
+
+// GOVUK Elements
 @import 'main-ie7';
+
+// Extensions
+@import 'extensions/elements/forms';
+
+// Utilities
+@import 'utilities/helpers';
+
+// Patterns
+@import 'patterns/global-nav';
+@import 'patterns/popup';
+@import 'patterns/notifications';
+
+// -- Initialize patterns
+
+// Generic popup
+@include popup(80%);
+
+// Global navigation
+@include global-nav;
