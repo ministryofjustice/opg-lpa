@@ -33,19 +33,8 @@
     class: 'form-control'
 }) ? ''}}
 
-{#
-$typeValueOptions = $type->getOptions()['value_options'];
-
-$typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
-$typeValueOptions['satisfied']['label'] = 'Satisfied';
-$typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
-$typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
-$typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
-
-$type->setOptions([
-    'value_options' => $typeValueOptions
-]);
-#}
+{% set allOptions = type.getOptions() %}
+{% set typeValueOptions = allOptions['value_options'] %}
 
 {{ form().openTag( form )|raw }}
 

@@ -20,6 +20,19 @@ class FeedbackController extends AbstractBaseController
     {
         $form = new FeedbackForm();
 
+        $type = $form->get('rating');
+        $typeValueOptions = $type->getOptions()['value_options'];
+        
+        $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
+        $typeValueOptions['satisfied']['label'] = 'Satisfied';
+        $typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
+        $typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
+        $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
+        
+        $type->setOptions([
+            'value_options' => $typeValueOptions
+        ]);
+        
         return new ViewModel([
             'form' => $form,
             'pageTitle' => 'Send feedback'
