@@ -80,9 +80,11 @@
             {{ formElement(email_confirm) }}
         </div>
 
-    </fieldset>
+        <div class="form-group">
+            <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">
+        </div>
 
-    <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">
+    </fieldset>
 
 {{ form().closeTag|raw }}
 

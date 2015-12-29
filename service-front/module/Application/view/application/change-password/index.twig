@@ -73,9 +73,11 @@
             {{ formElement(new_password_confirm) }}
         </div>
 
-    </fieldset>
+        <div class="form-group">
+            <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new password">
+        </div>
 
-    <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new password">
+    </fieldset>
 
 {{ form().closeTag|raw }}
 

@@ -133,9 +133,11 @@ Doesn't work in twig
                 {{ formElementErrorsV2(terms) }}
             </label>
         </div>
-    </fieldset>
 
-    <input type="submit" name="submit" id="signin-form-submit" value="Sign up" class="button">
+        <div class="form-group">
+            <input type="submit" name="submit" id="signin-form-submit" value="Sign up" class="button">
+        </div>
+    </fieldset>
 
 {{ form().closeTag|raw }}
 
