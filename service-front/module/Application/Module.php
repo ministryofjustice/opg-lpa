@@ -172,7 +172,6 @@ class Module{
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\PostcodeInfo\PostcodeInfoClientFactory',
-                'EmailPhpRenderer'      => 'Application\Model\Service\Mail\View\Renderer\PhpRendererFactory',
 
                 // Access via 'MailTransport'
                 'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',
