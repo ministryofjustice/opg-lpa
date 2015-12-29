@@ -27,6 +27,15 @@ class CompleteController extends AbstractLpaController
         
         $viewModel->setTemplate('application/complete/complete.phtml');
         
+        $lpa = $this->getLpa();
+        
+        $analyticsDimensions = [
+            'dimension2' => $this->getLpa()->startedAt,
+            'dimension3' => $this->getLpa()->updateSessionCount,
+        ];
+        
+        $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
+        
         return $viewModel;
     }
     
