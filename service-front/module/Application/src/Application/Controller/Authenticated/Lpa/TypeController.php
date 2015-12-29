@@ -51,6 +51,16 @@ class TypeController extends AbstractLpaController
             }
         }
         
+        if (empty($this->getLpa()->document->type)) {
+            $analyticsDimensions = [
+                'start_date' => date('Y-m-d'),
+                'return_session' => 0,
+            ];
+        
+            $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
+        
+        }
+        
         return new ViewModel([
                 'form'=>$form, 
                 'cloneUrl'=>$this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$this->getLpa()->id]),
