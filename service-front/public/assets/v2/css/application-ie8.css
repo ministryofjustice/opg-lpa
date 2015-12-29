@@ -1981,16 +1981,6 @@ input[disabled="disabled"] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
-.notice {
-  position: relative;
-  padding-left: 50px;
-  padding-top: 2px; }
-  .notice .icon {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-size: cover; }
-
 .noscroll {
   position: relative;
   overflow: hidden;
