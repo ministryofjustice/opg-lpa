@@ -15,8 +15,9 @@ class FormLinkedErrorList extends AbstractHelper
         foreach ($form->getElements() as $element) {
             foreach ($element->getMessages() as $elementMessage) {
                 echo '<li><a href="#' . $element->getAttribute('name') . '">';
-                if($label = $element->getLabel()) {
-                    echo $label .' - '; 
+                $label = $element->getLabel();
+                if($label) {
+                    echo $label . ' - '; 
                 }
                 echo $elementMessage;
                 echo '</a></li>';

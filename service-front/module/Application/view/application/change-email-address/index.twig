@@ -1,5 +1,11 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% set form = formErrorTextExchange(form, []) %}
+
+{% set password = form.get('password_current').setOptions({ label: 'Your account password' }) %}
+{% set email = form.get('email').setOptions({ label: 'New email address' }) %}
+{% set email_confirm = form.get('email_confirm').setOptions({ label: 'Re-enter new email address' }) %}
+
 {% block errorSummary %}
     {% include 'application/change-email-address/partials/index-error-summary.twig' %}
 {% endblock %}
@@ -10,19 +16,11 @@
 
 {% block content %}
 
-{% set form = formErrorTextExchange(form, []) %}
-
-{% set password = form.get('password_current') %}
-{% set email = form.get('email') %}
-{% set email_confirm = form.get('email_confirm') %}
-
 {{ password.setAttributes({
     id: 'password_current',
     autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
-
-{{ password.setOptions({ label: 'Your account password' }) ? '' }}
 
 {{ email.setAttributes({
     id: 'email',
@@ -30,15 +28,11 @@
     class: 'form-control'
 }) ? ''}}
 
-{{ email.setOptions({ label: 'New email address' }) ? '' }}
-
 {{ email_confirm.setAttributes({
     id: 'email_confirm',
     autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
-
-{{ email_confirm.setOptions({ label: 'Re-enter new email address' }) ? '' }}
 
 {{ form.prepare() ? '' }}
 
