@@ -8,8 +8,6 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
-use ZfcTwig\View\TwigRenderer;
-use ZfcTwig\View\TwigResolver;
 
 class PasswordReset implements ServiceLocatorAwareInterface {
 
@@ -36,7 +34,9 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             if( isset($body['activation_token']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                $result = $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                
+                return $result ? 'account-not-activated' : 'unknown-error';
 
             }elseif( isset($body['reason']) ){
 
