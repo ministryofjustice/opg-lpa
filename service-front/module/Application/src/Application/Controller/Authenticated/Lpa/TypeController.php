@@ -53,8 +53,8 @@ class TypeController extends AbstractLpaController
         
         if (empty($this->getLpa()->document->type)) {
             $analyticsDimensions = [
-                'start_date' => date('Y-m-d'),
-                'return_session' => 0,
+                'dimension2' => date('Y-m-d'),
+                'dimension3' => 0,
             ];
         
             $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
