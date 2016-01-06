@@ -1,0 +1,42 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    System Message
+{% endblock %}
+
+{% set form = formErrorTextExchange(form, []) %}
+{% set message = form.get('message') %}
+
+{% block content %}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+    
+    {{ message.setAttributes({
+        id: 'message',
+        rows: 4,
+        cols: 80
+    }) ? ''}}
+
+<div style="min-height:600px">
+
+	{{ form.prepare() ? '' }}
+    
+    {{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+	<div class="form-group {{ message.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ message.getAttribute('id') }}">
+                    {{ title.getOption('label') }}
+                    {{ formElementErrorsV2(message) }}
+                </label>
+                {{ formElement(message) }}
+    </div>
+
+	<input type="submit" class="button" value="Set system message">
+                
+    {{ form().closeTag|raw }}
+     
+</div>
+
+{% endblock %}
