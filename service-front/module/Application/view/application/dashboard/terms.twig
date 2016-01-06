@@ -1,2 +1,15 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/about-you/partials/form-error-summary.twig' %}
+{% endblock %}
+
+{% block pageTitle %}
 <h2>The terms have changed.</h2>
+{% endblock %}
+
+{% block content %}
+
 <p><a href="{{ url('user/dashboard') }}">Click here to proceed</a></p>
+
+{% endblock %}
