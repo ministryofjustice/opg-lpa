@@ -20,7 +20,7 @@ class GuidanceController extends AbstractBaseController
         
         $model = new ViewModel($guidanceService->parseMarkdown());
         
-        $model->setTemplate('guidance/opg-help-system.phtml');
+        $model->setTemplate('guidance/opg-help-system.twig');
         
         if ($this->request->isXmlHttpRequest()) {
             // if this is accessed via ajax request, disable layout, and return the core text content

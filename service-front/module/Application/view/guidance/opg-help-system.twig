@@ -1,0 +1,25 @@
+<section id="help-system"><header><p>A guide to making your lasting power of attorney</p></header>
+<nav class="help-navigation"><div class="group"><h2>Help topics</h2><ul class="help-topics">
+
+{% for key,value in sections %}
+<li><a class="js-guidance" href="{{ value['url'] }}" data-journey="{{ value['dataJourney'] }}">{{ value['title'] }}</a></li>
+{% endfor %}
+
+</ul></div></nav>
+
+<div class="content help-sections">
+{% for key,value in sections %}
+{{ value['html']|raw }}
+{% endfor %}
+</div>
+
+<div class="action group">
+<p>
+Need help? Ring us on <strong>0300 456 0300</strong>.
+Alternatively, email us at 
+<strong><a href="mailto:customerservices@PublicGuardian.gsi.gov.uk?subject=Digital%20LPA%20Enquiry">customerservices@PublicGuardian.gsi.gov.uk</a></strong>
+</p>
+<hr>
+<a href="#" class="js-popup-close button-secondary">Close help</a>
+</div>
+</section>
