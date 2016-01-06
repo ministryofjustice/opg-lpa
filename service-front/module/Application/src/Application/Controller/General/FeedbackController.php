@@ -40,8 +40,6 @@ class FeedbackController extends AbstractBaseController
             'pageTitle' => 'Send Feedback'
         ]);
         
-        $model->setTemplate('application/feedback/index.twig');
-        
         $request = $this->getRequest();
         
         if ($request->isPost()) {
