@@ -11,32 +11,38 @@
 
 {{ form.setAttribute('class', 'form') ? '' }}
     
-    {{ message.setAttributes({
-        id: 'message',
-        rows: 4,
-        cols: 80
-    }) ? ''}}
+{{ message.setAttributes({
+    id: 'message',
+    rows: 10,
+    cols: 67,
+    class: 'form-control'
+}) ? ''}}
 
-<div style="min-height:600px">
 
-	{{ form.prepare() ? '' }}
+{{ message.setOptions( { label: 'Message' }) ? '' }}
+
+{{ form.prepare() ? '' }}
     
-    {{ form().openTag( form )|raw }}
+{{ form().openTag( form )|raw }}
 
     {{ formElement(form.get( form.csrfName )) }}
 
-	<div class="form-group {{ message.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ message.getAttribute('id') }}">
-                    {{ title.getOption('label') }}
-                    {{ formElementErrorsV2(message) }}
-                </label>
-                {{ formElement(message) }}
-    </div>
+    <fieldset>
+        <legend class="visuallyhidden">Set the system message</legend>
+
+    	<div class="form-group {{ message.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ message.getAttribute('id') }}">
+                <span class="form-label-bold">{{ message.getOption('label') }}</span>
+                {{ formElementErrorsV2(message) }}
+            </label>
+            {{ formElement(message) }}
+        </div>
+        
+    </fieldset>
+
 
 	<input type="submit" class="button" value="Set system message">
                 
-    {{ form().closeTag|raw }}
-     
-</div>
+{{ form().closeTag|raw }}
 
 {% endblock %}
