@@ -1,0 +1,105 @@
+// LPA GUIDANCE HELP SYSTEM
+
+.help-header {
+	position: relative;
+	padding: $gutter-half;
+	border-bottom: 1px solid $border-colour;
+	.icon {
+		position: absolute;
+	}
+}
+
+.help-header-title {
+	display: block;
+	padding-left: 35px;
+}
+
+.help-body {
+	.column-left {
+		float: left;
+		width: 75%;
+		padding: 0 $gutter-half;
+		border-right: 2px solid $border-colour;
+  		@include box-sizing(border-box);
+  		@include media($min-width: 640px, $max-width: 1000px) {
+  			width: 70%;
+		}
+		@include media(mobile) {
+			float: none;
+			width: 100%;
+		}
+	}
+	.column-right {
+		float: right;
+		width: 25%;
+		padding: 0 $gutter-half;
+		@include box-sizing(border-box);
+		@include media($min-width: 640px, $max-width: 1000px) {
+			width: 30%;
+		}
+		@include media(mobile) {
+			float: none;
+			width: 100%;
+		}
+	}
+}
+
+.help-navigation {
+	padding: $gutter 0 $gutter 0;
+	margin-left: -17px;
+}
+
+.help-navigation-title {
+	padding-left: 30px;
+}
+
+.help-topics {
+	margin-top: $gutter-half;
+	list-style: none;
+	li {
+		padding: 4px 30px 4px 30px;
+		margin-bottom: 2px;
+		&.active {
+			padding-left: 28px;
+			border-left: 2px solid $link-colour;
+			background-color: $panel-colour;
+		}
+	}
+	a {
+		display: block;
+		font-size: 16px;
+		@include media($max-width: 640px) {
+			font-size: 14px;
+		}
+	}
+}
+
+.help-sections {
+	padding: $gutter $gutter-half $gutter $gutter;
+	h1 {
+		@extend .heading-xlarge;
+	}
+	h2 {
+		@extend .heading-medium;
+	}
+	h3 {
+		@extend .heading-small;
+	}
+	ul, ol {
+		@extend .list;
+	}
+	ul {
+		@extend .list-bullet;
+	}
+	ol {
+		@extend .list-number;
+	}
+}
+
+.help-footer {
+	padding: $gutter-half;
+	border-top: 1px solid $border-colour;
+	hr {
+		margin: $gutter-half 0 $gutter-half;
+	}
+}

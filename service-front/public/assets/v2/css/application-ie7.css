@@ -981,7 +981,7 @@ main {
   font-size: 16px;
   line-height: 1.25; }
 
-.heading-xlarge {
+.heading-xlarge, .help-sections h1 {
   font-family: "nta", Arial, sans-serif;
   font-size: 32px;
   line-height: 1.09375;
@@ -993,7 +993,7 @@ main {
   margin-bottom: 0.9375em;
   margin-top: 0.625em;
   margin-bottom: 1.25em; }
-  .heading-xlarge .heading-secondary {
+  .heading-xlarge .heading-secondary, .help-sections h1 .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 20px;
     line-height: 1.11111;
@@ -1035,7 +1035,7 @@ main {
     display: block;
     color: #6f777b; }
 
-.heading-medium {
+.heading-medium, .help-sections h2 {
   font-family: "nta", Arial, sans-serif;
   font-size: 18px;
   line-height: 1.2;
@@ -1048,7 +1048,7 @@ main {
   margin-top: 1.875em;
   margin-bottom: 0.83333em; }
 
-.heading-small {
+.heading-small, .help-sections h3 {
   font-family: "nta", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
@@ -1510,19 +1510,19 @@ ul,
 ol {
   list-style-type: none; }
 
-.list {
+.list, .help-sections ul, .help-sections ol {
   padding: 0;
   margin-top: 5px;
   margin-bottom: 20px; }
 
-.list li {
+.list li, .help-sections ul li, .help-sections ol li {
   margin-bottom: 5px; }
 
-.list-bullet {
+.list-bullet, .help-sections ul {
   list-style-type: disc;
   padding-left: 20px; }
 
-.list-number {
+.list-number, .help-sections ol {
   list-style-type: decimal;
   padding-left: 20px;
   padding-left: 28px; }
@@ -2035,6 +2035,66 @@ input[disabled="disabled"] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
+.help-header {
+  position: relative;
+  padding: 15px;
+  border-bottom: 1px solid #bfc1c3; }
+  .help-header .icon {
+    position: absolute; }
+
+.help-header-title {
+  display: block;
+  padding-left: 35px; }
+
+.help-body .column-left {
+  float: left;
+  width: 75%;
+  padding: 0 15px;
+  border-right: 2px solid #bfc1c3;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 70%; }
+.help-body .column-right {
+  float: right;
+  width: 25%;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 30%; }
+
+.help-navigation {
+  padding: 30px 0 30px 0;
+  margin-left: -17px; }
+
+.help-navigation-title {
+  padding-left: 30px; }
+
+.help-topics {
+  margin-top: 15px;
+  list-style: none; }
+  .help-topics li {
+    padding: 4px 30px 4px 30px;
+    margin-bottom: 2px; }
+    .help-topics li.active {
+      padding-left: 28px;
+      border-left: 2px solid #005ea5;
+      background-color: #dee0e2; }
+  .help-topics a {
+    display: block;
+    font-size: 16px;
+    font-size: 14px; }
+
+.help-sections {
+  padding: 30px 15px 30px 30px; }
+
+.help-footer {
+  padding: 15px;
+  border-top: 1px solid #bfc1c3; }
+  .help-footer hr {
+    margin: 15px 0 15px; }
+
 .noscroll {
   position: relative;
   overflow: hidden;
@@ -2063,7 +2123,10 @@ input[disabled="disabled"] {
   margin: 4em auto 20em auto;
   border: 0.5em solid #222;
   background-color: #fff;
-  margin: 0 auto; }
+  margin: 0 auto;
+  width: 960px;
+  width: auto;
+  margin: 2em 0.5em 10em 0.5em; }
   #popup .close {
     position: absolute;
     z-index: 2;
