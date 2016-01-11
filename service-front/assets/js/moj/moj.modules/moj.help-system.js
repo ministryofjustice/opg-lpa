@@ -50,6 +50,10 @@
 
       // nav click event
       $('body').on('click', this.settings.selector, function () {
+        // Be a normal link for mobile and go to the non-js guidance page
+        if (moj.Helpers.isMobileWidth()) {
+          return true;
+        }
         var href = $(this).attr('href'),
           topic = href.substring(href.lastIndexOf('#') + 1);
         // set the current click as the source
@@ -88,6 +92,10 @@
         // if the overlay is present, set topic immediately
         if ($('#popup.help-system').length > 0) {
           self._setTopic(topic);
+          // On small screens, jump to topic
+          if (moj.Helpers.isMobileWidth()) {
+            $('#' + topic)[0].scrollIntoView(true);
+          }
         } else {
           // otherwise, load in the overlay first and set in callback
           this._loadOverlay(topic);
@@ -115,6 +123,13 @@
         .removeClass('hidden')
         .siblings('article')
         .addClass('hidden');
+
+      // Associated back link visibility
+      $('.link-back')
+        .addClass('hidden');
+
+      $('#' + slug + ' + .link-back')
+        .removeClass('hidden');
 
       // Scroll back to top of help
       $('#mask').scrollTop(0);

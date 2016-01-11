@@ -2961,6 +2961,15 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
               ? target.offset().top - $('#popup').offset().top + parseInt($('#popup').css('marginTop'), 10)
               : target.offset().top;
   };
+
+  moj.Helpers.isMobileWidth = function () {
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+    if (w > 640) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 })();
 this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
@@ -3398,6 +3407,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
       // nav click event
       $('body').on('click', this.settings.selector, function () {
+        // Be a normal link for mobile and go to the non-js guidance page
+        if (moj.Helpers.isMobileWidth()) {
+          return true;
+        }
         var href = $(this).attr('href'),
           topic = href.substring(href.lastIndexOf('#') + 1);
         // set the current click as the source
@@ -3436,6 +3449,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         // if the overlay is present, set topic immediately
         if ($('#popup.help-system').length > 0) {
           self._setTopic(topic);
+          // On small screens, jump to topic
+          if (moj.Helpers.isMobileWidth()) {
+            $('#' + topic)[0].scrollIntoView(true);
+          }
         } else {
           // otherwise, load in the overlay first and set in callback
           this._loadOverlay(topic);
@@ -3463,6 +3480,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         .removeClass('hidden')
         .siblings('article')
         .addClass('hidden');
+
+      // Associated back link visibility
+      $('.link-back')
+        .addClass('hidden');
+
+      $('#' + slug + ' + .link-back')
+        .removeClass('hidden');
 
       // Scroll back to top of help
       $('#mask').scrollTop(0);

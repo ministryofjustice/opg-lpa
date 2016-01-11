@@ -53,4 +53,13 @@
               ? target.offset().top - $('#popup').offset().top + parseInt($('#popup').css('marginTop'), 10)
               : target.offset().top;
   };
+
+  moj.Helpers.isMobileWidth = function () {
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+    if (w > 640) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 })();
