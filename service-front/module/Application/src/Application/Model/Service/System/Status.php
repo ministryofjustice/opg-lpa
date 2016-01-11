@@ -49,18 +49,6 @@ class Status implements ServiceLocatorAwareInterface {
         $result['auth'] = $this->auth();
 
         //-----------------------------------
-        // Check v1 (#v1Code)
-
-        // This is just to check the V1 Module is enabled.
-        // Otherwise we skip v1 checks.
-        if( $this->getServiceLocator()->has('ProxyDashboard') ){
-
-            $result['v1'] = $this->v1();
-
-        }
-        // end #v1Code
-        
-        //-----------------------------------
 
         $ok = true;
 
@@ -73,54 +61,7 @@ class Status implements ServiceLocatorAwareInterface {
         return $result;
 
     } // function
-
-    //------------------------------------------------------------------------
-
-    /**
-     * This whole method is #v1Code code.
-     */
-    private function v1(){
-
-        $result = array('ok' => false, 'details' => array('200' => false));
-
-        try {
-
-            $client = new GuzzleClient();
-            $client->setDefaultOption('exceptions', false);
-
-            $response = $client->get(
-                'https://frontv1-01/manage/availability?healthcheck=1',
-                ['connect_timeout' => 5, 'timeout' => 20]
-            );
-
-            if ( $response->getStatusCode() == 200 ){
-                $result['details']['200'] = true;
-            }
-
-            //---
-
-            // Get the XML in array form.
-            $v1 = json_encode( $response->xml() );
-            $v1 = json_decode( $v1, true );
-
-            if( is_array($v1) ){
-
-                if( isset($v1['status']) ){
-
-                    if( $v1['status'] == 'OK' ){ $result['ok'] = true; }
-
-                    $result['details']['status'] = $v1['status'];
-
-                }
-
-            } // if
-
-        } catch (Exception $e) { /* Don't throw exceptions; we just return ok==false */ }
-
-        return $result;
-
-    } // function
-
+    
     //------------------------------------------------------------------------
 
     private function dynamo(){
