@@ -2070,9 +2070,11 @@ input[disabled="disabled"] {
   #popup .help-body .column-left {
     border-right: 2px solid #bfc1c3; }
 .help-body .column-right {
+  position: relative;
   float: right;
   width: 25%;
   padding: 0 15px;
+  z-index: 10;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;

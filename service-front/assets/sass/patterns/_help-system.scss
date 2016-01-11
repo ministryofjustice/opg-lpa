@@ -39,9 +39,11 @@
 		}
 	}
 	.column-right {
+		position: relative;
 		float: right;
 		width: 25%;
 		padding: 0 $gutter-half;
+		z-index: 10;
 		@include box-sizing(border-box);
 		@include media($min-width: 640px, $max-width: 1000px) {
 			width: 30%;
