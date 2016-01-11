@@ -39,9 +39,14 @@
     @include ie-lte(8) {
       margin: 0 auto;
     }
-    @include media(mobile) {
+    @include media($max-width: 1200px) {
+      width: 960px;
+    }
+    @include media($max-width: 1000px) {
       width: auto;
       margin: 2em 0.5em 10em 0.5em;
+    }
+    @include media(mobile) {
       border-width: 0.2em;
     }
 
