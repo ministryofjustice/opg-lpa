@@ -8,7 +8,7 @@
 	<div class="grid-row help-body">
 
 		<div class="column-right">
-			<nav class="help-navigation">
+			<nav class="help-navigation" id="help-navigation">
 				<h2 class="help-navigation-title">Help topics</h2>
 				<ul class="help-topics">
 
@@ -24,6 +24,7 @@
 			<div class="help-sections">
 			{% for key,value in sections %}
 				{{ value['html']|raw }}
+				<a href="#help-navigation" class="link-back">Back to topics</a>
 			{% endfor %}
 			</div>
 		</div>
