@@ -88,7 +88,7 @@
     <tbody>
     {% for key,lpa in lpas %}
             <tr>
-                <td>{{ lpa.id }}</td>
+                <td>{{ formatLpaId(lpa.id) }}</td>
                 <td>{{ lpa.donor }}</td>
                 <td>{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : '') }}</td>
                 <td>{{ lpa.progress }}</td>
