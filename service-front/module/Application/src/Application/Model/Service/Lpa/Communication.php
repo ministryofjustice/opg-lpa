@@ -79,7 +79,11 @@ class Communication implements ServiceLocatorAwareInterface {
 
         //---
 
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate($emailTemplate)->render(['lpa' => $lpa, 'signinUrl' => $signinUrl]);
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate($emailTemplate)->render([
+            'lpa' => $lpa,
+            'signinUrl' => $signinUrl,
+            'isHealthAndWelfare' => ( $lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW ),
+        ]);
 
         //---
 

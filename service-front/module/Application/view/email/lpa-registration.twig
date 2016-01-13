@@ -6,4 +6,29 @@
     LPA Registration
 </h1>
 
+<p>
+    Thank you for completing the LPA online for <strong>{{ lpa.document.donor.name }}'s lasting power of attorney (LPA) for
+    {% if isHealthAndWelfare %}health and welfare{% else %}property and financial affairs{% endif %}</strong>.
+</p>
+
+<p>Reference number {{ lpa.id }}</p>
+
+{% if lpa.payment.reference != null %}
+    <p>Payment reference number: {{ lpa.payment.reference }}</p>
+{% endif %}
+
+<p>If you haven't already you should print off the LPA and sign before sending it to the OPG. Instructions on the order people must sign are on the cover sheet of the LPA.</p>
+
+<div style='width:500px;margin-left:40px'>
+    <strong><a href="{{ signinUrl|raw }}">Sign in to download and print the LPA form</a></strong>
+</div>
+
+<p>If the donor is applying for an exemption or reduction of the fee, you'll need to download and sign the fee remission form too. If the donor has included "people to notify" in their LPA, you'll also need to download notification letters and send them to the people the donor has nominated. You'll find links to both the fee remission form and the "people to notify" letters on the same page as the link to the LPA itself.</p>
+
+<p>
+    If you have paid the LPA registration fee but not sent in the LPA form to be registered, we will send you a reminder email 20 days after payment. If we have still not received the LPA 40 days after the payment date, we will refund the fee to the account it was paid from.
+</p>
+
+<p><strong>Remember, an LPA must be registered before it can be used.</strong></p>
+
 {% endblock content %}

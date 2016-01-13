@@ -91,6 +91,7 @@ return [
             'concatNames'           => 'Application\View\Helper\ConcatNames',
             'cellStyles'            => 'Application\View\Helper\CellStyles',
             'systemMessage'         => 'Application\View\Helper\SystemMessage',
+            'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
         ],
     ],
 
