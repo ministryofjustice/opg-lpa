@@ -66,6 +66,16 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     // Getter
 
     /**
+     * Determines whether a property with the passed name exists.
+     *
+     * @param $property
+     * @return bool
+     */
+    public function __isset( $property ){
+        return isset( $this->{$property} );
+    }
+
+    /**
      * Returns the value for the passed property.
      *
      * @param string $property
