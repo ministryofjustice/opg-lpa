@@ -1,5 +1,9 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+    Your LPAs
+{% endblock %}
+
 {% block content %}
 
 {% if message %}
@@ -8,46 +12,40 @@
 
 {% else %}
 
-    <div class="dashboard-header indent-2em">
+    {% if isSearch %}
 
         {% if lpas.getTotalItemCount() == 0 %}
 
             {% if isSearch %}
+
                 <p>Your search has found no results</p>
+
             {% else %}
+
                 <p>You haven't created any LPAs yet.</p>
+
             {% endif %}
 
         {% else %}
 
-            {% if isSearch %}
-                <p>Your search has found these results</p>
-            {% else %}
-                {% if hasV1Lpas %}
-                    <p style="background-color: #ffbf47; padding: 10px;">
-                        Please note: records of LPAs made using this service before 1 July 2015 will be deleted from your account on 1 January 2016. If you want to use an LPA made before 1 July 2015, you'll need to print and sign it before 1 January 2016.
-                    </p>
-                {% endif %}
-
-                <p>On this page you'll find all the LPAs that you've created. As well as creating a new LPA from
-                    scratch, you can:</p>
-                <div>
-                    <ul>
-                        <li><strong>Continue creating</strong> an LPA</li>
-                        <li>Check that the <strong>signing dates</strong> on an LPA are in the right order before you
-                            register it. (If they're not in the right order, you risk having to repay some or all of the
-                            application fee.)
-                        </li>
-                        <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
-                            entering some information twice
-                        </li>
-                    </ul>
-                </div>
-           	{% endif %}
+            <p>Your search has found these results</p>
 
         {% endif %}
+        
+    {% else %}
 
-    </div>
+        <p class="lede">On this page you'll find all the LPAs that you've created. As well as creating a new LPA from scratch, you can:</p>
+        <ul class="list list-bullet">
+            <li><strong>Continue creating</strong> an LPA</li>
+            <li>Check that the <strong>signing dates</strong> on an LPA are in the right order before you
+                register it. (If they're not in the right order, you risk having to repay some or all of the
+                application fee.)
+            </li>
+            <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
+                entering some information twice
+            </li>
+        </ul>
+    {% endif %}
 
 {% endif %}
 
@@ -57,24 +55,29 @@
         <p style="text-align: right;">You were last signed in on {{ user.lastLogin.format('j F Y \a\t g:ia') }}</p>
     {% endif %}
 
+    <p>
+        <a class="add button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
+    </p>
+
     <div class="tool tool__search">
         <form action="{{ url('user/dashboard') }}" method="GET">
-            <input type="text" name="search"
-                   placeholder="LPA no, donor's first or last name"
-                   value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}"/>
-            <a class="button" id="clear" href='{{ url('user/dashboard') }}' role="button">Clear</a>
+            <label for="search" class="form-label">
+                <span class="form-label-bold">Search LPAs</span>
+            </label>
+            <span class="form-hint">LPA number, donor's first or last name</span>
+            <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
             <input class="add button" type="submit" value="Search"/>
+            <p>
+                <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
+            </p>
         </form>
-    </div>
-    <div class="tool tool__create">
-        <a class="add button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
     </div>
 
 </div>
 
 {% if lpas.getTotalItemCount() > 0 %}
 
-<table id="savedforms" class="lpa-list">
+<table id="savedforms" class="lpa-table">
     <thead>
     <tr>
         <th>LPA number</th>
@@ -89,7 +92,13 @@
     {% for key,lpa in lpas %}
             <tr>
                 <td>{{ formatLpaId(lpa.id) }}</td>
-                <td>{{ lpa.donor }}</td>
+                <td>
+                    {% if lpa.donor|length > 0 %}
+                        {{ lpa.donor }}
+                    {% else %}
+                        No donor details added
+                    {% endif %}
+                </td>
                 <td>{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : '') }}</td>
                 <td>{{ lpa.progress }}</td>
                 <td>{{ lpa.updatedAt.format('d/m/y') }}</td>
@@ -99,16 +108,16 @@
                            href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
 
                         {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                            <a class="button-secondary" href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
+                            <a class="button button-secondary" href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
                         {% endif %}
 
                         {% if lpa.progress != 'Started' %}
-                            <a class="button-secondary"
+                            <a class="button button-secondary"
                                href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse
                                 details</a>
                         {% endif %}
 
-                        <a class="button-warning delete-lpa"
+                        <a class="button button-warning delete-lpa"
                            href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
                     </div>
                 </td>
