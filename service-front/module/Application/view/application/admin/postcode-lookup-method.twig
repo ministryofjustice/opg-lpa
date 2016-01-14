@@ -1,0 +1,48 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Postcode Lookup Method
+{% endblock %}
+
+{% set form = formErrorTextExchange(form, []) %}
+{% set useNewPostcodeLookupMethod = form.get('use-new-postcode-lookup-method') %}
+
+{% block content %}
+
+    {{ form.setAttribute('class', 'form') ? '' }}
+
+    {{ useNewPostcodeLookupMethod.setAttributes({
+        id: 'useNewPostcodeLookupMethod',
+        rows: 10,
+        cols: 67,
+        class: 'form-control'
+    }) ? ''}}
+
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    <div class="text">
+        <p>If this box is checked, the MoJ DS postcode lookup service will be used. Otherwise, Postcode Anywhere will be used.</p>
+    </div>
+
+    <fieldset>
+        <legend class="visuallyhidden">Set the system message</legend>
+
+        <div class="form-group {{ useNewPostcodeLookupMethod.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ useNewPostcodeLookupMethod.getAttribute('id') }}">
+                <span class="form-label-bold">{{ useNewPostcodeLookupMethod.getOption('label') }}</span>
+                {{ formElementErrorsV2(useNewPostcodeLookupMethod) }}
+            </label>
+            {{ formElement(useNewPostcodeLookupMethod) }}
+        </div>
+
+    </fieldset>
+
+
+    <input type="submit" class="button" value="Set postcode lookup method">
+
+    {{ form().closeTag|raw }}
+
+{% endblock %}
