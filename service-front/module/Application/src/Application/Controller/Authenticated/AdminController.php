@@ -62,8 +62,8 @@ class AdminController extends AbstractAuthenticatedController
     }
     
     public function systemMessageAction()
-    {        
-        $form = new SystemMessageForm();
+    {
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Admin\SystemMessageForm');
         
         if ($this->request->isPost()) {
             $post = $this->request->getPost();
@@ -91,7 +91,8 @@ class AdminController extends AbstractAuthenticatedController
     
     public function postcodeLookupMethodAction()
     {
-        $form = new PostcodeLookupMethodForm();
+
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Admin\PostcodeLookupMethodForm');
     
         if ($this->request->isPost()) {
             $post = $this->request->getPost();
