@@ -12,68 +12,61 @@
 
 {% else %}
 
-    {% if isSearch %}
-
-        {% if lpas.getTotalItemCount() == 0 %}
-
-            {% if isSearch %}
-
-                <p>Your search has found no results</p>
-
-            {% else %}
-
-                <p>You haven't created any LPAs yet.</p>
-
-            {% endif %}
-
-        {% else %}
-
-            <p>Your search has found these results</p>
-
-        {% endif %}
-        
-    {% else %}
-
-        <p class="lede">On this page you'll find all the LPAs that you've created. As well as creating a new LPA from scratch, you can:</p>
-        <ul class="list list-bullet">
-            <li><strong>Continue creating</strong> an LPA</li>
-            <li>Check that the <strong>signing dates</strong> on an LPA are in the right order before you
-                register it. (If they're not in the right order, you risk having to repay some or all of the
-                application fee.)
-            </li>
-            <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
-                entering some information twice
-            </li>
-        </ul>
-    {% endif %}
+    <p class="lede">On this page you'll find all the LPAs that you've created. As well as creating a new LPA from scratch, you can:</p>
+    <ul class="list list-bullet">
+        <li><strong>Continue creating</strong> an LPA</li>
+        <li>Check that the <strong>signing dates</strong> on an LPA are in the right order before you
+            register it. (If they're not in the right order, you risk having to repay some or all of the
+            application fee.)
+        </li>
+        <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
+            entering some information twice
+        </li>
+    </ul>
 
 {% endif %}
 
-<div class="toolbar toolbar__dashboard">
+{% if user.lastLogin %}
+    <p style="text-align: right;">You were last signed in on {{ user.lastLogin.format('j F Y \a\t g:ia') }}</p>
+{% endif %}
 
-    {% if user.lastLogin %}
-        <p style="text-align: right;">You were last signed in on {{ user.lastLogin.format('j F Y \a\t g:ia') }}</p>
-    {% endif %}
+<p>
+    <a class="add button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
+</p>
 
-    <p>
-        <a class="add button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
-    </p>
-
-    <div class="tool tool__search">
-        <form action="{{ url('user/dashboard') }}" method="GET">
+<form action="{{ url('user/dashboard') }}" method="GET">
+    <fieldset>
+        <legend class="visuallyhidden">Search for LPAs</legend>
+        <div class="form-group">
             <label for="search" class="form-label">
                 <span class="form-label-bold">Search LPAs</span>
             </label>
             <span class="form-hint">LPA number, donor's first or last name</span>
             <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
             <input class="add button" type="submit" value="Search"/>
-            <p>
-                <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
-            </p>
-        </form>
-    </div>
+        </div>
+    </fieldset>
+</form>
 
-</div>
+{% if isSearch %}
+
+    {% if lpas.getTotalItemCount() == 0 %}
+
+        <p>
+            Your search has found no results.<br>
+            <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
+        </p>
+
+    {% else %}
+
+        <p>
+            Your search has found {{ isSearch }} results.<br>
+            <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
+        </p>
+
+    {% endif %}
+
+{% endif %}
 
 {% if lpas.getTotalItemCount() > 0 %}
 
