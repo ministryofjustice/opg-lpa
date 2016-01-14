@@ -39,15 +39,8 @@ class DashboardController extends AbstractAuthenticatedController
 
         //---
 
-        // Determine if there are any v1 LPAs. Returns a bool.
-        $hasV1Lpa = array_reduce( iterator_to_array($paginator), function( $carry, $lpa ){
-            return $carry || ($lpa->version == 1);
-        }, false );
-
-        //---
-
         return new ViewModel([
-            'hasV1Lpas' => $hasV1Lpa,
+            'hasV1Lpas' => false,
             'lpas' => $paginator,
             'freeText' => $query,
             'isSearch' => (is_string($query) && !empty($query)),
@@ -138,40 +131,6 @@ class DashboardController extends AbstractAuthenticatedController
 
         //---
 
-        /**
-         * When removing v1, the whole if statement below can be deleted.
-         *
-         * #v1Code
-         */
-        if( $this->getServiceLocator()->has('ProxyDashboard') ){
-
-            try {
-
-                // This will return an empty array if the user has no v1 LPAs.
-                $v1Lpas = $this->getServiceLocator()->get('ProxyDashboard')->getLpas();
-
-                if( is_array($v1Lpas) ){
-
-                    // Merge the v1 LPAs into the v2 list.
-                    $lpas = array_merge($lpas, $v1Lpas);
-
-                }
-
-            } catch( \RuntimeException $e ){
-
-                // Runtime errors are caused by a v1 / v2 auth token mismatch.
-                // Re-authenticating is the only solution.
-                // (realistically this only happens whilst we can login to both v1 & v2)
-                $this->redirect()->toRoute('login', ['state'=>'timeout']);
-
-            }
-
-        } // if
-
-        // end #v1Code
-
-        //---
-
         // Sort by updatedAt into descending order
         // Once we remove #v1Code, perhaps we can assume they're pre-sorted from the API/DB?
         usort($lpas, function($a, $b){
@@ -194,38 +153,6 @@ class DashboardController extends AbstractAuthenticatedController
 
         // Return all of the (v2) LPAs that match the query.
         $lpas = $this->getServiceLocator()->get('ApplicationList')->searchAllALpaSummaries( $query );
-
-        //---
-
-        /**
-         * This should be the only point at which we touch the V1Proxy module!
-         *
-         * When removing v1, the whole if statement below can be deleted.
-         *
-         * #v1Code
-         */
-        if( $this->getServiceLocator()->has('ProxyDashboard') ){
-
-            try {
-
-                // This will return an empty array if the user has no v1 LPAs.
-                $v1Lpas = $this->getServiceLocator()->get('ProxyDashboard')->searchLpas( $query );
-
-                // Merge the v1 LPAs into the v2 list.
-                $lpas = array_merge($lpas, $v1Lpas);
-
-            } catch( \RuntimeException $e ){
-
-                // Runtime errors are caused by a v1 / v2 auth token mismatch.
-                // Re-authenticating is the only solution.
-                // (realistically this only happens whilst we can login to both v1 & v2)
-                return $this->redirect()->toRoute('login', ['state'=>'timeout']);
-
-            }
-
-        }
-
-        // end #v1Code
 
         //---
 
