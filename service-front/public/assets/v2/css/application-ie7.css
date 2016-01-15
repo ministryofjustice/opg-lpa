@@ -2114,6 +2114,9 @@ input[disabled="disabled"] {
 #popup .link-back {
   display: none; }
 
+.lpa-search-form {
+  padding-top: 30px; }
+
 .lpa-table td:nth-child(6) {
   padding: 0; }
 .lpa-table .button {

@@ -1,6 +1,10 @@
 // =======================================================
 // SEARCH RESULTS
 
+.lpa-search-form {
+	padding-top: 30px;
+}
+
 .lpa-table {
 	th, td {
 		@include media(mobile) {

@@ -2295,6 +2295,9 @@ input[disabled="disabled"] {
   #popup .link-back {
     display: none; } }
 
+.lpa-search-form {
+  padding-top: 30px; }
+
 @media (max-width: 640px) {
   .lpa-table th, .lpa-table td {
     display: block; } }
