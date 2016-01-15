@@ -18,6 +18,8 @@
         class: 'form-control'
     }) ? ''}}
 
+    {{ useNewPostcodeLookupMethod.setOptions( { label: 'MoJ DS postcode lookup service' }) ? '' }}
+
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
 
@@ -28,14 +30,14 @@
     </div>
 
     <fieldset>
-        <legend class="visuallyhidden">Set the system message</legend>
+        <legend class="visuallyhidden">Set postcode lookup service</legend>
 
         <div class="form-group {{ useNewPostcodeLookupMethod.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ useNewPostcodeLookupMethod.getAttribute('id') }}">
-                <span class="form-label-bold">{{ useNewPostcodeLookupMethod.getOption('label') }}</span>
+            <label class="block-label" for="{{ useNewPostcodeLookupMethod.getAttribute('id') }}">
+                {{ formElement(useNewPostcodeLookupMethod) }}
+                {{ useNewPostcodeLookupMethod.getOption('label') }}
                 {{ formElementErrorsV2(useNewPostcodeLookupMethod) }}
             </label>
-            {{ formElement(useNewPostcodeLookupMethod) }}
         </div>
 
     </fieldset>
