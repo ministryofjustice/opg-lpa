@@ -65,7 +65,7 @@ class FeedbackForm extends AbstractForm {
                     'name'    => 'NotEmpty',
                     'options' => [
                         'messages' => [
-                            NotEmpty::IS_EMPTY => 'Please rate this service.',
+                            NotEmpty::IS_EMPTY => 'Please rate this service',
                         ],
                     ],
                 ],
@@ -83,7 +83,7 @@ class FeedbackForm extends AbstractForm {
                     'name'    => 'NotEmpty',
                     'options' => [
                         'messages' => [
-                            NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box.',
+                            NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box',
                         ],
                     ],
                 ],
@@ -92,7 +92,7 @@ class FeedbackForm extends AbstractForm {
                     'options' => [
                         'max' => self::MAX_FEEDBACK_LENGTH,
                         'messages' => [
-                             StringLength::TOO_LONG => 'Please limit your feedback to ' . self::MAX_FEEDBACK_LENGTH . ' chars.',
+                             StringLength::TOO_LONG => 'Please limit your feedback to ' . self::MAX_FEEDBACK_LENGTH . ' chars',
                          ],
                     ],
                 ],
