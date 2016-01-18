@@ -27,7 +27,7 @@ class FeedbackController extends AbstractBaseController
         
         $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
         $typeValueOptions['satisfied']['label'] = 'Satisfied';
-        $typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
+        $typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied nor dissatisfied';
         $typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
         $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
         
