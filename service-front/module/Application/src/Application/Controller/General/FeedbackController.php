@@ -36,8 +36,7 @@ class FeedbackController extends AbstractBaseController
         ]);
         
         $model = new ViewModel([
-            'form'=>$form,
-            'pageTitle' => 'Send Feedback'
+            'form'=>$form
         ]);
         
         $request = $this->getRequest();
@@ -60,7 +59,7 @@ class FeedbackController extends AbstractBaseController
                 ]);
                 
                 if ($result === true) {
-                    $model->setTemplate('application/feedback/thankyou.phtml');
+                    return (new ViewModel)->setTemplate('application/feedback/thankyou');
                 } else {
                     throw new \Exception('Error sending feedback email');
                 }
