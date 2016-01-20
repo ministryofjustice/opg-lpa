@@ -1,11 +1,13 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block errorSummary %}
-    {% include 'application/feedback/partials/index-error-summary.twig' %}
-{% endblock %}
-
 {% block pageTitle %}
     Send us feedback
+{% endblock %}
+
+{% set type = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
+
+{% block errorSummary %}
+    {% include 'application/feedback/partials/index-error-summary.twig' %}
 {% endblock %}
 
 {% block content %}
@@ -61,7 +63,7 @@
         </legend>
         <div class="form-group {{ details.getMessages|length >0 ? 'error'}}">
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
-                <span class="visuallyhidden">Your comments<br></span>
+                <span class="visuallyhidden">Your feedback<br></span>
                 <span class="form-hint">2000 characters max<br></span>
                 {{ formElementErrorsV2(details) }}
             </label>

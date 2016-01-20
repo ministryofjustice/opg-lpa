@@ -33,6 +33,7 @@ class Login extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
+            'error_message' => 'You can\'t leave this box empty',
             'filters'  => array(
                 array('name' => 'StringTrim'),
                 array('name' => 'StringToLower'),
@@ -42,6 +43,7 @@ class Login extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password',
             'required' => true,
+            'error_message' => 'You can\'t leave this box empty',
         ));
 
     } // function

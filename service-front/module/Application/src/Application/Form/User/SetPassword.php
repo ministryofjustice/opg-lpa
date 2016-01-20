@@ -34,6 +34,7 @@ class SetPassword extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password',
             'required' => true,
+            'error_message' => 'You can\'t leave this box empty',
             'validators' => array(
                 array(
                     'name'    => 'StringLength',
@@ -78,6 +79,7 @@ class SetPassword extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password_confirm',
             'required' => true,
+            'error_message' => 'You can\'t leave this box empty',
             'validators' => array(
                 array(
                     'name'    => 'Identical',

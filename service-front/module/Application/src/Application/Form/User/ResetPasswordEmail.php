@@ -34,6 +34,7 @@ class ResetPasswordEmail extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
+            'error_message' => 'You can\'t leave this box empty',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -48,6 +49,7 @@ class ResetPasswordEmail extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'email_confirm',
             'required' => true,
+            'error_message' => 'You can\'t leave this box empty',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
