@@ -5,20 +5,20 @@
 {% endblock %}
 
 {% set form = formErrorTextExchange(form, []) %}
-{% set useNewPostcodeLookupMethod = form.get('use-new-postcode-lookup-method') %}
+{% set usePostcodeAnywhere = form.get('use-postcode-anywhere') %}
 
 {% block content %}
 
     {{ form.setAttribute('class', 'form') ? '' }}
 
-    {{ useNewPostcodeLookupMethod.setAttributes({
-        id: 'useNewPostcodeLookupMethod',
+    {{ usePostcodeAnywhere.setAttributes({
+        id: 'usePostcodeAnywhere',
         rows: 10,
         cols: 67,
         class: 'form-control'
     }) ? ''}}
 
-    {{ useNewPostcodeLookupMethod.setOptions( { label: 'MoJ DS postcode lookup service' }) ? '' }}
+    {{ usePostcodeAnywhere.setOptions( { label: 'Use Postcode Anywhere' }) ? '' }}
 
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
@@ -26,17 +26,17 @@
     {{ formElement(form.get( form.csrfName )) }}
 
     <div class="text">
-        <p>If this box is checked, the MoJ DS postcode lookup service will be used. Otherwise, Postcode Anywhere will be used.</p>
+        <p>If this box is checked, the Postcode Anywhere lookup service will be used. Otherwise, the MoJ DS postcode lookup service will be used.</p>
     </div>
 
     <fieldset>
         <legend class="visuallyhidden">Set postcode lookup service</legend>
 
-        <div class="form-group {{ useNewPostcodeLookupMethod.getMessages|length >0 ? 'error'}}">
-            <label class="block-label" for="{{ useNewPostcodeLookupMethod.getAttribute('id') }}">
-                {{ formElement(useNewPostcodeLookupMethod) }}
-                {{ useNewPostcodeLookupMethod.getOption('label') }}
-                {{ formElementErrorsV2(useNewPostcodeLookupMethod) }}
+        <div class="form-group {{ usePostcodeAnywhere.getMessages|length >0 ? 'error'}}">
+            <label class="block-label" for="{{ usePostcodeAnywhere.getAttribute('id') }}">
+                {{ formElement(usePostcodeAnywhere) }}
+                {{ usePostcodeAnywhere.getOption('label') }}
+                {{ formElementErrorsV2(usePostcodeAnywhere) }}
             </label>
         </div>
 

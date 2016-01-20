@@ -15,7 +15,8 @@ class PostcodeController extends AbstractAuthenticatedController {
 
     public function indexAction(){
 
-        $usingMojDsdPostcodeService = $this->cache()->getItem('use-new-postcode-lookup-method') == 1;
+        // Use the MoJ DS service if we're NOT using Postcode Anywhere
+        $usingMojDsdPostcodeService = !($this->cache()->getItem('use-postcode-anywhere') == 1);
         
         $postcode = $this->params()->fromQuery('postcode');
         

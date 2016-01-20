@@ -98,15 +98,15 @@ class AdminController extends AbstractAuthenticatedController
             $post = $this->request->getPost();
     
             $form->setData($post);
-    
+
             if ($form->isValid()) {
-                $this->cache()->setItem('use-new-postcode-lookup-method', $post['use-new-postcode-lookup-method']);
-    
+                $this->cache()->setItem('use-postcode-anywhere', (int)$post['use-postcode-anywhere']);
+
                 return $this->redirect()->toRoute('home');
             }
         } else {
-            $messageElement = $form->get('use-new-postcode-lookup-method');
-            $currentValue = $this->cache()->getItem('use-new-postcode-lookup-method');
+            $messageElement = $form->get('use-postcode-anywhere');
+            $currentValue = $this->cache()->getItem('use-postcode-anywhere');
             $messageElement->setValue($currentValue);
         }
     

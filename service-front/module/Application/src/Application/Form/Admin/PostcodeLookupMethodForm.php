@@ -18,7 +18,7 @@ class PostcodeLookupMethodForm extends AbstractForm {
         //--- Form elements
 
         $this->add(array(
-            'name' => 'use-new-postcode-lookup-method',
+            'name' => 'use-postcode-anywhere',
             'type' => 'Checkbox',
         ));
 
