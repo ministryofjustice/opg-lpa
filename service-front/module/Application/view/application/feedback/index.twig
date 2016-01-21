@@ -46,9 +46,10 @@
 
     {{ formElement(form.get( form.csrfName )) }}
 
+    <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
+
     <fieldset>
         <legend class="group text">
-            <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
         </legend>
 
         <div class="form-group {{ type.getMessages|length >0 ? 'error'}}">
@@ -57,9 +58,10 @@
         </div>
     </fieldset>
 
+    <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what didn't.</h2>
+
     <fieldset>
         <legend class="group text">
-            <h2 class="heading-medium">Please take a moment to tell us about your experience, what worked and what didn't.</h2>
         </legend>
         <div class="form-group {{ details.getMessages|length >0 ? 'error'}}">
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
@@ -75,9 +77,10 @@
         <p>We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.</p>
     </div>
 
+    <h2 class="heading-medium flush--top">Your email address (optional)</h2>
+
     <fieldset>
         <legend class="group text">
-            <h2 class="heading-medium flush--top">Your email address (optional)</h2>
         </legend>
         <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
@@ -86,9 +89,6 @@
             </label>
             {{ formElement(email) }}
         </div>
-    </fieldset>
-
-
     </fieldset>
 
     <input type="submit" name="send" id="send" class="button" value="Send feedback">

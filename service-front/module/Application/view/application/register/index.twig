@@ -17,12 +17,6 @@
 {% block content %}
 
 {% set form = formErrorTextExchange(form, []) %}
-{#
-This is missing in the line above:
-    'terms' => ["must be checked" => "Please tick this checkbox"]
-
-Doesn't work in twig
-#}
 
 {{ form.setAttribute('class', 'form') ? '' }}
 
