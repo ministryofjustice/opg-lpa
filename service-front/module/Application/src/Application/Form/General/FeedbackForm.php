@@ -65,7 +65,7 @@ class FeedbackForm extends AbstractForm {
                     'name'    => 'NotEmpty',
                     'options' => [
                         'messages' => [
-                            NotEmpty::IS_EMPTY => 'Please rate this service',
+                            NotEmpty::IS_EMPTY => 'Please select one of the options',
                         ],
                     ],
                 ],
@@ -78,7 +78,7 @@ class FeedbackForm extends AbstractForm {
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
-            'validators' => array(
+            'validators' => [
                 [
                     'name'    => 'NotEmpty',
                     'options' => [
@@ -96,7 +96,7 @@ class FeedbackForm extends AbstractForm {
                          ],
                     ],
                 ],
-            ),
+            ],
         ]);
         
         $inputFilter->add(array(
@@ -106,11 +106,11 @@ class FeedbackForm extends AbstractForm {
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'EmailAddress',
-                ),
-            ),
+                ],
+            ],
         ));
         
         $this->setInputFilter( $inputFilter );

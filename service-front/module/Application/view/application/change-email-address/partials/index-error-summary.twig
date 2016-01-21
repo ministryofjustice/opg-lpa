@@ -1,7 +1,7 @@
 {% if (error is not empty or form.getMessages|length > 0) %}
     <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
-        <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting the form</h1>
-        <p>Because of the following problems:</p>
+        <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your email details</h1>
+        <p>For the following reasons:</p>
         <ol class="error-summary-list">
             {{ formLinkedErrorList(form) ? '' }}
 
