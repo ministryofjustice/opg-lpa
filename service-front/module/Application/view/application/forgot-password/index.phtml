@@ -47,7 +47,7 @@
                     switch($this->error){
                         case 'RECEIVED_IN_LAST_5_MINUTES':
                             echo $this->escapehtml( "You've already asked to reset your password in the last 5 minutes. We've sent you an email with your password reset instructions. If it hasn't arrived, please check your spam or junk mail folder: your email service may have filtered it by mistake." ); break;
-                        case 'ACCOUNT_NOT_FOUND':
+                        case 'user-not-found':
                             echo$this->escapehtml( "We could not find an account for this email address." ); break;
                         case 'ACCOUNT_NOT_ACTIVE':
                             echo $this->escapehtml( "You need to activate your account before you reset your password." ); break;
