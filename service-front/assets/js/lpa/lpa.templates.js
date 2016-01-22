@@ -132,22 +132,22 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  return "\n  <li><a href=\"#\" data-address-type=\"postal\" class=\"js-PostcodeLookup__toggle-address\">Enter address manually</a></li>\n  ";
+  return "\n		<li><a href=\"#\" data-address-type=\"postal\" class=\"js-PostcodeLookup__toggle-address\">Enter address manually</a></li>\n		";
   }
 
 function program3(depth0,data) {
   
   
-  return "\n  <li><a href=\"#\" data-address-type=\"dx\" class=\"js-PostcodeLookup__toggle-address\">Enter DX address</a></li>\n  ";
+  return "\n		<li><a href=\"#\" data-address-type=\"dx\" class=\"js-PostcodeLookup__toggle-address\">Enter DX address</a></li>\n		";
   }
 
-  buffer += "<ul class=\"address-type-toggle\">\n  ";
+  buffer += "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.postal), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ";
+  buffer += "\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.dx), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>";
+  buffer += "\n	</ul>\n</div>";
   return buffer;
   });
 
@@ -157,7 +157,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<p class=\"group js-PostcodeLookup__search\">\n  <label for=\"postcode-lookup\">Postcode</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-lookup button-secondary js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>";
+  return "<p class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>";
   });
 
 this["lpa"]["templates"]["postcodeLookup.search-result"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -196,7 +196,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"group\">\n  <label for=\"address-search-result\">Address</label>\n  <select class=\"js-PostcodeLookup__search-results\" id=\"address-search-result\">\n    <option value=\"\">Please select an address...</option>\n    ";
+  buffer += "<div class=\"form-group\">\n  <label class=\"form-label\" for=\"address-search-result\">Address</label>\n  <select class=\"form-control js-PostcodeLookup__search-results\" id=\"address-search-result\">\n    <option value=\"\">Please select an address...</option>\n    ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.results), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </select>\n</div>\n";
