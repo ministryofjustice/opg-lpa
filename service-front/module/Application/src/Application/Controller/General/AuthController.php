@@ -125,7 +125,7 @@ class AuthController extends AbstractBaseController {
 
         //---
 
-        return new ViewModel( [ 'form'=>$form, 'authError'=>$authError, 'pageTitle' => 'Sign in', 'isTimeout'=>$isTimeout ] );
+        return new ViewModel( [ 'form'=>$form, 'authError'=>$authError, 'isTimeout'=>$isTimeout ] );
 
     } // function
 

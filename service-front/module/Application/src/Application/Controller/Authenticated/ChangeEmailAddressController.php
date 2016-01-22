@@ -83,8 +83,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
         //----------------------
 
-        $pageTitle = 'Change your sign-in email address';
-
-        return new ViewModel( compact( 'form', 'error', 'pageTitle', 'currentAddress' ) );
+        return new ViewModel( compact( 'form', 'error', 'currentAddress' ) );
     }
 }

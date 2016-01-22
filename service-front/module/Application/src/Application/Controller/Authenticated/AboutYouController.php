@@ -99,9 +99,7 @@ class AboutYouController extends AbstractAuthenticatedController {
 
         //---
 
-        $pageTitle = 'Your Details';
-
-        return compact( 'form', 'error', 'pageTitle' ) ;
+        return compact( 'form', 'error') ;
 
     } // function
 
