@@ -12,6 +12,10 @@ module.exports = function (grunt) {
       js: {
         files: 'assets/js/**/*.js',
         tasks: ['concat']
+      },
+      templates: {
+        files: ['<%= handlebars.compile.src %>'],
+        tasks: ['handlebars']
       }
     },
 
