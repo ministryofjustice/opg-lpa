@@ -1,17 +1,11 @@
 {% set v1 = {
         'current' : {
             'started'   : {'all':41874,  'hw':11211, 'pf':30663},
-            'created'   : {'all':99530, 'hw':35731, 'pf':63799},
+            'created'   : {'all':101189, 'hw':36289, 'pf':64900},
             'signed'    : {'all':1659,   'hw':558,   'pf':1101},
             'completed' : {'all':97140,  'hw':33515, 'pf':63625},
             'deleted'   : {'all':31548,  'hw':12287, 'pf':19261},
-            'total'     : {'all':271751, 'hw':93302, 'pf':178449}
-        },
-        'month' : {
-            'started'   : {'2015-04':18544, '2015-05':18041, '2015-06':16273},
-            'created'   : {'2015-04':16393, '2015-05':17219, '2015-06':18367},
-            'signed'    : {'2015-04':8521,  '2015-05':8369,  '2015-06':8518},
-            'completed' : {'2015-04':8379,  '2015-05':8208,  '2015-06':8253}
+            'total'     : {'all':240211, 'hw':81021, 'pf':159190}
         }
     }
 %}
@@ -48,7 +42,7 @@
         <tr><th>Total no. of registered users</th><th>Total no. of activated users</th><th>No. of activated users this month</th></tr>
         </thead>
         <tbody class='app_stats'>
-        <tr><td>{{ users.total }}</td><td>{{ users.activated }}</td><td>{{ users.activated-this-month }}></td></tr>
+        <tr><td>{{ users.total }}</td><td>{{ users.activated }}</td><td>{{ users.activated-this-month }}</td></tr>
         </tbody>
     </table>
 
@@ -94,7 +88,7 @@
         <thead>
         <tr>
             <th></th>
-            {% for month,values in lpas.by-month %}
+            {% for month,values in lpas['by-month'] %}
                 <th>{{ month }}</th>
             {% endfor %}
         </tr>
@@ -102,20 +96,20 @@
         <tbody class='app_stats'>
         <tr>
             <td class='app_status'>Started LPAs</td>
-            {% for month,values in lpas.by-month %}
-                <td>{{ values.started + ((v1.month.started[month]) ? v1.month.started[month]:0) }}</td>
+            {% for month,values in lpas['by-month'] %}
+                <td>{{ values.started }}</td>
             {% endfor %}
         </tr>
         <tr>
             <td class='app_status'>Created LPAs</td>
-            {% for month,values in lpas.by-month %}
-                <td>{{ values.created + ((v1.month.started[month]) ? v1.month.created[month]:0) }}</td>
+            {% for month,values in lpas['by-month'] %}
+                <td>{{ values.created }}</td>
             {% endfor %}
         </tr>
         <tr>
             <td class='app_status'>Completed LPAs</td>
-            {% for month,values in lpas.by-month %}
-                <td>{{ values.completed + ((v1.month.started[month]) ? v1.month.completed[month]:0) }}</td>
+            {% for month,values in lpas['by-month'] %}
+                <td>{{ values.completed }}</td>
             {% endfor %}
         </tr>
         </tbody>
@@ -126,7 +120,7 @@
         <tr>
             <th></th>
             <th>All time</th>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <th>{{ month }}</th>
             {% endfor %}
         </tr>
@@ -135,42 +129,42 @@
         <tr>
             <td class="app_status">Donor</td>
             <td>{{ who.all.donor.count }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.donor.count }}</td>
             {% endfor %}
         </tr>
         <tr class="border">
             <td class="app_status">Friend or family</td>
             <td>{{ who.all.friendOrFamily.count }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.friendOrFamily.count }}</td>
             {% endfor %}
         </tr>
         <tr class="border">
             <td class="app_status">Professional</td>
             <td>{{ who.all.professional.count }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.professional.count }}</td>
             {% endfor %}
         </tr>
         <tr class="subquestion">
             <td class="app_status">Solicitor</td>
             <td>{{ who.all.professional.subquestions.solicitor }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.professional.subquestions.solicitor }}</td>
             {% endfor %}
         </tr>
         <tr class="subquestion">
             <td class="app_status">Will-writer</td>
             <td>{{ who.all.professional.subquestions.will-writer }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.professional.subquestions.will-writer }}</td>
             {% endfor %}
         </tr>
         <tr class="subquestion">
             <td class="app_status">Other</td>
             <td>{{ who.all.professional.subquestions.other }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.professional.subquestions.other }}</td>
             {% endfor %}
         </tr>
@@ -178,28 +172,28 @@
         <tr class="border">
             <td class="app_status">Digital Partner</td>
             <td>{{ who.all.digitalPartner.count }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.digitalPartner.count }}</td>
             {% endfor %}
         </tr>
         <tr class="subquestion">
             <td class="app_status">Age UK</td>
             <td>{{ who.all.digitalPartner.subquestions.Age-Uk }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.digitalPartner.subquestions.Age-Uk }}</td>
             {% endfor %}
         </tr>
         <tr class="subquestion">
             <td class="app_status">Alzheimer's Society</td>
             <td>{{ who.all.digitalPartner.subquestions.Alzheimer-Society }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.digitalPartner.subquestions.Alzheimer-Society }}</td>
             {% endfor %}
         </tr>
         <tr class="subquestion">
             <td class="app_status">Citizens Advice Bureau</td>
             <td>{{ who.all.digitalPartner.subquestions.Citizens-Advice-Bureau }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.digitalPartner.subquestions.Citizens-Advice-Bureau }}</td>
             {% endfor %}
         </tr>
@@ -207,14 +201,14 @@
         <tr class="border">
             <td class="app_status">Another organisation</td>
             <td>{{ who.all.organisation.count }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.organisation.count }}</td>
             {% endfor %}
         </tr>
         <tr class="border">
             <td class="app_status">Not said</td>
             <td>{{ who.all.notSaid.count }}</td>
-            {% for month,values in who.by-month %}
+            {% for month,values in who['by-month'] %}
                 <td>{{ values.notSaid.count }}</td>
             {% endfor %}
         </tr>
