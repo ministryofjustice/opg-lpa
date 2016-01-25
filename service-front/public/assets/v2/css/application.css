@@ -2191,6 +2191,12 @@ input[disabled="disabled"] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
+@media (max-width: 640px) {
+  .mobile-scroll {
+    overflow: auto; }
+    .mobile-scroll table {
+      min-width: 460px; } }
+
 .help-header {
   display: none;
   position: relative;
