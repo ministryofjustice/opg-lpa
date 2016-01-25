@@ -2483,6 +2483,25 @@ input[disabled="disabled"] {
   .button + .button {
     margin-top: 15px; } }
 
+@media (min-width: 641px) {
+  .postcode-input {
+    width: 27%; } }
+@media (min-width: 800px) {
+  .postcode-input {
+    width: 32%; } }
+
+@media (max-width: 640px) {
+  .postcode-button {
+    margin-top: 15px;
+    text-align: center; } }
+
+.spinner {
+  margin: 0 0 -3px 8px; }
+  @media (max-width: 640px) {
+    .spinner {
+      display: block;
+      margin: 15px auto 0 auto; } }
+
 .noscroll {
   position: relative;
   overflow: hidden; }

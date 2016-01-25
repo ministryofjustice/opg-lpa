@@ -12,6 +12,10 @@ module.exports = function (grunt) {
       js: {
         files: 'assets/js/**/*.js',
         tasks: ['concat']
+      },
+      templates: {
+        files: ['<%= handlebars.compile.src %>'],
+        tasks: ['handlebars']
       }
     },
 
@@ -170,6 +174,23 @@ module.exports = function (grunt) {
           proxy: "https://192.168.33.103/home"
         }
       }
+    },
+
+    // compile handlebars templates
+    handlebars: {
+      compile: {
+        options: {
+          namespace: 'lpa.templates',
+          prettify: false,
+          amdWrapper: false,
+          processName: function (filename) {
+            // Shortens the file path for the template and removes file extension.
+            return filename.slice(filename.indexOf('templates') + 10, filename.length).replace(/\.[^/.]+$/, '');
+          }
+        },
+        src: ['assets/js/lpa/templates/*.html'],
+        dest: 'assets/js/lpa/lpa.templates.js'
+      }
     }
   });
 
@@ -183,6 +204,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-browser-sync');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
 
   // define tasks
   grunt.registerTask('default', ['watch']);

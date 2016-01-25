@@ -43,6 +43,7 @@ class ChangeEmailAddress extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
+            'error_message' => 'You need to enter your new email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -77,6 +78,7 @@ class ChangeEmailAddress extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password_current',
             'required' => true,
+            'error_message' => 'You need to enter your password',
             'validators' => array(
                 array(
                     'name'    => 'Callback',

@@ -70,9 +70,7 @@ class ForgotPasswordController extends AbstractBaseController
         } // if
 
         return new ViewModel(
-            array_merge([
-                    'pageTitle' => 'Reset your password',    
-                ],
+            array_merge(
                 compact('form', 'error')
             ) 
         );
@@ -137,9 +135,7 @@ class ForgotPasswordController extends AbstractBaseController
         //---------------------------
 
         return new ViewModel(
-            array_merge([
-                    'pageTitle' => 'Reset your password',    
-                ],
+            array_merge(
                 compact('form', 'error')
             ) 
         );

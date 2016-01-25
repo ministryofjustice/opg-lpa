@@ -2280,6 +2280,13 @@ input[disabled="disabled"] {
   padding: 0.52632em 0.78947em 0.26316em 0.78947em;
   vertical-align: top; }
 
+.postcode-input {
+  width: 27%;
+  width: 32%; }
+
+.spinner {
+  margin: 0 0 -3px 8px; }
+
 .noscroll {
   position: relative;
   overflow: hidden;

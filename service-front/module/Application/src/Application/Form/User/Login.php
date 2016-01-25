@@ -33,6 +33,7 @@ class Login extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
+            'error_message' => 'You need to enter your email address',
             'filters'  => array(
                 array('name' => 'StringTrim'),
                 array('name' => 'StringToLower'),
@@ -42,6 +43,7 @@ class Login extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password',
             'required' => true,
+            'error_message' => 'You need to enter your password',
         ));
 
     } // function

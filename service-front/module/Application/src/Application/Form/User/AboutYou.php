@@ -85,7 +85,7 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'name-first',
             'required' => true,
-            'error_message' => 'must not be blank',
+            'error_message' => 'You can\'t leave this box empty',
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
@@ -101,7 +101,7 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'name-last',
             'required' => true,
-            'error_message' => 'must not be blank',
+            'error_message' => 'You can\'t leave this box empty',
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [

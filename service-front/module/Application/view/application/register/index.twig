@@ -1,22 +1,22 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block errorSummary %}
-    {% include 'application/register/partials/index-error-summary.twig' %}
-{% endblock %}
-
 {% block pageTitle %}
     Sign up
+{% endblock %}
+
+{% set email = form.get('email').setOptions({ label: 'Enter your email address' }) %}
+{% set email_confirm = form.get('email_confirm').setOptions({ label: 'Re-enter your email address' }) %}
+{% set password = form.get('password').setOptions({ label: 'Password' }) %}
+{% set password_confirm = form.get('password_confirm').setOptions({ label: 'Confirm Password' }) %}
+{% set terms = form.get('terms').setOptions({ label: 'I agree to the terms and conditions and privacy policy' }) %}
+
+{% block errorSummary %}
+    {% include 'application/register/partials/index-error-summary.twig' %}
 {% endblock %}
 
 {% block content %}
 
 {% set form = formErrorTextExchange(form, []) %}
-{#
-This is missing in the line above:
-    'terms' => ["must be checked" => "Please tick this checkbox"]
-
-Doesn't work in twig
-#}
 
 {{ form.setAttribute('class', 'form') ? '' }}
 
@@ -53,12 +53,6 @@ Doesn't work in twig
 {{ terms.setAttributes({
     id: 'terms'
 }) ? ''}}
-
-{{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
-{{ email_confirm.setOptions( { label: 'Re-enter your email address' }) ? '' }}
-{{ password.setOptions( { label: 'Password' }) ? '' }}
-{{ password_confirm.setOptions( { label: 'Confirm Password' }) ? '' }}
-{{ terms.setOptions( { label: 'I agree to the terms and conditions and privacy policy' }) ? '' }}
 
 {{ form.prepare() ? '' }}
 

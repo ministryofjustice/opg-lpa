@@ -19,15 +19,15 @@ class FeedbackController extends AbstractBaseController
     public function indexAction()
     {
         $container = new Container('feedback');
-        
-        $form = new FeedbackForm();
+
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\General\FeedbackForm');
         
         $type = $form->get('rating');
         $typeValueOptions = $type->getOptions()['value_options'];
         
         $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
         $typeValueOptions['satisfied']['label'] = 'Satisfied';
-        $typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
+        $typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied nor dissatisfied';
         $typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
         $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
         
@@ -36,8 +36,7 @@ class FeedbackController extends AbstractBaseController
         ]);
         
         $model = new ViewModel([
-            'form'=>$form,
-            'pageTitle' => 'Send Feedback'
+            'form'=>$form
         ]);
         
         $request = $this->getRequest();
@@ -60,7 +59,7 @@ class FeedbackController extends AbstractBaseController
                 ]);
                 
                 if ($result === true) {
-                    $model->setTemplate('application/feedback/thankyou.phtml');
+                    return (new ViewModel)->setTemplate('application/feedback/thankyou');
                 } else {
                     throw new \Exception('Error sending feedback email');
                 }

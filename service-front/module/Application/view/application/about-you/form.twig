@@ -1,11 +1,17 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block errorSummary %}
-    {% include 'application/about-you/partials/form-error-summary.twig' %}
-{% endblock %}
-
 {% block pageTitle %}
     Your details
+{% endblock %}
+
+{% set firstName = form.get('name-first').setOptions({ label: 'First names' }) %}
+{% set lastName = form.get('name-last').setOptions({ label: 'Last name' }) %}
+{% set dayOfBirth = form.get('dob-date-day').setOptions({ label: 'Day' }) %}
+{% set monthOfBirth = form.get('dob-date-month').setOptions({ label: 'Month' }) %}
+{% set yearOfBirth = form.get('dob-date-year').setOptions({ label: 'Year' }) %}
+
+{% block errorSummary %}
+    {% include 'application/about-you/partials/form-error-summary.twig' %}
 {% endblock %}
 
 {% block content %}
@@ -27,8 +33,8 @@
     {% set postcode = form.get('address-postcode') %}
 
     {{ title.setAttributes({id: 'title', class: 'form-control'}).setOptions({label: 'Title'}).setLabelAttributes({id:'title-label'}) ? ''}}
-    {{ firstName.setAttributes({id: 'firstname', class: 'form-control'}).setOptions({label: 'First names'}) ? ''}}
-    {{ lastName.setAttributes({id: 'surname', class: 'form-control'}).setOptions({label: 'Last name'}) ? ''}}
+    {{ firstName.setAttributes({id: 'firstname', class: 'form-control'}) ? ''}}
+    {{ lastName.setAttributes({id: 'surname', class: 'form-control'}) ? ''}}
     
     {{ dayOfBirth.setAttributes({
         id: 'dob-day',
@@ -37,7 +43,7 @@
         min: '0',
         max: '31',
         pattern: '[0-9]*'
-    }).setLabel('Day') ? ''}}
+    }) ? ''}}
 
     {{ monthOfBirth.setAttributes({
         id: 'dob-month',
@@ -46,7 +52,7 @@
         min: '0',
         max: '12',
         pattern: '[0-9]*'
-    }).setLabel('Month') ? ''}}
+    }) ? ''}}
 
     {{ yearOfBirth.setAttributes({
         id: 'dob-year',
@@ -55,7 +61,7 @@
         min: '0',
         max: '2014',
         pattern: '[0-9]*'
-    }).setLabel('Year') ? ''}}
+    }) ? ''}}
     
     {{ address1.setAttributes({id: 'addr1', class: 'form-control'}).setOptions({label: 'Address line 1'}) ? ''}}
     {{ address2.setAttributes({id: 'addr2', class: 'form-control'}).setOptions({label: 'Address line 2'}) ? ''}}
@@ -105,7 +111,7 @@
             <legend class="visuallyhidden">Date of birth</legend>
 
             <div class="form-date {{ dayOfBirth.getMessages|length >0 or monthOfBirth.getMessages|length >0 or yearOfBirth.getMessages|length >0 ? 'error'}}">
-                <p class="form-hint">For example, 08 04 <?= date('Y')-18 ?></p>
+                <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
                 {{ formElementErrorsV2(yearOfBirth) }}
                 {{ formElementErrorsV2(monthOfBirth) }}

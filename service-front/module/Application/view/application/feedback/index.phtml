@@ -1,8 +1,6 @@
 <?php
 $form = $this->formErrorTextExchange($this->form, []);
 
-$csrf = $form->get($form->csrfName());
-
 $form->setAttribute('class', 'form');
 
 $type = $form->get('rating');
@@ -10,7 +8,7 @@ $typeValueOptions = $type->getOptions()['value_options'];
 
 $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
 $typeValueOptions['satisfied']['label'] = 'Satisfied';
-$typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
+$typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied nor dissatisfied';
 $typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
 $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
 
@@ -35,11 +33,17 @@ $type->setOptions([
     'value_options' => $typeValueOptions
 ]);
 
+$form->prepare();
+
 $formLabel = $this->plugin('formLabel');
 ?>
 
 <?= $this->form()->openTag($form); ?>
-<?= $this->formElement($csrf)?>
+
+<div class="<?= $this->elementGroupClass($form->get($form->csrfName())) ?>">
+    <?= $this->formElement($form->get($form->csrfName())) ?>
+</div>
+
 <?= $this->formErrorList(); ?>
 
 <div class="form_element">

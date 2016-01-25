@@ -192,7 +192,7 @@ class Details implements ServiceLocatorAwareInterface {
     
         $message->addTo( $oldEmailAddress );
     
-        $message->setSubject( 'You requested a change to your email address' );
+        $message->setSubject( 'You asked us to change your email address' );
     
         //---
     

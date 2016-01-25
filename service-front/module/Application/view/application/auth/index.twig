@@ -1,11 +1,14 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block errorSummary %}
-    {% include 'application/auth/partials/error-summary.twig' %}
-{% endblock %}
-
 {% block pageTitle %}
     Sign in
+{% endblock %}
+
+{% set email = form.get('email').setOptions({ label: 'Email address' }) %}
+{% set password = form.get('password').setOptions({ label: 'Password' }) %}
+
+{% block errorSummary %}
+    {% include 'application/auth/partials/error-summary.twig' %}
 {% endblock %}
 
 {% block content %}
@@ -23,15 +26,11 @@
     class: 'form-control'
 }) ? ''}}
 
-{{ email.setOptions({ label: 'Email address' }) ? '' }}
-
 {{ password.setAttributes({
     id: 'password_current',
     autocomplete: 'off',
     class: 'form-control'
 }) ? '' }}
-
-{{ password.setOptions( { label: 'Password' }) ? '' }}
 
 {{ form.prepare() ? '' }}
 

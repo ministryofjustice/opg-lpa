@@ -1,7 +1,17 @@
 {% extends 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
+
+{% if (error is empty) %}
+
     Account activated
+
+{% else %}
+
+    Account activation problem
+
+{% endif %}
+
 {% endblock %}
 
 {% block content %}
@@ -9,21 +19,20 @@
 {% if (error is empty) %}
 
     <div class="text">
-        <p class="lede">Sorry, there was a problem activating your account. This is probably because you created the account more than 24 hours ago.</p>
-
-        <p>Accounts must be activated within 24 hours of their creation. Those that aren't activated are automatically deleted.</p>
-        
-        <p>You should return to <a href="{{ url('register') }}">the registration page</a> and create a new account, which you can then activate.</p>
-        
-        <p>If this doesn't work and you need further assistance, send an email to <a href="mailto:customerservices@PublicGuardian.gsi.gov.uk">customerservices@PublicGuardian.gsi.gov.uk</a> or call 0300 456 0300.</p>
+        <p class="lede">Thank you. We've now activated your account.</p>
+        <p>Please <a href="{{ url('login') }}">sign in</a></p>
     </div>
 
 {% else %}
 
     <div class="text">
-        <p class="lede">Thank you. Your account has now been activated.</p>
+        <p class="lede">Sorry, we had a problem activating your account. This is probably because you created the account more than 24 hours ago.</p>
 
-        <p>Please <a href="{{ url('login') }}">sign in</a></p>
+        <p>You need to activate your account within 24 hours of creating it. If you don't activate it within that time, we'll automatically delete it.</p>
+        
+        <p>You should return to <a href="{{ url('register') }}">the registration page</a> and create a new account, which you can then activate.</p>
+        
+        <p>If this doesn't work and you need further assistance, send an email to <a href="mailto:customerservices@publicguardian.gsi.gov.uk">customerservices@publicguardian.gsi.gov.uk</a> or call 0300 456 0300.</p>
     </div>
 
 {% endif %}
