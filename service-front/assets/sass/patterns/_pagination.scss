@@ -3,64 +3,50 @@
 // Borrowed from RPA Styleguide (http://rural-payments-styleguide.herokuapp.com/pagination/)
 
 .pager {
-    margin-top: .3125em;
-    margin-bottom: 1.25em
-}
-
-@media (min-width: 641px) {
-    .pager {
-        margin-top:.26316em;
-        margin-bottom: 1.05263em
-    }
+    margin-top: $gutter-half;
+    margin-bottom: $gutter;
 }
 
 .pager-items {
-    display: none
-}
-
-@media (min-width: 641px) {
-    .pager-items {
-        display:inline
-    }
-
-    .pager-items li {
+    display: none;
+    @include media($min-width: 641px) {
         display: inline;
-        margin: 0 5px
-    }
-
-    .pager-items li:first-child {
-        margin-left: 0
-    }
-
-    .pager-items li:last-child {
-        margin-right: 0
-    }
-}
-
-.pager-prev,.pager-next {
-    margin-right: 10px
-}
-
-@media (min-width: 641px) {
-    .pager-prev,.pager-next {
-        margin-right:0
+        li {
+            display: inline;
+            margin: 0 5px;
+            &:first-child {
+                margin-left: 0;
+            }
+            &:last-child {
+                margin-right: 0;
+            }
+        }
     }
 }
 
-@media (min-width: 641px) {
-    .pager-prev {
-        margin-right:10px
+
+.pager-prev,
+.pager-next {
+    margin-right: 10px;
+    @include media($min-width: 641px) {
+        margin-right: 0;
+    }  
+}
+
+.pager-prev {
+    @include media($min-width: 641px) {
+        margin-right: 10px;
     }
 }
 
-@media (min-width: 641px) {
-    .pager-next {
-        margin-left:10px
+.pager-next {
+    @include media($min-width: 641px) {
+        margin-left: 10px;
     }
 }
 
-@media (min-width: 641px) {
-    .pager-controls {
-        float:right
+.pager-controls {
+    @include media($min-width: 641px) {
+        float: right;
     }
 }

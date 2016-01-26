@@ -33,7 +33,8 @@ class DashboardController extends AbstractAuthenticatedController
 
         //---
 
-        $paginator->setItemCountPerPage(200);
+        $paginator->setPageRange(5);
+        $paginator->setItemCountPerPage(50);
 
         $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
 

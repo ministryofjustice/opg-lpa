@@ -2067,6 +2067,35 @@ input[disabled="disabled"] {
 .spinner {
   margin: 0 0 -3px 8px; }
 
+.pager {
+  margin-top: 15px;
+  margin-bottom: 30px; }
+
+.pager-items {
+  display: none;
+  display: inline; }
+  .pager-items li {
+    display: inline;
+    margin: 0 5px; }
+    .pager-items li:first-child {
+      margin-left: 0; }
+    .pager-items li:last-child {
+      margin-right: 0; }
+
+.pager-prev,
+.pager-next {
+  margin-right: 10px;
+  margin-right: 0; }
+
+.pager-prev {
+  margin-right: 10px; }
+
+.pager-next {
+  margin-left: 10px; }
+
+.pager-controls {
+  float: right; }
+
 .noscroll {
   position: relative;
   overflow: hidden;
