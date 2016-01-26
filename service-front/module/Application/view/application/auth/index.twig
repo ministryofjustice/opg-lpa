@@ -7,13 +7,20 @@
 {% set email = form.get('email').setOptions({ label: 'Email address' }) %}
 {% set password = form.get('password').setOptions({ label: 'Password' }) %}
 
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'cannot-be-empty' : 'Please enter your email address'
+    },
+    'password' : {
+        'cannot-be-empty' : 'Please enter your password'
+    }
+}) %}
+
 {% block errorSummary %}
     {% include 'application/auth/partials/error-summary.twig' %}
 {% endblock %}
 
 {% block content %}
-
-{% set form = formErrorTextExchange(form, []) %}
 
 {{ form.setAttribute('class', 'form') ? '' }}
 
