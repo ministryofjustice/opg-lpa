@@ -10,7 +10,7 @@
     {% elseif form.getMessages|length > 0 %}
         <p>You need to do the following:</p>
         <ul class="error-summary-list">
-            {{ formLinkedErrorList(form) }}
+            {{ formLinkedErrorListV2(form) }}
         </ul>
     {% endif %}
 </div>

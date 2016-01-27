@@ -3,7 +3,7 @@
         <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your feedback</h1>
         <p>For the following reasons:</p>
         <ol class="error-summary-list">
-            {{ formLinkedErrorList(form) ? '' }}
+            {{ formLinkedErrorListV2(form) ? '' }}
 
             {% if error is not empty %}
                 <li><a href="">
