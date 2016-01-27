@@ -28,13 +28,13 @@ class ResetPasswordEmail extends AbstractForm {
         ));
 
         //--------------------------------
-
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
-            'error_message' => 'You need to enter your email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -43,13 +43,20 @@ class ResetPasswordEmail extends AbstractForm {
                 array(
                     'name'    => 'EmailAddress',
                 ),
+                array(
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
             ),
         ));
 
         $inputFilter->add(array(
             'name'     => 'email_confirm',
             'required' => true,
-            'error_message' => 'You need to re-enter your email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -60,11 +67,19 @@ class ResetPasswordEmail extends AbstractForm {
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
-            ),
+                array(
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+            )
         ));
 
         //---

@@ -50,15 +50,15 @@ class Registration extends SetPassword {
                      * The email address should not be resolved from public network"
                      */
                 ),
-            ),
-            array(
-                'name'    => 'NotEmpty',
-                'options' => array(
-                    'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                    ],
+                array(
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
                 ),
             ),
+            )
         ));
 
         $inputFilter->add(array(
