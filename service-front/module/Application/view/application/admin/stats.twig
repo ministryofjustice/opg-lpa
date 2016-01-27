@@ -6,126 +6,51 @@
 
 {% block content %}
 
-<style>
-<!--
-div#stats {
-	outline: none;
-	width: 950px;
-	overflow: auto;
-}
+<div class="text">
+	<h2 class="heading-medium">Accounts</h2>
 
-table.stats {
-	border: 0px solid black;
-	width: 950px;
-	background: #EEE;
-	border-collapse: collapse
-}
-
-table.stats th {
-	text-align: center;
-	border: 1px solid #ddd;
-	padding: 8px;
-	background: #333;
-	color: #eee;
-	font-family: tahoma;
-	font-weight: normal;
-}
-
-table.stats td {
-	padding: 3px;
-	font-size: 16pt;
-	height: 30px;
-	text-align: center;
-	vertical-align: middle;
-	border: 1px solid #ccc;
-}
-
-table.stats td a {
-	text-decoration: none;
-	color: black
-}
-
-table.stats tbody.app_stats td {
-	width: 180px
-}
-
-table.stats tbody.app_stats td.app_status {
-	font-size: 10pt;
-	vertical-align: middle;
-	font-family: Verdana;
-	width: 100px;
-}
-
-table.stats tbody.site td {
-	width: 180px;
-}
-
-table.stats tbody.db td {
-	width: 110px;
-	margin: 10px;
-}
-
-table.stats td.error {
-	height: 200px;
-	background: red;
-}
-
-table.stats td.warning {
-	height: 200px;
-	background: orange;
-}
-
-table.stats td.ok {
-	height: 200px;
-	background: #88aa88;
-}
-
-table.stats img {
-	width: 60px;
-}
--->
-</style>
-
-<div id="stats" style="min-height:35em">
-
-    <table class="stats">
-    		<thead>
-    			<tr style="width: 100%">
-    				<th>Total</th>
-    				<th>Activated</th>
-    				<th>Activated this month</th>
-    			</tr>
-    		</thead>
-    		<tbody class="app_stats">
-                <tr>
-    				<td>{{ auth_stats.total }}</td>
-    				<td>{{ auth_stats.activated }}</td>
-    				<td>{{ auth_stats['activated-this-month'] }}</td>
-    		     </tr>
-    		</tbody>
-    </table>
-    
-    <h2>Applications</h2>
-
-    <a href="/admin/stats?by=lpa">By applications</a> |
-    <a href="/admin/stats?by=user">By user</a>
-
-    <table class="stats">
+	<table class="stats">
 		<thead>
-			<tr style="width: 100%">
-				<th>{{ columns[0] }}</th>
-				<th>{{ columns[1] }}</th>
+			<tr>
+				<th class="numeric">Total</th>
+				<th class="numeric">Activated</th>
+				<th class="numeric">Activated this month</th>
 			</tr>
 		</thead>
-		<tbody class="app_stats">
-{% for lpas, users in api_stats %}
-<tr>
-				<td>{{ lpas }}</td>
-				<td>{{ users }}</td>
-			</tr>
+		<tbody>
+		    <tr>
+				<td class="numeric">{{ auth_stats.total }}</td>
+				<td class="numeric">{{ auth_stats.activated }}</td>
+				<td class="numeric">{{ auth_stats['activated-this-month'] }}</td>
+		     </tr>
 		</tbody>
-{% endfor %}
-</table>
+	</table>
+
+	<h2 class="heading-medium">Applications</h2>
+
+	<p>
+		View by <a href="/admin/stats?by=lpa">number of applications</a> or by <a href="/admin/stats?by=user">number of users</a>
+	</p>
+
+	<table>
+		<thead>
+			<tr>
+				<th class="numeric">{{ columns[0] }}</th>
+				<th class="numeric">{{ columns[1] }}</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for lpas, users in api_stats %}
+			<tr>
+				<td class="numeric">{{ lpas }}</td>
+				<td class="numeric">{{ users }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
 </div>
 
+
 {% endblock %}
+
+{% block divider %}<hr class="invisible">{% endblock divider %}
