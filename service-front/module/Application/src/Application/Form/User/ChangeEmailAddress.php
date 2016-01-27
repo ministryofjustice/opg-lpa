@@ -53,15 +53,16 @@ class ChangeEmailAddress extends AbstractForm {
                 array(
                     'name'    => 'EmailAddress',
                 ),
-            ),
-            array(
-                'name'    => 'NotEmpty',
-                'options' => array(
-                    'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                    ],
+                array(
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
                 ),
             ),
+            
         ));
 
         $inputFilter->add(array(
