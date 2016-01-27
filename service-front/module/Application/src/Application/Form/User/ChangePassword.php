@@ -27,7 +27,8 @@ class ChangePassword extends SetPassword {
         ));
 
         //--------------------------------
-
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         //---
@@ -41,7 +42,7 @@ class ChangePassword extends SetPassword {
                     'options' => array(
                         'callback' => [ $this, 'validatePassword' ],
                         'messages' => [
-                            Validator\Callback::INVALID_VALUE => 'is incorrect',
+                            Validator\Callback::INVALID_VALUE => 'is-incorrect',
                         ],
                     ),
                 ),
