@@ -2,6 +2,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Zend\Validator;
 
 class TypeForm extends AbstractForm
 {
@@ -28,7 +29,18 @@ class TypeForm extends AbstractForm
     public function init()
     {
         $this->setName('form-type');
+        
         parent::init();
+        
+        $this->setUseInputFilterDefaults(false);
+        
+        $inputFilter = $this->getInputFilter();
+        
+        $inputFilter->add(array(
+            'name'     => 'type',
+            'required' => true,
+            'error_message' => 'cannot-be-empty',
+        ));
     }
     
    /**
