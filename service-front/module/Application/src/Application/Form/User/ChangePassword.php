@@ -46,6 +46,14 @@ class ChangePassword extends SetPassword {
                         ],
                     ),
                 ),
+                array(
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
             ),
         ));
 
