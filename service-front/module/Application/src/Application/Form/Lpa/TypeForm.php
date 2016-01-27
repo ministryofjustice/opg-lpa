@@ -2,7 +2,6 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Zend\Validator;
 
 class TypeForm extends AbstractForm
 {

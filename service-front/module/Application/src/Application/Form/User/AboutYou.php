@@ -66,7 +66,8 @@ class AboutYou extends AbstractForm {
         //--------------------------------
 
         $inputFilter = $this->getInputFilter();
-
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter->add([
             'name'     => 'name-title',
             'required' => false,
@@ -76,7 +77,7 @@ class AboutYou extends AbstractForm {
                     'name'    => 'StringLength',
                     'options' => [
                         'max' => 5,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
             ],
@@ -85,15 +86,22 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'name-first',
             'required' => true,
-            'error_message' => 'You can\'t leave this box empty',
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
                     'name'    => 'StringLength',
                     'options' => [
                         'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
+                ],
+                [
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
                 ],
             ],
         ]);
@@ -101,15 +109,22 @@ class AboutYou extends AbstractForm {
         $inputFilter->add([
             'name'     => 'name-last',
             'required' => true,
-            'error_message' => 'You can\'t leave this box empty',
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
                     'name'    => 'StringLength',
                     'options' => [
                         'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
+                ],
+                [
+                    'name'    => 'NotEmpty',
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
                 ],
             ],
         ]);
@@ -127,7 +142,7 @@ class AboutYou extends AbstractForm {
                     'options' => [
                         'min' => 1, 'max' => 31,
                         'messages' => [
-                            Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
+                            Validator\Between::NOT_BETWEEN => "must-be-between-%min%-and-%max%-characters",
                         ],
                     ],
                 ],
@@ -145,7 +160,7 @@ class AboutYou extends AbstractForm {
                     'options' => [
                         'min' => 1, 'max' => 12,
                         'messages' => [
-                            Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
+                            Validator\Between::NOT_BETWEEN => "must-be-between-%min%-and-%max%-characters",
                         ],
                     ],
                 ],
@@ -163,7 +178,7 @@ class AboutYou extends AbstractForm {
                     'options' => [
                         'min' => (int)date('Y') - 150, 'max' => (int)date('Y'),
                         'messages' => [
-                            Validator\Between::NOT_BETWEEN => "must be between %min% and %max%",
+                            Validator\Between::NOT_BETWEEN => "must-be-between-%min%-and-%max%-characters",
                         ],
                     ],
                 ],
@@ -181,7 +196,7 @@ class AboutYou extends AbstractForm {
                     'name'    => 'StringLength',
                     'options' => [
                         'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
             ],
@@ -196,7 +211,7 @@ class AboutYou extends AbstractForm {
                     'name'    => 'StringLength',
                     'options' => [
                         'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
             ],
@@ -211,7 +226,7 @@ class AboutYou extends AbstractForm {
                     'name'    => 'StringLength',
                     'options' => [
                         'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "must be %max% characters or fewer" ],
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
             ],
@@ -228,8 +243,8 @@ class AboutYou extends AbstractForm {
                         'min' => 1,
                         'max' => 8,
                         'messages' => [
-                            Validator\StringLength::TOO_SHORT => "must be at least %min% characters",
-                            Validator\StringLength::TOO_LONG => "must be %max% characters or fewer",
+                            Validator\StringLength::TOO_SHORT => "min-%min%-characters",
+                            Validator\StringLength::TOO_LONG => "max-%max%-characters",
                         ],
                     ],
                 ],
