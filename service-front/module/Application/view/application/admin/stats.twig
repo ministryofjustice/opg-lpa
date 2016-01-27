@@ -1,3 +1,11 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Accounts
+{% endblock %}
+
+{% block content %}
+
 <style>
 <!--
 div#stats {
@@ -79,7 +87,6 @@ table.stats img {
 </style>
 
 <div id="stats" style="min-height:35em">
-    <h2>Accounts</h2>
 
     <table class="stats">
     		<thead>
@@ -91,9 +98,9 @@ table.stats img {
     		</thead>
     		<tbody class="app_stats">
                 <tr>
-    				<td><?= $this->auth_stats['total']; ?></td>
-    				<td><?= $this->auth_stats['activated']; ?></td>
-    				<td><?= $this->auth_stats['activated-this-month']; ?></td>
+    				<td>{{ auth_stats.total }}</td>
+    				<td>{{ auth_stats.activated }}</td>
+    				<td>{{ auth_stats['activated-this-month'] }}</td>
     		     </tr>
     		</tbody>
     </table>
@@ -106,17 +113,19 @@ table.stats img {
     <table class="stats">
 		<thead>
 			<tr style="width: 100%">
-				<th><?= $this->columns[0]; ?></th>
-				<th><?= $this->columns[1]; ?></th>
+				<th>{{ columns[0] }}</th>
+				<th>{{ columns[1] }}</th>
 			</tr>
 		</thead>
 		<tbody class="app_stats">
-<?php foreach ($this->api_stats as $lpas => $users): ?>
+{% for lpas, users in api_stats %}
 <tr>
-				<td><?= $lpas; ?></td>
-				<td><?= $users; ?></td>
+				<td>{{ lpas }}</td>
+				<td>{{ users }}</td>
 			</tr>
 		</tbody>
-<?php endforeach; ?>
+{% endfor %}
 </table>
 </div>
+
+{% endblock %}
