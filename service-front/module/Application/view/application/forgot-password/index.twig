@@ -1,34 +1,20 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block pageTitle %}
-    Reset your password
-{% endblock %}
-
-{% set email = form.get('email').setOptions({ label: 'Email address' }) %}
-{% set email_confirm = form.get('email_confirm').setOptions({ label: 'Please re-enter your email address' }) %}
-
-{% set form = formErrorTextExchange(form,  {
-    'email' : {
-        'cannot-be-empty' : 'Please enter your email address',
-    },
-    'email_confirm' : {
-        'cannot-be-empty' : 'Please confirm your email address',
-        'did-not-match' : 'The emails did not match'
-    }
-    
-}) %}
-
 {% block errorSummary %}
     {% include 'application/forgot-password/partials/index-error-summary.twig' %}
 {% endblock %}
 
+{% block pageTitle %}
+    Reset your password
+{% endblock %}
+
 {% block content %}
 
-{% set form = formErrorTextExchange(form, []) %}
-
+{# Set form fields variables #}
 {% set email = form.get('email') %}
 {% set email_confirm = form.get('email_confirm') %}
 
+{# form fields config #}
 {{ email.setAttributes({
     id: 'email',
     autocomplete: 'off',
@@ -41,14 +27,17 @@
     class: 'form-control'
 }) ? ''}}
 
-{{ form.prepare() ? '' }}
+{# form fields labels #}
+{{ email.setOptions({ label: 'Email' }) ? '' }}
+{{ email_confirm.setOptions({ label: 'Please re-enter your email address' }) ? '' }}
 
 <div class="text">
     <p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
 </div>
 
+{# begin form #}
+{{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
-
     {{ formElement(form.get( form.csrfName )) }}
 
     <fieldset>
@@ -56,7 +45,7 @@
 
         <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ email.getAttribute('id') }}">
-                <span class="form-label-bold">{{ email.getOption('label') }}</span>
+                {{ email.getOption('label') }}
                 {{ formElementErrorsV2(email) }}
             </label>
             {{ formElement(email) }}
@@ -64,7 +53,7 @@
 
         <div class="form-group {{ email_confirm.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ email_confirm.getAttribute('id') }}">
-                <span class="form-label-bold">{{ email_confirm.getOption('label') }}</span>
+                {{ email_confirm.getOption('label') }}
                 {{ formElementErrorsV2(email_confirm) }}
             </label>
             {{ formElement(email_confirm) }}

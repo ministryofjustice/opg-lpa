@@ -1,3 +1,13 @@
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'cannot-be-empty' : 'Please enter your email address',
+    },
+    'email_confirm' : {
+        'cannot-be-empty' : 'Please confirm your email address',
+        'did-not-match' : 'The emails did not match'
+    } 
+}) %}
+
 {% if (error is not empty or form.getMessages|length > 0) %}
 <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
     <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your email details</h1>

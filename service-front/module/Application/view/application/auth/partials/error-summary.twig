@@ -1,3 +1,12 @@
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'cannot-be-empty' : 'Please enter your email address'
+    },
+    'password' : {
+        'cannot-be-empty' : 'Please enter your password'
+    }
+}) %}
+
 {% if isTimeout %}
     <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
       <h1 class="heading-medium error-summary-heading" id="error-heading">Session timed out</h1>

@@ -1,3 +1,17 @@
+{% set form = formErrorTextExchange(form,  {
+    'password_current' : {
+        'is-incorrect' : 'Your password is incorrect',
+        'cannot-be-empty' : 'Please enter your password'
+    },
+    'email' : {
+        'cannot-be-empty' : 'Please enter your new email address',
+    },
+    'email_confirm' : {
+        'cannot-be-empty' : 'Please confirm your new email address',
+        'did-not-match' : 'The emails did not match'
+    }
+}) %}
+
 {% if (error is not empty or form.getMessages|length > 0) %}
     <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
         <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your email details</h1>
