@@ -15,6 +15,23 @@ class NotificationsController extends AbstractBaseController {
 
     public function expiryNoticeAction(){
 
+        $config = $this->getServiceLocator()->get('config');
+
+        //---
+
+        $token = $this->request->getHeader('Token');
+
+        if( !$token || $token->getFieldValue() !== $config['account-cleanup']['notification']['token'] ){
+
+            $response = $this->getResponse();
+            $response->setStatusCode(403);
+            $response->setContent('Invalid Token');
+            return $response;
+
+        }
+
+        //---
+
         $posts = $this->request->getPost();
 
         if( !isset($posts['Username']) || !isset($posts['Type']) ){
@@ -34,7 +51,6 @@ class NotificationsController extends AbstractBaseController {
 
         //--
 
-        $config = $this->getServiceLocator()->get('config');
         $email->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         //---
