@@ -20,25 +20,23 @@
 {# form fields config #}
 {{ email.setAttributes({
     id: 'email',
-    autocomplete: 'off',
+    type: 'email',
     class: 'form-control'
 }) ? ''}}
 
 {{ email_confirm.setAttributes({
     id: 'email_confirm',
-    autocomplete: 'off',
+    type: 'email',
     class: 'form-control'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password',
-    autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
 
 {{ password_confirm.setAttributes({
     id: 'password_confirm',
-    autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
 
