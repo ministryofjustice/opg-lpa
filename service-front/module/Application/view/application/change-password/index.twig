@@ -6,6 +6,25 @@
 {% set new_password = form.get('password').setOptions({ label: 'New password' })  %}
 {% set new_password_confirm = form.get('password_confirm').setOptions({ label: 'Re-enter new password' }) %}
 
+{% set form = formErrorTextExchange(form,  {
+    'password_current' : {
+        'is-incorrect' : 'Your password is incorrect',
+        'cannot-be-empty' : 'Please enter your current password'
+    },
+    'password' : {
+        'cannot-be-empty' : 'Please enter your new password',
+        'min-length-8' : 'Your new password must be at least eight characters long',
+        'must-include-digit' : 'Your new password must include at least one digit (0-9)',
+        'must-include-lower-case' : 'Your new password must include at least one lower case letter (a-z)',
+        'must-include-upper-case' : 'Your new password must include at least one capital letter (A-Z)',
+    },
+    'password_confirm' : {
+        'did-not-match' : 'The passwords did not match',
+        'cannot-be-empty' : 'Please confirm your new password'
+    }
+    
+}) %}
+
 {% block errorSummary %}
     {% include 'application/change-password/partials/index-error-summary.twig' %}
 {% endblock %}

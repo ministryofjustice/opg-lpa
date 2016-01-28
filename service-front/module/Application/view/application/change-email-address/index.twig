@@ -6,6 +6,21 @@
 {% set email = form.get('email').setOptions({ label: 'New email address' }) %}
 {% set email_confirm = form.get('email_confirm').setOptions({ label: 'Re-enter new email address' }) %}
 
+{% set form = formErrorTextExchange(form,  {
+    'password_current' : {
+        'is-incorrect' : 'Your password is incorrect',
+        'cannot-be-empty' : 'Please enter your password'
+    },
+    'email' : {
+        'cannot-be-empty' : 'Please enter your new email address',
+    },
+    'email_confirm' : {
+        'cannot-be-empty' : 'Please confirm your new email address',
+        'did-not-match' : 'The emails did not match'
+    },
+    
+}) %}
+
 {% block errorSummary %}
     {% include 'application/change-email-address/partials/index-error-summary.twig' %}
 {% endblock %}

@@ -7,6 +7,17 @@
 {% set email = form.get('email').setOptions({ label: 'Email address' }) %}
 {% set email_confirm = form.get('email_confirm').setOptions({ label: 'Please re-enter your email address' }) %}
 
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'cannot-be-empty' : 'Please enter your email address',
+    },
+    'email_confirm' : {
+        'cannot-be-empty' : 'Please confirm your email address',
+        'did-not-match' : 'The emails did not match'
+    }
+    
+}) %}
+
 {% block errorSummary %}
     {% include 'application/forgot-password/partials/index-error-summary.twig' %}
 {% endblock %}

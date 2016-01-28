@@ -10,6 +10,24 @@
 {% set monthOfBirth = form.get('dob-date-month').setOptions({ label: 'Month' }) %}
 {% set yearOfBirth = form.get('dob-date-year').setOptions({ label: 'Year' }) %}
 
+{% set form = formErrorTextExchange(form,  {
+    'name-first' : {
+        'cannot-be-empty' : 'Please enter your first names'
+    },
+    'name-last' : {
+        'cannot-be-empty' : 'Please enter your last name'
+    },
+    'dob-date-day' : {
+        'must-be-between-1-and-31-characters' : 'Please enter a day between 1 and 31'
+    },
+    'dob-date-month' : {
+        'must-be-between-1-and-12-characters' : 'Please enter a month between 1 and 12'
+    },
+    'dob-date-year' : {
+        'must-be-between-1866-and-2016-characters' : 'Please enter a year between 1866 and 2016'
+    } 
+}) %}
+
 {% block errorSummary %}
     {% include 'application/about-you/partials/form-error-summary.twig' %}
 {% endblock %}
