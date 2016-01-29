@@ -42,23 +42,25 @@ class Registration extends SetPassword {
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'EmailAddress',
+                    'break_chain_on_failure' => true,
                     /* We'll just use the ZF2 messages for these - there are lots of them 
                      * and they include such classics as:
                      *
                      * "'%hostname%' is not in a routable network segment.
                      * The email address should not be resolved from public network"
                      */
-                ),
-                array(
-                    'name'    => 'NotEmpty',
-                    'options' => array(
-                        'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                ),
+                )
             ),
-            )
         ));
 
         $inputFilter->add(array(
@@ -70,7 +72,17 @@ class Registration extends SetPassword {
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'Identical',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
@@ -78,15 +90,6 @@ class Registration extends SetPassword {
                         ],
                     ),
                 ),
-                array(
-                    'name'    => 'NotEmpty',
-                    'options' => array(
-                        'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                    ),
-                ),
-                
             ),
         ));
 
@@ -97,6 +100,7 @@ class Registration extends SetPassword {
             'validators' => array(
                 array(
                     'name'    => 'Identical',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'token' => '1',
                         'literal' => true,

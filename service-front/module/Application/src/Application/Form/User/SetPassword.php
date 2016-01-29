@@ -37,6 +37,15 @@ class SetPassword extends AbstractForm {
             'required' => true,
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
@@ -73,14 +82,6 @@ class SetPassword extends AbstractForm {
                         ],
                     ),
                 ),
-                array(
-                    'name'    => 'NotEmpty',
-                    'options' => array(
-                        'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                    ),
-                ),
             ),
         )); // add
 
@@ -89,19 +90,21 @@ class SetPassword extends AbstractForm {
             'required' => true,
             'validators' => array(
                 array(
-                    'name'    => 'Identical',
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => array(
-                        'token' => 'password',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did-not-match',
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ),
                 ),
                 array(
-                    'name'    => 'NotEmpty',
+                    'name'    => 'Identical',
+                    'break_chain_on_failure' => true,
                     'options' => array(
+                        'token' => 'password',
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
