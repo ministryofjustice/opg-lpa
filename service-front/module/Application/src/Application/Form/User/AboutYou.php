@@ -89,19 +89,20 @@ class AboutYou extends AbstractForm {
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-                [
                     'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'messages' => [
                             Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ),
+                ],
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
+                    ],
                 ],
             ],
         ]);
@@ -112,19 +113,20 @@ class AboutYou extends AbstractForm {
             'filters'  => [ ['name' => 'StripTags'], ['name' => 'StringTrim'] ],
             'validators' => [
                 [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-                [
                     'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'messages' => [
                             Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ),
+                ],
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max' => 50,
+                        'messages' => [ Validator\StringLength::TOO_LONG => "max-%max%-characters" ],
+                    ],
                 ],
             ],
         ]);
