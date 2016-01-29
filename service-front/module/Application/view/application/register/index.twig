@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-    Sign up
+    Create an account
 {% endblock %}
 
 {% block content %}
@@ -46,7 +46,7 @@
 
 {# form fields labels #}
 {{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
-{{ email_confirm.setOptions( { label: 'Re-enter your email address' }) ? '' }}
+{{ email_confirm.setOptions( { label: 'Confirm your email address' }) ? '' }}
 {{ password.setOptions( { label: 'Password' }) ? '' }}
 {{ password_confirm.setOptions( { label: 'Confirm Password' }) ? '' }}
 {{ terms.setOptions( { label: 'I agree to the terms and conditions and privacy policy' }) ? '' }}
@@ -116,7 +116,7 @@
         </div>
 
         <div class="form-group {{ terms.getMessages|length >0 ? 'error'}}">
-            <label class="form-checkbox" for="{{ terms.getAttribute('id') }}">
+            <label class="block-label" for="{{ terms.getAttribute('id') }}">
                 {{ formElement(terms) }}
                 {{ terms.getOption('label') }}
                 {{ formElementErrorsV2(terms) }}
@@ -124,7 +124,7 @@
         </div>
 
         <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" value="Sign up" class="button">
+            <input type="submit" name="submit" id="signin-form-submit" value="Create account" class="button">
         </div>
     </fieldset>
 
