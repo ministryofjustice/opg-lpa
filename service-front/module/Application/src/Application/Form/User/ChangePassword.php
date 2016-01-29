@@ -38,19 +38,21 @@ class ChangePassword extends SetPassword {
             'required' => true,
             'validators' => array(
                 array(
-                    'name'    => 'Callback',
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => array(
-                        'callback' => [ $this, 'validatePassword' ],
                         'messages' => [
-                            Validator\Callback::INVALID_VALUE => 'is-incorrect',
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ),
                 ),
                 array(
-                    'name'    => 'NotEmpty',
+                    'name'    => 'Callback',
+                    'break_chain_on_failure' => true,
                     'options' => array(
+                        'callback' => [ $this, 'validatePassword' ],
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            Validator\Callback::INVALID_VALUE => 'is-incorrect',
                         ],
                     ),
                 ),

@@ -32,6 +32,7 @@ class Login extends AbstractForm {
 
         $inputFilter->add(array(
             'name'     => 'email',
+            'break_chain_on_failure' => true,
             'required' => true,
             'error_message' => 'cannot-be-empty',
             'filters'  => array(
@@ -42,6 +43,7 @@ class Login extends AbstractForm {
 
         $inputFilter->add(array(
             'name'     => 'password',
+            'break_chain_on_failure' => true,
             'required' => true,
             'error_message' => 'cannot-be-empty',
         ));
