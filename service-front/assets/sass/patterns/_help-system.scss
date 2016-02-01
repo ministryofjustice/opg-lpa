@@ -108,6 +108,9 @@
 		}
 	}
 	article {
+		@include media($min-width: 641px){
+			font-size: 19px;
+		}
 		strong {
 			font-weight: 700;
 		}

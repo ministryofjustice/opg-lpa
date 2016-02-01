@@ -2046,8 +2046,10 @@ input[disabled="disabled"] {
 
 #popup .help-sections {
   padding: 30px 15px 30px 30px; }
-.help-sections article strong {
-  font-weight: 700; }
+.help-sections article {
+  font-size: 19px; }
+  .help-sections article strong {
+    font-weight: 700; }
 .help-sections article:first-child h1 {
   margin-top: 0; }
 

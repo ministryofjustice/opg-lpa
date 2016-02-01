@@ -2285,6 +2285,9 @@ input[disabled="disabled"] {
   @media (max-width: 640px) {
     #popup .help-sections {
       padding: 15px; } }
+@media (min-width: 641px) {
+  .help-sections article {
+    font-size: 19px; } }
 .help-sections article strong {
   font-weight: 700; }
 @media (min-width: 640px) {
