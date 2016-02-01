@@ -34,7 +34,9 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             if( isset($body['activation_token']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                
+                return 'account-not-activated';
 
             }elseif( isset($body['status']) && $body['status'] == 404 ){
 
