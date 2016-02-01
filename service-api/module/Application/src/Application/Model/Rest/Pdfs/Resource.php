@@ -291,7 +291,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
             ]);
 
             // If it's in the cache, clean it out of the queue.
-            $this->getDynamoQueueClient()->dequeue( $ident );
+            $this->getDynamoQueueClient()->deleteJob( $ident );
 
             // If we get here it exists in the bucket...
             return Entity::STATUS_READY;
