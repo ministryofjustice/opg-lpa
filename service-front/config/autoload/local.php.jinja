@@ -7,6 +7,12 @@ return array(
         'environment' => '{{pillar['environment']}}',
     ],
 
+    'account-cleanup' => [
+        'notification' => [
+            'token' => '{{pillar['account-cleanup']['notification']['token']}}',
+        ],
+    ], // cleanup-cleanup
+
     'session' => [
 
         'encryption' => [
@@ -135,16 +141,5 @@ return array(
         'mac_secret' => '{{pillar['payment']['worldpay']['mac_secret']}}',
         'api_token_secret' => '{{pillar['payment']['worldpay']['api_token_secret']}}',
     ], // worldpay
-
-    #v1Code
-    'v1proxy' => [
-
-        'redis' => [
-            'server' => [
-                'host' => '{{pillar['v1proxy']['redis']['host']}}',
-            ],
-        ],
-
-    ],
 
 );

@@ -38,25 +38,16 @@ class Status implements ServiceLocatorAwareInterface {
 
         $result['dynamo'] = $this->dynamo();
 
-
         //-----------------------------------
         // Check API 2
 
         $result['api'] = $this->api();
 
-
         //-----------------------------------
-        // Check v1 (#v1Code)
+        // Check Auth 2
 
-        // This is just to check the V1 Module is enabled.
-        // Otherwise we skip v1 checks.
-        if( $this->getServiceLocator()->has('ProxyDashboard') ){
+        $result['auth'] = $this->auth();
 
-            $result['v1'] = $this->v1();
-
-        }
-        // end #v1Code
-        
         //-----------------------------------
 
         $ok = true;
@@ -70,54 +61,7 @@ class Status implements ServiceLocatorAwareInterface {
         return $result;
 
     } // function
-
-    //------------------------------------------------------------------------
-
-    /**
-     * This whole method is #v1Code code.
-     */
-    private function v1(){
-
-        $result = array('ok' => false, 'details' => array('200' => false));
-
-        try {
-
-            $client = new GuzzleClient();
-            $client->setDefaultOption('exceptions', false);
-
-            $response = $client->get(
-                'https://frontv1-01/manage/availability?healthcheck=1',
-                ['connect_timeout' => 5, 'timeout' => 20]
-            );
-
-            if ( $response->getStatusCode() == 200 ){
-                $result['details']['200'] = true;
-            }
-
-            //---
-
-            // Get the XML in array form.
-            $v1 = json_encode( $response->xml() );
-            $v1 = json_decode( $v1, true );
-
-            if( is_array($v1) ){
-
-                if( isset($v1['status']) ){
-
-                    if( $v1['status'] == 'OK' ){ $result['ok'] = true; }
-
-                    $result['details']['status'] = $v1['status'];
-
-                }
-
-            } // if
-
-        } catch (Exception $e) { /* Don't throw exceptions; we just return ok==false */ }
-
-        return $result;
-
-    } // function
-
+    
     //------------------------------------------------------------------------
 
     private function dynamo(){
@@ -234,6 +178,44 @@ class Status implements ServiceLocatorAwareInterface {
 
             $response = $client->get(
                 $config['api_uri'] . '/ping',
+                ['connect_timeout' => 5, 'timeout' => 10]
+            );
+
+            // There should be no JSON if we don't get a 200, so return.
+            if ($response->getStatusCode() != 200) {
+                return $result;
+            }
+
+            //---
+
+            $result['details']['200'] = true;
+
+            $api = $response->json();
+
+            $result['ok'] = $api['ok'];
+            $result['details'] = $result['details'] + $api;
+
+        } catch( Exception $e ){ /* Don't throw exceptions; we just return ok==false */ }
+
+        return $result;
+
+    } // function
+
+    //------------------------------------------------------------------------
+
+    private function auth(){
+
+        $result = array( 'ok'=> false, 'details'=>array( '200'=>false ) );
+
+        try {
+
+            $config = $this->getServiceLocator()->get('config')['api_client'];
+
+            $client = new GuzzleClient();
+            $client->setDefaultOption('exceptions', false);
+
+            $response = $client->get(
+                $config['auth_uri'] . '/ping',
                 ['connect_timeout' => 5, 'timeout' => 10]
             );
 

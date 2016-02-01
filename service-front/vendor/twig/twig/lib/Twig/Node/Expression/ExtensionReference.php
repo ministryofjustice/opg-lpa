@@ -9,10 +9,20 @@
  * file that was distributed with this source code.
  */
 
+<<<<<<< HEAD
+=======
+@trigger_error('The Twig_Node_Expression_ExtensionReference class is deprecated since version 1.23 and will be removed in 2.0.', E_USER_DEPRECATED);
+
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 /**
  * Represents an extension call node.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+<<<<<<< HEAD
+=======
+ *
+ * @deprecated since 1.23 and will be removed in 2.0.
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
  */
 class Twig_Node_Expression_ExtensionReference extends Twig_Node_Expression
 {

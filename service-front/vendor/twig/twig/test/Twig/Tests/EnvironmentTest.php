@@ -9,6 +9,11 @@
  * file that was distributed with this source code.
  */
 
+<<<<<<< HEAD
+=======
+require_once dirname(__FILE__).'/FilesystemHelper.php';
+
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 class Twig_Tests_EnvironmentTest extends PHPUnit_Framework_TestCase
 {
     private $deprecations = array();
@@ -154,8 +159,12 @@ class Twig_Tests_EnvironmentTest extends PHPUnit_Framework_TestCase
 
     public function testExtensionsAreNotInitializedWhenRenderingACompiledTemplate()
     {
+<<<<<<< HEAD
         $uid = function_exists('posix_getuid') ? posix_getuid() : '';
         $cache = new Twig_Cache_Filesystem($dir = sys_get_temp_dir().'/twig'.$uid);
+=======
+        $cache = new Twig_Cache_Filesystem($dir = sys_get_temp_dir().'/twig');
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
         $options = array('cache' => $cache, 'auto_reload' => false, 'debug' => false);
 
         // force compilation
@@ -178,7 +187,11 @@ class Twig_Tests_EnvironmentTest extends PHPUnit_Framework_TestCase
         $output = $twig->render('index', array('foo' => 'bar'));
         $this->assertEquals('bar', $output);
 
+<<<<<<< HEAD
         unlink($key);
+=======
+        Twig_Tests_FilesystemHelper::removeDir($dir);
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
     }
 
     public function testAutoReloadCacheMiss()
@@ -290,7 +303,11 @@ class Twig_Tests_EnvironmentTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('foo_global', $twig->getGlobals());
 
         $this->assertCount(1, $this->deprecations);
+<<<<<<< HEAD
         $this->assertContains('Defining the getGlobals() method in the "environment_test" extension is deprecated', $this->deprecations[0]);
+=======
+        $this->assertContains('Defining the getGlobals() method in the "environment_test" extension ', $this->deprecations[0]);
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 
         restore_error_handler();
     }
@@ -352,7 +369,11 @@ class Twig_Tests_EnvironmentTest extends PHPUnit_Framework_TestCase
         $twig->initRuntime();
 
         $this->assertCount(1, $this->deprecations);
+<<<<<<< HEAD
         $this->assertContains('Defining the initRuntime() method in the "with_deprecation" extension is deprecated.', $this->deprecations[0]);
+=======
+        $this->assertContains('Defining the initRuntime() method in the "with_deprecation" extension is deprecated since version 1.23.', $this->deprecations[0]);
+>>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 
         restore_error_handler();
     }

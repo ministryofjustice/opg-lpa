@@ -17,6 +17,7 @@ class Client extends GuzzleClient {
 
         $this->setDefaultOption( 'exceptions', false );
         $this->setDefaultOption( 'allow_redirects', false );
+        
 
     }
 
@@ -27,7 +28,7 @@ class Client extends GuzzleClient {
      */
     public function setToken( $token ){
 
-        $this->setDefaultOption( 'headers/X-AuthOne', $token );
+        $this->setDefaultOption( 'headers/Token', $token );
 
     }
 

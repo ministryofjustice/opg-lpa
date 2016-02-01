@@ -8,17 +8,15 @@
         <? /* Show the same error for both situations. */ ?>
         <? if (isset($this->error)) { ?>
 
-            <p>Sorry, there was a problem activating your account. This is probably because you created the account more
-                than 24 hours ago.</p>
-
-            <p>Accounts must be activated within 24 hours of their creation. Those that aren't activated are
-                automatically deleted.</p>
-
-            <p>You should return to <a href="<?= $this->url('register') ?>">the registration page</a> and create a new
-                account, which you can then activate.</p>
+            <p>We couldn't activate your account. This is probably for one of two reasons:
+            <ol>
+                <li>You've already activated your account, in which case you can <a href="<?= $this->url('login') ?>">sign in here</a></li>
+                <li>You didn't activate your account within 24 hours, in which case you can <a href="<?= $this->url('register') ?>">re-register here</a></li>
+            </ol>
+            </p>
 
             <p>If this doesn't work and you need further assistance, send an email to <a
-                    href="mailto:customerservices@PublicGuardian.gsi.gov.uk">customerservices@PublicGuardian.gsi.gov.uk</a>
+                    href="mailto:customerservices@PublicGuardian.gsi.gov.uk">customerservices@publicguardian.gsi.gov.uk</a>
                 or call 0300 456 0300.</p>
 
         <? } else { ?>
