@@ -205,8 +205,6 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             'callback' => $callbackUrl,
         ]);
         
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-
         //---
 
         $html = new MimePart( $content );
