@@ -31,16 +31,14 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             // Error...
             $body = $client->getLastContent();
 
-            if( $body['reason'] == 'ACCOUNT_NOT_ACTIVE' && isset($body['id']) ){
+            if( isset($body['activation_token']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-<<<<<<< HEAD
-                $result = $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
-                
-                return $result ? 'account-not-activated' : 'unknown-error';
-=======
-                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['id'] ) );
->>>>>>> develop
+                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+
+            }elseif( isset($body['status']) && $body['status'] == 404 ){
+
+                return "user-not-found";
 
             }elseif( isset($body['reason']) ){
 
@@ -85,31 +83,17 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             'Setting new password following password reset'
         );
         
-        $authToken = $this->getAuthTokenFromRestToken( $restToken );
-
-        if( !is_string( $authToken ) ){
-            // error
-            return false;
-        }
-
-        //---
-
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        // Set the new auth token on this client.
-        $client->setToken( $authToken );
-
-        $result = $client->updateAuthPassword( $password );
-
-        //---
-
-        if( $result !== true ){
+        $result = $client->updateAuthPasswordWithToken( $restToken, $password );
+        
+        if ($result !== true) {
 
             // Error...
             $body = $client->getLastContent();
 
-            if( isset($body['error_description']) ){
-                return $body['error_description'];
+            if( isset($body['detail']) ){
+                return $body['detail'];
             }
 
             return "unknown-error";
@@ -166,7 +150,7 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig')->render([
             'callback' => $callbackUrl,
         ]);
-        
+
         //---
 
         $html = new MimePart( $content );
@@ -220,6 +204,8 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset-not-active.twig')->render([
             'callback' => $callbackUrl,
         ]);
+        
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
 
         //---
 

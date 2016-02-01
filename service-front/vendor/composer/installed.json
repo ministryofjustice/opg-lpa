@@ -546,47 +546,6 @@
         ]
     },
     {
-        "name": "ministryofjustice/opg-lpa-api-client",
-        "version": "v1.0.2",
-        "version_normalized": "1.0.2.0",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-            "reference": "795e79d86c0871b33631face43dbaf426a4c98e0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/795e79d86c0871b33631face43dbaf426a4c98e0",
-            "reference": "795e79d86c0871b33631face43dbaf426a4c98e0",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "^5.1.0",
-            "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-05-27 10:58:14",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "API Wrapper for opg-lpa-api",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v1.0.2",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
-        }
-    },
-    {
         "name": "doctrine/instantiator",
         "version": "1.0.5",
         "version_normalized": "1.0.5.0",
@@ -1358,48 +1317,6 @@
         "keywords": [
             "global state"
         ]
-    },
-    {
-        "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "v1.1.6",
-        "version_normalized": "1.1.6.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "6b90faf661db487a84c4ada4efeaacb2c38066de"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6b90faf661db487a84c4ada4efeaacb2c38066de",
-            "reference": "6b90faf661db487a84c4ada4efeaacb2c38066de",
-            "shasum": ""
-        },
-        "require": {
-            "egulias/email-validator": "1.2.*",
-            "php": ">=5.5.9",
-            "symfony/intl": "2.6.*",
-            "symfony/validator": "2.6.*"
-        },
-        "require-dev": {
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-10-29 09:57:21",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "PHP data models that represent a Lasting Power of Attorney",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.5",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
-        }
     },
     {
         "name": "egulias/email-validator",
@@ -2952,5 +2869,88 @@
             "payment",
             "purchase"
         ]
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-datamodels",
+        "version": "v1.1.7",
+        "version_normalized": "1.1.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
+            "reference": "d67ad91f746c07a30cdecc99eff7268aa0d6ff9b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d67ad91f746c07a30cdecc99eff7268aa0d6ff9b",
+            "reference": "d67ad91f746c07a30cdecc99eff7268aa0d6ff9b",
+            "shasum": ""
+        },
+        "require": {
+            "egulias/email-validator": "1.2.*",
+            "php": ">=5.5.9",
+            "symfony/intl": "2.6.*",
+            "symfony/validator": "2.6.*"
+        },
+        "require-dev": {
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2016-01-13 11:22:04",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "PHP data models that represent a Lasting Power of Attorney",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.7",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
+        }
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-api-client",
+        "version": "v2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
+            "reference": "b343b5384d168d5f9f1e966e093e080096a9e347"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/b343b5384d168d5f9f1e966e093e080096a9e347",
+            "reference": "b343b5384d168d5f9f1e966e093e080096a9e347",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^5.1.0",
+            "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2015-10-05 11:09:32",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "API Wrapper for opg-lpa-api",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/LPA-1237/Auth2",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
+        }
     }
 ]
