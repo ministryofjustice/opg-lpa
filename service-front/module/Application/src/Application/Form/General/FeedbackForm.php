@@ -3,7 +3,7 @@ namespace Application\Form\General;
 
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
-use Zend\Validator\InArray;
+
 /**
  * To send feedback to the OPG
  *
