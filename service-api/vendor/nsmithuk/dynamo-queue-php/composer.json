@@ -14,5 +14,8 @@
           "DynamoQueue\\": "src/DynamoQueue/",
           "DynamoQueueTests\\": "tests/DynamoQueue/"
       }
-    }
+    },
+    "bin": [
+        "bin/dynamo-queue"
+    ]
 }

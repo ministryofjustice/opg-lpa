@@ -1,6 +1,8 @@
 <?php
 namespace Aws\Ses;
 
+use Aws\Credentials\CredentialsInterface;
+
 /**
  * This client is used to interact with the **Amazon Simple Email Service (Amazon SES)**.
  *
@@ -83,4 +85,26 @@ namespace Aws\Ses;
  * @method \Aws\Result verifyEmailIdentity(array $args = [])
  * @method \GuzzleHttp\Promise\Promise verifyEmailIdentityAsync(array $args = [])
  */
-class SesClient extends \Aws\AwsClient {}
+class SesClient extends \Aws\AwsClient
+{
+    /**
+     * Create an SMTP password for a given IAM user's credentials.
+     *
+     * The SMTP username is the Access Key ID for the provided credentials.
+     *
+     * @link http://docs.aws.amazon.com/ses/latest/DeveloperGuide/smtp-credentials.html#smtp-credentials-convert
+     *
+     * @param CredentialsInterface $creds
+     *
+     * @return string
+     */
+    public static function generateSmtpPassword(CredentialsInterface $creds)
+    {
+        static $version = "\x02";
+        static $algo = 'sha256';
+        static $message = 'SendRawEmail';
+        $signature = hash_hmac($algo, $message, $creds->getSecretKey(), true);
+
+        return base64_encode($version . $signature);
+    }
+}
