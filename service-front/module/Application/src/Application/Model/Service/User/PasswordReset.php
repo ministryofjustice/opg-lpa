@@ -31,14 +31,10 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             // Error...
             $body = $client->getLastContent();
 
-            if( isset($body['activation_token']) ){
+            if( $body['reason'] == 'ACCOUNT_NOT_ACTIVE' && isset($body['id']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
-
-            }elseif( isset($body['status']) && $body['status'] == 404 ){
-
-                return "user-not-found";
+                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['id'] ) );
 
             }elseif( isset($body['reason']) ){
 
@@ -83,17 +79,31 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             'Setting new password following password reset'
         );
         
+        $authToken = $this->getAuthTokenFromRestToken( $restToken );
+
+        if( !is_string( $authToken ) ){
+            // error
+            return false;
+        }
+
+        //---
+
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthPasswordWithToken( $restToken, $password );
-        
-        if ($result !== true) {
+        // Set the new auth token on this client.
+        $client->setToken( $authToken );
+
+        $result = $client->updateAuthPassword( $password );
+
+        //---
+
+        if( $result !== true ){
 
             // Error...
             $body = $client->getLastContent();
 
-            if( isset($body['detail']) ){
-                return $body['detail'];
+            if( isset($body['error_description']) ){
+                return $body['error_description'];
             }
 
             return "unknown-error";

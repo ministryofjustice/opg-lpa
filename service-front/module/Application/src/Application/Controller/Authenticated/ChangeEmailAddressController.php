@@ -11,7 +11,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
     {
 
         $currentAddress = (string)$this->getUserDetails()->email;
-        $userId = (string)$this->getUserDetails()->id;
 
         //----------------------
 
@@ -51,27 +50,40 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
-                $emailConfirmCallback = function( $userId, $token ) {
-                    return $this->url()->fromRoute('user/change-email-address/verify', [ 
-                            'userId'=>$userId,
-                            'token'=>$token,
-                        ], 
-                        [ 'force_canonical' => true ] 
-                    );
-                };
-                
-                $result = $service->requestEmailUpdate( $form, $emailConfirmCallback, $currentAddress, $userId );
-                
+                $result = $service->updateEmailAddress( $form );
+
                 //---
 
                 if( $result === true ){
+
+                    /**
+                     * When removing v1, the whole if statement below can be deleted.
+                     *
+                     * #v1Code
+                     */
+                    if( $this->getServiceLocator()->has('ChangeEmailAddress') ){
+
+                        // Update Email Address on Account Service
+                        $this->getServiceLocator()->get('ChangeEmailAddress')->changeAddress(
+                            $currentAddress,
+                            $form->getDataForModel()['email']
+                        );
+
+                    } // if
+
+                    // end #v1Code
+
+
+                    //---
 
                     // Clear the old details out the session.
                     // They will be reloaded the next time the the AbstractAuthenticatedController is called.
                     $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
                     unset($detailsContainer->user);
 
-                    return (new ViewModel( ['email'=>$form->getData()['email']] ))->setTemplate('application/change-email-address/email-sent');
+                    $this->flashMessenger()->addSuccessMessage('Your new email address has been saved. Please remember to use this new email address to sign in from now on.');
+
+                    return $this->redirect()->toRoute( 'user/about-you' );
 
                 } else {
                     $error = $result;
@@ -87,4 +99,5 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
         return new ViewModel( compact( 'form', 'error', 'pageTitle', 'currentAddress' ) );
     }
+
 }

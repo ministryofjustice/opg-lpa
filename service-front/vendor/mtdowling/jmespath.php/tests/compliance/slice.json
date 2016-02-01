@@ -125,10 +125,6 @@
     {
       "expression": "foo[8:2&]",
       "error": "syntax"
-    },
-    {
-      "expression": "foo[2:a:3]",
-      "error": "syntax"
     }
   ]
 }, {

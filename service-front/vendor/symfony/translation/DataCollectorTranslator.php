@@ -48,7 +48,7 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
     public function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
         $trans = $this->translator->trans($id, $parameters, $domain, $locale);
-        $this->collectMessage($locale, $domain, $id, $trans, $parameters);
+        $this->collectMessage($locale, $domain, $id, $trans);
 
         return $trans;
     }
@@ -59,7 +59,7 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
     public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null)
     {
         $trans = $this->translator->transChoice($id, $number, $parameters, $domain, $locale);
-        $this->collectMessage($locale, $domain, $id, $trans, $parameters, $number);
+        $this->collectMessage($locale, $domain, $id, $trans);
 
         return $trans;
     }
@@ -108,11 +108,9 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
      * @param string|null $locale
      * @param string|null $domain
      * @param string      $id
-     * @param string      $translation
-     * @param array|null  $parameters
-     * @param int|null    $number
+     * @param string      $trans
      */
-    private function collectMessage($locale, $domain, $id, $translation, $parameters = array(), $number = null)
+    private function collectMessage($locale, $domain, $id, $translation)
     {
         if (null === $domain) {
             $domain = 'messages';
@@ -144,8 +142,6 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
             'domain' => $domain,
             'id' => $id,
             'translation' => $translation,
-            'parameters' => $parameters,
-            'transChoiceNumber' => $number,
             'state' => $state,
         );
     }

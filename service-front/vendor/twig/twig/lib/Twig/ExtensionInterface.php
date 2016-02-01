@@ -23,11 +23,7 @@ interface Twig_ExtensionInterface
      *
      * @param Twig_Environment $environment The current Twig_Environment instance
      *
-<<<<<<< HEAD
      * @deprecated since 1.23 (to be removed in 2.0), implement Twig_Extension_InitRuntimeInterace instead
-=======
-     * @deprecated since 1.23 (to be removed in 2.0), implement Twig_Extension_InitRuntimeInterface instead
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
      */
     public function initRuntime(Twig_Environment $environment);
 

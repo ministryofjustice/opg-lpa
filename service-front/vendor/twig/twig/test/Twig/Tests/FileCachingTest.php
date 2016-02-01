@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-<<<<<<< HEAD
 class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
 {
     protected $fileName;
@@ -17,16 +16,6 @@ class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
     protected $tmpDir;
 
     public function setUp()
-=======
-require_once dirname(__FILE__).'/FilesystemHelper.php';
-
-class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
-{
-    private $env;
-    private $tmpDir;
-
-    protected function setUp()
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
     {
         $this->tmpDir = sys_get_temp_dir().'/TwigTests';
         if (!file_exists($this->tmpDir)) {
@@ -40,7 +29,6 @@ class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
         $this->env = new Twig_Environment(new Twig_Loader_Array(array('index' => 'index', 'index2' => 'index2')), array('cache' => $this->tmpDir));
     }
 
-<<<<<<< HEAD
     public function tearDown()
     {
         if ($this->fileName) {
@@ -48,11 +36,6 @@ class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
         }
 
         $this->removeDir($this->tmpDir);
-=======
-    protected function tearDown()
-    {
-        Twig_Tests_FilesystemHelper::removeDir($this->tmpDir);
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
     }
 
     /**
@@ -65,10 +48,7 @@ class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
         $cacheFileName = $this->env->getCacheFilename($name);
 
         $this->assertTrue(file_exists($cacheFileName), 'Cache file does not exist.');
-<<<<<<< HEAD
         $this->fileName = $cacheFileName;
-=======
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
     }
 
     /**
@@ -84,7 +64,6 @@ class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
         $this->env->clearCacheFiles();
         $this->assertFalse(file_exists($cacheFileName), 'Cache file was not cleared.');
     }
-<<<<<<< HEAD
 
     private function removeDir($target)
     {
@@ -103,6 +82,4 @@ class Twig_Tests_FileCachingTest extends PHPUnit_Framework_TestCase
         closedir($fp);
         rmdir($target);
     }
-=======
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 }

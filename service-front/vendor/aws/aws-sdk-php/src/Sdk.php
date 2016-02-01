@@ -27,7 +27,6 @@ namespace Aws;
  * @method \Aws\DynamoDb\DynamoDbClient createDynamoDb(array $args = [])
  * @method \Aws\DynamoDbStreams\DynamoDbStreamsClient createDynamoDbStreams(array $args = [])
  * @method \Aws\Ec2\Ec2Client createEc2(array $args = [])
- * @method \Aws\Ecr\EcrClient createEcr(array $args = [])
  * @method \Aws\Ecs\EcsClient createEcs(array $args = [])
  * @method \Aws\Efs\EfsClient createEfs(array $args = [])
  * @method \Aws\ElastiCache\ElastiCacheClient createElastiCache(array $args = [])
@@ -66,11 +65,7 @@ namespace Aws;
  */
 class Sdk
 {
-<<<<<<< HEAD
     const VERSION = '3.10.1';
-=======
-    const VERSION = '3.12.2';
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 
     /** @var array Arguments for creating clients */
     private $args;

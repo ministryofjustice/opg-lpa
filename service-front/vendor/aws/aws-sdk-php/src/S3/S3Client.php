@@ -749,10 +749,7 @@ class S3Client extends AwsClient
             } elseif ($error instanceof AwsException
                 && $retries < $maxRetries
             ) {
-                if (
-                    $error->getResponse()
-                    && $error->getResponse()->getStatusCode() >= 400
-                ) {
+                if ($error->getResponse()) {
                     return strpos(
                         $error->getResponse()->getBody(),
                         'Your socket connection to the server'

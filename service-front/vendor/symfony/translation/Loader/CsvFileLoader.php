@@ -11,14 +11,16 @@
 
 namespace Symfony\Component\Translation\Loader;
 
+use Symfony\Component\Translation\Exception\InvalidResourceException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * CsvFileLoader loads translations from CSV files.
  *
  * @author Saša Stamenković <umpirsky@gmail.com>
  */
-class CsvFileLoader extends FileLoader
+class CsvFileLoader extends ArrayLoader
 {
     private $delimiter = ';';
     private $enclosure = '"';
@@ -27,8 +29,16 @@ class CsvFileLoader extends FileLoader
     /**
      * {@inheritdoc}
      */
-    protected function loadResource($resource)
+    public function load($resource, $locale, $domain = 'messages')
     {
+        if (!stream_is_local($resource)) {
+            throw new InvalidResourceException(sprintf('This is not a local file "%s".', $resource));
+        }
+
+        if (!file_exists($resource)) {
+            throw new NotFoundResourceException(sprintf('File "%s" not found.', $resource));
+        }
+
         $messages = array();
 
         try {
@@ -46,7 +56,13 @@ class CsvFileLoader extends FileLoader
             }
         }
 
-        return $messages;
+        $catalogue = parent::load($messages, $locale, $domain);
+
+        if (class_exists('Symfony\Component\Config\Resource\FileResource')) {
+            $catalogue->addResource(new FileResource($resource));
+        }
+
+        return $catalogue;
     }
 
     /**

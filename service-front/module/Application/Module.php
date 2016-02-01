@@ -49,15 +49,10 @@ class Module{
 
         if( !($request instanceof \Zend\Console\Request) ){
 
-            // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
+            // Only bootstrap the session if it's *not* PHPUnit AND is not a healthcheck.
             if(
                 !strstr( $request->getServer('SCRIPT_NAME'), 'phpunit' ) &&
-                !in_array( $request->getUri()->getPath(), [
-                    // URLs excluded from creating a session
-                    '/ping/elb',
-                    '/ping/json',
-                    '/notifications/expiry-notice',
-                ]))
+                !in_array( $request->getUri()->getPath(), [ '/ping/elb', '/ping/json' ] ))
             {
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e);

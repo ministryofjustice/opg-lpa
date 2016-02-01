@@ -53,11 +53,7 @@ class Twig_Extension_Escaper extends Twig_Extension
     {
         // for BC
         if (true === $defaultStrategy) {
-<<<<<<< HEAD
             @trigger_error('Using "true" as the default strategy is deprecated. Use "html" instead.', E_USER_DEPRECATED);
-=======
-            @trigger_error('Using "true" as the default strategy is deprecated since version 1.21. Use "html" instead.', E_USER_DEPRECATED);
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 
             $defaultStrategy = 'html';
         }

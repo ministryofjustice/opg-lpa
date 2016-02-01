@@ -29,7 +29,7 @@ class Console
     public function hasColorSupport()
     {
         if (DIRECTORY_SEPARATOR == '\\') {
-            return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI') || 'xterm' === getenv('TERM');
+            return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI');
         }
 
         if (!defined('STDOUT')) {

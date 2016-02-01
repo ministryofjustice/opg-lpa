@@ -31,14 +31,12 @@ class Parser
         T::T_EXPREF            => 0,
         T::T_COLON             => 0,
         T::T_PIPE              => 1,
-        T::T_OR                => 2,
-        T::T_AND               => 3,
-        T::T_COMPARATOR        => 5,
-        T::T_FLATTEN           => 9,
+        T::T_COMPARATOR        => 2,
+        T::T_OR                => 5,
+        T::T_FLATTEN           => 6,
         T::T_STAR              => 20,
         T::T_FILTER            => 21,
         T::T_DOT               => 40,
-        T::T_NOT               => 45,
         T::T_LBRACE            => 50,
         T::T_LBRACKET          => 55,
         T::T_LPAREN            => 60,
@@ -134,22 +132,6 @@ class Parser
     {
         $this->next();
         return ['type' => T::T_EXPREF, 'children' => [$this->expr(self::$bp[T::T_EXPREF])]];
-    }
-
-    private function nud_not()
-    {
-        $this->next();
-        return ['type' => T::T_NOT, 'children' => [$this->expr(self::$bp[T::T_NOT])]];
-    }
-
-    private function nud_lparen() {
-        $this->next();
-        $result = $this->expr(0);
-        if ($this->token['type'] !== T::T_RPAREN) {
-            throw $this->syntax('Unclosed `(`');
-        }
-        $this->next();
-        return $result;
     }
 
     private function nud_lbrace()
@@ -251,15 +233,6 @@ class Parser
         ];
     }
 
-    private function led_and(array $left)
-    {
-        $this->next();
-        return [
-            'type'     => T::T_AND,
-            'children' => [$left, $this->expr(self::$bp[T::T_AND])]
-        ];
-    }
-
     private function led_pipe(array $left)
     {
         $this->next();
@@ -322,7 +295,7 @@ class Parser
         return [
             'type'     => T::T_COMPARATOR,
             'value'    => $token['value'],
-            'children' => [$left, $this->expr(self::$bp[T::T_COMPARATOR])]
+            'children' => [$left, $this->expr()]
         ];
     }
 

@@ -74,11 +74,7 @@ class Twig_Node implements Twig_NodeInterface
      */
     public function toXml($asDom = false)
     {
-<<<<<<< HEAD
         @trigger_error(sprintf('%s is deprecated.', __METHOD__), E_USER_DEPRECATED);
-=======
-        @trigger_error(sprintf('%s is deprecated since version 1.16.1 and will be removed in 2.0.', __METHOD__), E_USER_DEPRECATED);
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
 
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->formatOutput = true;

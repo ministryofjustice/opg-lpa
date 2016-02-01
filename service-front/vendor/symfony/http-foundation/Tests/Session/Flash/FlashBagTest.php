@@ -133,6 +133,7 @@ class FlashBagTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Symfony\Component\HttpFoundation\Session\Flash\FlashBag::getIterator
      * @group legacy
      */
     public function testLegacyGetIterator()

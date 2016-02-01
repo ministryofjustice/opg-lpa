@@ -1,7 +1,6 @@
 <?php
 namespace Aws\Api\ErrorParser;
 
-use Aws\Api\Parser\PayloadParserTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -9,8 +8,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class XmlErrorParser
 {
-    use PayloadParserTrait;
-
     public function __invoke(ResponseInterface $response)
     {
         $code = (string) $response->getStatusCode();
@@ -25,7 +22,7 @@ class XmlErrorParser
 
         $body = $response->getBody();
         if ($body->getSize() > 0) {
-            $this->parseBody($this->parseXml($body), $data);
+            $this->parseBody(new \SimpleXMLElement($body), $data);
         } else {
             $this->parseHeaders($response, $data);
         }

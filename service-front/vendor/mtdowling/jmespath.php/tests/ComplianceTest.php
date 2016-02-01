@@ -7,59 +7,50 @@ use JmesPath\SyntaxErrorException;
 
 class ComplianceTest extends \PHPUnit_Framework_TestCase
 {
-    private static $path;
+    private static $defaultRuntime;
+    private static $compilerRuntime;
 
     public static function setUpBeforeClass()
     {
-        self::$path = __DIR__ . '/../../compiled';
-        array_map('unlink', glob(self::$path . '/jmespath_*.php'));
+        $dir = __DIR__ . '/../../compiled';
+        self::$defaultRuntime = new AstRuntime();
+        self::$compilerRuntime = new CompilerRuntime($dir);
+        array_map('unlink', glob($dir . '/jmespath_*.php'));
     }
 
     public static function tearDownAfterClass()
     {
-        array_map('unlink', glob(self::$path . '/jmespath_*.php'));
+        $dir = __DIR__ . '/../../compiled';
+        array_map('unlink', glob($dir . '/jmespath_*.php'));
     }
 
     /**
      * @dataProvider complianceProvider
      */
-    public function testPassesCompliance(
-        $data,
-        $expression,
-        $result,
-        $error,
-        $file,
-        $suite,
-        $case,
-        $compiled,
-        $asAssoc
-    ) {
-        $evalResult = null;
-        $failed = false;
-        $failureMsg = '';
-        $failure = '';
+    public function testPassesCompliance($data, $expression, $result, $error, $file, $suite, $case, $compiled, $asAssoc)
+    {
+        $failed = $evalResult = $failureMsg = false;
+        $debug = fopen('php://temp', 'r+');
         $compiledStr = '';
 
         try {
             if ($compiled) {
                 $compiledStr = \JmesPath\Env::COMPILE_DIR . '=on ';
-                $runtime = new CompilerRuntime(self::$path);
+                $fn = self::$defaultRuntime;
+                $evalResult = $fn($expression, $data, $debug);
             } else {
-                $runtime = new AstRuntime();
+                $fn = self::$compilerRuntime;
+                $evalResult = $fn($expression, $data, $debug);
             }
-            $evalResult = $runtime($expression, $data);
         } catch (\Exception $e) {
             $failed = $e instanceof SyntaxErrorException ? 'syntax' : 'runtime';
-            $failureMsg = sprintf(
-                '%s (%s line %d)',
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine()
-            );
+            $failureMsg = sprintf('%s (%s line %d)', $e->getMessage(), $e->getFile(), $e->getLine());
         }
 
+        rewind($debug);
         $file = __DIR__ . '/compliance/' . $file . '.json';
-        $failure .= "\n{$compiledStr}php bin/jp.php --file {$file} --suite {$suite} --case {$case}\n\n"
+        $failure = "\n{$compiledStr}php bin/jp.php --file {$file} --suite {$suite} --case {$case}\n\n"
+            . stream_get_contents($debug) . "\n\n"
             . "Expected: " . $this->prettyJson($result) . "\n\n";
         $failure .= 'Associative? ' . var_export($asAssoc, true) . "\n\n";
 
@@ -69,16 +60,14 @@ class ComplianceTest extends \PHPUnit_Framework_TestCase
             $this->fail("Should have failed\n{$failure}");
         }
 
-        $this->assertEquals(
-            $this->convertAssoc($result),
-            $this->convertAssoc($evalResult),
-            $failure
-        );
+        $result = $this->convertAssoc($result);
+        $evalResult = $this->convertAssoc($evalResult);
+        $this->assertEquals($result, $evalResult, $failure);
     }
 
     public function complianceProvider()
     {
-        $cases = [];
+        $cases = array();
 
         $files = array_map(function ($f) {
             return basename($f, '.json');
@@ -117,12 +106,16 @@ class ComplianceTest extends \PHPUnit_Framework_TestCase
     private function convertAssoc($data)
     {
         if ($data instanceof \stdClass) {
-            return $this->convertAssoc((array) $data);
-        } elseif (is_array($data)) {
-            return array_map([$this, 'convertAssoc'], $data);
-        } else {
-            return $data;
+            $data = (array) $data;
         }
+
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->convertAssoc($value);
+            }
+        }
+
+        return $data;
     }
 
     private function prettyJson($json)

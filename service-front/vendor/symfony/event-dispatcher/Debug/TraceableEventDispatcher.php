@@ -102,14 +102,6 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function getListenerPriority($eventName, $listener)
-    {
-        return $this->dispatcher->getListenerPriority($eventName, $listener);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function hasListeners($eventName = null)
     {
         return $this->dispatcher->hasListeners($eventName);
@@ -193,8 +185,6 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
                 }
             }
         }
-
-        uasort($notCalled, array($this, 'sortListenersByPriority'));
 
         return $notCalled;
     }
@@ -295,7 +285,6 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
     {
         $info = array(
             'event' => $eventName,
-            'priority' => $this->getListenerPriority($eventName, $listener),
         );
         if ($listener instanceof \Closure) {
             $info += array(
@@ -342,26 +331,5 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
         }
 
         return $info;
-    }
-
-    private function sortListenersByPriority($a, $b)
-    {
-        if (is_int($a['priority']) && !is_int($b['priority'])) {
-            return 1;
-        }
-
-        if (!is_int($a['priority']) && is_int($b['priority'])) {
-            return -1;
-        }
-
-        if ($a['priority'] === $b['priority']) {
-            return 0;
-        }
-
-        if ($a['priority'] > $b['priority']) {
-            return -1;
-        }
-
-        return 1;
     }
 }

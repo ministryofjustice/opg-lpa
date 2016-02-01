@@ -15,10 +15,6 @@
             "result": "correct"
          },
          {
-            "expression": "foo\n.\nbar\n.baz",
-            "result": "correct"
-         },
-         {
             "expression": "foo.bar.baz.bad",
             "result": null
          },

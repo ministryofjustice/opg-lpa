@@ -9,38 +9,24 @@
  * file that was distributed with this source code.
  */
 
-<<<<<<< HEAD
 class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
 {
     private $nonce;
-=======
-require_once dirname(dirname(__FILE__)).'/FilesystemHelper.php';
-
-class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
-{
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
     private $classname;
     private $directory;
     private $cache;
 
     protected function setUp()
     {
-<<<<<<< HEAD
         $this->nonce = hash('sha256', uniqid(mt_rand(), true));
         $this->classname = '__Twig_Tests_Cache_FilesystemTest_Template_'.$this->nonce;
         $this->directory = sys_get_temp_dir().'/twig-test-'.$this->nonce;
-=======
-        $nonce = hash('sha256', uniqid(mt_rand(), true));
-        $this->classname = '__Twig_Tests_Cache_FilesystemTest_Template_'.$nonce;
-        $this->directory = sys_get_temp_dir().'/twig-test';
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
         $this->cache = new Twig_Cache_Filesystem($this->directory);
     }
 
     protected function tearDown()
     {
         if (file_exists($this->directory)) {
-<<<<<<< HEAD
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->directory), RecursiveIteratorIterator::CHILD_FIRST);
             foreach ($iterator as $filename => $fileInfo) {
                 if (!$iterator->isDot()) {
@@ -52,9 +38,6 @@ class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
                 }
             }
             rmdir($this->directory);
-=======
-            Twig_Tests_FilesystemHelper::removeDir($this->directory);
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
         }
     }
 
@@ -103,21 +86,10 @@ class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-<<<<<<< HEAD
      * @expectedExceptionMessageRegExp #^Unable to create the cache directory #
      */
     public function testWriteFailMkdir()
     {
-=======
-     * @expectedExceptionMessage Unable to create the cache directory
-     */
-    public function testWriteFailMkdir()
-    {
-        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
-            $this->markTestSkipped('Read-only directories not possible on Windows.');
-        }
-
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
         $key = $this->directory.'/cache/cachefile.php';
         $content = $this->generateSource();
 
@@ -132,21 +104,10 @@ class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-<<<<<<< HEAD
      * @expectedExceptionMessageRegExp #^Unable to write in the cache directory #
      */
     public function testWriteFailDirWritable()
     {
-=======
-     * @expectedExceptionMessage Unable to write in the cache directory
-     */
-    public function testWriteFailDirWritable()
-    {
-        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
-            $this->markTestSkipped('Read-only directories not possible on Windows.');
-        }
-
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
         $key = $this->directory.'/cache/cachefile.php';
         $content = $this->generateSource();
 
@@ -163,11 +124,7 @@ class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-<<<<<<< HEAD
      * @expectedExceptionMessageRegExp #^Failed to write cache file #
-=======
-     * @expectedExceptionMessage Failed to write cache file
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
      */
     public function testWriteFailWriteFile()
     {
@@ -203,34 +160,6 @@ class Twig_Tests_Cache_FilesystemTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $this->cache->getTimestamp($key));
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * Test file cache is tolerant towards trailing (back)slashes on the configured cache directory.
-     *
-     * @dataProvider provideDirectories
-     */
-    public function testGenerateKey($expected, $input)
-    {
-        $cache = new Twig_Cache_Filesystem($input);
-        $this->assertRegExp($expected, $cache->generateKey('_test_', get_class($this)));
-    }
-
-    public function provideDirectories()
-    {
-        $pattern = '#a/b/[a-zA-Z0-9]+/[a-zA-Z0-9]+.php$#';
-
-        return array(
-            array($pattern, 'a/b'),
-            array($pattern, 'a/b/'),
-            array($pattern, 'a/b\\'),
-            array($pattern, 'a/b\\/'),
-            array($pattern, 'a/b\\//'),
-            array('#/'.substr($pattern, 1), '/a/b'),
-        );
-    }
-
->>>>>>> ad369966f1649e91cb6a2708637bb1a3036002bb
     private function generateSource()
     {
         return strtr('<?php class {{classname}} {}', array(

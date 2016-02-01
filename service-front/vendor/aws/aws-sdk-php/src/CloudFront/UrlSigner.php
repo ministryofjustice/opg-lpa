@@ -10,7 +10,8 @@ use Psr\Http\Message\UriInterface;
  */
 class UrlSigner
 {
-    private $signer;
+    private $keyPairId;
+    private $pk;
 
     /**
      * @param $keyPairId  string ID of the key pair
@@ -21,7 +22,20 @@ class UrlSigner
      */
     public function __construct($keyPairId, $privateKey)
     {
-        $this->signer = new Signer($keyPairId, $privateKey);
+        if (!extension_loaded('openssl')) {
+            //@codeCoverageIgnoreStart
+            throw new \RuntimeException('The openssl extension is required to '
+                . 'sign CloudFront urls.');
+            //@codeCoverageIgnoreEnd
+        }
+
+        $this->keyPairId = $keyPairId;
+
+        if (!file_exists($privateKey)) {
+            throw new \InvalidArgumentException("PK file not found: $privateKey");
+        }
+
+        $this->pk = file_get_contents($privateKey);
     }
 
     /**
@@ -33,7 +47,7 @@ class UrlSigner
      * - mp4:<path>, some require you to add "/cfx/st" into your URL).
      *
      * @param string              $url     URL to sign (can include query
-     *                                     string string and wildcards)
+     *                                     string string and wildcards
      * @param string|integer|null $expires UTC Unix timestamp used when signing
      *                                     with a canned policy. Not required
      *                                     when passing a custom $policy.
@@ -57,31 +71,71 @@ class UrlSigner
         // Get the real scheme by removing wildcards from the scheme
         $scheme = str_replace('*', '', $urlSections[0]);
         $uri = new Uri($scheme . '://' . $urlSections[1]);
+
+        if ($policy) {
+            $isCustom = true;
+        } else {
+            $isCustom = false;
+            $policy = $this->createCannedPolicy($scheme, (string) $uri, $expires);
+        }
+
+        $policy = str_replace(' ', '', $policy);
         $query = Psr7\parse_query($uri->getQuery(), PHP_QUERY_RFC3986);
-        $signature = $this->signer->getSignature(
-            $this->createResource($scheme, (string) $uri),
-            $expires,
-            $policy
-        );
-        $uri = $uri->withQuery(
-            http_build_query($query + $signature, null, '&', PHP_QUERY_RFC3986)
-        );
+        $query = $this->prepareQuery($isCustom, $policy, $query, $expires);
+        $uri = $uri->withQuery(http_build_query($query, null, '&', PHP_QUERY_RFC3986));
 
         return $scheme === 'rtmp'
             ? $this->createRtmpUrl($uri)
             : (string) $uri;
     }
 
-    private function createRtmpUrl(UriInterface $uri)
+    private function prepareQuery($isCustom, $policy, array $query, $expires)
     {
-        // Use a relative URL when creating Flash player URLs
-        $result = ltrim($uri->getPath(), '/');
-
-        if ($query = $uri->getQuery()) {
-            $result .= '?' . $query;
+        if ($isCustom) {
+            // Custom policies require the encoded policy be specified in query
+            $query['Policy'] = strtr(base64_encode($policy), '+=/', '-_~');
+        } else {
+            // Canned policies require "Expires" in the URL.
+            $query['Expires'] = $expires;
         }
 
-        return $result;
+        $query['Signature'] = $this->signPolicy($policy);
+        $query['Key-Pair-Id'] = $this->keyPairId;
+
+        return $query;
+    }
+
+    private function rsaSha1Sign($policy)
+    {
+        $signature = '';
+        openssl_sign($policy, $signature, $this->pk);
+
+        return $signature;
+    }
+
+    private function createCannedPolicy($scheme, $url, $expires)
+    {
+        if (!$expires) {
+            throw new \InvalidArgumentException('An expires option is '
+                . 'required when using a canned policy');
+        }
+
+        return sprintf(
+            '{"Statement":[{"Resource":"%s","Condition":{"DateLessThan":{"AWS:EpochTime":%d}}}]}',
+            $this->createResource($scheme, $url),
+            $expires
+        );
+    }
+
+    private function signPolicy($policy)
+    {
+        // Sign the policy using the CloudFront private key
+        $signedPolicy = $this->rsaSha1Sign($policy);
+        // Remove whitespace, base64 encode the policy, and replace special
+        // characters.
+        $signedPolicy = strtr(base64_encode($signedPolicy), '+=/', '-_~');
+
+        return $signedPolicy;
     }
 
     /**
@@ -94,7 +148,6 @@ class UrlSigner
     {
         switch ($scheme) {
             case 'http':
-            case 'http*':
             case 'https':
                 return $url;
             case 'rtmp':
@@ -115,5 +168,17 @@ class UrlSigner
 
         throw new \InvalidArgumentException("Invalid URI scheme: {$scheme}. "
             . "Scheme must be one of: http, https, or rtmp");
+    }
+
+    private function createRtmpUrl(UriInterface $uri)
+    {
+        // Use a relative URL when creating Flash player URLs
+        $result = ltrim($uri->getPath(), '/');
+
+        if ($query = $uri->getQuery()) {
+            $result .= '?' . $query;
+        }
+
+        return $result;
     }
 }
