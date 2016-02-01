@@ -65,7 +65,7 @@ abstract class AbstractClient {
      * @param $id
      * @return bool True if the item existed and was deleted. False otherwise.
      */
-    public function dequeue( $id ){
+    public function deleteJob( $id ){
 
         $result = $this->client->deleteItem([
             'TableName'      => $this->config['table_name'],

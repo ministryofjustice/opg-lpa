@@ -6,11 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'b12accd861ed682ce314297046b7e8de' => $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
-    '025bea19df83471e989e01acafc2c4ae' => $vendorDir . '/guzzlehttp/psr7/src/functions_include.php',
-    '0c6cbb9f3b940f8793568234794898a5' => $vendorDir . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/functions.php',
-    '490132635c2242f734334b7c79438624' => $vendorDir . '/mtdowling/jmespath.php/src/JmesPath.php',
-    'fa32ece6c8db8a379982ca0b929df511' => $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
-    'f1a8b258cf6854bbbc358cc7e65f84fc' => $vendorDir . '/aws/aws-sdk-php/src/functions.php',
-    '14fe5a0d3c05542f73c6f21e946f989c' => $vendorDir . '/wp-cli/php-cli-tools/lib/cli/cli.php',
+    'c964ee0ededf28c96ebd9db5099ef910' => $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
+    'a0edc8309cc5e1d60e3047b5df6b7052' => $vendorDir . '/guzzlehttp/psr7/src/functions_include.php',
+    '185c4e929cdca231b7544ab54e07fde3' => $vendorDir . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/functions.php',
+    'b067bc7112e384b61c701452d53a14a8' => $vendorDir . '/mtdowling/jmespath.php/src/JmesPath.php',
+    '37a3dc5111fe8f707ab4c132ef1dbc62' => $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
+    '8a9dc1de0ca7e01f3e08231539562f61' => $vendorDir . '/aws/aws-sdk-php/src/functions.php',
+    '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
+    'be01b9b16925dcb22165c40b46681ac6' => $vendorDir . '/wp-cli/php-cli-tools/lib/cli/cli.php',
 );
