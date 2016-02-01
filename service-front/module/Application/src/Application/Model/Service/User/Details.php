@@ -6,12 +6,6 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 use Application\Model\Service\ServiceDataInputInterface;
 
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
-
-use Application\Model\Service\Mail\Message as MailMessage;
-use Opg\Lpa\Api\Client\Client;
-
 class Details implements ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
@@ -73,58 +67,39 @@ class Details implements ServiceLocatorAwareInterface {
      * Update the user's email address.
      *
      * @param ServiceDataInputInterface $details
-     * @param Callback function $activateEmailCallback
-     * @param string $currentAddress
-     * @param string $userId
-     * 
      * @return bool|string
      */
-    public function requestEmailUpdate( 
-        ServiceDataInputInterface $details, 
-        $activateEmailCallback, 
-        $currentAddress, 
-        $userId 
-    ){
-        
-        $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
-        
+    public function updateEmailAddress( ServiceDataInputInterface $details ){
+
         $this->getServiceLocator()->get('Logger')->info(
-            'Requesting email update to new email: ' . $details->getDataForModel()['email'],
-            $identityArray    
+            'Updating email address to ' . $details->getDataForModel()['email'],
+            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $updateToken = $client->requestEmailUpdate( strtolower($details->getDataForModel()['email']) );
+        $result = $client->updateAuthEmail( strtolower($details->getDataForModel()['email']) );
 
         //---
 
-        if( !is_string($updateToken) ){
+        if( $result !== true ){
 
-            // Error...
-            $body = $client->getLastContent();
+            // There was an error...
 
-            if( isset($body['detail']) ){
-                switch ($body['detail']) {
-                    case 'User already has this email' : 
-                        return 'user-already-has-email';
-                    case 'Email already exists for another user': 
-                        return 'email-already-exists';
-                    default: 
-                        return 'unknown-error';
-                }
+            $error = $client->getLastContent();
+
+            if( isset($error['error_description']) && $error['error_description'] == 'email address is already registered' ){
+                return 'address-already-registered';
+            } else {
+                return 'unknown-error';
             }
 
-            return "unknown-error";
-            
         } // if
 
-        $this->sendNotifyNewEmailEmail( $currentAddress, $details->getDataForModel()['email'] );
-        
-        return $this->sendActivateNewEmailEmail( $details->getDataForModel()['email'], $activateEmailCallback( $userId, $updateToken ) );
-
+        return true;
 
     } // function
+<<<<<<< HEAD
     
     function sendActivateNewEmailEmail( $newEmailAddress, $activateUrl ) {
         
@@ -245,6 +220,8 @@ class Details implements ServiceLocatorAwareInterface {
         
         return $success === true;
     }
+=======
+>>>>>>> develop
 
     /**
      * Update the user's password.
@@ -254,34 +231,23 @@ class Details implements ServiceLocatorAwareInterface {
      */
     public function updatePassword( ServiceDataInputInterface $details ){
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
-        
         $this->getServiceLocator()->get('Logger')->info(
             'Updating password',
-            $identity->toArray()
+            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $result = $client->updateAuthPassword(
-            $details->getDataForModel()['password_current'],
-            $details->getDataForModel()['password'] 
-        );
+        $result = $client->updateAuthPassword( $details->getDataForModel()['password'] );
 
         //---
 
-        if( !is_string($result) ){
+        if( $result !== true ){
 
             return 'unknown-error';
 
         } // if
 
-        // Update the identity with the new token to avoid being
-        // logged out after the redirect. We don't need to update the token
-        // on the API client because this will happen on the next request
-        // when it reads it from the identity.
-        $identity->setToken($result);
-        
         return true;
 
     } // function

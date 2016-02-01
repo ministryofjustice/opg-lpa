@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\HeaderBag;
 
 class HeaderBagTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::__construct
+     */
     public function testConstructor()
     {
         $bag = new HeaderBag(array('foo' => 'bar'));
@@ -64,6 +67,9 @@ class HeaderBagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('#a', $bag->getCacheControlDirective('public'));
     }
 
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::all
+     */
     public function testAll()
     {
         $bag = new HeaderBag(array('foo' => 'bar'));
@@ -73,6 +79,9 @@ class HeaderBagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('foo' => array('BAR')), $bag->all(), '->all() gets all the input key are lower case');
     }
 
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::replace
+     */
     public function testReplace()
     {
         $bag = new HeaderBag(array('foo' => 'bar'));
@@ -82,6 +91,9 @@ class HeaderBagTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($bag->has('foo'), '->replace() overrides previously set the input');
     }
 
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::get
+     */
     public function testGet()
     {
         $bag = new HeaderBag(array('foo' => 'bar', 'fuzz' => 'bizz'));
@@ -107,6 +119,9 @@ class HeaderBagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('value'), $bag->get('foo', 'nope', false), 'assoc indices of multi-valued headers are ignored');
     }
 
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::contains
+     */
     public function testContains()
     {
         $bag = new HeaderBag(array('foo' => 'bar', 'fuzz' => 'bizz'));
@@ -171,6 +186,9 @@ class HeaderBagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $bag->getCacheControlDirective('max-age'));
     }
 
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::getIterator
+     */
     public function testGetIterator()
     {
         $headers = array('foo' => 'bar', 'hello' => 'world', 'third' => 'charm');
@@ -185,6 +203,9 @@ class HeaderBagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($headers), $i);
     }
 
+    /**
+     * @covers Symfony\Component\HttpFoundation\HeaderBag::count
+     */
     public function testCount()
     {
         $headers = array('foo' => 'bar', 'HELLO' => 'WORLD');

@@ -16,13 +16,16 @@ use Symfony\Component\Translation\Dumper\MoFileDumper;
 
 class MoFileDumperTest extends \PHPUnit_Framework_TestCase
 {
-    public function testFormatCatalogue()
+    public function testDump()
     {
         $catalogue = new MessageCatalogue('en');
         $catalogue->add(array('foo' => 'bar'));
 
+        $tempDir = sys_get_temp_dir();
         $dumper = new MoFileDumper();
+        $dumper->dump($catalogue, array('path' => $tempDir));
+        $this->assertEquals(file_get_contents(__DIR__.'/../fixtures/resources.mo'), file_get_contents($tempDir.'/messages.en.mo'));
 
-        $this->assertStringEqualsFile(__DIR__.'/../fixtures/resources.mo', $dumper->formatCatalogue($catalogue, 'messages'));
+        unlink($tempDir.'/messages.en.mo');
     }
 }

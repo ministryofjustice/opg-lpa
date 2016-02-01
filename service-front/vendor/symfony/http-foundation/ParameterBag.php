@@ -78,9 +78,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns a parameter by name.
      *
-     * Note: Finding deep items is deprecated since version 2.8, to be removed in 3.0.
-     *
-     * @param string $key     The key
+     * @param string $path    The key
      * @param mixed  $default The default value if the parameter key does not exist
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
@@ -88,25 +86,21 @@ class ParameterBag implements \IteratorAggregate, \Countable
      *
      * @throws \InvalidArgumentException
      */
-    public function get($key, $default = null, $deep = false)
+    public function get($path, $default = null, $deep = false)
     {
-        if ($deep) {
-            @trigger_error('Using paths to find deeper items in '.__METHOD__.' is deprecated since version 2.8 and will be removed in 3.0. Filter the returned value in your own code instead.', E_USER_DEPRECATED);
+        if (!$deep || false === $pos = strpos($path, '[')) {
+            return array_key_exists($path, $this->parameters) ? $this->parameters[$path] : $default;
         }
 
-        if (!$deep || false === $pos = strpos($key, '[')) {
-            return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
-        }
-
-        $root = substr($key, 0, $pos);
+        $root = substr($path, 0, $pos);
         if (!array_key_exists($root, $this->parameters)) {
             return $default;
         }
 
         $value = $this->parameters[$root];
         $currentKey = null;
-        for ($i = $pos, $c = strlen($key); $i < $c; ++$i) {
-            $char = $key[$i];
+        for ($i = $pos, $c = strlen($path); $i < $c; ++$i) {
+            $char = $path[$i];
 
             if ('[' === $char) {
                 if (null !== $currentKey) {
@@ -178,7 +172,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Returns the alphabetic characters of the parameter value.
      *
      * @param string $key     The parameter key
-     * @param string $default The default value if the parameter key does not exist
+     * @param mixed  $default The default value if the parameter key does not exist
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return string The filtered value
@@ -192,7 +186,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Returns the alphabetic characters and digits of the parameter value.
      *
      * @param string $key     The parameter key
-     * @param string $default The default value if the parameter key does not exist
+     * @param mixed  $default The default value if the parameter key does not exist
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return string The filtered value
@@ -206,7 +200,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
      * Returns the digits of the parameter value.
      *
      * @param string $key     The parameter key
-     * @param string $default The default value if the parameter key does not exist
+     * @param mixed  $default The default value if the parameter key does not exist
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return string The filtered value
@@ -214,14 +208,14 @@ class ParameterBag implements \IteratorAggregate, \Countable
     public function getDigits($key, $default = '', $deep = false)
     {
         // we need to remove - and + because they're allowed in the filter
-        return str_replace(array('-', '+'), '', $this->filter($key, $default, FILTER_SANITIZE_NUMBER_INT, array(), $deep));
+        return str_replace(array('-', '+'), '', $this->filter($key, $default, $deep, FILTER_SANITIZE_NUMBER_INT));
     }
 
     /**
      * Returns the parameter value converted to integer.
      *
      * @param string $key     The parameter key
-     * @param int    $default The default value if the parameter key does not exist
+     * @param mixed  $default The default value if the parameter key does not exist
      * @param bool   $deep    If true, a path like foo[bar] will find deeper items
      *
      * @return int The filtered value
@@ -242,7 +236,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
      */
     public function getBoolean($key, $default = false, $deep = false)
     {
-        return $this->filter($key, $default, FILTER_VALIDATE_BOOLEAN, array(), $deep);
+        return $this->filter($key, $default, $deep, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -250,31 +244,16 @@ class ParameterBag implements \IteratorAggregate, \Countable
      *
      * @param string $key     Key.
      * @param mixed  $default Default = null.
+     * @param bool   $deep    Default = false.
      * @param int    $filter  FILTER_* constant.
      * @param mixed  $options Filter options.
-     * @param bool   $deep    Default = false.
      *
      * @see http://php.net/manual/en/function.filter-var.php
      *
      * @return mixed
      */
-    public function filter($key, $default = null, $filter = FILTER_DEFAULT, $options = array(), $deep = false)
+    public function filter($key, $default = null, $deep = false, $filter = FILTER_DEFAULT, $options = array())
     {
-        static $filters = null;
-
-        if (null === $filters) {
-            foreach (filter_list() as $tmp) {
-                $filters[filter_id($tmp)] = 1;
-            }
-        }
-        if (is_bool($filter) || !isset($filters[$filter]) || is_array($deep)) {
-            @trigger_error('Passing the $deep boolean as 3rd argument to the '.__METHOD__.' method is deprecated since version 2.8 and will be removed in 3.0. Remove it altogether as the $deep argument will be removed in 3.0.', E_USER_DEPRECATED);
-            $tmp = $deep;
-            $deep = $filter;
-            $filter = $options;
-            $options = $tmp;
-        }
-
         $value = $this->get($key, $default, $deep);
 
         // Always turn $options into an array - this allows filter_var option shortcuts.

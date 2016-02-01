@@ -1,7 +1,6 @@
 <?php
 namespace Aws\Api\ErrorParser;
 
-use Aws\Api\Parser\PayloadParserTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -9,8 +8,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait JsonParserTrait
 {
-    use PayloadParserTrait;
-
     private function genericHandler(ResponseInterface $response)
     {
         $code = (string) $response->getStatusCode();
@@ -20,7 +17,7 @@ trait JsonParserTrait
             'code'        => null,
             'message'     => null,
             'type'        => $code[0] == '4' ? 'client' : 'server',
-            'parsed'      => $this->parseJson($response->getBody())
+            'parsed'      => json_decode($response->getBody(), true)
         ];
     }
 }

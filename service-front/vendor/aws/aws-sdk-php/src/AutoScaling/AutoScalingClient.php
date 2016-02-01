@@ -96,8 +96,6 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise setDesiredCapacityAsync(array $args = [])
  * @method \Aws\Result setInstanceHealth(array $args = [])
  * @method \GuzzleHttp\Promise\Promise setInstanceHealthAsync(array $args = [])
- * @method \Aws\Result setInstanceProtection(array $args = [])
- * @method \GuzzleHttp\Promise\Promise setInstanceProtectionAsync(array $args = [])
  * @method \Aws\Result suspendProcesses(array $args = [])
  * @method \GuzzleHttp\Promise\Promise suspendProcessesAsync(array $args = [])
  * @method \Aws\Result terminateInstanceInAutoScalingGroup(array $args = [])

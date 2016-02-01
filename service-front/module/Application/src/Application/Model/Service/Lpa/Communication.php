@@ -24,15 +24,12 @@ class Communication implements ServiceLocatorAwareInterface {
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        //$this->sendDelayedSurveyEmail( $lpa, $signinUrl );
+        $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
         return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
         
     }
-
-    /**
-     * Disabled by commenting out above.
-     */
+    
     private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
         
         $startDate = '2015-10-12';

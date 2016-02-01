@@ -2,25 +2,25 @@
     "given": {
         "foo": {
             "bar": {
-                "baz": "val"
+                "baz": "one"
             },
             "other": {
-                "baz": "val"
+                "baz": "two"
             },
             "other2": {
-                "baz": "val"
+                "baz": "three"
             },
             "other3": {
                 "notbaz": ["a", "b", "c"]
             },
             "other4": {
-                "notbaz": ["a", "b", "c"]
+                "notbaz": ["d", "e", "f"]
             },
             "other5": {
                 "other": {
                     "a": 1,
-                    "b": 1,
-                    "c": 1
+                    "b": 2,
+                    "c": 3
                 }
             }
         }
@@ -28,56 +28,43 @@
     "cases": [
          {
             "expression": "foo.*.baz",
-            "result": ["val", "val", "val"]
+            "result": ["one", "two", "three"]
          },
          {
             "expression": "foo.bar.*",
-            "result": ["val"]
+            "result": ["one"]
          },
          {
             "expression": "foo.*.notbaz",
-            "result": [["a", "b", "c"], ["a", "b", "c"]]
+            "result": [["a", "b", "c"], ["d", "e", "f"]]
          },
          {
             "expression": "foo.*.notbaz[0]",
-            "result": ["a", "a"]
+            "result": ["a", "d"]
          },
          {
             "expression": "foo.*.notbaz[-1]",
-            "result": ["c", "c"]
-         }
-    ]
-}, {
-    "given": {
-        "foo": {
-            "first-1": {
-                "second-1": "val"
-            },
-            "first-2": {
-                "second-1": "val"
-            },
-            "first-3": {
-                "second-1": "val"
-            }
-        }
-    },
-    "cases": [
+            "result": ["c", "f"]
+         },
          {
             "expression": "foo.*",
-            "result": [{"second-1": "val"}, {"second-1": "val"},
-                       {"second-1": "val"}]
+            "result": [{"baz": "one"}, {"baz": "two"}, {"baz": "three"},
+                       {"notbaz": ["a", "b", "c"]}, {"notbaz": ["d", "e", "f"]},
+                       {"other": {"a": 1, "b": 2, "c": 3}}]
          },
          {
             "expression": "foo.*.*",
-            "result": [["val"], ["val"], ["val"]]
+            "result": [["one"], ["two"], ["three"],
+                       [["a", "b", "c"]], [["d", "e", "f"]],
+                       [{"a": 1, "b": 2, "c": 3}]]
          },
          {
             "expression": "foo.*.*.*",
-            "result": [[], [], []]
+            "result": [[], [], [], [], [], [[1, 2, 3]]]
          },
          {
             "expression": "foo.*.*.*.*",
-            "result": [[], [], []]
+            "result": [[], [], [], [], [], [[]]]
          }
     ]
 }, {
@@ -86,7 +73,7 @@
             "bar": "one"
         },
         "other": {
-            "bar": "one"
+            "bar": "two"
         },
         "nomatch": {
             "notbar": "three"
@@ -95,7 +82,7 @@
     "cases": [
          {
             "expression": "*.bar",
-            "result": ["one", "one"]
+            "result": ["one", "two"]
          }
     ]
 }, {
@@ -104,32 +91,37 @@
             "sub1": {"foo": "one"}
         },
         "top2": {
-            "sub1": {"foo": "one"}
+            "sub1": {"foo": "two"}
+        },
+        "top3": {
+            "sub3": {"notfoo": "notfoo"}
         }
     },
     "cases": [
          {
             "expression": "*",
             "result": [{"sub1": {"foo": "one"}},
-                       {"sub1": {"foo": "one"}}]
+                       {"sub1": {"foo": "two"}},
+                       { "sub3": {"notfoo": "notfoo"}}]
          },
          {
             "expression": "*.sub1",
             "result": [{"foo": "one"},
-                       {"foo": "one"}]
+                       {"foo": "two"}]
          },
          {
             "expression": "*.*",
             "result": [[{"foo": "one"}],
-                       [{"foo": "one"}]]
+                       [{"foo": "two"}],
+                       [{"notfoo": "notfoo"}]]
          },
          {
-            "expression": "*.*.foo[]",
-            "result": ["one", "one"]
+            "expression": "*.*.foo",
+            "result": [["one"], ["two"], []]
          },
          {
             "expression": "*.sub1.foo",
-            "result": ["one", "one"]
+            "result": ["one", "two"]
          }
     ]
 },
@@ -417,7 +409,7 @@
 {
     "given": {
         "string": "string",
-        "hash": {"foo": "val", "bar": "val"},
+        "hash": {"foo": "bar", "bar": "baz"},
         "number": 23,
         "array": [1, 2, 3],
         "nullvalue": null
@@ -429,7 +421,7 @@
          },
          {
             "expression": "hash.*",
-            "result": ["val", "val"]
+            "result": ["bar", "baz"]
          },
          {
             "expression": "number.*",
@@ -448,12 +440,12 @@
 {
     "given": {
         "a": [0, 1, 2],
-        "b": [0, 1, 2]
+        "b": [3, 4, 5]
      },
      "cases": [
          {
             "expression": "*[0]",
-            "result": [0, 0]
+            "result": [0, 3]
          }
      ]
 }

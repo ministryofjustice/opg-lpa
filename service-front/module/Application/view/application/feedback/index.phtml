@@ -1,0 +1,83 @@
+<?php
+$form = $this->formErrorTextExchange($this->form, []);
+
+$csrf = $form->get($form->csrfName());
+
+$form->setAttribute('class', 'form');
+
+$type = $form->get('rating');
+$typeValueOptions = $type->getOptions()['value_options'];
+
+$typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
+$typeValueOptions['satisfied']['label'] = 'Satisfied';
+$typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied or dissatisfied';
+$typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
+$typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
+
+$details = $form->get('details');
+
+$details->setAttributes([
+    'id' => 'details',
+    'rows' => 10,
+    'cols' => 67,
+    'maxlength' => 2000
+]);
+
+$email = $form->get('email');
+
+$email->setAttributes([
+    'id' => 'email',
+    'type' => 'email',
+    'maxlength' => 100
+]);
+
+$type->setOptions([
+    'value_options' => $typeValueOptions
+]);
+
+$formLabel = $this->plugin('formLabel');
+?>
+
+<?= $this->form()->openTag($form); ?>
+<?= $this->formElement($csrf)?>
+<?= $this->formErrorList(); ?>
+
+<div class="form_element">
+    <?= $formLabel->openTag($type)?>
+    <strong>How would you rate your experience with this service?</strong>
+    <?= $formLabel->closeTag(); ?>
+    <?= $this->formElementErrors($type)?>
+    <?= $this->formElement($type)?>
+</div>
+
+<div class="group form_element">
+    <?= $formLabel->openTag($details)?>
+    <strong>Please take a moment to tell us about your experience, what worked and what didn't.</strong>
+    <?= $formLabel->closeTag(); ?>
+
+    <?= $this->formElementErrors($details)?>
+    
+    <p>
+    <?= $this->formElement($details)?>
+    <div id="char-limit">2000 characters max</div>
+    </p>
+</div>
+
+<div class="form_element">
+    <?= $formLabel->openTag($email)?>
+    We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.
+    <br><br>
+    <strong>Your email address (optional)</strong>
+    <?= $formLabel->closeTag(); ?>
+    <?= $this->formElementErrors($email)?>
+    <p>
+    <?= $this->formElement($email)?>
+    </p>
+</div>
+
+<p>
+	<input type="submit" name="send" id="send" value="Send" class="button">
+</p>
+<?= $this->form()->closeTag(); ?>
+            
+            

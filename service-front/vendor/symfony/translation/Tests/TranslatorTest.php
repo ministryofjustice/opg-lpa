@@ -497,10 +497,9 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group legacy
      * @dataProvider dataProviderGetMessages
      */
-    public function testLegacyGetMessages($resources, $locale, $expected)
+    public function testGetMessages($resources, $locale, $expected)
     {
         $locales = array_keys($resources);
         $_locale = null !== $locale ? $locale : reset($locales);

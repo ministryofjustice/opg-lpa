@@ -75,10 +75,6 @@ class User {
     public function token(){
         return $this->token;
     }
-    
-    public function setToken($token){
-        $this->token = $token;
-    }
 
     public function lastLogin(){
         

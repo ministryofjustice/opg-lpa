@@ -17,60 +17,38 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 /**
  * Base catalogues binary operation class.
  *
- * A catalogue binary operation performs operation on
- * source (the left argument) and target (the right argument) catalogues.
- *
  * @author Jean-François Simon <contact@jfsimon.fr>
  */
 abstract class AbstractOperation implements OperationInterface
 {
     /**
-     * @var MessageCatalogueInterface The source catalogue
+     * @var MessageCatalogueInterface
      */
     protected $source;
 
     /**
-     * @var MessageCatalogueInterface The target catalogue
+     * @var MessageCatalogueInterface
      */
     protected $target;
 
     /**
-     * @var MessageCatalogue The result catalogue
+     * @var MessageCatalogue
      */
     protected $result;
 
     /**
-     * @var null|array The domains affected by this operation
+     * @var null|array
      */
     private $domains;
 
     /**
-     * This array stores 'all', 'new' and 'obsolete' messages for all valid domains.
-     *
-     * The data structure of this array is as follows:
-     * ```php
-     * array(
-     *     'domain 1' => array(
-     *         'all' => array(...),
-     *         'new' => array(...),
-     *         'obsolete' => array(...)
-     *     ),
-     *     'domain 2' => array(
-     *         'all' => array(...),
-     *         'new' => array(...),
-     *         'obsolete' => array(...)
-     *     ),
-     *     ...
-     * )
-     * ```
-     *
-     * @var array The array that stores 'all', 'new' and 'obsolete' messages
+     * @var array
      */
     protected $messages;
 
     /**
-     * @param MessageCatalogueInterface $source The source catalogue
-     * @param MessageCatalogueInterface $target The target catalogue
+     * @param MessageCatalogueInterface $source
+     * @param MessageCatalogueInterface $target
      *
      * @throws \LogicException
      */
@@ -162,10 +140,7 @@ abstract class AbstractOperation implements OperationInterface
     }
 
     /**
-     * Performs operation on source and target catalogues for the given domain and
-     * stores the results.
-     *
-     * @param string $domain The domain which the operation will be performed for
+     * @param string $domain
      */
     abstract protected function processDomain($domain);
 }

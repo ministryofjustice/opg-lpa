@@ -25,8 +25,6 @@ class Lexer
     const T_UNKNOWN = 'unknown';
     const T_PIPE = 'pipe';
     const T_OR = 'or';
-    const T_AND = 'and';
-    const T_NOT = 'not';
     const T_FILTER = 'filter';
     const T_LITERAL = 'literal';
     const T_EOF = 'eof';
@@ -45,7 +43,6 @@ class Lexer
     const STATE_GT = 10;
     const STATE_EQ = 11;
     const STATE_NOT = 12;
-    const STATE_AND = 13;
 
     /** @var array We know what token we are consuming based on each char */
     private static $transitionTable = [
@@ -55,7 +52,6 @@ class Lexer
         '!'  => self::STATE_NOT,
         '['  => self::STATE_LBRACKET,
         '|'  => self::STATE_PIPE,
-        '&'  => self::STATE_AND,
         '`'  => self::STATE_JSON_LITERAL,
         '"'  => self::STATE_QUOTED_STRING,
         "'"  => self::STATE_STRING_LITERAL,
@@ -80,6 +76,7 @@ class Lexer
         ','  => self::STATE_SINGLE_CHAR,
         ':'  => self::STATE_SINGLE_CHAR,
         '@'  => self::STATE_SINGLE_CHAR,
+        '&'  => self::STATE_SINGLE_CHAR,
         '('  => self::STATE_SINGLE_CHAR,
         ')'  => self::STATE_SINGLE_CHAR,
         '{'  => self::STATE_SINGLE_CHAR,
@@ -170,6 +167,7 @@ class Lexer
         ',' => self::T_COMMA,
         ':' => self::T_COLON,
         '@' => self::T_CURRENT,
+        '&' => self::T_EXPREF,
         '(' => self::T_LPAREN,
         ')' => self::T_RPAREN,
         '{' => self::T_LBRACE,
@@ -270,9 +268,7 @@ class Lexer
             } elseif ($state === self::STATE_STRING_LITERAL) {
 
                 // Consume raw string literals
-                $t = $this->inside($chars, "'", self::T_LITERAL);
-                $t['value'] = str_replace("\\'", "'", $t['value']);
-                $tokens[] = $t;
+                $tokens[] = $this->inside($chars, "'", self::T_LITERAL);
 
             } elseif ($state === self::STATE_PIPE) {
 
@@ -319,14 +315,10 @@ class Lexer
                 // Consume equals
                 $tokens[] = $this->matchOr($chars, '=', '=', self::T_COMPARATOR, self::T_UNKNOWN);
 
-            } elseif ($state == self::STATE_AND) {
-
-                $tokens[] = $this->matchOr($chars, '&', '&', self::T_AND, self::T_EXPREF);
-
             } elseif ($state === self::STATE_NOT) {
 
                 // Consume not equal
-                $tokens[] = $this->matchOr($chars, '!', '=', self::T_COMPARATOR, self::T_NOT);
+                $tokens[] = $this->matchOr($chars, '!', '=', self::T_COMPARATOR, self::T_UNKNOWN);
 
             } else {
 

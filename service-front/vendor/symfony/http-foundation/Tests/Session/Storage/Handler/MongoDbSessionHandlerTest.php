@@ -34,7 +34,6 @@ class MongoDbSessionHandlerTest extends \PHPUnit_Framework_TestCase
         $mongoClass = version_compare(phpversion('mongo'), '1.3.0', '<') ? 'Mongo' : 'MongoClient';
 
         $this->mongo = $this->getMockBuilder($mongoClass)
-            ->disableOriginalConstructor()
             ->getMock();
 
         $this->options = array(
@@ -242,8 +241,13 @@ class MongoDbSessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     private function createMongoCollectionMock()
     {
+        $mongoClient = $this->getMockBuilder('MongoClient')
+            ->getMock();
+        $mongoDb = $this->getMockBuilder('MongoDB')
+            ->setConstructorArgs(array($mongoClient, 'database-name'))
+            ->getMock();
         $collection = $this->getMockBuilder('MongoCollection')
-            ->disableOriginalConstructor()
+            ->setConstructorArgs(array($mongoDb, 'collection-name'))
             ->getMock();
 
         return $collection;
