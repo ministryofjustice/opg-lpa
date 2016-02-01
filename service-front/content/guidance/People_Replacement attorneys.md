@@ -1,4 +1,4 @@
-# Replacement attorneys
+## Replacement attorneys
 
 Replacement attorneys are people you choose to step in if one of your original attorneys can no longer make decisions on your behalf.
 

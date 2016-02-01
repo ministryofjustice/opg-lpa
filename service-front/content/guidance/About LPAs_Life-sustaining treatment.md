@@ -1,4 +1,4 @@
-# Life-sustaining treatment
+## Life-sustaining treatment
 
 'Life-sustaining treatment' means care, surgery, medicine or other help from doctors that's needed to keep someone alive.
 

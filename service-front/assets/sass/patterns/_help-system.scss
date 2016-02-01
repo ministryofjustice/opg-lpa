@@ -116,19 +116,19 @@
 		}
 	}
 	article:first-child {
-		h1 {
+		h2:first-child {
 			@include media($min-width: 640px) {
 				margin-top: 0;
 			}
 		}
 	}
-	h1 {
-		@extend .heading-large;
-		#popup & {
-			@extend .heading-xlarge;
-		}
-	}
 	h2 {
+		&:first-child {
+			@extend .heading-large;
+			#popup & {
+				@extend .heading-xlarge;
+			}
+		}
 		@extend .heading-medium;
 	}
 	h3 {

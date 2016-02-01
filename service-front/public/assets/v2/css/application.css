@@ -1051,7 +1051,7 @@ main {
       font-size: 16px;
       line-height: 1.25; } }
 
-.heading-xlarge, #popup .help-sections h1 {
+.heading-xlarge, #popup .help-sections h2:first-child {
   font-family: "nta", Arial, sans-serif;
   font-size: 32px;
   line-height: 1.09375;
@@ -1060,14 +1060,14 @@ main {
   margin-top: 0.46875em;
   margin-bottom: 0.9375em; }
   @media (min-width: 641px) {
-    .heading-xlarge, #popup .help-sections h1 {
+    .heading-xlarge, #popup .help-sections h2:first-child {
       font-size: 48px;
       line-height: 1.04167; } }
   @media (min-width: 641px) {
-    .heading-xlarge, #popup .help-sections h1 {
+    .heading-xlarge, #popup .help-sections h2:first-child {
       margin-top: 0.625em;
       margin-bottom: 1.25em; } }
-  .heading-xlarge .heading-secondary, #popup .help-sections h1 .heading-secondary {
+  .heading-xlarge .heading-secondary, #popup .help-sections h2:first-child .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 20px;
     line-height: 1.11111;
@@ -1078,15 +1078,15 @@ main {
     display: block;
     color: #6f777b; }
     @media (min-width: 641px) {
-      .heading-xlarge .heading-secondary, #popup .help-sections h1 .heading-secondary {
+      .heading-xlarge .heading-secondary, #popup .help-sections h2:first-child .heading-secondary {
         font-size: 27px;
         line-height: 1.11111; } }
     @media (min-width: 641px) {
-      .heading-xlarge .heading-secondary, #popup .help-sections h1 .heading-secondary {
+      .heading-xlarge .heading-secondary, #popup .help-sections h2:first-child .heading-secondary {
         padding-top: 4px;
         padding-bottom: 6px; } }
 
-.heading-large, .help-sections h1 {
+.heading-large, .help-sections h2:first-child {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -1095,14 +1095,14 @@ main {
   margin-top: 1.04167em;
   margin-bottom: 0.41667em; }
   @media (min-width: 641px) {
-    .heading-large, .help-sections h1 {
+    .heading-large, .help-sections h2:first-child {
       font-size: 36px;
       line-height: 1.11111; } }
   @media (min-width: 641px) {
-    .heading-large, .help-sections h1 {
+    .heading-large, .help-sections h2:first-child {
       margin-top: 1.25em;
       margin-bottom: 0.55556em; } }
-  .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+  .heading-large .heading-secondary, .help-sections h2:first-child .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -1113,11 +1113,11 @@ main {
     display: block;
     color: #6f777b; }
     @media (min-width: 641px) {
-      .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+      .heading-large .heading-secondary, .help-sections h2:first-child .heading-secondary {
         font-size: 24px;
         line-height: 1.25; } }
     @media (min-width: 641px) {
-      .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+      .heading-large .heading-secondary, .help-sections h2:first-child .heading-secondary {
         padding-top: 6px;
         padding-bottom: 4px; } }
 
@@ -2366,7 +2366,7 @@ input[disabled="disabled"] {
 .help-sections article strong {
   font-weight: 700; }
 @media (min-width: 640px) {
-  .help-sections article:first-child h1 {
+  .help-sections article:first-child h2:first-child {
     margin-top: 0; } }
 
 .help-footer {
