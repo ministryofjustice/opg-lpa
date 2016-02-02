@@ -12,6 +12,7 @@
 
 {% else %}
 
+<div class="text">
     <p class="lede">On this page you'll find all the LPAs that you've created. As well as creating a new LPA from scratch, you can:</p>
     <ul class="list list-bullet">
         <li><strong>Continue creating</strong> an LPA</li>
@@ -22,7 +23,9 @@
         <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
             entering some information twice
         </li>
-    </ul>
+    </ul>    
+</div>
+
 
 {% endif %}
 
@@ -70,48 +73,124 @@
 
 {% if lpas.getTotalItemCount() > 0 %}
 
-<table id="savedforms" class="lpa-table">
+<hr>
+<h2 class="heading-large">Property and finance</h2>
+<hr>
+
+<table id="savedforms" class="lpa-cards">
     <thead>
     <tr>
-        <th>LPA number</th>
         <th>Donor</th>
-        <th>Type</th>
+        <th>LPA number</th>
+        <th>LPA Type</th>
         <th>Progress</th>
-        <th>Last saved on</th>
+        <th>Last saved</th>
         <th>&nbsp;</th>
     </tr>
     </thead>
     <tbody>
     {% for key,lpa in lpas %}
             <tr>
-                <td>{{ formatLpaId(lpa.id) }}</td>
-                <td>
+                <td class="lpa-donor">
+                    <h3 class="heading-small flush--top">  
                     {% if lpa.donor|length > 0 %}
                         {{ lpa.donor }}
                     {% else %}
-                        No donor details added
+                        No donor added
                     {% endif %}
+                    </h3>
                 </td>
-                <td>{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : '') }}</td>
-                <td>{{ lpa.progress }}</td>
-                <td>{{ lpa.updatedAt.format('d/m/y') }}</td>
-                <td>
-                    <div class="lpa-actions">
-                        <a class="button"
-                           href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
+                <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}</td>
+                <td class="lpa-progress">
+                    <span>{{ lpa.progress }}</span>
+                </td>
+                <td class="lpa-date">
+                    {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
+                    <span>00/00/00</span>
+                </td>
+                <td class="lpa-actions">
+                    <div class="lpa-cta">
+                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    </div>
+                    <div class="lpa-manage">
 
                         {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                            <a class="button button-secondary" href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
+                            <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a><br>
                         {% endif %}
 
                         {% if lpa.progress != 'Started' %}
-                            <a class="button button-secondary"
-                               href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse
-                                details</a>
+                            <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a><br>
                         {% endif %}
 
-                        <a class="button button-warning delete-lpa"
-                           href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
+                        <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
+                    </div>
+                </td>
+            </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+<? /* Pagination HTML is in pagination.phtml */ ?>
+{{ paginationControl(lpas, 'Sliding', 'application/dashboard/pagination', {'route': 'user/dashboard/pagination'}) }}
+
+<p>
+{% endif %}
+
+{% if lpas.getTotalItemCount() > 0 %}
+
+<hr>
+<h2 class="heading-large">All LPAs</h2>
+<hr>
+
+<table id="savedforms" class="lpa-table">
+    <thead>
+    <tr>
+        <th>Donor</th>
+        <th>LPA number</th>
+        <th>LPA Type</th>
+        <th>Progress</th>
+        <th>Last saved</th>
+        <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for key,lpa in lpas %}
+            <tr>
+                <td class="lpa-donor">
+                    <h3 class="heading-small flush--top">  
+                    {% if lpa.donor|length > 0 %}
+                        {{ lpa.donor }}
+                    {% else %}
+                        No donor added
+                    {% endif %}
+                    </h3>
+                </td>
+                <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
+                <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
+                <td class="lpa-progress">
+                    <span>{{ lpa.progress }}</span>
+                </td>
+                <td class="lpa-date">
+                    {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
+                    <span>00/00/00</span>
+                </td>
+                <td class="lpa-actions">
+                    <div class="lpa-cta">
+                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    </div>
+                    <div class="lpa-manage">
+
+                        {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
+                            <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a><br>
+                        {% endif %}
+
+                        {% if lpa.progress != 'Started' %}
+                            <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a><br>
+                        {% endif %}
+
+                        <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
                     </div>
                 </td>
             </tr>

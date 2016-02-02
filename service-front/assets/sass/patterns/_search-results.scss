@@ -82,3 +82,85 @@
 .lpa-actions {
 	padding-top: 12px;
 }
+
+.lpa-cards {
+	thead {
+		display: none;
+	}
+	tr {
+		display: block;
+		position: relative;
+		width: 48%;
+		float: left;
+		@include box-sizing (border-box);
+		margin-bottom: $gutter;
+		padding: $gutter-half;
+		border: 1px solid $border-colour;
+		&:nth-child(2n-1) {
+			margin-right: 4%;
+			@include media(mobile) {
+				margin-right: 0;
+			}
+		}
+		@include media(mobile){
+			width: 100%
+
+		}
+	}
+	td {
+		display: block;
+		position: relative;
+		padding: 0;
+		border-bottom: 0;
+	}
+	.lpa-type {
+		display: none;
+	}
+	.lpa-progress,
+	.lpa-date {
+		float: right;
+		position: relative;
+		width: 174px;
+		top: -50px;
+		padding: 0;
+		clear: right;
+		span {
+			display: block;
+			position: relative;
+			width: 100%;
+			text-align: left;
+		}
+	}
+	.lpa-progress span {
+		&:before {
+			content: 'Status: ';
+		}
+	}
+	.lpa-date span {
+		&:before {
+			content: 'Last saved on: ';
+		}
+	}
+	.button {
+		display: inline-block;
+		float: left;
+		position: relative;
+		bottom: 0;
+		margin-top: 20px;
+	}
+	.lpa-cta {
+		float: left;
+		position: relative;
+		bottom: 0;
+		padding: 0;
+		clear: left;
+	}
+	.lpa-manage {
+		position: absolute;
+		width: 174px;
+		height: 0;
+		right: 0;
+		top: 16px;
+		padding: 0;
+	}
+}
