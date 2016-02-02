@@ -34,9 +34,13 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             if( isset($body['activation_token']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-                $result = $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
                 
-                return $result ? 'account-not-activated' : 'unknown-error';
+                return 'account-not-activated';
+
+            }elseif( isset($body['status']) && $body['status'] == 404 ){
+
+                return "user-not-found";
 
             }elseif( isset($body['reason']) ){
 
@@ -148,7 +152,7 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig')->render([
             'callback' => $callbackUrl,
         ]);
-        
+
         //---
 
         $html = new MimePart( $content );
@@ -202,7 +206,7 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset-not-active.twig')->render([
             'callback' => $callbackUrl,
         ]);
-
+        
         //---
 
         $html = new MimePart( $content );

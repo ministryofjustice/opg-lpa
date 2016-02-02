@@ -28,21 +28,30 @@ class SetPassword extends AbstractForm {
         ));
 
         //--------------------------------
-
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
             'name'     => 'password',
             'required' => true,
-            'error_message' => 'You need to enter your password',
             'validators' => array(
+                array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
                 array(
                     'name'    => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
                         'min'      => 8,
                         'messages' => [
-                            Validator\StringLength::TOO_SHORT => 'must be at least %min% characters long',
+                            Validator\StringLength::TOO_SHORT => 'min-length-%min%',
                         ],
                     ),
                 ),
@@ -51,7 +60,7 @@ class SetPassword extends AbstractForm {
                     'options' => array(
                         'pattern' => '/.*[0-9].*/',
                         'messages' => [
-                            Validator\Regex::NOT_MATCH => 'must include a number',
+                            Validator\Regex::NOT_MATCH => 'must-include-digit',
                         ],
                     ),
                 ),
@@ -60,7 +69,7 @@ class SetPassword extends AbstractForm {
                     'options' => array(
                         'pattern' => '/.*[a-z].*/',
                         'messages' => [
-                            Validator\Regex::NOT_MATCH => 'must include a lower-case letter',
+                            Validator\Regex::NOT_MATCH => 'must-include-lower-case',
                         ],
                     ),
                 ),
@@ -69,7 +78,7 @@ class SetPassword extends AbstractForm {
                     'options' => array(
                         'pattern' => '/.*[A-Z].*/',
                         'messages' => [
-                            Validator\Regex::NOT_MATCH => 'must include a capital letter',
+                            Validator\Regex::NOT_MATCH => 'must-include-upper-case',
                         ],
                     ),
                 ),
@@ -79,14 +88,23 @@ class SetPassword extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password_confirm',
             'required' => true,
-            'error_message' => 'You need to confirm your password',
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'Identical',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'token' => 'password',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match.',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),

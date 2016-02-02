@@ -20,3 +20,13 @@
 .hard--ends     { padding-top:   0!important; padding-bottom:0!important; }
 .hard--sides    { padding-right: 0!important; padding-left:  0!important; }
 
+// Simple handling of overflowing tables on mobile
+.mobile-scroll {
+	@include media(mobile) {
+		overflow: auto;
+		table {
+			min-width: 460px;
+		}
+	}
+}
+

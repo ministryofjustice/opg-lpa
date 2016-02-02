@@ -1,4 +1,4 @@
-# Certificate providers
+## Certificate providers
 
 A certificate provider is an impartial person who confirms that you understand what you're doing and that nobody is forcing you to make an LPA.
 

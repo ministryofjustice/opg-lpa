@@ -1,4 +1,4 @@
-# Correspondence address
+## Correspondence address
 
 The Office of the Public Guardian (OPG) will contact the person named in the correspondence address about the progress of an application to register an LPA. They will also send the registered LPA to this correspondent. 
 

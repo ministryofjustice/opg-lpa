@@ -1,44 +1,39 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block pageTitle %}
-    Sign in
-{% endblock %}
-
-{% set email = form.get('email').setOptions({ label: 'Email address' }) %}
-{% set password = form.get('password').setOptions({ label: 'Password' }) %}
-
 {% block errorSummary %}
     {% include 'application/auth/partials/error-summary.twig' %}
 {% endblock %}
 
+{% block pageTitle %}
+    Sign in
+{% endblock %}
+
 {% block content %}
 
-{% set form = formErrorTextExchange(form, []) %}
-
-{{ form.setAttribute('class', 'form') ? '' }}
-
+{# Set form fields variables #}
 {% set email = form.get('email') %}
 {% set password = form.get('password') %}
 
+{# form fields config #}
 {{ email.setAttributes({
     id: 'email',
-    autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password_current',
-    autocomplete: 'off',
     class: 'form-control'
 }) ? '' }}
 
-{{ form.prepare() ? '' }}
-
+{# form fields labels #}
+{{ email.setOptions({ label: 'Email address' }) ? '' }}
+{{ password.setOptions( { label: 'Password' }) ? '' }}
 
 <p>Sign in or <a href="{{ url('register') }}">create an account</a> to get started.</p>
 
+{# begin form #}
+{{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
-
     {{ formElement(form.get( form.csrfName )) }}
 
     <fieldset>
@@ -46,7 +41,7 @@
 
         <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ email.getAttribute('id') }}">
-                <span class="form-label-bold">{{ email.getOption('label') }}</span>
+                {{ email.getOption('label') }}
                 {{ formElementErrorsV2(email) }}
             </label>
             {{ formElement(email) }}
@@ -54,7 +49,7 @@
 
         <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ password.getAttribute('id') }}">
-                <span class="form-label-bold">{{ password.getOption('label') }}</span>
+                {{ password.getOption('label') }}
                 {{ formElementErrorsV2(password) }}
             </label>
             {{ formElement(password) }}

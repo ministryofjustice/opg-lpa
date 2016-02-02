@@ -1,4 +1,4 @@
-# When an LPA can be used
+## When an LPA can be used
 
 ## Health and welfare LPA
 

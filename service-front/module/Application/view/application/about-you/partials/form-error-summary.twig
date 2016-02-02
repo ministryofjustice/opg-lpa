@@ -1,15 +1,37 @@
-{% if (error is not empty or form.getMessages|length > 0) %}
-    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
-        <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your details</h1>
-        <p>Because of the following problems:</p>
-        <ol class="error-summary-list">
-            {{ formLinkedErrorList(form) ? '' }}
+{% set form = formErrorTextExchange(form,  {
+    'name-first' : {
+        'cannot-be-empty' : 'Please enter your first names'
+    },
+    'name-last' : {
+        'cannot-be-empty' : 'Please enter your last name'
+    },
+    'dob-date-day' : {
+        'must-be-between-1-and-31-characters' : 'Please enter a day between 1 and 31'
+    },
+    'dob-date-month' : {
+        'must-be-between-1-and-12-characters' : 'Please enter a month between 1 and 12'
+    },
+    'dob-date-year' : {
+        'must-be-between-1866-and-2016-characters' : 'Please enter a year between 1866 and 2016'
+    } 
+}) %}
 
-            {% if error is not empty %}
-                <li><a href="">
-                {{ error }}
-                </a></li>
-            {% endif %}
-        </ol>
-    </div>
+{% if (error is not empty or form.getMessages|length > 0) %}
+<div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your details</h1>
+    {# Show this only if it's a form error #}
+    {% if form.getMessages|length > 0 %}
+        <p>You need to do the following:</p>
+    {% endif %}
+    
+    <ul class="error-summary-list">
+        {# Form errors #}
+        {{ formLinkedErrorListV2(form) ? '' }}
+
+        {# API errors #}
+        {% if error is not empty %}
+            <li><p>{{ error }}</p></li>
+        {% endif %}
+    </ul>
+</div>
 {% endif %}

@@ -1,11 +1,5 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% set form = formErrorTextExchange(form, []) %}
-
-{% set password = form.get('password_current').setOptions({ label: 'Your current password' }) %}
-{% set new_password = form.get('password').setOptions({ label: 'New password' })  %}
-{% set new_password_confirm = form.get('password_confirm').setOptions({ label: 'Re-enter new password' }) %}
-
 {% block errorSummary %}
     {% include 'application/change-password/partials/index-error-summary.twig' %}
 {% endblock %}
@@ -16,28 +10,38 @@
 
 {% block content %}
 
+{# Set form fields variables #}
+{% set password = form.get('password_current') %}
+{% set new_password = form.get('password') %}
+{% set new_password_confirm = form.get('password_confirm') %}
+
+{# form fields config #}
 {{ password.setAttributes({
     id: 'password_current',
-    autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
 
 {{ new_password.setAttributes({
     id: 'email',
-    autocomplete: 'off',
+    type: 'email',
     class: 'form-control'
 }) ? ''}}
 
 {{ new_password_confirm.setAttributes({
     id: 'email_confirm',
+    type: 'email',
     autocomplete: 'off',
     class: 'form-control'
 }) ? ''}}
 
+{# form fields labels #}
+{{ password.setOptions({ label: 'Your current password' }) ? '' }}
+{{ new_password.setOptions({ label: 'New password' }) ? '' }}
+{{ new_password_confirm.setOptions({ label: 'Confirm new password' }) ? '' }}
+
+{# begin form #}
 {{ form.prepare() ? '' }}
-
 {{ form().openTag( form )|raw }}
-
     {{ formElement(form.get( form.csrfName )) }}
 
     <fieldset>
@@ -45,7 +49,7 @@
 
         <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ password.getAttribute('id') }}">
-                <span class="form-label-bold">{{ password.getOption('label') }}</span>
+                {{ password.getOption('label') }}
                 {{ formElementErrorsV2(password) }}
             </label>
             {{ formElement(password) }}
@@ -53,7 +57,7 @@
 
         <div class="form-group {{ new_password.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ new_password.getAttribute('id') }}">
-                <span class="form-label-bold">{{ new_password.getOption('label') }}</span>
+                {{ new_password.getOption('label') }}
                 {{ formElementErrorsV2(new_password) }}
             </label>
             {{ formElement(new_password) }}
@@ -61,7 +65,7 @@
 
         <div class="form-group {{ new_password_confirm.getMessages|length >0 ? 'error'}}">
             <label class="form-label" for="{{ new_password_confirm.getAttribute('id') }}">
-                <span class="form-label-bold">{{ new_password_confirm.getOption('label') }}</span>
+                {{ new_password_confirm.getOption('label') }}
                 {{ formElementErrorsV2(new_password_confirm) }}
             </label>
             {{ formElement(new_password_confirm) }}

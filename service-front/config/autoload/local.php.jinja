@@ -136,4 +136,15 @@ return array(
         'api_token_secret' => '{{pillar['payment']['worldpay']['api_token_secret']}}',
     ], // worldpay
 
+    #v1Code
+    'v1proxy' => [
+
+        'redis' => [
+            'server' => [
+                'host' => '{{pillar['v1proxy']['redis']['host']}}',
+            ],
+        ],
+
+    ],
+
 );

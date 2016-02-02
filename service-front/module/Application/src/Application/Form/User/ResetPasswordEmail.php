@@ -28,18 +28,27 @@ class ResetPasswordEmail extends AbstractForm {
         ));
 
         //--------------------------------
-
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
-            'error_message' => 'You need to enter your email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
             'validators' => array(
+                array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
                 array(
                     'name'    => 'EmailAddress',
                 ),
@@ -49,22 +58,30 @@ class ResetPasswordEmail extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'email_confirm',
             'required' => true,
-            'error_message' => 'You need to re-enter your email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),  
+                array(
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
-            ),
+            )
         ));
 
         //---

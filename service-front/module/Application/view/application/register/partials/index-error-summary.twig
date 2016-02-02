@@ -1,3 +1,28 @@
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'cannot-be-empty' : 'Please enter your email address',
+    },
+    'email_confirm' : {
+        'cannot-be-empty' : 'Please confirm your email address',
+        'did-not-match' : 'The emails did not match'
+    },
+    'password' : {
+        'cannot-be-empty' : 'Please enter your password',
+        'min-length-8' : 'Your password must be at least eight characters long',
+        'must-include-digit' : 'Your password must include at least one digit (0-9)',
+        'must-include-lower-case' : 'Your password must include at least one lower case letter (a-z)',
+        'must-include-upper-case' : 'Your password must include at least one capital letter (A-Z)',
+    },
+    'password_confirm' : {
+        'did-not-match' : 'The passwords did not match',
+        'cannot-be-empty' : 'Please confirm your password'
+    },
+    'terms' : {
+        'must-be-checked' : 'You must accept the terms and conditions'
+    }
+    
+}) %}
+
 {% if (error is not empty or form.getMessages|length > 0) %}
 <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
     <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem creating your account</h1>
@@ -10,7 +35,7 @@
     {% elseif form.getMessages|length > 0 %}
         <p>You need to do the following:</p>
         <ul class="error-summary-list">
-            {{ formLinkedErrorList(form) }}
+            {{ formLinkedErrorListV2(form) }}
         </ul>
     {% endif %}
 </div>

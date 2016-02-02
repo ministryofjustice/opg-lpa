@@ -28,12 +28,13 @@ class Registration extends SetPassword {
 
         //--------------------------------
 
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
-            'error_message' => 'You need to enter your email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -41,26 +42,51 @@ class Registration extends SetPassword {
             ),
             'validators' => array(
                 array(
-                    'name'    => 'EmailAddress',
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
                 ),
+                array(
+                    'name'    => 'EmailAddress',
+                    'break_chain_on_failure' => true,
+                    /* We'll just use the ZF2 messages for these - there are lots of them 
+                     * and they include such classics as:
+                     *
+                     * "'%hostname%' is not in a routable network segment.
+                     * The email address should not be resolved from public network"
+                     */
+                )
             ),
         ));
 
         $inputFilter->add(array(
             'name'     => 'email_confirm',
             'required' => true,
-            'error_message' => 'You need to confirm your email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'Identical',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'must match Enter your email address',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
@@ -70,15 +96,16 @@ class Registration extends SetPassword {
         $inputFilter->add(array(
             'name'     => 'terms',
             'required' => true,
-            'error_message' => 'Please tick this checkbox',
+            'error_message' => 'must-be-checked',
             'validators' => array(
                 array(
                     'name'    => 'Identical',
+                    'break_chain_on_failure' => true,
                     'options' => array(
                         'token' => '1',
                         'literal' => true,
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'must be checked',
+                            Validator\Identical::NOT_SAME => 'must-be-checked',
                         ],
                     ),
                 ),

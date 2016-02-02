@@ -38,21 +38,32 @@ class ChangeEmailAddress extends AbstractForm {
 
         //--------------------------------
 
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
             'name'     => 'email',
             'required' => true,
-            'error_message' => 'You need to enter your new email address',
             'filters'  => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'EmailAddress',
                 ),
             ),
+            
         ));
 
         $inputFilter->add(array(
@@ -64,11 +75,20 @@ class ChangeEmailAddress extends AbstractForm {
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
@@ -78,14 +98,13 @@ class ChangeEmailAddress extends AbstractForm {
         $inputFilter->add(array(
             'name'     => 'password_current',
             'required' => true,
-            'error_message' => 'You need to enter your password',
             'validators' => array(
                 array(
-                    'name'    => 'Callback',
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => array(
-                        'callback' => [ $this, 'validatePassword' ],
                         'messages' => [
-                            Validator\Callback::INVALID_VALUE => 'is incorrect',
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ),
                 ),
