@@ -1,4 +1,4 @@
-# LPA basics
+## LPA basics
 
 A lasting power of attorney (LPA) is a legal document that lets you (the 'donor') choose trusted people ('attorneys') to make decisions on your behalf.
 

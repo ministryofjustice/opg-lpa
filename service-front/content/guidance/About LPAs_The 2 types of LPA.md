@@ -1,4 +1,4 @@
-# The 2 types of LPA
+## The 2 types of LPA
 
 There are 2 types of LPA. Some people make one, while others make both.
 

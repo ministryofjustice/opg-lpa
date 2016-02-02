@@ -1,4 +1,4 @@
-# Instructions and preferences
+## Instructions and preferences
 
 You can leave instructions and preferences for your attorneys to direct and guide the way they act, but you don't have to. If you leave this blank, your attorneys will be free to make decisions they think are right.
 

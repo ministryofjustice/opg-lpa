@@ -1,4 +1,4 @@
-# Donor
+## Donor
 
 The donor is the person who makes the LPA. The registered LPA can be used if the donor loses mental capacity.
 

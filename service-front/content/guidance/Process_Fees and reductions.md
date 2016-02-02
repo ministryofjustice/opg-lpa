@@ -1,4 +1,4 @@
-# Fees, reductions and exemptions
+## Fees, reductions and exemptions
 
 It costs £110 to apply to register an LPA. If you (the donor) have a low income or get certain means-tested benefits, you can pay a lower fee or no fee.
 

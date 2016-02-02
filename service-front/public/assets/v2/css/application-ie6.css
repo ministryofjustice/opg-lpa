@@ -983,7 +983,7 @@ main {
   font-size: 16px;
   line-height: 1.25; }
 
-.heading-xlarge, #popup .help-sections h1 {
+.heading-xlarge, #popup .help-sections h2:first-child {
   font-family: "nta", Arial, sans-serif;
   font-size: 32px;
   line-height: 1.09375;
@@ -995,7 +995,7 @@ main {
   margin-bottom: 0.9375em;
   margin-top: 0.625em;
   margin-bottom: 1.25em; }
-  .heading-xlarge .heading-secondary, #popup .help-sections h1 .heading-secondary {
+  .heading-xlarge .heading-secondary, #popup .help-sections h2:first-child .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 20px;
     line-height: 1.11111;
@@ -1010,7 +1010,7 @@ main {
     display: block;
     color: #6f777b; }
 
-.heading-large, .help-sections h1 {
+.heading-large, .help-sections h2:first-child {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -1022,7 +1022,7 @@ main {
   margin-bottom: 0.41667em;
   margin-top: 1.25em;
   margin-bottom: 0.55556em; }
-  .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+  .heading-large .heading-secondary, .help-sections h2:first-child .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -2188,7 +2188,7 @@ input[disabled="disabled"] {
   font-size: 19px; }
   .help-sections article strong {
     font-weight: 700; }
-.help-sections article:first-child h1 {
+.help-sections article:first-child h2:first-child {
   margin-top: 0; }
 
 .help-footer {
