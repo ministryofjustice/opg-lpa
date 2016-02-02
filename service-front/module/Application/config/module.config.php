@@ -9,14 +9,6 @@
 
 return [
 
-    'zfctwig' => array(
-        'helper_manager' => array(
-            'configs' => array(
-                'Zend\Navigation\View\HelperConfig'
-            ),
-        )
-    ),
-        
     /* ------------------------------------------------------------- */
     /* ------------ All routes are in module.routes.php ------------ */
     /* ------------------------------------------------------------- */
