@@ -1,0 +1,10 @@
+.panel-cta {
+	padding: $gutter-half;
+	background-color: $panel-colour;
+	.panel-body {
+		font-weight: 700;
+	}
+	.panel-button {
+		text-align: center;
+	}
+}

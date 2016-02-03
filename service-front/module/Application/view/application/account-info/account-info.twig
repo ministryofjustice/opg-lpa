@@ -7,6 +7,10 @@
                     <li><a href="{{ value['url'] }}">{{ value['text'] }}</a></li>
                 {% endfor %}
             </ul>
+            {% if not user.lastLogin %}
+                {# <p style="text-align: right;">You were last signed in on {{ user.lastLogin.format('j F Y \a\t g:ia') }}</p> #}
+                <p class="lastsigned flush--ends">Last signed in: dd/mm/yyy at hh:mm</p>
+            {% endif %}
         </nav>
     </div>
 </div>

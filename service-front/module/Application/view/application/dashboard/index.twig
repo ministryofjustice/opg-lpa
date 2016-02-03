@@ -12,44 +12,34 @@
 
 {% else %}
 
-<div class="text">
-    <p class="lede">On this page you'll find all the LPAs that you've created. As well as creating a new LPA from scratch, you can:</p>
-    <ul class="list list-bullet">
-        <li><strong>Continue creating</strong> an LPA</li>
-        <li>Check that the <strong>signing dates</strong> on an LPA are in the right order before you
-            register it. (If they're not in the right order, you risk having to repay some or all of the
-            application fee.)
-        </li>
-        <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
-            entering some information twice
-        </li>
-    </ul>    
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="text">
+            <p class="lede">On this page you'll find all the LPAs that you've created. As well as creating a new LPA from scratch, you can:</p>
+            <ul class="list list-bullet">
+                <li><strong>Continue creating</strong> an LPA</li>
+                <li>Check that the <strong>signing dates</strong> on an LPA are in the right order before you
+                    register it. (If they're not in the right order, you risk having to repay some or all of the
+                    application fee.)
+                </li>
+                <li><strong>Reuse details</strong> from an existing LPA to create a new one and save you
+                    entering some information twice
+                </li>
+            </ul>    
+        </div>
+    </div>
+    <div class="column-one-third">
+        <div class="panel-cta">
+            <p class="panel-body flush--top">Create another LPA for a family member or friend. It will be added to this account.</p>
+            <p class="panel-button flush--bottom">
+                <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
+            </p>
+            
+        </div>
+    </div>
 </div>
 
-
 {% endif %}
-
-{% if user.lastLogin %}
-    <p style="text-align: right;">You were last signed in on {{ user.lastLogin.format('j F Y \a\t g:ia') }}</p>
-{% endif %}
-
-<p>
-    <a class="add button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
-</p>
-
-<form action="{{ url('user/dashboard') }}" method="GET" class="lpa-search-form">
-    <fieldset>
-        <legend class="visuallyhidden">Search for LPAs</legend>
-        <div class="form-group">
-            <label for="search" class="form-label">
-                <span class="form-label-bold">Search LPAs</span>
-            </label>
-            <span class="form-hint">LPA number, donor's first or last name</span>
-            <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
-            <input class="add button" type="submit" value="Search"/>
-        </div>
-    </fieldset>
-</form>
 
 {% if isSearch %}
 
@@ -141,7 +131,26 @@
 {% if lpas.getTotalItemCount() > 0 %}
 
 <hr>
-<h2 class="heading-large">All LPAs</h2>
+<div class="grid-row">
+    <div class="column-one-half">
+        <h2 class="heading-large">All LPAs</h2>
+    </div>
+    <div class="column-one-half">
+        <form action="{{ url('user/dashboard') }}" method="GET" class="lpa-search-form">
+            <fieldset>
+                <legend class="visuallyhidden">Search for LPAs</legend>
+                <div class="">
+                    <label for="search" class="form-label">
+                        <span class="form-label-bold">Search LPAs</span>
+                    </label>
+                    <span class="form-hint">LPA number, donor's first or last name</span>
+                    <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
+                    <input class="add button" type="submit" value="Search"/>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
 <hr>
 
 <table id="savedforms" class="lpa-table">
@@ -181,16 +190,29 @@
                         <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
                     </div>
                     <div class="lpa-manage">
+                        <details>
+                            <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form">
+                                <span class="summary">Manage</span>
+                            </summary>
+                            <ul>
+                                {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
+                                    <li>
+                                        <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
+                                    </li>
+                                {% endif %}
 
-                        {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                            <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a><br>
-                        {% endif %}
+                                {% if lpa.progress != 'Started' %}
+                                    <li>
+                                        <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a>     
+                                    </li>
+                                {% endif %}
 
-                        {% if lpa.progress != 'Started' %}
-                            <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a><br>
-                        {% endif %}
+                                <li>
+                                    <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
+                                </li>
+                            </ul>
+                        </details>
 
-                        <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
                     </div>
                 </td>
             </tr>

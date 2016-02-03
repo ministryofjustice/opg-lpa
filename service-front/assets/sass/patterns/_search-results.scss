@@ -2,7 +2,17 @@
 // SEARCH RESULTS
 
 .lpa-search-form {
-	padding-top: 30px;
+	position: relative;
+	input[type='text'] {
+		width: 100%;
+	}
+	.button {
+		@include media(tablet) {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+		}
+	}
 }
 
 .lpa-table {
@@ -39,12 +49,12 @@
 		}
 		td:nth-child(1) {
 			&:before {
-				content: 'LPA number:';
+				content: 'Donor:';
 			}
 		}
 		td:nth-child(2) {
 			&:before {
-				content: 'Donor:';
+				content: 'LPA number:';
 			}
 		}
 		td:nth-child(3) {

@@ -2444,7 +2444,14 @@ input[disabled="disabled"] {
     display: none; } }
 
 .lpa-search-form {
-  padding-top: 30px; }
+  position: relative; }
+  .lpa-search-form input[type='text'] {
+    width: 100%; }
+  @media (min-width: 641px) {
+    .lpa-search-form .button {
+      position: absolute;
+      right: 0;
+      bottom: 0; } }
 
 @media (max-width: 640px) {
   .lpa-table th, .lpa-table td {
@@ -2471,9 +2478,9 @@ input[disabled="disabled"] {
       padding-bottom: 6px;
       font-weight: 700; }
   .lpa-table td:nth-child(1):before {
-    content: 'LPA number:'; }
-  .lpa-table td:nth-child(2):before {
     content: 'Donor:'; }
+  .lpa-table td:nth-child(2):before {
+    content: 'LPA number:'; }
   .lpa-table td:nth-child(3):before {
     content: 'Type:'; }
   .lpa-table td:nth-child(4):before {
@@ -2753,6 +2760,14 @@ input[disabled="disabled"] {
   .pager-controls {
     float: right; } }
 
+.panel-cta {
+  padding: 15px;
+  background-color: #dee0e2; }
+  .panel-cta .panel-body {
+    font-weight: 700; }
+  .panel-cta .panel-button {
+    text-align: center; }
+
 .noscroll {
   position: relative;
   overflow: hidden; }
@@ -2813,8 +2828,12 @@ input[disabled="disabled"] {
   border-bottom: 1px solid #bfc1c3;
   overflow: hidden; }
   @media (min-width: 641px) {
-    #global-nav {
-      text-align: right; } }
+    #global-nav .lastsigned {
+      float: left;
+      padding: 10px 8px; } }
+  @media (min-width: 641px) {
+    #global-nav #navigation {
+      float: right; } }
   #global-nav nav {
     font-family: "nta", Arial, sans-serif;
     font-size: 14px;

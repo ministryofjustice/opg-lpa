@@ -2204,7 +2204,13 @@ input[disabled="disabled"] {
   display: none; }
 
 .lpa-search-form {
-  padding-top: 30px; }
+  position: relative; }
+  .lpa-search-form input[type='text'] {
+    width: 100%; }
+  .lpa-search-form .button {
+    position: absolute;
+    right: 0;
+    bottom: 0; }
 
 .lpa-table td:nth-child(6) {
   padding: 0; }
@@ -2502,8 +2508,12 @@ input[disabled="disabled"] {
 
 #global-nav {
   border-bottom: 1px solid #bfc1c3;
-  overflow: hidden;
-  text-align: right; }
+  overflow: hidden; }
+  #global-nav .lastsigned {
+    float: left;
+    padding: 10px 8px; }
+  #global-nav #navigation {
+    float: right; }
   #global-nav nav {
     font-family: "nta", Arial, sans-serif;
     font-size: 14px;

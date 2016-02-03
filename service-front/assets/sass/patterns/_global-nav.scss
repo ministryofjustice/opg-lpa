@@ -6,8 +6,18 @@
     border-bottom: 1px solid $border-colour;
     overflow: hidden;
     
-    @include media(tablet){
-      text-align: right;
+
+    .lastsigned {
+      @include media(tablet){
+        float: left;
+        padding: 10px 8px;
+      }
+    }
+
+    #navigation {
+      @include media(tablet){
+        float: right;
+      }
     }
 
     nav {
