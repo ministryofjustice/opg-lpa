@@ -146,7 +146,6 @@ abstract class AbstractClient {
                     'Projection' => [
                         'ProjectionType' => 'INCLUDE',
                         'NonKeyAttributes' => [
-                            'id',
                             'processor',
                         ],
                     ],
@@ -266,10 +265,6 @@ abstract class AbstractClient {
             if( !is_array( $globalSecondaryIndexes['Projection']['NonKeyAttributes'] ) ){
                 $errors[] = "The Global Secondary Index must Project the 'id' and 'processor' attributes";
             } else {
-
-                if( !in_array( 'id', $globalSecondaryIndexes['Projection']['NonKeyAttributes'] ) ){
-                    $errors[] = "The Global Secondary Index must Project the 'id' attribute";
-                }
 
                 if( !in_array( 'processor', $globalSecondaryIndexes['Projection']['NonKeyAttributes'] ) ){
                     $errors[] = "The Global Secondary Index must Project the 'processor' attribute";

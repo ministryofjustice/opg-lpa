@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.5 - 2016-02-02
+
+### Added
+
+- [#81](https://github.com/zendframework/zend-servicemanager/pull/81) adds a
+  test covering forwards-compatibility features for plugin manager
+  implementations.
+- [#96](https://github.com/zendframework/zend-servicemanager/pull/96) adds
+  `Zend\ServiceManager\Test\CommonPluginManagerTrait`, which allows you to test
+  that your plugin manager is forwards compatible with v3.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#91](https://github.com/zendframework/zend-servicemanager/pull/91) updates
+  the `InvokableFactory` to add the `setCreationOptions()` method, allowing
+  the `InvokableFactory` to accept `$options` when triggered.
+
 ## 2.7.4 - 2015-01-19
 
 ### Added

@@ -52,6 +52,8 @@ $arguments->addOption(array('secret'), [
 
 $arguments->addFlag(array('create'), 'Create the table in DynamoDB');
 
+$arguments->addFlag(array('v'), 'Set the system log level to Debug');
+
 $arguments->parse();
 
 
@@ -63,9 +65,14 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 
 
-$formatter = new LineFormatter( );
-$stream = new StreamHandler('php://stdout', Logger::DEBUG);
+if ($arguments['v']) {
+    $stream = new StreamHandler('php://stdout', Logger::DEBUG);
+} else {
+    $stream = new StreamHandler('php://stdout', Logger::INFO);
+}
 
+
+$formatter = new LineFormatter();
 $stream->setFormatter($formatter);
 
 $logger = new Logger('DynamoQueue');
@@ -174,6 +181,8 @@ pcntl_signal(SIGQUIT, array($worker, 'stop'));
 //---
 
 try {
+
+    $logger->notice( "Worker started" );
 
     $okay = $worker->run();
 
