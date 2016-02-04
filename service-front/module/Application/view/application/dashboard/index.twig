@@ -97,14 +97,11 @@
                 </td>
                 <td class="lpa-date">
                     {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
-                    <span>00/00/00</span>
+                    <span>24/10/16</span>
                 </td>
                 <td class="lpa-actions">
-                    <div class="lpa-cta">
-                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
-                    </div>
+                    <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
                     <div class="lpa-manage">
-
                         {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
                             <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a><br>
                         {% endif %}

@@ -2308,16 +2308,19 @@ input[disabled="disabled"] {
   position: relative;
   padding: 0;
   border-bottom: 0; }
+.lpa-cards .lpa-donor {
+  padding-right: 120px;
+  padding-right: 190px; }
 .lpa-cards .lpa-type {
   display: none; }
 .lpa-cards .lpa-progress,
 .lpa-cards .lpa-date {
-  float: right;
-  position: relative;
-  width: 174px;
-  top: -50px;
+  position: absolute;
+  width: 120px;
+  top: 17px;
+  right: 0;
   padding: 0;
-  clear: right; }
+  width: 190px; }
   .lpa-cards .lpa-progress span,
   .lpa-cards .lpa-date span {
     display: block;
@@ -2326,14 +2329,16 @@ input[disabled="disabled"] {
     text-align: left; }
 .lpa-cards .lpa-progress span:before {
   content: 'Status: '; }
-.lpa-cards .lpa-date span:before {
-  content: 'Last saved on: '; }
-.lpa-cards .button {
-  display: inline-block;
-  float: left;
+.lpa-cards .lpa-date span {
+  top: 20px; }
+  .lpa-cards .lpa-date span:before {
+    content: 'Last saved on: '; }
+.lpa-cards .lpa-actions {
   position: relative;
-  bottom: 0;
-  margin-top: 20px; }
+  min-height: 80px; }
+.lpa-cards .button {
+  position: absolute;
+  bottom: 2px; }
 .lpa-cards .lpa-cta {
   float: left;
   position: relative;
@@ -2342,11 +2347,11 @@ input[disabled="disabled"] {
   clear: left; }
 .lpa-cards .lpa-manage {
   position: absolute;
-  width: 174px;
-  height: 0;
+  width: 100px;
   right: 0;
-  top: 16px;
-  padding: 0; }
+  bottom: 0;
+  padding: 0;
+  width: 174px; }
 
 .button-secondary {
   background-color: #dee0e2;

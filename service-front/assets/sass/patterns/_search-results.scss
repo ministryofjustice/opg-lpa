@@ -123,17 +123,25 @@
 		padding: 0;
 		border-bottom: 0;
 	}
+	.lpa-donor {
+		padding-right: 120px;
+		@include media($min-width: 780px) {
+			padding-right: 190px;
+		}
+	}
 	.lpa-type {
 		display: none;
 	}
 	.lpa-progress,
 	.lpa-date {
-		float: right;
-		position: relative;
-		width: 174px;
-		top: -50px;
+		position: absolute;
+		width: 120px;
+		top: 17px;
+		right: 0;
 		padding: 0;
-		clear: right;
+		@include media($min-width: 780px) {
+			width: 190px;
+		}
 		span {
 			display: block;
 			position: relative;
@@ -143,20 +151,26 @@
 	}
 	.lpa-progress span {
 		&:before {
-			content: 'Status: ';
+			@include media($min-width: 780px) {
+				content: 'Status: ';
+			}
 		}
 	}
 	.lpa-date span {
+		top: 20px;
 		&:before {
-			content: 'Last saved on: ';
+			@include media($min-width: 780px) {
+				content: 'Last saved on: ';
+			}
 		}
 	}
-	.button {
-		display: inline-block;
-		float: left;
+	.lpa-actions {
 		position: relative;
-		bottom: 0;
-		margin-top: 20px;
+		min-height: 80px;
+	}
+	.button {
+		position: absolute;
+		bottom: 2px;
 	}
 	.lpa-cta {
 		float: left;
@@ -167,10 +181,12 @@
 	}
 	.lpa-manage {
 		position: absolute;
-		width: 174px;
-		height: 0;
+		width: 100px;
 		right: 0;
-		top: 16px;
+		bottom: 0;
 		padding: 0;
+		@include media($min-width: 780px) {
+			width: 174px;
+		}
 	}
 }
