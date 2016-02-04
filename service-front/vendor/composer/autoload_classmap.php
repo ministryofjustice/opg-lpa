@@ -6,6 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Aws\\Acm\\AcmClient' => $vendorDir . '/aws/aws-sdk-php/src/Acm/AcmClient.php',
+    'Aws\\Acm\\Exception\\AcmException' => $vendorDir . '/aws/aws-sdk-php/src/Acm/Exception/AcmException.php',
     'Aws\\ApiGateway\\ApiGatewayClient' => $vendorDir . '/aws/aws-sdk-php/src/ApiGateway/ApiGatewayClient.php',
     'Aws\\ApiGateway\\Exception\\ApiGatewayException' => $vendorDir . '/aws/aws-sdk-php/src/ApiGateway/Exception/ApiGatewayException.php',
     'Aws\\Api\\AbstractModel' => $vendorDir . '/aws/aws-sdk-php/src/Api/AbstractModel.php',
@@ -69,6 +71,8 @@ return array(
     'Aws\\CloudTrail\\LogFileIterator' => $vendorDir . '/aws/aws-sdk-php/src/CloudTrail/LogFileIterator.php',
     'Aws\\CloudTrail\\LogFileReader' => $vendorDir . '/aws/aws-sdk-php/src/CloudTrail/LogFileReader.php',
     'Aws\\CloudTrail\\LogRecordIterator' => $vendorDir . '/aws/aws-sdk-php/src/CloudTrail/LogRecordIterator.php',
+    'Aws\\CloudWatchEvents\\CloudWatchEventsClient' => $vendorDir . '/aws/aws-sdk-php/src/CloudWatchEvents/CloudWatchEventsClient.php',
+    'Aws\\CloudWatchEvents\\Exception\\CloudWatchEventsException' => $vendorDir . '/aws/aws-sdk-php/src/CloudWatchEvents/Exception/CloudWatchEventsException.php',
     'Aws\\CloudWatchLogs\\CloudWatchLogsClient' => $vendorDir . '/aws/aws-sdk-php/src/CloudWatchLogs/CloudWatchLogsClient.php',
     'Aws\\CloudWatchLogs\\Exception\\CloudWatchLogsException' => $vendorDir . '/aws/aws-sdk-php/src/CloudWatchLogs/Exception/CloudWatchLogsException.php',
     'Aws\\CloudWatch\\CloudWatchClient' => $vendorDir . '/aws/aws-sdk-php/src/CloudWatch/CloudWatchClient.php',
@@ -2081,6 +2085,8 @@ return array(
     'Symfony\\Component\\Yaml\\Yaml' => $vendorDir . '/symfony/yaml/Yaml.php',
     'Symfony\\Polyfill\\Mbstring\\Mbstring' => $vendorDir . '/symfony/polyfill-mbstring/Mbstring.php',
     'Symfony\\Polyfill\\Php54\\Php54' => $vendorDir . '/symfony/polyfill-php54/Php54.php',
+    'Symfony\\Polyfill\\Php55\\Php55' => $vendorDir . '/symfony/polyfill-php55/Php55.php',
+    'Symfony\\Polyfill\\Php55\\Php55ArrayColumn' => $vendorDir . '/symfony/polyfill-php55/Php55ArrayColumn.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'Twig_Autoloader' => $vendorDir . '/twig/twig/lib/Twig/Autoloader.php',
     'Twig_BaseNodeVisitor' => $vendorDir . '/twig/twig/lib/Twig/BaseNodeVisitor.php',
@@ -2185,6 +2191,7 @@ return array(
     'Twig_Node_Expression_GetAttr' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/GetAttr.php',
     'Twig_Node_Expression_MethodCall' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/MethodCall.php',
     'Twig_Node_Expression_Name' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/Name.php',
+    'Twig_Node_Expression_NullCoalesce' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/NullCoalesce.php',
     'Twig_Node_Expression_Parent' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/Parent.php',
     'Twig_Node_Expression_TempName' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/TempName.php',
     'Twig_Node_Expression_Test' => $vendorDir . '/twig/twig/lib/Twig/Node/Expression/Test.php',

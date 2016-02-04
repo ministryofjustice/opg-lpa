@@ -29,16 +29,18 @@ class Register implements ServiceLocatorAwareInterface {
             // Error...
             $body = $client->getLastContent();
 
-            if( isset($body['detail']) ){
+            if( isset($body['reason']) ){
+                return trim( $body['reason'] );
+            } elseif( isset($body['detail']) ){
 
-                if( $body['detail'] === 'username-already-exists' ){
+                if( $body['detail'] == 'username-already-exists' ){
                     return "address-already-registered";
                 } else {
-                    return trim($body['detail']);
+                    return trim( $body['error_description'] );
                 }
 
-            }
-            
+            } // if
+
             return "unknown-error";
 
         } // if

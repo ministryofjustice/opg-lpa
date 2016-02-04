@@ -1,4 +1,4 @@
-# About this digital service
+## About this digital service
 This digital LPA service helps you make your lasting power of attorney (LPA) online.
 
 You'll be asked some questions. For each question, you'll need to give some information or make choices. You'll also find links to detailed guidance.

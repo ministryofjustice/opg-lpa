@@ -1,4 +1,4 @@
-# Applicant
+## Applicant
 
 The applicant is the person applying to register the LPA. The applicant will also receive the stamped LPA once it's registered.
 

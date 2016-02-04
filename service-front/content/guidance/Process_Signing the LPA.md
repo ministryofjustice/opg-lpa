@@ -1,4 +1,4 @@
-# Signing the LPA
+## Signing the LPA
 
 The people involved in the LPA must sign it in the correct order. If they don't, the Office of the Public Guardian won't register it and your attorneys will not be able to use it.
 
