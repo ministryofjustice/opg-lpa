@@ -108,4 +108,29 @@ class EncryptedDynamoDB extends DynamoDB {
         return parent::destroy( $this->hashId( $id ) );
     }
 
+    /**
+     * Close a session from writing.
+     *
+     * THIS IS A HACK
+     *
+     * As formatId() is private, we cannot close the session correctly as it directly accesses session_id().
+     * We therefore have to temporarily change it globally.
+     *
+     * A patch to the AWS SDK to been submitted to correct the properly.
+     *
+     * @return bool Success
+     */
+    public function close(){
+
+        $id = session_id();
+
+        session_id( $this->hashId( $id ) );
+
+        $result = parent::close();
+
+        session_id( $id );
+
+        return $result;
+    }
+
 } // class
