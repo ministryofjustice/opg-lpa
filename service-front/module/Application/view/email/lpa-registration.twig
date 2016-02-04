@@ -12,7 +12,7 @@
 </p>
 
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
-	Reference number: {{ lpa.id }}
+	Reference number: {{ formatLpaId(lpa.id) }}
 </p>
 
 {% if lpa.payment.reference != null %}
