@@ -42,7 +42,6 @@ class EncryptedDynamoDB extends DynamoDB {
 
     }
 
-
     /**
      * Returns the current BlockCipher.
      *
@@ -57,23 +56,9 @@ class EncryptedDynamoDB extends DynamoDB {
         return $this->blockCipher;
     }
 
-    /**
-     * Returns a hash of the passed session id.
-     *
-     * @param $id
-     * @return string
-     */
-    private function hashId( $id ){
-
-        return hash( 'sha512', $id );
-
-    }
-
     //-----------------------
 
     public function read($id){
-
-        $id = $this->hashId( $id );
 
         // Return the data from the cache
         $data = parent::read( $id );
@@ -91,8 +76,6 @@ class EncryptedDynamoDB extends DynamoDB {
 
     public function write($id, $data){
 
-        $id = $this->hashId( $id );
-
         // Compress the data.
         $data = (new Compress( self::COMPRESSION_ADAPTER ))->filter( $data );
 
@@ -102,10 +85,6 @@ class EncryptedDynamoDB extends DynamoDB {
         // Save it to the cache
         return parent::write( $id, $data );
 
-    }
-
-    public function destroy($id){
-        return parent::destroy( $this->hashId( $id ) );
     }
 
 } // class
