@@ -119,7 +119,6 @@ return array(
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
                     'before' => function(){ sleep(1); },
-                    'batch_size' => 10,
                 ]
             ],
         ],
