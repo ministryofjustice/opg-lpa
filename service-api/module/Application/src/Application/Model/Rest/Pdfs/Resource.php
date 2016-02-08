@@ -321,7 +321,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
             //  - An error occurred.
 
             // For now we just remove the job from teh queue so it can be re-added.
-            $this->getDynamoQueueClient()->dequeue( $ident );
+            $this->getDynamoQueueClient()->deleteJob( $ident );
 
         }
 
