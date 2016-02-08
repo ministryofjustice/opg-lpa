@@ -59,7 +59,10 @@ class Client extends AbstractClient {
         $result = $this->client->getItem([
             'TableName'      => $this->config['table_name'],
             'Key'            => ['id' => ['S' => $id]],
-            'AttributesToGet'=> [ 'state' ],
+            'ExpressionAttributeNames' => [
+                '#state' => 'state',
+            ],
+            'ProjectionExpression'=> '#state',
             'ConsistentRead' => true,
         ]);
 

@@ -50,7 +50,14 @@ $arguments->addOption(array('secret'), [
     ]
 );
 
+$arguments->addOption(array('ttl'), [
+        'description' => "The number of milliseconds to leave a job before it's removed during a cleanup"
+    ]
+);
+
 $arguments->addFlag(array('create'), 'Create the table in DynamoDB');
+
+$arguments->addFlag(array('cleanup'), 'Cleanup the table in DynamoDB');
 
 $arguments->addFlag(array('v'), 'Set the system log level to Debug');
 
@@ -131,6 +138,27 @@ if ($arguments['create']) {
 
     } catch( Exception $e ){
         cli\err( "%rUnable to create table in DynamoDB: ". $e->getMessage() ."%n" );
+        exit(1);
+    }
+
+    exit(0);
+
+}
+
+//------------------------------------
+// If we're performing a table cleanup
+
+if ($arguments['cleanup']) {
+
+    try {
+
+        $ttl = ($arguments['ttl'] && is_numeric($arguments['ttl'])) ? (int)$arguments['ttl'] : 0;
+
+        $deletedJobs = $queue->cleanupTable( $ttl );
+        cli\line( "%g{$deletedJobs} jobs tidied up from '{$config['table_name']}'%n" );
+
+    } catch( Exception $e ){
+        cli\err( "%rUnable to cleanup table: ". $e->getMessage() ."%n" );
         exit(1);
     }
 
