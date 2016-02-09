@@ -15,6 +15,7 @@
 				<th class="numeric">Total</th>
 				<th class="numeric">Activated</th>
 				<th class="numeric">Activated this month</th>
+				<th class="numeric">Deleted*</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -22,9 +23,12 @@
 				<td class="numeric">{{ auth_stats.total }}</td>
 				<td class="numeric">{{ auth_stats.activated }}</td>
 				<td class="numeric">{{ auth_stats['activated-this-month'] }}</td>
+				<td class="numeric">{{ auth_stats.deleted }}</td>
 		     </tr>
 		</tbody>
 	</table>
+
+	<p>* since 17 December 2015</p>
 
 	<h2 class="heading-medium">Applications</h2>
 

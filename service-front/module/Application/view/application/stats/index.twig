@@ -27,17 +27,21 @@
                 <th class="numeric">Total no. of registered users</th>
                 <th class="numeric">Total no. of activated users</th>
                 <th class="numeric">No. of activated users this month</th>
+                <th class="numeric">No. of deleted user accounts*</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td class="numeric">{{ users.total }}</td>
                 <td class="numeric">{{ users.activated }}</td>
-                <td class="numeric">{{ users.activated-this-month }}</td>
+                <td class="numeric">{{ users['activated-this-month'] }}</td>
+                <td class="numeric">{{ users.deleted }}</td>
             </tr>
         </tbody>
     </table>
 </div>
+
+    <p>* since 17 December 2015</p>
 
 <h2 class="heading-medium">Status by type</h2>
 
