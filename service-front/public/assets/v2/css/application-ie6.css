@@ -2280,6 +2280,24 @@ input[disabled="disabled"] {
     right: 0;
     bottom: 0; }
 
+.lpa-table .lpa-donor {
+  width: 25%; }
+.lpa-table .lpa-number {
+  width: 120px; }
+.lpa-table .lpa-type {
+  width: 80px; }
+.lpa-table .lpa-progress {
+  width: 80px; }
+.lpa-table .lpa-date {
+  width: 80px; }
+.lpa-table .lpa-actions {
+  width: 190px; }
+  .lpa-table .lpa-actions .button {
+    float: right;
+    margin-top: 13px; }
+.lpa-table .lpa-manage {
+  float: left;
+  margin-top: 20px; }
 .lpa-table td:nth-child(6) {
   padding: 0; }
 .lpa-table .button {

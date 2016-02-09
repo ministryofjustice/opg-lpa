@@ -16,6 +16,32 @@
 }
 
 .lpa-table {
+	.lpa-donor {
+		width: 25%;
+	}
+	.lpa-number {
+		width: 120px;
+	}
+	.lpa-type {
+		width: 80px;
+	}
+	.lpa-progress {
+		width: 80px;
+	}
+	.lpa-date {
+		width: 80px;
+	}
+	.lpa-actions {
+		width: 190px;
+		.button {
+			float: right;
+			margin-top: 13px;
+		}
+	}
+	.lpa-manage {
+		float: left;
+		margin-top: 20px;
+	}
 	th, td {
 		@include media(mobile) {
 			display: block;
