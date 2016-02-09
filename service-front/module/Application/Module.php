@@ -231,6 +231,20 @@ class Module{
                     
                     $env = new \Twig_Environment($loader);
                     
+                    $viewHelperManager = $sm->get('ViewHelperManager');
+                    $renderer = new \Zend\View\Renderer\PhpRenderer();
+                    $renderer->setHelperPluginManager($viewHelperManager);
+                    
+                    $env->registerUndefinedFunctionCallback(function ($name) use ($viewHelperManager, $renderer) {
+                        if (!$viewHelperManager->has($name)) {
+                            return false;
+                        }
+                        
+                        $callable = [$renderer->plugin($name), '__invoke'];
+                        $options  = ['is_safe' => ['html']];
+                        return new \Twig_SimpleFunction(null, $callable, $options);
+                    });
+                    
                     return $env;
                     
                 },
@@ -240,6 +254,7 @@ class Module{
                     $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
                     
                     $env = new \Twig_Environment($loader);
+
                     
                     return $env;
                 
