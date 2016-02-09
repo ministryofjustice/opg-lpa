@@ -24,6 +24,9 @@ class Registration extends SetPassword {
         $this->add(array(
             'name' => 'terms',
             'type' => 'Checkbox',
+            'options' => [
+                'use_hidden_element' => false,
+            ]
         ));
 
         //--------------------------------
