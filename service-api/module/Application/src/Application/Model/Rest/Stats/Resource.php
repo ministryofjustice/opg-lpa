@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\Rest\Stats;
 
-use MongoId, MongoDate;
+use MongoId, MongoDate, MongoCode;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
@@ -290,56 +290,64 @@ class Resource extends AbstractResource {
     private function getLpasPerUser(){
         
         $collection = $this->getCollection('lpa');
+        $db = $collection->db;
         
         // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
-        
-        // Get a list of users and the number of applications they have
-        $results = $collection->group(
-            ['user' => 1],
-            ['lpacount' => 0],
-            'function (obj, prev) { prev.lpacount ++; }'
-        )['retval'];
-        
-        // Create an array indexed by userId with lpaCount as a value
-        $userLpaCounts = [];
-        foreach ($results as $result) {
-            
-            $userId = $result['user'];
-            $lpaCount = $result['lpacount'];
-            
-            if (!empty($userId)) {
-                $userLpaCounts[$userId] = $lpaCount;
-            }
-        }
+        $db->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
-        // Create an array indexed by number of lpas with number of users as the value
-        $byLpaCount = [];
-        foreach ($userLpaCounts as $userId => $lpaCount) {
-            if (isset($byLpaCount[$lpaCount])) {
-                $byLpaCount[$lpaCount] ++;
-            } else {
-                $byLpaCount[$lpaCount] = 1;
-            }
-        }
+        //------------------------------------
 
-        // Create an array indexed by number of users with number of lpas as the value
-        $byUserCount = [];
-        foreach ($byLpaCount as $lpaCount => $userCount) {
-            if (isset($byUserCount[$userCount])) {
-                $byUserCount[$userCount] += $lpaCount;
-            } else {
-                $byUserCount[$userCount] = $lpaCount;
-            }
-        }
-        
-        krsort($byLpaCount);
-        krsort($byUserCount);
-        
+        // Returns the number of LPAs under each userId
+
+        $map = new MongoCode("function() { emit(this.user,1); }");
+
+        $reduce = new MongoCode(
+            'function(user, lpas) {
+                return lpas.length;
+            }'
+        );
+
+        $results = $db->command([
+            'mapreduce' => $collection->getName(),
+            'map' => $map,
+            'reduce' => $reduce,
+            'out' => ['inline'=>1],
+        ])['results'];
+
+        //------------------------------------
+
+        /*
+         * This creates an array where:
+         *  key = a number or LPAs
+         *  value = the number of users with that number of LPAs.
+         *
+         * This lets us say:
+         *  N users have X LPAs
+         */
+
+        $byLpaCount = array_reduce(
+            $results,
+            function( $carry, $item ){
+
+                $count = (int)$item['value'];
+
+                if( !isset($carry[$count]) ){
+                    $carry[$count] = 1;
+                } else {
+                    $carry[$count]++;
+                }
+
+                return $carry;
+            },
+            array()
+        );
+
+        //---
+
         return [
             'byLpaCount' => $byLpaCount,
-            'byUserCount' => $byUserCount,  
         ];
+
     } // function getLpasPerUser()
         
 } // class
