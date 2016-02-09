@@ -2453,14 +2453,47 @@ input[disabled="disabled"] {
       right: 0;
       bottom: 0; } }
 
-.lpa-table .lpa-donor {
-  width: 25%; }
-.lpa-table .lpa-number {
-  width: 120px; }
-.lpa-table .lpa-type {
-  width: 80px; }
-.lpa-table .lpa-progress {
-  width: 80px; }
+@media (min-width: 750px) {
+  .lpa-table .lpa-donor {
+    width: 30%; } }
+@media (min-width: 861px) {
+  .lpa-table .lpa-donor {
+    width: 23%; } }
+@media (min-width: 950px) {
+  .lpa-table .lpa-donor {
+    width: 25%; } }
+@media (min-width: 861px) {
+  .lpa-table .lpa-number {
+    width: 150px; } }
+@media (min-width: 950px) {
+  .lpa-table .lpa-number {
+    width: 120px; } }
+@media (max-width: 860px) {
+  .lpa-table .lpa-number {
+    display: none; } }
+.lpa-table .lpa-number-alt {
+  display: none; }
+  @media (max-width: 860px) {
+    .lpa-table .lpa-number-alt {
+      display: inline-block; } }
+@media (max-width: 860px) {
+  .lpa-table th:nth-child(2) {
+    display: none; } }
+@media (min-width: 861px) {
+  .lpa-table .lpa-type {
+    width: 70px; } }
+@media (min-width: 950px) {
+  .lpa-table .lpa-type {
+    width: 80px; } }
+@media (min-width: 770px) {
+  .lpa-table .lpa-progress {
+    width: 60px; } }
+@media (min-width: 861px) {
+  .lpa-table .lpa-progress {
+    width: 70px; } }
+@media (min-width: 950px) {
+  .lpa-table .lpa-progress {
+    width: 80px; } }
 .lpa-table .lpa-date {
   width: 80px; }
 .lpa-table .lpa-actions {
@@ -2478,35 +2511,41 @@ input[disabled="disabled"] {
   .lpa-table thead {
     display: none; }
   .lpa-table tr {
+    position: relative;
     display: block;
-    margin-top: 30px;
-    border-bottom: 1px solid #bfc1c3; }
+    margin-bottom: 15px;
+    border: 1px solid #bfc1c3;
+    padding: 15px; }
     .lpa-table tr:last-child {
-      border-bottom: 0; }
+      margin-bottom: 0; }
   .lpa-table td {
     position: relative;
     border-bottom: 0;
-    padding: 0 0 6px 120px; }
-    .lpa-table td:before {
-      position: absolute;
-      top: -2px;
+    padding: 0 0 6px 0; }
+  .lpa-table .lpa-type:before {
+    content: 'Type: '; }
+  .lpa-table .lpa-date {
+    width: 100%; }
+    .lpa-table .lpa-date:before {
+      content: 'Last saved: '; }
+  .lpa-table .lpa-actions {
+    position: static;
+    width: 100%; }
+  .lpa-table .lpa-cta {
+    position: absolute;
+    top: 0;
+    right: 0; }
+    .lpa-table .lpa-cta .button {
+      width: 100px;
+      height: 183px;
+      float: none;
+      display: block;
+      margin-top: 0;
       left: 0;
-      width: 120px;
-      height: auto;
-      padding-bottom: 6px;
-      font-weight: 700; }
-  .lpa-table td:nth-child(1):before {
-    content: 'Donor:'; }
-  .lpa-table td:nth-child(2):before {
-    content: 'LPA number:'; }
-  .lpa-table td:nth-child(3):before {
-    content: 'Type:'; }
-  .lpa-table td:nth-child(4):before {
-    content: 'Progress:'; }
-  .lpa-table td:nth-child(5):before {
-    content: 'Last saved on:'; }
-  .lpa-table td:nth-child(6) {
-    padding: 15px 0 30px 0; } }
+      box-shadow: 0 0 0;
+      vertical-align: middle; }
+  .lpa-table .lpa-manage {
+    float: none; } }
 @media (min-width: 641px) {
   .lpa-table td:nth-child(6) {
     padding: 0; } }

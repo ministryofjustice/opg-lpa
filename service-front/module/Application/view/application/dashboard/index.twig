@@ -172,6 +172,7 @@
                         No donor added
                     {% endif %}
                     </h3>
+                    <div class="lpa-number-alt">{{ formatLpaId(lpa.id) }}</div>
                 </td>
                 <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
                 <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>

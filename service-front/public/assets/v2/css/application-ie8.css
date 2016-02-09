@@ -2213,12 +2213,24 @@ input[disabled="disabled"] {
     bottom: 0; }
 
 .lpa-table .lpa-donor {
+  width: 30%;
+  width: 23%;
   width: 25%; }
 .lpa-table .lpa-number {
-  width: 120px; }
+  width: 150px;
+  width: 120px;
+  display: none; }
+.lpa-table .lpa-number-alt {
+  display: none;
+  display: inline-block; }
+.lpa-table th:nth-child(2) {
+  display: none; }
 .lpa-table .lpa-type {
+  width: 70px;
   width: 80px; }
 .lpa-table .lpa-progress {
+  width: 60px;
+  width: 70px;
   width: 80px; }
 .lpa-table .lpa-date {
   width: 80px; }

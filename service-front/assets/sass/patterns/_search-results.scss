@@ -17,16 +17,58 @@
 
 .lpa-table {
 	.lpa-donor {
-		width: 25%;
+		@include media($min-width: 750px) {
+			width: 30%;
+		}
+		@include media($min-width: 861px) {
+			width: 23%;
+		}
+		@include media($min-width: 950px) {
+			width: 25%;
+		}
 	}
 	.lpa-number {
-		width: 120px;
+		@include media($min-width: 861px) {
+			width: 150px;
+		}
+		@include media($min-width: 950px) {
+			width: 120px;
+		}
+		@include media($max-width: 860px) {
+			display: none;
+		}
+	}
+	.lpa-number-alt {
+		display: none;
+		@include media($max-width: 860px) {
+			display: inline-block;
+		}
+	}
+	th {
+		@include media($max-width: 860px) {
+			&:nth-child(2) {
+				display: none;
+			}
+		}
 	}
 	.lpa-type {
-		width: 80px;
+		@include media($min-width: 861px) {
+			width: 70px;
+		}
+		@include media($min-width: 950px) {
+			width: 80px;
+		}
 	}
 	.lpa-progress {
-		width: 80px;
+		@include media($min-width: 770px) {
+			width: 60px;
+		}
+		@include media($min-width: 861px) {
+			width: 70px;
+		}
+		@include media($min-width: 950px) {
+			width: 80px;
+		}
 	}
 	.lpa-date {
 		width: 80px;
@@ -52,54 +94,52 @@
 			display: none;
 		}
 		tr {
+			position: relative;
 			display: block;
-			margin-top: 30px;
-			border-bottom: 1px solid $border-colour;
+			margin-bottom: $gutter-half;
+			border: 1px solid $border-colour;
+			padding: $gutter-half;
 			&:last-child {
-				border-bottom: 0;
+				margin-bottom: 0;
 			}
 		}
 		td {
 			position: relative;
 			border-bottom: 0;
-			padding: 0 0 6px 120px;
+			padding: 0 0 6px 0;
+		}
+		.lpa-type {
 			&:before {
-				position: absolute;
-				top: -2px;
+				content: 'Type: ';
+			}
+		}
+		.lpa-date {
+			width: 100%;
+			&:before {
+				content: 'Last saved: ';
+			}
+		}
+		.lpa-actions {
+			position: static;
+			width: 100%;
+		}
+		.lpa-cta {
+			position: absolute;
+			top: 0;
+			right: 0;
+			.button {
+				width: 100px;
+				height: 183px;
+				float: none;
+				display: block;
+				margin-top: 0;
 				left: 0;
-				width: 120px;
-				height: auto;
-				padding-bottom: 6px;
-				font-weight: 700;
+				box-shadow: 0 0 0;
+				vertical-align: middle;
 			}
 		}
-		td:nth-child(1) {
-			&:before {
-				content: 'Donor:';
-			}
-		}
-		td:nth-child(2) {
-			&:before {
-				content: 'LPA number:';
-			}
-		}
-		td:nth-child(3) {
-			&:before {
-				content: 'Type:';
-			}
-		}
-		td:nth-child(4) {
-			&:before {
-				content: 'Progress:';
-			}
-		}
-		td:nth-child(5) {
-			&:before {
-				content: 'Last saved on:';
-			}
-		}
-		td:nth-child(6) {
-			padding: $gutter-half 0 $gutter 0;
+		.lpa-manage {
+			float: none;
 		}
 	}
 	@include media($min-width: 641px) {
