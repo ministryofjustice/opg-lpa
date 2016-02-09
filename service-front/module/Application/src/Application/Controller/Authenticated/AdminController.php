@@ -93,20 +93,30 @@ class AdminController extends AbstractAuthenticatedController
     {
         $form = new PostcodeLookupMethodForm();
     
+        $type = $form->get('postcode-service');
+        $typeValueOptions = $type->getOptions()['value_options'];
+        
+        $typeValueOptions['postcode-anywhere']['label'] = 'Postcode Anywhere';
+        $typeValueOptions['moj-dsd']['label'] = 'MoJ Digital Postcode Service';
+
+        $type->setOptions([
+            'value_options' => $typeValueOptions
+        ]);
+        
         if ($this->request->isPost()) {
             $post = $this->request->getPost();
     
             $form->setData($post);
 
             if ($form->isValid()) {
-                $this->cache()->setItem('use-postcode-anywhere', (int)$post['use-postcode-anywhere']);
+                $this->cache()->setItem('use-postcode-anywhere', ($post['postcode-service'] == 'postcode-anywhere') ? 1 : 0);
 
                 return $this->redirect()->toRoute('home');
             }
         } else {
-            $messageElement = $form->get('use-postcode-anywhere');
+            $messageElement = $form->get('postcode-service');
             $currentValue = $this->cache()->getItem('use-postcode-anywhere');
-            $messageElement->setValue($currentValue);
+            $messageElement->setValue($currentValue == 1 ? 'postcode-anywhere' : 'moj-dsd');
         }
     
         return new ViewModel(['form'=>$form]);

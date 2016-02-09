@@ -5,19 +5,17 @@
 {% endblock %}
 
 {% set form = formErrorTextExchange(form, []) %}
-{% set usePostcodeAnywhere = form.get('use-postcode-anywhere') %}
+{% set postcodeService = form.get('postcode-service') %}
 
 {% block content %}
 
     {{ form.setAttribute('class', 'form') ? '' }}
 
-    {{ usePostcodeAnywhere.setAttributes({
-        id: 'usePostcodeAnywhere',
+    {{ postcodeService.setAttributes({
+        id: 'postcodeService',
         rows: 10,
         cols: 67
     }) ? ''}}
-
-    {{ usePostcodeAnywhere.setOptions( { label: 'Use Postcode Anywhere' }) ? '' }}
 
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
@@ -25,18 +23,15 @@
     {{ formElement(form.get( form.csrfName )) }}
 
     <div class="text">
-        <p>If this box is checked, the Postcode Anywhere lookup service will be used. Otherwise, the MoJ DS postcode lookup service will be used.</p>
+        <p>Please choose the postcode service to be used by the OPG LPA digital service.</p>
     </div>
-
+    
     <fieldset>
         <legend class="visuallyhidden">Set postcode lookup service</legend>
 
-        <div class="form-group {{ usePostcodeAnywhere.getMessages|length >0 ? 'error'}}">
-            <label class="block-label" for="{{ usePostcodeAnywhere.getAttribute('id') }}">
-                {{ formElement(usePostcodeAnywhere) }}
-                {{ usePostcodeAnywhere.getOption('label') }}
-                {{ formElementErrorsV2(usePostcodeAnywhere) }}
-            </label>
+        <div class="form-group {{ postcodeService.getMessages|length > 0 ? 'error'}}">
+            {{ formElement(postcodeService) }}
+            {{ formElementErrorsV2(postcodeService) }}
         </div>
 
     </fieldset>
