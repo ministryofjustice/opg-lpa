@@ -318,6 +318,7 @@ class Resource extends AbstractResource {
             'map' => $map,
             'reduce' => $reduce,
             'out' => ['inline'=>1],
+            'query' => [ 'user' => [ '$exists'=>true ] ],
         ])['results'];
 
         //------------------------------------
