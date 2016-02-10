@@ -18,8 +18,15 @@ class PostcodeLookupMethodForm extends AbstractForm {
         //--- Form elements
 
         $this->add(array(
-            'name' => 'use-postcode-anywhere',
-            'type' => 'Checkbox',
+            'name' => 'postcode-service',
+            'type' => 'Radio',
+            'options'   => [
+                'value_options' => [
+                    'postcode-anywhere' => ['value' => 'postcode-anywhere'],
+                    'moj-dsd' => ['value' => 'moj-dsd'],
+                ],
+                'disable_inarray_validator' => true,
+            ],
         ));
 
         //--------------------------------

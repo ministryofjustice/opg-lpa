@@ -1653,8 +1653,8 @@ class Client
      * @return bool|mixed
      */
     public function getAuthStats( ){
-    
-        $response = $this->client()->get( $this->authBaseUri . '/stats' );
+
+        $response = $this->client()->get( $this->authBaseUri . '/v1/stats' );
     
         $code = $response->getStatusCode();
         
