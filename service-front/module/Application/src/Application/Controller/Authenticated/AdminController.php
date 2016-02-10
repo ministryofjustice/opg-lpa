@@ -87,7 +87,7 @@ class AdminController extends AbstractAuthenticatedController
         $type = $form->get('postcode-service');
         $typeValueOptions = $type->getOptions()['value_options'];
         
-        $typeValueOptions['postcode-anywhere']['label'] = 'Postcode Anywhere';
+        $typeValueOptions['postcode-anywhere']['label'] = 'PCA Predict';
         $typeValueOptions['moj-dsd']['label'] = 'MoJ Digital Postcode Service';
 
         $type->setOptions([
