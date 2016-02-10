@@ -2494,6 +2494,10 @@ input[disabled="disabled"] {
 @media (min-width: 950px) {
   .lpa-table .lpa-progress {
     width: 80px; } }
+.lpa-table .lpa-progress .progress-started {
+  color: #f47738; }
+.lpa-table .lpa-progress .progress-completed {
+  color: #006435; }
 .lpa-table .lpa-date {
   width: 80px; }
 .lpa-table .lpa-actions {
@@ -2503,10 +2507,7 @@ input[disabled="disabled"] {
     margin-top: 13px; }
 .lpa-table .lpa-manage {
   float: left;
-  margin-top: 20px; }
-@media (max-width: 640px) {
-  .lpa-table th, .lpa-table td {
-    display: block; } }
+  margin-top: 15px; }
 @media (max-width: 640px) {
   .lpa-table thead {
     display: none; }
@@ -2515,37 +2516,70 @@ input[disabled="disabled"] {
     display: block;
     margin-bottom: 15px;
     border: 1px solid #bfc1c3;
-    padding: 15px; }
+    padding: 15px;
+    overflow: hidden; }
     .lpa-table tr:last-child {
       margin-bottom: 0; }
   .lpa-table td {
+    display: block;
     position: relative;
     border-bottom: 0;
     padding: 0 0 6px 0; }
-  .lpa-table .lpa-type:before {
-    content: 'Type: '; }
+  .lpa-table .lpa-number {
+    display: block;
+    margin-bottom: 15px;
+    color: #6f777b;
+    font-size: 16px; }
+  .lpa-table .lpa-number-alt {
+    display: none; }
+  .lpa-table .lpa-type {
+    color: #6f777b;
+    font-size: 16px; }
+    .lpa-table .lpa-type:before {
+      content: 'Type: '; }
+  .lpa-table .lpa-progress {
+    position: absolute;
+    top: 41px;
+    left: 155px;
+    font-size: 16px; }
+    .lpa-table .lpa-progress:before {
+      padding-right: 15px;
+      content: '|';
+      color: #6f777b; }
   .lpa-table .lpa-date {
-    width: 100%; }
+    display: block;
+    width: 100%;
+    color: #6f777b;
+    font-size: 16px; }
     .lpa-table .lpa-date:before {
       content: 'Last saved: '; }
   .lpa-table .lpa-actions {
     position: static;
-    width: 100%; }
+    width: 100%;
+    padding-bottom: 0; }
   .lpa-table .lpa-cta {
     position: absolute;
     top: 0;
     right: 0; }
     .lpa-table .lpa-cta .button {
-      width: 100px;
-      height: 183px;
+      width: 90px;
+      height: 250px;
       float: none;
       display: block;
       margin-top: 0;
       left: 0;
       box-shadow: 0 0 0;
-      vertical-align: middle; }
+      vertical-align: middle;
+      background-image: url(../images/custom/arrow-in-circle.png);
+      background-repeat: no-repeat;
+      background-position: center 35%;
+      text-indent: -9999px;
+      border-left: 1px solid #bfc1c3; }
   .lpa-table .lpa-manage {
-    float: none; } }
+    float: none;
+    font-size: 16px; }
+    .lpa-table .lpa-manage .summary:after {
+      content: ' this LPA'; } }
 @media (min-width: 641px) {
   .lpa-table td:nth-child(6) {
     padding: 0; } }
@@ -2571,12 +2605,6 @@ input[disabled="disabled"] {
   border: 1px solid #bfc1c3; }
   .lpa-cards tr:nth-child(2n-1) {
     margin-right: 4%; }
-    @media (max-width: 640px) {
-      .lpa-cards tr:nth-child(2n-1) {
-        margin-right: 0; } }
-  @media (max-width: 640px) {
-    .lpa-cards tr {
-      width: 100%; } }
 .lpa-cards td {
   display: block;
   position: relative;
@@ -2600,41 +2628,140 @@ input[disabled="disabled"] {
     .lpa-cards .lpa-progress,
     .lpa-cards .lpa-date {
       width: 190px; } }
+  @media (max-width: 640px) {
+    .lpa-cards .lpa-progress,
+    .lpa-cards .lpa-date {
+      position: static; } }
   .lpa-cards .lpa-progress span,
   .lpa-cards .lpa-date span {
     display: block;
     position: relative;
     width: 100%;
     text-align: left; }
-@media (min-width: 780px) {
-  .lpa-cards .lpa-progress span:before {
-    content: 'Status: '; } }
+    @media (max-width: 640px) {
+      .lpa-cards .lpa-progress span,
+      .lpa-cards .lpa-date span {
+        position: static;
+        display: inline; } }
+.lpa-cards .lpa-progress .progress-started {
+  color: #f47738; }
+.lpa-cards .lpa-progress .progress-completed {
+  color: #006435; }
+.lpa-cards .lpa-progress span:before {
+  color: #0b0c0c;
+  content: 'Status: '; }
+  @media (min-width: 641px) {
+    .lpa-cards .lpa-progress span:before {
+      content: ''; } }
+  @media (min-width: 780px) {
+    .lpa-cards .lpa-progress span:before {
+      content: 'Status: '; } }
+  @media (max-width: 640px) {
+    .lpa-cards .lpa-progress span:before {
+      content: ''; } }
 .lpa-cards .lpa-date span {
   top: 20px; }
-  @media (min-width: 780px) {
-    .lpa-cards .lpa-date span:before {
-      content: 'Last saved on: '; } }
+  .lpa-cards .lpa-date span:before {
+    content: 'Last saved on: '; }
+    @media (min-width: 641px) {
+      .lpa-cards .lpa-date span:before {
+        content: ''; } }
+    @media (min-width: 780px) {
+      .lpa-cards .lpa-date span:before {
+        content: 'Last saved on: '; } }
+    @media (max-width: 640px) {
+      .lpa-cards .lpa-date span:before {
+        content: ''; } }
 .lpa-cards .lpa-actions {
   position: relative;
   min-height: 80px; }
-.lpa-cards .button {
-  position: absolute;
-  bottom: 2px; }
-.lpa-cards .lpa-cta {
-  float: left;
-  position: relative;
-  bottom: 0;
-  padding: 0;
-  clear: left; }
-.lpa-cards .lpa-manage {
-  position: absolute;
-  width: 100px;
-  right: 0;
-  bottom: 0;
-  padding: 0; }
-  @media (min-width: 780px) {
-    .lpa-cards .lpa-manage {
-      width: 174px; } }
+@media (min-width: 641px) {
+  .lpa-cards .button {
+    position: absolute;
+    bottom: 2px; } }
+@media (min-width: 641px) {
+  .lpa-cards .lpa-manage {
+    position: absolute;
+    width: 100px;
+    right: 0;
+    bottom: 0;
+    padding: 0; } }
+@media (min-width: 780px) {
+  .lpa-cards .lpa-manage {
+    width: 174px; } }
+@media (max-width: 640px) {
+  .lpa-cards thead {
+    display: none; }
+  .lpa-cards tr {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    border: 1px solid #bfc1c3;
+    padding: 15px;
+    overflow: hidden; }
+    .lpa-cards tr:last-child {
+      margin-bottom: 0; }
+  .lpa-cards td {
+    display: block;
+    position: relative;
+    border-bottom: 0;
+    padding: 0 0 6px 0; }
+  .lpa-cards .lpa-number {
+    display: block;
+    margin-bottom: 15px;
+    color: #6f777b;
+    font-size: 16px; }
+  .lpa-cards .lpa-number-alt {
+    display: none; }
+  .lpa-cards .lpa-type {
+    color: #6f777b;
+    font-size: 16px; }
+    .lpa-cards .lpa-type:before {
+      content: 'Type: '; }
+  .lpa-cards .lpa-progress {
+    position: absolute;
+    top: 41px;
+    left: 155px;
+    font-size: 16px; }
+    .lpa-cards .lpa-progress:before {
+      padding-right: 15px;
+      content: '|';
+      color: #6f777b; }
+  .lpa-cards .lpa-date {
+    display: block;
+    width: 100%;
+    color: #6f777b;
+    font-size: 16px; }
+    .lpa-cards .lpa-date:before {
+      content: 'Last saved: '; }
+  .lpa-cards .lpa-actions {
+    position: static;
+    width: 100%;
+    padding-bottom: 0; }
+  .lpa-cards .lpa-cta {
+    position: absolute;
+    top: 0;
+    right: 0; }
+    .lpa-cards .lpa-cta .button {
+      width: 90px;
+      height: 250px;
+      float: none;
+      display: block;
+      margin-top: 0;
+      left: 0;
+      box-shadow: 0 0 0;
+      vertical-align: middle;
+      background-image: url(../images/custom/arrow-in-circle.png);
+      background-repeat: no-repeat;
+      background-position: center 35%;
+      text-indent: -9999px;
+      border-left: 1px solid #bfc1c3; }
+  .lpa-cards .lpa-manage {
+    float: none;
+    font-size: 16px; }
+    .lpa-cards .lpa-manage .summary:after {
+      content: ' this LPA'; } }
 
 .button-secondary {
   background-color: #dee0e2;

@@ -82,7 +82,7 @@
     {% for key,lpa in lpas %}
             <tr>
                 <td class="lpa-donor">
-                    <h3 class="heading-small flush--top">  
+                    <h3 class="heading-small flush--ends">  
                     {% if lpa.donor|length > 0 %}
                         {{ lpa.donor }}
                     {% else %}
@@ -91,16 +91,18 @@
                     </h3>
                 </td>
                 <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
-                <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}</td>
+                <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
                 <td class="lpa-progress">
-                    <span>{{ lpa.progress }}</span>
+                    <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
                 </td>
                 <td class="lpa-date">
                     {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
                     <span>24/10/16</span>
                 </td>
                 <td class="lpa-actions">
-                    <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    <div class="lpa-cta">
+                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    </div>
                     <div class="lpa-manage">
                         {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
                             <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a><br>
@@ -114,6 +116,7 @@
                     </div>
                 </td>
             </tr>
+
     {% endfor %}
 
     </tbody>
@@ -177,7 +180,7 @@
                 <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
                 <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
                 <td class="lpa-progress">
-                    <span>{{ lpa.progress }}</span>
+                    <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
                 </td>
                 <td class="lpa-date">
                     {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
