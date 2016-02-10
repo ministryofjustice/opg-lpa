@@ -299,7 +299,13 @@ class Resource extends AbstractResource {
 
         // Returns the number of LPAs under each userId
 
-        $map = new MongoCode("function() { emit(this.user,1); }");
+        $map = new MongoCode(
+            'function() {
+                if( this.user ){
+                    emit(this.user,1);
+                }
+            }'
+        );
 
         $reduce = new MongoCode(
             'function(user, lpas) {
