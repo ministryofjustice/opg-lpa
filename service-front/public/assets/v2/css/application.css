@@ -2508,78 +2508,6 @@ input[disabled="disabled"] {
 .lpa-table .lpa-manage {
   float: left;
   margin-top: 15px; }
-@media (max-width: 640px) {
-  .lpa-table thead {
-    display: none; }
-  .lpa-table tr {
-    position: relative;
-    display: block;
-    margin-bottom: 15px;
-    border: 1px solid #bfc1c3;
-    padding: 15px;
-    overflow: hidden; }
-    .lpa-table tr:last-child {
-      margin-bottom: 0; }
-  .lpa-table td {
-    display: block;
-    position: relative;
-    border-bottom: 0;
-    padding: 0 0 6px 0; }
-  .lpa-table .lpa-number {
-    display: block;
-    margin-bottom: 15px;
-    color: #6f777b;
-    font-size: 16px; }
-  .lpa-table .lpa-number-alt {
-    display: none; }
-  .lpa-table .lpa-type {
-    color: #6f777b;
-    font-size: 16px; }
-    .lpa-table .lpa-type:before {
-      content: 'Type: '; }
-  .lpa-table .lpa-progress {
-    position: absolute;
-    top: 41px;
-    left: 155px;
-    font-size: 16px; }
-    .lpa-table .lpa-progress:before {
-      padding-right: 15px;
-      content: '|';
-      color: #6f777b; }
-  .lpa-table .lpa-date {
-    display: block;
-    width: 100%;
-    color: #6f777b;
-    font-size: 16px; }
-    .lpa-table .lpa-date:before {
-      content: 'Last saved: '; }
-  .lpa-table .lpa-actions {
-    position: static;
-    width: 100%;
-    padding-bottom: 0; }
-  .lpa-table .lpa-cta {
-    position: absolute;
-    top: 0;
-    right: 0; }
-    .lpa-table .lpa-cta .button {
-      width: 90px;
-      height: 250px;
-      float: none;
-      display: block;
-      margin-top: 0;
-      left: 0;
-      box-shadow: 0 0 0;
-      vertical-align: middle;
-      background-image: url(../images/custom/arrow-in-circle.png);
-      background-repeat: no-repeat;
-      background-position: center 35%;
-      text-indent: -9999px;
-      border-left: 1px solid #bfc1c3; }
-  .lpa-table .lpa-manage {
-    float: none;
-    font-size: 16px; }
-    .lpa-table .lpa-manage .summary:after {
-      content: ' this LPA'; } }
 @media (min-width: 641px) {
   .lpa-table td:nth-child(6) {
     padding: 0; } }
@@ -2690,59 +2618,77 @@ input[disabled="disabled"] {
   .lpa-cards .lpa-manage {
     width: 174px; } }
 @media (max-width: 640px) {
+  .lpa-cards tr {
+    width: 100%; } }
+
+@media (max-width: 640px) {
+  .lpa-table thead,
   .lpa-cards thead {
     display: none; }
+  .lpa-table tr,
   .lpa-cards tr {
     position: relative;
     display: block;
-    width: 100%;
     margin-bottom: 15px;
     border: 1px solid #bfc1c3;
     padding: 15px;
     overflow: hidden; }
+    .lpa-table tr:last-child,
     .lpa-cards tr:last-child {
       margin-bottom: 0; }
+  .lpa-table td,
   .lpa-cards td {
     display: block;
     position: relative;
     border-bottom: 0;
     padding: 0 0 6px 0; }
+  .lpa-table .lpa-number,
   .lpa-cards .lpa-number {
     display: block;
     margin-bottom: 15px;
     color: #6f777b;
     font-size: 16px; }
+  .lpa-table .lpa-number-alt,
   .lpa-cards .lpa-number-alt {
     display: none; }
+  .lpa-table .lpa-type,
   .lpa-cards .lpa-type {
     color: #6f777b;
     font-size: 16px; }
+    .lpa-table .lpa-type:before,
     .lpa-cards .lpa-type:before {
       content: 'Type: '; }
+  .lpa-table .lpa-progress,
   .lpa-cards .lpa-progress {
     position: absolute;
     top: 41px;
     left: 155px;
     font-size: 16px; }
+    .lpa-table .lpa-progress:before,
     .lpa-cards .lpa-progress:before {
       padding-right: 15px;
       content: '|';
       color: #6f777b; }
+  .lpa-table .lpa-date,
   .lpa-cards .lpa-date {
     display: block;
     width: 100%;
     color: #6f777b;
     font-size: 16px; }
+    .lpa-table .lpa-date:before,
     .lpa-cards .lpa-date:before {
       content: 'Last saved: '; }
+  .lpa-table .lpa-actions,
   .lpa-cards .lpa-actions {
     position: static;
     width: 100%;
     padding-bottom: 0; }
+  .lpa-table .lpa-cta,
   .lpa-cards .lpa-cta {
     position: absolute;
     top: 0;
     right: 0; }
+    .lpa-table .lpa-cta .button,
     .lpa-cards .lpa-cta .button {
       width: 90px;
       height: 250px;
@@ -2757,9 +2703,11 @@ input[disabled="disabled"] {
       background-position: center 35%;
       text-indent: -9999px;
       border-left: 1px solid #bfc1c3; }
+  .lpa-table .lpa-manage,
   .lpa-cards .lpa-manage {
     float: none;
     font-size: 16px; }
+    .lpa-table .lpa-manage .summary:after,
     .lpa-cards .lpa-manage .summary:after {
       content: ' this LPA'; } }
 
