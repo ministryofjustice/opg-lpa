@@ -2462,16 +2462,19 @@ input[disabled="disabled"] {
 @media (min-width: 950px) {
   .lpa-table .lpa-donor {
     width: 25%; } }
-@media (min-width: 861px) {
-  .lpa-table .lpa-number {
-    width: 150px; } }
-@media (min-width: 950px) {
-  .lpa-table .lpa-number {
-    width: 120px; } }
-@media (max-width: 860px) {
-  .lpa-table .lpa-number {
-    display: none; } }
+.lpa-table .lpa-number {
+  color: #6f777b; }
+  @media (min-width: 861px) {
+    .lpa-table .lpa-number {
+      width: 150px; } }
+  @media (min-width: 950px) {
+    .lpa-table .lpa-number {
+      width: 120px; } }
+  @media (max-width: 860px) {
+    .lpa-table .lpa-number {
+      display: none; } }
 .lpa-table .lpa-number-alt {
+  color: #6f777b;
   display: none; }
   @media (max-width: 860px) {
     .lpa-table .lpa-number-alt {
@@ -2479,12 +2482,14 @@ input[disabled="disabled"] {
 @media (max-width: 860px) {
   .lpa-table th:nth-child(2) {
     display: none; } }
-@media (min-width: 861px) {
-  .lpa-table .lpa-type {
-    width: 70px; } }
-@media (min-width: 950px) {
-  .lpa-table .lpa-type {
-    width: 80px; } }
+.lpa-table .lpa-type {
+  color: #6f777b; }
+  @media (min-width: 861px) {
+    .lpa-table .lpa-type {
+      width: 70px; } }
+  @media (min-width: 950px) {
+    .lpa-table .lpa-type {
+      width: 80px; } }
 @media (min-width: 770px) {
   .lpa-table .lpa-progress {
     width: 60px; } }
@@ -2499,6 +2504,7 @@ input[disabled="disabled"] {
 .lpa-table .lpa-progress .progress-completed {
   color: #006435; }
 .lpa-table .lpa-date {
+  color: #6f777b;
   width: 80px; }
 .lpa-table .lpa-actions {
   width: 190px; }
@@ -2507,7 +2513,7 @@ input[disabled="disabled"] {
     margin-top: 13px; }
 .lpa-table .lpa-manage {
   float: left;
-  margin-top: 15px; }
+  margin-top: 21px; }
 @media (min-width: 641px) {
   .lpa-table td:nth-child(6) {
     padding: 0; } }
@@ -2656,6 +2662,7 @@ input[disabled="disabled"] {
   .lpa-cards .lpa-number {
     display: block;
     margin-bottom: 15px;
+    padding-top: 0;
     color: #6f777b;
     font-size: 16px; }
   .lpa-table .lpa-number-alt,
@@ -2716,7 +2723,8 @@ input[disabled="disabled"] {
   .lpa-table .lpa-manage,
   .lpa-cards .lpa-manage {
     float: none;
-    font-size: 16px; }
+    font-size: 16px;
+    margin-top: 15px; }
     .lpa-table .lpa-manage .summary:after,
     .lpa-cards .lpa-manage .summary:after {
       content: ' this LPA'; } }

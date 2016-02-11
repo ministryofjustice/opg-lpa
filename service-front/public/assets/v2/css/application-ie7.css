@@ -2275,15 +2275,18 @@ input[disabled="disabled"] {
   width: 23%;
   width: 25%; }
 .lpa-table .lpa-number {
+  color: #6f777b;
   width: 150px;
   width: 120px;
   display: none; }
 .lpa-table .lpa-number-alt {
+  color: #6f777b;
   display: none;
   display: inline-block; }
 .lpa-table th:nth-child(2) {
   display: none; }
 .lpa-table .lpa-type {
+  color: #6f777b;
   width: 70px;
   width: 80px; }
 .lpa-table .lpa-progress {
@@ -2295,6 +2298,7 @@ input[disabled="disabled"] {
   .lpa-table .lpa-progress .progress-completed {
     color: #006435; }
 .lpa-table .lpa-date {
+  color: #6f777b;
   width: 80px; }
 .lpa-table .lpa-actions {
   width: 190px; }
@@ -2303,7 +2307,7 @@ input[disabled="disabled"] {
     margin-top: 13px; }
 .lpa-table .lpa-manage {
   float: left;
-  margin-top: 15px; }
+  margin-top: 21px; }
 .lpa-table td:nth-child(6) {
   padding: 0; }
 .lpa-table .button {

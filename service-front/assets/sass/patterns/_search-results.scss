@@ -29,6 +29,7 @@
 		}
 	}
 	.lpa-number {
+		color: $secondary-text-colour;
 		@include media($min-width: 861px) {
 			width: 150px;
 		}
@@ -40,6 +41,7 @@
 		}
 	}
 	.lpa-number-alt {
+		color: $secondary-text-colour;
 		display: none;
 		@include media($max-width: 860px) {
 			display: inline-block;
@@ -53,6 +55,7 @@
 		}
 	}
 	.lpa-type {
+		color: $secondary-text-colour;
 		@include media($min-width: 861px) {
 			width: 70px;
 		}
@@ -78,6 +81,7 @@
 		}
 	}
 	.lpa-date {
+		color: $secondary-text-colour;
 		width: 80px;
 	}
 	.lpa-actions {
@@ -89,7 +93,7 @@
 	}
 	.lpa-manage {
 		float: left;
-		margin-top: $gutter-half;
+		margin-top: 21px;
 	}
 	@include media($min-width: 641px) {
 		td:nth-child(6) {
@@ -284,6 +288,7 @@
 		.lpa-number {
 			display: block;
 			margin-bottom: $gutter-half;
+			padding-top: 0;
 			color: $secondary-text-colour;
 			font-size: 16px;
 		}
@@ -345,6 +350,7 @@
 		.lpa-manage {
 			float: none;
 			font-size: 16px;
+			margin-top: $gutter-half;
 			.summary:after {
 				content: ' this LPA';
 			}
