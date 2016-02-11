@@ -2523,7 +2523,7 @@ input[disabled="disabled"] {
 .lpa-cards tr {
   display: block;
   position: relative;
-  width: 48%;
+  width: 48.5%;
   float: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -2532,30 +2532,35 @@ input[disabled="disabled"] {
   padding: 15px;
   border: 1px solid #bfc1c3; }
   .lpa-cards tr:nth-child(2n-1) {
-    margin-right: 4%; }
+    margin-right: 3%; }
 .lpa-cards td {
   display: block;
   position: relative;
   padding: 0;
-  border-bottom: 0; }
+  border-bottom: 0;
+  font-size: 19px; }
 .lpa-cards .lpa-donor {
   padding-right: 120px; }
-  @media (min-width: 780px) {
+  @media (min-width: 870px) {
     .lpa-cards .lpa-donor {
-      padding-right: 190px; } }
+      padding-right: 210px; } }
+.lpa-cards .lpa-number {
+  padding-top: 6px;
+  color: #6f777b; }
 .lpa-cards .lpa-type {
   display: none; }
 .lpa-cards .lpa-progress,
 .lpa-cards .lpa-date {
   position: absolute;
-  width: 120px;
-  top: 17px;
+  width: 128px;
+  top: 19px;
   right: 0;
-  padding: 0; }
-  @media (min-width: 780px) {
+  padding: 0;
+  line-height: 1.31579em; }
+  @media (min-width: 870px) {
     .lpa-cards .lpa-progress,
     .lpa-cards .lpa-date {
-      width: 190px; } }
+      width: 210px; } }
   @media (max-width: 640px) {
     .lpa-cards .lpa-progress,
     .lpa-cards .lpa-date {
@@ -2576,25 +2581,26 @@ input[disabled="disabled"] {
 .lpa-cards .lpa-progress .progress-completed {
   color: #006435; }
 .lpa-cards .lpa-progress span:before {
-  color: #0b0c0c;
+  color: #6f777b;
   content: 'Status: '; }
   @media (min-width: 641px) {
     .lpa-cards .lpa-progress span:before {
       content: ''; } }
-  @media (min-width: 780px) {
+  @media (min-width: 870px) {
     .lpa-cards .lpa-progress span:before {
       content: 'Status: '; } }
   @media (max-width: 640px) {
     .lpa-cards .lpa-progress span:before {
       content: ''; } }
 .lpa-cards .lpa-date span {
-  top: 20px; }
+  top: 24px;
+  color: #6f777b; }
   .lpa-cards .lpa-date span:before {
     content: 'Last saved on: '; }
     @media (min-width: 641px) {
       .lpa-cards .lpa-date span:before {
         content: ''; } }
-    @media (min-width: 780px) {
+    @media (min-width: 870px) {
       .lpa-cards .lpa-date span:before {
         content: 'Last saved on: '; } }
     @media (max-width: 640px) {
@@ -2610,13 +2616,17 @@ input[disabled="disabled"] {
 @media (min-width: 641px) {
   .lpa-cards .lpa-manage {
     position: absolute;
-    width: 100px;
+    width: 112px;
     right: 0;
     bottom: 0;
-    padding: 0; } }
-@media (min-width: 780px) {
+    padding: 0; }
+    .lpa-cards .lpa-manage a span {
+      display: none; } }
+@media (min-width: 870px) {
   .lpa-cards .lpa-manage {
-    width: 174px; } }
+    width: 194px; }
+    .lpa-cards .lpa-manage a span {
+      display: inline; } }
 @media (max-width: 640px) {
   .lpa-cards tr {
     width: 100%; } }
@@ -2910,7 +2920,8 @@ input[disabled="disabled"] {
   padding: 15px;
   background-color: #dee0e2; }
   .panel-cta .panel-body {
-    font-weight: 700; }
+    font-weight: 700;
+    text-align: center; }
   .panel-cta .panel-button {
     text-align: center; }
 

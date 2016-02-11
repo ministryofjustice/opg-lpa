@@ -30,9 +30,9 @@
     </div>
     <div class="column-one-third">
         <div class="panel-cta">
-            <p class="panel-body flush--top">Create another LPA for a family member or friend. It will be added to this account.</p>
+            <p class="panel-body flush--top">Create another LPA</p>
             <p class="panel-button flush--bottom">
-                <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Create a new LPA</a>
+                <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
             </p>
             
         </div>
@@ -61,13 +61,38 @@
 
 {% endif %}
 
+{% set shortList = true %}
+
 {% if lpas.getTotalItemCount() > 0 %}
 
 <hr>
-<h2 class="heading-large">Property and finance</h2>
+{% if shortList %}
+    <h2 class="heading-large">Property and finance</h2>
+{% else %}
+    <div class="grid-row">
+        <div class="column-one-half">
+            <h2 class="heading-large">All LPAs</h2>
+        </div>
+        <div class="column-one-half">
+            <form action="{{ url('user/dashboard') }}" method="GET" class="lpa-search-form">
+                <fieldset>
+                    <legend class="visuallyhidden">Search for LPAs</legend>
+                    <div class="">
+                        <label for="search" class="form-label">
+                            <span class="form-label-bold">Search LPAs</span>
+                        </label>
+                        <span class="form-hint">LPA number, donor's first or last name</span>
+                        <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
+                        <input class="add button" type="submit" value="Search"/>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endif %}
 <hr>
 
-<table id="savedforms" class="lpa-cards">
+<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
     <thead>
     <tr>
         <th>Donor</th>
@@ -80,119 +105,46 @@
     </thead>
     <tbody>
     {% for key,lpa in lpas %}
-            <tr>
-                <td class="lpa-donor">
-                    <h3 class="heading-small flush--ends">  
-                    {% if lpa.donor|length > 0 %}
-                        {{ lpa.donor }}
-                    {% else %}
-                        No donor added
-                    {% endif %}
-                    </h3>
-                </td>
-                <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
-                <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
-                <td class="lpa-progress">
-                    <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
-                </td>
-                <td class="lpa-date">
-                    {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
-                    <span>24/10/16</span>
-                </td>
-                <td class="lpa-actions">
-                    <div class="lpa-cta">
-                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
-                    </div>
-                    <div class="lpa-manage">
+        <tr>
+            <td class="lpa-donor">
+                <h3 class="heading-medium flush--ends">  
+                {% if lpa.donor|length > 0 %}
+                    {{ lpa.donor }}
+                {% else %}
+                    No donor added
+                {% endif %}
+                </h3>
+                {% if not shortList %}
+                    <div class="lpa-number-alt">{{ formatLpaId(lpa.id) }}</div>
+                {% endif %}
+            </td>
+            <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
+            <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
+            <td class="lpa-progress">
+                <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
+            </td>
+            <td class="lpa-date">
+                {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
+                <span>24/10/16</span>
+            </td>
+            <td class="lpa-actions">
+                <div class="lpa-cta">
+                    <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                </div>
+                <div class="lpa-manage">
+                    {% if shortList %}
                         {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                            <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a><br>
+                            <a href="/lpa/{{ lpa.id }}/date-check">Check <span>signing</span> dates</a><br>
                         {% endif %}
 
                         {% if lpa.progress != 'Started' %}
-                            <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a><br>
+                            <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span>LPA</span> details</a><br>
                         {% endif %}
 
-                        <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
-                    </div>
-                </td>
-            </tr>
-
-    {% endfor %}
-
-    </tbody>
-</table>
-
-<? /* Pagination HTML is in pagination.phtml */ ?>
-{{ paginationControl(lpas, 'Sliding', 'application/dashboard/pagination', {'route': 'user/dashboard/pagination'}) }}
-
-<p>
-{% endif %}
-
-{% if lpas.getTotalItemCount() > 0 %}
-
-<hr>
-<div class="grid-row">
-    <div class="column-one-half">
-        <h2 class="heading-large">All LPAs</h2>
-    </div>
-    <div class="column-one-half">
-        <form action="{{ url('user/dashboard') }}" method="GET" class="lpa-search-form">
-            <fieldset>
-                <legend class="visuallyhidden">Search for LPAs</legend>
-                <div class="">
-                    <label for="search" class="form-label">
-                        <span class="form-label-bold">Search LPAs</span>
-                    </label>
-                    <span class="form-hint">LPA number, donor's first or last name</span>
-                    <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
-                    <input class="add button" type="submit" value="Search"/>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-</div>
-<hr>
-
-<table id="savedforms" class="lpa-table">
-    <thead>
-    <tr>
-        <th>Donor</th>
-        <th>LPA number</th>
-        <th>LPA Type</th>
-        <th>Progress</th>
-        <th>Last saved</th>
-        <th>&nbsp;</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for key,lpa in lpas %}
-            <tr>
-                <td class="lpa-donor">
-                    <h3 class="heading-small flush--ends">  
-                    {% if lpa.donor|length > 0 %}
-                        {{ lpa.donor }}
+                        <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete <span>LPA</span></a>
                     {% else %}
-                        No donor added
-                    {% endif %}
-                    </h3>
-                    <div class="lpa-number-alt">{{ formatLpaId(lpa.id) }}</div>
-                </td>
-                <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
-                <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
-                <td class="lpa-progress">
-                    <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
-                </td>
-                <td class="lpa-date">
-                    {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
-                    <span>00/00/00</span>
-                </td>
-                <td class="lpa-actions">
-                    <div class="lpa-cta">
-                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
-                    </div>
-                    <div class="lpa-manage">
                         <details>
-                            <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form">
+                            <summary>
                                 <span class="summary">Manage</span>
                             </summary>
                             <ul>
@@ -213,10 +165,11 @@
                                 </li>
                             </ul>
                         </details>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
 
-                    </div>
-                </td>
-            </tr>
     {% endfor %}
 
     </tbody>

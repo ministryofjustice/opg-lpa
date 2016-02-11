@@ -116,14 +116,14 @@
 	tr {
 		display: block;
 		position: relative;
-		width: 48%;
+		width: 48.5%;
 		float: left;
 		@include box-sizing (border-box);
 		margin-bottom: $gutter;
 		padding: $gutter-half;
 		border: 1px solid $border-colour;
 		&:nth-child(2n-1) {
-			margin-right: 4%;
+			margin-right: 3%;
 			@include media(mobile) {
 				//margin-right: 0;
 			}
@@ -134,11 +134,12 @@
 		position: relative;
 		padding: 0;
 		border-bottom: 0;
+		font-size: 19px;
 	}
 	.lpa-donor {
 		padding-right: 120px;
-		@include media($min-width: 780px) {
-			padding-right: 190px;
+		@include media($min-width: 870px) {
+			padding-right: 210px;
 		}
 		@include media(mobile) {
 			//padding-right: 160px;
@@ -147,18 +148,23 @@
 			//padding-right: 120px;
 		}
 	}
+	.lpa-number {
+		padding-top: 6px;
+		color: $secondary-text-colour;
+	}
 	.lpa-type {
 		display: none;
 	}
 	.lpa-progress,
 	.lpa-date {
 		position: absolute;
-		width: 120px;
-		top: 17px;
+		width: 128px;
+		top: 19px;
 		right: 0;
 		padding: 0;
-		@include media($min-width: 780px) {
-			width: 190px;
+		line-height: 1.31579em;
+		@include media($min-width: 870px) {
+			width: 210px;
 		}
 		@include media(mobile) {
 			position: static;
@@ -186,12 +192,12 @@
 		}
 		span {
 			&:before {
-				color: $text-colour;
+				color: $secondary-text-colour;
 				content: 'Status: ';
 				@include media($min-width: 641px) {
 					content: '';
 				}
-				@include media($min-width: 780px) {
+				@include media($min-width: 870px) {
 					content: 'Status: ';
 				}
 				@include media(mobile) {
@@ -201,13 +207,14 @@
 		}
 	}
 	.lpa-date span {
-		top: 20px;
+		top: 24px;
+		color: $secondary-text-colour;
 		&:before {
 			content: 'Last saved on: ';
 			@include media($min-width: 641px) {
 				content: '';
 			}
-			@include media($min-width: 780px) {
+			@include media($min-width: 870px) {
 				content: 'Last saved on: ';
 			}
 			@include media(mobile) {
@@ -228,13 +235,19 @@
 	.lpa-manage {
 		@include media(tablet) {
 			position: absolute;
-			width: 100px;
+			width: 112px;
 			right: 0;
 			bottom: 0;
 			padding: 0;
+			a span {
+				display: none;
+			}
 		}
-		@include media($min-width: 780px) {
-			width: 174px;
+		@include media($min-width: 870px) {
+			width: 194px;
+			a span {
+				display: inline;
+			}
 		}
 	}
 	@include media(mobile) {
