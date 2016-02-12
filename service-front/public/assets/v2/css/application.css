@@ -2480,6 +2480,8 @@ input[disabled="disabled"] {
     .lpa-table .lpa-number-alt {
       display: inline-block; } }
 @media (max-width: 860px) {
+  .lpa-table th:nth-child(1):after {
+    content: " / LPA number"; }
   .lpa-table th:nth-child(2) {
     display: none; } }
 .lpa-table .lpa-type {

@@ -49,6 +49,11 @@
 	}
 	th {
 		@include media($max-width: 860px) {
+			&:nth-child(1) {
+				&:after {
+					content: ' / LPA number'
+				}
+			}
 			&:nth-child(2) {
 				display: none;
 			}

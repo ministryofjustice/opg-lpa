@@ -2283,6 +2283,8 @@ input[disabled="disabled"] {
   color: #6f777b;
   display: none;
   display: inline-block; }
+.lpa-table th:nth-child(1):after {
+  content: " / LPA number"; }
 .lpa-table th:nth-child(2) {
   display: none; }
 .lpa-table .lpa-type {
