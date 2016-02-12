@@ -2719,7 +2719,7 @@ input[disabled="disabled"] {
       vertical-align: middle;
       background-image: url(../images/custom/arrow-in-circle.png);
       background-repeat: no-repeat;
-      background-position: center 35%;
+      background-position: center 32%;
       text-indent: -9999px;
       border-left: 1px solid #bfc1c3; }
   .lpa-table .lpa-manage,
@@ -2927,8 +2927,11 @@ input[disabled="disabled"] {
     float: right; } }
 
 .panel-cta {
-  padding: 15px;
+  padding: 15px 15px 30px;
   background-color: #dee0e2; }
+  @media (max-width: 640px) {
+    .panel-cta {
+      padding-bottom: 15px; } }
   .panel-cta .panel-body {
     font-weight: 700;
     text-align: center; }
