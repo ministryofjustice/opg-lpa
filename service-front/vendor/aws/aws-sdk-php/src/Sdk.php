@@ -39,6 +39,7 @@ namespace Aws;
  * @method \Aws\ElasticsearchService\ElasticsearchServiceClient createElasticsearchService(array $args = [])
  * @method \Aws\Emr\EmrClient createEmr(array $args = [])
  * @method \Aws\Firehose\FirehoseClient createFirehose(array $args = [])
+ * @method \Aws\GameLift\GameLiftClient createGameLift(array $args = [])
  * @method \Aws\Glacier\GlacierClient createGlacier(array $args = [])
  * @method \Aws\Iam\IamClient createIam(array $args = [])
  * @method \Aws\Inspector\InspectorClient createInspector(array $args = [])
@@ -68,7 +69,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.14.2';
+    const VERSION = '3.15.1';
 
     /** @var array Arguments for creating clients */
     private $args;

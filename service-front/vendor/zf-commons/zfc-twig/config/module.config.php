@@ -63,7 +63,7 @@ return array(
         'helper_manager' => array(
             'configs' => array(
                 'Zend\Navigation\View\HelperConfig'
-            ),
+            )
         )
     ),
 
