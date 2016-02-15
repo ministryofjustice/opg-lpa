@@ -1,6 +1,7 @@
 {
     "name": "nsmithuk/dynamo-queue-php",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": ">=5.5",
         "ext-pcntl": "*",

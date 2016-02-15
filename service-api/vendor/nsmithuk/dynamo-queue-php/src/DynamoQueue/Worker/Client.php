@@ -87,10 +87,6 @@ class Client extends AbstractClient {
 
                 $result = null;
 
-                // These queries take up 0.5 read units, so by waiting 500ms we ensure each worker
-                // doesn't require more than 1 read unit per second.
-                usleep(500000); // 500ms
-
             }
 
             //----
@@ -195,22 +191,17 @@ class Client extends AbstractClient {
             'IndexName'         => 'partition-order-index',
             'TableName'         => $this->config['table_name'],
             'Limit'             => $this->config['query_limit'],
-            'AttributesToGet'   => [ 'id', 'processor' ],
+            'ProjectionExpression'   => 'id, processor',
             'ConsistentRead'    => false,
-            'KeyConditions' => [
-                'run_partition' => [
-                    'AttributeValueList' => [
-                        [ 'N' => (string)$this->getRunPartition() ]
-                    ],
-                    'ComparisonOperator' => 'EQ'
-                ],
-                'run_after' => [
-                    'AttributeValueList' => [
-                        [ 'N' => (string)round(microtime(true) * 1000) ] // Don't return job scheduled for the future.
-                    ],
-                    'ComparisonOperator' => 'LE'
-                ],
+            'ExpressionAttributeNames' => [
+                '#run_partition' => 'run_partition',
+                '#run_after' => 'run_after',
             ],
+            'ExpressionAttributeValues' => [
+                ':run_partition' => [ 'N' => (string)$this->getRunPartition() ],
+                ':run_after' => [ 'N' => (string)round(microtime(true) * 1000) ] /* Don't return job scheduled for the future */
+            ],
+            'KeyConditionExpression' => '#run_partition = :run_partition AND #run_after < :run_after',
             'ScanIndexForward' => true, // Ensure they are run in the order they were added.
             'ReturnConsumedCapacity' => 'TOTAL',
         ]);

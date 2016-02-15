@@ -1,7 +1,9 @@
 <?php
 namespace DynamoQueue;
 
+use Exception;
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\WriteRequestBatch;
 
 abstract class AbstractClient {
 
@@ -78,6 +80,26 @@ abstract class AbstractClient {
 
     } // function
 
+
+    /**
+     * Returns the total number of jobs waiting to be processes.
+     *
+     * @return int
+     */
+    public function countWaitingJobs(){
+
+        // Only waiting jobs are in 'partition-order-index', so we can simply scan this.
+
+        $result = $this->client->scan([
+            'TableName' => $this->config['table_name'],
+            'IndexName' => 'partition-order-index',
+            'Select'    => 'COUNT'
+        ]);
+
+        return $result['Count'];
+
+    } // function
+
     //---------------------------------------------------------------------------------------
     // Table management functions
 
@@ -146,7 +168,6 @@ abstract class AbstractClient {
                     'Projection' => [
                         'ProjectionType' => 'INCLUDE',
                         'NonKeyAttributes' => [
-                            'id',
                             'processor',
                         ],
                     ],
@@ -267,10 +288,6 @@ abstract class AbstractClient {
                 $errors[] = "The Global Secondary Index must Project the 'id' and 'processor' attributes";
             } else {
 
-                if( !in_array( 'id', $globalSecondaryIndexes['Projection']['NonKeyAttributes'] ) ){
-                    $errors[] = "The Global Secondary Index must Project the 'id' attribute";
-                }
-
                 if( !in_array( 'processor', $globalSecondaryIndexes['Projection']['NonKeyAttributes'] ) ){
                     $errors[] = "The Global Secondary Index must Project the 'processor' attribute";
                 }
@@ -282,6 +299,59 @@ abstract class AbstractClient {
         //---
 
         return ( empty($errors) ) ? true : $errors;
+
+    } // function
+
+    /**
+     * Removes finished ( done or error ) jobs from a table.
+     *
+     * @param int $ttl The time in - in milliseconds - to leave a finished job before removing it.
+     * @return int
+     */
+    public function cleanupTable( $ttl = 0 ){
+
+        // Create a Scan iterator for finding finished jobs
+        $scan = $this->client->getPaginator('Scan', [
+            'TableName' => $this->config['table_name'],
+            'ProjectionExpression' => 'id, #state',
+            'ExpressionAttributeNames' => [
+                '#state' => 'state',
+                '#updated' => 'updated',
+            ],
+            'ExpressionAttributeValues' => [
+                ':done' => [ 'S' => AbstractJob::STATE_DONE ],
+                ':error' => [ 'S' => AbstractJob::STATE_ERROR ],
+                ':notUpdatedSince' => [ 'N' => (string)(round(microtime(true) * 1000) - $ttl) ],
+            ],
+            'FilterExpression' => '#state IN (:done, :error) AND #updated < :notUpdatedSince',
+        ]);
+
+        //---
+
+        // Create a WriteRequestBatch for deleting the expired jobs
+        $batch = new WriteRequestBatch($this->client, [
+            'error' => function($v){
+                if( $v instanceof Exception ){ throw $v; }
+            }
+        ]);
+
+        //---
+
+        $deletedJobs = 0;
+
+        foreach ($scan->search('Items') as $item) {
+
+            $batch->delete( [ 'id'=>$item['id'] ], $this->config['table_name'] );
+            $deletedJobs++;
+
+        }
+
+        // Delete any remaining jobs that were not auto-flushed
+        $batch->flush();
+
+        //---
+
+        return $deletedJobs;
 
     } // function
 
