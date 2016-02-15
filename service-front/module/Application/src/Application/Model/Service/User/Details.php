@@ -37,11 +37,25 @@ class Details implements ServiceLocatorAwareInterface {
 
         //---
 
+        $details = $details->getDataForModel();
+
         // Load the existing details...
         $userDetails = $client->getAboutMe();
 
         // Apply the new ones...
-        $userDetails->populateWithFlatArray( $details->getDataForModel() );
+        $userDetails->populateWithFlatArray( $details );
+        
+        //---
+
+        // Check if the user has removed their address
+        if( array_key_exists( 'address', $details ) && $details['address'] == null ){
+            $userDetails->address = null;
+        }
+
+        // Check if the user has removed their DOB
+        if( !isset( $details['dob-date'] ) ){
+            $userDetails->dob = null;
+        }
 
         //---
 

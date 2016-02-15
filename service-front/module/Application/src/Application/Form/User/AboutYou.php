@@ -293,6 +293,19 @@ class AboutYou extends AbstractForm {
             return !empty( $v );
         });
 
+        //---
+        // If no address is set, ensure NULL is passed.
+
+        if( empty($data['address-address1']) &&
+            empty($data['address-address2']) &&
+            empty($data['address-address3']) &&
+            empty($data['address-postcode']) )
+        {
+            $data['address'] = null;
+        }
+
+        //---
+
         return $data;
 
     } // function

@@ -26,7 +26,7 @@
                         <a class="button" href="{{ url('register') }}" role="button">Create an account now</a>
                     </p>
                 {% else %}
-                    <p><a class="create-lpa button" href="<?= $this->url('user/dashboard/create-lpa') ?>" role="button">Create an LPA now</a></p>
+                    <p><a class="create-lpa button" href="{{ url('user/dashboard/create-lpa') }}" role="button">Create an LPA now</a></p>
                 {% endif %}
                 <details>
                     <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form">

@@ -2438,6 +2438,12 @@ input[disabled="disabled"] {
   border-top: 1px solid #bfc1c3; }
   .help-footer hr {
     margin: 15px 0 15px; }
+  #content .help-footer {
+    padding: 30px 0 0 0; }
+    #content .help-footer hr {
+      display: none; }
+    #content .help-footer .button-secondary {
+      display: none; }
 
 @media (min-width: 641px) {
   #popup .link-back {
@@ -2888,6 +2894,12 @@ input[disabled="disabled"] {
     .spinner {
       display: block;
       margin: 15px auto 0 auto; } }
+
+.loading {
+  text-align: center; }
+  .loading .spinner {
+    display: block;
+    margin: 20px auto 6px auto; }
 
 .pager {
   margin-top: 15px;
