@@ -27,6 +27,9 @@ use PhlyMongo\MongoConnectionFactory;
 use PhlyMongo\MongoDbFactory;
 use Application\Library\ApiProblem\ApiProblem;
 
+use Aws\DynamoDb\DynamoDbClient;
+use DynamoQueue\Queue\Client as DynamoQueue;
+
 class Module {
 
     public function onBootstrap(MvcEvent $e){
@@ -178,6 +181,17 @@ class Module {
                     $logger->setSentryUri($logConfig['sentry-uri']);
                     
                     return $logger;
+                },
+
+                // Get Dynamo Queue Client
+                'DynamoQueueClient' => function ( $sm ) {
+
+                    $config = $sm->get('config')['pdf']['DynamoQueue'];
+
+                    $dynamoDb = new DynamoDbClient($config['client']);
+
+                    return new DynamoQueue( $dynamoDb, $config['settings'] );
+
                 },
 
             ], // factories

@@ -93,11 +93,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $config = $this->getServiceLocator()->get('config')['pdf']['DynamoQueue'];
-
-        $dynamoDb = new DynamoDbClient($config['client']);
-
-        $this->dynamoQueue = new DynamoQueue( $dynamoDb, $config['settings'] );
+        $this->dynamoQueue = $this->getServiceLocator()->get('DynamoQueueClient');
 
         return $this->dynamoQueue;
 

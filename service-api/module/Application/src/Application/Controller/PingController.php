@@ -33,53 +33,71 @@ class PingController extends AbstractActionController {
 
     public function indexAction(){
 
-        $allOk = true;
+        $result = array();
 
         //----------------------------
         // Check Mongo
 
+        $result['database'] = [ 'ok' => false ];
+
         try {
 
-            $mongoOK = $this->canConnectToMongo();
+            $result['database'] = [ 'ok' => $this->canConnectToMongo() ];
 
-            $allOk = $allOk && $mongoOK;
+            //$mongoOK = $this->canConnectToMongo();
 
-        } catch( \Exception $e ){
-            $allOk = false;
-        }
+            //$allOk = $allOk && $mongoOK;
+
+        } catch( \Exception $e ){}
+
 
         //----------------------------
-        // Check Redis
+        // Check DynamoDB
+
+        $result['queue'] = [
+            'ok' => false,
+            'details' => [
+                'available' => false,
+                'length' => 'unknown',
+                'lengthAcceptable' => false,
+            ],
+        ];
 
         try {
 
-            $config = $this->getServiceLocator()->get('config')['db']['redis']['default'];
+            $dynamoQueue = $this->getServiceLocator()->get('DynamoQueueClient');
 
-            $redis = new \Credis_Client( $config['host'], $config['port'], $timeout = 5);
+            $count = $dynamoQueue->countWaitingJobs();
 
-            $queue = ( $redis->ping() == '+PONG' );
+            if( !is_int($count) ){
+                throw new \Exception('Invalid count returned');
+            }
 
-            $allOk = $allOk && $queue;
+            //---
 
-        } catch( \Exception $e ){
-            
-            $allOk = false;
-        }
+            $result['queue']['details'] = [
+                'available' => true,
+                'length' => $count,
+                'lengthAcceptable' => ( $count < 50 ),
+            ];
 
-        $results = [
-            'ok' => $allOk,
-            'database' => (isset($mongoOK))?$mongoOK:false,
-            'queue' => (isset($queue))?$queue:false,
-        ];
+            $result['queue']['ok'] = $result['queue']['details']['lengthAcceptable'];
+
+        } catch( \Exception $e ){}
+
+        //----------------
+
+        // Is everything true?
+        $result['ok'] = $result['queue']['ok'] && $result['database']['ok'];
         
         $this->getServiceLocator()->get('Logger')->info(
             'PingController results',
-            $results
+            $result
         );
         
         //---
 
-        return new JsonModel($results);
+        return new JsonModel($result);
 
     }
 
