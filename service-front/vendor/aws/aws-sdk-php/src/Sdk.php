@@ -4,6 +4,7 @@ namespace Aws;
 /**
  * Builds AWS clients based on configuration settings.
  *
+ * @method \Aws\Acm\AcmClient createAcm(array $args = [])
  * @method \Aws\ApiGateway\ApiGatewayClient createApiGateway(array $args = [])
  * @method \Aws\AutoScaling\AutoScalingClient createAutoScaling(array $args = [])
  * @method \Aws\CloudFormation\CloudFormationClient createCloudFormation(array $args = [])
@@ -13,6 +14,7 @@ namespace Aws;
  * @method \Aws\CloudSearchDomain\CloudSearchDomainClient createCloudSearchDomain(array $args = [])
  * @method \Aws\CloudTrail\CloudTrailClient createCloudTrail(array $args = [])
  * @method \Aws\CloudWatch\CloudWatchClient createCloudWatch(array $args = [])
+ * @method \Aws\CloudWatchEvents\CloudWatchEventsClient createCloudWatchEvents(array $args = [])
  * @method \Aws\CloudWatchLogs\CloudWatchLogsClient createCloudWatchLogs(array $args = [])
  * @method \Aws\CodeCommit\CodeCommitClient createCodeCommit(array $args = [])
  * @method \Aws\CodeDeploy\CodeDeployClient createCodeDeploy(array $args = [])
@@ -27,6 +29,7 @@ namespace Aws;
  * @method \Aws\DynamoDb\DynamoDbClient createDynamoDb(array $args = [])
  * @method \Aws\DynamoDbStreams\DynamoDbStreamsClient createDynamoDbStreams(array $args = [])
  * @method \Aws\Ec2\Ec2Client createEc2(array $args = [])
+ * @method \Aws\Ecr\EcrClient createEcr(array $args = [])
  * @method \Aws\Ecs\EcsClient createEcs(array $args = [])
  * @method \Aws\Efs\EfsClient createEfs(array $args = [])
  * @method \Aws\ElastiCache\ElastiCacheClient createElastiCache(array $args = [])
@@ -36,6 +39,7 @@ namespace Aws;
  * @method \Aws\ElasticsearchService\ElasticsearchServiceClient createElasticsearchService(array $args = [])
  * @method \Aws\Emr\EmrClient createEmr(array $args = [])
  * @method \Aws\Firehose\FirehoseClient createFirehose(array $args = [])
+ * @method \Aws\GameLift\GameLiftClient createGameLift(array $args = [])
  * @method \Aws\Glacier\GlacierClient createGlacier(array $args = [])
  * @method \Aws\Iam\IamClient createIam(array $args = [])
  * @method \Aws\Inspector\InspectorClient createInspector(array $args = [])
@@ -65,7 +69,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.10.1';
+    const VERSION = '3.15.1';
 
     /** @var array Arguments for creating clients */
     private $args;
