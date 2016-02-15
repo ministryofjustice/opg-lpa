@@ -2188,6 +2188,12 @@ input[disabled="disabled"] {
   border-top: 1px solid #bfc1c3; }
   .help-footer hr {
     margin: 15px 0 15px; }
+  #content .help-footer {
+    padding: 30px 0 0 0; }
+    #content .help-footer hr {
+      display: none; }
+    #content .help-footer .button-secondary {
+      display: none; }
 
 #popup .link-back {
   display: none; }
@@ -2198,6 +2204,12 @@ input[disabled="disabled"] {
 
 .spinner {
   margin: 0 0 -3px 8px; }
+
+.loading {
+  text-align: center; }
+  .loading .spinner {
+    display: block;
+    margin: 20px auto 6px auto; }
 
 .pager {
   margin-top: 15px;

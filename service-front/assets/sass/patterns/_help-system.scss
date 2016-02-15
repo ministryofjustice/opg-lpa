@@ -151,6 +151,15 @@
 	hr {
 		margin: $gutter-half 0 $gutter-half;
 	}
+	#content & {
+		padding: $gutter 0 0 0;
+		hr {
+			display: none;
+		}
+		.button-secondary {
+			display: none;
+		}
+	}
 }
 
 .link-back {
