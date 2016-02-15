@@ -44,10 +44,6 @@ class PingController extends AbstractActionController {
 
             $result['database'] = [ 'ok' => $this->canConnectToMongo() ];
 
-            //$mongoOK = $this->canConnectToMongo();
-
-            //$allOk = $allOk && $mongoOK;
-
         } catch( \Exception $e ){}
 
 
