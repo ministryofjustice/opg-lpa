@@ -2398,6 +2398,12 @@ input[disabled="disabled"] {
       display: block;
       margin: 15px auto 0 auto; } }
 
+.loading {
+  text-align: center; }
+  .loading .spinner {
+    display: block;
+    margin: 20px auto 6px auto; }
+
 .pager {
   margin-top: 15px;
   margin-bottom: 30px; }

@@ -8,3 +8,11 @@
 		margin: $gutter-half auto 0 auto;
 	}
 }
+
+.loading {
+	text-align: center;
+	.spinner {
+		display: block;
+		margin: 20px auto 6px auto;
+	}
+}
