@@ -283,6 +283,14 @@
 			&:last-child {
 				margin-bottom: 0;
 			}
+			&:after {
+				position: absolute;
+				background-color: blue;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+			}
 		}
 		td {
 			display: block;
@@ -290,12 +298,27 @@
 			border-bottom: 0;
 			padding: 0 0 6px 0;
 		}
+		.lpa-donor {
+			padding-right: 90px;
+			@include media($max-width: 300px) {
+				padding-right: 50px;
+			}
+		}
 		.lpa-number {
 			display: block;
 			margin-bottom: $gutter-half;
 			padding-top: 0;
 			color: $secondary-text-colour;
 			font-size: 16px;
+			&:after {
+				position: absolute;
+				top: 0;
+				left: 135px;
+				content: '|';
+				@include media($max-width: 420px) {
+					content: '';
+				}
+			}
 		}
 		.lpa-number-alt {
 			display: none;
@@ -309,13 +332,22 @@
 		}
 		.lpa-progress {
 			position: absolute;
-			top: 41px;
-			left: 155px;
+			top: 39px;
+			left: 170px;
+			width: 150px;
 			font-size: 16px;
 			&:before {
-				padding-right: 15px;
-				content: '|';
+				content: '';
 				color: $secondary-text-colour;
+				@include media($min-width: 460px){
+					content: 'Status: ';
+				}
+				@include media($max-width: 420px) {
+					content: 'Status: ';
+				}
+			}
+			@include media($max-width: 420px) {
+				position: static;
 			}
 		}
 		.lpa-date {
@@ -325,31 +357,42 @@
 			font-size: 16px;
 			&:before {
 				content: 'Last saved: ';
+				@include media($max-width: 320px) {
+					content: '';
+				}
 			}
 		}
 		.lpa-actions {
 			position: static;
 			width: 100%;
 			padding-bottom: 0;
+			min-height: 0;
 		}
 		.lpa-cta {
 			position: absolute;
 			top: 0;
 			right: 0;
+			bottom: 0;
+			left: 0;
 			.button {
+				position: absolute;
 				width: 90px;
-				height: 250px;
+				height: 100%;
 				float: none;
 				display: block;
 				margin-top: 0;
-				left: 0;
+				right: 0;
 				box-shadow: 0 0 0;
 				vertical-align: middle;
 				background-image: url(../images/custom/arrow-in-circle.png);
 				background-repeat: no-repeat;
-				background-position: center 32%;
+				background-position: center;
 				text-indent: -9999px;
 				border-left: 1px solid $border-colour;
+				@include media($max-width: 300px) {
+					width: 50px;
+					background-size: 60%;
+				}
 			}
 		}
 		.lpa-manage {
@@ -361,5 +404,4 @@
 			}
 		}
 	}
-
 }
