@@ -131,7 +131,7 @@ class DashboardController extends AbstractAuthenticatedController
      *
      * @return Paginator
      */
-    private function getLpaList(){
+    private function getLpaList($groupByType = false){
 
         // Return all of the (v2) LPAs.
         $lpas = $this->getServiceLocator()->get('ApplicationList')->getAllALpaSummaries();
