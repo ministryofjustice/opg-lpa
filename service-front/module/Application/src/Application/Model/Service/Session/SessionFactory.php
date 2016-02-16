@@ -103,7 +103,9 @@ class SessionFactory implements FactoryInterface {
 
             //---
 
-            $saveHandler = SaveHandler\EncryptedDynamoDB::fromClient( $dynamoDb, $config['dynamodb']['settings'] );
+            $saveHandler = new SaveHandler\EncryptedDynamoDB(
+                new SaveHandler\HashedKeyDynamoDbSessionConnection( $dynamoDb, $config['dynamodb']['settings'] )
+            );
 
             $saveHandler->setBlockCipher( $blockCipher );
 
