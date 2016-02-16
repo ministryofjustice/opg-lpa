@@ -81,9 +81,7 @@
 
 {% if lpas.getTotalItemCount() > 0 %}
 
-{% if shortList %}
-    <h2 class="heading-large">Property and finance</h2>
-{% else %}
+{% if not shortList %}
     <div class="grid-row">
         <div class="column-one-half">
             <h2 class="heading-large">All {{ lpas.getTotalItemCount() }} LPAs</h2>
@@ -126,23 +124,13 @@
 {% endif %}
 <hr>
 
-<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
-    <thead>
-    <tr>
-        <th>Donor</th>
-        <th>LPA number</th>
-        <th>LPA type</th>
-        <th>Progress</th>
-        <th>Last saved</th>
-        <th>&nbsp;</th>
-    </tr>
-    </thead>
-    <tbody>
-    
-    {{ macros.listLpas(lpas, shortList, 'all') }}
-
-    </tbody>
-</table>
+{% if shortList %}
+	{{ macros.listLpas(lpas, true, 'untyped') }}
+	{{ macros.listLpas(lpas, true, 'property-and-financial') }}
+	{{ macros.listLpas(lpas, true, 'health-and-welfare') }}
+{% else %}
+	{{ macros.listLpas(lpas, false, 'all') }}
+{% endif %}
 
 <? /* Pagination HTML is in pagination.phtml */ ?>
 {{ paginationControl(lpas, 'Sliding', 'application/dashboard/pagination', {'route': 'user/dashboard/pagination'}) }}
