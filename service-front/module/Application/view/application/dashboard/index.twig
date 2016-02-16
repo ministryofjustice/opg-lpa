@@ -1,5 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% import "application/dashboard/macros.twig" as macros %}
+
 {% block pageTitle %}
     Your LPAs
 {% endblock %}
@@ -79,9 +81,7 @@
 
 {% if lpas.getTotalItemCount() > 0 %}
 
-{% if shortList %}
-    <h2 class="heading-large">Property and finance</h2>
-{% else %}
+{% if not shortList %}
     <div class="grid-row">
         <div class="column-one-half">
             <h2 class="heading-large">All {{ lpas.getTotalItemCount() }} LPAs</h2>
@@ -124,80 +124,13 @@
 {% endif %}
 <hr>
 
-<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
-    <thead>
-    <tr>
-        <th>Donor</th>
-        <th>LPA number</th>
-        <th>LPA type</th>
-        <th>Progress</th>
-        <th>Last saved</th>
-        <th>&nbsp;</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for key,lpa in lpas %}
-        <tr>
-            <td class="lpa-donor">
-                <h3 class="heading-{{ shortList == true ? 'medium' : 'small' }} flush--ends">  
-                {% if lpa.donor|length > 0 %}
-                    {{ lpa.donor }}
-                {% else %}
-                    No donor added
-                {% endif %}
-                </h3>
-                {% if not shortList %}
-                    <div class="lpa-number-alt">{{ formatLpaId(lpa.id) }}</div>
-                {% endif %}
-            </td>
-            <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
-            <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
-            <td class="lpa-progress">
-                <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
-            </td>
-            <td class="lpa-date">
-                {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
-                <span>24/10/16</span>
-            </td>
-            <td class="lpa-actions">
-                <div class="lpa-cta">
-                    <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
-                </div>
-                <div class="lpa-manage">
-                    {% if not shortList %}
-                    <details>
-                        <summary>
-                            <span class="summary">Manage</span>
-                        </summary>
-                    {% endif %}
-                        <ul>
-                            {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                                <li>
-                                    <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
-                                </li>
-                            {% endif %}
-
-                            {% if lpa.progress != 'Started' %}
-                                <li>
-                                    <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a>     
-                                </li>
-                            {% endif %}
-
-                            <li>
-                                <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
-                            </li>
-                        </ul>
-                    {% if not shortList %}
-                    </details>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
-
-    {% endfor %}
-
-    </tbody>
-</table>
+{% if shortList %}
+	{{ macros.listLpas(lpas, true, 'untyped') }}
+	{{ macros.listLpas(lpas, true, 'property-and-financial') }}
+	{{ macros.listLpas(lpas, true, 'health-and-welfare') }}
+{% else %}
+	{{ macros.listLpas(lpas, false, 'all') }}
+{% endif %}
 
 <? /* Pagination HTML is in pagination.phtml */ ?>
 {{ paginationControl(lpas, 'Sliding', 'application/dashboard/pagination', {'route': 'user/dashboard/pagination'}) }}
