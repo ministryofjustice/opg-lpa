@@ -122,6 +122,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.user-timeout.js',
           'assets/js/moj/moj.modules/moj.sticky-nav.js',
           'assets/js/moj/moj.modules/moj.repeat-application.js',
+          'assets/js/moj/moj.modules/moj.dashboard.js',
 
           // LPA Scripts
           'assets/js/main.js',

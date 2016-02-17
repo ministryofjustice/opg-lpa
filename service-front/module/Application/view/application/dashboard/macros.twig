@@ -47,39 +47,31 @@
                     <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
                 </div>
                 <div class="lpa-manage">
-                    {% if shortList %}
-                        {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                            <a href="/lpa/{{ lpa.id }}/date-check">Check <span>signing</span> dates</a><br>
-                        {% endif %}
-
-                        {% if lpa.progress != 'Started' %}
-                            <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span>LPA</span> details</a><br>
-                        {% endif %}
-
-                        <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete <span>LPA</span></a>
-                    {% else %}
-                        <details>
-                            <summary>
-                                <span class="summary">Manage</span>
-                            </summary>
-                            <ul>
-                                {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                                    <li>
-                                        <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
-                                    </li>
-                                {% endif %}
-
-                                {% if lpa.progress != 'Started' %}
-                                    <li>
-                                        <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a>     
-                                    </li>
-                                {% endif %}
-
+                    {% if not shortList %}
+                    <details>
+                        <summary>
+                            <span class="summary">Manage</span>
+                        </summary>
+                    {% endif %}
+                        <ul>
+                            {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
                                 <li>
-                                    <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
+                                    <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
                                 </li>
-                            </ul>
-                        </details>
+                            {% endif %}
+
+                            {% if lpa.progress != 'Started' %}
+                                <li>
+                                    <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a>     
+                                </li>
+                            {% endif %}
+
+                            <li>
+                                <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
+                            </li>
+                        </ul>
+                    {% if not shortList %}
+                    </details>
                     {% endif %}
                 </div>
             </td>
