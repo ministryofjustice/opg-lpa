@@ -125,11 +125,11 @@
 <hr>
 
 {% if shortList %}
-	{{ macros.listLpas(lpas, true, 'untyped') }}
-	{{ macros.listLpas(lpas, true, 'property-and-financial') }}
-	{{ macros.listLpas(lpas, true, 'health-and-welfare') }}
+	{{ macros.listLpas(lpas, true, '', 'Unstarted') }}
+	{{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and Finance') }}
+	{{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and Welfare') }}
 {% else %}
-	{{ macros.listLpas(lpas, false, 'all') }}
+	{{ macros.listLpas(lpas, false, 'all', '') }}
 {% endif %}
 
 <? /* Pagination HTML is in pagination.phtml */ ?>

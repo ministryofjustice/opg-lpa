@@ -1,8 +1,8 @@
-{% macro listLpas(lpas, shortList, type) %}
+{% macro listLpas(lpas, shortList, type, headingText) %}
 
 	{% import _self as macros %}
 	
-	{{ macros.showTypeHeaderIfLpasExist(lpas, type) }}
+	{{ macros.showTypeHeaderIfLpasExist(lpas, type, headingText) }}
 	
 	<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
     <thead>
@@ -18,11 +18,7 @@
     <tbody>
     
 	{% for key,lpa in lpas %}
-	    {% if (type == 'all') 
-	       or (type == 'property-and-financial' and lpa.type == 'property-and-financial') 
-	       or (type == 'health-and-welfare' and lpa.type == 'health-and-welfare')
-	       or (type == 'untyped' and lpa.type == '')
-	    %}
+	    {% if (type == 'all' or type == lpa.type) %}
 	    	 
         <tr>
             <td class="lpa-donor">
@@ -97,20 +93,14 @@
 	</table>
 {% endmacro %}
 
-{% macro showTypeHeaderIfLpasExist(lpas, type) %}
+{% macro showTypeHeaderIfLpasExist(lpas, type, headingText) %}
 	
 	{% set found = false %}
 	
 	{% for key,lpa in lpas %}
 		{% if not found %}
-    	    {% if (type == 'property-and-financial' and lpa.type == 'property-and-financial') %}
-    	    	<h2 class="heading-large">Property and Finance</h2>
-    	    	{% set found = true %} 
-    	    {% elseif (type == 'health-and-welfare' and lpa.type == 'health-and-welfare') %}
-    	    	<h2 class="heading-large">Health and Welfare</h2>
-    	    	{% set found = true %} 
-    	  	{% elseif (type == 'untyped' and lpa.type == '') %}
-    	    	<h2 class="heading-large">Not yet started</h2>
+    	    {% if (type == lpa.type) %}
+    	    	<h2 class="heading-large">{{ headingText }}</h2>
     	    	{% set found = true %} 
     	   	{% endif %}
     	{% endif %}	   	
