@@ -39,7 +39,7 @@ class DashboardController extends AbstractAuthenticatedController
         $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
 
         //---
-
+        
         // Determine if there are any v1 LPAs. Returns a bool.
         $hasV1Lpa = array_reduce( iterator_to_array($paginator), function( $carry, $lpa ){
             return $carry || ($lpa->version == 1);
