@@ -138,6 +138,7 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
             'Application\Controller\Ping' => 'Application\Controller\PingController',
             'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
+            'Application\Controller\Console\GenerateStats' => 'Application\Controller\Console\GenerateStatsController',
         ],
         'factories' => [
             //'Application\Controller\Version1\Rest' => 'Application\Factory\RestControllerFactory',
@@ -219,6 +220,18 @@ return [
     'console' => [
         'router' => [
             'routes' => [
+
+                'account-cleanup' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'generate-stats',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console\GenerateStats',
+                            'action'     => 'generate'
+                        ],
+                    ],
+                ],
+
             ],
         ],
     ],

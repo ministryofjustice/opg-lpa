@@ -2,6 +2,11 @@
 
 return array(
 
+    'stack' => [
+        'name' => '{{grains['opg_stackname']}}',
+        'environment' => '{{pillar['environment']}}',
+    ],
+
     'authentication' => [
         'endpoint' => '{{pillar['endpoints']['auth']}}/v1/authenticate',
     ],
@@ -10,6 +15,30 @@ return array(
         'path' => '{{pillar['apps']['opg-lpa-api2']['log-dir']}}/application.log',
         'sentry-uri' => '{{pillar['opg-lpa']['sentry']['api-uri']}}',
     ], // log
+
+
+    'cron' => [
+
+        'lock' => [
+
+            'dynamodb' => [
+                'settings' => [
+                    'table_name' => '{{pillar['cronlock']['dynamodb']['table']}}',
+                ],
+{% if 'key' in pillar['cronlock']['dynamodb'] and 'secret' in pillar['cronlock']['dynamodb'] %}
+                'client' => [
+                    'credentials' => [
+                        'key'    => '{{pillar['cronlock']['dynamodb']['key']}}',
+                        'secret' => '{{pillar['cronlock']['dynamodb']['secret']}}',
+                    ]
+                ],
+{% endif %}
+            ],
+
+        ], // lock
+
+    ], // cron
+
 
     'db' => [
 

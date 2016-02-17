@@ -27,6 +27,9 @@ use PhlyMongo\MongoConnectionFactory;
 use PhlyMongo\MongoDbFactory;
 use Application\Library\ApiProblem\ApiProblem;
 
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Model\Service\System\DynamoCronLock;
+
 class Module {
 
     public function onBootstrap(MvcEvent $e){
@@ -34,16 +37,21 @@ class Module {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        //$sharedEvents = $eventManager->getSharedManager();
 
-        // Setup authentication listener...
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [ new AuthenticationListener, 'authenticate' ], 500);
+        //---
 
-        // Register error handler for dispatch and render errors
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
-        
-       
+        $request = $e->getApplication()->getServiceManager()->get('Request');
+
+        if( !($request instanceof \Zend\Console\Request) ) {
+
+            // Setup authentication listener...
+            $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
+
+            // Register error handler for dispatch and render errors
+            $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+            $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+
+        }
 
     } // function
 
@@ -94,6 +102,9 @@ class Module {
 
     public function getServiceConfig() {
         return [
+            'invokables' => [
+                'StatsService' => 'Application\Model\Service\System\Stats',
+            ],
             'initializers' => [
                 'InjectResourceEntities' => function($object, $sm) {
 
@@ -144,6 +155,18 @@ class Module {
 
                 //---------------------
 
+                'DynamoCronLock' => function ( ServiceLocatorInterface $sm ) {
+
+                    $config = $sm->get('config')['cron']['lock']['dynamodb'];
+
+                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
+
+                    return new DynamoCronLock($config);
+
+                },
+
+                //---------------------
+
                 // Create an instance of the MongoClient...
                 'Mongo-Default' => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default'];
@@ -168,7 +191,8 @@ class Module {
                 'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
                 'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
                 'MongoDB-Default-stats-who' => new MongoCollectionFactory('whoAreYou', 'MongoDB-Default'),
-                
+                'MongoDB-Default-stats-lpas' => new MongoCollectionFactory('lpaStats', 'MongoDB-Default'),
+
                 // Logger
                 'Logger' => function ( $sm ) {
                     $logger = new \Opg\Lpa\Logger\Logger();
