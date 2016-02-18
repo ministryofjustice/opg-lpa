@@ -2522,6 +2522,9 @@ input[disabled="disabled"] {
 .lpa-table .lpa-manage {
   float: left;
   margin-top: 21px; }
+  @media (min-width: 641px) {
+    .lpa-table .lpa-manage a span {
+      display: none; } }
 @media (min-width: 641px) {
   .lpa-table td:nth-child(6) {
     padding: 0; } }
@@ -2751,7 +2754,7 @@ input[disabled="disabled"] {
   .lpa-table .lpa-actions,
   .lpa-cards .lpa-actions {
     position: static;
-    width: 100%;
+    width: 70%;
     padding-bottom: 0;
     min-height: 0; }
   .lpa-table .lpa-cta,
@@ -2791,7 +2794,13 @@ input[disabled="disabled"] {
     margin-top: 15px; }
     .lpa-table .lpa-manage .summary:after,
     .lpa-cards .lpa-manage .summary:after {
-      content: ' this LPA'; } }
+      content: ' this LPA'; }
+    .lpa-table .lpa-manage li,
+    .lpa-cards .lpa-manage li {
+      margin-bottom: 4px; }
+      .lpa-table .lpa-manage li:last-child,
+      .lpa-cards .lpa-manage li:last-child {
+        margin-bottom: 0; } }
 
 .button-secondary {
   background-color: #dee0e2;

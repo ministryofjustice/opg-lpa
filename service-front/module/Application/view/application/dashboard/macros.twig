@@ -56,18 +56,18 @@
                         <ul>
                             {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
                                 <li>
-                                    <a href="/lpa/{{ lpa.id }}/date-check">Check dates</a>
+                                    <a href="/lpa/{{ lpa.id }}/date-check">Check <span>signing</span> dates</a>
                                 </li>
                             {% endif %}
 
                             {% if lpa.progress != 'Started' %}
                                 <li>
-                                    <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse details</a>     
+                                    <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span>LPA</span> details</a>     
                                 </li>
                             {% endif %}
 
                             <li>
-                                <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete</a>
+                                <a href="/user/dashboard/delete-lpa/{{ lpa.id }}">Delete <span>LPA</span></a>
                             </li>
                         </ul>
                     {% if not shortList %}

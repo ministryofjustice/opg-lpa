@@ -99,6 +99,11 @@
 	.lpa-manage {
 		float: left;
 		margin-top: 21px;
+		a span {
+			@include media(tablet) {
+				display: none;
+			}
+		}
 	}
 	@include media($min-width: 641px) {
 		td:nth-child(6) {
@@ -364,7 +369,7 @@
 		}
 		.lpa-actions {
 			position: static;
-			width: 100%;
+			width: 70%;
 			padding-bottom: 0;
 			min-height: 0;
 		}
@@ -402,6 +407,12 @@
 			margin-top: $gutter-half;
 			.summary:after {
 				content: ' this LPA';
+			}
+			li {
+				margin-bottom: 4px;
+				&:last-child {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}

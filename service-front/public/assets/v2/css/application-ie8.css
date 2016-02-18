@@ -2258,6 +2258,8 @@ input[disabled="disabled"] {
 .lpa-table .lpa-manage {
   float: left;
   margin-top: 21px; }
+  .lpa-table .lpa-manage a span {
+    display: none; }
 .lpa-table td:nth-child(6) {
   padding: 0; }
 .lpa-table .button {
