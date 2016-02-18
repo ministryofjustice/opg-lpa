@@ -2785,6 +2785,7 @@ input[disabled="disabled"] {
 @media (max-width: 640px) {
   .lpa-table .lpa-manage,
   .lpa-cards .lpa-manage {
+    position: relative;
     float: none;
     font-size: 16px;
     margin-top: 15px; }

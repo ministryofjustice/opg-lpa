@@ -44,7 +44,7 @@
 {% endif %}
 
 <hr>
-{% set shortList = lpas.getTotalItemCount() <= 20 and isSearch == false %}
+{% set shortList = lpas.getTotalItemCount() <= 9 and isSearch == false %}
 
 {% if lpas.getTotalItemCount() == 0 %}
     {% if shortList %}

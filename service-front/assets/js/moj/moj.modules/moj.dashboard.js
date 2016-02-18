@@ -10,9 +10,12 @@
     },
 
     changeMobileActions: function(){
+      // In list view on mobile, disable DETAILS and show all actions
       if (moj.Helpers.isMobileWidth()) {
-        // move the UL from DETAILS and rebind the links
-        // Look into the bind & render functions
+        $('tr .lpa-actions').each(function(){
+          $('.lpa-manage details', this).before($('.lpa-manage details ul', this));
+          $('.lpa-manage details').addClass('hidden');
+        })
       }
     }
   };
