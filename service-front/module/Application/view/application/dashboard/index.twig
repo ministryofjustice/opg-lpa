@@ -48,30 +48,25 @@
 
 {% if lpas.getTotalItemCount() == 0 %}
     {% if shortList %}
-        <h2 class="heading-large">You have no LPAs</h2>
+        <h2 class="heading-large flush--ends">You have no LPAs</h2>
     {% else %}
         <div class="grid-row">
             <div class="column-one-half">
-                <h2 class="heading-large">No LPAs found</h2>
+                <h2 class="heading-large flush--ends">No LPAs found</h2>
                 {% if isSearch %}
-                    <p>
+                    <p class="flush--bottom">
                         Your search has found no results.<br>
                         <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
                     </p>
                 {% endif %}
             </div>
             <div class="column-one-half">
-                <form action="{{ url('user/dashboard') }}" method="GET" class="lpa-search-form">
+                <form action="{{ url('user/dashboard') }}" method="GET" class="search-form">
                     <fieldset>
                         <legend class="visuallyhidden">Search for LPAs</legend>
-                        <div class="">
-                            <label for="search" class="form-label">
-                                <span class="form-label-bold">Search LPAs</span>
-                            </label>
-                            <span class="form-hint">LPA number, donor's first or last name</span>
-                            <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
-                            <input class="add button" type="submit" value="Search"/>
-                        </div>
+                        <label for="search" class="search-label">Search for an LPA or donor</label>
+                        <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="js-search-focus search-input form-control"/>
+                        <input class="search-button button" type="submit" value="Search"/>
                     </fieldset>
                 </form>
             </div>
@@ -84,39 +79,35 @@
 {% if not shortList %}
     <div class="grid-row">
         <div class="column-one-half">
-            <h2 class="heading-large">All {{ lpas.getTotalItemCount() }} LPAs</h2>
             {% if isSearch %}
-
+                <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
                 {% if lpas.getTotalItemCount() == 0 %}
 
-                    <p>
+                    <p class="flush--bottom">
                         Your search has found no results.<br>
                         <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
                     </p>
 
                 {% else %}
 
-                    <p>
+                    <p class="flush--bottom">
                         Your search has found {{ lpas.getTotalItemCount() }} results.<br>
                         <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
                     </p>
 
                 {% endif %}
 
+            {% else %}
+                <h2 class="heading-large flush--ends">All {{ lpas.getTotalItemCount() }} LPAs</h2>
             {% endif %}
         </div>
         <div class="column-one-half">
-            <form action="{{ url('user/dashboard') }}" method="GET" class="lpa-search-form">
+            <form action="{{ url('user/dashboard') }}" method="GET" class="search-form">
                 <fieldset>
                     <legend class="visuallyhidden">Search for LPAs</legend>
-                    <div class="">
-                        <label for="search" class="form-label">
-                            <span class="form-label-bold">Search LPAs</span>
-                        </label>
-                        <span class="form-hint">LPA number, donor's first or last name</span>
-                        <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="form-control"/>
-                        <input class="add button" type="submit" value="Search"/>
-                    </div>
+                    <label for="search" class="search-label">Search for an LPA or donor</label>
+                    <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="js-search-focus search-input form-control"/>
+                    <input class="search-button button" type="submit" value="Search"/>
                 </fieldset>
             </form>
         </div>
