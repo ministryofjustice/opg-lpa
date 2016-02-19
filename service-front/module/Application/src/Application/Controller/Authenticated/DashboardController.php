@@ -76,6 +76,7 @@ class DashboardController extends AbstractAuthenticatedController
 
         $newLpaId = $this->getLpaApplicationService()->createApplication();
 
+        $newLpaId = false;
         if( $newLpaId === false ){
 
             $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');

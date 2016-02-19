@@ -100,21 +100,19 @@
         <h1 class="heading-xlarge">
             {% block pageTitle %} Make a lasting power of attorney {% endblock %}
         </h1>
-                            
+
+        {{ flashMessenger().render('error', {0:'alert', 1:'alert-dismissible', 2:'alert-danger'})|raw }}
+        {{ flashMessenger().render('info', {0:'alert', 1:'alert-dismissible', 2:'alert-info'})|raw }}
+        {{ flashMessenger().render('default', {0:'alert', 1:'alert-dismissible', 2:'alert-warning'})|raw }}
+        {{ flashMessenger().render('success', {0:'alert', 1:'alert-dismissible', 2:'alert-success'})|raw }}
+        {{ flashMessenger().render('warning', {0:'alert', 1:'alert-dismissible', 2:'alert-warning'})|raw }}
+                                    
         {#
         <?php if(isset($this->contentHeader)): ?>
         <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
         
         <div id="accordion" class="accordion-form">
         <?php endif; ?>
-
-        <?php
-            echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissible', 'alert-danger'));
-            echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissible', 'alert-info'));
-            echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissible', 'alert-warning'));
-            echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissible', 'alert-success'));
-            echo $this->flashMessenger()->render('warning', array('alert', 'alert-dismissible', 'alert-warning'));
-        ?>
         
         <?php
         
