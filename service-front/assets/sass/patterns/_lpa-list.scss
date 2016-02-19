@@ -1,21 +1,7 @@
 // =======================================================
-// SEARCH RESULTS
+// LPA LIST - CARDS AND TABLE VIEWS
 
-.lpa-search-form {
-	position: relative;
-	input[type='text'] {
-		width: 100%;
-	}
-	.button {
-		@include media(tablet) {
-			position: absolute;
-			right: 0;
-			bottom: 0;
-		}
-	}
-}
-
-// List View
+// Table View
 .lpa-table {
 	.lpa-donor {
 		@include media($min-width: 750px) {

@@ -4792,6 +4792,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     init: function () {
       this.changeMobileActions();
+      this.searchFocus();
     },
 
     changeMobileActions: function(){
@@ -4802,6 +4803,19 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $('.lpa-manage details').addClass('hidden');
         })
       }
+    },
+
+    searchFocus:function(){
+      $('.js-search-focus').on('focus', function(){
+        if (!$(this).hasClass('focus')){
+          $(this).addClass('focus');
+        }
+      });
+      $('.js-search-focus').on('blur', function(){
+        if ($(this).val() == '') {
+          $(this).removeClass('focus');
+        }
+      });
     }
   };
 })();
