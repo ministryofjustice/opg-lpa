@@ -4806,6 +4806,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     searchFocus:function(){
+      if ($('.js-search-focus').val() != '') {
+        $('.js-search-focus').addClass('focus');
+      }
       $('.js-search-focus').on('focus', function(){
         if (!$(this).hasClass('focus')){
           $(this).addClass('focus');
