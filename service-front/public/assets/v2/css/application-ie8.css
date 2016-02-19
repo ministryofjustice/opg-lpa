@@ -1950,6 +1950,7 @@ input[disabled="disabled"] {
       background-size: 100%; } }
 
 .icon-finance {
+  margin-right: 10px;
   width: 52px;
   height: 50px;
   background-image: url("/assets/v2/images/icons/icon-finance.png");
@@ -1970,6 +1971,7 @@ input[disabled="disabled"] {
       background-size: 100%; } }
 
 .icon-welfare {
+  margin-right: 10px;
   width: 52px;
   height: 50px;
   background-image: url("/assets/v2/images/icons/icon-welfare.png");

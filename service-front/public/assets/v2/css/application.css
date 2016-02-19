@@ -2169,6 +2169,7 @@ input[disabled="disabled"] {
       display: none; } }
 
 .icon-finance {
+  margin-right: 10px;
   width: 52px;
   height: 50px;
   background-image: url("/assets/v2/images/icons/icon-finance.png"); }
@@ -2178,6 +2179,7 @@ input[disabled="disabled"] {
       background-size: 100%; } }
   @media (max-width: 640px) {
     .icon-finance {
+      margin-right: 6px;
       width: 31px;
       height: 30px;
       background-image: url("/assets/v2/images/icons/icon-finance.png");
@@ -2215,6 +2217,7 @@ input[disabled="disabled"] {
       display: none; } }
 
 .icon-welfare {
+  margin-right: 10px;
   width: 52px;
   height: 50px;
   background-image: url("/assets/v2/images/icons/icon-welfare.png"); }
@@ -2224,6 +2227,7 @@ input[disabled="disabled"] {
       background-size: 100%; } }
   @media (max-width: 640px) {
     .icon-welfare {
+      margin-right: 6px;
       width: 31px;
       height: 30px;
       background-image: url("/assets/v2/images/icons/icon-welfare.png");

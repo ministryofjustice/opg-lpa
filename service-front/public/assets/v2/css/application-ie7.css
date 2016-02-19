@@ -1993,6 +1993,48 @@ input[disabled="disabled"] {
   display: none !important;
   visibility: hidden !important; }
 
+.icon-property {
+  width: 55px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-property.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-property {
+      background-image: url("/assets/v2/images/icons/icon-property-2x.png");
+      background-size: 100%; } }
+
+.icon-finance {
+  margin-right: 10px;
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-finance.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-finance {
+      background-image: url("/assets/v2/images/icons/icon-finance-2x.png");
+      background-size: 100%; } }
+
+.icon-health {
+  width: 60px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-health.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-health {
+      background-image: url("/assets/v2/images/icons/icon-health-2x.png");
+      background-size: 100%; } }
+
+.icon-welfare {
+  margin-right: 10px;
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-welfare.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-welfare {
+      background-image: url("/assets/v2/images/icons/icon-welfare-2x.png");
+      background-size: 100%; } }
+
 .flush {
   margin: 0 !important; }
 
