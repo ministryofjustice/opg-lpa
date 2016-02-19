@@ -1,0 +1,46 @@
+// Icons
+// ==========================================================================
+
+.icon-property {
+  @include icon(icon-property, 55, 50);
+  @include media(mobile){
+	  @include icon(icon-property, 33, 30);
+	  background-size: contain;
+  }
+  @include media($max-width: 360px) {
+  	display: none;
+  }
+}
+
+.icon-finance {
+  @include icon(icon-finance, 52, 50);
+  @include media(mobile){
+	  @include icon(icon-finance, 31, 30);
+	  background-size: contain;
+  }
+  @include media($max-width: 360px) {
+  	display: none;
+  }
+}
+
+.icon-health {
+  @include icon(icon-health, 60, 50);
+  @include media(mobile){
+	  @include icon(icon-health, 36, 30);
+	  background-size: contain;
+  }
+  @include media($max-width: 360px) {
+  	display: none;
+  }
+}
+
+.icon-welfare {
+  @include icon(icon-welfare, 52, 50);
+  @include media(mobile){
+	  @include icon(icon-welfare, 31, 30);
+	  background-size: contain;
+  }
+  @include media($max-width: 360px) {
+  	display: none;
+  }
+}

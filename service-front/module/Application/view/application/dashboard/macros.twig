@@ -3,6 +3,8 @@
 	{% import _self as macros %}
 	
 	{{ macros.showTypeHeaderIfLpasExist(lpas, type, headingText) }}
+
+    <hr class="separator-heading">
 	
 	<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
     <thead>
@@ -92,7 +94,17 @@
 	{% for key,lpa in lpas %}
 		{% if not found %}
     	    {% if (type == lpa.type) %}
-    	    	<h2 class="heading-large">{{ headingText }}</h2>
+    	    	<h2 class="heading-large flush--bottom type-heading">
+                    {% if type == 'property-and-financial' %}
+                        <i class="icon icon-property"></i>
+                        <i class="icon icon-finance"></i>
+                    {% endif %}
+                    {% if type == 'health-and-welfare' %}
+                        <i class="icon icon-health"></i>
+                        <i class="icon icon-welfare"></i>
+                    {% endif %}
+                    {{ headingText }}
+                </h2>
     	    	{% set found = true %} 
     	   	{% endif %}
     	{% endif %}	   	

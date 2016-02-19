@@ -1,6 +1,25 @@
 // =======================================================
 // LPA LIST - CARDS AND TABLE VIEWS
 
+// Headings
+.type-heading {
+	.icon {
+		position: relative;
+		top: 10px;
+		@include media(mobile) {
+			top: 5px;
+		}
+	}
+}
+
+.separator-heading {
+	margin-top: 26px;
+	@include media(mobile) {
+		margin-top: $gutter-half;
+		margin-bottom: $gutter-half;
+	}
+}
+
 // Table View
 .lpa-table {
 	.lpa-donor {

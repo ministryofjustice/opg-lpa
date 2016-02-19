@@ -2145,6 +2145,98 @@ input[disabled="disabled"] {
   display: none !important;
   visibility: hidden !important; }
 
+.icon-property {
+  width: 55px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-property.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-property {
+      background-image: url("/assets/v2/images/icons/icon-property-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-property {
+      width: 33px;
+      height: 30px;
+      background-image: url("/assets/v2/images/icons/icon-property.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-property {
+      background-image: url("/assets/v2/images/icons/icon-property-2x.png");
+      background-size: 100%; } }
+
+  @media (max-width: 360px) {
+    .icon-property {
+      display: none; } }
+
+.icon-finance {
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-finance.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-finance {
+      background-image: url("/assets/v2/images/icons/icon-finance-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-finance {
+      width: 31px;
+      height: 30px;
+      background-image: url("/assets/v2/images/icons/icon-finance.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-finance {
+      background-image: url("/assets/v2/images/icons/icon-finance-2x.png");
+      background-size: 100%; } }
+
+  @media (max-width: 360px) {
+    .icon-finance {
+      display: none; } }
+
+.icon-health {
+  width: 60px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-health.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-health {
+      background-image: url("/assets/v2/images/icons/icon-health-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-health {
+      width: 36px;
+      height: 30px;
+      background-image: url("/assets/v2/images/icons/icon-health.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-health {
+      background-image: url("/assets/v2/images/icons/icon-health-2x.png");
+      background-size: 100%; } }
+
+  @media (max-width: 360px) {
+    .icon-health {
+      display: none; } }
+
+.icon-welfare {
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-welfare.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-welfare {
+      background-image: url("/assets/v2/images/icons/icon-welfare-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-welfare {
+      width: 31px;
+      height: 30px;
+      background-image: url("/assets/v2/images/icons/icon-welfare.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-welfare {
+      background-image: url("/assets/v2/images/icons/icon-welfare-2x.png");
+      background-size: 100%; } }
+
+  @media (max-width: 360px) {
+    .icon-welfare {
+      display: none; } }
+
 .flush {
   margin: 0 !important; }
 
@@ -2489,6 +2581,20 @@ input[disabled="disabled"] {
     .search-button {
       width: 36px;
       height: 34px; } }
+
+.type-heading .icon {
+  position: relative;
+  top: 10px; }
+  @media (max-width: 640px) {
+    .type-heading .icon {
+      top: 5px; } }
+
+.separator-heading {
+  margin-top: 26px; }
+  @media (max-width: 640px) {
+    .separator-heading {
+      margin-top: 15px;
+      margin-bottom: 15px; } }
 
 @media (min-width: 750px) {
   .lpa-table .lpa-donor {

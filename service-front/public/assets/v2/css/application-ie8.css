@@ -1939,6 +1939,46 @@ input[disabled="disabled"] {
   display: none !important;
   visibility: hidden !important; }
 
+.icon-property {
+  width: 55px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-property.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-property {
+      background-image: url("/assets/v2/images/icons/icon-property-2x.png");
+      background-size: 100%; } }
+
+.icon-finance {
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-finance.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-finance {
+      background-image: url("/assets/v2/images/icons/icon-finance-2x.png");
+      background-size: 100%; } }
+
+.icon-health {
+  width: 60px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-health.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-health {
+      background-image: url("/assets/v2/images/icons/icon-health-2x.png");
+      background-size: 100%; } }
+
+.icon-welfare {
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-welfare.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-welfare {
+      background-image: url("/assets/v2/images/icons/icon-welfare-2x.png");
+      background-size: 100%; } }
+
 .flush {
   margin: 0 !important; }
 
@@ -2242,6 +2282,141 @@ input[disabled="disabled"] {
   background-image: url(../images/icons/icon-search.png);
   background-size: 70%;
   text-indent: -5000px; }
+
+.type-heading .icon {
+  position: relative;
+  top: 10px; }
+
+.separator-heading {
+  margin-top: 26px; }
+
+.lpa-table .lpa-donor {
+  width: 30%;
+  width: 23%;
+  width: 25%; }
+.lpa-table .lpa-number {
+  color: #6f777b;
+  width: 150px;
+  width: 120px;
+  display: none; }
+.lpa-table .lpa-number-alt {
+  color: #6f777b;
+  display: none;
+  display: inline-block; }
+.lpa-table th:nth-child(1):after {
+  content: " / LPA number"; }
+.lpa-table th:nth-child(2) {
+  display: none; }
+.lpa-table .lpa-type {
+  color: #6f777b;
+  width: 70px;
+  width: 80px; }
+.lpa-table .lpa-progress {
+  width: 60px;
+  width: 70px;
+  width: 80px; }
+  .lpa-table .lpa-progress .progress-started {
+    color: #f47738; }
+  .lpa-table .lpa-progress .progress-completed {
+    color: #006435; }
+.lpa-table .lpa-date {
+  color: #6f777b;
+  width: 80px; }
+.lpa-table .lpa-actions {
+  width: 190px; }
+  .lpa-table .lpa-actions .button {
+    float: right;
+    margin-top: 13px; }
+.lpa-table .lpa-manage {
+  float: left;
+  margin-top: 21px; }
+  .lpa-table .lpa-manage a span {
+    display: none; }
+.lpa-table td:nth-child(6) {
+  padding: 0; }
+.lpa-table .button {
+  margin-bottom: 14px; }
+
+.lpa-actions {
+  padding-top: 12px; }
+
+.lpa-cards thead {
+  display: none; }
+.lpa-cards tr {
+  display: block;
+  position: relative;
+  width: 48.5%;
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #bfc1c3; }
+  .lpa-cards tr:nth-child(2n-1) {
+    margin-right: 3%; }
+.lpa-cards td {
+  display: block;
+  position: relative;
+  padding: 0;
+  border-bottom: 0;
+  font-size: 19px; }
+.lpa-cards .lpa-donor {
+  padding-right: 120px;
+  padding-right: 210px; }
+.lpa-cards .lpa-number {
+  padding-top: 6px;
+  color: #6f777b; }
+.lpa-cards .lpa-type {
+  display: none; }
+.lpa-cards .lpa-progress,
+.lpa-cards .lpa-date {
+  position: absolute;
+  width: 128px;
+  top: 19px;
+  right: 0;
+  padding: 0;
+  line-height: 1.31579em;
+  width: 210px; }
+  .lpa-cards .lpa-progress span,
+  .lpa-cards .lpa-date span {
+    display: block;
+    position: relative;
+    width: 100%;
+    text-align: left; }
+.lpa-cards .lpa-progress .progress-started {
+  color: #f47738; }
+.lpa-cards .lpa-progress .progress-completed {
+  color: #006435; }
+.lpa-cards .lpa-progress span:before {
+  color: #6f777b;
+  content: 'Status: ';
+  content: '';
+  content: 'Status: '; }
+.lpa-cards .lpa-date span {
+  top: 24px;
+  color: #6f777b; }
+  .lpa-cards .lpa-date span:before {
+    content: 'Last saved on: ';
+    content: '';
+    content: 'Last saved on: '; }
+.lpa-cards .lpa-actions {
+  position: relative;
+  min-height: 80px; }
+.lpa-cards .button {
+  position: absolute;
+  bottom: 2px; }
+.lpa-cards .lpa-manage {
+  position: absolute;
+  width: 112px;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  width: 194px; }
+  .lpa-cards .lpa-manage a span {
+    display: none; }
+  .lpa-cards .lpa-manage a span {
+    display: inline; }
 
 .button-secondary {
   background-color: #dee0e2;
