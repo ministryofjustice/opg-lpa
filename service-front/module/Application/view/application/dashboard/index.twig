@@ -31,12 +31,11 @@
         </div>
     </div>
     <div class="column-one-third">
-        <div class="panel-cta">
+        <div class="panel-cta tablet-and-up">
             <p class="heading-medium panel-body flush--top">Create another LPA</p>
             <p class="panel-button flush--bottom">
                 <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
-            </p>
-            
+            </p> 
         </div>
     </div>
 </div>
@@ -136,5 +135,12 @@
 
     <p>
 {% endif %}
+
+<div class="panel-cta mobile">
+    <p class="heading-medium panel-body flush--top">Create another LPA</p>
+    <p class="panel-button flush--bottom">
+        <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
+    </p> 
+</div>
   
 {% endblock %}
