@@ -2353,6 +2353,9 @@ input[disabled="disabled"] {
   background-size: 70%;
   text-indent: -5000px; }
 
+.dashboard-search .column-one-half:last-child {
+  display: none; }
+
 .type-heading .icon {
   position: relative;
   top: 10px; }

@@ -47,3 +47,18 @@
     	height: 34px;
     }
 }
+
+.dashboard-search {
+    .column-one-half {
+        &:first-child {
+            @include media(mobile) {
+                display: none;
+            }
+        }
+        &:last-child {
+            @include media(tablet) {
+                display: none;
+            }
+        }
+    }
+}
