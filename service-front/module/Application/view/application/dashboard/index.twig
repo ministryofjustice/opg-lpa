@@ -113,12 +113,11 @@
         </div>
     </div>
 {% endif %}
-<hr>
 
 {% if shortList %}
 	{{ macros.listLpas(lpas, true, '', 'Unstarted') }}
-	{{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and Finance') }}
-	{{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and Welfare') }}
+	{{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance') }}
+	{{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare') }}
 {% else %}
 	{{ macros.listLpas(lpas, false, 'all', '') }}
 {% endif %}
