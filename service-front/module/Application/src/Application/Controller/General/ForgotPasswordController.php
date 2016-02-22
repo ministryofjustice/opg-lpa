@@ -91,13 +91,6 @@ class ForgotPasswordController extends AbstractBaseController
             return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
         }
 
-        // Check the token is valid...
-        $valid = $this->getServiceLocator()->get('PasswordReset')->isResetTokenValid( $token );
-
-        if( !$valid ){
-            return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
-        }
-
         //-------------------------------------
         // We have a valid reset token...
 

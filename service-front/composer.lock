@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0f9932fe1e6df84946c523d0e99ee65e",
-    "content-hash": "e3142e76967e7bb24c2356c7d262f5aa",
+    "hash": "b2411019c21c7f9fc04eff66eb155af4",
+    "content-hash": "038a67ea27b9472054631e43707e556c",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.15.1",
+            "version": "3.15.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5e6078913293576de969703481994b77c380ca30"
+                "reference": "db18f6c4653add0cc40d708f0916192f9ec67ac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5e6078913293576de969703481994b77c380ca30",
-                "reference": "5e6078913293576de969703481994b77c380ca30",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/db18f6c4653add0cc40d708f0916192f9ec67ac3",
+                "reference": "db18f6c4653add0cc40d708f0916192f9ec67ac3",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-02-11 23:23:31"
+            "time": "2016-02-18 23:32:29"
         },
         {
             "name": "doctrine/lexer",
@@ -400,16 +400,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "f5d04bdd2881ac89abde1fb78cc234bce24327bb"
+                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/f5d04bdd2881ac89abde1fb78cc234bce24327bb",
-                "reference": "f5d04bdd2881ac89abde1fb78cc234bce24327bb",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2e89629ff057ebb49492ba08e6995d3a6a80021b",
+                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b",
                 "shasum": ""
             },
             "require": {
@@ -454,7 +454,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2016-01-23 01:23:02"
+            "time": "2016-02-18 21:54:00"
         },
         {
             "name": "guzzlehttp/ringphp",
@@ -652,16 +652,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "v2.0.2",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "a92360ea6c0a5ed35cbd71b197ab4fa1cc663ee1"
+                "reference": "c8d8e08f33e8c826fc46937323cc0da28aa955dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/a92360ea6c0a5ed35cbd71b197ab4fa1cc663ee1",
-                "reference": "a92360ea6c0a5ed35cbd71b197ab4fa1cc663ee1",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/c8d8e08f33e8c826fc46937323cc0da28aa955dd",
+                "reference": "c8d8e08f33e8c826fc46937323cc0da28aa955dd",
                 "shasum": ""
             },
             "require": {
@@ -684,10 +684,10 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v2.0.2",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v2.0.4",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-02-09 12:41:03"
+            "time": "2016-02-22 11:58:53"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",

@@ -190,13 +190,13 @@ class Client
     public function createApplication()
     {
         $response = $this->client()->post( $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications', []);
-
+    
         if( $response->getStatusCode() != 201 ){
             return $this->log($response, false);
         }
-        
+    
         $json = $response->json();
-
+        
         if( !isset($json['id']) ){
             return $this->log($response, false);
         }
@@ -555,6 +555,32 @@ class Client
         }
     
         return true;
+    }
+    
+    /**
+     * Exchanges a password reset token for a auth token (which can then be used to reset the user's password).
+     *
+     * @param $resetToken string Token supplied by requestPasswordReset()
+     * @return bool|string Returns false on an error or the auth token on success.
+     */
+    public function requestPasswordResetAuthToken( $resetToken ){
+    
+        $response = $this->client()->get( $this->authBaseUri . '/pwreset/' . $resetToken );
+    
+        echo $response->getStatusCode(); die;
+        
+        if( $response->getStatusCode() != 200 ){
+            return $this->log($response, false);
+        }
+    
+        $data = $response->json();
+    
+        if ( !isset($data['access_token']) ){
+            return $this->log($response, false);
+        }
+    
+        return $data['access_token'];
+    
     }
     
     /**
@@ -1824,4 +1850,5 @@ class Client
 
         return $isSuccess;
     }
+    
 }
