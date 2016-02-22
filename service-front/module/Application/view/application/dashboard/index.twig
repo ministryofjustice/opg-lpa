@@ -53,7 +53,8 @@
     {% endif %}
 {% else %}
 {# Over 20 LPAs and search is presented #}
-    <div class="grid-row dashboard-search">
+<div class="dashboard-search">
+    <div class="grid-row">
         <div class="column-one-half">
             {% if lpas.getTotalItemCount() == 0 %}
             {# No LPAs to display #}
@@ -91,7 +92,6 @@
         </div>
         <div class="column-one-half">
         {# This is only displayed on mobile #}
-            <hr>
             {% if lpas.getTotalItemCount() == 0 %}
             {# No LPAs to display #}
                 <h2 class="heading-large flush--ends">No LPAs found</h2>
@@ -118,6 +118,7 @@
             {% endif %}
         </div>
     </div>
+</div>
 {% endif %}
 
 {% if lpas.getTotalItemCount() > 0 %}

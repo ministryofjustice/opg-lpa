@@ -3,6 +3,11 @@
 
 .search-form {
 	position: relative;
+    @include media(mobile) {
+        margin-bottom: $gutter-half;
+        padding-bottom: $gutter;
+        border-bottom: 1px solid $border-colour;
+    }
 	input[type='text'] {
 		width: 100%;
 	}
@@ -49,6 +54,14 @@
 }
 
 .dashboard-search {
+    margin: $gutter 0;
+    padding: $gutter-half 0;
+    border-top: 1px solid $border-colour;
+    border-bottom: 1px solid $border-colour;
+    @include media(mobile) {
+        padding-top: 0;
+        border-top: 0;
+    }
     .column-one-half {
         &:first-child {
             @include media(mobile) {
