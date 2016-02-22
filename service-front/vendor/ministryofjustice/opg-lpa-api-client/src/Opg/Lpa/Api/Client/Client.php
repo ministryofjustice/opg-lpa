@@ -190,13 +190,13 @@ class Client
     public function createApplication()
     {
         $response = $this->client()->post( $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications', []);
-    
+
         if( $response->getStatusCode() != 201 ){
             return $this->log($response, false);
         }
-    
-        $json = $response->json();
         
+        $json = $response->json();
+
         if( !isset($json['id']) ){
             return $this->log($response, false);
         }
