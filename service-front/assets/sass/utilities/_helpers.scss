@@ -30,3 +30,16 @@
 	}
 }
 
+// Responsive helper classes
+.mobile {
+	@include media(tablet) {
+		display: none;
+	}
+}
+
+.tablet-and-up {
+	@include media(mobile) {
+		display: none;
+	}
+}
+
