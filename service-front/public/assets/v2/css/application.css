@@ -2241,6 +2241,31 @@ input[disabled="disabled"] {
     .icon-welfare {
       display: none; } }
 
+.icon-question {
+  margin-right: 10px;
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-question.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-question {
+      background-image: url("/assets/v2/images/icons/icon-question-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-question {
+      margin-right: 6px;
+      width: 31px;
+      height: 30px;
+      background-image: url("/assets/v2/images/icons/icon-question.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-question {
+      background-image: url("/assets/v2/images/icons/icon-question-2x.png");
+      background-size: 100%; } }
+
+  @media (max-width: 360px) {
+    .icon-question {
+      display: none; } }
+
 .flush {
   margin: 0 !important; }
 

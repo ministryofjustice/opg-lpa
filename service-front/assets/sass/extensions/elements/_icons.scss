@@ -48,3 +48,16 @@
 		display: none;
 	}
 }
+
+.icon-question {
+	margin-right: 10px;
+	@include icon(icon-question, 52, 50);
+	@include media(mobile){
+		margin-right: 6px;
+		@include icon(icon-question, 31, 30);
+		background-size: contain;
+	}
+	@include media($max-width: 360px) {
+		display: none;
+	}
+}

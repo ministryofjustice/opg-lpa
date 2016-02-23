@@ -42,7 +42,6 @@
 
 {% endif %}
 
-<hr>
 {% set shortList = lpas.getTotalItemCount() <= 20 and isSearch == false %}
 
 {% if shortList %}
@@ -123,9 +122,9 @@
 {% if lpas.getTotalItemCount() > 0 %}
 
     {% if shortList %}
-    	{{ macros.listLpas(lpas, true, '', 'Unstarted') }}
-    	{{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance') }}
-    	{{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare') }}
+    	{{ macros.listLpas(lpas, true, '', 'No type selected') }}
+        {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance') }}
+        {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare') }}
     {% else %}
     	{{ macros.listLpas(lpas, false, 'all', '') }}
     {% endif %}
