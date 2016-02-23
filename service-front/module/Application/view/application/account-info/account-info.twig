@@ -7,7 +7,7 @@
                     <li><a href="{{ value['url'] }}">{{ value['text'] }}</a></li>
                 {% endfor %}
             </ul>
-            {% if not user.lastLogin %}
+            {% if lastLogin %}
                 <p class="lastsigned flush--ends">Last signed in: {{ lastLogin|date('j F Y \a\t g:ia') }}</p>
             {% endif %}
         </nav>

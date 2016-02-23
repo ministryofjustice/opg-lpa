@@ -139,8 +139,6 @@ class Details implements ServiceLocatorAwareInterface {
         
         $message->addTo( $newEmailAddress );
         
-        $message->setSubject( 'Please verify your new email address' );
-        
         //---
         
         $message->addCategory('opg');
@@ -152,6 +150,12 @@ class Details implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-verify.twig')->render([
             'activateUrl' => $activateUrl,
         ]);
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) != 1) {
+            return 'failed-sending-email';
+        }
+        
+        $message->setSubject($matches[1]);
         
         //---
         
