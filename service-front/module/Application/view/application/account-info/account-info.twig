@@ -8,7 +8,7 @@
                 {% endfor %}
             </ul>
             {% if not user.lastLogin %}
-                <p class="lastsigned flush--ends">Last signed in: {{ user.lastLogin|date('j F Y \a\t g:ia') }}</p>
+                <p class="lastsigned flush--ends">Last signed in: {{ lastLogin|date('j F Y \a\t g:ia') }}</p>
             {% endif %}
         </nav>
     </div>
