@@ -3,20 +3,21 @@
 
 // Headings
 .type-heading {
+	margin-bottom: $gutter;
+	padding-bottom: $gutter-half;
+	border-bottom: 1px solid $border-colour;
+	@include media(mobile) {
+		margin-bottom: $gutter-half;
+		padding-bottom: 12px;
+		padding-top: 6px;
+		border-top: 1px solid $border-colour;
+	}
 	.icon {
 		position: relative;
 		top: 10px;
 		@include media(mobile) {
 			top: 5px;
 		}
-	}
-}
-
-.separator-heading {
-	margin-top: 26px;
-	@include media(mobile) {
-		margin-top: $gutter-half;
-		margin-bottom: $gutter-half;
 	}
 }
 

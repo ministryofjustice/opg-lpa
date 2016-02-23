@@ -2081,6 +2081,9 @@ input[disabled="disabled"] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
+.mobile {
+  display: none; }
+
 .button-secondary {
   background-color: #dee0e2;
   position: relative;
@@ -2343,12 +2346,21 @@ input[disabled="disabled"] {
   background-size: 70%;
   text-indent: -5000px; }
 
-.type-heading .icon {
-  position: relative;
-  top: 10px; }
+.dashboard-search {
+  margin: 30px 0;
+  padding: 15px 0;
+  border-top: 1px solid #bfc1c3;
+  border-bottom: 1px solid #bfc1c3; }
+  .dashboard-search .column-one-half:last-child {
+    display: none; }
 
-.separator-heading {
-  margin-top: 26px; }
+.type-heading {
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #bfc1c3; }
+  .type-heading .icon {
+    position: relative;
+    top: 10px; }
 
 .lpa-table .lpa-donor {
   width: 30%;
