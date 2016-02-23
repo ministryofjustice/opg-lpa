@@ -55,8 +55,6 @@ class Register implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Activate your lasting power of attorney account' );
-
         //---
 
         $message->addCategory('opg');
@@ -68,6 +66,12 @@ class Register implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('registration.twig')->render(
             ['callback' => $routeCallback( $activationToken ),
         ]);
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'Activate your lasting power of attorney account' );
+        }
         
         //---
 

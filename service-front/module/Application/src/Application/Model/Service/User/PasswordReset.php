@@ -138,8 +138,6 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Password reset request' );
-
         //---
 
         $message->addCategory('opg');
@@ -153,6 +151,12 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             'callback' => $callbackUrl,
         ]);
 
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'Password reset request' );
+        }
+        
         //---
 
         $html = new MimePart( $content );
@@ -192,8 +196,6 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Password reset request' );
-
         //---
 
         $message->addCategory('opg');
@@ -206,6 +208,12 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset-not-active.twig')->render([
             'callback' => $callbackUrl,
         ]);
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'Password reset request' );
+        }
         
         //---
 

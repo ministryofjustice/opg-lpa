@@ -26,7 +26,7 @@ class Communication implements ServiceLocatorAwareInterface {
     {
         $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
-        return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register', 'opg-lpa-complete-registration');
         
     }
     
@@ -65,8 +65,6 @@ class Communication implements ServiceLocatorAwareInterface {
         
         $message->addTo( $userSession->user->email->address );
         
-        $message->setSubject( $subject );
-        
         //---
 
         $message->addCategory('opg');
@@ -82,6 +80,13 @@ class Communication implements ServiceLocatorAwareInterface {
             'isHealthAndWelfare' => ( $lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW ),
         ]);
 
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $subject = sprintf($matches[1], $lpa->document->donor->name);
+            $message->setSubject($subject);
+        } else {
+            $message->setSubject($subject);
+        }
+        
         //---
 
         $html = new MimePart( $content );

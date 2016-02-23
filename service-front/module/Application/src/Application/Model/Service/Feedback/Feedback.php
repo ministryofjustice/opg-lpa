@@ -31,7 +31,6 @@ class Feedback implements ServiceLocatorAwareInterface
             $this->getServiceLocator()->get('Config')['sendFeedbackEmailTo']
         );
         
-        $message->setSubject( 'LPA v2 User Feedback' );
         
         //---
         
@@ -43,6 +42,12 @@ class Feedback implements ServiceLocatorAwareInterface
         //---
         
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('feedback.twig')->render($data);
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'LPA v2 User Feedback' );
+        }
         
         //---
         

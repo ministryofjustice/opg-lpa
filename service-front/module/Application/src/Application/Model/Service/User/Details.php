@@ -151,11 +151,11 @@ class Details implements ServiceLocatorAwareInterface {
             'activateUrl' => $activateUrl,
         ]);
         
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) != 1) {
-            return 'failed-sending-email';
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject('Please verify your new email address');
         }
-        
-        $message->setSubject($matches[1]);
         
         //---
         
@@ -196,8 +196,6 @@ class Details implements ServiceLocatorAwareInterface {
     
         $message->addTo( $oldEmailAddress );
     
-        $message->setSubject( 'You asked us to change your email address' );
-    
         //---
     
         $message->addCategory('opg');
@@ -209,6 +207,12 @@ class Details implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-notify.twig')->render([
             'newEmailAddress' => $newEmailAddress,
         ]);
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'You asked us to change your email address' );
+        }
         
         //---
     

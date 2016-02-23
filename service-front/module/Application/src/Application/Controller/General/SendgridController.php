@@ -50,12 +50,15 @@ class SendgridController extends AbstractBaseController
         
         $messageService->addTo( $userEmail );
         
-        $messageService->setSubject( 'This mailbox is not monitored' );
-        
         //---
         
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('bounce.twig')->render([]);
         
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $messageService->setSubject($matches[1]);
+        } else {
+            $messageService->setSubject( 'This mailbox is not monitored' );
+        }
         
         //---
         
