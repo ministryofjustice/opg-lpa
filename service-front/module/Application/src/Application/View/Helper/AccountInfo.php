@@ -37,6 +37,9 @@ class AccountInfo extends AbstractHelper
                 'text' => 'Sign out',
                 'url' => $this->view->url('logout'),
             );
+
+            $params['lastLogin'] = $auth->getIdentity()->lastLogin();
+            
         } else {
             $params['email'] = '';
             $params['links'][] = array(
