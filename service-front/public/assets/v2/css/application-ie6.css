@@ -2041,6 +2041,17 @@ input[disabled="disabled"] {
       background-image: url("/assets/v2/images/icons/icon-welfare-2x.png");
       background-size: 100%; } }
 
+.icon-question {
+  margin-right: 10px;
+  width: 52px;
+  height: 50px;
+  background-image: url("/assets/v2/images/icons/icon-question.png");
+  display: none; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-question {
+      background-image: url("/assets/v2/images/icons/icon-question-2x.png");
+      background-size: 100%; } }
+
 .flush {
   margin: 0 !important; }
 
