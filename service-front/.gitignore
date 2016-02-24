@@ -11,5 +11,4 @@ nbproject
 .sass-cache/*
 node_modules/*
 bower_downloads/*
-vendor/zendframework/*
 public/nocommit/*
