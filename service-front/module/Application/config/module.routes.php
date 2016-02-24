@@ -57,7 +57,7 @@ return [
                         'options' => [
                             'route'    => '/reset/:token',
                             'constraints' => [
-                                'token' => '[a-f0-9]+',
+                                'token' => '[a-zA-Z0-9]+',
                             ],
                             'defaults' => [
                                 'action'     => 'reset-password',
@@ -183,7 +183,7 @@ return [
                         'options' => [
                             'route'    => '/confirm/:token',
                             'constraints' => [
-                                'token' => '[a-f0-9]+',
+                                'token' => '[a-zA-Z0-9]+',
                             ],
                             'defaults' => [
                                 'action'     => 'confirm',
@@ -342,7 +342,7 @@ return [
                                     'route'    => '/verify[/:userId][/:token]',
                                     'constraints' => [
                                         'userId' => '[a-f0-9]+',
-                                        'token' => '[a-f0-9]+',
+                                        'token' => '[a-zA-Z0-9]+',
                                     ],
                                     'defaults' => [
                                         'controller' => 'General\VerifyEmailAddressController',

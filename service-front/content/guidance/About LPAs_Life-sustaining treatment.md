@@ -50,7 +50,7 @@ Choose option B if you want your doctors to decide about life-sustaining treatme
 
 ### Making your treatment preferences known
 
-If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'instructions and preferences' section of this LPA service. You'll also need to include a copy of the decision when you send your LPA to the Office of the Public Guardian (OPG) to be registered.
+If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'instructions and preferences' section of this LPA service.
 
  <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" rel="external" target="_blank">NHS Choices has information about advance decisions.</a>
 

@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b2411019c21c7f9fc04eff66eb155af4",
-    "content-hash": "038a67ea27b9472054631e43707e556c",
+    "hash": "dc4331e95925812e4112930f0fed9426",
+    "content-hash": "019c62e8fe2bb84cf07c3c4778c070ab",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.15.3",
+            "version": "3.15.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "db18f6c4653add0cc40d708f0916192f9ec67ac3"
+                "reference": "b1e854697f57b8376cf27a150fb452c45d495411"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/db18f6c4653add0cc40d708f0916192f9ec67ac3",
-                "reference": "db18f6c4653add0cc40d708f0916192f9ec67ac3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b1e854697f57b8376cf27a150fb452c45d495411",
+                "reference": "b1e854697f57b8376cf27a150fb452c45d495411",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-02-18 23:32:29"
+            "time": "2016-02-23 21:45:03"
         },
         {
             "name": "doctrine/lexer",
@@ -652,16 +652,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "v2.0.4",
+            "version": "v2.0.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:ministryofjustice/opg-lpa-api-client.git",
-                "reference": "c8d8e08f33e8c826fc46937323cc0da28aa955dd"
+                "reference": "ad3e302d588929f768e42e0d69d182b0d0958638"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/c8d8e08f33e8c826fc46937323cc0da28aa955dd",
-                "reference": "c8d8e08f33e8c826fc46937323cc0da28aa955dd",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/ad3e302d588929f768e42e0d69d182b0d0958638",
+                "reference": "ad3e302d588929f768e42e0d69d182b0d0958638",
                 "shasum": ""
             },
             "require": {
@@ -684,10 +684,10 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v2.0.4",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v2.0.5",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-02-22 11:58:53"
+            "time": "2016-02-23 14:24:57"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
