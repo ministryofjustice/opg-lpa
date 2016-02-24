@@ -41,8 +41,7 @@
                 <span class="{{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
             </td>
             <td class="lpa-date">
-                {# <span>{{ lpa.updatedAt.format('d/m/y') }}</span> #}
-                <span>24/10/16</span>
+                <span>{{ lpa.updatedAt|date('d/m/Y \a\t g:ia') }}</span>
             </td>
             <td class="lpa-actions">
                 <div class="lpa-cta">
