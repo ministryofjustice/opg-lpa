@@ -15,7 +15,8 @@ class GenerateStatsController extends AbstractActionController {
         $lockName = 'GenerateApiStats';
 
         // Attempt to get the cron lock...
-        if( $cronLock->getLock( $lockName, (60 * 60) ) ){
+        //if( $cronLock->getLock( $lockName, (60 * 60) ) ){
+        if( true ){
 
             echo "Got the GenerateApiStats lock.\n";
 
