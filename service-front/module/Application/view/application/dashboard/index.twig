@@ -54,29 +54,23 @@
 <div class="dashboard-search">
     <div class="grid-row">
         <div class="column-one-half">
-            {% if lpas.getTotalItemCount() == 0 %}
-            {# No LPAs to display #}
-                <h2 class="heading-large flush--ends">No LPAs found</h2>
-                {% if isSearch %}
-                    <p class="flush--bottom">
-                        Your search has found no results.<br>
-                        <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
-                    </p>
-                {% endif %}
-            {% else %}
-            {# LPAs to display #}
-                {% if isSearch %}
-                {# from a search #}
-                    <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
-                    <p class="flush--bottom">
-                        Your search has found {{ lpas.getTotalItemCount() }} results.<br>
-                        <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
-                    </p>
+        {% if isSearch %}
+            <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+            <p class="flush--bottom">
+                {% if lpas.getTotalItemCount() == 0 %}
+                    Your search has found no results.<br>
                 {% else %}
-                {# total LPAs #}
-                    <h2 class="heading-large flush--ends">All {{ lpas.getTotalItemCount() }} LPAs</h2>
+                    Your search has found {{ lpas.getTotalItemCount() }} results.<br>
                 {% endif %}
+                <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
+            </p>
+        {% else %}
+            {% if lpas.getTotalItemCount() == 0 %}
+                <h2 class="heading-large flush--ends">No LPAs found</h2>
+            {% else %}
+                <h2 class="heading-large flush--ends">All {{ lpas.getTotalItemCount() }} LPAs</h2>
             {% endif %}
+        {% endif %}
         </div>
         <div class="column-one-half">
             <form action="{{ url('user/dashboard') }}" method="GET" class="search-form">
@@ -122,11 +116,11 @@
 {% if lpas.getTotalItemCount() > 0 %}
 
     {% if shortList %}
-    	{{ macros.listLpas(lpas, true, '', 'No type selected') }}
+        {{ macros.listLpas(lpas, true, '', 'No type selected') }}
         {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance') }}
         {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare') }}
     {% else %}
-    	{{ macros.listLpas(lpas, false, 'all', '') }}
+        {{ macros.listLpas(lpas, false, 'all', '') }}
     {% endif %}
 
     <? /* Pagination HTML is in pagination.phtml */ ?>
