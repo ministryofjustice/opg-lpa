@@ -3292,22 +3292,28 @@ input[disabled="disabled"] {
     @media (max-width: 640px) {
       #global-nav nav {
         padding: 6px 0; } }
-    #global-nav nav a,
-    #global-nav nav .user {
-      padding: 6px 0; }
-      @media (min-width: 641px) {
-        #global-nav nav a,
-        #global-nav nav .user {
-          padding: 10px 8px; } }
+    @media (min-width: 641px) {
+      #global-nav nav a,
+      #global-nav nav .user {
+        padding: 10px 8px; } }
+    @media (max-width: 640px) {
+      #global-nav nav .user {
+        display: block; } }
     #global-nav nav a {
-      display: block; }
-      @media (min-width: 641px) {
+      display: inline-block; }
+      @media (max-width: 640px) {
         #global-nav nav a {
-          display: inline-block; } }
-    #global-nav nav li {
-      display: block; }
-      @media (min-width: 641px) {
-        #global-nav nav li {
-          display: inline; } }
+          padding: 10px 10px; } }
+      @media (max-width: 300px) {
+        #global-nav nav a {
+          padding: 10px 5px; } }
+    @media (max-width: 640px) {
+      #global-nav nav li {
+        display: inline; }
+        #global-nav nav li:nth-child(2) a {
+          padding-left: 0; } }
+    @media (min-width: 641px) {
+      #global-nav nav li {
+        display: inline; } }
 
 /*# sourceMappingURL=application.css.map */

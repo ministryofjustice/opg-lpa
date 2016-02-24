@@ -2755,13 +2755,11 @@ input[disabled="disabled"] {
     line-height: 1.25; }
     #global-nav nav a,
     #global-nav nav .user {
-      padding: 6px 0;
       padding: 10px 8px; }
     #global-nav nav a {
-      display: block;
-      display: inline-block; }
+      display: inline-block;
+      padding: 10px 5px; }
     #global-nav nav li {
-      display: block;
       display: inline; }
 
 /*# sourceMappingURL=application-ie7.css.map */
