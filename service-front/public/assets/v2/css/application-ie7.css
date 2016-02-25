@@ -2355,7 +2355,8 @@ input[disabled="disabled"] {
   background-position: 9px 55%;
   background-image: url(../images/icons/icon-search.png);
   background-size: 70%;
-  text-indent: -5000px; }
+  text-indent: -5000px;
+  overflow: hidden; }
 
 .dashboard-search {
   margin: 30px 0;
@@ -2733,7 +2734,8 @@ input[disabled="disabled"] {
       background-image: url(/assets/v2/images/icons/icon-close.png);
       background-position: center;
       background-repeat: no-repeat;
-      text-indent: -9999px; }
+      text-indent: -9999px;
+      overflow: hidden; }
       #popup .close a:hover {
         background-color: #bfbfbf; }
 

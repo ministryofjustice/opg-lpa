@@ -47,6 +47,7 @@
     background-image: url(../images/icons/icon-search.png);
     background-size: 70%;
     text-indent: -5000px;
+    overflow: hidden;
     @include media(mobile) {
     	width: 36px;
     	height: 34px;
