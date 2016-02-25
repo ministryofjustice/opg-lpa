@@ -157,18 +157,18 @@
 		font-size: 19px;
 	}
 	.lpa-donor {
-		padding-right: 120px;
-		@include media($min-width: 870px) {
-			padding-right: 210px;
-		}
-		@include media(mobile) {
-			//padding-right: 160px;
-		}
-		@include media($max-width: 380px) {
-			//padding-right: 120px;
+		float: left;
+		width: 100%;
+		.heading-medium {
+			padding-right: 120px;
+			@include media($min-width: 870px) {
+				padding-right: 210px;
+			}
 		}
 	}
 	.lpa-number {
+		float: left;
+		width: 100%;
 		padding-top: 6px;
 		color: $secondary-text-colour;
 	}
@@ -243,6 +243,8 @@
 		}
 	}
 	.lpa-actions {
+		float: left;
+		width: 100%;
 		position: relative;
 		min-height: 80px;
 	}
@@ -251,6 +253,10 @@
 			position: absolute;
 			bottom: 2px;
 		}
+	}
+	.lpa-cta {
+		float: left;
+		width: 100%;
 	}
 	.lpa-manage {
 		@include media(tablet) {
@@ -310,9 +316,11 @@
 			padding: 0 0 6px 0;
 		}
 		.lpa-donor {
-			padding-right: 90px;
-			@include media($max-width: 300px) {
-				padding-right: 50px;
+			.heading-medium {
+				padding-right: 90px;
+				@include media($max-width: 300px) {
+					padding-right: 50px;
+				}
 			}
 		}
 		.lpa-number {

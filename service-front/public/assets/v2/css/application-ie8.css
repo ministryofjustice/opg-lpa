@@ -2388,9 +2388,14 @@ input[disabled="disabled"] {
   border-bottom: 0;
   font-size: 19px; }
 .lpa-cards .lpa-donor {
-  padding-right: 120px;
-  padding-right: 210px; }
+  float: left;
+  width: 100%; }
+  .lpa-cards .lpa-donor .heading-medium, .lpa-cards .lpa-donor .help-sections h2, .help-sections .lpa-cards .lpa-donor h2 {
+    padding-right: 120px;
+    padding-right: 210px; }
 .lpa-cards .lpa-number {
+  float: left;
+  width: 100%;
   padding-top: 6px;
   color: #6f777b; }
 .lpa-cards .lpa-type {
@@ -2427,11 +2432,16 @@ input[disabled="disabled"] {
     content: '';
     content: 'Last saved on: '; }
 .lpa-cards .lpa-actions {
+  float: left;
+  width: 100%;
   position: relative;
   min-height: 80px; }
 .lpa-cards .button {
   position: absolute;
   bottom: 2px; }
+.lpa-cards .lpa-cta {
+  float: left;
+  width: 100%; }
 .lpa-cards .lpa-manage {
   position: absolute;
   width: 112px;

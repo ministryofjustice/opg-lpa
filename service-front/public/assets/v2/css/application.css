@@ -2756,11 +2756,16 @@ input[disabled="disabled"] {
   border-bottom: 0;
   font-size: 19px; }
 .lpa-cards .lpa-donor {
-  padding-right: 120px; }
-  @media (min-width: 870px) {
-    .lpa-cards .lpa-donor {
-      padding-right: 210px; } }
+  float: left;
+  width: 100%; }
+  .lpa-cards .lpa-donor .heading-medium, .lpa-cards .lpa-donor .help-sections h2, .help-sections .lpa-cards .lpa-donor h2 {
+    padding-right: 120px; }
+    @media (min-width: 870px) {
+      .lpa-cards .lpa-donor .heading-medium, .lpa-cards .lpa-donor .help-sections h2, .help-sections .lpa-cards .lpa-donor h2 {
+        padding-right: 210px; } }
 .lpa-cards .lpa-number {
+  float: left;
+  width: 100%;
   padding-top: 6px;
   color: #6f777b; }
 .lpa-cards .lpa-type {
@@ -2823,12 +2828,17 @@ input[disabled="disabled"] {
       .lpa-cards .lpa-date span:before {
         content: ''; } }
 .lpa-cards .lpa-actions {
+  float: left;
+  width: 100%;
   position: relative;
   min-height: 80px; }
 @media (min-width: 641px) {
   .lpa-cards .button {
     position: absolute;
     bottom: 2px; } }
+.lpa-cards .lpa-cta {
+  float: left;
+  width: 100%; }
 @media (min-width: 641px) {
   .lpa-cards .lpa-manage {
     position: absolute;
@@ -2876,12 +2886,16 @@ input[disabled="disabled"] {
     position: relative;
     border-bottom: 0;
     padding: 0 0 6px 0; }
-  .lpa-table .lpa-donor,
-  .lpa-cards .lpa-donor {
+  .lpa-table .lpa-donor .heading-medium, .lpa-table .lpa-donor .help-sections h2, .help-sections .lpa-table .lpa-donor h2,
+  .lpa-cards .lpa-donor .heading-medium,
+  .lpa-cards .lpa-donor .help-sections h2,
+  .help-sections .lpa-cards .lpa-donor h2 {
     padding-right: 90px; } }
   @media (max-width: 640px) and (max-width: 300px) {
-    .lpa-table .lpa-donor,
-    .lpa-cards .lpa-donor {
+    .lpa-table .lpa-donor .heading-medium, .lpa-table .lpa-donor .help-sections h2, .help-sections .lpa-table .lpa-donor h2,
+    .lpa-cards .lpa-donor .heading-medium,
+    .lpa-cards .lpa-donor .help-sections h2,
+    .help-sections .lpa-cards .lpa-donor h2 {
       padding-right: 50px; } }
 @media (max-width: 640px) {
   .lpa-table .lpa-number,
