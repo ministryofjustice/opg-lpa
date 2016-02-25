@@ -101,7 +101,7 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-spinner.js',
 
           // Polyfills
-          'assets/js/polyfills/jquery-details/jquery.details.min.js',
+          'assets/bower/govuk_elements/public/javascripts/vendor/details.polyfill.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',

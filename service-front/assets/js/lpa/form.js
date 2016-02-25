@@ -51,12 +51,6 @@ $(document).ready(function () {
   var body = $('body');
 
   // ====================================================================================
-  // DETAILS TAG SUPPORT
-
-  $('html').addClass($.fn.details.support ? 'details' : 'no-details');
-  $('details').details();
-
-  // ====================================================================================
   // FORM VALIDATION
 
   body.on('click', 'form [role="alert"] a', function() {

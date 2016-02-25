@@ -28,25 +28,27 @@
                 {% else %}
                     <p><a class="create-lpa button" href="{{ url('user/dashboard/create-lpa') }}" role="button">Create an LPA now</a></p>
                 {% endif %}
-                <details>
-                    <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form">
+                <details role="group">
+                    <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form" role="button">
                         <span class="summary">What you'll need to complete the form</span>
                     </summary>
-                    <ul class="list-bullet">
-                        <li>name, address and date of birth of the
-                            <a class="js-guidance" href="/guide#topic-donor" data-journey="stageprompt.lpa:help:donor">donor</a>
-                            (the person the LPA is for)
-                        </li>
-                        <li>names, addresses and dates of birth of all
-                            <a class="js-guidance" href="/guide#topic-attorneys" data-journey="stageprompt.lpa:help:attorneys">attorneys</a>
-                        </li>
-                        <li>names and addresses of
-                            <a class="js-guidance" href="/guide#topic-certificate-providers" data-journey="stageprompt.lpa:help:certificate-providers">certificate provider</a>
-                        </li>
-                        <li>names and addresses of
-                            <a class="js-guidance" href="/guide#topic-people-to-be-told" data-journey="stageprompt.lpa:help:people-to-be-told">'people to notify'</a>
-                        </li>
-                    </ul>
+                    <div>
+                        <ul class="list-bullet">
+                            <li>name, address and date of birth of the
+                                <a class="js-guidance" href="/guide#topic-donor" data-journey="stageprompt.lpa:help:donor">donor</a>
+                                (the person the LPA is for)
+                            </li>
+                            <li>names, addresses and dates of birth of all
+                                <a class="js-guidance" href="/guide#topic-attorneys" data-journey="stageprompt.lpa:help:attorneys">attorneys</a>
+                            </li>
+                            <li>names and addresses of
+                                <a class="js-guidance" href="/guide#topic-certificate-providers" data-journey="stageprompt.lpa:help:certificate-providers">certificate provider</a>
+                            </li>
+                            <li>names and addresses of
+                                <a class="js-guidance" href="/guide#topic-people-to-be-told" data-journey="stageprompt.lpa:help:people-to-be-told">'people to notify'</a>
+                            </li>
+                        </ul>
+                    </div>
                 </details>
             </div>
 

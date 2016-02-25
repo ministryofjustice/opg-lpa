@@ -54,23 +54,25 @@
                             <span class="summary">Manage</span>
                         </summary>
                     {% endif %}
-                        <ul>
-                            {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
-                                <li>
-                                    <a href="/lpa/{{ lpa.id }}/date-check">Check <span>signing</span> dates</a>
-                                </li>
-                            {% endif %}
+                        <div>
+                            <ul>
+                                {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
+                                    <li>
+                                        <a href="/lpa/{{ lpa.id }}/date-check">Check <span>signing</span> dates</a>
+                                    </li>
+                                {% endif %}
 
-                            {% if lpa.progress != 'Started' %}
-                                <li>
-                                    <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span>LPA</span> details</a>     
-                                </li>
-                            {% endif %}
+                                {% if lpa.progress != 'Started' %}
+                                    <li>
+                                        <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span>LPA</span> details</a>     
+                                    </li>
+                                {% endif %}
 
-                            <li>
-                                <a href="/user/dashboard/delete-lpa/{{ lpa.id }}" class="js-delete-lpa">Delete <span>LPA</span></a>
-                            </li>
-                        </ul>
+                                <li>
+                                    <a href="/user/dashboard/delete-lpa/{{ lpa.id }}" class="js-delete-lpa">Delete <span>LPA</span></a>
+                                </li>
+                            </ul>
+                        </div>
                     {% if not shortList %}
                     </details>
                     {% endif %}
