@@ -2507,6 +2507,8 @@ input[disabled="disabled"] {
 .lpa-cards .button {
   position: absolute;
   bottom: 2px; }
+  .lpa-cards .button:active {
+    top: inherit; }
 .lpa-cards .lpa-cta {
   float: left;
   width: 100%; }

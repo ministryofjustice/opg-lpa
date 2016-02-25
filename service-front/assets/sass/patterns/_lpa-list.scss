@@ -252,6 +252,9 @@
 		@include media(tablet) {
 			position: absolute;
 			bottom: 2px;
+			&:active {
+				top: inherit;
+			}
 		}
 	}
 	.lpa-cta {
