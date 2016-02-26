@@ -2369,7 +2369,8 @@ input[disabled="disabled"] {
 .type-heading {
   margin-bottom: 30px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #bfc1c3; }
+  border-bottom: 1px solid #bfc1c3;
+  padding: 8px 0 6px; }
   .type-heading .icon {
     position: relative;
     top: 10px; }

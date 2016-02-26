@@ -2651,6 +2651,9 @@ input[disabled="disabled"] {
       padding-bottom: 12px;
       padding-top: 6px;
       border-top: 1px solid #bfc1c3; } }
+  @media (max-width: 360px) {
+    .type-heading {
+      padding: 8px 0 6px; } }
   .type-heading .icon {
     position: relative;
     top: 10px; }
