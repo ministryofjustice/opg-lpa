@@ -27,9 +27,11 @@
 
 .search-input {
     position: relative;
-    padding: 6px;
+    height: 39px;
     z-index: 3;
     background-color: transparent;
+    -webkit-appearance: none;
+    box-sizing: border-box;
     &:focus, &.focus {
     	background-color: #fff;
     }
@@ -48,10 +50,7 @@
     background-size: 70%;
     text-indent: -5000px;
     overflow: hidden;
-    @include media(mobile) {
-    	width: 36px;
-    	height: 34px;
-    }
+    box-shadow: none;
 }
 
 .dashboard-search {

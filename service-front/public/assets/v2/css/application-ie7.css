@@ -2341,9 +2341,11 @@ input[disabled="disabled"] {
 
 .search-input {
   position: relative;
-  padding: 6px;
+  height: 39px;
   z-index: 3;
-  background-color: transparent; }
+  background-color: transparent;
+  -webkit-appearance: none;
+  box-sizing: border-box; }
   .search-input:focus, .search-input.focus {
     background-color: #fff; }
 
@@ -2359,7 +2361,8 @@ input[disabled="disabled"] {
   background-image: url(../images/icons/icon-search.png);
   background-size: 70%;
   text-indent: -5000px;
-  overflow: hidden; }
+  overflow: hidden;
+  box-shadow: none; }
 
 .dashboard-search {
   margin: 30px 0;
