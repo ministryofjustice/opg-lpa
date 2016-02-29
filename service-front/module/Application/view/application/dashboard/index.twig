@@ -45,7 +45,7 @@
 {# Over 20 LPAs and search is presented #}
 <div class="dashboard-search">
     <div class="grid-row">
-        <div class="column-one-half">
+        <div class="column-one-half tablet-and-up">
         {% if isSearch %}
             <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
             <p class="flush--bottom">
@@ -74,7 +74,7 @@
                 </fieldset>
             </form>
         </div>
-        <div class="column-one-half">
+        <div class="column-one-half mobile">
         {# This is only displayed on mobile #}
             {% if isSearch %}
                 <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>

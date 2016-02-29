@@ -3994,7 +3994,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // change label to point to select element
       $label.attr('for', $text.attr('id') + '__select');
       // create a new label for the hidden input element
-      $text.append($('<label>', { for: $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
+      $text.append($('<label>', { 'for': $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
     },
 
     selectChanged: function (e) {
@@ -4985,6 +4985,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     init: function () {
       this.changeMobileActions();
       this.searchFocus();
+      this.ie8NthChildFix();
     },
 
     changeMobileActions: function(){
@@ -5011,6 +5012,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $(this).removeClass('focus');
         }
       });
+    },
+
+    ie8NthChildFix: function(){
+      if ($('html').hasClass('lte-ie8')) {
+        $('.lpa-cards tr:nth-child(2n-1)').addClass('odd');
+      }
     }
   };
 })();

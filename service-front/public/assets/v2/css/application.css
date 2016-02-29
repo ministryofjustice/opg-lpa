@@ -2636,12 +2636,6 @@ input[disabled="disabled"] {
     .dashboard-search {
       padding-top: 0;
       border-top: 0; } }
-  @media (max-width: 640px) {
-    .dashboard-search .column-one-half:first-child {
-      display: none; } }
-  @media (min-width: 641px) {
-    .dashboard-search .column-one-half:last-child {
-      display: none; } }
 
 .type-heading {
   margin-bottom: 30px;
@@ -2673,7 +2667,8 @@ input[disabled="disabled"] {
   .lpa-table .lpa-donor {
     width: 25%; } }
 .lpa-table .lpa-number {
-  color: #6f777b; }
+  color: #6f777b;
+  display: table-cell; }
   @media (min-width: 861px) {
     .lpa-table .lpa-number {
       width: 150px; } }
@@ -2689,11 +2684,16 @@ input[disabled="disabled"] {
   @media (max-width: 860px) {
     .lpa-table .lpa-number-alt {
       display: inline-block; } }
-@media (max-width: 860px) {
-  .lpa-table th:nth-child(1):after {
-    content: " / LPA number"; }
-  .lpa-table th:nth-child(2) {
-    display: none; } }
+.lpa-table th.lpa-donor-header:after {
+  content: ''; }
+  @media (max-width: 860px) {
+    .lpa-table th.lpa-donor-header:after {
+      content: ' / LPA number'; } }
+.lpa-table th.lpa-number-header {
+  display: table-cell; }
+  @media (max-width: 860px) {
+    .lpa-table th.lpa-number-header {
+      display: none; } }
 .lpa-table .lpa-type {
   color: #6f777b; }
   @media (min-width: 861px) {
@@ -2753,6 +2753,8 @@ input[disabled="disabled"] {
   padding: 15px;
   border: 1px solid #bfc1c3; }
   .lpa-cards tr:nth-child(2n-1) {
+    margin-right: 3%; }
+  .lpa-cards tr.odd {
     margin-right: 3%; }
 .lpa-cards td {
   display: block;

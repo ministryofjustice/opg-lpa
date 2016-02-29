@@ -2379,8 +2379,6 @@ input[disabled="disabled"] {
   padding: 15px 0;
   border-top: 1px solid #bfc1c3;
   border-bottom: 1px solid #bfc1c3; }
-  .dashboard-search .column-one-half:last-child {
-    display: none; }
 
 .type-heading {
   margin-bottom: 30px;
@@ -2399,15 +2397,18 @@ input[disabled="disabled"] {
   color: #6f777b;
   width: 150px;
   width: 120px;
-  display: none; }
-.lpa-table .lpa-number-alt {
-  color: #6f777b;
   display: none;
-  display: inline-block; }
-.lpa-table th:nth-child(1):after {
-  content: " / LPA number"; }
-.lpa-table th:nth-child(2) {
+  display: table-cell; }
+.lpa-table .lpa-number-alt {
+  display: inline-block;
+  color: #6f777b;
   display: none; }
+.lpa-table th.lpa-donor-header:after {
+  content: ' / LPA number';
+  content: ''; }
+.lpa-table th.lpa-number-header {
+  display: none;
+  display: table-cell; }
 .lpa-table .lpa-type {
   color: #6f777b;
   width: 70px;
@@ -2455,6 +2456,8 @@ input[disabled="disabled"] {
   padding: 15px;
   border: 1px solid #bfc1c3; }
   .lpa-cards tr:nth-child(2n-1) {
+    margin-right: 3%; }
+  .lpa-cards tr.odd {
     margin-right: 3%; }
 .lpa-cards td {
   display: block;
@@ -2721,6 +2724,15 @@ input[disabled="disabled"] {
 
 .pager-controls {
   float: right; }
+
+.panel-cta {
+  padding: 15px 15px 30px;
+  background-color: #dee0e2; }
+  .panel-cta .panel-body {
+    font-weight: 700;
+    text-align: center; }
+  .panel-cta .panel-button {
+    text-align: center; }
 
 .noscroll {
   position: relative;

@@ -62,16 +62,4 @@
         padding-top: 0;
         border-top: 0;
     }
-    .column-one-half {
-        &:first-child {
-            @include media(mobile) {
-                display: none;
-            }
-        }
-        &:last-child {
-            @include media(tablet) {
-                display: none;
-            }
-        }
-    }
 }

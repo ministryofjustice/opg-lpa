@@ -82,7 +82,7 @@
       // change label to point to select element
       $label.attr('for', $text.attr('id') + '__select');
       // create a new label for the hidden input element
-      $text.append($('<label>', { for: $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
+      $text.append($('<label>', { 'for': $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
     },
 
     selectChanged: function (e) {

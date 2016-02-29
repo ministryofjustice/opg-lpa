@@ -48,24 +48,29 @@
 		@include media($max-width: 860px) {
 			display: none;
 		}
+		display: table-cell;
 	}
 	.lpa-number-alt {
-		color: $secondary-text-colour;
-		display: none;
 		@include media($max-width: 860px) {
 			display: inline-block;
 		}
+		color: $secondary-text-colour;
+		display: none;
 	}
 	th {
-		@include media($max-width: 860px) {
-			&:nth-child(1) {
-				&:after {
-					content: ' / LPA number'
+		&.lpa-donor-header {
+			&:after {
+				@include media($max-width: 860px) {
+					content: ' / LPA number';
 				}
+				content: '';
 			}
-			&:nth-child(2) {
+		}
+		&.lpa-number-header {
+			@include media($max-width: 860px) {
 				display: none;
 			}
+			display: table-cell;
 		}
 	}
 	.lpa-type {
@@ -147,9 +152,9 @@
 		border: 1px solid $border-colour;
 		&:nth-child(2n-1) {
 			margin-right: 3%;
-			@include media(mobile) {
-				//margin-right: 0;
-			}
+		}
+		&.odd {
+			margin-right: 3%;
 		}
 	}
 	td {
