@@ -181,7 +181,7 @@
         
         ga('create', 'UA-33184303-1', { 'allowLinker': true });
         
-        ga('send', 'pageview');
+        ga('send', 'pageview', {{ analyticsDimensions ?: '{}' }});
         
         GOVUK.performance.stageprompt.setupForGoogleAnalytics();
     </script>
