@@ -8,12 +8,6 @@
 
 {% block content %}
 
-{% if message %}
-
-    <h3>{{ message }}</h3>
-
-{% else %}
-
 <div class="grid-row">
     <div class="column-two-thirds">
         <div class="text">
@@ -39,8 +33,6 @@
         </div>
     </div>
 </div>
-
-{% endif %}
 
 {% set shortList = lpas.getTotalItemCount() <= 20 and isSearch == false %}
 
