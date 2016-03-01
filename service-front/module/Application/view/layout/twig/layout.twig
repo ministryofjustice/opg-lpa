@@ -96,22 +96,20 @@
 
     <main id="content" role="main">
         {{ accountInfo() }}
+        
         {% block errorSummary %}{% endblock %}
         <h1 class="heading-xlarge">
             {% block pageTitle %} Make a lasting power of attorney {% endblock %}
         </h1>
 
-        {# Static HTML for flash messages
-        <ul class="alert alert-success">
-            <li>Your new password has been saved. Please remember to use this new password to sign in from now on.</li>
-        </ul>
-        #}
+        {% import 'layout/twig/flash.twig' as flash %}
 
-        {{ flashMessenger().render('error', {0:'alert', 1:'alert-danger'})|raw }}
-        {{ flashMessenger().render('info', {0:'alert', 1:'alert-info'})|raw }}
-        {{ flashMessenger().render('default', {0:'alert', 1:'alert-warning'})|raw }}
-        {{ flashMessenger().render('success', {0:'alert', 1:'alert-success'})|raw }}
-        {{ flashMessenger().render('warning', {0:'alert', 1:'alert-warning'})|raw }}
+        {{ flash.render('error', 'alert-danger') }}
+        {{ flash.render('info', 'alert-info') }}
+        {{ flash.render('default', 'alert-warning') }}
+        {{ flash.render('success', 'alert-success') }}
+        {{ flash.render('warning', 'alert-warning') }}
+
                                     
         {#
         <?php if(isset($this->contentHeader)): ?>
