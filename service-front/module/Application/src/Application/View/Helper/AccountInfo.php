@@ -38,7 +38,20 @@ class AccountInfo extends AbstractHelper
                 'url' => $this->view->url('logout'),
             );
 
-            $params['lastLogin'] = $auth->getIdentity()->lastLogin();
+            //-----------------------------------------------------
+            // Include last logged in date if set a view parameter
+
+            $layoutChildren = $this->view->getHelperPluginManager()->getServiceLocator()
+                ->get('ViewManager')->getViewModel()->getIterator();
+
+            if( $layoutChildren->count() > 0 ){
+                $view = $layoutChildren->current();
+
+                if( isset($view->user) && isset($view->user['lastLogin']) ){
+                    $params['lastLogin'] = $view->user['lastLogin'];
+                }
+
+            } // if
             
         } else {
             $params['email'] = '';

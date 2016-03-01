@@ -39,26 +39,12 @@ class DashboardController extends AbstractAuthenticatedController
         $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
 
         //---
-        
-        // Determine if there are any v1 LPAs. Returns a bool.
-        $hasV1Lpa = array_reduce( iterator_to_array($paginator), function( $carry, $lpa ){
-            return $carry || ($lpa->version == 1);
-        }, false );
-
-        //---
 
         return new ViewModel([
-            'hasV1Lpas' => $hasV1Lpa,
             'lpas' => $paginator,
             'freeText' => $query,
             'isSearch' => (is_string($query) && !empty($query)),
-            'version' => [
-                'commit' => $this->config()['version']['commit'],
-                'cache' => $this->config()['version']['cache'],
-            ],
             'user' => [
-                'id' => $this->getUser()->id(),
-                'token' => $this->getUser()->token(),
                 'lastLogin' => $this->getUser()->lastLogin(),
             ],
         ]);

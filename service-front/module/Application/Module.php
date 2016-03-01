@@ -85,15 +85,6 @@ class Module{
     } // function
 
     /**
-     * This performs lazy checking of the user's auth token (if there is one).
-     *
-     * It works by only checking if the token is invalid once we've gone past our recorded (in session)
-     * 'tokenExpiresAt' time. Before then we assume the token is valid (leaving the API to verify this).
-     *
-     * If we're past 'tokenExpiresAt', then we query the Auth service to check the token's state. If it's still
-     * valid we update 'tokenExpiresAt'. Otherwise we clear the user's identity form the session.
-     *
-     * IGNORE ALL OF THE ABOVE ^^^ #TODO
      *
      * This now checks the token on every request otherwise we have no method of knowing if the user has
      * logged in on another browser. We need to find a new way of checking this, then hopefully we can
