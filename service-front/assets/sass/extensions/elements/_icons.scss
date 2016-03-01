@@ -61,3 +61,16 @@
 		display: none;
 	}
 }
+
+.icon-tick {
+	@include icon(icon-tick, 22, 22);
+}
+
+.icon-cross {
+	@include icon(icon-cross, 22, 22);
+}
+
+.icon-important-small {
+	@include icon(icon-important, 27, 27);
+	background-size: contain;
+}
