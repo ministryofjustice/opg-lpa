@@ -9,7 +9,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
     public function indexAction()
     {
-
         $currentAddress = (string)$this->getUserDetails()->email;
         $userId = (string)$this->getUserDetails()->id;
 
