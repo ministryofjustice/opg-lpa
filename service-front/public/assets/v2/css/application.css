@@ -2278,12 +2278,34 @@ input[disabled="disabled"] {
     .icon-tick {
       background-image: url("/assets/v2/images/icons/icon-tick-2x.png");
       background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-tick {
+      margin-right: 6px;
+      width: 16px;
+      height: 16px;
+      background-image: url("/assets/v2/images/icons/icon-tick.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-tick {
+      background-image: url("/assets/v2/images/icons/icon-tick-2x.png");
+      background-size: 100%; } }
 
 .icon-cross {
   width: 22px;
   height: 22px;
   background-image: url("/assets/v2/images/icons/icon-cross.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-cross {
+      background-image: url("/assets/v2/images/icons/icon-cross-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-cross {
+      margin-right: 6px;
+      width: 16px;
+      height: 16px;
+      background-image: url("/assets/v2/images/icons/icon-cross.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
     .icon-cross {
       background-image: url("/assets/v2/images/icons/icon-cross-2x.png");
       background-size: 100%; } }
@@ -3276,10 +3298,9 @@ input[disabled="disabled"] {
 .alert-error {
   border-color: #b10e1e; }
 
-.service-list .icon {
-  position: relative;
-  top: 4px;
-  padding-right: 10px; }
+.service-status .icon {
+  float: left;
+  margin-right: 10px; }
 
 .noscroll {
   position: relative;

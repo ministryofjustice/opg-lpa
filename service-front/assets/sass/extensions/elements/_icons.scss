@@ -64,10 +64,20 @@
 
 .icon-tick {
 	@include icon(icon-tick, 22, 22);
+	@include media(mobile){
+		margin-right: 6px;
+		@include icon(icon-tick, 16, 16);
+		background-size: contain;
+	}
 }
 
 .icon-cross {
 	@include icon(icon-cross, 22, 22);
+	@include media(mobile){
+		margin-right: 6px;
+		@include icon(icon-cross, 16, 16);
+		background-size: contain;
+	}
 }
 
 .icon-important-small {

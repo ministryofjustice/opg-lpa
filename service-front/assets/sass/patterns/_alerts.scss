@@ -18,10 +18,9 @@
 	border-color: $error-colour;
 }
 
-.service-list {
+.service-status {
 	.icon {
-		position: relative;
-		top: 4px;
-		padding-right: 10px;
+		float: left;
+		margin-right: 10px;
 	}
 }
