@@ -21,18 +21,15 @@ class DeleteController extends AbstractAuthenticatedController {
 
     public function confirmAction(){
 
-        // If we are still using a v1 proxy...
-        if( $this->getServiceLocator()->has('ProxyDashboard') ){
-
-            // Delete all v1 LPAs and their Account Service account.
-            $this->getServiceLocator()->get('ProxyDashboard')->deleteAllLpasAndAccount();
-        }
-
         // Delete all v2 LPAs, their v2 Personal details, and their Auth account.
-        $this->getServiceLocator()->get('DeleteUser')->delete();
-
-        // Redirect them to the deleted page.
-        return $this->redirect()->toRoute( 'deleted' );
+        if ($this->getServiceLocator()->get('DeleteUser')->delete()) {
+            // Redirect them to the deleted page.
+            return $this->redirect()->toRoute( 'deleted' );
+        } else {
+            $view = new ViewModel();
+            $view->setTemplate('error/500');
+            return $view;
+        }
 
     } // function
 
