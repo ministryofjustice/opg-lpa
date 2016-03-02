@@ -8,10 +8,12 @@ use Application\Controller\AbstractBaseController;
 
 class PingController extends AbstractBaseController {
 
-    public function indexAction()
-    {
+    public function indexAction(){
 
-        return new ViewModel();
+        $result = $this->getServiceLocator()->get('SiteStatus')->check();
+
+        return new ViewModel( [ 'status'=>$result ] );
+        
     }
 
     /**
