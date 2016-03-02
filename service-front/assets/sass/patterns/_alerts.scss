@@ -4,4 +4,23 @@
 .alert {
 	@extend .panel;
 	@extend .text;
+	.icon {
+		float: left;
+		margin-right: 10px;
+	}
+}
+
+.alert-message {
+	overflow: hidden;
+}
+
+.alert-error {
+	border-color: $error-colour;
+}
+
+.service-status {
+	.icon {
+		float: left;
+		margin-right: 10px;
+	}
 }
