@@ -2759,6 +2759,11 @@ input[disabled="disabled"] {
 .alert-error {
   border-color: #b10e1e; }
 
+.service-list .icon {
+  position: relative;
+  top: 4px;
+  padding-right: 10px; }
+
 .noscroll {
   position: relative;
   overflow: hidden;

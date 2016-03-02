@@ -1,0 +1,35 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Service status
+{% endblock %}
+
+{% block content %}
+
+<div class="text">
+	{% if status.ok == true %}
+		<h2 class="heading-medium"><i class="icon icon-tick"></i> Service is up and running</h2>
+	{% else %}
+		<h2 class="heading-medium"><i class="icon icon-cross"></i> Service is down</h2>
+	{% endif %}
+
+	<ul class="service-list">
+		{% if status.dynamo.ok == true %}
+			<li><i class="icon icon-tick"></i>Database is up and running</li>
+		{% else %}
+			<li><i class="icon icon-cross"></i>Database is down</li>
+		{% endif %}
+		{% if status.api.ok == true %}
+			<li><i class="icon icon-tick"></i>API service is up and running</li>
+		{% else %}
+			<li><i class="icon icon-cross"></i>API service is down</li>
+		{% endif %}
+		{% if status.auth.ok == true %}
+			<li><i class="icon icon-tick"></i>Authentication service is up and running</li>
+		{% else %}
+			<li><i class="icon icon-cross"></i>Authentication service is down</li>
+		{% endif %}
+	</ul>
+</div>
+
+{% endblock content %}

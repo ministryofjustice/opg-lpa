@@ -17,3 +17,11 @@
 .alert-error {
 	border-color: $error-colour;
 }
+
+.service-list {
+	.icon {
+		position: relative;
+		top: 4px;
+		padding-right: 10px;
+	}
+}
