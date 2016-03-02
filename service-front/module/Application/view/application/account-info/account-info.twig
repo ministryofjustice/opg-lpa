@@ -1,6 +1,13 @@
 <div class="js-toggle-nav" id="global-nav">
     <div class="inner">
         <nav role="navigation" class="content">
+        
+            {# 
+            USAGE EXAMPLE
+            -------------
+            {{ route == '/user/about-you' ? 'ON ABOUT YOU PAGE' : 'ON ANOTHER PAGE' }}
+            #}
+            
             <ul id="navigation">
                 <li class="user">{{ name ? name ~ ':' : '' }} </li>
                 {% for key,value in links %}

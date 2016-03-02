@@ -60,6 +60,8 @@ class AccountInfo extends AbstractHelper
                 'url' => '/user/login'
             );
         }
+
+        $params['route'] = $this->view->url();
         
         if ($auth->hasIdentity()) {
             $template = $this->view->getHelperPluginManager()->getServiceLocator()->get('TwigViewRenderer')->loadTemplate('account-info/account-info.twig');
