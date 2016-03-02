@@ -54,7 +54,7 @@ class PingController extends AbstractActionController {
             'ok' => false,
             'details' => [
                 'available' => false,
-                'length' => 'unknown',
+                'length' => null,
                 'lengthAcceptable' => false,
             ],
         ];
