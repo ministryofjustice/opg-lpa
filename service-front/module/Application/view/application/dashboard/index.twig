@@ -108,7 +108,7 @@
         {{ macros.listLpas(lpas, false, 'all', '') }}
     {% endif %}
 
-    <? /* Pagination HTML is in pagination.phtml */ ?>
+    {# Pagination HTML is in pagination.phtml #}
     {{ paginationControl(lpas, 'Sliding', 'application/dashboard/pagination', {'route': 'user/dashboard/pagination'}) }}
 
     <p>
