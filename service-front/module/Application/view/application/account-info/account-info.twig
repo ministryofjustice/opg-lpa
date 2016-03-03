@@ -11,7 +11,13 @@
             <ul id="navigation">
                 <li class="user">{{ name ? name ~ ':' : '' }} </li>
                 {% for key,value in links %}
-                    <li><a href="{{ value['url'] }}">{{ value['text'] }}</a></li>
+                    <li>
+                        {% if route == value['url'] %}
+                            <span>{{ value['text'] }}</span>
+                        {% else %}
+                            <a href="{{ value['url'] }}">{{ value['text'] }}</a>
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
             {% if lastLogin %}
