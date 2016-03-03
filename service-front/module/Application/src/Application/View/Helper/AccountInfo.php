@@ -7,7 +7,10 @@ class AccountInfo extends AbstractHelper
 {
     public function __invoke()
     {
-        $auth = $this->view->getHelperPluginManager()->getServiceLocator()->get('AuthenticationService');
+        $serviceLocator = $this->view->getHelperPluginManager()->getServiceLocator();
+        
+        $auth = $serviceLocator->get('AuthenticationService');
+        
         $params = [
             'links' => [],
         ];
@@ -61,7 +64,7 @@ class AccountInfo extends AbstractHelper
             );
         }
 
-        $params['route'] = $this->view->url();
+        $params['route'] = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
         
         if ($auth->hasIdentity()) {
             $template = $this->view->getHelperPluginManager()->getServiceLocator()->get('TwigViewRenderer')->loadTemplate('account-info/account-info.twig');
