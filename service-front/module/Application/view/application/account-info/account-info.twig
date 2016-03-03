@@ -1,28 +1,37 @@
 <div class="js-toggle-nav" id="global-nav">
     <div class="inner">
         <nav role="navigation" class="content">
-        
-            {# 
-            USAGE EXAMPLE
-            -------------
-            {{ route == '/user/about-you' ? 'ON ABOUT YOU PAGE' : 'ON ANOTHER PAGE' }}
-            #}
-            
+
             <ul id="navigation">
-                <li class="user">{{ name ? name ~ ':' : '' }} </li>
-                {% for key,value in links %}
-                    <li>
-                        {% if route == value['url'] %}
-                            <span>{{ value['text'] }}</span>
-                        {% else %}
-                            <a href="{{ value['url'] }}">{{ value['text'] }}</a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
+
+                {% if name %}
+                    <li class="user">{{ name ~ ':' }} </li>
+
+                    {% set links = {
+                    'user/about-you': 'Your details',
+                    'user/dashboard': 'Your LPAs'
+                    } %}
+
+                    {% for page,title in links %}
+                        <li>
+                            {% if route == page %}
+                                <span>{{ title }}</span>
+                            {% else %}
+                                <a href="{{ view.url(page) }}">{{ title }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+
+                {% endif %}
+
+                <li><a href="{{ view.url('logout') }}">Sign out</a></li>
+
             </ul>
+
             {% if lastLogin %}
                 <p class="lastsigned flush--ends">Last signed in: {{ lastLogin|date('j F Y \a\t g:ia') }}</p>
             {% endif %}
+
         </nav>
     </div>
 </div>
