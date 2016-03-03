@@ -30,12 +30,14 @@ class Module{
         $moduleRouteListener->attach($eventManager);
         
         // Register error handler for dispatch and render errors
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+        //$eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+        //$eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
         
         register_shutdown_function(function () {
             $error = error_get_last();
+
+            var_dump($error); die;
             
             if ($error['type'] === E_ERROR) {
                 // This is a fatal error, we have no exception and no nice view to render

@@ -30,7 +30,7 @@
     "require": {
         "php": ">=5.5.9",
         "guzzlehttp/guzzle": "^5.1.0",
-        "zendframework/zendframework": "^2.4.9",
+        "zendframework/zendframework": "2.4.*",
         "sendgrid/sendgrid": "2.2.*",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-api-client": "2.0.5",
