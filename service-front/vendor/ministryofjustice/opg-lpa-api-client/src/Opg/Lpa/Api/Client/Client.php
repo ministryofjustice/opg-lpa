@@ -608,7 +608,7 @@ class Client
     )
     {
         $response = $this->client()->post( $this->authBaseUri . '/v1/users/' . $userId . '/email', [
-            'body' => ['emailUpdateToken' => $emailUpdateToken]
+            'body' => ['Token' => $emailUpdateToken]
         ]);
         
         if ($response->getStatusCode() != 204) {
