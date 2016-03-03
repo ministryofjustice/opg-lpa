@@ -20,7 +20,11 @@ class AboutYouController extends AbstractAuthenticatedController {
         $result = $this->process();
 
         if( $result === true ){
+
+            $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
+
             return $this->redirect()->toRoute( 'user/dashboard' );
+
         }
 
         //---
