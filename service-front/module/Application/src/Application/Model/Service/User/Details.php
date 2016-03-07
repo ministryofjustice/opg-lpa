@@ -240,7 +240,7 @@ class Details implements ServiceLocatorAwareInterface {
     
     }
     
-    function updateEmailUsingToken( $userId, $emailUpdateToken ) {
+    function updateEmailUsingToken( $emailUpdateToken ) {
         
         $this->getServiceLocator()->get('Logger')->info(
             'Updating email using token'

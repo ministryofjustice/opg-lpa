@@ -8,12 +8,11 @@ class VerifyEmailAddressController extends AbstractBaseController {
   
     public function verifyAction()
     {
-        $userId = $this->params()->fromRoute('userId');
         $token = $this->params()->fromRoute('token');
         
         $service = $this->getServiceLocator()->get('AboutYouDetails');
         
-        if ($service->updateEmailUsingToken( $userId, $token ) === true) {
+        if ($service->updateEmailUsingToken( $token ) === true) {
 
             $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
             
