@@ -55,13 +55,13 @@
             returnDate;
 
           if ($dayObj.val() !== '') {
-            day = parseInt($dayObj.val());
+            day = parseInt($dayObj.val(), 10);
             if (isNaN(day) || (day <= 1)) {
               day = undefined;
             }
           }
           if ($monthObj.val() !== '') {
-            month = parseInt($monthObj.val());
+            month = parseInt($monthObj.val(), 10);
             if (isNaN(month) || (month <= 0)) {
               month = undefined;
             }
@@ -70,7 +70,7 @@
             }
           }
           if ($yearObj.val() !== '') {
-            year = parseInt($yearObj.val());
+            year = parseInt($yearObj.val(), 10);
             if (isNaN(year) || (year <= 0)) {
               year = undefined;
             }

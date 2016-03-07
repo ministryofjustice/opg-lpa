@@ -55,11 +55,11 @@
   };
 
   moj.Helpers.isMobileWidth = function () {
-    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     if (w > 640) {
       return false;
     } else {
       return true;
     }
-  }
+  };
 })();

@@ -26,7 +26,7 @@ module.exports = function (grunt) {
           loadPath: [
           'assets/bower/govuk_frontend_toolkit/stylesheets',
           'assets/bower/govuk_template/source/assets/stylesheets',
-          'assets/bower/govuk_elements/public/sass',
+          'assets/bower/govuk_elements/public/sass'
           ]
         },
         files: {
@@ -172,7 +172,7 @@ module.exports = function (grunt) {
         },
         options: {
           watchTask: true,
-          proxy: "https://192.168.33.103/home"
+          proxy: 'https://192.168.33.103/home'
         }
       }
     },

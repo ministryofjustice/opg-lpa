@@ -3155,13 +3155,13 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
   };
 
   moj.Helpers.isMobileWidth = function () {
-    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     if (w > 640) {
       return false;
     } else {
       return true;
     }
-  }
+  };
 })();
 this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
@@ -4481,13 +4481,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             returnDate;
 
           if ($dayObj.val() !== '') {
-            day = parseInt($dayObj.val());
+            day = parseInt($dayObj.val(), 10);
             if (isNaN(day) || (day <= 1)) {
               day = undefined;
             }
           }
           if ($monthObj.val() !== '') {
-            month = parseInt($monthObj.val());
+            month = parseInt($monthObj.val(), 10);
             if (isNaN(month) || (month <= 0)) {
               month = undefined;
             }
@@ -4496,7 +4496,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
           }
           if ($yearObj.val() !== '') {
-            year = parseInt($yearObj.val());
+            year = parseInt($yearObj.val(), 10);
             if (isNaN(year) || (year <= 0)) {
               year = undefined;
             }
@@ -4994,21 +4994,24 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         $('tr .lpa-actions').each(function(){
           $('.lpa-manage details', this).before($('.lpa-manage details ul', this));
           $('.lpa-manage details').addClass('hidden');
-        })
+        });
       }
     },
 
     searchFocus:function(){
-      if ($('.js-search-focus').val() != '') {
+      // Add .focus class if there's text already there (on load)
+      if ($('.js-search-focus').val() !== '') {
         $('.js-search-focus').addClass('focus');
       }
+      // Add .focus class when input gets focus
       $('.js-search-focus').on('focus', function(){
         if (!$(this).hasClass('focus')){
           $(this).addClass('focus');
         }
       });
+      // Remove .focus class if input is blurred
       $('.js-search-focus').on('blur', function(){
-        if ($(this).val() == '') {
+        if ($(this).val() === '') {
           $(this).removeClass('focus');
         }
       });
