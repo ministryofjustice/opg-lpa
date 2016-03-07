@@ -339,9 +339,8 @@ return [
                             'verify' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/verify[/:userId][/:token]',
+                                    'route'    => '/verify/:token',
                                     'constraints' => [
-                                        'userId' => '[a-f0-9]+',
                                         'token' => '[a-zA-Z0-9]+',
                                     ],
                                     'defaults' => [

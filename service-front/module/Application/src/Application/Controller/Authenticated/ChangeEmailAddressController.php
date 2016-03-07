@@ -51,8 +51,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
                 $emailConfirmCallback = function( $userId, $token ) {
-                    return $this->url()->fromRoute('user/change-email-address/verify', [ 
-                            'userId'=>$userId,
+                    return $this->url()->fromRoute('user/change-email-address/verify', [
                             'token'=>$token,
                         ], 
                         [ 'force_canonical' => true ] 
