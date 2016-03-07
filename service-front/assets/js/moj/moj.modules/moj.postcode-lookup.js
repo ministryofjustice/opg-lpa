@@ -94,8 +94,8 @@
       var $el = $(e.target),
       val = $el.val();
       
-      if (postcodeService == 'mojDs') {
-          var $selectedOption = $el.find(":selected");
+      if (postcodeService === 'mojDs') {
+          var $selectedOption = $el.find(':selected');
 
 	      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
 	      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));

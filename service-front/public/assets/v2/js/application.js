@@ -4277,8 +4277,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var $el = $(e.target),
       val = $el.val();
       
-      if (postcodeService == 'mojDs') {
-          var $selectedOption = $el.find(":selected");
+      if (postcodeService === 'mojDs') {
+          var $selectedOption = $el.find(':selected');
 
 	      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
 	      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
@@ -5055,10 +5055,11 @@ $(function(){
  */
 
 
-window.lpa = window.lpa || {}
+window.lpa = window.lpa || {};
 
 // Select the given value of a select box where present
 lpa.updateSelectbox = function (el, value) {
+  'use strict';
   var found = false,
       field = el.attr('name'),
       form = el.closest('form');
@@ -5082,9 +5083,10 @@ lpa.updateSelectbox = function (el, value) {
 };
 
 (function() {
-    if ( !$('#lpa-type').hasClass('current') && $('section.current').offset() != undefined ) {
+  'use strict';
+    if ( !$('#lpa-type').hasClass('current') && $('section.current').offset() !== undefined ) {
         setTimeout(function() {
-            if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) != 'lpa-type') {
+            if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) !== 'lpa-type') {
                 window.scrollTo(0, $('section.current').offset().top - 107);
             }
         }, 200);
@@ -5092,6 +5094,7 @@ lpa.updateSelectbox = function (el, value) {
 })();
 
 $(document).ready(function () {
+  'use strict';
 
   // ====================================================================================
   // COMMON VARIABLES
@@ -5151,12 +5154,12 @@ $(document).ready(function () {
 
   jQuery.fn.hasConditionalContent = function() {
       var name = $(this).attr('name');
-      $("[id^='toggle-"+name+"']").hide();
+      $('[id^="toggle-'+name+'"]').hide();
 
-      $("[name="+name+"]").change(function(){
+      $('[name="'+name+'"]').change(function(){
           if($(this).is(':checked')){
-              $("[id^='toggle-"+name+"']").hide();
-              $("#toggle-"+name+"-"+$(this).val()).show();
+              $('[id^="toggle-'+name+'"]').hide();
+              $('#toggle-'+name+'-'+$(this).val()).show();
           }
       }).change();
   }
@@ -5168,19 +5171,19 @@ $(document).ready(function () {
 
   // Who is applying to register?
 
-  $("[name='whoIsRegistering']").change(function(){
-	    if($(this).val() == 'donor' ){
+  $('[name="whoIsRegistering"]').change(function(){
+	    if($(this).val() === 'donor' ){
 	        $('.attorney-applicant input:checkbox').prop('checked', false);
 	    } else {
 	        $('.attorney-applicant input:checkbox').prop('checked', true);
 	    }
   });
 
-  $(".attorney-applicant input").change(function(){
-    if($(".attorney-applicant input").is(':checked')){
-      $("input[name='whoIsRegistering'][value!='donor']").prop('checked', true);
+  $('.attorney-applicant input').change(function(){
+    if($('.attorney-applicant input').is(':checked')){
+      $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
     } else {
-      $("input[name='whoIsRegistering'][value='donor']").prop('checked', true);
+      $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true);
     }
   });
 
@@ -5189,8 +5192,8 @@ $(document).ready(function () {
 
   $('.date-field input').datepicker(
     {
-      dateFormat: "dd/mm/yy",
-      altFormat: "dd/mm/yy",
+      dateFormat: 'dd/mm/yy',
+      altFormat: 'dd/mm/yy',
       firstDay: 1,
       autoSize:true,
       changeMonth:true,
@@ -5202,7 +5205,7 @@ $(document).ready(function () {
   // Any previous LPAs?
 
   $('#previousLpa').change(function(){
-    if($('#toggle-previousLpa textarea').val() != ''){
+    if($('#toggle-previousLpa textarea').val() !== ''){
         $('#previousLpa').prop('checked', true);
     }
     if($(this).is(':checked')) {
@@ -5217,7 +5220,7 @@ $(document).ready(function () {
   // Any other info?
 
   $('#otherInfo').change(function(){
-    if($('#toggle-otherInfo textarea').val() != ''){
+    if($('#toggle-otherInfo textarea').val() !== ''){
         $('#otherInfo').prop('checked', true);
     }
     if($(this).is(':checked')) {
@@ -5231,9 +5234,10 @@ $(document).ready(function () {
 
   // Fee remissions
 
-    $allRevisedFees = $('.revised-fee').hide();
+    var $allRevisedFees = $('.revised-fee').hide();
+    var $revisedFee;
 
-    $("input[name=reductionOptions]").change(function(){
+    $('input[name=reductionOptions]').change(function(){
 
         $allRevisedFees.hide();
 
@@ -5263,7 +5267,7 @@ $(document).ready(function () {
         url: deleteUrl,
         type: 'DELETE',
         success: function(resp){
-          window.location.href="/";
+          window.location.href='/';
         }
       });
     }
@@ -5286,7 +5290,7 @@ $(document).ready(function () {
   body.on('click', 'a.delete-confirmation', function(event){
     event.preventDefault();
     var url=$(this).attr('href');
-    if(confirm("Do you want to remove this person?")) {
+    if(confirm('Do you want to remove this person?')) {
       window.location.href=url;
     }
   });
@@ -5303,7 +5307,9 @@ $(document).ready(function () {
   // POPULATE WITH TEST DATA SCRIPTS
 
   function populateDate(id, date) {
-        if ($(id).length > 0) $(id).val(date);
+        if ($(id).length > 0) {
+          $(id).val(date);
+        }
     }
 
   function getDateString() {
@@ -5312,12 +5318,12 @@ $(document).ready(function () {
       var month = currentTime.getMonth() + 1;
       var year = currentTime.getFullYear();
       if (day < 10) {
-          day = "0" + day;
+          day = '0' + day;
       }
       if (month < 10) {
-          month = "0" + month;
+          month = '0' + month;
       }
-      return day + "/" + month + "/" + year;
+      return day + '/' + month + '/' + year;
   }
 
   $('#populatetestdates').click(function (event) {
