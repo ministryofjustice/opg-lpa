@@ -14,19 +14,23 @@ class VerifyEmailAddressController extends AbstractBaseController {
         $service = $this->getServiceLocator()->get('AboutYouDetails');
         
         if ($service->updateEmailUsingToken( $userId, $token ) === true) {
-            $message = 'Your email address was succesfully updated. Please login with your new address.';
-            
+
             $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
             
             if( isset($detailsContainer->user) ) {
                 unset($detailsContainer->user);
             }
+
+            $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+
+            $this->flashMessenger()
+                ->addSuccessMessage('Your email address was successfully updated. Please login with your new address.');
             
         } else {
-            $message = 'There was an error updating your email address';
+            $this->flashMessenger()
+                ->addErrorMessage('There was an error updating your email address');
         }
-        
-        $this->flashMessenger()->addErrorMessage($message);
+
         // will either go to the login page or the dashboard
         return $this->redirect()->toRoute( 'login' );
     }

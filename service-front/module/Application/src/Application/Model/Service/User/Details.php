@@ -247,9 +247,8 @@ class Details implements ServiceLocatorAwareInterface {
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
-        
-        $client instanceof Client;
-        $success = $client->updateAuthEmail( $userId, $emailUpdateToken );
+
+        $success = $client->updateAuthEmail( $emailUpdateToken );
         
         return $success === true;
     }
