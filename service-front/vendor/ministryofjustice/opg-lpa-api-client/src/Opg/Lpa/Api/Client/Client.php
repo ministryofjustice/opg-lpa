@@ -597,17 +597,16 @@ class Client
     /**
      * Update auth email
      *
-     * @param string $userId
-     * @param string $newEmail
+     * @param string $emailUpdateToken The token returned by requestEmailUpdate()
      * 
      * @return boolean
      */
     public function updateAuthEmail(
-        $userId,
         $emailUpdateToken
     )
     {
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users/' . $userId . '/email', [
+
+        $response = $this->client()->post( $this->authBaseUri . '/v1/users/confirm-new-email', [
             'body' => ['Token' => $emailUpdateToken]
         ]);
         
