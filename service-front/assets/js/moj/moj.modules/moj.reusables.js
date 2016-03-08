@@ -111,7 +111,11 @@
       }
       
       // empty existing form element values before populating data into the form.
-      $('form.js-PersonForm').find('input[type=text],input[type=email],select').each(function(){$(this).val('')});
+      $('form.js-PersonForm')
+        .find('input[type=text],input[type=email],select')
+        .each(function() {
+          $(this).val('');
+        });
 
       // Show any fields which were hidden
       $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();

@@ -75,7 +75,7 @@ $(document).ready(function () {
 
 
   // Donor cannot sign LPA
-  $(document).delegate('#donor_cannot_sign', 'change', function (evt) {
+  $(document).delegate('#donor_cannot_sign', 'change', function () {
     var donorCannotSign = $(this).is(':checked');
     if (donorCannotSign) {
       $('#donorsignprompt').show();
@@ -114,7 +114,7 @@ $(document).ready(function () {
               $('#toggle-'+name+'-'+$(this).val()).show();
           }
       }).change();
-  }
+  };
 
   $('[name="certificateProviderStatementType"]').hasConditionalContent();
   $('[name="how"]').hasConditionalContent();
@@ -218,7 +218,7 @@ $(document).ready(function () {
       $.ajax({
         url: deleteUrl,
         type: 'DELETE',
-        success: function(resp){
+        success: function(){
           window.location.href='/';
         }
       });
@@ -252,53 +252,6 @@ $(document).ready(function () {
 
   $('body').on('change', '#form-lightbox input, #form-lightbox select:not(#reusables)', function () {
     $(this).closest('form').data('dirty', true);
-  });
-
-
-  // ====================================================================================
-  // POPULATE WITH TEST DATA SCRIPTS
-
-  function populateDate(id, date) {
-        if ($(id).length > 0) {
-          $(id).val(date);
-        }
-    }
-
-  function getDateString() {
-      var currentTime = new Date();
-      var day = currentTime.getDate();
-      var month = currentTime.getMonth() + 1;
-      var year = currentTime.getFullYear();
-      if (day < 10) {
-          day = '0' + day;
-      }
-      if (month < 10) {
-          month = '0' + month;
-      }
-      return day + '/' + month + '/' + year;
-  }
-
-  $('#populatetestdates').click(function (event) {
-    event.preventDefault();
-      var dateString = getDateString();
-
-      populateDate('input#donor', dateString);
-      populateDate('input#lifesustaining', dateString);
-      for (i=0; i<5; i++) {
-          populateDate('input#attorney_' + i, dateString);
-          populateDate('input#certificateProvider_' + i, dateString);
-          populateDate('input#replacementAttorney_' + i, dateString);
-          populateDate('input#trustCorporation', dateString);
-      }
-  });
-
-  $('#populatenotifiedtestdates').click(function (event) {
-    event.preventDefault();
-      var dateString = getDateString();
-
-      for (i=0; i<5; i++) {
-          populateDate('input#notifiedPerson_' + i, dateString);
-      }
   });
 
 

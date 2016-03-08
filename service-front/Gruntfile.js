@@ -144,7 +144,9 @@ module.exports = function (grunt) {
         'Gruntfile.js',
         'assets/js/moj/**/*.js',
         'assets/js/lpa/**/*.js',
-        'assets/js/main.js'
+        'assets/js/main.js',
+        // ignore compiled handlebars templates
+        '!assets/js/lpa/lpa.templates.js'
       ]
     },
 
