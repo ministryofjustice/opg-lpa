@@ -244,9 +244,6 @@
         $('#donorsignprompt', $form).hide();
       }
 
-      // Initialise details tag within the lightbox
-      $('details', $form).details();
-
       // show free text field on certificate provider form when a statement type was chosen
       $('input:radio[name="certificateProviderStatementType"]').each(function (idx) {
         if ($(this).attr('checked') !== undefined) {
