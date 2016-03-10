@@ -39,7 +39,6 @@
       }
       var $form = $(el),
         $submitBtn = $('input[type="submit"]', $form),
-        donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
         $allFields = $('input[required], label.required + input, label.required ~ select', $form),
         $addressFields = $('input[name^="address"]', $form),
         allPopulated,
@@ -236,24 +235,6 @@
 
       // toggle initial change on donor relationship
       $('[name="relationshipToDonor"]', $form).change().closest('form').data('dirty', false);
-
-      // donor toggle
-      if (donorCannotSign) {
-        $('#donorsignprompt', $form).show();
-      } else {
-        $('#donorsignprompt', $form).hide();
-      }
-
-      // show free text field on certificate provider form when a statement type was chosen
-      $('input:radio[name="certificateProviderStatementType"]').each(function (idx) {
-        if ($(this).attr('checked') !== undefined) {
-          if (idx === 0) {
-            $(':input[name="certificateProviderKnowledgeOfDonor"]').closest('.form-element-textarea-cp-statement').show();
-          } else {
-            $(':input[name="certificateProviderProfessionalSkills"]').closest('.form-element-textarea-cp-statement').show();
-          }
-        }
-      });
     }
 
   };

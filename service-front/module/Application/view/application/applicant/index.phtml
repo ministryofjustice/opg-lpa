@@ -87,7 +87,7 @@ $form->prepare();
         </div>
         
         <?php if(isset($attorneyList)):?>
-    		<div class="attorney-applicant">
+    		<div class="attorney-applicant js-attorney-list">
                 <?= $this->formElement($attorneyList)?>
                 <?= $this->formElementErrors($attorneyList) ?>
             </div>

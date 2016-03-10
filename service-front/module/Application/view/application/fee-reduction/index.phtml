@@ -9,7 +9,7 @@
     $reductionOptionsValueOptions = $reductionOptions->getOptions()['value_options'];
     $reductionOptionsValueOptions['reducedFeeReceivesBenefits']['label'] = <<<EOT
     The donor currently claims one of <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
-        <div class="revised-fee" id="revised-fee-0">
+        <div class="revised-fee hidden" id="revised-fee-0">
         	<h2>Reduced fee: &pound;0</h2>
             <p>To apply for this exemption, you must enclose copies of letters from the Department for Work and Pensions or your benefit provider. The 
         letters must confirm that the benefit was being paid at the time the LPA was sent to us for registration. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
@@ -22,7 +22,7 @@
 EOT;
     $reductionOptionsValueOptions['reducedFeeUniversalCredit']['label'] = <<<EOT
     The donor receives Universal Credit
-        <div class="revised-fee" id="revised-fee-uc">
+        <div class="revised-fee hidden" id="revised-fee-uc">
         	<h2>We'll contact you about the fee</h2>
         	<p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
         	<p>This means <strong>the tool will not charge you for this LPA now.</strong></p>

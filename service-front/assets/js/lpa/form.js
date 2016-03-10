@@ -9,40 +9,20 @@
 
 window.lpa = window.lpa || {};
 
-// Select the given value of a select box where present
-lpa.updateSelectbox = function (el, value) {
-  'use strict';
-  var found = false,
-      field = el.attr('name'),
-      form = el.closest('form');
 
-  // Check if value is in list
-  el.children('option').each(function () {
-    if ($(this).prop('value') === value) {
-      found = true;
-    }
-  });
-
-  // If not an available option, change field to text box
-  if (!found) {
-    el.val('Other...').change();
-  }
-
-  // Apply the correct value
-  // As the field changes to a text box we lose it's reference,
-  // so we need to reselect the element.
-  form.find('[name=' + field + ']').val(value); // use the name attr as it's unique & will always exist
-};
+// ====================================================================================
+// SCROLL TO CURRENT SECTION OF LPA
+// This happens before anything else, but it pauses slightly before scrolling (200ms)
 
 (function() {
   'use strict';
-    if ( !$('#lpa-type').hasClass('current') && $('section.current').offset() !== undefined ) {
-        setTimeout(function() {
-            if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) !== 'lpa-type') {
-                window.scrollTo(0, $('section.current').offset().top - 107);
-            }
-        }, 200);
-    }
+  if ( $('section.current').offset() !== undefined ) {
+    setTimeout(function() {
+      if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) !== 'lpa-type') {
+        window.scrollTo(0, $('section.current').offset().top - 107);
+      }
+    }, 200);
+  }
 })();
 
 $(document).ready(function () {
@@ -53,8 +33,10 @@ $(document).ready(function () {
 
   var body = $('body');
 
+
   // ====================================================================================
   // FORM VALIDATION
+  // NOTE: Only on the older pages. This is older validation and will be replaced.
 
   body.on('click', 'form [role="alert"] a', function() {
     var $target = $($(this).attr('href'));
@@ -70,77 +52,36 @@ $(document).ready(function () {
 
 
   // ====================================================================================
-  // TOGGLEABLE FORMS
+  // WHO IS APPLYING TO REGISTER?
+  // NOTE: This is on the 'applicant' page (Registration #1)
+
+  // Only do the following if .js-attorney-list exists
+  if ($('.js-attorney-list')[0]) {
+
+    // Toggle all checkboxes under Attorneys
+    $('[name="whoIsRegistering"]').change(function(){
+      if($(this).val() === 'donor' ){
+        $('.attorney-applicant input:checkbox').prop('checked', false);
+      } else {
+        $('.attorney-applicant input:checkbox').prop('checked', true);
+      }
+    });
+
+    // Revert to Donor if no Attorneys are checked
+    $('.attorney-applicant input').change(function(){
+      if($('.attorney-applicant input').is(':checked')){
+        $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
+      } else {
+        $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true);
+      }
+    });
+
+  }
 
 
-
-  // Donor cannot sign LPA
-  $(document).delegate('#donor_cannot_sign', 'change', function () {
-    var donorCannotSign = $(this).is(':checked');
-    if (donorCannotSign) {
-      $('#donorsignprompt').show();
-    } else {
-      $('#donorsignprompt').hide();
-    }
-  });
-
-  // Cancel pop-up
-  body.on('click', 'button#form-cancel', function (e) {
-    e.preventDefault();
-    $('#lightboxclose').click();
-  });
-
-
-  // RADIOS WITH CONDITIONAL CONTENT
-  //
-  // A jQuery function for toggling content based on selected radio buttons
-  //
-  // Usage:
-  //
-  // $(radio).hasConditionalContent();
-  //
-  // Where radio is one or more of the radios in the group.
-  // The elements to be toggled must have an ID made from a concatenation of 'toggle', the radio name and value.
-  // For example, a radio with name="radios" and a value of "1" will toggle an element with id="toggle-radios-1".
-
-
-  jQuery.fn.hasConditionalContent = function() {
-      var name = $(this).attr('name');
-      $('[id^="toggle-'+name+'"]').hide();
-
-      $('[name="'+name+'"]').change(function(){
-          if($(this).is(':checked')){
-              $('[id^="toggle-'+name+'"]').hide();
-              $('#toggle-'+name+'-'+$(this).val()).show();
-          }
-      }).change();
-  };
-
-  $('[name="certificateProviderStatementType"]').hasConditionalContent();
-  $('[name="how"]').hasConditionalContent();
-  $('[name="when"]').hasConditionalContent();
-
-
-  // Who is applying to register?
-
-  $('[name="whoIsRegistering"]').change(function(){
-	    if($(this).val() === 'donor' ){
-	        $('.attorney-applicant input:checkbox').prop('checked', false);
-	    } else {
-	        $('.attorney-applicant input:checkbox').prop('checked', true);
-	    }
-  });
-
-  $('.attorney-applicant input').change(function(){
-    if($('.attorney-applicant input').is(':checked')){
-      $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
-    } else {
-      $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true);
-    }
-  });
-
-
-  // Calendar control for date fields
+  // ====================================================================================
+  // JQUERY UI DATEPICKER SETUP
+  // NOTE: Only on the 'date-check' page.
 
   $('.date-field input').datepicker(
     {
@@ -154,92 +95,28 @@ $(document).ready(function () {
   );
 
 
-  // Any previous LPAs?
+  // ====================================================================================
+  // FEE REDUCTION CHOICES
+  // NOTE: This is only on the 'fee-reduction' page (Registration #4)
+  // This could be some sort of a label subtext pattern
 
-  $('#previousLpa').change(function(){
-    if($('#toggle-previousLpa textarea').val() !== ''){
-        $('#previousLpa').prop('checked', true);
-    }
-    if($(this).is(':checked')) {
-        $('#toggle-previousLpa').show();
-    } else {
-        $('#toggle-previousLpa textarea').val('');
-        $('#toggle-previousLpa').hide();
-    }
-  }).change();
-
-
-  // Any other info?
-
-  $('#otherInfo').change(function(){
-    if($('#toggle-otherInfo textarea').val() !== ''){
-        $('#otherInfo').prop('checked', true);
-    }
-    if($(this).is(':checked')) {
-        $('#toggle-otherInfo').show();
-    } else {
-        $('#toggle-otherInfo textarea').val('');
-        $('#toggle-otherInfo').hide();
-    }
-  }).change();
-
-
-  // Fee remissions
-
-    var $allRevisedFees = $('.revised-fee').hide();
-    var $revisedFee;
-
-    $('input[name=reductionOptions]').change(function(){
-
-        $allRevisedFees.hide();
-
-        if ($('#reducedFeeReceivesBenefits').is(':checked')) {
-            $revisedFee = $('#revised-fee-0').show();
-        } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
-            $revisedFee = $('#revised-fee-uc').show();
-        }
-    }).change();
-
-  $('#load-pf').click(function(){
-    $.get('/service/loadpf');
-  });
-
-  $('#load-hw').click(function(){
-    $.get('/service/loadhw');
+  $('input[name=reductionOptions]').change(function(){
+      $('.revised-fee').addClass('hidden');
+      if ($('#reducedFeeReceivesBenefits').is(':checked')) {
+          $('#revised-fee-0').removeClass('hidden');
+      } else if ($('#reducedFeeUniversalCredit').is(':checked')) {
+          $('#revised-fee-uc').removeClass('hidden');
+      }
   });
 
 
-  // Delete user account?
-
-  body.on('click', '#delete-account', function(event){
-    event.preventDefault();
-    var deleteUrl = $(this).attr('href');
-    if(confirm('Are you sure you want to delete this account?')) {
-      $.ajax({
-        url: deleteUrl,
-        type: 'DELETE',
-        success: function(){
-          window.location.href='/';
-        }
-      });
-    }
-  });
-
-
-  // Delete LPA?
-
-  body.on('click', '.js-delete-lpa', function(event){
-    event.preventDefault();
-    if(confirm('Are you sure you want to delete this LPA?')) {
-      var url = $(this).attr('href');
-      window.location.href = url;
-    }
-  });
-
-
-  // Delete person?
+  // ====================================================================================
+  // DELETE PERSON (ACTOR) CONFIRMATION AND REDIRECT
+  // NOTE: Only on older pages.
+  // TO DO: Would like to get away from generic alerts.
 
   body.on('click', 'a.delete-confirmation', function(event){
+    moj.log('Delete person?');
     event.preventDefault();
     var url=$(this).attr('href');
     if(confirm('Do you want to remove this person?')) {
@@ -248,15 +125,9 @@ $(document).ready(function () {
   });
 
 
-  // Watch for changes to lightbox forms
-
-  $('body').on('change', '#form-lightbox input, #form-lightbox select:not(#reusables)', function () {
-    $(this).closest('form').data('dirty', true);
-  });
-
-
   // ====================================================================================
-  // Emphasised checkbox and radio button label styles
+  // EMPHASISED CHECKBOX AND RADIO BUTTON LABEL STYLES
+  // NOTE: Only on older pages. This won't be needed when new styles come in
 
   var $emphasised = $('.emphasised input');
   $emphasised.filter(':checked').parent().addClass('checked');
