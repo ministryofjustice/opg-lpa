@@ -108,7 +108,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     {
         if($this->flowChecker == null) {
             $formFlowChecker = new FormFlowChecker($this->getLpa());
-            $formFlowChecker->setLpa($this->getLpa());
             $this->flowChecker = $formFlowChecker;
         }
         

@@ -14,6 +14,7 @@ class FormFlowChecker extends StateChecker
     static $accessibleFunctionMap = array(
             'lpa'                                           => 'isLpaAccessible',
             'lpa/form-type'                                 => 'isFormTypeAccessible',
+            'lpa-type-no-id'                                => 'isFormTypeAccessible',
             'lpa/donor'                                     => 'isDonorAccessible',
             'lpa/donor/add'                                 => 'isDonorAddAccessible',
             'lpa/donor/edit'                                => 'isDonorEditAccessible',
@@ -64,6 +65,7 @@ class FormFlowChecker extends StateChecker
     
     static $returnFunctionMap = array(
             'lpa/form-type'                                 => 'returnToFormType',
+            'lpa-type-no-id'                                => 'returnToNewLpa',
             'lpa/donor'                                     => 'returnToDonor',
             'lpa/when-lpa-starts'                           => 'returnToWhenLpaStarts',
             'lpa/life-sustaining'                           => 'returnToLifeSustaining',
@@ -86,6 +88,7 @@ class FormFlowChecker extends StateChecker
     );
     
     static $nextRouteMap = array(
+            'lpa-type-no-id'                                => 'lpa/donor',  
             'lpa/form-type'                                 => 'lpa/donor',
             'lpa/donor'                                     => ['lpa/when-lpa-starts', 'lpa/life-sustaining'],
             'lpa/donor/add'                                 => 'lpa/donor',
@@ -143,7 +146,7 @@ class FormFlowChecker extends StateChecker
         }
         
         // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
-        if(($this->lpa->completedAt instanceof \DateTime)
+        if(!empty($this->lpa) && ($this->lpa->completedAt instanceof \DateTime)
                && ($currentRouteName != 'lpa/complete') 
                && ($currentRouteName != 'lpa/date-check') 
                && ($currentRouteName != 'lpa/download')) {
@@ -758,6 +761,11 @@ class FormFlowChecker extends StateChecker
     }
     
 ######################## return functions #####################    
+
+    private function returnToNewLpa()
+    {
+        return 'lpa-type-no-id';
+    }
     
     private function returnToFormType()
     {

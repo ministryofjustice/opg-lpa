@@ -434,7 +434,21 @@ return [
                     ], // delete
                 ],
             ], // user
-
+            
+            //--------------------------------------------------
+            // Untyped LPA Route (Type form, no LPA ID)
+            
+            'lpa-type-no-id' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/lpa/type',
+                    'defaults' => [
+                        'controller' => 'Authenticated\TypeController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+                
             //--------------------------------------------------
             // LPA Routes
 
