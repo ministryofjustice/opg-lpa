@@ -24,7 +24,8 @@ class Communication implements ServiceLocatorAwareInterface {
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
+        // This is only uncommented when we want Survey emails send
+        // $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
         return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register', 'opg-lpa-complete-registration');
         
