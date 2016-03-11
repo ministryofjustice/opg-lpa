@@ -9,7 +9,6 @@
       this.changeMobileActions();
       this.searchFocus();
       this.ie8NthChildFix();
-      this.deleteLPAs();
     },
     changeMobileActions: function(){
       // In list view on mobile, disable DETAILS and show all actions
@@ -42,15 +41,6 @@
       if ($('html').hasClass('lte-ie8')) {
         $('.lpa-cards tr:nth-child(2n-1)').addClass('odd');
       }
-    },
-    deleteLPAs: function(){
-      $('body').on('click', '.js-delete-lpa', function(event){
-        event.preventDefault();
-        if(confirm('Are you sure you want to delete this LPA?')) {
-          var url = $(this).attr('href');
-          window.location.href = url;
-        }
-      });
     }
   };
   
