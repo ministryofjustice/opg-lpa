@@ -33,10 +33,12 @@
     $type->setOptions( ['value_options' => $typeValueOptions] );
     
     $isChangeAllowed = true;
-    if(($this->lpa->document instanceof Opg\Lpa\DataModel\Lpa\Document\Document) && (
-            $this->lpa->document->donor instanceof Opg\Lpa\DataModel\Lpa\Document\Donor)) {
-        $type->setAttributes(['disabled'=>'disabled']);
-        $isChangeAllowed = false;
+    if (!empty($this->lpa)) {
+        if(($this->lpa->document instanceof Opg\Lpa\DataModel\Lpa\Document\Document) && (
+                $this->lpa->document->donor instanceof Opg\Lpa\DataModel\Lpa\Document\Donor)) {
+            $type->setAttributes(['disabled'=>'disabled']);
+            $isChangeAllowed = false;
+        }
     }
     
     $submit      = $form->get('submit');
@@ -55,7 +57,6 @@
     		<p>You can make an LPA to cover either your property and financial affairs, or your health and welfare.</p>
     		<p><a class="js-guidance" href="/guidance/#topic-the-2-types-of-lpa" data-journey-click="stageprompt.lpa:help:the-2-types-of-lpa">Find out about the 2 types of LPA</a></p>
     	</div>
-    		    
     	
         <?= $this->form()->openTag($form); ?>
     
@@ -92,7 +93,6 @@
             </div>
         
         <?= $this->form()->closeTag(); ?>
-    	
     </div>
     
 </section>

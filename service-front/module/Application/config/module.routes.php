@@ -122,6 +122,18 @@ return [
                     ],
                 ],
             ], // guidance
+            
+            'guidance-non-twig' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/guide/v1[/:section]',
+                    'defaults' => [
+                        'controller' => 'General\GuidanceController',
+                        'action'     => 'indexNonTwig',
+                        'section'    => '',
+                    ],
+                ],
+            ], // guidance
 
             'enable-cookie' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
@@ -434,7 +446,21 @@ return [
                     ], // delete
                 ],
             ], // user
-
+            
+            //--------------------------------------------------
+            // Untyped LPA Route (Type form, no LPA ID)
+            
+            'lpa-type-no-id' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/lpa/type',
+                    'defaults' => [
+                        'controller' => 'Authenticated\TypeController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+                
             //--------------------------------------------------
             // LPA Routes
 

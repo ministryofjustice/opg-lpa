@@ -3335,7 +3335,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
   HelpSystem.prototype = {
     defaults: {
-      guidancePath: 'guide',
+      guidancePath: 'guide/v1',
       selector: 'a.js-guidance',
       overlayIdent: 'help-system',
       overlaySource: '#content',

@@ -40,7 +40,9 @@ class StateChecker {
      */
     public function __construct(Lpa $lpa = null)
     {
-        $this->setLpa($lpa);
+        if ($lpa) {
+            $this->setLpa($lpa);
+        }
     }
 
     /**

@@ -117,19 +117,19 @@
 		}
 	}
 	article:first-child {
-		h2:first-child {
+		h1 {
 			@include media($min-width: 640px) {
 				margin-top: 0;
 			}
 		}
 	}
-	h2 {
-		&:first-child {
-			@extend .heading-large;
-			#popup & {
-				@extend .heading-xlarge;
-			}
+	h1 {
+		@extend .heading-large;
+		#popup & {
+			@extend .heading-xlarge;
 		}
+	}
+	h2 {
 		@extend .heading-medium;
 	}
 	h3 {

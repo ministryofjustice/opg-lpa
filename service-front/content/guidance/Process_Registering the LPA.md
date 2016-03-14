@@ -1,4 +1,4 @@
-## Registering the LPA
+# Registering the LPA
 
 Once you have completed the questions in the first part of your LPA form, this service will take you through the steps to send in your LPA for registration.
 

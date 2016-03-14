@@ -49,7 +49,7 @@ class DashboardController extends AbstractAuthenticatedController
             ],
         ]);
     }
-
+    
     /**
      * Creates a new LPA
      *
@@ -57,23 +57,25 @@ class DashboardController extends AbstractAuthenticatedController
      */
     public function createAction(){
 
-        //-------------------------------------
-        // Create a new LPA...
-
-        $newLpaId = $this->getLpaApplicationService()->createApplication();
-
-        if( $newLpaId === false ){
-
-            $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
-            return $this->redirect()->toRoute( 'user/dashboard' );
-
-        }
-
+        $seedId = $this->params()->fromRoute('lpa-id');
+        
         //-------------------------------------
         // If we're seeding the new LPA...
 
-        if( ($seedId = $this->params()->fromRoute('lpa-id')) != null ){
+        if( $seedId != null ){
 
+            //-------------------------------------
+            // Create a new LPA...
+            
+            $newLpaId = $this->getLpaApplicationService()->createApplication();
+            
+            if( $newLpaId === false ){
+            
+                $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+                return $this->redirect()->toRoute( 'user/dashboard' );
+            
+            }
+            
             $result = $this->getLpaApplicationService()->setSeed( $newLpaId, (int)$seedId );
             
             $this->resetSessionCloneData($seedId);
@@ -81,13 +83,16 @@ class DashboardController extends AbstractAuthenticatedController
             if( $result !== true ){
                 $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');
             }
+            
+            // Redirect them to the first page...
+            return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$newLpaId ] );
 
         }
 
         //---
 
-        // Redirect them to the first page...
-        return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$newLpaId ] );
+        // Redirect them to the first page, no LPA created
+        return $this->redirect()->toRoute( 'lpa-type-no-id' );
 
     } // function
     

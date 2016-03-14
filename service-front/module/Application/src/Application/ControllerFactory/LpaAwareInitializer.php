@@ -61,7 +61,6 @@ class LpaAwareInitializer implements InitializerInterface {
                 }
 
                 //---
-
                 $instance->setLpa( $lpa );
 
             } // if

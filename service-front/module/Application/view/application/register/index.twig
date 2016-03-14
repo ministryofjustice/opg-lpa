@@ -50,7 +50,6 @@
 {{ email_confirm.setOptions( { label: 'Confirm your email address' }) ? '' }}
 {{ password.setOptions( { label: 'Password' }) ? '' }}
 {{ password_confirm.setOptions( { label: 'Confirm password' }) ? '' }}
-{{ terms.setOptions( { label: 'I agree to the terms and conditions and privacy policy' }) ? '' }}
 
 <div class="text">
     <p class="lede">You need to enter your email address and create a password. This will allow you to make, save and retrieve LPAs.</p>
@@ -119,7 +118,7 @@
         <div class="form-group {{ terms.getMessages|length >0 ? 'error'}}">
             <label class="block-label" for="{{ terms.getAttribute('id') }}">
                 {{ formElement(terms) }}
-                {{ terms.getOption('label') }}
+                I agree to the <a href="/terms-and-conditions" target="_blank">terms and conditions and privacy policy</a>
                 {{ formElementErrorsV2(terms) }}
             </label>
         </div>

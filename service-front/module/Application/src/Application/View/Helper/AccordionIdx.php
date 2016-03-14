@@ -12,13 +12,20 @@ class AccordionIdx extends AbstractAccordion
      */
     public function __invoke (Lpa $lpa = null)
     {
-        if($lpa === null) {
-            return null;
+        if ($lpa === null) {
+            return 1;
         }
-        
+       
         $this->lpa = $lpa;
         
         $routeName = $this->getRouteName();
+        
+        if ($routeName == 'lpa-type-no-id') {
+            // for the purposes of this function we'll treat the route
+            // as lpa/form-type
+            $routeName = 'lpa/form-type';
+        }
+        
         $barConfig = $this->getBarConfig($routeName);
         
         if($barConfig == null) {
