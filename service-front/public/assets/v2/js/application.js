@@ -3557,7 +3557,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var HelpSystem = function (options) {
     this.settings = $.extend({}, this.defaults, options);
   };
-
+  
   HelpSystem.prototype = {
     defaults: {
       guidancePath: 'guide',
