@@ -1,4 +1,4 @@
-## People to notify
+# People to notify
 
 You can choose 'people to notify' who will be told when you or your attorneys apply to register your LPA.
 

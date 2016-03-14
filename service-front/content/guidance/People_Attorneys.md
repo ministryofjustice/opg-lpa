@@ -1,4 +1,4 @@
-## Attorneys
+# Attorneys
 Attorneys are people you trust and appoint under your LPA to make decisions on your behalf when you don't have mental capacity.
 
 You must have at least one attorney. There's no upper limit but too many attorneys could make things difficult, as they'll need to work together.

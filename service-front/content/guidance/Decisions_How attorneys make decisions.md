@@ -1,4 +1,4 @@
-## How attorneys make decisions
+# How attorneys make decisions
 
 If you have more than one attorney, you must decide whether you want them to make some or all decisions on their own or whether they should agree some or all decisions unanimously. The legal terms are 'severally' and 'jointly'.
 

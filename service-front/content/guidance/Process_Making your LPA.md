@@ -1,4 +1,4 @@
-## Making your LPA
+# Making your LPA
 
 You can use this tool to fill out and print a lasting power of attorney (LPA) document. Everyone involved must then sign it. You must register the LPA with the Office of the Public Guardian (OPG) before it can be used.
 
