@@ -123,11 +123,17 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.sticky-nav.js',
           'assets/js/moj/moj.modules/moj.repeat-application.js',
           'assets/js/moj/moj.modules/moj.dashboard.js',
+          'assets/js/moj/moj.modules/moj.ui-behaviour.js',
+          'assets/js/moj/moj.modules/moj.applicant.js',
+          'assets/js/moj/moj.modules/moj.fees.js',
+          'assets/js/moj/moj.modules/moj.confirm.js',
+          'assets/js/moj/moj.modules/moj.who-are-you.js',
 
-          // LPA Scripts
+          // Init Script
           'assets/js/main.js',
-          'assets/js/lpa/who-are-you.js',
-          'assets/js/lpa/form.js'
+
+          // SHAME.JS -- NOT FOR PRODUCTION
+          'assets/js/shame.js'
         ],
         dest: 'public/assets/v2/js/application.js',
         nonull: true
