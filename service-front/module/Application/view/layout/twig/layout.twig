@@ -110,13 +110,10 @@
         {{ flash.render('success', 'alert-success', 'icon-tick') }}
         {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
 
-                                    
+        {% block openAccordion %}
+        {% endblock %}
+                              
         {#
-        <?php if(isset($this->contentHeader)): ?>
-        <?= $this->partial('layout/partials/main-content-headers/'.$this->contentHeader)?>
-        
-        <div id="accordion" class="accordion-form">
-        <?php endif; ?>
         
         <?php
         
@@ -136,11 +133,10 @@
                 echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionBottom);
             }
         ?>
-        
-        <?php if(isset($this->contentHeader)): ?>
-        </div> <!-- Close accordion --> 
-        <?php endif; ?>
-        #}
+		#}
+		        
+        {% block closeAccordion %}
+        {% endblock %}
 
         {% block divider %}
         <hr>

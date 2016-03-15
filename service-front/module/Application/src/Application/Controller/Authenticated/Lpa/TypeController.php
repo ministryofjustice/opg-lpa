@@ -15,9 +15,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class TypeController extends AbstractLpaController
 {
-    
-    protected $contentHeader = 'creation-partial.phtml';
-    
     public function indexAction()
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TypeForm');
