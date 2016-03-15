@@ -22,6 +22,31 @@ class TypeController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TypeForm');
         
+        $type = $form->get('type');
+        
+        $typeValueOptions = $type->getOptions()['value_options'];
+        $typeValueOptions['property-and-financial']['label'] = 'Property and financial affairs';
+        $typeValueOptions['health-and-welfare']['label'] = 'Health and welfare';
+        
+        $typeValueOptions['property-and-financial'] += [
+            'label_attributes' => [
+                'for' => 'property-and-financial',
+            ],
+            'attributes' => [
+                'id' => 'property-and-financial',
+            ],
+        ];
+        $typeValueOptions['health-and-welfare'] += [
+            'label_attributes' => [
+                'for' => 'health-and-welfare',
+            ],
+            'attributes' => [
+                'id' => 'health-and-welfare',
+            ],
+        ];
+        
+        $type->setOptions( ['value_options' => $typeValueOptions] );
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             

@@ -315,14 +315,19 @@ class Module{
         $children = $e->getViewModel()->getChildren();
         
         $twigWillBeUsed = false;
-
+        
         // $children is an array but we only really expect one child
         foreach ($children as $child) {
+            
+            $potentialTwigTemplate = 'module/Application/view/' . $child->getTemplate() . '.twig';
+            
+            // if there is a .phtml extension inside the name (abc.phtml.twig), then remove it
+            $potentialTwigTemplate = str_replace('.phtml', '', $potentialTwigTemplate);
             
             // the template name will be something like 'application/about-you/index' - with
             // no suffix. We look in the directory where we know the .phtml file will be
             // located and see if there is a .twig file (which would take precedence over it)
-            if (file_exists('module/Application/view/' . $child->getTemplate() . '.twig')) {
+            if (file_exists($potentialTwigTemplate)) {
                 $twigWillBeUsed = true;
                 break;
             }
