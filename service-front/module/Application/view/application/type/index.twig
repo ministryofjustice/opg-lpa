@@ -1,0 +1,105 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block content %}
+
+{% set form = formErrorTextExchange(form,  {
+    'type' : {
+        'cannot-be-empty' : 'Please choose a type of LPA',
+    }
+}) %}
+
+{% set type = form.get('type') %}
+{% set isChangeAllowed = true %}
+
+{% set submit = form.get('submit') %}
+{{ submit.setAttributes({'class':'button gotonextpart', 'value':'Save and continue'}) ? '' }}
+
+{#
+    if (!empty($this->lpa)) {
+        if(($this->lpa->document instanceof Opg\Lpa\DataModel\Lpa\Document\Document) && (
+                $this->lpa->document->donor instanceof Opg\Lpa\DataModel\Lpa\Document\Donor)) {
+            $type->setAttributes(['disabled'=>'disabled']);
+            $isChangeAllowed = false;
+        }
+    }
+#}
+
+{{ form.prepare() ? '' }}
+
+<section id="lpa-type-section" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. What type of LPA do you want to create?</h2>
+	
+    <div class="accordion-content">
+    	<div class="section-intro">
+    		<p>You can make an LPA to cover either your property and financial affairs, or your health and welfare.</p>
+    		<p><a class="js-guidance" href="/guidance#topic-the-2-types-of-lpa" data-journey-click="stageprompt.lpa:help:the-2-types-of-lpa">Find out about the 2 types of LPA</a></p>
+    	</div>
+    	
+{{ form().openTag( form )|raw }}
+    
+{{ formElement(form.get( form.csrfName )) }}
+            
+{% if (error is not empty or form.getMessages|length > 0) %}
+<div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your details</h1>
+    {# Show this only if it's a form error #}
+    {% if form.getMessages|length > 0 %}
+        <p>You need to do the following:</p>
+    {% endif %}
+    
+    <ul class="error-summary-list">
+        {# Form errors #}
+        {{ formLinkedErrorListV2(form) ? '' }}
+
+        {# API errors #}
+        {% if error is not empty %}
+            <li><p>{{ error }}</p></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+
+            <div class="emphasised option group">
+                {{ formElement(type) }}
+                
+                {{ formElementErrorsV2(type) }}
+                
+                {% if (isChangeAllowed) %}
+                <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a
+                 {{ 
+                    (lpa.document.type == 'health-and-welfare')
+                    ?'Property  and financial affairs'
+                    :'Health and welfare' 
+                 }} 
+                 LPA based on the current one, click <a href="<?= $this->cloneUrl ?>">here</a>.</p>
+                {% endif %}
+                
+            </div>
+    
+    		<details>
+    			<summary data-journey-click="stageprompt.lpa:help.inline:create/lpa-type:what-if-i-want-to-make-more-than-one-lpa" role="button" aria-expanded="false">What if I want to make more than one LPA?</summary>
+                <div>
+        			<p>You'll need to go through this form for each LPA you create.</p>
+        			<p>We'll remember names and addresses you add so you don't have to enter them each time.</p>
+        			<p>Remember, there’s an application fee for each LPA you register.</p>
+                </div>
+    		</details>
+    
+            <div class="accordion-actions">
+				<p>
+				{% if (isChangeAllowed) %}
+                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+                {% else %}
+                    <a href='{{ nextUrl }}' class="button gotonextpart">Continue</a>
+                {% endif %}
+                </p>
+            </div>
+        
+{{ form().closeTag|raw }}
+
+    </div>
+    
+</section>
+
+{% endblock %}
