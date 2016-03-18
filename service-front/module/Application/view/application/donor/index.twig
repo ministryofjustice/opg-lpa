@@ -21,29 +21,29 @@
     			<p><a href="/guidance/#topic-donor" class="js-guidance" data-journey-click="stageprompt.lpa:help:donor">Find out more about being a donor</a></p>
     		</div>
     		
-    {# <?php if($this->lpa->document->donor instanceof \Opg\Lpa\DataModel\Lpa\Document\Donor): ?>		
+    {% if (lpa.document.donor) %}
     		<div class="person-summary group">
     			<div class="person">
-    				<h3><?=$this->donor['name']?></h3>
+    				<h3>{{ donor['name'] }}</h3>
     				<p>
-    				<?=$this->donor['address']?>
+    				{{ donor['address'] }}
     				</p>
     			</div>
     
     			<ul class="actions">
-    				<li><a href="<?=$this->editDonorUrl?>" data-form="donor" class="js-form-popup">View/edit details</a></li>
+    				<li><a href="{{ editDonorUrl }}" data-form="donor" class="js-form-popup">View/edit details</a></li>
     			</ul>
     		</div>
     		<div class="accordion-actions group">
     			<p>
-    				<a href="<?=$this->nextRoute?>" class="button gotonextpart" role="button">Save and continue</a>
+    				<a href="{{ nextRoute }}" class="button gotonextpart" role="button">Save and continue</a>
     			</p>
     		</div>
-    
-    <?php else:?>
+
+	{% else %}    
     
             <p>
-                <a class="add button js-form-popup" data-form="donor" href="<?= $this->addRoute ?>" role="button">Add donor details</a>
+                <a class="add button js-form-popup" data-form="donor" href="{{ addRoute }}" role="button">Add donor details</a>
             </p>
     		
     		<div class="accordion-actions group">
@@ -51,9 +51,7 @@
     				<span disabled="1" class="button">Save and continue</span>
     			</p>
     		</div>
-    <?php endif;?>
-    
-    #}
+    {% endif %}
     
     </div>
 
