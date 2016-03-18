@@ -12,7 +12,17 @@ class Config implements Countable, ArrayAccess {
 
     private function __construct( ) {
         if($this->container === null) {
-            $this->container = static::merge( include('global.php'), include('docker.php'), include('local.php') );
+
+            $this->container = include('global.php');
+
+            if( stream_resolve_include_path('docker.php') !== false ){
+                $this->container = static::merge( $this->container, include('docker.php') );
+            }
+
+            if( stream_resolve_include_path('local.php') !== false ){
+                $this->container = static::merge( $this->container, include('local.php') );
+            }
+
         }
     }
     
