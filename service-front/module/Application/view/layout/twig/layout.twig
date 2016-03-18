@@ -118,7 +118,7 @@
         
         {% if (accordionTop) %}
         {% for partialVars in accordionTop %}
-        	{% include 'layout/partials/accordion/accordion.phtml' with partialVars %}
+        	{% include 'layout/partials/accordion/accordion.twig' with partialVars %}
         {% endfor %}
         {% endif %}
         
@@ -126,7 +126,7 @@
         
         {% if (accordionBottom) %}
         {% for partialVars in accordionBottom %}
-        	{% include 'layout/partials/accordion/accordion.phtml' with partialVars %}
+        	{% include 'layout/partials/accordion/accordion.twig' with partialVars %}
         {% endfor %}
         {% endif %}
                          
