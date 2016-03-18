@@ -235,6 +235,6 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function getViewScriptName($barDataFuncName)
     {
-        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $barDataFuncName)).'.phtml';
+        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $barDataFuncName)).'.twig';
     }
 }
