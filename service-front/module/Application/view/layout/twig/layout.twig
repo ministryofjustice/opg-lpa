@@ -112,29 +112,24 @@
 
         {% block openAccordion %}
         {% endblock %}
-                              
-        {#
+             
+        {% set accordionTop = accordionTop(lpa) %}
+        {% set accordionBottom = accordionBottom(lpa) %}
         
-        <?php
+        {% if (accordionTop) %}
+        {% for partialVars in accordionTop %}
+        	{% include 'layout/partials/accordion/accordion.phtml' with partialVars %}
+        {% endfor %}
+        {% endif %}
         
-            $accordionTop = $this->accordionTop($this->lpa);
-            if(is_array($accordionTop)) {
-                echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionTop);
-            }
-        ?>
-        #}
-
         {% block content %}{% endblock %}
-
-        {#
-        <?php
-            $accordionBottom = $this->accordionBottom($this->lpa);
-            if(is_array($accordionBottom)) {
-                echo $this->partialloop('layout/partials/accordion/accordion.phtml', $accordionBottom);
-            }
-        ?>
-		#}
-		        
+        
+        {% if (accordionBottom) %}
+        {% for partialVars in accordionBottom %}
+        	{% include 'layout/partials/accordion/accordion.phtml' with partialVars %}
+        {% endfor %}
+        {% endif %}
+                         
         {% block closeAccordion %}
         {% endblock %}
 
