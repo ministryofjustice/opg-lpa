@@ -29,79 +29,58 @@
     {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
 {% endif %}
 
+{% set title = form.get('name-title') %}
+{% set firstName = form.get('name-first') %}
+{% set lastName = form.get('name-last') %}
+{% set otherNames = form.get('otherNames') %}
+{% set email = form.get('email-address') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+{% set canSign = form.get('canSign') %}
+{% set dob = form.get('dob-date') %}
+{% set dobDay = dob.get('day') %}
+{% set dobMonth = dob.get('month') %}
+{% set dobYear = dob.get('year') %}
+
+{{ dobDay.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
+{{ dobMonth.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
+{{ dobYear.setAttributes({'maxlength':'4','pattern': '[0-9]{4}'}) ? '' }}
+
+{{ form.setAttributes({'class':'form js-PersonForm js-PostcodeLookup', 'novalidate': ''}) ? '' }}
+
+{{ title.setOptions({label:'Title'}) ? '' }}
+{{ title.setAttributes({id:'name-title'}) ? '' }}
+
+{{ firstname.setOptions({label:'First name'}) ? '' }}
+{{ firstname.setAttributes({id:'name-title'}) ? '' }}
+
+{{ lastname.setOptions({label:'Last name'}) ? '' }}
+{{ lastname.setAttributes({id:'name-title'}) ? '' }}
+
+{{ otherNames.setOptions({label:'Other names'}) ? '' }}
+
+{{ dob.setOptions({label:'Date of Birth'}) ? '' }}
+{{ dobDay.setOptions({label:'Day'}) ? '' }}
+{{ dobMonth.setOptions({label:'Month'}) ? '' }}
+{{ dobYear.setOptions({label:'Year'}) ? '' }}
+{{ dobDay.setAttribute('id', 'dob-date-day') ? '' }}
+{{ dobMonth.setAttribute('id', 'dob-date-month') ? '' }}
+{{ dobYear.setAttribute('id', 'dob-date-year') ? '' }}
+
+{{ email.setOptions({label:'Email address'}) ? '' }}
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+{{ canSign.setOptions({label:'This person cannot physically sign the LPA'}) ? '' }}
+{{ address1.setAttributes({id:'address-address1'}) ? '' }}
+{{ canSign.setAttributes({class:'donor-cannot-sign'}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
 {#
-
-<?php
-
-    /**
-     * Donor form
-     */
-
-
-    $csrf       = $form->get($form->csrfName());
-    $title      = $form->get('name-title');
-    $firstname  = $form->get('name-first');
-    $lastname   = $form->get('name-last');
-    $otherNames = $form->get('otherNames');
-    $email      = $form->get('email-address');
-    $address1   = $form->get('address-address1');
-    $address2   = $form->get('address-address2');
-    $address3   = $form->get('address-address3');
-    $postcode   = $form->get('address-postcode');
-    $canSign    = $form->get('canSign');
-
-    $dob      = $form->get('dob-date');
-    $dobDay   = $dob->get('day');
-    $dobDay->setAttributes([
-        'maxlength' => '2',
-        'pattern' => '[0-9]{2}'
-    ]);
-    $dobMonth = $dob->get('month');
-    $dobMonth->setAttributes([
-        'maxlength' => '2',
-        'pattern' => '[0-9]{2}'
-    ]);
-    $dobYear  = $dob->get('year');
-    $dobYear->setAttributes([
-        'maxlength' => '4',
-        'pattern' => '[0-9]{4}'
-    ]);
-    
-    $form->setAttributes([
-        'class' => 'form js-PersonForm js-PostcodeLookup',
-        'novalidate' => ''
-    ]);
-
-    $title->setOptions(     ['label' => 'Title'] );
-    $title->setAttributes(['id'=>'name-title']);
-    $firstname->setOptions( ['label' => 'First names'] );
-    $firstname->setAttributes(['required' => 'required']);
-    $lastname->setOptions(  ['label' => 'Last name'] );
-    $lastname->setAttributes(['required' => 'required']);
-    $otherNames->setOptions(['label' => 'Other names'] );
-    
-    $dob->setOptions(['label'=>'Date of Birth']);
-    
-    $dobDay->setOptions(    ['label' => 'Day'] );
-    $dobMonth->setOptions(  ['label' => 'Month'] );
-    $dobYear->setOptions(   ['label' => 'Year'] );
-    
-    $dobDay->setAttribute('id', 'dob-date-day');
-    $dobMonth->setAttribute('id', 'dob-date-month');
-    $dobYear->setAttribute('id', 'dob-date-year');
-    
-    $email->setOptions(     ['label' => 'Email address'] );
-    $address1->setOptions(  ['label' => 'Address line 1'] );
-    $address1->setAttributes(['id'=>'address-address1']);
-    $address2->setOptions(  ['label' => 'Address line 2'] );
-    $address3->setOptions(  ['label' => 'Address line 3'] );
-    $postcode->setOptions(  ['label' => 'Postcode'] );
-    $canSign->setOptions(   ['label' => 'This person cannot physically sign the LPA'] );
-    $canSign->setAttribute('class', 'donor-cannot-sign');
-    
-    $formLabel  = $this->plugin('formLabel');
-    $form->prepare();
-?>
 
 <h2 class="header">Edit the donor's details</h2>
 
