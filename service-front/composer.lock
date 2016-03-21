@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.15.8",
+            "version": "3.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "94630759de5e55c8e9670ea12b7ded132229696d"
+                "reference": "4853bf1f865f6c6df44db0cd5664319ae806f319"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/94630759de5e55c8e9670ea12b7ded132229696d",
-                "reference": "94630759de5e55c8e9670ea12b7ded132229696d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4853bf1f865f6c6df44db0cd5664319ae806f319",
+                "reference": "4853bf1f865f6c6df44db0cd5664319ae806f319",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-03-08 23:21:09"
+            "time": "2016-03-17 23:57:52"
         },
         {
             "name": "doctrine/lexer",
@@ -917,16 +917,16 @@
         },
         {
             "name": "omnipay/common",
-            "version": "v2.4.1",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/omnipay-common.git",
-                "reference": "5a618b4083a63b2e1405529d16c8d546a6788921"
+                "reference": "550138529e850143af7a87eab8cfe16e72a2f768"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/omnipay-common/zipball/5a618b4083a63b2e1405529d16c8d546a6788921",
-                "reference": "5a618b4083a63b2e1405529d16c8d546a6788921",
+                "url": "https://api.github.com/repos/thephpleague/omnipay-common/zipball/550138529e850143af7a87eab8cfe16e72a2f768",
+                "reference": "550138529e850143af7a87eab8cfe16e72a2f768",
                 "shasum": ""
             },
             "require": {
@@ -1009,7 +1009,7 @@
                 "payment",
                 "purchase"
             ],
-            "time": "2016-01-27 03:04:53"
+            "time": "2016-03-10 03:03:17"
         },
         {
             "name": "psr/http-message",

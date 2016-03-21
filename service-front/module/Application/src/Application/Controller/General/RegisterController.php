@@ -86,6 +86,17 @@ class RegisterController extends AbstractBaseController {
             return new ViewModel( [ 'error'=>'invalid-token' ] );
         }
 
+        //---
+
+        // Ensure they're not logged in whilst activating a new account.
+        $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+
+        $session = $this->getServiceLocator()->get('SessionManager');
+        $session->getStorage()->clear();
+        $session->initialise();
+
+        //---
+
         /**
          * This returns:
          *      TRUE - If the user account exists. The account has been activated, or was already activated.
