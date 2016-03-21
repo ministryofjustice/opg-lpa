@@ -1,0 +1,8 @@
+// Typography
+// ==========================================================================
+
+// Allow very long words/links to break so they don't break out of containers
+.text {
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+}

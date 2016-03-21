@@ -2125,6 +2125,10 @@ input[type=number] {
   background: #28a197;
   text-align: center; }
 
+.text, .alert {
+  overflow-wrap: break-word;
+  word-wrap: break-word; }
+
 input[disabled="disabled"] {
   opacity: .5; }
 
