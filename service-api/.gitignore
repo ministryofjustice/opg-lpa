@@ -12,3 +12,4 @@ vendor/bin
 .sass-cache/*
 node_modules/*
 bower_downloads/*
+local.php.old
