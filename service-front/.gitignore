@@ -12,3 +12,4 @@ nbproject
 node_modules/*
 bower_downloads/*
 public/nocommit/*
+local.php.old
