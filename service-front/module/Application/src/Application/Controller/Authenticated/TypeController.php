@@ -80,7 +80,6 @@ class TypeController extends AbstractAuthenticatedController
             'dimension3' => 0,
         ];
     
-        $this->layout()->contentHeader = $this->contentHeader;
         $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
         
         $view = new ViewModel([
