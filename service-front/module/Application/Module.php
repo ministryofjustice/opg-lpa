@@ -246,7 +246,6 @@ class Module{
                     
                     $env = new \Twig_Environment($loader);
 
-                    
                     return $env;
                 
                 }
@@ -312,14 +311,16 @@ class Module{
      */
     public function preRender(MvcEvent $e)
     {
-        $children = $e->getViewModel()->getChildren();
+        $viewModel = $e->getViewModel();
         
-        $twigWillBeUsed = false;
-        
-        // $children is an array but we only really expect one child
-        foreach ($children as $child) {
+        if ($viewModel->hasChildren()) {
+            // This view has a layout (i.e. it's not a popup window)
+            $children = $viewModel->getChildren();
             
-            $potentialTwigTemplate = 'module/Application/view/' . $child->getTemplate() . '.twig';
+            // $children is an array but we only really expect one child
+            $targetTemplateName = $children[0]->getTemplate();
+            
+            $potentialTwigTemplate = 'module/Application/view/' . $targetTemplateName . '.twig';
             
             // if there is a .phtml extension inside the name (abc.phtml.twig), then remove it
             $potentialTwigTemplate = str_replace('.phtml', '', $potentialTwigTemplate);
@@ -327,15 +328,12 @@ class Module{
             // the template name will be something like 'application/about-you/index' - with
             // no suffix. We look in the directory where we know the .phtml file will be
             // located and see if there is a .twig file (which would take precedence over it)
+            
             if (file_exists($potentialTwigTemplate)) {
-                $twigWillBeUsed = true;
-                break;
+                // Use the Twig layout
+                $viewModel->setTemplate('layout/twig/layout');
             }
             
-        }
-        
-        if ($twigWillBeUsed) {
-            $e->getViewModel()->setTemplate('layout/twig/layout');
         }
         
     }
