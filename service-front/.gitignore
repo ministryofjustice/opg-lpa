@@ -12,3 +12,4 @@ nbproject
 node_modules/*
 assets/bower/*
 public/nocommit/*
+local.php.old
