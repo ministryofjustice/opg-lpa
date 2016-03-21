@@ -168,7 +168,7 @@ module.exports = function (grunt) {
     },
 
     // refreshes browser on scss, js & twig changes
-    // runs a mini-server on localhost:3000 as a proxy on vagrant box
+    // runs a mini-server on localhost:3000 as a proxy on docker box
     browserSync: {
       dev: {
         bsFiles: {
@@ -180,7 +180,7 @@ module.exports = function (grunt) {
         },
         options: {
           watchTask: true,
-          proxy: 'https://192.168.33.103/home'
+          proxy: 'https://192.168.99.101/home'
         }
       }
     },
