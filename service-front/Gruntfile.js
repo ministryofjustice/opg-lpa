@@ -180,7 +180,7 @@ module.exports = function (grunt) {
         },
         options: {
           watchTask: true,
-          proxy: 'https://192.168.99.101/home'
+          proxy: 'https://192.168.99.100/home'
         }
       }
     },
