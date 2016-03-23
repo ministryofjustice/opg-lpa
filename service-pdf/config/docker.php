@@ -1,51 +1,83 @@
 <?php
 
-return array(
+return call_user_func(function(){
 
-    'worker' => array(
+    $config = array(
 
-        'testResponse'=>array(
+        'worker' => array(
 
-            'path' => __DIR__.'/../test-data/output/',
+            's3Response'=>array(
+                'client' => [
+                    'credentials' => [
+                        'key'    => 'OPG_LPA_PDF_CACHE_S3_KEY',
+                        'secret' => 'OPG_LPA_PDF_CACHE_S3_SECRET',
+                    ]
+                ],
+                'settings' => [
+                    'Bucket' => 'OPG_LPA_PDF_CACHE_S3_BUCKET',
+                ],
+            ),
 
         ),
 
-        'redisResponse'=>array(
+        'log' => [
+            'path' => 'OPG_LPA_PDF_APPLICATION_LOG_PATH',
+            'sentry-uri' => 'OPG_LPA_PDF_SENTRY_API_URI',
+        ], // log
 
-            'host' => getenv('OPG_LPA_PDF_CACHE_REDIS_HOST') ? getenv('OPG_LPA_PDF_CACHE_REDIS_HOST') : null,
-        ),
-
-        's3Response'=>array(
-            'client' => [
-                'credentials' => [
-                    'key'    => getenv('OPG_LPA_PDF_CACHE_S3_KEY') ? getenv('OPG_LPA_PDF_CACHE_S3_KEY') : null,
-                    'secret' => getenv('OPG_LPA_PDF_CACHE_S3_SECRET') ? getenv('OPG_LPA_PDF_CACHE_S3_SECRET') : null,
-                ]
+        'pdf' => [
+            'encryption' => [
+                // Keys MUST be a 32 character ASCII string
+                'keys' => [
+                    'queue'     => 'OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE',
+                    'document'  => 'OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT',
+                ],
             ],
-            'settings' => [
-                'Bucket' => getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') ? getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') : null,
-            ],
-        ),
+        ], // pdf
 
-    ),
+    ); // config array
 
-    'log' => [
-        'path' => getenv('OPG_LPA_PDF_APPLICATION_LOG_PATH') ? getenv('OPG_LPA_PDF_APPLICATION_LOG_PATH') : null,
-        'sentry-uri' => getenv('OPG_LPA_PDF_SENTRY_API_URI') ? getenv('OPG_LPA_PDF_SENTRY_API_URI') : null,
-    ], // log
-    
-    'pdf' => [
-        'encryption' => [
-            // Keys MUST be a 32 character ASCII string
-            'keys' => [
-                'queue'     => getenv('OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE') ? getenv('OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE') : null,
-                'document'  => getenv('OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT') ? getenv('OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT') : null,
-            ],
-            'options' => [
-                'algorithm' => 'aes',
-                'mode' => 'cbc',
-            ],
-        ],
-    ], // pdf
+    $filter = function(array &$array) use(&$filter) {
 
-);
+        foreach ($array as $key => &$value) {
+
+            // If the value is an array...
+            if (is_array($value)) {
+
+                // Apply this function over that array...
+                $value = $filter($value);
+
+                // If an empty array way returned, we can remove it...
+                if (is_array($value) && count($value) == 0) {
+                    unset($array[$key]);
+                }
+
+            } else {
+
+                // Else it's a variable.
+
+                // See if it's in the environment...
+                if (getenv($value)) {
+
+                    // If so, replace the ENV name with the value.
+                    $array[$key] = getenv($value);
+
+                } else {
+
+                    // Else drop the key
+                    unset($array[$key]);
+
+                } // if
+
+            } // if
+
+        } // foreach
+
+        return $array;
+
+    };
+
+    return $filter($config);
+
+});
+
