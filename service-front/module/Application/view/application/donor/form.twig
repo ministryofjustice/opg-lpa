@@ -117,54 +117,49 @@
 {{ macros.renderElementDiv(firstname) }}
 {{ macros.renderElementDiv(lastname) }}
 
-{#
-
-    <details<?= empty($otherNames->getValue())?"":" open" ?>>
+    <details{{ otherNames.getValue() ? '' : ' open' }}>
         <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
         <div class="group">
-            <?= $this->partial("partial/form/formElement.phtml", [
-                'formLabel' => $formLabel,
-                'element' => $otherNames
-            ] ) ?>
+            {{ macros.renderElementDiv(otherNames) }}
         </div>
     </details>
 
-    <div class="<?= $this->elementGroupClass($dob) ?>">
-
+    <div class="{{ elementGroupClass(dob) }}">
+        
         <label for="dob" id="dob-label" class="required">Date of birth</label>
 
         <div class="dob-element">
 
             <div class="form-group form-group-day">
-                <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($dobDay) ?>
+                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">{{ dobDay.getOption('label') }}</label>
+                {{ formElement(dobDay) }}
             </div>
 
             <div class="form-group form-group-month">
-                <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($dobMonth) ?>
+                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">{{ dobMonth.getOption('label') }}</label>
+                {{ formElement(dobMonth) }}
             </div>
 
             <div class="form-group form-group-year">
-                <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
-                <?= $this->formElement($dobYear) ?>
+                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">{{ dobYear.getOption('label') }}</label>
+                {{ formElement(dobYear) }}
             </div>
-        </div>
-        <?= $this->formElementErrors($dobDay) ?>
-        <?= $this->formElementErrors($dobMonth) ?>
-        <?= $this->formElementErrors($dobYear) ?>
-        <?= $this->formElementErrors($dob) ?>
-    </div>
-    <?= $this->formElementErrors($dobYear) ?>
 
-    <div class="group">
-        <?= $this->partial("partial/form/formElement.phtml", [
-            'formLabel' => $formLabel,
-            'element' => $email
-        ] ) ?>
+        </div>
+        
+        {{ formElementErrorsV2(dobDay) }}
+        {{ formElementErrorsV2(dobMonth) }}
+        {{ formElementErrorsV2(dobYear) }}
+        {{ formElementErrorsV2(dob) }}
+        
     </div>
+
+{{ macros.renderElementDiv(email) }}
 
 </fieldset>
+
+{#
+
 
 <fieldset class="js-PostcodeLookup__postal-add">
     <?= $this->partial("partial/form/formElement.phtml", [
