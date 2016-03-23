@@ -55,7 +55,7 @@ class DonorController extends AbstractLpaActorController
         }
         
         $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
-        $viewModel->setTemplate('application/donor/form.phtml');
+        $viewModel->setTemplate('application/donor/form.twig');
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
         }

@@ -1,7 +1,5 @@
 {% macro formErrorSummary(error, form, message) %}
 
-	{% import _self as macros %}
-
     {% if (error is not empty or form.getMessages|length > 0) %}
 <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
     <h1 class="heading-medium error-summary-heading" id="error-heading">{{ message }}</h1>
@@ -22,4 +20,16 @@
 </div>
 {% endif %}
 	
+{% endmacro %}
+
+{% macro renderElementDiv(element) %}
+
+<div class="element {{ elementGroupClass(element) }}">
+    <label class="form-label" for="{{ element.getAttribute('id') }}">
+        {{ element.getOption('label') }}
+        {{ formElementErrorsV2(element) }}
+    </label>
+    {{ formElement(element) }}
+</div>
+
 {% endmacro %}

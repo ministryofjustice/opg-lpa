@@ -30,8 +30,8 @@
 {% endif %}
 
 {% set title = form.get('name-title') %}
-{% set firstName = form.get('name-first') %}
-{% set lastName = form.get('name-last') %}
+{% set firstname = form.get('name-first') %}
+{% set lastname = form.get('name-last') %}
 {% set otherNames = form.get('otherNames') %}
 {% set email = form.get('email-address') %}
 {% set address1 = form.get('address-address1') %}
@@ -80,61 +80,44 @@
 
 {{ form.prepare() ? '' }}
 
-{#
-
 <h2 class="header">Edit the donor's details</h2>
 
-<?php ############################ picker form ############################ ?>
+{############################ picker form ############################}
 
-<?php if(isset($pickerForm)):?>
-    <?= $this->form()->openTag($pickerForm); ?>
-
-    <?= $this->formElement($pickerCsrf) ?>
-    <?= $this->formErrorList($pickerForm); ?>
+{% if (pickerForm) %}
+{{ form().openTag(pickerForm)|raw }}
+{{ formElement(pickerCsrf) }}
 
     <div class="role-select group">
-        <?= $formLabel->openTag($picker) . $picker->getOption('label') . $formLabel->closeTag() ?>
-        <?= $this->formSelect($picker) ?>
-        <?= $this->formElementErrors($picker) ?>
-        <?= $this->formsubmit($pickerSubmit) ?>
+        <label>{{ picker.getOption('label') }}</label>
+        {{ formSelect(picker) }}
+        {{ formElementErrors(picker) }}
+        {{ formSubmit(pickerSubmit) }}
     </div>
 
-    <?= $this->form()->closeTag(); ?>
-<?php endif;?>
+{{ form().closeTag|raw }}
+    
+{% endif %}
 
-<?php ############################ donor form ############################ ?>
+{############################ donor form ############################}
 
-<?= $this->form()->openTag($form); ?>
+{{ form().openTag( form )|raw }}
 
-<?php if(isset($this->useMyDetailsRoute )): ?>
+{% if (useMyDetailsRoute) %}
 <p class="role-select group">
-    <a class="js-form-popup" href="<?= $this->useMyDetailsRoute ?>">Use my details</a>
+    <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
 </p>
-<?php endif;?>
+{% endif %}
 
-<?= $this->formElement($csrf) ?>
-<?= $this->formElementErrors($csrf) ?>
-
-<?= $this->formErrorList($form); ?>
+{{ formElement(form.get( form.csrfName )) }}
 
 <fieldset>
 
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $title
-    ] ) ?>
+{{ macros.renderElementDiv(title) }}
+{{ macros.renderElementDiv(firstname) }}
+{{ macros.renderElementDiv(lastname) }}
 
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $firstname,
-        'required' => true
-    ] ) ?>
-
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $lastname,
-        'required' => true
-    ] ) ?>
+{#
 
     <details<?= empty($otherNames->getValue())?"":" open" ?>>
         <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
