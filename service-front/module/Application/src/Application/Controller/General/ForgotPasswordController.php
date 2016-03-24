@@ -121,6 +121,10 @@ class ForgotPasswordController extends AbstractBaseController
 
                 }
 
+                if( $result == 'invalid-token' ){
+                    return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
+                }
+
                 // else there was an error
                 $error = $result;
 
