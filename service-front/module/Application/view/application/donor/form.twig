@@ -158,37 +158,25 @@
 
 </fieldset>
 
-{#
-
+<h2 class="heading-medium">What is your address?</h2>
 
 <fieldset class="js-PostcodeLookup__postal-add">
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $address1
-    ]) ?>
-
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $address2
-    ]) ?>
-
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $address3
-    ]) ?>
-
-    <?= $this->partial("partial/form/formElement.phtml", [
-        'formLabel' => $formLabel,
-        'element' => $postcode
-    ]) ?>
+    {{ macros.renderElementDiv(address1) }}
+    {{ macros.renderElementDiv(address2) }}
+    {{ macros.renderElementDiv(address3) }}
+    {{ macros.renderElementDiv(postcode) }}
 </fieldset>
+
+{{ macros.renderElementDiv(address3) }}
 
 <fieldset id="donor-sign">
 <div class="option group">
-    <?= $formLabel->openTag($canSign) . $this->formcheckbox($canSign); ?>
-    <?= $canSign->getOption('label'). $formLabel->closeTag(); ?>
+    <label>
+    {{ formcheckbox(canSign) }}
+    {{ canSign.getOption('label') }}
+    </label>
     <span class="hint">We'll include an extra signature sheet so someone can sign on their behalf</span>
-    <?= $this->formElementErrors($canSign) ?>
+    {{ formElementErrorsV2(canSign) }}
 </div>
 </fieldset>
 
@@ -197,6 +185,5 @@
 <button name="cancel" type="button" class="button-secondary">Cancel</button>
 </p>
 
-<?= $this->form()->closeTag(); ?>
+{{ form().closeTag|raw }}
 
-#}
