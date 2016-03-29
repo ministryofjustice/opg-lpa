@@ -3306,6 +3306,12 @@ input[disabled="disabled"] {
   float: left;
   margin-right: 10px; }
 
+.accordion-header {
+  display: block;
+  padding: 0.5em 1em;
+  background-color: #28a197;
+  color: white; }
+
 .noscroll {
   position: relative;
   overflow: hidden; }
@@ -3409,5 +3415,8 @@ input[disabled="disabled"] {
     @media (min-width: 641px) {
       #global-nav nav li {
         display: inline; } }
+
+.page-header {
+  display: none; }
 
 /*# sourceMappingURL=application.css.map */
