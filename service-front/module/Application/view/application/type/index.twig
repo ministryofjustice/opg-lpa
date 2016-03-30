@@ -86,15 +86,7 @@
                 </div>
     		</details>
     
-            <div class="accordion-actions">
-				<p>
-				{% if (isChangeAllowed) %}
-                    <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-                {% else %}
-                    <a href='{{ nextUrl }}' class="button gotonextpart">Continue</a>
-                {% endif %}
-                </p>
-            </div>
+            {{ macros.renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) }}
         
 {{ form().closeTag|raw }}
 

@@ -1,0 +1,55 @@
+{% extends 'layout/twig/creation-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form, {}) %}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+    
+{% set csrf = form.get(form.csrfName) %}
+{% set when = form.get('when') %}
+        
+{{ form.prepare() ? '' }}
+
+<section id="when-lpa-starts-section" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. When can your LPA be used?</h2>
+	
+    <div class="accordion-content">
+    
+		<div class="section-intro">
+			<p>If you want help straight away with certain decisions about your property and financial affairs you can say that your LPA can be used as soon as it's registered.</p>
+			<p>As long as you have mental capacity your registered LPA can only be used with your consent. You decide how and when it is used. Your attorneys will also be able to use your LPA fully if you don’t have mental capacity in the future.</p>
+			<p>Alternatively, you can say that your LPA can only be used if you don’t have mental capacity.</p>
+			<p><a href="/help/#topic-when-an-lpa-can-be-used" class="js-guidance" data-journey-click="stageprompt.lpa:help:when-an-lpa-can-be-used">Find out more about your options</a></p>
+
+		</div>
+		
+		<h3>My LPA can be used:</h3>
+		
+        {{ form().openTag( form )|raw }}
+        
+		<div class="{{ elementGroupClass(csrf) }}">
+		{{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+		</div>
+
+        <div class="emphasised option group">
+        
+            {{ formRadio(when) }}
+            
+            {{ formElementErrors(when) }}
+            
+        </div>
+        
+		{{ macros.renderAccordionSaveAndContinue(true, nextUrl) }}
+
+        {{ form().closeTag|raw }}
+        
+    </div>
+    
+</section>
+
+{% endblock %}

@@ -22,6 +22,31 @@ class WhenLpaStartsController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhenLpaStartsForm');
         
+        $when = $form->get('when');
+        
+        $whenValueOptions = $when->getOptions()['value_options'];
+        $whenValueOptions['now']['label'] = "as soon as it's registered (with my consent)";
+        $whenValueOptions['no-capacity']['label'] = "only if I don't have mental capacity";
+        
+        $whenValueOptions['now'] += [
+            'label_attributes' => [
+                'for' => 'now',
+            ],
+            'attributes' => [
+                'id' => 'now',
+            ],
+        ];
+        $whenValueOptions['no-capacity'] += [
+            'label_attributes' => [
+                'for' => 'no-capacity',
+            ],
+            'attributes' => [
+                'id' => 'no-capacity',
+            ],
+        ];
+        
+        $when->setOptions( [ 'value_options' => $whenValueOptions ] );
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
