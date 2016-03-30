@@ -2781,6 +2781,12 @@ input[disabled="disabled"] {
   float: left;
   margin-right: 10px; }
 
+.accordion-header {
+  display: block;
+  padding: 0.5em 1em;
+  background-color: #28a197;
+  color: white; }
+
 .noscroll {
   position: relative;
   overflow: hidden;
