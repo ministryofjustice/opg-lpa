@@ -81,7 +81,7 @@ return [
             'sendgrid-bounce' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/email/bounce[/:token]',
+                    'route'    => '/email/bounce/:token',
                     'constraints' => [
                         'token' => '[a-zA-Z0-9]+',
                     ],

@@ -18,6 +18,23 @@ class SendgridController extends AbstractBaseController
     public function bounceAction()
     {
 
+        $config = $this->getServiceLocator()->get('config');
+
+        //---
+
+        $token = $this->params()->fromRoute('token');
+
+        if( !$token || $token !== $config['email']['sendgrid']['webhook']['token'] ){
+
+            $response = $this->getResponse();
+            $response->setStatusCode(403);
+            $response->setContent('Invalid Token');
+            return $response;
+
+        }
+
+        //---
+
         $blackHoleAddress = 'blackhole@lastingpowerofattorney.service.gov.uk';
 
         $originalToAddress = $this->request->getPost('to');
@@ -30,8 +47,7 @@ class SendgridController extends AbstractBaseController
         //---
         
         $messageService = new MessageService();
-        
-        $config = $this->getServiceLocator()->get('config');
+
         $messageService->addFrom($blackHoleAddress, $config['email']['sender']['default']['name']);
 
         $userEmail = $this->request->getPost('from');
