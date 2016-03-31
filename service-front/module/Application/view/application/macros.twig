@@ -35,7 +35,7 @@
 {% endmacro %}
 
 {% macro renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) %}
-    {% if not (isChangeAllowed) %}
+    {% if (isChangeAllowed) %}
         <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
     {% else %}
         <a href='{{ nextUrl }}' class="button gotonextpart">Continue</a>
