@@ -2711,6 +2711,10 @@ input[disabled="disabled"] {
   background-color: #28a197;
   color: white; }
 
+.accordion-info {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #bfc1c3; }
+
 .noscroll {
   position: relative;
   overflow: hidden;
