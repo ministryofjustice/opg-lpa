@@ -12,6 +12,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 
 class TypeController extends AbstractLpaController
 {
@@ -44,6 +45,8 @@ class TypeController extends AbstractLpaController
         
         $type->setOptions( ['value_options' => $typeValueOptions] );
         
+        $isChangeAllowed = true;
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -71,6 +74,10 @@ class TypeController extends AbstractLpaController
         else {
             if($this->getLpa()->document instanceof Document) {
                 $form->bind($this->getLpa()->document->flatten());
+                
+                if($this->getLpa()->document->donor instanceof Donor) {
+                    $isChangeAllowed = false;
+                }
             }
         }
         
@@ -83,11 +90,11 @@ class TypeController extends AbstractLpaController
             $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
         
         }
-        
         return new ViewModel([
-                'form'=>$form, 
-                'cloneUrl'=>$this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$this->getLpa()->id]),
-                'nextUrl'=>$this->url()->fromRoute('lpa/donor', ['lpa-id'=>$this->getLpa()->id]),
+            'form'=>$form, 
+            'cloneUrl'=>$this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$this->getLpa()->id]),
+            'nextUrl'=>$this->url()->fromRoute('lpa/donor', ['lpa-id'=>$this->getLpa()->id]),
+            'isChangeAllowed' => $isChangeAllowed,
         ]);
     }
 

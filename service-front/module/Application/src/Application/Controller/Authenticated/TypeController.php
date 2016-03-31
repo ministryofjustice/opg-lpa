@@ -83,7 +83,8 @@ class TypeController extends AbstractAuthenticatedController
         $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
         
         $view = new ViewModel([
-            'form'=>$form, 
+            'form'=>$form,
+            'isChangeAllowed' => true,
         ]);
         
         $view->setTemplate('application/type/index');

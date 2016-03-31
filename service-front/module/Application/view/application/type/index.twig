@@ -18,6 +18,10 @@
 {% set type = form.get('type') %}
 {% set submit = form.get('submit') %}
 
+{% if not isChangeAllowed %}
+{{ type.setAttributes({'disabled': 'disabled'}) ? '' }}
+{% endif %}
+
 {# form fields config #}
 {{ submit.setAttributes({
     'class':'button gotonextpart',
