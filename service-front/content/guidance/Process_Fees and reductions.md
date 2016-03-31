@@ -64,7 +64,7 @@ Gross annual income is income before tax. It's not just salary or wages – it m
 
 ### Proof of low income
 
-You have to send OPG documents that prove you have a low income. These must be documents that have your title, full name, address and postcode printed on them and they must be from the current tax year. (Tax years run from 5 April one year to 4 April the next year.) Proof can include photocopies of:
+You have to send OPG documents that prove you have a low income. These must be documents that have your title, full name, address and postcode printed on them and they must be from the current tax year. (Tax years run from 6 April one year to 5 April the next year.) Proof can include photocopies of:
 
 * 3 months' consecutive wage slips or a P60
 * statements from a pension provider
