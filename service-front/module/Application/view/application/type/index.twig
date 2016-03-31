@@ -1,9 +1,5 @@
 {% extends 'layout/twig/creation-stage.twig' %}
 
-{% block pageTitle %}
-    Create a lasting power of attorney 
-{% endblock %}
-
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
@@ -32,7 +28,7 @@
     label_attributes: {'class': 'block-label'}
 }) ? ''}}
 
-<section id="lpa-type-section" class="section current">
+<li id="lpa-type-section" class="section current">
 
     <h2 class="heading-medium accordion-header">What type of LPA do you want to create?</h2>
     
@@ -53,7 +49,7 @@
         <fieldset>
             <legend class="visuallyhidden">Choose type of LPA</legend>
 
-            <h3 class="heading-medium flush--top">What type of LPA do you want to create?</h3>
+            <h2 class="heading-medium flush--top">What type of LPA do you want to create?</h2>
 
             <div class="form-group {{ type.getMessages|length > 0 ? 'error'}}">
                 {{ formElement(type) }}
@@ -91,6 +87,6 @@
        
     {{ form().closeTag|raw }}
     
-</section>
+</li>
 
 {% endblock %}

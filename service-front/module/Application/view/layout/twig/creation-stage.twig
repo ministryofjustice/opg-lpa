@@ -1,5 +1,9 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+    Create a lasting power of attorney 
+{% endblock %}
+
 {% block openAccordion %}
 <header class="page-header group">
     <hgroup>
@@ -20,10 +24,10 @@
     <p>We'll save your LPA as you progress so you don't need to do it all in one go.</p>
 </div>
 
-<div class="accordion">
+<ul class="accordion">
 {% endblock %}
 
 {% block closeAccordion %}
-</div> <!-- Close accordion --> 
+</ul> <!-- Close accordion --> 
 {% endblock %}
 
