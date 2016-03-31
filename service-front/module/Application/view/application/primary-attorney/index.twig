@@ -2,11 +2,9 @@
 
 {% block content %}
 
-{% import "application/macros.twig" as macros %}
-
 <section id="primary-attorney-section" class="section current">
 	
-    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who are your attorneys?</h2>
+    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who are your attorneys?</h2>
 
     <div class="accordion-content">
 
@@ -23,29 +21,31 @@
 		<p><a class="js-guidance" href="/help/#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
 	</div>
 	
-    <?php if(isset($this->attorneys)): ?>
+    {% if (attorneys) %}
     
-        <?= $this->partialloop('application/primary-attorney/partials/attorney.phtml', $this->attorneys)?>
-
-        <p class="add-another"><a class="add js-form-popup" href="<?= $this->addRoute ?>">Add another attorney?</a></p>
+        {% for attorney in attorneys %}
+            {% include 'application/primary-attorney/partials/attorney.twig' with attorney %}
+        {% endfor %}
+        
+        <p class="add-another"><a class="add js-form-popup" href="{{ addRoute }}">Add another attorney?</a></p>
 		
         <div class="accordion-actions group">
             <p>
-                <a href="<?= $this->nextRoute ?>" class="button gotonextpart" role="button">Save and continue</a>
+                <a href="{{ nextRoute }}" class="button gotonextpart" role="button">Save and continue</a>
             </p>
         </div>
     
-    <?php else:?>
+    {% else %}
     
-        <p><a class="add button js-form-popup" href="<?= $this->addRoute ?>" role="button">Add an attorney</a></p>
+        <p><a class="add button js-form-popup" href="{{ addRoute }}" role="button">Add an attorney</a></p>
 		
-        <div class="accordion-actions group">
+		<div class="accordion-actions group">
             <p>
                 <span class="disabled button">Save and continue</span>
             </p>
         </div>
     
-    <?php endif; ?>
+    {% endif %}
     
     </div>
     
