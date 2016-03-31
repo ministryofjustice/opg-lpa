@@ -79,9 +79,12 @@ return [
             ], // send-feedback
             
             'sendgrid-bounce' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/email/bounce',
+                    'route'    => '/email/bounce[/:token]',
+                    'constraints' => [
+                        'token' => '[a-zA-Z0-9]+',
+                    ],
                     'defaults' => [
                         'controller' => 'General\SendgridController',
                         'action'     => 'bounce',
@@ -118,6 +121,18 @@ return [
                     'defaults' => [
                         'controller' => 'General\GuidanceController',
                         'action'     => 'index',
+                        'section'    => '',
+                    ],
+                ],
+            ], // guidance
+            
+            'guidance-non-twig' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/guide/v1[/:section]',
+                    'defaults' => [
+                        'controller' => 'General\GuidanceController',
+                        'action'     => 'indexNonTwig',
                         'section'    => '',
                     ],
                 ],
@@ -339,9 +354,8 @@ return [
                             'verify' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/verify[/:userId][/:token]',
+                                    'route'    => '/verify/:token',
                                     'constraints' => [
-                                        'userId' => '[a-f0-9]+',
                                         'token' => '[a-zA-Z0-9]+',
                                     ],
                                     'defaults' => [
@@ -435,7 +449,21 @@ return [
                     ], // delete
                 ],
             ], // user
-
+            
+            //--------------------------------------------------
+            // Untyped LPA Route (Type form, no LPA ID)
+            
+            'lpa-type-no-id' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/lpa/type',
+                    'defaults' => [
+                        'controller' => 'Authenticated\TypeController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+                
             //--------------------------------------------------
             // LPA Routes
 

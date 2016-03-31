@@ -1,79 +1,181 @@
 module.exports = function (grunt) {
   'use strict';
 
-  // Show execution time of tasks
-  require('time-grunt')(grunt);
-
-  // Load all plugins
-  require('matchdep').filterDev(['grunt-*', '!grunt-cli']).forEach(grunt.loadNpmTasks);
-
-  // Project configuration.
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
 
-    meta: {
-      banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+    // watching sass and js (as they need post tasks)
+    watch: {
+      scss: {
+        files: 'assets/sass/**/*.scss',
+        tasks: ['sass', 'replace:image_url']
+      },
+      js: {
+        files: 'assets/js/**/*.js',
+        tasks: ['concat']
+      },
+      templates: {
+        files: ['<%= handlebars.compile.src %>'],
+        tasks: ['handlebars']
+      }
     },
 
-    // Join the files
-    concat: {
-      dist: {
+    // sass files to compile
+    sass: {
+      dev: {
         options: {
-          banner: '<%= meta.banner %>'
+          loadPath: [
+          'assets/bower/govuk_frontend_toolkit/stylesheets',
+          'assets/bower/govuk_template/source/assets/stylesheets',
+          'assets/bower/govuk_elements/public/sass'
+          ]
         },
-        src: [
-          // vendor scripts
-          'javascript/vendor/handlebars.js',
-          'javascript/vendor/lodash-2.4.1.min.js',
-          // LPA scripts
-          'javascript/stageprompt.2.0.0.js',
-          'public/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
-          'javascript/jquery-plugin/opg/jquery-plugin-opg-hascrollbar.js',
-          'javascript/jquery-plugin/opg/jquery-plugin-opg-spinner.js',
-          'javascript/jquery-plugin/jquery-details/jquery.details.min.js',
-          // 'javascript/jquery-plugin/tools/jquery.tools.min.js',
-          // MOJ style js
-          'javascript/moj.js',
-          'javascript/moj.helpers.js',
-          'javascript/lpa.templates.js',
-          'javascript/moj.modules/moj.popup.js',
-          'javascript/moj.modules/moj.help-system.js',
-          'javascript/moj.modules/moj.form-popup.js',
-          'javascript/moj.modules/moj.title-switch.js',
-          'javascript/moj.modules/moj.reusables.js',
-          'javascript/moj.modules/moj.postcode-lookup.js',
-          'javascript/moj.modules/moj.person-form.js',
-          'javascript/moj.modules/moj.validation.js',
-          'javascript/moj.modules/moj.user-timeout.js',
-          'javascript/moj.modules/moj.sticky-nav.js',
-          'javascript/moj.modules/moj.repeat-application.js',
-          'javascript/main.js',
-          'javascript/who-are-you.js',
-          'javascript/form.js'
-        ],
-        dest: 'public/assets/v1/js/application.js',
-        nonull: true
-      },
-      govukStatic: {
         files: {
-          'public/assets/v1/js/pwstrength.js': ['javascript/zxcvbn.js', 'javascript/pwstrength.js'],
-          'public/assets/v1/js/zxcvbn-async.js': 'javascript/zxcvbn-async.js'
+          'public/assets/v2/css/application.css': 'assets/sass/application.scss',
+          'public/assets/v2/css/application-ie8.css': 'assets/sass/application-ie8.scss',
+          'public/assets/v2/css/application-ie7.css': 'assets/sass/application-ie7.scss',
+          'public/assets/v2/css/application-ie6.css': 'assets/sass/application-ie6.scss',
+          'public/assets/v2/css/govuk-template-print.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-print.scss'
         }
       }
     },
 
-    // Minify for production
-    uglify: {
-      build: {
-        options: {
-          banner: '<%= meta.banner %>'
-        },
-        src: 'public/assets/v1/js/application.js',
-        dest: 'public/assets/v1/js/application.min.js'
+    // lint scss files
+    scsslint: {
+      allFiles: [
+        'assets/sass/*.scss'
+      ],
+      options: {
+        config: null,
+        reporterOutput: null,
+        colorizeOutput: true
+      }
+    },
+
+    // replacing a compass depended helper within govuk template css
+    replace: {
+      image_url: {
+        src: ['public/assets/v2/css/*.css'],
+        dest: 'public/assets/v2/css/',
+        replacements: [{
+          from: 'image-url',
+          to: 'url'
+        }]
+      }
+    },
+
+    // minifying the css
+    cssmin: {
+      options: {
+        sourceMap: true
       },
-      jquery: {
-        src: 'public/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js',
-        dest: 'public/assets/v1/js/jquery-ui-1.10.3.custom/js/jquery-1.9.1.min.js'
+      target: {
+        files: [{
+          expand: true,
+          cwd: 'public/assets/v2/css',
+          src: ['*.css', '!*.min.css'],
+          dest: 'public/assets/v2/css',
+          ext: '.min.css'
+        }]
+      }
+    },
+
+    // join the JS files
+    concat: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        src: [
+          // Vendor Scripts
+          'assets/js/vendor/handlebars.js',
+          'assets/js/vendor/lodash-2.4.1.min.js',
+
+          // GOVUK Scripts
+          'assets/bower/stageprompt/script/stageprompt.js',
+
+          // UI Framework
+          'assets/js/ui_framework/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
+
+          // OPG Scripts
+          'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
+          'assets/js/opg/jquery-plugin-opg-spinner.js',
+
+          // Polyfills
+          'assets/bower/govuk_elements/public/javascripts/vendor/details.polyfill.js',
+
+          // MoJ Scripts - Base
+          'assets/js/moj/moj.js',
+          'assets/js/moj/moj.helpers.js',
+
+          // LPA Scripts - Templates
+          'assets/js/lpa/lpa.templates.js',
+
+          // MoJ Scripts - Modules
+          'assets/js/moj/moj.modules/moj.popup.js',
+          'assets/js/moj/moj.modules/moj.help-system.js',
+          'assets/js/moj/moj.modules/moj.form-popup.js',
+          'assets/js/moj/moj.modules/moj.title-switch.js',
+          'assets/js/moj/moj.modules/moj.reusables.js',
+          'assets/js/moj/moj.modules/moj.postcode-lookup.js',
+          'assets/js/moj/moj.modules/moj.person-form.js',
+          'assets/js/moj/moj.modules/moj.validation.js',
+          'assets/js/moj/moj.modules/moj.user-timeout.js',
+          'assets/js/moj/moj.modules/moj.sticky-nav.js',
+          'assets/js/moj/moj.modules/moj.repeat-application.js',
+          'assets/js/moj/moj.modules/moj.dashboard.js',
+
+          // LPA Scripts
+          'assets/js/main.js',
+          'assets/js/lpa/who-are-you.js',
+          'assets/js/lpa/form.js'
+        ],
+        dest: 'public/assets/v2/js/application.js',
+        nonull: true
+      }
+    },
+
+    // lint js files
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc',
+        ignores: []
+      },
+      files: [
+        'Gruntfile.js',
+        'assets/js/moj/**/*.js',
+        'assets/js/lpa/**/*.js',
+        'assets/js/main.js',
+        // ignore compiled handlebars templates
+        '!assets/js/lpa/lpa.templates.js'
+      ]
+    },
+
+    // minify for production
+    uglify: {
+      options: {
+        sourceMap: true
+      },
+      build: {
+        src: 'public/assets/v2/js/application.js',
+        dest: 'public/assets/v2/js/application.min.js'
+      }
+    },
+
+    // refreshes browser on scss, js & twig changes
+    // runs a mini-server on localhost:3000 as a proxy on vagrant box
+    browserSync: {
+      dev: {
+        bsFiles: {
+          src: [
+            'public/assets/v2/css/application.css',
+            'public/assets/v2/js/application.js',
+            'module/Application/view/**/*.twig'
+          ]
+        },
+        options: {
+          watchTask: true,
+          proxy: 'https://192.168.33.103/home'
+        }
       }
     },
 
@@ -89,105 +191,28 @@ module.exports = function (grunt) {
             return filename.slice(filename.indexOf('templates') + 10, filename.length).replace(/\.[^/.]+$/, '');
           }
         },
-        src: ['javascript/templates/**/*.html'],
-        dest: 'javascript/lpa.templates.js'
-      }
-    },
-
-    // compile sass files
-    sass: {
-      dist: {
-        files: [
-          {
-            expand: true,
-            cwd: 'sass',
-            src: ['*.scss'],
-            dest: 'public/assets/v1/css',
-            ext: '.css'
-          }
-        ]
-      }
-    },
-
-    // lint js files
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        ignores: [
-          // ignore templates
-          '<%= handlebars.compile.dest %>',
-          // ignore vendor files
-          'javascript/vendor/**',
-          // ignore jquery plugins
-          // 'javascript/jquery-plugin/**',
-          // ignore govuk copies
-          'javascript/govukcopies/**'
-        ]
-      },
-      files: [
-        'Gruntfile.js',
-        'javascript/jquery-plugin/opg/**',
-        'javascript/moj.modules/**',
-        'javascript/lpa.*.js',
-        'javascript/moj*.js',
-        'javascript/main.js',
-        'javascript/date-picker.js',
-        'javascript/help-popup.js',
-        'javascript/pwstrength.js',
-        'javascript/zfdebug.js',
-        'test/**/*.js',
-        'test/*.js'
-      ]
-    },
-
-    dalek: {
-      options: {
-        reporter: ['console'],
-        files: [
-          'tests/dalekjs/browser/*_test.js'
-        ]
-      },
-      headless: {
-        options: {
-          browser: ['phantomjs']
-        },
-        src: ['<%= dalek.options.files %>']
-      },
-      chrome: {
-        options: {
-          browser: ['chrome']
-        },
-        src: ['<%= dalek.options.files %>']
-      },
-      firefox: {
-        options: {
-          browser: ['firefox']
-        },
-        src: ['<%= dalek.options.files %>']
-      }
-    },
-
-    // Watch files for changes and run relevant tasks
-    watch: {
-      styles: {
-        files: ['sass/**/*.scss'],
-        tasks: ['sass']
-      },
-      templates: {
-        files: ['<%= handlebars.compile.src %>'],
-        tasks: ['handlebars']
-      },
-      scripts: {
-        files: ['javascript/**/*.js', 'test/**', '!<%= handlebars.compile.dest %>'],
-        tasks: ['concat:dist']
+        src: ['assets/js/lpa/templates/*.html'],
+        dest: 'assets/js/lpa/lpa.templates.js'
       }
     }
   });
 
-  // Tasks
-  grunt.registerTask('default', ['build']);
-  grunt.registerTask('dev', ['sass', 'handlebars', 'concat:dist', 'watch']);
-  grunt.registerTask('nosass', ['handlebars', 'concat:dist', 'watch']);
-  grunt.registerTask('test', ['jshint', 'dalek:headless']);
-  grunt.registerTask('build', ['sass', 'handlebars', 'concat', 'uglify']);
+  // load npm tasks
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-scss-lint');
+  grunt.loadNpmTasks('grunt-text-replace');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-browser-sync');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
+
+  // define tasks
+  grunt.registerTask('default', ['watch']);
+  grunt.registerTask('compile', ['sass', 'replace:image_url']);
+  grunt.registerTask('test', ['scsslint', 'jshint']);
+  grunt.registerTask('compress', ['cssmin', 'uglify']);
+  grunt.registerTask('refresh', ['browserSync', 'watch']);
 };

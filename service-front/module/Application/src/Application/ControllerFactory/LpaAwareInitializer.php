@@ -39,8 +39,6 @@ class LpaAwareInitializer implements InitializerInterface {
             // Load the LPA...
             $lpa = $locator->get('LpaApplicationService')->getApplication( (int)$lpaId );
 
-            //var_dump($lpa); die;
-
             //---
 
             // If it's an object, assume it's an LPA (if it's not it'll be picked up later)
@@ -63,7 +61,6 @@ class LpaAwareInitializer implements InitializerInterface {
                 }
 
                 //---
-
                 $instance->setLpa( $lpa );
 
             } // if

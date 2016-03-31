@@ -33,30 +33,23 @@ class DashboardController extends AbstractAuthenticatedController
 
         //---
 
-        $paginator->setItemCountPerPage(200);
+        $paginator->setPageRange(5);
+        $paginator->setItemCountPerPage(50);
 
         $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
 
         //---
 
         return new ViewModel([
-            'hasV1Lpas' => false,
             'lpas' => $paginator,
             'freeText' => $query,
             'isSearch' => (is_string($query) && !empty($query)),
-            'version' => [
-                'commit' => $this->config()['version']['commit'],
-                'cache' => $this->config()['version']['cache'],
-            ],
             'user' => [
-                'id' => $this->getUser()->id(),
-                'token' => $this->getUser()->token(),
-                'lastLogin' => $this->getUser()->lastLogin()->setTimezone( new \DateTimeZone( 'Europe/London' ) ),
+                'lastLogin' => $this->getUser()->lastLogin(),
             ],
-            'pageTitle' => 'Your LPAs',
         ]);
     }
-
+    
     /**
      * Creates a new LPA
      *
@@ -64,23 +57,25 @@ class DashboardController extends AbstractAuthenticatedController
      */
     public function createAction(){
 
-        //-------------------------------------
-        // Create a new LPA...
-
-        $newLpaId = $this->getLpaApplicationService()->createApplication();
-
-        if( $newLpaId === false ){
-
-            $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
-            return $this->redirect()->toRoute( 'user/dashboard' );
-
-        }
-
+        $seedId = $this->params()->fromRoute('lpa-id');
+        
         //-------------------------------------
         // If we're seeding the new LPA...
 
-        if( ($seedId = $this->params()->fromRoute('lpa-id')) != null ){
+        if( $seedId != null ){
 
+            //-------------------------------------
+            // Create a new LPA...
+            
+            $newLpaId = $this->getLpaApplicationService()->createApplication();
+            
+            if( $newLpaId === false ){
+            
+                $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+                return $this->redirect()->toRoute( 'user/dashboard' );
+            
+            }
+            
             $result = $this->getLpaApplicationService()->setSeed( $newLpaId, (int)$seedId );
             
             $this->resetSessionCloneData($seedId);
@@ -88,13 +83,16 @@ class DashboardController extends AbstractAuthenticatedController
             if( $result !== true ){
                 $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');
             }
+            
+            // Redirect them to the first page...
+            return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$newLpaId ] );
 
         }
 
         //---
 
-        // Redirect them to the first page...
-        return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$newLpaId ] );
+        // Redirect them to the first page, no LPA created
+        return $this->redirect()->toRoute( 'lpa-type-no-id' );
 
     } // function
     
@@ -124,7 +122,7 @@ class DashboardController extends AbstractAuthenticatedController
      *
      * @return Paginator
      */
-    private function getLpaList(){
+    private function getLpaList($groupByType = false){
 
         // Return all of the (v2) LPAs.
         $lpas = $this->getServiceLocator()->get('ApplicationList')->getAllALpaSummaries();
@@ -153,7 +151,7 @@ class DashboardController extends AbstractAuthenticatedController
 
         // Return all of the (v2) LPAs that match the query.
         $lpas = $this->getServiceLocator()->get('ApplicationList')->searchAllALpaSummaries( $query );
-
+        
         //---
 
         // Sort by updatedAt into descending order

@@ -50,15 +50,15 @@ class SendgridController extends AbstractBaseController
         
         $messageService->addTo( $userEmail );
         
-        $messageService->setSubject( 'This mailbox is not monitored' );
-        
         //---
         
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate('email/bounce.phtml');
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('bounce.twig')->render([]);
         
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $messageService->setSubject($matches[1]);
+        } else {
+            $messageService->setSubject( 'This mailbox is not monitored' );
+        }
         
         //---
         

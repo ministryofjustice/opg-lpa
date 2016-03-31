@@ -9,7 +9,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
     public function indexAction()
     {
-
         $currentAddress = (string)$this->getUserDetails()->email;
         $userId = (string)$this->getUserDetails()->id;
 
@@ -52,8 +51,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
                 $service = $this->getServiceLocator()->get('AboutYouDetails');
 
                 $emailConfirmCallback = function( $userId, $token ) {
-                    return $this->url()->fromRoute('user/change-email-address/verify', [ 
-                            'userId'=>$userId,
+                    return $this->url()->fromRoute('user/change-email-address/verify', [
                             'token'=>$token,
                         ], 
                         [ 'force_canonical' => true ] 
@@ -83,8 +81,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
         //----------------------
 
-        $pageTitle = 'Change your sign-in email address';
-
-        return new ViewModel( compact( 'form', 'error', 'pageTitle', 'currentAddress' ) );
+        return new ViewModel( compact( 'form', 'error', 'currentAddress' ) );
     }
 }

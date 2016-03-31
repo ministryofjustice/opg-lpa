@@ -28,7 +28,18 @@ class TypeForm extends AbstractForm
     public function init()
     {
         $this->setName('form-type');
+        
         parent::init();
+        
+        $this->setUseInputFilterDefaults(false);
+        
+        $inputFilter = $this->getInputFilter();
+        
+        $inputFilter->add(array(
+            'name'     => 'type',
+            'required' => true,
+            'error_message' => 'cannot-be-empty',
+        ));
     }
     
    /**

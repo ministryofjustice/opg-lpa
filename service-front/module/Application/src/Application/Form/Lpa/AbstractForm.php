@@ -34,24 +34,13 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         parent::init();
         $this->setAttribute('method', 'post');
 
-
         $this->csrfName = 'secret_'.md5(get_class($this));
 
-        $csrf = (new Csrf($this->csrfName))->setCsrfValidator(
+        $this->add( (new Csrf($this->csrfName))->setCsrfValidator(
             new CsrfValidator([
                 'name' => $this->csrfName,
                 'salt' => $this->getServiceLocator()->getServiceLocator()->get('Config')['csrf']['salt'],
             ])
-        );
-
-        $this->add( $csrf );
-
-        $this->getInputFilter()->add(array(
-            'name'     => $this->csrfName,
-            'required' => true,
-            'validators'  => array(
-                $csrf->getCsrfValidator()
-            ),
         ));
 
         //---

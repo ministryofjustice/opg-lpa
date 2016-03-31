@@ -3,6 +3,7 @@ namespace Application\Form\General;
 
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+
 /**
  * To send feedback to the OPG
  *
@@ -18,12 +19,8 @@ class FeedbackForm extends AbstractForm {
         parent::__construct( $formName );
 
         //--- Form elements
-
-        $this->add(array(
-            'name' => 'rating',
-            'type' => 'Radio',
-            'options'   => [
-                'value_options' => [
+        
+        $valueOptions = [
                     'very-satisfied' => [
                         'value' => 'very-satisfied',
                     ],
@@ -39,7 +36,13 @@ class FeedbackForm extends AbstractForm {
                     'very-dissatisfied' => [
                         'value' => 'very-dissatisfied',
                     ],
-                ],
+                ];
+
+        $this->add(array(
+            'name' => 'rating',
+            'type' => 'Radio',
+            'options'   => [
+                'value_options' => $valueOptions,
                 'disable_inarray_validator' => true,
             ],
         ));
@@ -60,16 +63,7 @@ class FeedbackForm extends AbstractForm {
 
         $inputFilter->add([
             'name'     => 'rating',
-            'validators' => [
-                [
-                    'name'    => 'NotEmpty',
-                    'options' => [
-                        'messages' => [
-                            NotEmpty::IS_EMPTY => 'Please rate this service.',
-                        ],
-                    ],
-                ],
-            ],
+            'error_message' => 'cannot-be-empty',
         ]);
         
         $inputFilter->add([
@@ -78,12 +72,13 @@ class FeedbackForm extends AbstractForm {
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
-            'validators' => array(
+            'validators' => [
                 [
                     'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => [
                         'messages' => [
-                            NotEmpty::IS_EMPTY => 'Don\'t forget to leave your feedback in the box.',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ],
                 ],
@@ -92,11 +87,11 @@ class FeedbackForm extends AbstractForm {
                     'options' => [
                         'max' => self::MAX_FEEDBACK_LENGTH,
                         'messages' => [
-                             StringLength::TOO_LONG => 'Please limit your feedback to ' . self::MAX_FEEDBACK_LENGTH . ' chars.',
+                             StringLength::TOO_LONG => 'max-' . self::MAX_FEEDBACK_LENGTH . '-chars',
                          ],
                     ],
                 ],
-            ),
+            ],
         ]);
         
         $inputFilter->add(array(
@@ -106,11 +101,11 @@ class FeedbackForm extends AbstractForm {
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
             ),
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'EmailAddress',
-                ),
-            ),
+                ],
+            ],
         ));
         
         $this->setInputFilter( $inputFilter );

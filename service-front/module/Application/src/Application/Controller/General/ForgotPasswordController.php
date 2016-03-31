@@ -52,9 +52,14 @@ class ForgotPasswordController extends AbstractBaseController
 
                 $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $form->getData()['email'], $fpCallback, $activateCallback );
 
-                if( $result === true ){
-
-                    return (new ViewModel( ['email'=>$form->getData()['email']] ))->setTemplate('application/forgot-password/email-sent');
+                if( $result === true || $result == 'account-not-activated' ) {
+                    
+                      $viewParams = [
+                          'email' => $form->getData()['email'],
+                          'accountNotActivated' => ($result === 'account-not-activated'),
+                      ];
+                      
+                      return (new ViewModel( $viewParams ))->setTemplate('application/forgot-password/email-sent');
 
                 }
 
@@ -65,9 +70,7 @@ class ForgotPasswordController extends AbstractBaseController
         } // if
 
         return new ViewModel(
-            array_merge([
-                    'pageTitle' => 'Reset your password',    
-                ],
+            array_merge(
                 compact('form', 'error')
             ) 
         );
@@ -88,6 +91,9 @@ class ForgotPasswordController extends AbstractBaseController
             return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
         }
 
+        //-------------------------------------
+        // We have a valid reset token...
+
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\SetPassword');
         $form->setAttribute( 'action', $this->url()->fromRoute('forgot-password/callback', [ 'token'=>$token ] ) );
 
@@ -102,9 +108,9 @@ class ForgotPasswordController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                
+
                 $result = $this->getServiceLocator()->get('PasswordReset')->setNewPassword( $token, $form->getData()['password'] );
-                
+
                 // if all good, direct them back to login.
                 if( $result === true ){
 
@@ -113,6 +119,10 @@ class ForgotPasswordController extends AbstractBaseController
                     // Send them to login...
                     return $this->redirect()->toRoute( 'login' );
 
+                }
+
+                if( $result == 'invalid-token' ){
+                    return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
                 }
 
                 // else there was an error
@@ -132,9 +142,7 @@ class ForgotPasswordController extends AbstractBaseController
         //---------------------------
 
         return new ViewModel(
-            array_merge([
-                    'pageTitle' => 'Reset your password',    
-                ],
+            array_merge(
                 compact('form', 'error')
             ) 
         );

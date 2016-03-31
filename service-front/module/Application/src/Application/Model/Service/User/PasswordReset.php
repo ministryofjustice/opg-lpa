@@ -34,7 +34,9 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             if( isset($body['activation_token']) ){
 
                 // If they have not yet activated their account, we re-send them the activation link.
-                return $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                
+                return 'account-not-activated';
 
             }elseif( isset($body['status']) && $body['status'] == 404 ){
 
@@ -93,6 +95,13 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             $body = $client->getLastContent();
 
             if( isset($body['detail']) ){
+
+                if( $body['detail'] == 'Invalid token' ){
+
+                    return "invalid-token";
+
+                }
+
                 return $body['detail'];
             }
 
@@ -136,8 +145,6 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Password reset request' );
-
         //---
 
         $message->addCategory('opg');
@@ -147,14 +154,16 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/password-reset.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig')->render([
             'callback' => $callbackUrl,
         ]);
 
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'Password reset request' );
+        }
+        
         //---
 
         $html = new MimePart( $content );
@@ -194,8 +203,6 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Password reset request' );
-
         //---
 
         $message->addCategory('opg');
@@ -205,14 +212,16 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/password-reset-not-active.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset-not-active.twig')->render([
             'callback' => $callbackUrl,
         ]);
-
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'Password reset request' );
+        }
+        
         //---
 
         $html = new MimePart( $content );

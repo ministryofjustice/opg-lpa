@@ -10,6 +10,6 @@ nbproject
 *.iml
 .sass-cache/*
 node_modules/*
-bower_downloads/*
+assets/bower/*
 public/nocommit/*
 local.php.old

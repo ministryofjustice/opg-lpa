@@ -162,10 +162,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
 
         if( !( $this->user instanceof Identity ) ){
 
-            $this->flashMessenger()->addWarningMessage('Your session has expired. Please sign in again to continue.');
-
-            //---
-
             if( $allowRedirect ){
 
                 $preAuthRequest = new Container('PreAuthRequest');
@@ -177,7 +173,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
             //---
 
             // Redirect to the About You page.
-            return $this->redirect()->toRoute( 'login' );
+            return $this->redirect()->toRoute( 'login', [ 'state'=>'timeout' ] );
 
         } // if
 

@@ -29,16 +29,18 @@ class Register implements ServiceLocatorAwareInterface {
             // Error...
             $body = $client->getLastContent();
 
-            if( isset($body['detail']) ){
+            if( isset($body['reason']) ){
+                return trim( $body['reason'] );
+            } elseif( isset($body['detail']) ){
 
-                if( $body['detail'] === 'username-already-exists' ){
+                if( $body['detail'] == 'username-already-exists' ){
                     return "address-already-registered";
                 } else {
-                    return trim($body['detail']);
+                    return trim( $body['error_description'] );
                 }
 
-            }
-            
+            } // if
+
             return "unknown-error";
 
         } // if
@@ -53,8 +55,6 @@ class Register implements ServiceLocatorAwareInterface {
 
         $message->addTo( $email );
 
-        $message->setSubject( 'Activate your lasting power of attorney account' );
-
         //---
 
         $message->addCategory('opg');
@@ -63,12 +63,16 @@ class Register implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $content = $this->getServiceLocator()->get('EmailPhpRenderer')->render('registration', [
-            // Use the passed callback to load the URL (the model should not be aware of how this is generated)
-            'callback' => $routeCallback( $activationToken ),
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('registration.twig')->render(
+            ['callback' => $routeCallback( $activationToken ),
         ]);
-
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'Activate your lasting power of attorney account' );
+        }
+        
         //---
 
         $html = new MimePart( $content );

@@ -24,15 +24,13 @@ class Communication implements ServiceLocatorAwareInterface {
     
     public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
     {
-        //$this->sendDelayedSurveyEmail( $lpa, $signinUrl );
+        // This is only uncommented when we want Survey emails send
+        // $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
         
-        return $this->sendEmail('email/lpa-registration.phtml', $lpa, $signinUrl, 'Lasting power of attorney for '.$lpa->document->donor->name.' is ready to register', 'opg-lpa-complete-registration');
+        return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register', 'opg-lpa-complete-registration');
         
     }
-
-    /**
-     * Disabled by commenting out above.
-     */
+    
     private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
         
         $startDate = '2015-10-12';
@@ -48,7 +46,7 @@ class Communication implements ServiceLocatorAwareInterface {
         if ($now > $startTimestamp /* && $now <= $endTimestamp */) {
         
             $sendAt = time() + $emailDelaySeconds;
-            $this->sendEmail('email/feedback-survey.phtml', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
+            $this->sendEmail('feedback-survey.twig', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
         }
     }
     
@@ -68,8 +66,6 @@ class Communication implements ServiceLocatorAwareInterface {
         
         $message->addTo( $userSession->user->email->address );
         
-        $message->setSubject( $subject );
-        
         //---
 
         $message->addCategory('opg');
@@ -79,12 +75,19 @@ class Communication implements ServiceLocatorAwareInterface {
 
         //---
 
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate($emailTemplate)->setVariables(['lpa' => $lpa, 'signinUrl' => $signinUrl]);
-        
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate($emailTemplate)->render([
+            'lpa' => $lpa,
+            'signinUrl' => $signinUrl,
+            'isHealthAndWelfare' => ( $lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW ),
+        ]);
 
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $subject = sprintf($matches[1], $lpa->document->donor->name);
+            $message->setSubject($subject);
+        } else {
+            $message->setSubject($subject);
+        }
+        
         //---
 
         $html = new MimePart( $content );

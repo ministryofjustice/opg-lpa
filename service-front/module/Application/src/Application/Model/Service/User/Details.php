@@ -43,25 +43,11 @@ class Details implements ServiceLocatorAwareInterface {
 
         //---
 
-        $details = $details->getDataForModel();
-
         // Load the existing details...
         $userDetails = $client->getAboutMe();
 
         // Apply the new ones...
-        $userDetails->populateWithFlatArray( $details );
-        
-        //---
-
-        // Check if the user has removed their address
-        if( array_key_exists( 'address', $details ) && $details['address'] == null ){
-            $userDetails->address = null;
-        }
-
-        // Check if the user has removed their DOB
-        if( !isset( $details['dob-date'] ) ){
-            $userDetails->dob = null;
-        }
+        $userDetails->populateWithFlatArray( $details->getDataForModel() );
 
         //---
 
@@ -153,8 +139,6 @@ class Details implements ServiceLocatorAwareInterface {
         
         $message->addTo( $newEmailAddress );
         
-        $message->setSubject( 'Please verify your new email address' );
-        
         //---
         
         $message->addCategory('opg');
@@ -163,13 +147,15 @@ class Details implements ServiceLocatorAwareInterface {
         
         //---
         
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/new-email-verify.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-verify.twig')->render([
             'activateUrl' => $activateUrl,
         ]);
         
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject('Please verify your new email address');
+        }
         
         //---
         
@@ -210,8 +196,6 @@ class Details implements ServiceLocatorAwareInterface {
     
         $message->addTo( $oldEmailAddress );
     
-        $message->setSubject( 'You requested a change to your email address' );
-    
         //---
     
         $message->addCategory('opg');
@@ -220,14 +204,16 @@ class Details implements ServiceLocatorAwareInterface {
     
         //---
     
-        // Load the content from the view and merge in our variables...
-        $viewModel = new \Zend\View\Model\ViewModel();
-        $viewModel->setTemplate( 'email/new-email-notify.phtml' )->setVariables([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-notify.twig')->render([
             'newEmailAddress' => $newEmailAddress,
         ]);
-    
-        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
-    
+        
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'You asked us to change your email address' );
+        }
+        
         //---
     
         $html = new MimePart( $content );
@@ -254,16 +240,15 @@ class Details implements ServiceLocatorAwareInterface {
     
     }
     
-    function updateEmailUsingToken( $userId, $emailUpdateToken ) {
+    function updateEmailUsingToken( $emailUpdateToken ) {
         
         $this->getServiceLocator()->get('Logger')->info(
             'Updating email using token'
         );
         
         $client = $this->getServiceLocator()->get('ApiClient');
-        
-        $client instanceof Client;
-        $success = $client->updateAuthEmail( $userId, $emailUpdateToken );
+
+        $success = $client->updateAuthEmail( $emailUpdateToken );
         
         return $success === true;
     }

@@ -30,8 +30,9 @@ class TypeController extends AbstractLpaController
             
             if($form->isValid()) {
                 
-                $lpaId = $this->getLpa()->id;
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+                
+                $lpaId = $this->getLpa()->id;
                 
                 $lpaType = $form->getData()['type'];
                 
@@ -67,4 +68,5 @@ class TypeController extends AbstractLpaController
                 'nextUrl'=>$this->url()->fromRoute('lpa/donor', ['lpa-id'=>$this->getLpa()->id]),
         ]);
     }
+
 }

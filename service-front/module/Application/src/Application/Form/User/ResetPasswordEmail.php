@@ -28,7 +28,8 @@ class ResetPasswordEmail extends AbstractForm {
         ));
 
         //--------------------------------
-
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
@@ -39,6 +40,15 @@ class ResetPasswordEmail extends AbstractForm {
                 array('name' => 'StringTrim'),
             ),
             'validators' => array(
+                array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
                 array(
                     'name'    => 'EmailAddress',
                 ),
@@ -54,15 +64,24 @@ class ResetPasswordEmail extends AbstractForm {
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),  
+                array(
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
-            ),
+            )
         ));
 
         //---

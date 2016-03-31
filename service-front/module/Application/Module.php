@@ -32,6 +32,7 @@ class Module{
         // Register error handler for dispatch and render errors
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
         
         register_shutdown_function(function () {
             $error = error_get_last();
@@ -90,6 +91,11 @@ class Module{
 
     /**
      *
+     * This now checks the token on every request otherwise we have no method of knowing if the user has
+     * logged in on another browser. We need to find a new way of checking this, then hopefully we can
+     * re-enable lazy checking.
+     *
+     *
      * We don't deal with forcing the user to re-authenticate here as they
      * may be accessing a page that does not require authentication.
      *
@@ -104,21 +110,26 @@ class Module{
         // If we have an identity...
         if ( ($identity = $auth->getIdentity()) != null ) {
 
-            // Get the tokens details...
-            $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
+            // If we're beyond the original time we expected the token to expire...
+            //if( (new DateTime) > $identity->tokenExpiresAt() ){
 
-            // If the token has not expired...
-            if( isset($info['expires_in']) ){
+                // Get the tokens details...
+                $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
 
-                // update the time the token expires in the session
-                $identity->tokenExpiresIn( $info['expires_in'] );
+                // If the token has not expired...
+                if( isset($info['expires_in']) ){
 
-            } else {
+                    // update the time the token expires in the session
+                    $identity->tokenExpiresIn( $info['expires_in'] );
 
-                // else the user will need to re-login, so remove the current identity.
-                $auth->clearIdentity();
+                } else {
 
-            }
+                    // else the user will need to re-login, so remove the current identity.
+                    $auth->clearIdentity();
+
+                }
+
+            //} // if we're beyond tokenExpiresAt
 
         } // if we have an identity
 
@@ -157,7 +168,6 @@ class Module{
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\PostcodeInfo\PostcodeInfoClientFactory',
-                'EmailPhpRenderer'      => 'Application\Model\Service\Mail\View\Renderer\PhpRendererFactory',
 
                 // Access via 'MailTransport'
                 'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',
@@ -210,6 +220,41 @@ class Module{
 
                     return $dynamoDbAdapter;
                 },
+                
+                'TwigEmailRenderer' => function ( ServiceLocatorInterface $sm ) {
+                 
+                    $loader = new \Twig_Loader_Filesystem('module/Application/view/email');
+                    
+                    $env = new \Twig_Environment($loader);
+                    
+                    $viewHelperManager = $sm->get('ViewHelperManager');
+                    $renderer = new \Zend\View\Renderer\PhpRenderer();
+                    $renderer->setHelperPluginManager($viewHelperManager);
+                    
+                    $env->registerUndefinedFunctionCallback(function ($name) use ($viewHelperManager, $renderer) {
+                        if (!$viewHelperManager->has($name)) {
+                            return false;
+                        }
+                        
+                        $callable = [$renderer->plugin($name), '__invoke'];
+                        $options  = ['is_safe' => ['html']];
+                        return new \Twig_SimpleFunction(null, $callable, $options);
+                    });
+                    
+                    return $env;
+                    
+                },
+                
+                'TwigViewRenderer' => function ( ServiceLocatorInterface $sm ) {
+                 
+                    $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
+                    
+                    $env = new \Twig_Environment($loader);
+
+                    
+                    return $env;
+                
+                }
 
             ], // factories
         ];
@@ -261,6 +306,38 @@ class Module{
 
         return $config;
 
+    }
+    
+    /**
+     * Look at the child view of the layout. If we detect that there is
+     * a ".twig" file that will be picked up by the Twig module for rendering,
+     * then change the current layout to be the ".twig" layout.
+     * 
+     * @param MvcEvent $e
+     */
+    public function preRender(MvcEvent $e)
+    {
+        $children = $e->getViewModel()->getChildren();
+        
+        $twigWillBeUsed = false;
+
+        // $children is an array but we only really expect one child
+        foreach ($children as $child) {
+            
+            // the template name will be something like 'application/about-you/index' - with
+            // no suffix. We look in the directory where we know the .phtml file will be
+            // located and see if there is a .twig file (which would take precedence over it)
+            if (file_exists('module/Application/view/' . $child->getTemplate() . '.twig')) {
+                $twigWillBeUsed = true;
+                break;
+            }
+            
+        }
+        
+        if ($twigWillBeUsed) {
+            $e->getViewModel()->setTemplate('layout/twig/layout');
+        }
+        
     }
     
     /**

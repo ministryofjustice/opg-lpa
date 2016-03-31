@@ -1,0 +1,10 @@
+<div class="form-group">
+	<ul class="address-type-toggle">
+		{{#if postal}}
+		<li><a href="#" data-address-type="postal" class="js-PostcodeLookup__toggle-address">Enter address manually</a></li>
+		{{/if}}
+		{{#if dx}}
+		<li><a href="#" data-address-type="dx" class="js-PostcodeLookup__toggle-address">Enter DX address</a></li>
+		{{/if}}
+	</ul>
+</div>

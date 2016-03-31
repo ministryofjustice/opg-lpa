@@ -1,0 +1,98 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Send us feedback
+{% endblock %}
+
+{% set type = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
+
+{% block errorSummary %}
+    {% include 'application/feedback/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block content %}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+
+{% set type = form.get('rating') %}
+{% set details = form.get('details') %}
+{% set email = form.get('email') %}
+
+{{ details.setAttributes({
+    id: 'details',
+    rows: 10,
+    cols: 67,
+    maxlength: 2000,
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setAttributes({
+    id: 'email',
+    type: 'email',
+    maxlength: 100,
+    class: 'form-control'
+}) ? ''}}
+
+{% set allOptions = type.getOptions() %}
+{% set typeValueOptions = allOptions['value_options'] %}
+
+{{ type.setOptions({
+    label_attributes: {'class': 'block-label'}
+}) ? ''}}
+
+{{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
+
+    <fieldset>
+        <legend class="group text">
+        </legend>
+
+        <div class="form-group {{ type.getMessages|length >0 ? 'error'}}">
+            {{ formElementErrorsV2(type) }}
+            {{ formElement(type) }}
+        </div>
+    </fieldset>
+
+    <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what didn't.</h2>
+
+    <fieldset>
+        <legend class="group text">
+        </legend>
+        <div class="form-group {{ details.getMessages|length >0 ? 'error'}}">
+            <label class="form-label text" for="{{ details.getAttribute('id') }}">
+                <span class="visuallyhidden">Your feedback<br></span>
+                <span class="form-hint">2000 characters max<br></span>
+                {{ formElementErrorsV2(details) }}
+            </label>
+            {{ formElement(details) }}
+        </div>
+    </fieldset>
+
+    <div class="text">
+        <p>We are always working to improve this service. If you are happy to be contacted to give further feedback, please leave your email address.</p>
+    </div>
+
+    <h2 class="heading-medium flush--top">Your email address (optional)</h2>
+
+    <fieldset>
+        <legend class="group text">
+        </legend>
+        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
+            <label class="form-label text" for="{{ email.getAttribute('id') }}">
+                <span class="visuallyhidden">Your email address (optional)</span>
+                {{ formElementErrorsV2(email) }}
+            </label>
+            {{ formElement(email) }}
+        </div>
+    </fieldset>
+
+    <input type="submit" name="send" id="send" class="button" value="Send feedback">
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}
+            
+            

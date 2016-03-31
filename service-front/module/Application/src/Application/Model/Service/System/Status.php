@@ -61,7 +61,7 @@ class Status implements ServiceLocatorAwareInterface {
         return $result;
 
     } // function
-    
+
     //------------------------------------------------------------------------
 
     private function dynamo(){

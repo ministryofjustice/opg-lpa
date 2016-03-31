@@ -38,6 +38,8 @@ class ChangeEmailAddress extends AbstractForm {
 
         //--------------------------------
 
+        $this->setUseInputFilterDefaults(false);
+        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
@@ -49,9 +51,19 @@ class ChangeEmailAddress extends AbstractForm {
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'EmailAddress',
                 ),
             ),
+            
         ));
 
         $inputFilter->add(array(
@@ -63,11 +75,20 @@ class ChangeEmailAddress extends AbstractForm {
             ),
             'validators' => array(
                 array(
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => array(
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ),
+                ),
+                array(
                     'name'    => 'Identical',
                     'options' => array(
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did not match',
+                            Validator\Identical::NOT_SAME => 'did-not-match',
                         ],
                     ),
                 ),
@@ -79,11 +100,11 @@ class ChangeEmailAddress extends AbstractForm {
             'required' => true,
             'validators' => array(
                 array(
-                    'name'    => 'Callback',
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
                     'options' => array(
-                        'callback' => [ $this, 'validatePassword' ],
                         'messages' => [
-                            Validator\Callback::INVALID_VALUE => 'is incorrect',
+                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ),
                 ),

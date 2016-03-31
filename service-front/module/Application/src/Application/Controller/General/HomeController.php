@@ -9,7 +9,7 @@ class HomeController extends AbstractBaseController
 {
     public function indexAction()
     {
-        return new ViewModel(['pageTitle' => 'Make a lasting power of attorney']);
+        return new ViewModel();
     }
     
     public function redirectAction()

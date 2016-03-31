@@ -1,0 +1,14 @@
+.panel-cta {
+	padding: $gutter-half $gutter-half $gutter;
+	background-color: $panel-colour;
+	@include media(mobile) {
+		padding-bottom: $gutter-half;
+	}
+	.panel-body {
+		font-weight: 700;
+		text-align: center;
+	}
+	.panel-button {
+		text-align: center;
+	}
+}

@@ -20,14 +20,18 @@ class AboutYouController extends AbstractAuthenticatedController {
         $result = $this->process();
 
         if( $result === true ){
+
+            $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
+
             return $this->redirect()->toRoute( 'user/dashboard' );
+
         }
 
         //---
 
         $result['form']->setAttribute( 'action', $this->url()->fromRoute('user/about-you') );
 
-        return $result;
+        return new ViewModel($result);
 
     } // function
 
@@ -39,7 +43,7 @@ class AboutYouController extends AbstractAuthenticatedController {
      * @return \Zend\Http\Response|ViewModel
      */
     public function newAction(){
-
+        
         $result = $this->process();
 
         if( $result === true ){
@@ -99,9 +103,7 @@ class AboutYouController extends AbstractAuthenticatedController {
 
         //---
 
-        $pageTitle = 'Your Details';
-
-        return compact( 'form', 'error', 'pageTitle' ) ;
+        return compact( 'form', 'error') ;
 
     } // function
 

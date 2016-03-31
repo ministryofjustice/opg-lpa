@@ -1,0 +1,32 @@
+// Forms
+// ==========================================================================
+
+input[disabled="disabled"] {
+	opacity: .5;
+}
+
+.form-date {
+	margin-bottom: 30px;
+	overflow: hidden;
+	&.error {
+		.form-control {
+			border: 2px solid $grey-1;
+		}
+		.error {
+			@extend .error;
+		}
+	}
+}
+
+.form-group-day,
+.form-group-month,
+.form-group-year {
+	&.error {
+		border-left: 0;
+		padding-left: 0;
+	}
+}
+
+.form-control {
+	border-radius: 0;
+}

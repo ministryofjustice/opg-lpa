@@ -1,0 +1,36 @@
+// =======================================================
+// BUTTONS
+
+
+.button-secondary {
+	@include button($panel-colour);
+	@extend %button-extended;
+}
+
+.button-warning {
+	@include button($error-colour);
+	@extend %button-extended;
+}
+
+%button-extended {
+	@include box-sizing (border-box);
+  	padding: em(10) em(15) em(5) em(15);
+  	vertical-align: top;
+  	@include media (mobile) {
+    	width: 100%;
+  	}
+}
+
+.button {
+	td &,
+	p & {
+		@include media(mobile) {
+			text-align: center;
+		}
+	}
+	+ .button {
+		@include media(mobile) {
+			margin-top: 15px;
+		}
+	}
+}

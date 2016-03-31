@@ -105,6 +105,9 @@ return array(
         'sendgrid' => [
             'user' => "{{pillar['email']['username']}}",
             'key' => "{{pillar['email']['password']}}",
+            'webhook' => [
+                'token' => '{{pillar['email']['webhook']['token']}}',
+            ],
         ], //sendgrid
 
     ], // email

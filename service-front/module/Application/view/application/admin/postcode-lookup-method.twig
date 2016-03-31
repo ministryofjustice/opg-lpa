@@ -1,0 +1,46 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Postcode lookup service
+{% endblock %}
+
+{% set form = formErrorTextExchange(form, []) %}
+{% set postcodeService = form.get('postcode-service') %}
+
+{% block content %}
+
+    {{ form.setAttribute('class', 'form') ? '' }}
+
+    {{ postcodeService.setAttributes({
+        id: 'postcodeService'
+    }) ? ''}}
+
+    {{ postcodeService.setOptions({
+        label_attributes: {'class': 'block-label'}
+    }) ? ''}}
+
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    <div class="text">
+        <p>Please choose the postcode lookup service to be used by the OPG LPA digital service.</p>
+    </div>
+    
+    <fieldset>
+        <legend class="visuallyhidden">Set postcode lookup service</legend>
+
+        <div class="form-group {{ postcodeService.getMessages|length > 0 ? 'error'}}">
+            {{ formElement(postcodeService) }}
+            {{ formElementErrorsV2(postcodeService) }}
+        </div>
+
+    </fieldset>
+
+
+    <input type="submit" class="button" value="Set postcode lookup method">
+
+    {{ form().closeTag|raw }}
+
+{% endblock %}
