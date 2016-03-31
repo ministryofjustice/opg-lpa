@@ -108,8 +108,11 @@
                     <p>Remember, there’s an application fee for each LPA you register.</p>
                 </div>
     		</details>
+
+            <div class="form-group">
+                {{ macros.renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) }}
+            </div>
     
-            {{ macros.renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) }}
 
         
         </fieldset>
