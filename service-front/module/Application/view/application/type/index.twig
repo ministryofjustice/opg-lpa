@@ -32,16 +32,6 @@
     label_attributes: {'class': 'block-label'}
 }) ? ''}}
 
-{#
-    if (!empty($this->lpa)) {
-        if(($this->lpa->document instanceof Opg\Lpa\DataModel\Lpa\Document\Document) && (
-                $this->lpa->document->donor instanceof Opg\Lpa\DataModel\Lpa\Document\Donor)) {
-            $type->setAttributes(['disabled'=>'disabled']);
-            $isChangeAllowed = false;
-        }
-    }
-#}
-
 <section id="lpa-type-section" class="section current">
 
     <h2 class="heading-medium accordion-header">What type of LPA do you want to create?</h2>
