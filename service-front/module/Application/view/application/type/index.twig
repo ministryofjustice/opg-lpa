@@ -6,6 +6,8 @@
 
 {% block content %}
 
+{% import "application/macros.twig" as macros %}
+
 {% set form = formErrorTextExchange(form,  {
     'type' : {
         'cannot-be-empty' : 'Please choose a type of LPA',
