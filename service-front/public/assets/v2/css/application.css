@@ -3311,13 +3311,27 @@ input[disabled="disabled"] {
 
 .accordion-header {
   display: block;
-  padding: 0.5em 1em;
+  padding: 15px 30px;
   background-color: #28a197;
   color: white; }
+  @media (max-width: 640px) {
+    .accordion-header {
+      padding-left: 15px; } }
 
 .accordion-info {
   margin-bottom: 30px;
   border-bottom: 1px solid #bfc1c3; }
+
+.accordion-summary {
+  overflow: hidden;
+  margin-bottom: 15px;
+  padding: 15px 30px;
+  background-color: #f8f8f8; }
+  @media (max-width: 640px) {
+    .accordion-summary {
+      padding-left: 15px; } }
+  .accordion-summary .edit {
+    display: none; }
 
 .person {
   padding: 0 0 30px 100px;

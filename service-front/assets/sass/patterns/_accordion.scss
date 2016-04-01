@@ -3,12 +3,28 @@
 
 .accordion-header {
 	display: block;
-	padding: 0.5em 1em;
+	padding: $gutter-half $gutter;
 	background-color: $turquoise;
 	color: white;
+	@include media(mobile) {
+		padding-left: $gutter-half;
+	}
 }
 
 .accordion-info {
 	margin-bottom: $gutter;
 	border-bottom: 1px solid $border-colour;
+}
+
+.accordion-summary {
+	overflow: hidden;
+	margin-bottom: $gutter-half;
+	padding: $gutter-half $gutter;
+	background-color: $highlight-colour;
+	@include media(mobile) {
+		padding-left: $gutter-half;
+	}
+	.edit {
+		display: none;
+	}
 }
