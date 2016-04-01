@@ -3,12 +3,50 @@
 
 .accordion-header {
 	display: block;
-	padding: 0.5em 1em;
+	padding: $gutter-half $gutter;
 	background-color: $turquoise;
 	color: white;
+	@include media(mobile) {
+		padding: $gutter-half;
+	}
 }
 
 .accordion-info {
 	margin-bottom: $gutter;
 	border-bottom: 1px solid $border-colour;
+}
+
+.accordion-summary {
+	overflow: hidden;
+	margin-bottom: $gutter-half;
+	background-color: $highlight-colour;
+	.title {
+		display: inline-block;
+		padding: $gutter-half $gutter;
+		@include media(mobile) {
+			padding: $gutter-half;
+		}
+	}
+	.label {
+		float: right;
+		margin: 16px 16px 0 0;
+		padding: 2px 5px 0;
+		border: 2px solid $grey-1;
+		border-radius: 5px;
+		font-size: 13px;
+		font-weight: 700;
+		color: $grey-1;
+		text-align: center;
+		text-transform: uppercase;
+	}
+	.link {
+		display: inline-block;
+		float: right;
+	}
+	.link-edit {
+		display: block;
+		float: right;
+		padding: $gutter-half $gutter;
+		border-left: 6px solid white;
+	}
 }

@@ -1,7 +1,13 @@
-<section class="section complete">
-	<p class="accordion-summary">
-		<a href="{{ url(routeName, {'lpa-id': lpaId}) }}">
-		{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}
-		<span class="edit" style="float:right">edit</span></a>
-	</p>
-</section>
+<li class="section complete">
+	<div class="accordion-summary">
+		<p class="title flush--ends tablet-and-up">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</p>
+		<p class="link flush--ends">
+			<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
+				<span class="tablet-and-up">edit</span>
+				<span class="visuallyhidden">: </span>
+				<span class="mobile">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</span>
+			</a>
+		</p>
+		<span class="label">Complete</span>
+	</div>
+</li>

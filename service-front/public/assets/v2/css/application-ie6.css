@@ -2786,13 +2786,40 @@ input[disabled="disabled"] {
 
 .accordion-header {
   display: block;
-  padding: 0.5em 1em;
+  padding: 15px 30px;
   background-color: #28a197;
   color: white; }
 
 .accordion-info {
   margin-bottom: 30px;
   border-bottom: 1px solid #bfc1c3; }
+
+.accordion-summary {
+  overflow: hidden;
+  margin-bottom: 15px;
+  background-color: #f8f8f8; }
+  .accordion-summary .title {
+    display: inline-block;
+    padding: 15px 30px; }
+  .accordion-summary .label {
+    float: right;
+    margin: 16px 16px 0 0;
+    padding: 2px 5px 0;
+    border: 2px solid #6f777b;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #6f777b;
+    text-align: center;
+    text-transform: uppercase; }
+  .accordion-summary .link {
+    display: inline-block;
+    float: right; }
+  .accordion-summary .link-edit {
+    display: block;
+    float: right;
+    padding: 15px 30px;
+    border-left: 6px solid white; }
 
 .person {
   padding: 0 0 30px 100px;
