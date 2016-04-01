@@ -2,59 +2,53 @@
 
 {% block content %}
 
-<section id="donor-section" class="section current">
+{% import "application/macros.twig" as macros %}
+
+<li id="donor-section" class="section current">
 	
-	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who is the donor for this LPA?</h2>
+	<h2 class="heading-medium accordion-header flush--top">Who is the donor for this LPA?</h2>
 	
-    <div class="accordion-content">
-    		<div class="section-intro">
-    			<p>The 'donor' is the person appointing other people to make decisions on their behalf. The donor:</p>
-    
-    			<ul>
-    				<li>must be 18 or over</li>
-    				<li>must be able to make their own decisions when they create the LPA – this is known as having mental capacity</li>
-    			</ul>
-    
-    			<p>Only the donor can make decisions about their LPA and the people to involve.</p>
-    
-    
-    			<p><a href="/guidance/#topic-donor" class="js-guidance" data-journey-click="stageprompt.lpa:help:donor">Find out more about being a donor</a></p>
-    		</div>
+    <div class="accordion-info">
+        <div class="text">
+            <p>The 'donor' is the person appointing other people to make decisions on their behalf. The donor:</p>
+
+            <ul class="list list-bullet">
+                <li>must be 18 or over</li>
+                <li>must be able to make their own decisions when they create the LPA – this is known as having mental capacity</li>
+            </ul>
+
+            <p>Only the donor can make decisions about their LPA and the people to involve.</p>
+
+            <p>
+                <a href="/guidance/#topic-donor" class="js-guidance" data-journey-click="stageprompt.lpa:help:donor">Find out more about being a donor</a>
+            </p>
+        </div>
+    </div>
     		
     {% if (lpa.document.donor) %}
-    		<div class="person-summary group">
-    			<div class="person">
-    				<h3>{{ donor['name'] }}</h3>
-    				<p>
-    				{{ donor['address'] }}
-    				</p>
-    			</div>
-    
-    			<ul class="actions">
-    				<li><a href="{{ editDonorUrl }}" data-form="donor" class="js-form-popup">View/edit details</a></li>
-    			</ul>
-    		</div>
-    		<div class="accordion-actions group">
-    			<p>
-    				<a href="{{ nextRoute }}" class="button gotonextpart" role="button">Save and continue</a>
-    			</p>
-    		</div>
 
-	{% else %}    
-    
-            <p>
-                <a class="add button js-form-popup" data-form="donor" href="{{ addRoute }}" role="button">Add donor details</a>
-            </p>
-    		
-    		<div class="accordion-actions group">
-    			<p>
-    				<span disabled="1" class="button">Save and continue</span>
-    			</p>
-    		</div>
+        <div class="person">
+            <h3 class="heading-small flush--ends">{{ donor['name'] }}</h3>
+            <p class="flush--ends">{{ donor['address'] }}</p>
+            <a href="{{ editDonorUrl }}" data-form="donor" class="js-form-popup">View/edit details</a>
+        </div>
+
+        <div class="form-group">
+            <a href="{{ nextRoute }}" class="button" role="button">Save and continue</a> 
+        </div>
+
+	{% else %}
+
+        <div class="form-group">
+            <a href="{{ addRoute }}" class="button js-form-popup" data-form="donor" role="button">Add donor details</a>
+        </div>
+
+        <div class="form-group">
+            <a class="button divorced" disabled="disabled">Save and continue</a>
+        </div>
+
     {% endif %}
-    
-    </div>
 
-</section>
+</li>
 
 {% endblock %}

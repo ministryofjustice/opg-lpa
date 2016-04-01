@@ -2794,6 +2794,15 @@ input[disabled="disabled"] {
   margin-bottom: 30px;
   border-bottom: 1px solid #bfc1c3; }
 
+.person {
+  padding: 0 0 30px 100px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  border-bottom: 1px solid #bfc1c3;
+  background-image: url(../images/custom/person.svg);
+  background-repeat: no-repeat;
+  background-size: 80px; }
+
 .noscroll {
   position: relative;
   overflow: hidden;
