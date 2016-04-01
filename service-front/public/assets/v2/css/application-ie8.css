@@ -2074,8 +2074,11 @@ input[disabled="disabled"] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
+.divorced {
+  margin-top: 30px; }
+
 .mobile {
-  display: none; }
+  display: none !important; }
 
 .button-secondary {
   background-color: #dee0e2;

@@ -22,11 +22,8 @@
 }
 
 .button {
-	td &,
-	p & {
-		@include media(mobile) {
-			text-align: center;
-		}
+	@include media(mobile) {
+		text-align: center;
 	}
 	+ .button {
 		@include media(mobile) {

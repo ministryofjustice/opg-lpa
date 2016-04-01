@@ -20,6 +20,11 @@
 .hard--ends     { padding-top:   0!important; padding-bottom:0!important; }
 .hard--sides    { padding-right: 0!important; padding-left:  0!important; }
 
+//Further down
+.divorced {
+	margin-top: $gutter;
+}
+
 // Simple handling of overflowing tables on mobile
 .mobile-scroll {
 	@include media(mobile) {
@@ -33,13 +38,13 @@
 // Responsive helper classes
 .mobile {
 	@include media(tablet) {
-		display: none;
+		display: none !important;
 	}
 }
 
 .tablet-and-up {
 	@include media(mobile) {
-		display: none;
+		display: none !important;
 	}
 }
 

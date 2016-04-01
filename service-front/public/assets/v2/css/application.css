@@ -2370,6 +2370,9 @@ input[disabled="disabled"] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
+.divorced {
+  margin-top: 30px; }
+
 @media (max-width: 640px) {
   .mobile-scroll {
     overflow: auto; }
@@ -2378,11 +2381,11 @@ input[disabled="disabled"] {
 
 @media (min-width: 641px) {
   .mobile {
-    display: none; } }
+    display: none !important; } }
 
 @media (max-width: 640px) {
   .tablet-and-up {
-    display: none; } }
+    display: none !important; } }
 
 .button-secondary {
   background-color: #dee0e2;
@@ -2517,7 +2520,7 @@ input[disabled="disabled"] {
       width: 100%; } }
 
 @media (max-width: 640px) {
-  td .button, p .button {
+  .button {
     text-align: center; } }
 @media (max-width: 640px) {
   .button + .button {
@@ -3212,7 +3215,7 @@ input[disabled="disabled"] {
       width: 100%; } }
 
 @media (max-width: 640px) {
-  td .button, p .button {
+  .button {
     text-align: center; } }
 @media (max-width: 640px) {
   .button + .button {
