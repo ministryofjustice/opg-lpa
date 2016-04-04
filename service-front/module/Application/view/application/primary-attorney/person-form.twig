@@ -1,0 +1,220 @@
+{% import "application/macros.twig" as macros %}
+
+<script type="text/javascript">
+	var actors = {names: {{ actorsList(lpa, routeMatch)|json_encode() }}};
+</script>
+
+<?php
+    /**
+     * Picker form
+     */
+    if(isset($this->seedDetailsPickerForm)) {
+        $pickerForm   = $this->seedDetailsPickerForm;
+        $pickerForm->setAttribute('class', 'form');
+        $pickerCsrf   = $pickerForm->get($pickerForm->csrfName());
+        $pickerCsrf->setAttributes(['id'=>'secret']);
+        
+        $picker = $pickerForm->get('pick-details');
+        $picker->setAttributes(['id'=>'pick-details', 'class'=>'js-reusable']);
+        $picker->setOptions([
+                'label' => 'Use these details',
+                'empty_option' => 'Choose a person',
+        ]);
+        
+        $pickerSubmit     = $pickerForm->get('submit');
+        $pickerSubmit->setAttributes(['value'=>"Use this person's details", 'class'=>'button  details-picker']);
+        $pickerFormLabel  = $this->plugin('formLabel');
+        $pickerForm->prepare();
+    }
+    
+    /**
+     * attorney form
+     */
+        
+    $form = $this->formErrorTextExchange($this->form, [
+        'dob-date-day' => [
+            "Value is required and can't be empty" => "Please enter a day",
+        ],
+        'dob-date-month' => [
+            "Value is required and can't be empty" => "Please enter a month",
+        ],
+        'dob-date-year' => [
+            "Value is required and can't be empty" => "Please enter a year",
+        ],
+    ]);
+    
+    $csrf       = $form->get($form->csrfName());
+    $title      = $form->get('name-title');
+    $firstname  = $form->get('name-first');
+    $lastname   = $form->get('name-last');
+    $email      = $form->get('email-address');
+    $address1   = $form->get('address-address1');
+    $address2   = $form->get('address-address2');
+    $address3   = $form->get('address-address3');
+    $postcode   = $form->get('address-postcode');
+    
+    $dob      = $form->get('dob-date');
+    $dobDay   = $dob->get('day');
+    $dobMonth = $dob->get('month');
+    $dobYear  = $dob->get('year');
+    
+    $dob->setOptions(['label'=>'Date of Birth']);
+    
+    $dobDay->setOptions(    ['label' => 'Day'] );
+    $dobMonth->setOptions(  ['label' => 'Month'] );
+    $dobYear->setOptions(   ['label' => 'Year'] );
+    
+    $dobDay->setAttribute('id', 'dob-date-day');
+    $dobMonth->setAttribute('id', 'dob-date-month');
+    $dobYear->setAttribute('id', 'dob-date-year');
+    
+    $form->setAttribute('class', 'form js-PersonForm js-PostcodeLookup');
+    
+    $title->setOptions( ['label' => 'Title'] );
+    $title->setAttributes(['id'=>'name-title']);
+    $firstname->setOptions( ['label' => 'First names'] );
+    $lastname->setOptions( ['label' => 'Last name'] );
+    
+    $email->setOptions( ['label' => 'Email address'] );
+    $address1->setOptions( ['label' => 'Address line 1'] );
+    $address1->setAttributes(['id'=>'address-address1']);
+    $address2->setOptions( ['label' => 'Address line 2'] );
+    $address3->setOptions( ['label' => 'Address line 3'] );
+    $postcode->setOptions( ['label' => 'Postcode'] );
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<h2 class="header">Edit attorney details</h2>
+
+<?php ############################ picker form ############################ ?>
+
+<?php if(isset($pickerForm)):?>
+    <?= $this->form()->openTag($pickerForm); ?>
+    
+    <?= $this->formElement($pickerCsrf) ?>
+    <?= $this->formErrorList($pickerForm); ?>
+    
+    <div class="role-select group">
+        <?= $formLabel->openTag($picker) . $picker->getOption('label') . $formLabel->closeTag() ?>
+        <?= $this->formSelect($picker) ?>
+        <?= $this->formElementErrors($picker) ?>
+        <?= $this->formsubmit($pickerSubmit) ?> 
+    </div>
+    
+    <?= $this->form()->closeTag(); ?>
+<?php endif;?>
+
+<?php ############################ attorney form ############################ ?>
+
+<?= $this->form()->openTag($form); ?>
+
+<?php if(isset($this->useMyDetailsRoute )): ?>
+<p class="role-select group">
+    <a class="js-form-popup" href="<?= $this->useMyDetailsRoute ?>">Use my details</a>
+</p>
+<?php endif;?>
+
+<?php if(isset($this->addTrustCorporationRoute )): ?>
+<p class="role-select group">
+    <a class="js-form-popup" href="<?= $this->addTrustCorporationRoute ?>">Using a trust corporation?</a>
+</p>
+<?php endif;?>
+
+<?= $this->formElement($csrf) ?>
+<?= $this->formElementErrors($csrf) ?>
+
+<?= $this->formErrorList(); ?>
+
+<fieldset>
+
+    <div class="group">
+        <?= $formLabel->openTag() . $title->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($title) ?>
+        <?= $this->formElementErrors($title) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $firstname->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($firstname) ?>
+        <?= $this->formElementErrors($firstname) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $lastname->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($lastname) ?>
+        <?= $this->formElementErrors($lastname) ?>
+    </div>
+    
+    <div class="group">
+        <label for="dob" id="dob-label" class="required">Date of birth</label>
+        
+        <div class="dob-element">
+            <div class="form-group form-group-day">
+                <?= $formLabel->openTag($dobDay) . $dobDay->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobDay) ?>
+            </div>
+            
+            <div class="form-group form-group-month">
+                <?= $formLabel->openTag($dobMonth) . $dobMonth->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobMonth) ?>
+            </div>
+            
+            <div class="form-group form-group-year">
+                <?= $formLabel->openTag($dobYear) . $dobYear->getOption('label') . $formLabel->closeTag(); ?>
+                <?= $this->formElement($dobYear) ?>
+            </div>
+        </div>
+        <?= $this->formElementErrors($dobDay) ?>
+        <?= $this->formElementErrors($dobMonth) ?>
+        <?= $this->formElementErrors($dobYear) ?>
+        <?= $this->formElementErrors($dob) ?>
+    </div>
+    
+    <div class="group">
+        <?= $this->formElementErrors($dobYear) ?>
+    </div>
+    
+    <div class="group">
+        <?= $formLabel->openTag() . $email->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($email) ?>
+        <?= $this->formElementErrors($email) ?>
+    </div>
+
+</fieldset>
+
+<fieldset class="js-PostcodeLookup__postal-add">
+
+    <div class="form_element">
+        <?= $formLabel->openTag() . $address1->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($address1) ?>
+        <?= $this->formElementErrors($address1) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $address2->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($address2) ?>
+        <?= $this->formElementErrors($address2) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $address3->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($address3) ?>
+        <?= $this->formElementErrors($address3) ?>
+    </div>
+    
+    <div class="form_element">
+        <?= $formLabel->openTag() . $postcode->getOption('label') . $formLabel->closeTag(); ?>
+        <?= $this->formElement($postcode) ?>
+        <?= $this->formElementErrors($postcode) ?>
+    </div>
+
+</fieldset>
+
+<p class="action group">
+<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<button name="cancel" type="button" class="button-secondary">Cancel</button>
+</p>
+
+<?= $this->form()->closeTag(); ?>
