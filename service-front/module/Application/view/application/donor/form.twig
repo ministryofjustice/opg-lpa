@@ -37,6 +37,7 @@
     {{ seedDetailsPickerForm.prepare() ? '' }}
 {% endif %}
 
+{# Set form fields variables #}
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
@@ -52,43 +53,47 @@
 {% set dobMonth = dob.get('month') %}
 {% set dobYear = dob.get('year') %}
 
+{# form fields config #}
+{{ form.setAttributes({'class':'form js-PersonForm js-PostcodeLookup', 'novalidate': ''}) ? '' }}
 {{ dobDay.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
 {{ dobMonth.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
 {{ dobYear.setAttributes({'maxlength':'4','pattern': '[0-9]{4}'}) ? '' }}
-
-{{ form.setAttributes({'class':'form js-PersonForm js-PostcodeLookup', 'novalidate': ''}) ? '' }}
-
-{{ title.setOptions({label:'Title'}) ? '' }}
 {{ title.setAttributes({id:'name-title'}) ? '' }}
-
-{{ firstname.setOptions({label:'First name'}) ? '' }}
 {{ firstname.setAttributes({id:'name-title'}) ? '' }}
-
-{{ lastname.setOptions({label:'Last name'}) ? '' }}
 {{ lastname.setAttributes({id:'name-title'}) ? '' }}
+{{ dobDay.setAttribute('id', 'dob-date-day') ? '' }}
+{{ dobMonth.setAttribute('id', 'dob-date-month') ? '' }}
+{{ dobYear.setAttribute('id', 'dob-date-year') ? '' }}
+{{ address1.setAttributes({id:'address-address1'}) ? '' }}
+{{ canSign.setAttributes({class:'donor-cannot-sign'}) ? '' }}
 
+{# form fields labels #}
+{{ title.setOptions({label:'Title'}) ? '' }}
+{{ firstname.setOptions({label:'First name'}) ? '' }}
+{{ lastname.setOptions({label:'Last name'}) ? '' }}
 {{ otherNames.setOptions({label:'Other names'}) ? '' }}
-
 {{ dob.setOptions({label:'Date of Birth'}) ? '' }}
 {{ dobDay.setOptions({label:'Day'}) ? '' }}
 {{ dobMonth.setOptions({label:'Month'}) ? '' }}
 {{ dobYear.setOptions({label:'Year'}) ? '' }}
-{{ dobDay.setAttribute('id', 'dob-date-day') ? '' }}
-{{ dobMonth.setAttribute('id', 'dob-date-month') ? '' }}
-{{ dobYear.setAttribute('id', 'dob-date-year') ? '' }}
-
 {{ email.setOptions({label:'Email address'}) ? '' }}
 {{ address1.setOptions({label:'Address line 1'}) ? '' }}
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
 {{ postcode.setOptions({label:'Postcode'}) ? '' }}
 {{ canSign.setOptions({label:'This person cannot physically sign the LPA'}) ? '' }}
-{{ address1.setAttributes({id:'address-address1'}) ? '' }}
-{{ canSign.setAttributes({class:'donor-cannot-sign'}) ? '' }}
+
+
+
+
+
 
 {{ form.prepare() ? '' }}
 
-<h2 class="header">Edit the donor's details</h2>
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title flush--ends">Edit the donor's details</h2>
+</header>
 
 {############################ picker form ############################}
 

@@ -84,3 +84,12 @@
 	@include icon(icon-important, 27, 27);
 	background-size: contain;
 }
+
+.icon-person {
+	@include icon(icon-person, 27, 27);
+	@include media(mobile){
+		margin-right: 6px;
+		@include icon(icon-person, 27, 27);
+		background-size: contain;
+	}
+}
