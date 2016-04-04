@@ -2088,6 +2088,15 @@ input[disabled="disabled"] {
       background-image: url("/assets/v2/images/icons/icon-important-2x.png");
       background-size: 100%; } }
 
+.icon-person {
+  width: 27px;
+  height: 27px;
+  background-image: url("/assets/v2/images/icons/icon-person.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-person {
+      background-image: url("/assets/v2/images/icons/icon-person-2x.png");
+      background-size: 100%; } }
+
 .flush {
   margin: 0 !important; }
 
@@ -2860,6 +2869,20 @@ input[disabled="disabled"] {
       overflow: hidden; }
       #popup .close a:hover {
         background-color: #bfbfbf; }
+
+.popup-header {
+  display: none;
+  position: relative;
+  padding: 15px;
+  border-bottom: 1px solid #d5e8f3; }
+  #popup .popup-header {
+    display: block; }
+  .popup-header .icon {
+    position: absolute; }
+
+.popup-header-title {
+  display: block;
+  padding-left: 35px; }
 
 #global-nav {
   border-bottom: 1px solid #bfc1c3;
