@@ -54,9 +54,11 @@ class DonorController extends AbstractLpaActorController
             return $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
         }
         
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         $viewModel->setTemplate('application/donor/form.twig');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        if ($isPopup) {
             $viewModel->setTerminal(true);
         }
         
@@ -112,13 +114,17 @@ class DonorController extends AbstractLpaActorController
     
     public function editAction()
     {
+        
         $routeMatch = $this->getEvent()->getRouteMatch();
         $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
         
         $viewModel->setTemplate('application/donor/form.twig');
+
+        $viewModel->isPopup = false;
         
         if ( $this->getRequest()->isXmlHttpRequest() ) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
         
         $lpaId = $this->getLpa()->id;

@@ -325,6 +325,9 @@ class Module{
             // if there is a .phtml extension inside the name (abc.phtml.twig), then remove it
             $potentialTwigTemplate = str_replace('.phtml', '', $potentialTwigTemplate);
             
+            // if there is a double .twig extension inside the name (abc.twig.twig), then remove one
+            $potentialTwigTemplate = str_replace('.twig.twig', '.twig', $potentialTwigTemplate);
+
             // the template name will be something like 'application/about-you/index' - with
             // no suffix. We look in the directory where we know the .phtml file will be
             // located and see if there is a .twig file (which would take precedence over it)
