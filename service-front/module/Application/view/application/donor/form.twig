@@ -4,8 +4,11 @@
 
 {% import "application/macros.twig" as macros %}
 
+
+
 <script type="text/javascript">
-	var actors = {names: {{ actorsList(lpa, routeMatch)|json_encode() }}};
+	var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
+	var actors = {names: actorNames};
 </script>
 
 {% set form = formErrorTextExchange(form,  {
