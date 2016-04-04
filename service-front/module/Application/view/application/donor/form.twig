@@ -27,6 +27,7 @@
     {{ seedDetailsPickerForm.setOptions({'label': 'Use these details', 'empty_option' : 'Choose a person'}) ? '' }}
     {% set pickerSubmit = seedDetailsPickerForm.get('submit') %}
     {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
+    {{ seedDetailsPickerForm.prepare() ? '' }}
 {% endif %}
 
 {# Set form fields variables #}

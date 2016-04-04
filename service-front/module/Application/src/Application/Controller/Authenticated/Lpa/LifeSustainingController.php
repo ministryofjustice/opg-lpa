@@ -21,6 +21,31 @@ class LifeSustainingController extends AbstractLpaController
     public function indexAction()
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\LifeSustainingForm');
+     
+        $canSustainLife = $form->get('canSustainLife');
+        
+        $canSustainLifeValueOptions = $canSustainLife->getOptions()['value_options'];
+        $canSustainLifeValueOptions[true]['label'] = "Option A: Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf";
+        $canSustainLifeValueOptions[false]['label'] = "Option B: No. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf";
+        
+        $canSustainLifeValueOptions[true] += [
+            'label_attributes' => [
+                'for' => 'can-sustain-life-true'
+            ],
+            'attributes' => [
+                'id' => 'can-sustain-life-true'
+            ],
+        ];
+        $canSustainLifeValueOptions[false] += [
+            'label_attributes' => [
+                'for' => 'can-sustain-life-false'
+            ],
+            'attributes' => [
+                'id' => 'can-sustain-life-false'
+            ],
+        ];
+        
+        $canSustainLife->setOptions(['value_options'=>$canSustainLifeValueOptions]);
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
