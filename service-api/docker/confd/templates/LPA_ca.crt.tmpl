@@ -1,0 +1,2 @@
+{{if exists "/opg/base/ca/cert" }}{{range (split (getv "/opg/base/ca/cert") `\n`)}}{{.}}
+{{end}}{{end}}

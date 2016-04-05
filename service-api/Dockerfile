@@ -1,8 +1,5 @@
 FROM registry.service.dsd.io/opguk/php-fpm:0.1.130
 
-ADD docker/ca/LPA_ca.crt /usr/local/share/ca-certificates/LPA_ca.crt
-RUN /usr/sbin/update-ca-certificates
-
 RUN groupadd webservice && \
     groupadd supervisor
 
@@ -36,9 +33,8 @@ RUN mkdir -p /srv/opg-lpa-api2/application && \
 
 #
 #
-#
+ADD docker/confd /etc/confd
 
-# Following line needs to be fixed in image
-ADD docker/my_init/40-update-php-fpm-environment /etc/my_init.d/40-update-php-fpm-environment
+ADD docker/my_init/* /etc/my_init.d/
 
 ENV OPG_SERVICE api
