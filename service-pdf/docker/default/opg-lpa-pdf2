@@ -1,0 +1,3 @@
+export QUEUE=pdf-queue
+export INTERVAL=1
+export REDIS_BACKEND=redisback:6379

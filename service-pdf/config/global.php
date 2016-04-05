@@ -23,16 +23,6 @@ return array(
 
         ),
 
-        'redisResponse'=>array(
-
-            'host' => 'redisback',
-            'port' => 6379,
-
-            // The number of files that can be stored in Redis.
-            'size' => 30,
-
-        ),
-
         's3Response'=>array(
             'client' => [
                 'version' => '2006-03-01',
@@ -46,22 +36,14 @@ return array(
 
     ), // worker
 
-
-    'footer' => [
-        'lp1f' => [
-            'instrument'   => 'LP1F Property and financial affairs (07.15)',
-            'registration' => 'LP1F Register your LPA (07.15)'
+    'pdf' => [
+        'encryption' => [
+            'options' => [
+                'algorithm' => 'aes',
+                'mode' => 'cbc',
+            ],
         ],
-        'lp1h' => [
-            'instrument'   => 'LP1H Health and welfare (07.15)',
-            'registration' => 'LP1H Register your LPA (07.15)'
-        ],
-        'cs1' => 'LPC Continuation sheet 1 (07.15)',
-        'cs2' => 'LPC Continuation sheet 2 (07.15)',
-        'cs3' => 'LPC Continuation sheet 3 (07.15)',
-        'cs4' => 'LPC Continuation sheet 4 (07.15)',
-        'lp3' => 'LP3 People to notify (07.15)',
-    ], // footer
+    ], // pdf
 
     'footer' => [
         'lp1f' => [
