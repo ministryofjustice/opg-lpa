@@ -1,3 +1,7 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block content %}
+
 {% import "application/macros.twig" as macros %}
 
 <script type="text/javascript">
@@ -151,3 +155,5 @@
 </p>
 
 {{ form().closeTag|raw }}
+
+{% endblock %}
