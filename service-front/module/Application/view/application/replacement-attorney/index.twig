@@ -51,7 +51,7 @@
     
     {{ form().openTag( form )|raw }}
     {{ formElement(form.get( form.csrfName )) }}
-    {{ formElementErrorsV2(csrf) }}
+    {{ formElementErrorsV2(form.get( form.csrfName )) }}
     
     <div class="accordion-actions">
 		<p>
