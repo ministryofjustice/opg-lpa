@@ -75,15 +75,18 @@
 	}
 
 	.popup-header {
-		display: none;
 		position: relative;
 		padding: $gutter-half;
 		border-bottom: 1px solid $border-colour;
-		#popup & {
-			display: block;
-		}
 		.icon {
 			position: absolute;
+		}
+		.no-js & {
+			padding: 0;
+			border-bottom: 0;
+			.icon {
+				display: none;
+			}
 		}
 	}
 
@@ -92,6 +95,12 @@
 		padding-left: 35px;
 		@include media(mobile) {
 			padding-right: 40px;
+		}
+		.no-js & {
+			padding-left: 0;
+			&.heading-small {
+				@extend .heading-large;
+			}
 		}
 	}
 }

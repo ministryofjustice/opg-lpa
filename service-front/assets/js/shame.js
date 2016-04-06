@@ -15,5 +15,7 @@ $(document).ready(function () {
       $emphasised.filter(':checked').parent().addClass('checked');
   });
 
+  $('body').removeClass('no-js');
+
 });
 

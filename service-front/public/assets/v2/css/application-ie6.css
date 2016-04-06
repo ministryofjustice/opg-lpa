@@ -1010,7 +1010,7 @@ main {
     display: block;
     color: #6f777b; }
 
-.heading-large, .help-sections h1 {
+.heading-large, .help-sections h1, .no-js .popup-header-title.heading-small, .no-js .help-sections h3.popup-header-title, .help-sections .no-js h3.popup-header-title {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -1022,7 +1022,7 @@ main {
   margin-bottom: 0.41667em;
   margin-top: 1.25em;
   margin-bottom: 0.55556em; }
-  .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+  .heading-large .heading-secondary, .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary, .no-js .help-sections h3.popup-header-title .heading-secondary, .help-sections .no-js h3.popup-header-title .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -2871,18 +2871,22 @@ input[disabled="disabled"] {
         background-color: #bfbfbf; }
 
 .popup-header {
-  display: none;
   position: relative;
   padding: 15px;
   border-bottom: 1px solid #d5e8f3; }
-  #popup .popup-header {
-    display: block; }
   .popup-header .icon {
     position: absolute; }
+  .no-js .popup-header {
+    padding: 0;
+    border-bottom: 0; }
+    .no-js .popup-header .icon {
+      display: none; }
 
 .popup-header-title {
   display: block;
   padding-left: 35px; }
+  .no-js .popup-header-title {
+    padding-left: 0; }
 
 #global-nav {
   border-bottom: 1px solid #bfc1c3;

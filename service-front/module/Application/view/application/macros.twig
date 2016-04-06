@@ -22,9 +22,9 @@
 	
 {% endmacro %}
 
-{% macro renderElementDiv(element) %}
+{% macro formGroup(element) %}
 
-<div class="element {{ elementGroupClass(element) }}">
+<div class="form-group {{ element.getMessages|length >0 ? 'error'}}">
     <label class="form-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label') }}
         {{ formElementErrorsV2(element) }}
