@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.17.0",
+            "version": "3.17.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4853bf1f865f6c6df44db0cd5664319ae806f319"
+                "reference": "4d70cbe397c03e84907e10436358f627aab428e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4853bf1f865f6c6df44db0cd5664319ae806f319",
-                "reference": "4853bf1f865f6c6df44db0cd5664319ae806f319",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4d70cbe397c03e84907e10436358f627aab428e6",
+                "reference": "4d70cbe397c03e84907e10436358f627aab428e6",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-03-17 23:57:52"
+            "time": "2016-03-29 22:53:44"
         },
         {
             "name": "doctrine/lexer",
@@ -1114,16 +1114,16 @@
         },
         {
             "name": "react/promise",
-            "version": "v2.2.2",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "3aacad8bf10c7d83e6fa2089d413529888c2bedf"
+                "reference": "8ffacee1171e33a1c129f424bf1ec36e062eba82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/3aacad8bf10c7d83e6fa2089d413529888c2bedf",
-                "reference": "3aacad8bf10c7d83e6fa2089d413529888c2bedf",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/8ffacee1171e33a1c129f424bf1ec36e062eba82",
+                "reference": "8ffacee1171e33a1c129f424bf1ec36e062eba82",
                 "shasum": ""
             },
             "require": {
@@ -1154,7 +1154,7 @@
                 }
             ],
             "description": "A lightweight implementation of CommonJS Promises/A for PHP",
-            "time": "2016-02-26 19:09:02"
+            "time": "2016-03-24 21:20:22"
         },
         {
             "name": "sendgrid/sendgrid",
@@ -1251,16 +1251,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "78c468665c9568c3faaa9c416a7134308f2d85c3"
+                "reference": "47d2d8cade9b1c3987573d2943bb9352536cdb87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/78c468665c9568c3faaa9c416a7134308f2d85c3",
-                "reference": "78c468665c9568c3faaa9c416a7134308f2d85c3",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/47d2d8cade9b1c3987573d2943bb9352536cdb87",
+                "reference": "47d2d8cade9b1c3987573d2943bb9352536cdb87",
                 "shasum": ""
             },
             "require": {
@@ -1307,24 +1307,25 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-27 05:14:19"
+            "time": "2016-03-07 14:04:32"
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "6f4e41c41e7d352ed9adf71ff6f2ec1756490a1b"
+                "reference": "06d6b2c755b2f34ce21e688b62072e9c625709c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/6f4e41c41e7d352ed9adf71ff6f2ec1756490a1b",
-                "reference": "6f4e41c41e7d352ed9adf71ff6f2ec1756490a1b",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/06d6b2c755b2f34ce21e688b62072e9c625709c4",
+                "reference": "06d6b2c755b2f34ce21e688b62072e9c625709c4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.9",
+                "symfony/polyfill-mbstring": "~1.1",
                 "symfony/polyfill-php54": "~1.0",
                 "symfony/polyfill-php55": "~1.0"
             },
@@ -1361,7 +1362,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-28 16:20:50"
+            "time": "2016-03-27 12:57:53"
         },
         {
             "name": "symfony/intl",
@@ -1614,16 +1615,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "b7b4ebadd2b5e614ff7d2d6fc63e0ed0578909c7"
+                "reference": "d60b8e076d22953aabebeebda53bf334438e7aca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/b7b4ebadd2b5e614ff7d2d6fc63e0ed0578909c7",
-                "reference": "b7b4ebadd2b5e614ff7d2d6fc63e0ed0578909c7",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/d60b8e076d22953aabebeebda53bf334438e7aca",
+                "reference": "d60b8e076d22953aabebeebda53bf334438e7aca",
                 "shasum": ""
             },
             "require": {
@@ -1674,7 +1675,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-02 09:49:18"
+            "time": "2016-03-25 01:40:30"
         },
         {
             "name": "symfony/validator",
@@ -2815,16 +2816,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995"
+                "reference": "584e52cb8f788a887553ba82db6caacb1d6260bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
-                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/584e52cb8f788a887553ba82db6caacb1d6260bb",
+                "reference": "584e52cb8f788a887553ba82db6caacb1d6260bb",
                 "shasum": ""
             },
             "require": {
@@ -2860,7 +2861,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-23 07:41:20"
+            "time": "2016-03-04 07:54:35"
         }
     ],
     "aliases": [],

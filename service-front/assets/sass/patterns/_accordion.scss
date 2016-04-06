@@ -7,7 +7,7 @@
 	background-color: $turquoise;
 	color: white;
 	@include media(mobile) {
-		padding: $gutter-half;
+		padding-left: $gutter-half;
 	}
 }
 
@@ -20,6 +20,9 @@
 	overflow: hidden;
 	margin-bottom: $gutter-half;
 	background-color: $highlight-colour;
+	@include media(mobile) {
+		padding-left: $gutter-half;
+	}
 	.title {
 		display: inline-block;
 		padding: $gutter-half $gutter;

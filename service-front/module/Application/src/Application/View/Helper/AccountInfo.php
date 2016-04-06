@@ -50,7 +50,11 @@ class AccountInfo extends AbstractHelper
         //---
 
         // Include the name of the current route.
-        $params['route'] = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
+        $routeMatch = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch();
+        
+        if ($routeMatch) {
+            $params['route'] = $routeMatch->getMatchedRouteName();
+        }
 
         //---
 

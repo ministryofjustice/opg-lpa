@@ -50,10 +50,15 @@ class Module{
 
         if( !($request instanceof \Zend\Console\Request) ){
 
-            // Only bootstrap the session if it's *not* PHPUnit AND is not a healthcheck.
+            // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
             if(
                 !strstr( $request->getServer('SCRIPT_NAME'), 'phpunit' ) &&
-                !in_array( $request->getUri()->getPath(), [ '/ping/elb', '/ping/json' ] ))
+                !in_array( $request->getUri()->getPath(), [
+                    // URLs excluded from creating a session
+                    '/ping/elb',
+                    '/ping/json',
+                    '/notifications/expiry-notice',
+                ]))
             {
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e);
@@ -87,9 +92,7 @@ class Module{
     /**
      *
      * This now checks the token on every request otherwise we have no method of knowing if the user has
-     * logged in on another browser. We need to find a new way of checking this, then hopefully we can
-     * re-enable lazy checking.
-     *
+     * logged in on another browser.
      *
      * We don't deal with forcing the user to re-authenticate here as they
      * may be accessing a page that does not require authentication.
@@ -105,26 +108,21 @@ class Module{
         // If we have an identity...
         if ( ($identity = $auth->getIdentity()) != null ) {
 
-            // If we're beyond the original time we expected the token to expire...
-            //if( (new DateTime) > $identity->tokenExpiresAt() ){
+            // Get the tokens details...
+            $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
 
-                // Get the tokens details...
-                $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
+            // If the token has not expired...
+            if( isset($info['expires_in']) ){
 
-                // If the token has not expired...
-                if( isset($info['expires_in']) ){
+                // update the time the token expires in the session
+                $identity->tokenExpiresIn( $info['expires_in'] );
 
-                    // update the time the token expires in the session
-                    $identity->tokenExpiresIn( $info['expires_in'] );
+            } else {
 
-                } else {
+                // else the user will need to re-login, so remove the current identity.
+                $auth->clearIdentity();
 
-                    // else the user will need to re-login, so remove the current identity.
-                    $auth->clearIdentity();
-
-                }
-
-            //} // if we're beyond tokenExpiresAt
+            }
 
         } // if we have an identity
 
@@ -325,6 +323,9 @@ class Module{
             // if there is a .phtml extension inside the name (abc.phtml.twig), then remove it
             $potentialTwigTemplate = str_replace('.phtml', '', $potentialTwigTemplate);
             
+            // if there is a double .twig extension inside the name (abc.twig.twig), then remove one
+            $potentialTwigTemplate = str_replace('.twig.twig', '.twig', $potentialTwigTemplate);
+
             // the template name will be something like 'application/about-you/index' - with
             // no suffix. We look in the directory where we know the .phtml file will be
             // located and see if there is a .twig file (which would take precedence over it)

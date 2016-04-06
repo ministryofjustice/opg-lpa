@@ -1086,7 +1086,7 @@ main {
         padding-top: 4px;
         padding-bottom: 6px; } }
 
-.heading-large, .help-sections h1 {
+.heading-large, .help-sections h1, .no-js .popup-header-title.heading-small, .no-js .help-sections h3.popup-header-title, .help-sections .no-js h3.popup-header-title {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -1095,14 +1095,14 @@ main {
   margin-top: 1.04167em;
   margin-bottom: 0.41667em; }
   @media (min-width: 641px) {
-    .heading-large, .help-sections h1 {
+    .heading-large, .help-sections h1, .no-js .popup-header-title.heading-small, .no-js .help-sections h3.popup-header-title, .help-sections .no-js h3.popup-header-title {
       font-size: 36px;
       line-height: 1.11111; } }
   @media (min-width: 641px) {
-    .heading-large, .help-sections h1 {
+    .heading-large, .help-sections h1, .no-js .popup-header-title.heading-small, .no-js .help-sections h3.popup-header-title, .help-sections .no-js h3.popup-header-title {
       margin-top: 1.25em;
       margin-bottom: 0.55556em; } }
-  .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+  .heading-large .heading-secondary, .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary, .no-js .help-sections h3.popup-header-title .heading-secondary, .help-sections .no-js h3.popup-header-title .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -1113,11 +1113,11 @@ main {
     display: block;
     color: #6f777b; }
     @media (min-width: 641px) {
-      .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+      .heading-large .heading-secondary, .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary, .no-js .help-sections h3.popup-header-title .heading-secondary, .help-sections .no-js h3.popup-header-title .heading-secondary {
         font-size: 24px;
         line-height: 1.25; } }
     @media (min-width: 641px) {
-      .heading-large .heading-secondary, .help-sections h1 .heading-secondary {
+      .heading-large .heading-secondary, .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary, .no-js .help-sections h3.popup-header-title .heading-secondary, .help-sections .no-js h3.popup-header-title .heading-secondary {
         padding-top: 6px;
         padding-bottom: 4px; } }
 
@@ -2324,6 +2324,26 @@ input[disabled="disabled"] {
       background-image: url("/assets/v2/images/icons/icon-important-2x.png");
       background-size: 100%; } }
 
+.icon-person {
+  width: 27px;
+  height: 27px;
+  background-image: url("/assets/v2/images/icons/icon-person.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-person {
+      background-image: url("/assets/v2/images/icons/icon-person-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-person {
+      margin-right: 6px;
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-person.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-person {
+      background-image: url("/assets/v2/images/icons/icon-person-2x.png");
+      background-size: 100%; } }
+
 .flush {
   margin: 0 !important; }
 
@@ -3316,7 +3336,7 @@ input[disabled="disabled"] {
   color: white; }
   @media (max-width: 640px) {
     .accordion-header {
-      padding: 15px; } }
+      padding-left: 15px; } }
 
 .accordion-info {
   margin-bottom: 30px;
@@ -3326,6 +3346,9 @@ input[disabled="disabled"] {
   overflow: hidden;
   margin-bottom: 15px;
   background-color: #f8f8f8; }
+  @media (max-width: 640px) {
+    .accordion-summary {
+      padding-left: 15px; } }
   .accordion-summary .title {
     display: inline-block;
     padding: 15px 30px; }
@@ -3421,6 +3444,27 @@ input[disabled="disabled"] {
       overflow: hidden; }
       #popup .close a:hover {
         background-color: #bfbfbf; }
+
+.popup-header {
+  position: relative;
+  padding: 15px;
+  border-bottom: 1px solid #d5e8f3; }
+  .popup-header .icon {
+    position: absolute; }
+  .no-js .popup-header {
+    padding: 0;
+    border-bottom: 0; }
+    .no-js .popup-header .icon {
+      display: none; }
+
+.popup-header-title {
+  display: block;
+  padding-left: 35px; }
+  @media (max-width: 640px) {
+    .popup-header-title {
+      padding-right: 40px; } }
+  .no-js .popup-header-title {
+    padding-left: 0; }
 
 #global-nav {
   border-bottom: 1px solid #bfc1c3;

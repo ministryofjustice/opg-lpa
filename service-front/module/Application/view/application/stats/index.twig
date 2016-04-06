@@ -5,19 +5,7 @@
 {% endblock %}
 
 {% block content %}
-
-{% set v1 = {
-        'current' : {
-            'started'   : {'all':0, 'hw':0, 'pf':0},
-            'created'   : {'all':0, 'hw':0, 'pf':0},
-            'signed'    : {'all':0, 'hw':0, 'pf':0},
-            'completed' : {'all':0, 'hw':0, 'pf':0},
-            'deleted'   : {'all':0, 'hw':0, 'pf':0},
-            'total'     : {'all':0, 'hw':0, 'pf':0}
-        }
-    }
-%}
-
+    
 <h2 class="heading-medium">Users</h2>
 
 <div class="mobile-scroll">
@@ -58,31 +46,31 @@
         <tbody>
             <tr>
                 <td>Started</td>
-                <td class="numeric">{{ lpas.all.started + v1.current.started.all }}</td>
-                <td class="numeric">{{ lpas.health-and-welfare.started + v1.current.started.hw }}</td>
-                <td class="numeric">{{ lpas.property-and-finance.started + v1.current.started.pf }}</td>
+                <td class="numeric">{{ lpas.all.started }}</td>
+                <td class="numeric">{{ lpas['health-and-welfare'].started }}</td>
+                <td class="numeric">{{ lpas['property-and-finance'].started }}</td>
             </tr>
             <tr>
                 <td>Created</td>
-                <td class="numeric">{{ lpas.all.created + v1.current.created.all }}</td>
-                <td class="numeric">{{ lpas.health-and-welfare.created + v1.current.created.hw }}</td>
-                <td class="numeric">{{ lpas.property-and-finance.created + v1.current.created.pf }}</td>
+                <td class="numeric">{{ lpas.all.created }}</td>
+                <td class="numeric">{{ lpas['health-and-welfare'].created }}</td>
+                <td class="numeric">{{ lpas['property-and-finance'].created }}</td>
             </tr>
             <tr>
                 <td>Completed</td>
-                <td class="numeric">{{ lpas.all.completed + v1.current.completed.all }}</td>
-                <td class="numeric">{{ lpas.health-and-welfare.completed + v1.current.completed.hw }}</td>
-                <td class="numeric">{{ lpas.property-and-finance.completed + v1.current.completed.pf }}</td>
+                <td class="numeric">{{ lpas.all.completed }}</td>
+                <td class="numeric">{{ lpas['health-and-welfare'].completed }}</td>
+                <td class="numeric">{{ lpas['property-and-finance'].completed }}</td>
             </tr>
             <tr>
                 <td><strong>Total</strong></td>
-                <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.completed + v1.current.total.all }}</td>
-                <td class="numeric">{{ lpas.health-and-welfare.started + lpas.health-and-welfare.created + lpas.health-and-welfare.completed + v1.current.total.hw }}</td>
-                <td class="numeric">{{ lpas.property-and-finance.started + lpas.property-and-finance.created + lpas.property-and-finance.completed + v1.current.total.pf }}</td>
+                <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.completed }}</td>
+                <td class="numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].completed }}</td>
+                <td class="numeric">{{ lpas['property-and-finance'].started + lpas['property-and-finance'].created + lpas['property-and-finance'].completed }}</td>
             </tr>
             <tr>
                 <td>Deleted</td>
-                <td class="numeric">{{ lpas.all.deleted + v1.current.deleted.all }}</td>
+                <td class="numeric">{{ lpas.all.deleted }}</td>
                 <td class="numeric">&nbsp;</td>
                 <td class="numeric">&nbsp;</td>
             </tr>

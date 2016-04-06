@@ -1,7 +1,16 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Create a lasting power of attorney 
+{% endblock %}
+
+{% block content %}
+
 {% import "application/macros.twig" as macros %}
 
 <script type="text/javascript">
-	var actors = {names: {{ actorsList(lpa, routeMatch)|json_encode() }}};
+	var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
+	var actors = {names: actorNames};
 </script>
 
 {% set form = formErrorTextExchange(form,  {
@@ -27,8 +36,10 @@
     {{ seedDetailsPickerForm.setOptions({'label': 'Use these details', 'empty_option' : 'Choose a person'}) ? '' }}
     {% set pickerSubmit = seedDetailsPickerForm.get('submit') %}
     {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
+    {{ seedDetailsPickerForm.prepare() ? '' }}
 {% endif %}
 
+{# Set form fields variables #}
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
@@ -44,44 +55,111 @@
 {% set dobMonth = dob.get('month') %}
 {% set dobYear = dob.get('year') %}
 
+{# form fields config #}
+{{ form.setAttributes({'class':'form js-PersonForm js-PostcodeLookup', 'novalidate': ''}) ? '' }}
 {{ dobDay.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
 {{ dobMonth.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
 {{ dobYear.setAttributes({'maxlength':'4','pattern': '[0-9]{4}'}) ? '' }}
 
-{{ form.setAttributes({'class':'form js-PersonForm js-PostcodeLookup', 'novalidate': ''}) ? '' }}
+{{ title.setAttributes({
+    id: 'name-title',
+    class: 'form-control'
+}) ? '' }}
 
+{{ firstname.setAttributes({
+    id: 'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ lastname.setAttributes({
+    id: 'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ otherNames.setAttributes({
+    id: 'other-names',
+    class: 'form-control'
+}) ? '' }}
+
+{{ dobDay.setAttributes({
+    id: 'dob-date-day',
+    type: 'number',
+    class: 'form-control',
+    maxlength: '2',
+    min: '0',
+    max: '31',
+    pattern: '[0-9]*'
+}) ? ''}}
+
+{{ dobMonth.setAttributes({
+    id: 'dob-date-month',
+    type: 'number',
+    class: 'form-control',
+    min: '0',
+    max: '12',
+    pattern: '[0-9]*'
+ }) ? ''}}
+
+{{ dobYear.setAttributes({
+    id: 'dob-date-year',
+    type: 'number',
+    class: 'form-control',
+    min: '0',
+    max: '2014',
+    pattern: '[0-9]*'
+})  ? ''}}
+
+{{ email.setAttributes({
+    id: 'email-address',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address1.setAttributes({
+    id: 'address-address1',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address2.setAttributes({
+    id: 'address-address2',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address3.setAttributes({
+    id: 'address-address3',
+    class: 'form-control'
+}) ? ''}}
+
+{{ postcode.setAttributes({
+    id: 'postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{{ canSign.setAttributes({class:'donor-cannot-sign'}) ? '' }}
+
+{# form fields labels #}
 {{ title.setOptions({label:'Title'}) ? '' }}
-{{ title.setAttributes({id:'name-title'}) ? '' }}
-
 {{ firstname.setOptions({label:'First name'}) ? '' }}
-{{ firstname.setAttributes({id:'name-title'}) ? '' }}
-
 {{ lastname.setOptions({label:'Last name'}) ? '' }}
-{{ lastname.setAttributes({id:'name-title'}) ? '' }}
-
 {{ otherNames.setOptions({label:'Other names'}) ? '' }}
-
 {{ dob.setOptions({label:'Date of Birth'}) ? '' }}
 {{ dobDay.setOptions({label:'Day'}) ? '' }}
 {{ dobMonth.setOptions({label:'Month'}) ? '' }}
 {{ dobYear.setOptions({label:'Year'}) ? '' }}
-{{ dobDay.setAttribute('id', 'dob-date-day') ? '' }}
-{{ dobMonth.setAttribute('id', 'dob-date-month') ? '' }}
-{{ dobYear.setAttribute('id', 'dob-date-year') ? '' }}
-
 {{ email.setOptions({label:'Email address'}) ? '' }}
 {{ address1.setOptions({label:'Address line 1'}) ? '' }}
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
 {{ postcode.setOptions({label:'Postcode'}) ? '' }}
 {{ canSign.setOptions({label:'This person cannot physically sign the LPA'}) ? '' }}
-{{ address1.setAttributes({id:'address-address1'}) ? '' }}
-{{ canSign.setAttributes({class:'donor-cannot-sign'}) ? '' }}
+
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Edit the donor's details</h2>
+</header>
+
 
 {{ form.prepare() ? '' }}
-
-<h2 class="header">Edit the donor's details</h2>
-
 {############################ picker form ############################}
 
 {% if (pickerForm) %}
@@ -101,88 +179,100 @@
 
 {############################ donor form ############################}
 
-{{ form().openTag( form )|raw }}
 {% if (useMyDetailsRoute) %}
-<p class="role-select group">
-    <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
-</p>
+<a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
 {% endif %}
 
-{{ formElement(form.get( form.csrfName )) }}
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.get( form.csrfName )) }}
 
-<fieldset>
+    <h2 class="heading-medium">What is the donor's name?</h2>
 
-{{ macros.renderElementDiv(title) }}
-{{ macros.renderElementDiv(firstname) }}
-{{ macros.renderElementDiv(lastname) }}
+    <fieldset>
+        <legend class="visuallyhidden">Add donor details</legend>
 
-    <details{{ otherNames.getValue() ? '' : ' open' }}>
-        <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
-        <div class="group">
-            {{ macros.renderElementDiv(otherNames) }}
-        </div>
-    </details>
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
 
-    <div class="{{ elementGroupClass(dob) }}">
-        
-        <label for="dob" id="dob-label" class="required">Date of birth</label>
+        <details {{ otherNames.getValue() ? 'open' : '' }}>
+            <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
+            <div>
+                {{ macros.formGroup(otherNames) }}
+            </div>
+        </details>
 
-        <div class="dob-element">
+    </fieldset>
 
-            <div class="form-group form-group-day">
-                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">{{ dobDay.getOption('label') }}</label>
+    <h2 class="heading-medium">What is the donor's date of birth?</h2>
+
+    <fieldset>
+        <legend class="visuallyhidden">Date of birth</legend>
+
+        <div class="form-date {{ dobDay.getMessages|length >0 or dobMonth.getMessages|length >0 or dobYear.getMessages|length >0 ? 'error'}}">
+            <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
+
+            {{ formElementErrorsV2(dobYear) }}
+            {{ formElementErrorsV2(dobMonth) }}
+            {{ formElementErrorsV2(dobDay) }}
+
+            <div class="form-group form-group-day {{ dobDay.getMessages|length >0 ? 'error'}}">
+                <label for="dob-day">Day</label>
                 {{ formElement(dobDay) }}
             </div>
 
-            <div class="form-group form-group-month">
-                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">{{ dobMonth.getOption('label') }}</label>
+            <div class="form-group form-group-month {{ dobMonth.getMessages|length >0 ? 'error'}}">
+                <label for="dob-month">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
 
-            <div class="form-group form-group-year">
-                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">{{ dobYear.getOption('label') }}</label>
+            <div class="form-group form-group-year {{ dobYear.getMessages|length >0 ? 'error'}}">
+                <label for="dob-year">Year</label>
                 {{ formElement(dobYear) }}
             </div>
-
         </div>
-        
-        {{ formElementErrorsV2(dobDay) }}
-        {{ formElementErrorsV2(dobMonth) }}
-        {{ formElementErrorsV2(dobYear) }}
-        {{ formElementErrorsV2(dob) }}
-        
+
+    </fieldset>
+
+    <h2 class="heading-medium">What is the donor's email address?</h2>
+
+    <fieldset>
+        <legend class="visuallyhidden">Email address</legend>
+
+        {{ macros.formGroup(email) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium">What is the donor's address?</h2>
+
+    <fieldset class="js-PostcodeLookup__postal-add">
+        <legend class="visuallyhidden">Address</legend>
+        {{ macros.formGroup(address1) }}
+        {{ macros.formGroup(address2) }}
+        {{ macros.formGroup(address3) }}
+        {{ macros.formGroup(postcode) }}
+    </fieldset>
+
+    <fieldset>
+        <legend class="visuallyhidden"></legend>
+
+        <div class="form-group text {{ canSign.getMessages|length >0 ? 'error'}}">
+            <label class="block-label" for="{{ canSign.getAttribute('id') }}">
+                {{ formElement(canSign) }}
+                {{ canSign.getOption('label') }}
+                <span class="form-hint">We'll include an extra signature sheet so someone can sign on their behalf</span>
+                {{ formElementErrorsV2(canSign) }}
+            </label>
+        </div>
+
+    </fieldset>
+
+    <div class="form-group">
+        <input type="submit" name="submit" id="form-save" value="Save details" class="button">
+        <button name="cancel" type="button" class="button-secondary">Cancel</button>
     </div>
-
-{{ macros.renderElementDiv(email) }}
-
-</fieldset>
-
-<h2 class="heading-medium">What is your address?</h2>
-
-<fieldset class="js-PostcodeLookup__postal-add">
-    {{ macros.renderElementDiv(address1) }}
-    {{ macros.renderElementDiv(address2) }}
-    {{ macros.renderElementDiv(address3) }}
-    {{ macros.renderElementDiv(postcode) }}
-</fieldset>
-
-{{ macros.renderElementDiv(address3) }}
-
-<fieldset id="donor-sign">
-<div class="option group">
-    <label>
-    {{ formcheckbox(canSign) }}
-    {{ canSign.getOption('label') }}
-    </label>
-    <span class="hint">We'll include an extra signature sheet so someone can sign on their behalf</span>
-    {{ formElementErrorsV2(canSign) }}
-</div>
-</fieldset>
-
-<p class="action group">
-<input type="submit" name="submit" id="form-save" value="Save details" class="button">
-<button name="cancel" type="button" class="button-secondary">Cancel</button>
-</p>
 
 {{ form().closeTag|raw }}
 
+{% endblock %}

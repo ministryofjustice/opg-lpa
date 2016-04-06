@@ -1,0 +1,69 @@
+{% extends 'layout/twig/creation-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form, 
+		{'canSustainLife' : {
+				"Value is required and can't be empty" : 'Please select either option A or option B'
+			}
+		}
+    ) 
+%}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+
+{% set csrf = form.get(form.csrfName) %}
+{% set canSustainLife = form.get('canSustainLife') %}
+    
+{{ form.prepare() ? '' }}
+
+<section id="life-sustaining-section" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Can your attorneys give or refuse consent to life-sustaining treatment?</h2>
+
+    <div class="accordion-content">
+  
+		<div class="section-intro">
+
+            <p>This is a very important decision. Read the guidance carefully before you answer.</p>
+            <ul>
+            	<li>Life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
+            	<li>If you don’t allow your attorneys to give or refuse consent on your behalf, your doctors will make decisions about life-sustaining treatment</li>
+            	<li>Your attorneys can only make decisions about life-sustaining treatment if you don't have mental capacity</li>
+            </ul>
+            
+    		<p><a href="/help/#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="stageprompt.lpa:help:life-sustaining-treatment">Read guidance on making this decision </a></p>
+
+		</div>
+
+		<h3>Do you want to give your attorneys authority to make decisions about life-sustaining treatment on your behalf?</h3>
+    
+        {{ form().openTag( form )|raw }}
+        
+        {{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+        
+        <div class="emphasised option group">
+            {{ formRadio(canSustainLife) }}
+            
+            {{ formElementErrors(canSustainLife) }}
+        </div>
+        
+        <p>Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
+        
+        <div class="accordion-actions">
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+            </p>
+        </div>
+        
+                
+        {{ form().closeTag|raw }}
+    
+    </div>
+    
+</section>
+
+{% endblock %}

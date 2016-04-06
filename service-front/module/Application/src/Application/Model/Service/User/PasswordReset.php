@@ -95,6 +95,13 @@ class PasswordReset implements ServiceLocatorAwareInterface {
             $body = $client->getLastContent();
 
             if( isset($body['detail']) ){
+
+                if( $body['detail'] == 'Invalid token' ){
+
+                    return "invalid-token";
+
+                }
+
                 return $body['detail'];
             }
 
