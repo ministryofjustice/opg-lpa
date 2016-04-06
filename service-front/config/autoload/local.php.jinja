@@ -7,6 +7,12 @@ return array(
         'environment' => '{{pillar['environment']}}',
     ],
 
+    'account-cleanup' => [
+        'notification' => [
+            'token' => '{{pillar['account-cleanup']['notification']['token']}}',
+        ],
+    ], // cleanup-cleanup
+
     'session' => [
 
         'encryption' => [
@@ -99,6 +105,9 @@ return array(
         'sendgrid' => [
             'user' => "{{pillar['email']['username']}}",
             'key' => "{{pillar['email']['password']}}",
+            'webhook' => [
+                'token' => '{{pillar['email']['webhook']['token']}}',
+            ],
         ], //sendgrid
 
     ], // email

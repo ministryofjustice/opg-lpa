@@ -15,6 +15,23 @@ class NotificationsController extends AbstractBaseController {
 
     public function expiryNoticeAction(){
 
+        $config = $this->getServiceLocator()->get('config');
+
+        //---
+
+        $token = $this->request->getHeader('Token');
+
+        if( !$token || $token->getFieldValue() !== $config['account-cleanup']['notification']['token'] ){
+
+            $response = $this->getResponse();
+            $response->setStatusCode(403);
+            $response->setContent('Invalid Token');
+            return $response;
+
+        }
+
+        //---
+
         $posts = $this->request->getPost();
 
         if( !isset($posts['Username']) || !isset($posts['Type']) ){
@@ -34,7 +51,6 @@ class NotificationsController extends AbstractBaseController {
 
         //--
 
-        $config = $this->getServiceLocator()->get('config');
         $email->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         //---
@@ -46,27 +62,16 @@ class NotificationsController extends AbstractBaseController {
 
         //--
 
+        $viewModel = new ViewModel();
+
         switch($posts['Type']){
             case '1-week-notice':
-                
-                $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('notification-1-week-notice.twig');
-                
-                if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $template, $matches) === 1) {
-                    $email->setSubject($matches[1]);
-                } else {
-                    $email->setSubject( 'If you still need your lasting power of attorney online account, please sign back in in the next seven days' );
-                }
-               
+                $email->setSubject( 'If you still need your lasting power of attorney online account, please sign back in in the next seven days' );
+                $viewModel->setTemplate('email/notification-1-week-notice.phtml');
                 break;
             case '1-month-notice':
-                $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('notification-1-month-notice.twig');
-                
-                if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $template, $matches) === 1) {
-                    $email->setSubject($matches[1]);
-                } else {
-                    $email->setSubject( 'Do you still need your lasting power of attorney online account?' );
-                }
-                
+                $email->setSubject( 'Do you still need your lasting power of attorney online account?' );
+                $viewModel->setTemplate('email/notification-1-month-notice.phtml');
                 break;
             default:
                 $response = $this->getResponse();
@@ -78,7 +83,7 @@ class NotificationsController extends AbstractBaseController {
 
         //---
 
-        $content = $template->render([]);
+        $content = $this->getServiceLocator()->get('ViewRenderer')->render( $viewModel );
 
         //---
 
