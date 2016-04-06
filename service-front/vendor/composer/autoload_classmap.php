@@ -1393,6 +1393,7 @@ return array(
     'Raven_Stacktrace' => $vendorDir . '/raven/raven/lib/Raven/Stacktrace.php',
     'Raven_Util' => $vendorDir . '/raven/raven/lib/Raven/Util.php',
     'React\\Promise\\CancellablePromiseInterface' => $vendorDir . '/react/promise/src/CancellablePromiseInterface.php',
+    'React\\Promise\\CancellationQueue' => $vendorDir . '/react/promise/src/CancellationQueue.php',
     'React\\Promise\\Deferred' => $vendorDir . '/react/promise/src/Deferred.php',
     'React\\Promise\\ExtendedPromiseInterface' => $vendorDir . '/react/promise/src/ExtendedPromiseInterface.php',
     'React\\Promise\\FulfilledPromise' => $vendorDir . '/react/promise/src/FulfilledPromise.php',
