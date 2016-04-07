@@ -113,14 +113,14 @@
         {% block openAccordion %}
         {% endblock %}
              
-        {% set accordionTop = accordionTop(lpa) %}
+        {% set accordionItems = accordionTop(lpa) %}
         {% set accordionBottom = accordionBottom(lpa) %}
-        
-        {% if (accordionTop) %}
-        {% for partialVars in accordionTop %}
-        	{% include 'layout/partials/accordion/accordion.twig' with partialVars %}
-        {% endfor %}
+
+
+        {% if (accordionItems) %}
+        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionItems, 'lpa':lpa } %}
         {% endif %}
+
         
         {% block content %}{% endblock %}
         

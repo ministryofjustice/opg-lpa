@@ -1,91 +1,86 @@
-<li class="section complete">
-	<div class="accordion-summary">
-		<div class="title-box">
-			<p class="title flush--ends tablet-and-up">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</p>
-		</div>
-		<div class="label-and-edit-box">
-			<p class="link flush--ends">
-				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
-					<span class="tablet-and-up">edit</span>
-					<span class="visuallyhidden">: </span>
-					<span class="mobile">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</span>
-				</a>
-			</p>
-			<span class="label">Complete</span>
-		</div>
-	</div>
-</li>
+{% set itemPath = 'layout/partials/accordion/accordion-item.twig' %}
 
-<li class="section complete">
-	<div class="accordion-summary">
-		<div class="title-box">
-			<p class="title flush--ends tablet-and-up">This LPA covers health and welfare</p>
-		</div>
-		<div class="label-and-edit-box">
-			<p class="link flush--ends">
-				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
-					<span class="tablet-and-up">edit</span>
-					<span class="visuallyhidden">: </span>
-					<span class="mobile">This LPA covers health and welfare</span>
-				</a>
-			</p>
-			<span class="label">Complete</span>
-		</div>
-	</div>
-</li>
+{% set block = 'lpa/form-type' %}
+{% if block in items %}
 
-<li class="section complete">
-	<div class="accordion-summary">
-		<div class="title-box">
-			<p class="title flush--ends tablet-and-up">The replacement attorneys are Mr Jack Wilkins Junior and Mrs Lauren Clayton-Holler</p>
-		</div>
-		<div class="label-and-edit-box">
-			<p class="link flush--ends">
-				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
-					<span class="tablet-and-up">edit</span>
-					<span class="visuallyhidden">: </span>
-					<span class="mobile">The replacement attorneys are Mr Jack Wilkins Junior and Mrs Lauren Clayton-Holler</span>
-				</a>
-			</p>
-			<span class="label">2 replacement attorneys</span>
-		</div>
-	</div>
-</li>
+	{% include itemPath with {
+		'desktop' : (lpa.document.type == 'property-and-financial') ?
+					'This LPA covers property and financial affairs' :
+					'This LPA covers health and welfare',
+		'mobile' : (lpa.document.type == 'property-and-financial') ?
+					'This LPA covers property and financial affairs' :
+					'This LPA covers health and welfare',
+		'status' : 'Complete',
+		'edit' : url(block, {'lpa-id': lpa.id})
+	} %}
 
-<li class="section complete">
-	<div class="accordion-summary">
-		<div class="title-box">
-			<p class="title flush--ends tablet-and-up">The attorney is Mr John Simpson</p>
-		</div>
-		<div class="label-and-edit-box">
-			<p class="link flush--ends">
-				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
-					<span class="tablet-and-up">edit</span>
-					<span class="visuallyhidden">: </span>
-					<span class="mobile">The attorney is Mr John Simpson</span>
-				</a>
-			</p>
-			<span class="label">1 attorney</span>
-		</div>
-	</div>
-</li>
+{% endif %}
 
 
-<li class="section complete">
-	<div class="accordion-summary">
-		<div class="title-box">
-			<p class="title flush--ends tablet-and-up">word</p>
-		</div>
-		<div class="label-and-edit-box">
-			<p class="link flush--ends">
-				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
-					<span class="tablet-and-up">edit</span>
-					<span class="visuallyhidden">: </span>
-					<span class="mobile">This LPA covers health and welfare</span>
-				</a>
-			</p>
-			<span class="label">Complete</span>
-		</div>
-	</div>
-</li>
+{% set block = 'lpa/donor' %}
+{% if block in items %}
 
+	{% include itemPath with {
+		'desktop' : 'The donor is My Bob Sanders',
+		'mobile' : 'The donor is My Bob Sanders',
+		'status' : 'Complete',
+		'edit' : url(block, {'lpa-id': lpa.id})
+	} %}
+
+{% endif %}
+
+
+{% set block = 'lpa/when-lpa-starts' %}
+{% if block in items %}
+
+	{% include itemPath with {
+	'desktop' : 'AAA',
+	'mobile' : 'AAA',
+	'status' : 'Complete',
+	'edit' : url(block, {'lpa-id': lpa.id})
+	} %}
+
+{% endif %}
+
+
+{% set block = 'lpa/life-sustaining' %}
+{% if block in items %}
+
+	{% include itemPath with {
+	'desktop' : 'BBB',
+	'mobile' : 'BBB',
+	'status' : 'Complete',
+	'edit' : url(block, {'lpa-id': lpa.id})
+	} %}
+
+{% endif %}
+
+
+{% set block = 'lpa/primary-attorney' %}
+{% if block in items %}
+
+	{% include itemPath with {
+	'desktop' : 'The attorney is Mr Bob Sanders',
+	'mobile' : 'The attorney is Mr Bob Sanders',
+	'status' : '1 attorney',
+	'edit' : url(block, {'lpa-id': lpa.id})
+	} %}
+
+{% endif %}
+
+
+
+{#
+'lpa/form-type'
+'lpa/donor'
+'lpa/when-lpa-starts'
+'lpa/life-sustaining'
+'lpa/primary-attorney'
+'lpa/how-primary-attorneys-make-decision'
+'lpa/replacement-attorney'
+'lpa/when-replacement-attorney-step-in'
+'lpa/how-replacement-attorneys-make-decision'
+'lpa/certificate-provider'
+'lpa/people-to-notify'
+'lpa/instructions'
+#}
