@@ -2795,7 +2795,7 @@ input[disabled="disabled"] {
 
 .accordion-header {
   display: block;
-  padding: 15px 30px;
+  padding: 15px;
   background-color: #28a197;
   color: white; }
 
@@ -2804,15 +2804,16 @@ input[disabled="disabled"] {
   border-bottom: 1px solid #bfc1c3; }
 
 .accordion-summary {
+  position: relative;
   overflow: hidden;
   margin-bottom: 15px;
-  background-color: #f8f8f8; }
+  background-color: #bfc1c3; }
   .accordion-summary .title {
     display: inline-block;
-    padding: 15px 30px; }
+    padding: 15px; }
   .accordion-summary .label {
     float: right;
-    margin: 16px 16px 0 0;
+    margin: 16px 22px 0 0;
     padding: 2px 5px 0;
     border: 2px solid #6f777b;
     border-radius: 5px;
@@ -2827,8 +2828,15 @@ input[disabled="disabled"] {
   .accordion-summary .link-edit {
     display: block;
     float: right;
-    padding: 15px 30px;
-    border-left: 6px solid white; }
+    padding: 15px 30px; }
+  .accordion-summary .title-box {
+    padding-right: 225px;
+    margin-right: 92px;
+    border-right: 6px solid white; }
+  .accordion-summary .label-and-edit-box {
+    position: absolute;
+    top: 0;
+    right: 0; }
 
 .person {
   padding: 0 0 30px 100px;

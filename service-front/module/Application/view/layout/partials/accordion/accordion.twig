@@ -1,13 +1,91 @@
 <li class="section complete">
 	<div class="accordion-summary">
-		<p class="title flush--ends tablet-and-up">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</p>
-		<p class="link flush--ends">
-			<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
-				<span class="tablet-and-up">edit</span>
-				<span class="visuallyhidden">: </span>
-				<span class="mobile">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</span>
-			</a>
-		</p>
-		<span class="label">Complete</span>
+		<div class="title-box">
+			<p class="title flush--ends tablet-and-up">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</p>
+		</div>
+		<div class="label-and-edit-box">
+			<p class="link flush--ends">
+				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
+					<span class="tablet-and-up">edit</span>
+					<span class="visuallyhidden">: </span>
+					<span class="mobile">{% include 'layout/partials/accordion/items/' ~ name with {'params': params} %}</span>
+				</a>
+			</p>
+			<span class="label">Complete</span>
+		</div>
 	</div>
 </li>
+
+<li class="section complete">
+	<div class="accordion-summary">
+		<div class="title-box">
+			<p class="title flush--ends tablet-and-up">This LPA covers health and welfare</p>
+		</div>
+		<div class="label-and-edit-box">
+			<p class="link flush--ends">
+				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
+					<span class="tablet-and-up">edit</span>
+					<span class="visuallyhidden">: </span>
+					<span class="mobile">This LPA covers health and welfare</span>
+				</a>
+			</p>
+			<span class="label">Complete</span>
+		</div>
+	</div>
+</li>
+
+<li class="section complete">
+	<div class="accordion-summary">
+		<div class="title-box">
+			<p class="title flush--ends tablet-and-up">The replacement attorneys are Mr Jack Wilkins Junior and Mrs Lauren Clayton-Holler</p>
+		</div>
+		<div class="label-and-edit-box">
+			<p class="link flush--ends">
+				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
+					<span class="tablet-and-up">edit</span>
+					<span class="visuallyhidden">: </span>
+					<span class="mobile">The replacement attorneys are Mr Jack Wilkins Junior and Mrs Lauren Clayton-Holler</span>
+				</a>
+			</p>
+			<span class="label">2 replacement attorneys</span>
+		</div>
+	</div>
+</li>
+
+<li class="section complete">
+	<div class="accordion-summary">
+		<div class="title-box">
+			<p class="title flush--ends tablet-and-up">The attorney is Mr John Simpson</p>
+		</div>
+		<div class="label-and-edit-box">
+			<p class="link flush--ends">
+				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
+					<span class="tablet-and-up">edit</span>
+					<span class="visuallyhidden">: </span>
+					<span class="mobile">The attorney is Mr John Simpson</span>
+				</a>
+			</p>
+			<span class="label">1 attorney</span>
+		</div>
+	</div>
+</li>
+
+
+<li class="section complete">
+	<div class="accordion-summary">
+		<div class="title-box">
+			<p class="title flush--ends tablet-and-up">word</p>
+		</div>
+		<div class="label-and-edit-box">
+			<p class="link flush--ends">
+				<a href="{{ url(routeName, {'lpa-id': lpaId}) }}" class="link-edit">
+					<span class="tablet-and-up">edit</span>
+					<span class="visuallyhidden">: </span>
+					<span class="mobile">This LPA covers health and welfare</span>
+				</a>
+			</p>
+			<span class="label">Complete</span>
+		</div>
+	</div>
+</li>
+

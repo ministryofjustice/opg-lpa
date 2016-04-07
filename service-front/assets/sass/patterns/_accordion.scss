@@ -3,7 +3,7 @@
 
 .accordion-header {
 	display: block;
-	padding: $gutter-half $gutter;
+	padding: $gutter-half;
 	background-color: $turquoise;
 	color: white;
 	@include media(mobile) {
@@ -17,22 +17,24 @@
 }
 
 .accordion-summary {
+	position: relative;
 	overflow: hidden;
 	margin-bottom: $gutter-half;
-	background-color: $highlight-colour;
+	//background-color: $highlight-colour;
+	background-color: $grey-2;
 	@include media(mobile) {
 		padding-left: $gutter-half;
 	}
 	.title {
 		display: inline-block;
-		padding: $gutter-half $gutter;
+		padding: $gutter-half;
 		@include media(mobile) {
 			padding: $gutter-half;
 		}
 	}
 	.label {
 		float: right;
-		margin: 16px 16px 0 0;
+		margin: 16px 22px 0 0;
 		padding: 2px 5px 0;
 		border: 2px solid $grey-1;
 		border-radius: 5px;
@@ -45,11 +47,31 @@
 	.link {
 		display: inline-block;
 		float: right;
+		@include media(mobile) {
+			float: left;
+		}
 	}
 	.link-edit {
 		display: block;
 		float: right;
 		padding: $gutter-half $gutter;
-		border-left: 6px solid white;
+		@include media(mobile) {
+			padding-left: 0;
+		}
+	}
+
+	.title-box {
+		padding-right: 225px;
+		margin-right: 92px;
+		border-right: 6px solid white;
+	}
+
+	.label-and-edit-box {
+		position: absolute;
+		top: 0;
+		right: 0;
+		@include media(mobile) {
+			position: relative;
+		}
 	}
 }
