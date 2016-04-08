@@ -17,8 +17,6 @@
     {{ seedDetailsPickerForm.prepare() ? '' }}
 {% endif %}
     
-{% set form = formErrorTextExchange(form,  {}) %}
-
 {% set name = form.get('name') %}
 {% set companyNumber = form.get('number') %}
 {% set email = form.get('email-address') %}
@@ -42,7 +40,7 @@
 
 <h2 class="header">Edit trust corporation details</h2>
 
-{############################ trust corp form ############################}
+<?php ############################ trust corp form ############################ ?>
 
 {{ form().openTag( form )|raw }}
 
@@ -60,12 +58,10 @@
 
 {{ formElement(form.get( form.csrfName )) }}
 
-
 <fieldset>
 
 {{ macros.renderElementDiv(name) }}
 {{ macros.renderElementDiv(companyNumber) }}
-{{ macros.renderElementDiv(email) }}
 
 </fieldset>
 
