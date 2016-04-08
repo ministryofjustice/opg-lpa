@@ -20,8 +20,7 @@
 	position: relative;
 	overflow: hidden;
 	margin-bottom: $gutter-half;
-	//background-color: $highlight-colour;
-	background-color: $grey-2;
+	background-color: $highlight-colour;
 	@include media(mobile) {
 		padding-left: $gutter-half;
 	}
@@ -36,19 +35,26 @@
 		float: right;
 		margin: 16px 22px 0 0;
 		padding: 2px 5px 0;
-		border: 2px solid $grey-1;
+		border: 2px solid #28A197;
 		border-radius: 5px;
 		font-size: 13px;
 		font-weight: 700;
-		color: $grey-1;
+		color: #28A197;
 		text-align: center;
 		text-transform: uppercase;
+		@include media(mobile) {
+			position: absolute;
+			top: 14px;
+			right: 14px;
+			margin: 0;
+		}
 	}
 	.link {
 		display: inline-block;
 		float: right;
 		@include media(mobile) {
 			float: left;
+			padding-right: 130px;
 		}
 	}
 	.link-edit {
@@ -61,7 +67,7 @@
 	}
 
 	.title-box {
-		padding-right: 225px;
+		padding-right: 130px;
 		margin-right: 92px;
 		border-right: 6px solid white;
 	}

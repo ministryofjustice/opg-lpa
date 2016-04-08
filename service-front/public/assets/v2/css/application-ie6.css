@@ -2807,7 +2807,7 @@ input[disabled="disabled"] {
   position: relative;
   overflow: hidden;
   margin-bottom: 15px;
-  background-color: #bfc1c3; }
+  background-color: #f8f8f8; }
   .accordion-summary .title {
     display: inline-block;
     padding: 15px; }
@@ -2815,11 +2815,11 @@ input[disabled="disabled"] {
     float: right;
     margin: 16px 22px 0 0;
     padding: 2px 5px 0;
-    border: 2px solid #6f777b;
+    border: 2px solid #28A197;
     border-radius: 5px;
     font-size: 13px;
     font-weight: 700;
-    color: #6f777b;
+    color: #28A197;
     text-align: center;
     text-transform: uppercase; }
   .accordion-summary .link {
@@ -2830,7 +2830,7 @@ input[disabled="disabled"] {
     float: right;
     padding: 15px 30px; }
   .accordion-summary .title-box {
-    padding-right: 225px;
+    padding-right: 130px;
     margin-right: 92px;
     border-right: 6px solid white; }
   .accordion-summary .label-and-edit-box {
