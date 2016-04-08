@@ -7,14 +7,14 @@ The Lasting Power of Attorney API Service is responsible for managing and storin
 ## Collections
 
 The API service requires four collections:
-* **lpa** - Stores the details of teh actual LPAs
-* **user** - Users 'About You' details. Does not hold email or password details.
-* **lpaStats** - Pre-calculated cache of LPA stats
-* **whoAreYou** - Holds responses to the Who Are You question. This has it's own colelction as the results are anonymous.
+* **lpa**: Stores the details of the actual LPAs
+* **user**: Users' 'About You' details. Does not hold email or password details.
+* **lpaStats**: Pre-calculated cache of LPA stats
+* **whoAreYou**: Holds responses to the Who Are You question. This has it's own collection as the results are anonymous.
 
 ### Indexes
 
-For _lpa_ colelction:
+For _lpa_ collection:
 ```
 - db.lpa.createIndex( { user: 1, updatedAt: -1 } )
 - db.lpa.createIndex( { user: 1, search: "text" } )
