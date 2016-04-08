@@ -1,0 +1,112 @@
+{% extends 'layout/twig/creation-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form, {}) %}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+
+{% set csrf = form.get(form.csrfName) %}
+
+{% set how = form.get('how') %}
+{% set howDetails = form.get('howDetails') %}
+{{ howDetails.setAttributes({rows:'24', cols:'80'}) ? '' }}
+    
+{% set currentHowValueOptions = how.getOptions()['value_options'] %}
+
+{% set howValueOptions = {
+			'jointly-attorney-severally' :
+				{ label: 'Jointly and severally<span class="option-help">
+	 					  Attorneys can make decisions on their own or together.<br> 
+						  Most people choose this option because it’s the most practical.
+	 					  </span>',
+	 			  label_attributes: {
+	 			       for: 'how-jointly-attorney-severally',
+	 			       id: 'how-jointly-attorney-severally'
+	 			  },
+	 			  value: currentHowValueOptions['jointly-attorney-severally'].value
+	 		    },
+			'jointly' :
+				{ label: 'Jointly<span class="option-help">
+	 					  Attorneys must agree unanimously on every decision, however big or small. <br> 
+	 				      If one of your attorneys can no longer act the others will no longer be able to act.
+	 					  </span>',
+                  label_attributes: {
+                       for: 'how-jointly',
+                       id: 'how-jointly'
+                  },
+                  value: currentHowValueOptions['jointly'].value 
+	 		    },
+			'depends' :
+				{ label: 'Jointly for some decisions, and jointly and severally for other decisions<span class="option-help">
+	 					  Attorneys must agree unanimously on some decisions, but can make others on their own.
+	 					  <br>You’ll need to state which decisions need to be agreed unanimously.
+	 					  </span>',
+                  label_attributes: {
+                       for: 'how-depends',
+                       id: 'how-depends',
+                  },
+                  value: currentHowValueOptions['depends'].value
+	 		    }
+		}
+%}
+
+{{ how.setOptions({value_options: howValueOptions}) ? '' }}
+{{ how.setLabelOptions({disable_html_escape: true}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<section id="primary-attorney-decision-sections" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. How should your attorneys make decisions?</h2>
+	
+    <div class="accordion-content">
+
+
+		<div class="section-intro">
+
+			<p>Your choice here is very important as it affects how your LPA can be used. Whichever option you choose, your attorneys must always act in your best interests.</p>
+
+			<p><a class="js-guidance" href="/help/#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Get help with making this decision</a></p>
+		</div>
+
+		<h3>How should the attorneys make decisions?</h3>
+		
+        {{ form().openTag( form )|raw }}
+        
+        {{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+
+        <div class="emphasised option group">
+            
+            {{ formElement(how) }}
+			{{ formElementErrors(how) }}
+            
+        </div>
+
+        <div id="toggle-how-depends" class="details-textbox" data-toggled-by="#how-depends" style="display: none;">
+				<p class="hint">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. 
+				
+				<a class="js-guidance" href="/help/#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
+				
+			{{ formElement(howDetails) }}
+			{{ formElementErrors(howDetails) }}
+
+        </div>        
+
+        <div class="accordion-actions">
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+            </p>
+        </div>
+        
+        {{ form().closeTag|raw }}
+		
+        
+    </div>	
+
+</section>
+
+{% endblock %}
