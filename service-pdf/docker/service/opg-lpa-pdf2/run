@@ -1,5 +1,4 @@
 #!/bin/sh
 
-. /etc/default/opg-lpa-pdf2
 rm -rf /tmp/pdf_ramdisk/*
 exec su -c "/srv/opg-lpa-pdf2/application/current/vendor/bin/resque >> /var/log/app/queue.log 2>&1" app
