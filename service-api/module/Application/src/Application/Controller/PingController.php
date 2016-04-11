@@ -53,7 +53,7 @@ class PingController extends AbstractActionController {
 
         try {
 
-            $config = $this->getServiceLocator()->get('config')['db']['redis']['default'];
+            $config = $this->getServiceLocator()->get('config')['db']['resque']['default'];
 
             $redis = new \Credis_Client( $config['host'], $config['port'], $timeout = 5);
 
