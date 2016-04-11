@@ -1,0 +1,1 @@
+{ "authentication": { "endpoint": "https://authv2/v1/authenticate" } }
