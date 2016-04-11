@@ -1395,6 +1395,7 @@ return array(
     'React\\Promise\\CancellablePromiseInterface' => $vendorDir . '/react/promise/src/CancellablePromiseInterface.php',
     'React\\Promise\\CancellationQueue' => $vendorDir . '/react/promise/src/CancellationQueue.php',
     'React\\Promise\\Deferred' => $vendorDir . '/react/promise/src/Deferred.php',
+    'React\\Promise\\Exception\\LengthException' => $vendorDir . '/react/promise/src/Exception/LengthException.php',
     'React\\Promise\\ExtendedPromiseInterface' => $vendorDir . '/react/promise/src/ExtendedPromiseInterface.php',
     'React\\Promise\\FulfilledPromise' => $vendorDir . '/react/promise/src/FulfilledPromise.php',
     'React\\Promise\\LazyPromise' => $vendorDir . '/react/promise/src/LazyPromise.php',
