@@ -164,7 +164,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         
         if($attorney instanceof Human) {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-            $viewModel->setTemplate('application/primary-attorney/person-form.twig');
+            $viewModel->setTemplate('application/primary-attorney/person-form.phtml');
         }
         else {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');

@@ -23,6 +23,8 @@ class Dob extends Fieldset
                 'name' => 'year',
                 'type' => 'Text',
         ]);
+        
+        $this->setAttribute('name', 'date-of-birth');
     }
     
     public function setMessages($messages)
