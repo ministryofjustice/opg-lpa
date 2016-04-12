@@ -20,9 +20,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
 {
-    
-    protected $contentHeader = 'creation-partial.phtml';
-    
+        
     public function indexAction()
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -164,7 +162,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         
         if($attorney instanceof Human) {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-            $viewModel->setTemplate('application/primary-attorney/person-form.phtml');
+            $viewModel->setTemplate('application/primary-attorney/person-form.twig');
         }
         else {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
