@@ -48,7 +48,16 @@ class FormErrorTextExchange extends AbstractHelper
             $overrideMap
         );
         
-        foreach ($form->getElements() as $element) {
+        $elements = $form->getElements();
+        
+        foreach ($form->getFieldsets() as $fieldset) {
+            foreach ($fieldset->getElements() as $element) {
+                $elements[] = $element;
+            }
+            $elements[] = $fieldset;
+        }
+        
+        foreach ($elements as $element) {
             
             $name = $element->getName();
             
@@ -61,9 +70,9 @@ class FormErrorTextExchange extends AbstractHelper
             $messages = $element->getMessages();
             
             foreach ($messages as &$elementMessage) {
-
                 if (array_key_exists($elementMessage, $elementMap)) {
                     $elementMessage = $elementMap[$elementMessage];
+                    echo '&nbsp;' .  '&nbsp;' .  $elementMessage . '<br>';
                 } elseif (array_key_exists($elementMessage, $this->commonMap)) {
                     $elementMessage = $this->commonMap[$elementMessage];
                 }
