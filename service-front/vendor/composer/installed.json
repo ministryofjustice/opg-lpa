@@ -2954,5 +2954,116 @@
             "s3",
             "sdk"
         ]
+    },
+    {
+        "name": "symfony/var-dumper",
+        "version": "v3.0.4",
+        "version_normalized": "3.0.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/var-dumper.git",
+            "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+            "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9",
+            "symfony/polyfill-mbstring": "~1.0"
+        },
+        "require-dev": {
+            "twig/twig": "~1.20|~2.0"
+        },
+        "suggest": {
+            "ext-symfony_debug": ""
+        },
+        "time": "2016-03-10 10:34:12",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Resources/functions/dump.php"
+            ],
+            "psr-4": {
+                "Symfony\\Component\\VarDumper\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony mechanism for exploring and dumping PHP variables",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "debug",
+            "dump"
+        ]
+    },
+    {
+        "name": "nsmithuk/zf-config-dump",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/NSmithUK/zf-config-dump.git",
+            "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/NSmithUK/zf-config-dump/zipball/89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+            "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4",
+            "symfony/var-dumper": "^3.0",
+            "zendframework/zendframework": "^2.0"
+        },
+        "time": "2016-04-12 13:21:43",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "ZFConfigDump\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Neil Smith",
+                "email": "neil@nsmith.net"
+            }
+        ],
+        "description": "Dumps an application's config to the terminal",
+        "keywords": [
+            "cli",
+            "config",
+            "module",
+            "zf2"
+        ]
     }
 ]

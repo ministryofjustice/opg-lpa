@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f7c4f2861c5a35c87749c9b3528a835a",
-    "content-hash": "f84a0d1a258b53cf765c398c2ea12b95",
+    "hash": "ea4c4b93916ee9936ef86f0413946d63",
+    "content-hash": "72c4c1d06bab8152bd6207ca1e2e92a9",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -916,6 +916,50 @@
             "time": "2015-11-18 11:06:24"
         },
         {
+            "name": "nsmithuk/zf-config-dump",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NSmithUK/zf-config-dump.git",
+                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NSmithUK/zf-config-dump/zipball/89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/var-dumper": "^3.0",
+                "zendframework/zendframework": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ZFConfigDump\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Neil Smith",
+                    "email": "neil@nsmith.net"
+                }
+            ],
+            "description": "Dumps an application's config to the terminal",
+            "keywords": [
+                "cli",
+                "config",
+                "module",
+                "zf2"
+            ],
+            "time": "2016-04-12 13:21:43"
+        },
+        {
             "name": "omnipay/common",
             "version": "v2.5.0",
             "source": {
@@ -1748,6 +1792,69 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2015-07-01 19:58:06"
+        },
+        {
+            "name": "symfony/var-dumper",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/var-dumper.git",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "twig/twig": "~1.20|~2.0"
+            },
+            "suggest": {
+                "ext-symfony_debug": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Resources/functions/dump.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Component\\VarDumper\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony mechanism for exploring and dumping PHP variables",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "debug",
+                "dump"
+            ],
+            "time": "2016-03-10 10:34:12"
         },
         {
             "name": "twig/twig",
