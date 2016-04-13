@@ -10,24 +10,14 @@ class FormErrorTextExchange extends AbstractHelper
      * 
      * @var array - Common Generic Map
      */
-    private $commonMap = [
-        'cannot-be-blank' => 'Please enter a value for this field',
-        'invalid-email-address' => 'Please enter a valid email address',
-        'invalid-phone-number' => 'Please enter a valid phone number',
-    ];
+    private $commonMap = [];
     
     /**
      * Generic transformations for named fields
      * 
      * $var array - Common Field Map
      */
-    private $commonFieldMap = [
-        'address-postcode' => [
-            'must-be-greater-than-or-equal:5' => 'Postcode must be at least five characters',
-        ],
-        'name-title' => [
-            'must-be-less-than-or-equal:5' => 'Title must be five letters or fewer - please abbreviate, if necessary',
-        ]
+    private $commonFieldMap = []
     ];
     
     /**
