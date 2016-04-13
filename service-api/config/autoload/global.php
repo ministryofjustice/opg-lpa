@@ -55,6 +55,15 @@ return array(
 
         ], // mongo
 
+
+        // Used to access generated PDFs.
+        'redis' => [
+            'default' => [
+                'host' => getenv('OPG_LPA_API_PDF_CACHE_REDIS_HOST') ?: null,
+                'port' => 6379,
+            ],
+        ], // redis
+
         // The queue for PDFs to be generated.
         'resque' => [
 
