@@ -28,7 +28,7 @@ use ZfcRbac\Exception;
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @author  JM Leroux <jmleroux.pro@gmail.com>
- * @licence MIT
+ * @license MIT
  */
 class GuardPluginManager extends AbstractPluginManager
 {

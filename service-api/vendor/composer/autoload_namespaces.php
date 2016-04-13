@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZfcRbac\\' => array($vendorDir . '/zf-commons/zfc-rbac/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
+    'ZFConfigDump\\' => array($vendorDir . '/nsmithuk/zf-config-dump/src'),
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Resque' => array($vendorDir . '/chrisboulton/php-resque/lib'),
