@@ -17,8 +17,7 @@ class FormErrorTextExchange extends AbstractHelper
      * 
      * $var array - Common Field Map
      */
-    private $commonFieldMap = []
-    ];
+    private $commonFieldMap = [];
     
     /**
      * Look at each element message on the form. If a transform message exists
