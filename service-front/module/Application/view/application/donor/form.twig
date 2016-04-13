@@ -14,11 +14,17 @@
 </script>
 
 {% set form = formErrorTextExchange(form,  {
-	 'dob-date' : {
-            "day value must be between 1 and 31" : "Please enter a day",
-            "month value must be between 1 and 12" : "Please enter a month",
-            "Value is required and can't be empty" : "Please enter a year"
-     }
+    'name-first' : {
+        'cannot-be-blank' : 'Please enter the donor\'s first name'
+    },
+    'name-last' : {
+        'cannot-be-blank' : 'Please enter the donor\'s last name'
+    },
+    'dob-date' : {
+        "day value must be between 1 and 31" : "Please enter a day",
+        "month value must be between 1 and 12" : "Please enter a month",
+        "year value must be between 1866 and 2016" : "Please enter a year"
+    }
 }) %}
 
 {{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
@@ -82,7 +88,7 @@
     type: 'number',
     class: 'form-control',
     maxlength: '2',
-    min: '0',
+    min: '1',
     max: '31',
     pattern: '[0-9]*'
 }) ? ''}}
@@ -91,7 +97,7 @@
     id: 'dob-date-month',
     type: 'number',
     class: 'form-control',
-    min: '0',
+    min: '1',
     max: '12',
     pattern: '[0-9]*'
  }) ? ''}}
@@ -100,8 +106,8 @@
     id: 'dob-date-year',
     type: 'number',
     class: 'form-control',
-    min: '0',
-    max: '2014',
+    min: '1866',
+    max: '2016',
     pattern: '[0-9]*'
 })  ? ''}}
 
