@@ -30,7 +30,7 @@ class SessionFactory implements FactoryInterface {
         $config = $serviceLocator->get('Config');
 
         if( !isset( $config['session'] ) ){
-            throw new RuntimeException('Session configuration setting not found ');
+            throw new RuntimeException('Session configuration setting not found');
         }
 
         $config = $config['session'];
@@ -79,11 +79,28 @@ class SessionFactory implements FactoryInterface {
 
         } else {
 
-            $key = $config['encryption']['key'];
+            $keys = $config['encryption']['keys'];
 
-            // AES is rijndael-128 with a 32 character (256 bit) key.
-            if( strlen( $key ) != 32 ){
-                throw new CryptInvalidArgumentException('Key must be a string of 32 characters');
+            /*
+             * Keys are in the format:
+             *      array( <int ident> => <string key>, ... )
+             */
+
+            //---
+
+            // Validate the keys
+
+            if( !is_array($keys) || empty($keys) ){
+                throw new RuntimeException('At least one session encryption key must be set');
+            }
+
+            foreach( $keys as $ident => $key ){
+
+                // AES is rijndael-128 with a 32 character (256 bit) key.
+                if( strlen( $key ) != 32 ){
+                    throw new CryptInvalidArgumentException("Key ($ident) must be a string of 32 characters");
+                }
+
             }
 
             //---
@@ -94,20 +111,13 @@ class SessionFactory implements FactoryInterface {
                 'mode' => 'cbc',
             ]);
 
-            // Set the secret key
-            $blockCipher->setKey( $key );
-
-            // Output raw binary (as opposed to base64).
-            // I want to enable this, but Amazon's  driver only supports strings at present.
-            //$blockCipher->setBinaryOutput( true );
-
             //---
 
             $saveHandler = new SaveHandler\EncryptedDynamoDB(
                 new SaveHandler\HashedKeyDynamoDbSessionConnection( $dynamoDb, $config['dynamodb']['settings'] )
             );
 
-            $saveHandler->setBlockCipher( $blockCipher );
+            $saveHandler->setBlockCipher( $blockCipher, $keys );
 
         } // if
 
