@@ -2811,6 +2811,8 @@ input[disabled="disabled"] {
   padding-left: 35px; }
   .no-js .popup-header-title {
     padding-left: 0; }
+  .js-enabled .popup-header-title {
+    margin-top: 2px; }
 
 #global-nav {
   border-bottom: 1px solid #bfc1c3;

@@ -3366,6 +3366,36 @@ input[disabled="disabled"] {
       padding-left: 80px;
       background-size: 60px; } }
 
+.js-enabled #popup.form-popup {
+  max-width: 600px; }
+
+.form-popup .form-condensed {
+  padding: 20px; }
+  .form-popup .form-condensed .heading-medium, .form-popup .form-condensed .help-sections h2, .help-sections .form-popup .form-condensed h2 {
+    display: none; }
+  .form-popup .form-condensed .form-group {
+    margin-bottom: 15px; }
+  .form-popup .form-condensed .form-label {
+    float: left;
+    width: 150px;
+    margin-top: 6px; }
+  .form-popup .form-condensed input[type='text'].form-control,
+  .form-popup .form-condensed input[type='email'].form-control,
+  .form-popup .form-condensed select.form-control {
+    width: 400px; }
+  .form-popup .form-condensed input[type='text'].postcode-input,
+  .form-popup .form-condensed input[type='email'].postcode-input,
+  .form-popup .form-condensed select.postcode-input {
+    width: 258px; }
+  .form-popup .form-condensed .hint {
+    margin-left: 150px; }
+  .form-popup .form-condensed .form-date {
+    margin-bottom: 0; }
+    .form-popup .form-condensed .form-date .form-hint {
+      display: none; }
+  .form-popup .form-condensed .address-type-toggle {
+    margin-left: 150px; }
+
 .noscroll {
   position: relative;
   overflow: hidden; }
@@ -3443,6 +3473,8 @@ input[disabled="disabled"] {
       padding-right: 40px; } }
   .no-js .popup-header-title {
     padding-left: 0; }
+  .js-enabled .popup-header-title {
+    margin-top: 2px; }
 
 #global-nav {
   border-bottom: 1px solid #bfc1c3;

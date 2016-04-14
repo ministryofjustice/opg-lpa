@@ -1,0 +1,50 @@
+.js-enabled #popup.form-popup {
+	max-width: 600px;
+}
+
+
+.form-popup .form-condensed {
+	padding: 20px;
+
+	.heading-medium {
+		display: none;
+	}
+
+	.form-group {
+		margin-bottom: $gutter-half;
+	}
+
+	.form-label {
+		float: left;
+		width: 150px;
+		margin-top: 6px;
+	}
+
+	input[type='text'],
+	input[type='email'],
+	select {
+		&.form-control {
+			width: 400px;
+		}
+		&.postcode-input {
+			width: 258px;
+		}
+	}
+
+	.hint {
+		margin-left: 150px;
+	}
+
+	.form-date {
+		margin-bottom: 0;
+		.form-hint {
+			display: none;
+		}
+	}
+
+	.address-type-toggle {
+		margin-left: 150px;
+	}
+
+
+}
