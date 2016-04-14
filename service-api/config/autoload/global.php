@@ -59,7 +59,7 @@ return array(
         // Used to access generated PDFs.
         'redis' => [
             'default' => [
-                'host' => getenv('OPG_LPA_PDF_CACHE_REDIS_HOST') ?: null,
+                'host' => getenv('OPG_LPA_RESQUE_REDIS_HOST') ?: null,
                 'port' => 6379,
             ],
         ], // redis
