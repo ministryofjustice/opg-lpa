@@ -19,13 +19,13 @@ return array(
                 'client' => [
                     'version' => '2012-08-10',
                     'region' => 'eu-west-1',
-                    'credentials' => ( getenv('OPG_LPA_API_CRONLOCK_DYNAMODB_KEY') && getenv('OPG_LPA_API_CRONLOCK_DYNAMODB_SECRET') ) ? [
-                        'key'    => getenv('OPG_LPA_API_CRONLOCK_DYNAMODB_KEY'),
-                        'secret' => getenv('OPG_LPA_API_CRONLOCK_DYNAMODB_SECRET'),
+                    'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
+                        'key'    => getenv('OPG_LPA_AWS_KEY'),
+                        'secret' => getenv('OPG_LPA_AWS_SECRET'),
                     ] : null,
                 ],
                 'settings' => [
-                    'table_name' => getenv('OPG_LPA_API_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
+                    'table_name' => getenv('OPG_LPA_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
 
@@ -59,7 +59,7 @@ return array(
         // Used to access generated PDFs.
         'redis' => [
             'default' => [
-                'host' => getenv('OPG_LPA_API_PDF_CACHE_REDIS_HOST') ?: null,
+                'host' => getenv('OPG_LPA_PDF_CACHE_REDIS_HOST') ?: null,
                 'port' => 6379,
             ],
         ], // redis
@@ -69,7 +69,7 @@ return array(
 
             'default' => [
 
-                'host' => getenv('OPG_LPA_API_RESQUE_REDIS_HOST') ?: null,
+                'host' => getenv('OPG_LPA_RESQUE_REDIS_HOST') ?: null,
                 'port' => 6379,
 
             ],
@@ -80,8 +80,8 @@ return array(
 
     'log' => [
 
-        'path' => getenv('OPG_LPA_API_LOG_PATH') ?: '/var/log/opg-lpa-api2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_API_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-api2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
 
     ], // log
 
@@ -103,14 +103,14 @@ return array(
 
             's3' => [
                 'settings' => [
-                    'Bucket' => getenv('OPG_LPA_API_PDF_CACHE_S3_BUCKET') ?: null,
+                    'Bucket' => getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') ?: null,
                 ],
                 'client' => [
                     'version' => '2006-03-01',
                     'region' => 'eu-west-1',
-                    'credentials' => ( getenv('OPG_LPA_API_PDF_CACHE_S3_KEY') && getenv('OPG_LPA_API_PDF_CACHE_S3_SECRET') ) ? [
-                        'key'    => getenv('OPG_LPA_API_PDF_CACHE_S3_KEY'),
-                        'secret' => getenv('OPG_LPA_API_PDF_CACHE_S3_SECRET'),
+                    'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_KEY') ) ? [
+                        'key'    => getenv('OPG_LPA_AWS_KEY'),
+                        'secret' => getenv('OPG_LPA_AWS_SECRET'),
                     ] : null,
                 ],
             ], // S3
