@@ -24,9 +24,9 @@ return array(
             'client' => [
                 'version' => '2006-03-01',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('OPG_LPA_PDF_CACHE_S3_KEY') && getenv('OPG_LPA_PDF_CACHE_S3_SECRET') ) ? [
-                    'key'    => getenv('OPG_LPA_PDF_CACHE_S3_KEY'),
-                    'secret' => getenv('OPG_LPA_PDF_CACHE_S3_SECRET'),
+                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
+                    'key'    => getenv('OPG_LPA_AWS_KEY'),
+                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
                 ] : null,
             ],
             'settings' => [
@@ -38,8 +38,8 @@ return array(
     ), // worker
 
     'log' => [
-        'path' => getenv('OPG_LPA_PDF_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_PDF_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
     ], // log
 
 
