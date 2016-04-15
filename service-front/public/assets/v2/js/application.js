@@ -4485,7 +4485,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
           if ($dayObj.val() !== '') {
             day = parseInt($dayObj.val(), 10);
-            if (isNaN(day) || (day <= 1)) {
+            if (isNaN(day) || (day < 1)) {
               day = undefined;
             }
           }
@@ -4537,7 +4537,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             duplicateName = null,
             loop,
             item;
-
+          
           if (!$target.hasClass('confirmation-validation')) {
             // If the input changed is not a confirmation tick box, then do the form checks...
 
@@ -4567,7 +4567,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 actionGroup.before($(tplInputCheckbox({
                   'elementJSref': 'js-confirm-name',
                   'elementName': 'confirmName',
-                  'elementLabel': 'The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. Click here to confirm that these are 2 different people with the same name.'
                 })).addClass('validation'));
               }
 
@@ -4576,16 +4575,17 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // Are we editing the DOB?
             if ($target.parents('.dob-element').length) {
-
-              $dobGroup = $dobElement.parents('.group');
+              $dobGroup = $dobElement;
               $dobGroup.removeClass('validation');
               $dobGroup.find('.form-element-errors').remove();
               $('.js-age-check').remove();
 
               dob = getDOB();
+              
               if (dob !== null) {
-
+            	  
                 if (dob > minAge) {
+
                   $dobGroup.addClass('validation');
                   $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
                   actionGroup.before($(tplInputCheckbox({

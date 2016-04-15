@@ -224,7 +224,7 @@
     <fieldset name="{{ dob.getAttribute('name') }}">
         <legend class="form-label">Date of birth</legend>
 
-        <div class="form-date {{ dobDay.getMessages|length >0 or dobMonth.getMessages|length >0 or dobYear.getMessages|length >0 ? 'error'}}">
+        <div class="dob-element form-date {{ dobDay.getMessages|length >0 or dobMonth.getMessages|length >0 or dobYear.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             {{ formElementErrorsV2(dobYear) }}
