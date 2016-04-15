@@ -112,10 +112,10 @@ class Module{
             $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
 
             // If the token has not expired...
-            if( isset($info['expires_in']) ){
+            if( isset($info['expiresIn']) ){
 
                 // update the time the token expires in the session
-                $identity->tokenExpiresIn( $info['expires_in'] );
+                $identity->tokenExpiresIn( $info['expiresIn'] );
 
             } else {
 

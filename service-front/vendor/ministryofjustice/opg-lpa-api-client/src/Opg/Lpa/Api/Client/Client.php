@@ -364,36 +364,18 @@ class Client
 
         $authResponse->exchangeJson( $response->getBody() );
 
+        //---
+
+        // Cache a local copy of the details.
+
+        $this->setUserId( $authResponse->getUserId() );
         $this->setToken( $authResponse->getToken() );
-        $this->setEmail( $email );
-
-        //-------------------------
-        // Get the user's details
-
-        $response = $this->client()->get( $this->authBaseUri . '/tokeninfo', [
-            'query' => [ 'access_token' => $this->getToken() ]
-        ]);
-
-        if( $response->getStatusCode() != 200 ){
-            $this->log($response, false);
-            return $authResponse->setErrorDescription( "Authentication failed" );
-        }
-        
-        $responseJson = $response->json();
-
-        if( !isset($responseJson['user_id']) ){
-            $this->log($response, false);
-            return $authResponse->setErrorDescription( "Authentication failed" );
-        }
-
-        $this->log($response, true);
-        $authResponse->setUserId( $responseJson['user_id'] );
-        
-        $this->setUserId($responseJson['user_id']);
+        $this->setEmail( $authResponse->getUsername() );
 
         //---
 
         return $authResponse;
+
     }
 
     /**
@@ -405,8 +387,10 @@ class Client
     public function getTokenInfo($token)
     {
 
-        $response = $this->client()->get( $this->authBaseUri . '/tokeninfo', [
-            'query' => [ 'access_token' => $token ]
+        $response = $this->client()->post( $this->authBaseUri . '/v1/authenticate' ,[
+            'body' => [
+                'Token' => $token,
+            ]
         ]);
 
         if( $response->getStatusCode() != 200 ){
@@ -444,8 +428,8 @@ class Client
     {
 
         $response = $this->getTokenInfo( $this->token );
-    
-        if( !isset($response['user_id']) ){
+
+        if( !isset($response['userId']) ){
             return false;
         }
         
@@ -454,7 +438,7 @@ class Client
         }
     
         $this->setEmail($response['username']);
-        $this->setUserId($response['user_id']);
+        $this->setUserId($response['userId']);
         
         return true;
     }
