@@ -4476,9 +4476,9 @@ var actionGroup = $('.group.action'),
 	tplInputCheckbox = lpa.templates['input.checkbox'];
   
 function dobChecks(dobGroup) {
-    currentDate = new Date(),
-    minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
-    maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+    var currentDate = new Date(),
+        minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+        maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate());
     
 	dobGroup.removeClass('validation');
     dobGroup.find('.form-element-errors').remove();

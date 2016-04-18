@@ -106,6 +106,7 @@ class DonorController extends AbstractLpaActorController
         }
         
         $viewModel->form = $form;
+        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/donor', ['lpa-id' => $lpaId]);
         
         // show user my details link (if the link has not been clicked and seed dropdown is not set in the view)
         if(($viewModel->seedDetailsPickerForm==null) && !$this->params()->fromQuery('use-my-details')) {

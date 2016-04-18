@@ -12,7 +12,7 @@
 	var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
 	var actors = {names: actorNames};
 
-	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetails) }}
+	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetailsDetails) }}
 
 </script>
 
@@ -288,9 +288,11 @@
 
     <div class="form-group">
         <input type="submit" name="submit" id="form-save" value="Save details" class="button">
-        <button name="cancel" type="button" class="button-secondary">Cancel</button>
+        
     </div>
 
+	<a href="{{ cancelRoute }}">Cancel</a>
+	
 {{ form().closeTag|raw }}
 
 {% endblock %}
