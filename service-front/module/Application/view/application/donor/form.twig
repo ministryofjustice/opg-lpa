@@ -82,12 +82,12 @@
 }) ? '' }}
 
 {{ firstname.setAttributes({
-    id: 'name-title',
+    id: 'name-first',
     class: 'form-control'
 }) ? '' }}
 
 {{ lastname.setAttributes({
-    id: 'name-title',
+    id: 'name-last',
     class: 'form-control'
 }) ? '' }}
 
@@ -145,7 +145,7 @@
 }) ? ''}}
 
 {{ postcode.setAttributes({
-    id: 'postcode',
+    id: 'address-postcode',
     class: 'form-control'
 }) ? ''}}
 
@@ -222,7 +222,7 @@
 
     <h2 class="heading-medium">What is the donor's date of birth?</h2>
 
-    <fieldset>
+    <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="form-label">Date of birth</legend>
 
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'error'}}">
@@ -285,9 +285,7 @@
     </fieldset>
 
     <input type="submit" name="submit" id="form-save" value="Save details" class="button">
-    <button name="cancel" type="button" class="button-secondary">Cancel</button>
-
-	<a href="{{ cancelRoute }}">Cancel</a>
+	<a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
 	
 {{ form().closeTag|raw }}
 
