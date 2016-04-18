@@ -46,5 +46,10 @@
 		margin-left: 150px;
 	}
 
+}
 
+.no-js {
+	legend.form-label {
+		display: none;
+	}
 }
