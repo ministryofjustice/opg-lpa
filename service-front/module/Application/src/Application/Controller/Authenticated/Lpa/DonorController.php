@@ -70,6 +70,8 @@ class DonorController extends AbstractLpaActorController
             return $seedSelection;
         }
         
+        $viewModel->isUseMyDetails = false;
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -99,6 +101,7 @@ class DonorController extends AbstractLpaActorController
             // load user's details into the form
             if($this->params()->fromQuery('use-my-details')) {
                 $form->bind($this->getUserDetailsAsArray());
+                $viewModel->isUseMyDetails = true;
             }
         }
         

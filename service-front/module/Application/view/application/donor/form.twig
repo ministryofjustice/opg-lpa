@@ -11,6 +11,9 @@
 <script type="text/javascript">
 	var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
 	var actors = {names: actorNames};
+
+	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetails) }}
+
 </script>
 
 {% set form = formErrorTextExchange(form,  {
