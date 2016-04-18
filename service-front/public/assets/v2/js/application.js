@@ -3805,6 +3805,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         source.spinner();
         // show form
         this.loadContent(href, form);
+        
       }
 
       return false;
@@ -4428,6 +4429,90 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     }
   };
 }());
+
+var getDOB = function () {
+    var day,
+      month,
+      year,
+      $dayObj = $('#dob-date-day'),
+      $monthObj = $('#dob-date-month'),
+      $yearObj = $('#dob-date-year'),
+      returnDate;
+
+    if ($dayObj.val() !== '') {
+      day = parseInt($dayObj.val(), 10);
+      if (isNaN(day) || (day < 1)) {
+        day = undefined;
+      }
+    }
+    if ($monthObj.val() !== '') {
+      month = parseInt($monthObj.val(), 10);
+      if (isNaN(month) || (month <= 0)) {
+        month = undefined;
+      }
+      else {
+        month = month - 1;
+      }
+    }
+    if ($yearObj.val() !== '') {
+      year = parseInt($yearObj.val(), 10);
+      if (isNaN(year) || (year <= 0)) {
+        year = undefined;
+      }
+    }
+
+    returnDate = new Date(year, month, day);
+    if (!isFinite(returnDate)) {
+      returnDate = null;
+    }
+
+    return returnDate;
+
+  }
+
+var actionGroup = $('.group.action'),
+	tplFormElementErrors = lpa.templates['errors.formElement'],
+	tplErrorsFormSummary = lpa.templates['errors.formSummary'],
+	tplInputCheckbox = lpa.templates['input.checkbox'];
+  
+function dobChecks(dobGroup) {
+    var currentDate = new Date(),
+        minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
+        maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate());
+    
+	dobGroup.removeClass('validation');
+    dobGroup.find('.form-element-errors').remove();
+    $('.js-age-check').remove();
+
+    dob = getDOB();
+    
+    if (dob !== null) {
+  	  
+      if (dob > minAge) {
+
+        dobGroup.addClass('validation');
+        dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+        actionGroup.before($(tplInputCheckbox({
+          'elementJSref': 'js-age-check',
+          'elementName': 'ageCheck',
+          'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
+        })).addClass('validation'));
+
+      }
+      else if (dob <= maxAge) {
+        dobGroup.addClass('validation');
+        dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
+        actionGroup.before($(tplInputCheckbox({
+          'elementJSref': 'js-age-check',
+          'elementName': 'ageCheck',
+          'elementLabel': 'Please confirm that they are over 100 years old.'
+        })).addClass('validation'));
+
+      }
+
+    }
+}
+
 // Person Form module for LPA
 // Dependencies: moj, _, jQuery
 
@@ -4473,49 +4558,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         $addressFields = $('input[name^="address"]', $form),
         allPopulated,
         countAddr,
-        dob,
-        getDOB = function () {
-          var day,
-            month,
-            year,
-            $dayObj = $('#dob-date-day'),
-            $monthObj = $('#dob-date-month'),
-            $yearObj = $('#dob-date-year'),
-            returnDate;
-
-          if ($dayObj.val() !== '') {
-            day = parseInt($dayObj.val(), 10);
-            if (isNaN(day) || (day < 1)) {
-              day = undefined;
-            }
-          }
-          if ($monthObj.val() !== '') {
-            month = parseInt($monthObj.val(), 10);
-            if (isNaN(month) || (month <= 0)) {
-              month = undefined;
-            }
-            else {
-              month = month - 1;
-            }
-          }
-          if ($yearObj.val() !== '') {
-            year = parseInt($yearObj.val(), 10);
-            if (isNaN(year) || (year <= 0)) {
-              year = undefined;
-            }
-          }
-
-          returnDate = new Date(year, month, day);
-          if (!isFinite(returnDate)) {
-            returnDate = null;
-          }
-
-          return returnDate;
-
-        },
-        tplFormElementErrors = lpa.templates['errors.formElement'],
-        tplErrorsFormSummary = lpa.templates['errors.formSummary'],
-        tplInputCheckbox = lpa.templates['input.checkbox'];
+        dob;
 
       // disable submit if empty form
       $submitBtn.attr('disabled', $('#address-address1', $form).val() === '');
@@ -4525,12 +4568,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
 
           var $target = $(evt.target),
-            currentDate = new Date(),
-            minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
-            maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate()),
             $dobElement = $('.dob-element'),
-            $dobGroup,
-            actionGroup = $('.group.action'),
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
             $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
@@ -4575,39 +4613,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // Are we editing the DOB?
             if ($target.parents('.dob-element').length) {
-              $dobGroup = $dobElement;
-              $dobGroup.removeClass('validation');
-              $dobGroup.find('.form-element-errors').remove();
-              $('.js-age-check').remove();
-
-              dob = getDOB();
-              
-              if (dob !== null) {
-            	  
-                if (dob > minAge) {
-
-                  $dobGroup.addClass('validation');
-                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                  actionGroup.before($(tplInputCheckbox({
-                    'elementJSref': 'js-age-check',
-                    'elementName': 'ageCheck',
-                    'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
-                  })).addClass('validation'));
-
-                }
-                else if (dob <= maxAge) {
-                  $dobGroup.addClass('validation');
-                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                  actionGroup.before($(tplInputCheckbox({
-                    'elementJSref': 'js-age-check',
-                    'elementName': 'ageCheck',
-                    'elementLabel': 'Please confirm that they are over 100 years old.'
-                  })).addClass('validation'));
-
-                }
-
-              }
-
+            	dobChecks($dobElement);
             }
 
 

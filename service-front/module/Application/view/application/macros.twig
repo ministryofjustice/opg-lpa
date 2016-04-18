@@ -41,3 +41,11 @@
         <a href='{{ nextUrl }}' class="button gotonextpart">Continue</a>
     {% endif %}
 {% endmacro %}
+
+{% macro addDobCheckOnUseMyDetails(isUseMyDetails) %}
+	{% if (isUseMyDetails) %}
+		if ($('#dob-date-day').val()) {
+			dobChecks($('.dob-element'));
+		}
+	{% endif %}
+{% endmacro %}

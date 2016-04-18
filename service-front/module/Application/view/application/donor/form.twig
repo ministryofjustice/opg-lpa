@@ -11,6 +11,8 @@
 <script type="text/javascript">
 	var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
 	var actors = {names: actorNames};
+
+	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetailsDetails) }}
 </script>
 
 {% set form = formErrorTextExchange(form,  {
@@ -285,6 +287,8 @@
     <input type="submit" name="submit" id="form-save" value="Save details" class="button">
     <button name="cancel" type="button" class="button-secondary">Cancel</button>
 
+	<a href="{{ cancelRoute }}">Cancel</a>
+	
 {{ form().closeTag|raw }}
 
 {% endblock %}

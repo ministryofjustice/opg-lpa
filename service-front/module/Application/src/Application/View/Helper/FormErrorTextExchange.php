@@ -61,7 +61,6 @@ class FormErrorTextExchange extends AbstractHelper
             foreach ($messages as &$elementMessage) {
                 if (array_key_exists($elementMessage, $elementMap)) {
                     $elementMessage = $elementMap[$elementMessage];
-                    echo '&nbsp;' .  '&nbsp;' .  $elementMessage . '<br>';
                 } elseif (array_key_exists($elementMessage, $this->commonMap)) {
                     $elementMessage = $this->commonMap[$elementMessage];
                 }
