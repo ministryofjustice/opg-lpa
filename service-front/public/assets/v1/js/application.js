@@ -2772,6 +2772,7 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
         var href = this.$el.attr('href');
         this.$el.data('href', href).removeAttr('href');
       }
+
     },
 
     enable: function () {
@@ -3551,7 +3552,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         href = source.attr('href'),
         form = source.data('form');
 
-      // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
+      // set original source to be the original link clicked from the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
       if ($('#popup').length === 0) {
         this.originalSource = source;
@@ -3579,6 +3580,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         } else {
           // render form
           self.renderForm(html);
+          if (url.indexOf('use-my-details') !== -1) {
+        	  $('#dob-date-day').trigger('change');
+          }
         }
       });
     },
@@ -4278,7 +4282,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // Listen for changes to form
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
-
           var $target = $(evt.target),
             currentDate = new Date(),
             minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
@@ -4338,7 +4341,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
               }
 
             }
-
 
             // Are we editing the DOB?
             if ($target.parents('.dob-element').length) {
