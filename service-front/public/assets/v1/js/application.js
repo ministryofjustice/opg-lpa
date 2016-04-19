@@ -4243,7 +4243,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
           if ($dayObj.val() !== '') {
             day = parseInt($dayObj.val());
-            if (isNaN(day) || (day <= 1)) {
+            if (isNaN(day) || (day < 1)) {
               day = undefined;
             }
           }

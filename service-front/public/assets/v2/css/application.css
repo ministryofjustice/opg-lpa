@@ -3396,6 +3396,9 @@ input[disabled="disabled"] {
   .form-popup .form-condensed .address-type-toggle {
     margin-left: 150px; }
 
+.no-js legend.form-label {
+  display: none; }
+
 .noscroll {
   position: relative;
   overflow: hidden; }
