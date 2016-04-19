@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f7c4f2861c5a35c87749c9b3528a835a",
-    "content-hash": "f84a0d1a258b53cf765c398c2ea12b95",
+    "hash": "a5374314006ca62e195dc2eadd59f6c2",
+    "content-hash": "815d88d04b814abd55689a191631c183",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.17.5",
+            "version": "3.17.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1cef9b334729b3564c9aef15481a55561c54b53f"
+                "reference": "d5a5145263da88c9ba870b579c3d4f648b82d2a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1cef9b334729b3564c9aef15481a55561c54b53f",
-                "reference": "1cef9b334729b3564c9aef15481a55561c54b53f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d5a5145263da88c9ba870b579c3d4f648b82d2a9",
+                "reference": "d5a5145263da88c9ba870b579c3d4f648b82d2a9",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-04-07 22:44:13"
+            "time": "2016-04-11 17:36:01"
         },
         {
             "name": "doctrine/lexer",
@@ -400,16 +400,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.3",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b"
+                "reference": "31382fef2889136415751badebbd1cb022a4ed72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2e89629ff057ebb49492ba08e6995d3a6a80021b",
-                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/31382fef2889136415751badebbd1cb022a4ed72",
+                "reference": "31382fef2889136415751badebbd1cb022a4ed72",
                 "shasum": ""
             },
             "require": {
@@ -454,7 +454,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2016-02-18 21:54:00"
+            "time": "2016-04-13 19:56:01"
         },
         {
             "name": "guzzlehttp/ringphp",
@@ -652,16 +652,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "532cbc26d77411d28486df2e9abd36578b10fb82"
+                "reference": "a59709ee8271a86ce9a0150a18e343df4d545878"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/532cbc26d77411d28486df2e9abd36578b10fb82",
-                "reference": "532cbc26d77411d28486df2e9abd36578b10fb82",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/a59709ee8271a86ce9a0150a18e343df4d545878",
+                "reference": "a59709ee8271a86ce9a0150a18e343df4d545878",
                 "shasum": ""
             },
             "require": {
@@ -684,10 +684,10 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v3.0.0",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v3.0.1",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-03-07 16:01:47"
+            "time": "2016-04-15 09:45:11"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -914,6 +914,50 @@
                 "source": "https://github.com/Netsensia/omnipay-worldpay-xml/tree/v1.1.1"
             },
             "time": "2015-11-18 11:06:24"
+        },
+        {
+            "name": "nsmithuk/zf-config-dump",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NSmithUK/zf-config-dump.git",
+                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NSmithUK/zf-config-dump/zipball/89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/var-dumper": "^3.0",
+                "zendframework/zendframework": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ZFConfigDump\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Neil Smith",
+                    "email": "neil@nsmith.net"
+                }
+            ],
+            "description": "Dumps an application's config to the terminal",
+            "keywords": [
+                "cli",
+                "config",
+                "module",
+                "zf2"
+            ],
+            "time": "2016-04-12 13:21:43"
         },
         {
             "name": "omnipay/common",
@@ -1748,6 +1792,69 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2015-07-01 19:58:06"
+        },
+        {
+            "name": "symfony/var-dumper",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/var-dumper.git",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "twig/twig": "~1.20|~2.0"
+            },
+            "suggest": {
+                "ext-symfony_debug": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Resources/functions/dump.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Component\\VarDumper\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony mechanism for exploring and dumping PHP variables",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "debug",
+                "dump"
+            ],
+            "time": "2016-03-10 10:34:12"
         },
         {
             "name": "twig/twig",

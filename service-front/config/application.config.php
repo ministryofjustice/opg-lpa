@@ -4,6 +4,7 @@ return array(
     'modules' => array(
         'Application',
         'ZfcTwig',
+        'ZFConfigDump'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

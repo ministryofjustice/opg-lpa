@@ -178,7 +178,7 @@ class AuthResponse
     
     public function isAuthenticated()
     {
-        return !empty($this->userId) && !empty($this->token);
+        return !empty($this->userId) && !empty($this->token) && empty($this->errorDescription);
     }
 
     /**
