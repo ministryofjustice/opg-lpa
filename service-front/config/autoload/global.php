@@ -27,7 +27,7 @@ return array(
 
     'account-cleanup' => [
         'notification' => [
-            'token' => getenv('OPG_LPA_FRONT_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
+            'token' => getenv('OPG_LPA_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
         ],
     ], // cleanup-cleanup
 
