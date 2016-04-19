@@ -4,6 +4,10 @@
 
 .form-popup {
 	@extend main;
+
+	.error-summary {
+		display: none;
+	}
 }
 
 .form-popup .form-condensed {
@@ -71,6 +75,31 @@
 		position: absolute;
 		top: 16px;
 		right: 182px;
+	}
+
+	.error {
+		position: relative;
+		padding-left: 0;
+		border-left: 0;
+		.form-label {
+			width: 150px;
+		}
+		.form-control {
+			margin-bottom: 28px;
+		}
+	}
+
+	.error-message {
+		position: absolute;
+		top: 42px;
+		left: 150px;
+	}
+
+	.form-date {
+		.error-message {
+			left: 0;
+			top: 78px;
+		}
 	}
 
 }

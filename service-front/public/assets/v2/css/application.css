@@ -3369,6 +3369,9 @@ input[disabled="disabled"] {
 .js-enabled #popup.form-popup {
   max-width: 600px; }
 
+.form-popup .error-summary {
+  display: none; }
+
 .form-popup .form-condensed {
   padding: 30px 15px; }
   .form-popup .form-condensed .heading-medium, .form-popup .form-condensed .help-sections h2, .help-sections .form-popup .form-condensed h2 {
@@ -3410,6 +3413,21 @@ input[disabled="disabled"] {
     position: absolute;
     top: 16px;
     right: 182px; }
+  .form-popup .form-condensed .error {
+    position: relative;
+    padding-left: 0;
+    border-left: 0; }
+    .form-popup .form-condensed .error .form-label {
+      width: 150px; }
+    .form-popup .form-condensed .error .form-control {
+      margin-bottom: 28px; }
+  .form-popup .form-condensed .error-message {
+    position: absolute;
+    top: 42px;
+    left: 150px; }
+  .form-popup .form-condensed .form-date .error-message {
+    left: 0;
+    top: 78px; }
 
 .no-js legend.form-label {
   display: none; }
