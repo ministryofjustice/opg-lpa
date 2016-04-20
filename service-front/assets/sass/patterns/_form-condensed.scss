@@ -1,5 +1,12 @@
 .js-enabled #popup.form-popup {
 	max-width: 600px;
+	@include media($max-width: 1000px) {
+		margin: 0 auto;
+	}
+	@include media(mobile) {
+		width: auto;
+		margin: 2em 0.5em 10em 0.5em;
+	}
 }
 
 .form-popup {
@@ -12,9 +19,14 @@
 
 .form-popup .form-condensed {
 	padding: $gutter $gutter-half;
+	@include media(mobile) {
+		padding-top: 0;
+	}
 
 	.heading-medium {
-		display: none;
+		@include media(tablet) {
+			display: none;
+		}
 	}
 
 	.form-group {
@@ -22,49 +34,67 @@
 	}
 
 	.form-label {
-		float: left;
-		width: 150px;
-		margin-top: 6px;
+		@include media(tablet) {
+			float: left;
+			width: 150px;
+			margin-top: 6px;
+		}
 	}
 
 	input[type='text'],
 	input[type='email'],
 	select {
 		&.form-control {
-			width: 420px;
+			@include media(tablet) {
+				width: 420px;
+			}
 		}
 		&.postcode-input {
-			width: 252px;
+			@include media(tablet) {
+				width: 252px;
+			}
 		}
 	}
 
 	.hint {
-		margin-left: 150px;
+		@include media(tablet) {
+			margin-left: 150px;
+		}
 	}
 
 	.form-date {
 		margin-bottom: 0;
 		.form-hint {
-			display: none;
+			@include media(tablet) {
+				display: none;
+			}
 		}
 	}
 
 	.address-type-toggle {
-		margin-left: 150px;
+		@include media(tablet) {
+			margin-left: 150px;
+		}
 	}
 
 	.block-label {
-		width: auto;
-		margin-left: 150px;
-		padding: 15px 15px 15px 40px;
+		@include media(tablet) {
+			width: auto;
+			margin-left: 150px;
+			padding: 15px 15px 15px 40px;
+		}
 		input {
-			top: 12px;
-			left: 12px;
+			@include media(tablet) {
+				top: 12px;
+				left: 12px;
+			}
 		}
 	}
 
 	input.button {
-		margin-left: 150px;
+		@include media(tablet) {
+			margin-left: 150px;
+		}
 	}
 
 	.postcodelookup {
@@ -72,33 +102,51 @@
 	}
 
 	.spinner {
-		position: absolute;
-		top: 16px;
-		right: 182px;
+		@include media(tablet) {
+			position: absolute;
+			top: 16px;
+			right: 182px;	
+		}
 	}
 
 	.error {
-		position: relative;
-		padding-left: 0;
-		border-left: 0;
+		@include media(tablet) {
+			position: relative;
+			padding-left: 0;
+			border-left: 0;	
+		}
 		.form-label {
-			width: 150px;
+			@include media(tablet) {
+				width: 150px;
+			}
 		}
 		.form-control {
-			margin-bottom: 28px;
+			@include media(tablet) {
+				margin-bottom: 28px;
+			}
 		}
 	}
 
 	.error-message {
-		position: absolute;
-		top: 42px;
-		left: 150px;
+		@include media(tablet) {
+			position: absolute;
+			top: 42px;
+			left: 150px;	
+		}
 	}
 
 	.form-date {
 		.error-message {
-			left: 0;
-			top: 78px;
+			@include media(tablet) {
+				left: 0;
+				top: 78px;
+			}
+		}
+	}
+
+	legend.form-label {
+		@include media(mobile) {
+			display: none;		
 		}
 	}
 
