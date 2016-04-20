@@ -149,7 +149,10 @@
     class: 'form-control'
 }) ? ''}}
 
-{{ canSign.setAttributes({class:'donor-cannot-sign'}) ? '' }}
+{{ canSign.setAttributes({
+    id: 'can-sign',
+    class:'donor-cannot-sign'
+}) ? '' }}
 
 {# form fields labels #}
 {{ title.setOptions({label:'Title'}) ? '' }}
@@ -195,7 +198,9 @@
 {############################ donor form ############################}
 
 {% if (useMyDetailsRoute) %}
-<a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
+<div class="panel-actions">
+    <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
+</div>
 {% endif %}
 
 {# begin form #}
@@ -262,22 +267,24 @@
 
     <h2 class="heading-medium">What is the donor's address?</h2>
 
-    <fieldset class="js-PostcodeLookup__postal-add">
+    <fieldset class="postcodelookup">
         <legend class="visuallyhidden">Address</legend>
-        {{ macros.formGroup(address1) }}
-        {{ macros.formGroup(address2) }}
-        {{ macros.formGroup(address3) }}
-        {{ macros.formGroup(postcode) }}
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
     </fieldset>
 
     <fieldset>
         <legend class="visuallyhidden"></legend>
 
-        <div class="form-group text {{ canSign.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ canSign.getMessages|length >0 ? 'error'}}">
             <label class="block-label" for="{{ canSign.getAttribute('id') }}">
                 {{ formElement(canSign) }}
                 {{ canSign.getOption('label') }}
-                <span class="form-hint">We'll include an extra signature sheet so someone can sign on their behalf</span>
+                <span class="form-hint flush--bottom">We'll include an extra signature sheet so someone can sign on their behalf</span>
                 {{ formElementErrorsV2(canSign) }}
             </label>
         </div>

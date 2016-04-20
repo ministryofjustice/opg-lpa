@@ -2,9 +2,16 @@
 	max-width: 600px;
 }
 
+.form-popup {
+	@extend main;
+
+	.error-summary {
+		display: none;
+	}
+}
 
 .form-popup .form-condensed {
-	padding: 20px;
+	padding: $gutter $gutter-half;
 
 	.heading-medium {
 		display: none;
@@ -24,10 +31,10 @@
 	input[type='email'],
 	select {
 		&.form-control {
-			width: 400px;
+			width: 420px;
 		}
 		&.postcode-input {
-			width: 258px;
+			width: 252px;
 		}
 	}
 
@@ -46,10 +53,64 @@
 		margin-left: 150px;
 	}
 
+	.block-label {
+		width: auto;
+		margin-left: 150px;
+		padding: 15px 15px 15px 40px;
+		input {
+			top: 12px;
+			left: 12px;
+		}
+	}
+
+	input.button {
+		margin-left: 150px;
+	}
+
+	.postcodelookup {
+		position: relative;
+	}
+
+	.spinner {
+		position: absolute;
+		top: 16px;
+		right: 182px;
+	}
+
+	.error {
+		position: relative;
+		padding-left: 0;
+		border-left: 0;
+		.form-label {
+			width: 150px;
+		}
+		.form-control {
+			margin-bottom: 28px;
+		}
+	}
+
+	.error-message {
+		position: absolute;
+		top: 42px;
+		left: 150px;
+	}
+
+	.form-date {
+		.error-message {
+			left: 0;
+			top: 78px;
+		}
+	}
+
 }
 
 .no-js {
 	legend.form-label {
 		display: none;
 	}
+}
+
+.panel-actions {
+	@extend .panel-cta;
+	padding: $gutter-half;
 }
