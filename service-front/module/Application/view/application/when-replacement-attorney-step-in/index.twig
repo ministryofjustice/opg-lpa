@@ -1,0 +1,103 @@
+{% extends 'layout/twig/creation-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form, {}) %}
+
+{{ form.setAttributes({class: 'form', id:'step-in-form'}) ? '' }}
+
+{% set csrf = form.get(form.csrfName) %}
+
+{% set when = form.get('when') %}
+{% set whenDetails = form.get('whenDetails') %}
+{{ whenDetails.setAttributes({rows:'24', cols:'80'}) ? '' }}
+
+{% set currentWhenOptions = when.getOptions()['value_options'] %}
+
+{% set whenOptions = {
+			'first' :
+				{ label: 'As soon as one of the original attorneys can no longer act',
+	 			  label_attributes: {
+	 			       for: 'when-first',
+	 			       id: 'when-first'
+	 			  },
+	 			  value: currentWhenOptions['first'].value
+	 		    },
+			'last' :
+				{ label: 'Only when none of the original attorneys can act',
+                  label_attributes: {
+                       for: 'when-last',
+                       id: 'when-last'
+                  },
+                  value: currentWhenOptions['last'].value 
+	 		    },
+			'depends' :
+				{ label: 'In some other way...',
+                  label_attributes: {
+                       for: 'when-depends',
+                       id: 'when-depends',
+                  },
+                  value: currentWhenOptions['depends'].value
+	 		    }
+		}
+%}
+
+{{ when.setOptions({value_options: whenOptions}) ? '' }}
+{{ when.setLabelOptions({disable_html_escape: true}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<section id="when-replacement-attorney-step-in-section" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. How should your replacement attorneys step in?</h2>
+
+    <div class="accordion-content">
+    
+		<div class="section-intro">
+
+			<p>You can choose when your replacement attorneys step in, and in what order.</p>
+
+			<p>Your replacement attorneys will usually all step in together as soon as 1 of your original attorneys can no longer act. They will be able to make
+				any decision jointly and severally along with the other original attorneys.</p>
+
+			<p>If you'd rather they stepped in later, or you want to choose a specific order, then select 1 of the other 2 options.</p>
+		</div>
+
+		<h3>My replacement attorneys will step in...</h3>
+		
+		{{ form().openTag( form )|raw }}
+		
+        {{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+		
+        <div class="emphasised option group">
+            
+            {{ formElement(when) }}
+			{{ formElementErrors(when) }}
+            
+        </div>
+        
+		<div id="toggle-when-depends" class="details-textbox" data-toggled-by="#when-depends" style="display: none;">
+			<p class="hint">
+		  	Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice. <a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Not sure what to put?</a>
+			</p>
+			
+            {{ formElement(whenDetails) }}
+			{{ formElementErrors(whenDetails) }}
+		</div>
+
+		<div class="accordion-actions group">
+			<p>
+                <input type="submit" name="save" id="go-to-next-part" value="Save and continue" class="button gotonextpart">
+            </p>
+		</div>
+
+		{{ form().closeTag|raw }}
+    
+    </div>
+    
+</section>
+
+{% endblock %}
