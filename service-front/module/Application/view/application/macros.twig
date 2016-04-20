@@ -49,3 +49,28 @@
 		}
 	{% endif %}
 {% endmacro %}
+
+{% macro renderPickerForm(form, pickerForm) %}
+    {% if (pickerForm) %}
+    {{ form().openTag(pickerForm)|raw }}
+    {{ formElement(pickerCsrf) }}
+    
+        <div class="role-select group">
+            <label>{{ picker.getOption('label') }}</label>
+            {{ formSelect(picker) }}
+            {{ formElementErrors(picker) }}
+            {{ formSubmit(pickerSubmit) }}
+        </div>
+    
+    {{ form().closeTag|raw }}
+        
+    {% endif %}
+{% endmacro %}
+
+{% macro useMyDetails(useMyDetailsRoute) %}
+    {% if (useMyDetailsRoute) %}
+    <p class="role-select group">
+        <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
+    </p>
+    {% endif %}
+{% endmacro %}

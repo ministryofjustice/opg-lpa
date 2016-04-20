@@ -67,32 +67,13 @@
 
 <h2 class="header">Edit attorney details</h2>
 
-{############################ picker form ############################}
-
-{% if (pickerForm) %}
-{{ form().openTag(pickerForm)|raw }}
-{{ formElement(pickerCsrf) }}
-
-    <div class="role-select group">
-        <label>{{ picker.getOption('label') }}</label>
-        {{ formSelect(picker) }}
-        {{ formElementErrors(picker) }}
-        {{ formSubmit(pickerSubmit) }}
-    </div>
-
-{{ form().closeTag|raw }}
-    
-{% endif %}
+{{ macros.renderPickerForm(form, pickerForm) }}
 
 {############################ attorney form ############################}
 
 {{ form().openTag( form )|raw }}
 
-{% if (useMyDetailsRoute) %}
-<p class="role-select group">
-    <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
-</p>
-{% endif %}
+{{ macros.useMyDetails(useMyDetailsRoute) }}
 
 {% if (addTrustCorporationRoute) %}
 <p class="role-select group">
