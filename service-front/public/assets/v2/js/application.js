@@ -3819,9 +3819,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         } else {
           // render form
           self.renderForm(html);
-          if (url.indexOf('use-my-details') !== -1) {
-        	  $('#dob-date-day').trigger('change');
-          }
         }
       });
     },
@@ -5037,11 +5034,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     sectionScrollTo: function(){
-      if ( $('section.current').offset() !== undefined ) {
+      if ( $('.js-current').offset() !== undefined ) {
         setTimeout(function() {
-          if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) !== 'lpa-type') {
-            window.scrollTo(0, $('section.current').offset().top - 107);
-          }
+          window.scrollTo(0, $('.js-current').offset().top - 20);
         }, 200);
       }
     }
