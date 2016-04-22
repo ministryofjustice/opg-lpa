@@ -1,0 +1,45 @@
+{% extends 'layout/twig/creation-stage.twig' %}
+
+{% block content %}
+
+<section id="people-to-notify-section" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who should be notified about your LPA?</h2>
+
+    <div class="accordion-content">
+    
+		<div class="section-intro">
+			<p>It's a good idea to let people know when you apply to register your LPA. You can add up to 5 ‘people to notify’. Many donors just add 1 or 2.</p>
+			<p>These people have a chance to raise any concerns before your LPA is registered, as a safeguard for you.</p>
+			<p>However, you don't have to include any 'people to notify' for your LPA to be valid.</p>
+			
+			<p><a class="js-guidance" href="/help/#topic-people-to-notify" data-journey-click="stageprompt.lpa:help:people-to-notify">Find out more about 'people to notify'</a></p>
+		</div>
+		
+        {% if (peopleToNotify) %}
+            
+            {% for person in peopleToNotify %}
+            	{% include 'application/people-to-notify/partials/people-to-notify.twig' with person %}
+        	{% endfor %}
+        
+            {% if (addRoute) %}
+                <p><a class="add button js-form-popup" data-form="notifiedperson1" href="{{ addRoute }}" role="button">Add another 'person to notify'</a></p>
+            {% endif %}
+            
+        {% else %}
+        
+		    <p><a class="add button js-form-popup" data-form="notifiedperson1" href="{{ addRoute }}" role="button">Add a 'person to notify'</a></p>
+		    
+        {% endif %}
+        
+        <div class="accordion-actions group">
+            <p>
+                <span class="button">Save and continue</span>
+            </p>
+        </div>
+        
+    </div>
+    
+</section>
+
+{% endblock %}
