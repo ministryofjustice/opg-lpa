@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% set form = formErrorTextExchange(form,  {}) %}
+{{ form.prepare() ? '' }}
+
 <section id="people-to-notify-section" class="section current">
 	
 	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who should be notified about your LPA?</h2>
@@ -31,12 +34,18 @@
 		    <p><a class="add button js-form-popup" data-form="notifiedperson1" href="{{ addRoute }}" role="button">Add a 'person to notify'</a></p>
 		    
         {% endif %}
+
+        {{ form().openTag( form )|raw }}
         
-        <div class="accordion-actions group">
-            <p>
-                <span class="button">Save and continue</span>
+        {{ formElement(form.get( form.csrfName )) }}
+        
+        <div class="accordion-actions">
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
             </p>
         </div>
+        
+        {{ form().closeTag|raw }}
         
     </div>
     

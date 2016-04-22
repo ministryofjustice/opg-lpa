@@ -1,0 +1,7 @@
+{{ params.idx }}. 
+{% if (params.values == '') %}
+There are no 'people to notify'
+{% else %}
+The person to be notified
+{{ params.values }}
+{% endif %}
