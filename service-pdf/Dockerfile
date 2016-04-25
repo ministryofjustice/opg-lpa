@@ -24,7 +24,7 @@ RUN mkdir -p /srv/opg-lpa-pdf2/application && \
     chmod -R 755 /srv/opg-lpa-pdf2/application && \
     ln -s /app /srv/opg-lpa-pdf2/application/current
 
-ADD docker/service/opg-lpa-pdf2 /etc/service/opg-lpa-pdf2
-RUN chmod a+x /etc/service/opg-lpa-pdf2/run
+RUN mkdir /etc/service/opg-lpa-pdf2/
+ADD docker/confd /etc/confd
 
 ENV OPG_SERVICE pdf

@@ -1,0 +1,6 @@
+[template]
+src = "run.tmpl"
+dest = "/etc/service/opg-lpa-pdf2/run"
+keys = [
+    "/opg/lpa/queue/dynamodb",
+]
