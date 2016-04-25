@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "165cf4a71eb62de1553a760e34558c87",
-    "content-hash": "7c43fa0fc91a82316fb1b520181dd073",
+    "hash": "d15592a488bab56f793a2b81285e8532",
+    "content-hash": "2c814613e5173b9ca8d3f07bbab27475",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -86,101 +86,6 @@
                 "sdk"
             ],
             "time": "2016-04-21 21:16:40"
-        },
-        {
-            "name": "chrisboulton/php-resque",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/chrisboulton/php-resque.git",
-                "reference": "c335bc3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/c335bc3",
-                "reference": "c335bc3",
-                "shasum": ""
-            },
-            "require": {
-                "colinmollenhour/credis": "~1.2",
-                "ext-pcntl": "*",
-                "php": ">=5.3.0",
-                "psr/log": "1.0.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "3.7.*"
-            },
-            "suggest": {
-                "ext-proctitle": "Allows php-resque to rename the title of UNIX processes to show the status of a worker.",
-                "ext-redis": "Native PHP extension for Redis connectivity. Credis will automatically utilize when available."
-            },
-            "bin": [
-                "bin/resque"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Resque": "lib"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Chris Boulton",
-                    "email": "chris@bigcommerce.com"
-                }
-            ],
-            "description": "Redis backed library for creating background jobs and processing them later. Based on resque for Ruby.",
-            "homepage": "http://www.github.com/chrisboulton/php-resque/",
-            "keywords": [
-                "background",
-                "job",
-                "redis",
-                "resque"
-            ],
-            "time": "2015-05-13 11:58:23"
-        },
-        {
-            "name": "colinmollenhour/credis",
-            "version": "1.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/colinmollenhour/credis.git",
-                "reference": "74b2b703da5c58dc07fb97e8954bc63280b469bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/74b2b703da5c58dc07fb97e8954bc63280b469bf",
-                "reference": "74b2b703da5c58dc07fb97e8954bc63280b469bf",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "Client.php",
-                    "Cluster.php",
-                    "Sentinel.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Colin Mollenhour",
-                    "email": "colin@mollenhour.com"
-                }
-            ],
-            "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
-            "homepage": "https://github.com/colinmollenhour/credis",
-            "time": "2016-03-24 15:50:52"
         },
         {
             "name": "doctrine/lexer",
@@ -559,16 +464,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.1.7",
+            "version": "v1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "d67ad91f746c07a30cdecc99eff7268aa0d6ff9b"
+                "reference": "6b90faf661db487a84c4ada4efeaacb2c38066de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d67ad91f746c07a30cdecc99eff7268aa0d6ff9b",
-                "reference": "d67ad91f746c07a30cdecc99eff7268aa0d6ff9b",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6b90faf661db487a84c4ada4efeaacb2c38066de",
+                "reference": "6b90faf661db487a84c4ada4efeaacb2c38066de",
                 "shasum": ""
             },
             "require": {
@@ -592,10 +497,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.7",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.6",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2016-01-13 11:22:04"
+            "time": "2015-10-29 09:57:21"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -853,6 +758,50 @@
                 "MIT"
             ],
             "time": "2016-02-15 15:41:07"
+        },
+        {
+            "name": "nsmithuk/zf-config-dump",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NSmithUK/zf-config-dump.git",
+                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NSmithUK/zf-config-dump/zipball/89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/var-dumper": "^3.0",
+                "zendframework/zendframework": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ZFConfigDump\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Neil Smith",
+                    "email": "neil@nsmith.net"
+                }
+            ],
+            "description": "Dumps an application's config to the terminal",
+            "keywords": [
+                "cli",
+                "config",
+                "module",
+                "zf2"
+            ],
+            "time": "2016-04-12 13:21:43"
         },
         {
             "name": "phly/phly-mongo",
@@ -1372,6 +1321,69 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2015-07-01 19:58:06"
+        },
+        {
+            "name": "symfony/var-dumper",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/var-dumper.git",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "twig/twig": "~1.20|~2.0"
+            },
+            "suggest": {
+                "ext-symfony_debug": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Resources/functions/dump.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Component\\VarDumper\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony mechanism for exploring and dumping PHP variables",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "debug",
+                "dump"
+            ],
+            "time": "2016-03-10 10:34:12"
         },
         {
             "name": "wp-cli/php-cli-tools",
@@ -2567,14 +2579,12 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "chrisboulton/php-resque": 20,
         "nsmithuk/dynamo-queue-php": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.4.0",
-        "ext-redis": ">=2.2.4",
         "ext-mongo": ">=1.4.5"
     },
     "platform-dev": []

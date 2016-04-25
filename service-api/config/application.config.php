@@ -5,6 +5,7 @@ return array(
         'ZF\ApiProblem',
         'ZfcRbac',
         'Application',
+        'ZFConfigDump'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+"""
+Iterates over env variables and for each non empty variable create entry in
+    /etc/php5/fpm/pool.d/app.conf
+
+"""
+import os
+import re
+
+skip_regexs = ["^LS_COLORS$","OPG_BASE_SSL_CERT$","OPG_BASE_SSL_KEY$", "OPG_BASE_CA_CERT$"]
+
+
+with open("/etc/php5/fpm/pool.d/app.conf", "a") as app_conf:
+
+    for name, value in os.environ.iteritems():
+        if value:
+            dontskip = True
+            for thisregex in skip_regexs:
+              if re.search(thisregex,name) is not None:
+                dontskip = False
+            if dontskip:
+                app_conf.write("env[{}] = \"{}\"\n".format(name, value))
+            else:
+                print("Skipping variable {} as it's in the skip list".format(name))
+        else:
+            print("Skipping variable {} as it's empty".format(name))
+

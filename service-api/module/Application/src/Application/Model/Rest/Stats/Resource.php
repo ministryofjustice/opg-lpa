@@ -282,72 +282,30 @@ class Resource extends AbstractResource {
      * Returns a list of lpa counts and user counts, in order to
      * answer questions of the form how many users have five LPAs?
      *
+     * This data comes from a pre-generated cache.
+     *
      * @return array
      * 
      * The key of the return array is the number of LPAs
      * The value is the number of users with this many LPAs
      */
     private function getLpasPerUser(){
-        
-        $collection = $this->getCollection('lpa');
-        $db = $collection->db;
-        
-        // Stats can (ideally) be processed on a secondary.
-        $db->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
-        //------------------------------------
+        $collection = $this->getCollection('stats-lpas');
 
-        // Returns the number of LPAs under each userId
+        // Stats can (ideally) be pulled from a secondary.
+        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
-        $map = new MongoCode(
-            'function() {
-                if( this.user ){
-                    emit(this.user,1);
-                }
-            }'
-        );
+        // Return all the cached data.
+        $cachedStats = $collection->find();
 
-        $reduce = new MongoCode(
-            'function(user, lpas) {
-                return lpas.length;
-            }'
-        );
+        //---
 
-        $results = $db->command([
-            'mapreduce' => $collection->getName(),
-            'map' => $map,
-            'reduce' => $reduce,
-            'out' => ['inline'=>1],
-            'query' => [ 'user' => [ '$exists'=>true ] ],
-        ])['results'];
+        $byLpaCount = array();
 
-        //------------------------------------
-
-        /*
-         * This creates an array where:
-         *  key = a number or LPAs
-         *  value = the number of users with that number of LPAs.
-         *
-         * This lets us say:
-         *  N users have X LPAs
-         */
-
-        $byLpaCount = array_reduce(
-            $results,
-            function( $carry, $item ){
-
-                $count = (int)$item['value'];
-
-                if( !isset($carry[$count]) ){
-                    $carry[$count] = 1;
-                } else {
-                    $carry[$count]++;
-                }
-
-                return $carry;
-            },
-            array()
-        );
+        foreach( $cachedStats as $stat ){
+            $byLpaCount[$stat['_id']] = $stat['count'];
+        }
 
         //---
 

@@ -426,9 +426,12 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      */
     private function getPdfIdent( $type ){
 
+        $keys = $this->getServiceLocator()->get('config')['pdf']['encryption']['keys'];
+
         $lpa = $this->getLpa();
 
-        $hash = md5( $lpa->toJson() );
+        // $keys are included so a new ident is generated when encryption keys change.
+        $hash = hash( 'sha512', md5( $lpa->toJson() ) . $keys['document'] . $keys['queue'] );
 
         return strtolower( "{$type}-{$hash}" );
 
