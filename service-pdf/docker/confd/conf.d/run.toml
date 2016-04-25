@@ -4,3 +4,5 @@ dest = "/etc/service/opg-lpa-pdf2/run"
 keys = [
     "/opg/lpa/queue/dynamodb",
 ]
+owner = "root"
+mode = "0755"
