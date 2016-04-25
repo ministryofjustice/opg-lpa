@@ -80,6 +80,26 @@ abstract class AbstractClient {
 
     } // function
 
+
+    /**
+     * Returns the total number of jobs waiting to be processes.
+     *
+     * @return int
+     */
+    public function countWaitingJobs(){
+
+        // Only waiting jobs are in 'partition-order-index', so we can simply scan this.
+
+        $result = $this->client->scan([
+            'TableName' => $this->config['table_name'],
+            'IndexName' => 'partition-order-index',
+            'Select'    => 'COUNT'
+        ]);
+
+        return $result['Count'];
+
+    } // function
+
     //---------------------------------------------------------------------------------------
     // Table management functions
 

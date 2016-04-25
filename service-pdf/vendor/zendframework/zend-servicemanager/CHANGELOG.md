@@ -2,16 +2,20 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.7.5 - 2016-02-02
+## 3.0.3 - 2016-02-02
 
 ### Added
 
-- [#81](https://github.com/zendframework/zend-servicemanager/pull/81) adds a
-  test covering forwards-compatibility features for plugin manager
-  implementations.
-- [#96](https://github.com/zendframework/zend-servicemanager/pull/96) adds
-  `Zend\ServiceManager\Test\CommonPluginManagerTrait`, which allows you to test
-  that your plugin manager is forwards compatible with v3.
+- [#89](https://github.com/zendframework/zend-servicemanager/pull/89) adds
+  cyclic alias detection to the `ServiceManager`; it now raises a
+  `Zend\ServiceManager\Exception\CyclicAliasException` when one is detected,
+  detailing the cycle detected.
+- [#95](https://github.com/zendframework/zend-servicemanager/pull/95) adds
+  GitHub Pages publication automation, and moves the documentation to
+  https://zendframework.github.io/zend-servicemanager/
+- [#93](https://github.com/zendframework/zend-servicemanager/pull/93) adds
+  `Zend\ServiceManager\Test\CommonPluginManagerTrait`, which can be used to
+  validate that a plugin manager instance is ready for version 3.
 
 ### Deprecated
 
@@ -23,15 +27,20 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- [#91](https://github.com/zendframework/zend-servicemanager/pull/91) updates
-  the `InvokableFactory` to add the `setCreationOptions()` method, allowing
-  the `InvokableFactory` to accept `$options` when triggered.
+- [#90](https://github.com/zendframework/zend-servicemanager/pull/90) fixes
+  several examples in the configuration chapter of the documentation, ensuring
+  that the signatures are correct.
+- [#92](https://github.com/zendframework/zend-servicemanager/pull/92) ensures
+  that alias resolution is skipped during configuration if no aliases are
+  present, and forward-ports the test from [#81](https://github.com/zendframework/zend-servicemanager/pull/81)
+  to validate v2/v3 compatibility for plugin managers.
 
-## 2.7.4 - 2015-01-19
+## 3.0.2 - 2016-01-24
 
 ### Added
 
-- Nothing.
+- [#64](https://github.com/zendframework/zend-servicemanager/pull/64) performance optimizations
+  when dealing with alias resolution during service manager instantiation
 
 ### Deprecated
 
@@ -43,11 +52,17 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- [#71](https://github.com/zendframework/zend-servicemanager/pull/71) fixes an edge case
-  with alias usage, whereby an alias of an alias was not being resolved to the
-  final service name.
+- [#62](https://github.com/zendframework/zend-servicemanager/pull/62)
+  [#64](https://github.com/zendframework/zend-servicemanager/pull/64) corrected benchmark assets signature
+- [#72](https://github.com/zendframework/zend-servicemanager/pull/72) corrected link to the Proxy Pattern Wikipedia
+  page in the documentation
+- [#78](https://github.com/zendframework/zend-servicemanager/issues/78)
+  [#79](https://github.com/zendframework/zend-servicemanager/pull/79) creation context was not being correctly passed
+  to abstract factories when using plugin managers
+- [#82](https://github.com/zendframework/zend-servicemanager/pull/82) corrected migration guide in the DocBlock of
+  the `InitializerInterface`
 
-## 2.7.3 - 2016-01-13
+## 3.0.1 - 2016-01-19
 
 ### Added
 
@@ -59,59 +74,253 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- [#68](https://github.com/zendframework/zend-servicemanager/pull/68) removes
+  the dependency on zend-stdlib by inlining the `ArrayUtils::merge()` routine
+  as a private method of `Zend\ServiceManager\Config`.
 
 ### Fixed
 
-- [#69](https://github.com/zendframework/zend-servicemanager/pull/69) fixes the
-  way aliases are resolved to ensure that the original alias target, without
-  canonicalization is passed to factories and abstract factories, ensuring that
-  features such as the `InvokableFactory` implementation can work.
+- Nothing.
 
-## 2.7.2 - 2016-01-11
+## 3.0.0 - 2016-01-11
+
+First stable release of version 3 of zend-servicemanager.
+
+Documentation is now available at http://zend-servicemanager.rtfd.org
 
 ### Added
 
-- [#63](https://github.com/zendframework/zend-servicemanager/pull/63) adds a
-  constructor to `InvokableFactory`. In v2, this allows plugin managers to pass
-  construction options to the factory to use during instantiation of the
-  requested service class, emulating the behavior of `build()` in v3.
+- You can now map multiple key names to the same factory. It was previously
+  possible in ZF2 but it was not enforced by the `FactoryInterface` interface.
+  Now the interface receives the `$requestedName` as the *second* parameter
+  (previously, it was the third).
+
+  Example:
+  
+  ```php
+  $sm = new \Zend\ServiceManager\ServiceManager([
+      'factories'  => [
+          MyClassA::class => MyFactory::class,
+          MyClassB::class => MyFactory::class,
+          'MyClassC'      => 'MyFactory' // This is equivalent as using ::class
+      ],
+  ]);
+  
+  $sm->get(MyClassA::class); // MyFactory will receive MyClassA::class as second parameter
+  ```
+
+- Writing a plugin manager has been simplified. If you have simple needs, you no
+  longer need to implement the complete `validate` method.
+
+  In versions 2.x, if your plugin manager only allows creating instances that
+  implement `Zend\Validator\ValidatorInterface`, you needed to write the
+  following code:
+
+  ```php
+  class MyPluginManager extends AbstractPluginManager
+  {
+    public function validate($instance)
+    {
+        if ($instance instanceof \Zend\Validator\ValidatorInterface) {
+            return;
+        }
+    
+        throw new InvalidServiceException(sprintf(
+            'Plugin manager "%s" expected an instance of type "%s", but "%s" was received',
+             __CLASS__,
+             \Zend\Validator\ValidatorInterface::class,
+             is_object($instance) ? get_class($instance) : gettype($instance)
+        ));
+    }
+  }
+  ```
+  
+  In version 3, this becomes:
+  
+  ```php
+  use Zend\ServiceManager\AbstractPluginManager;
+  use Zend\Validator\ValidatorInterface;
+  
+  class MyPluginManager extends AbstractPluginManager
+  {
+      protected $instanceOf = ValidatorInterface::class;
+  }
+  ```
+  
+  Of course, you can still override the `validate` method if your logic is more
+  complex.
+
+  To aid migration, `validate()` will check for a `validatePlugin()` method (which
+  was required in v2), and proxy to it if found, after emitting an
+  `E_USER_DEPRECATED` notice prompting you to rename the method.
+
+- A new method, `configure()`, was added, allowing full configuration of the
+  `ServiceManager` instance at once. Each of the various configuration methods —
+  `setAlias()`, `setInvokableClass()`, etc. — now proxy to this method.
+
+- A new method, `mapLazyService($name, $class = null)`, was added, to allow
+  mapping a lazy service, and as an analog to the other various service
+  definition methods.
 
 ### Deprecated
 
-- Nothing.
+- Nothing
 
 ### Removed
 
-- Nothing.
+- Peering has been removed. It was a complex and rarely used feature that was
+  misunderstood most of the time.
 
-### Fixed
+- Integration with `Zend\Di` has been removed. It may be re-integrated later.
 
-- Nothing.
+- `MutableCreationOptionsInterface` has been removed, as options can now be
+  passed directly through factories.
 
-## 2.7.1 - 2016-01-11
+- `ServiceLocatorAwareInterface` and its associated trait has been removed. It
+  was an anti-pattern, and you are encouraged to inject your dependencies in
+  factories instead of injecting the whole service locator.
 
-### Added
+### Changed/Fixed
 
-- [#61](https://github.com/zendframework/zend-servicemanager/pull/61) adds
-  `Zend\ServiceManager\Exception\InvalidServiceException` for forwards
-  compatibility with v3.
+v3 of the ServiceManager component is a completely rewritten, more efficient
+implementation of the service locator pattern. It includes a number of breaking
+changes, outlined in this section.
 
-### Deprecated
+- You no longer need a `Zend\ServiceManager\Config` object to configure the
+  service manager; you can pass the configuration array directly instead.
 
-- Nothing.
+  In version 2.x:
+  
+  ```php
+  $config = new \Zend\ServiceManager\Config([
+      'factories'  => [...]
+  ]);
+  
+  $sm = new \Zend\ServiceManager\ServiceManager($config);
+  ```
+  
+  In ZF 3.x:
+  
+  ```php
+  $sm = new \Zend\ServiceManager\ServiceManager([
+      'factories'  => [...]
+  ]);
+  ```
 
-### Removed
+  `Config` and `ConfigInterface` still exist, however, but primarily for the
+  purposes of codifying and aggregating configuration to use.
 
-- Nothing.
+- `ConfigInterface` has two important changes:
+  - `configureServiceManager()` now **must** return the updated service manager
+    instance.
+  - A new method, `toArray()`, was added, to allow pulling the configuration in
+    order to pass to a ServiceManager or plugin manager's constructor or
+    `configure()` method.
 
-### Fixed
+- Interfaces for `FactoryInterface`, `DelegatorFactoryInterface` and
+  `AbstractFactoryInterface` have changed. All are now directly invokable. This
+  allows a number of performance optimization internally.
 
-- [#61](https://github.com/zendframework/zend-servicemanager/pull/61) updates
-  the `InvokableFactory` to throw `InvalidServiceException` instead of
-  `InvalidServiceNameException`, for forwards compatibility with v3.
-- [#61](https://github.com/zendframework/zend-servicemanager/pull/61) fixes
-  the behavior of `InvokableFactory` when invoked after resolving an alias.
+  Additionally, all signatures that accepted a "canonical name" argument now
+  remove it.
+
+  Most of the time, rewriting a factory to match the new interface implies
+  replacing the method name by `__invoke`, and removing the canonical name
+  argument if present.
+
+  For instance, here is a simple version 2.x factory:
+  
+  ```php
+  class MyFactory implements FactoryInterface
+  {
+      function createService(ServiceLocatorInterface $sl)
+      {
+          // ...
+      }
+  }
+  ```
+  
+  The equivalent version 3 factory:
+  
+  ```php
+  class MyFactory implements FactoryInterface
+  {
+      function __invoke(ServiceLocatorInterface $sl, $requestedName)
+      {
+          // ...
+      }
+  }
+  ```
+
+  Note another change in the above: factories also receive a second parameter,
+  enforced through the interface, that allows you to easily map multiple service
+  names to the same factory.
+
+  To provide forwards compatibility, the original interfaces have been retained,
+  but extend the new interfaces (which are under new namespaces). You can implement
+  the new methods in your existing v2 factories in order to make them forwards
+  compatible with v3.
+
+- The for `AbstractFactoryInterface` interface renames the method `canCreateServiceWithName()`
+  to `canCreate()`, and merges the `$name` and `$requestedName` arguments.
+
+- Plugin managers will now receive the parent service locator instead of itself
+  in factories. In version 2.x, you needed to call the method
+  `getServiceLocator()` to retrieve the parent (application) service locator.
+  This was confusing, and not IDE friendly as this method was not enforced
+  through the interface.
+
+  In version 2.x, if a factory was set to a service name defined in a plugin manager:
+  
+  ```php
+  class MyFactory implements FactoryInterface
+  {
+      function createService(ServiceLocatorInterface $sl)
+      {
+          // $sl is actually a plugin manager
+        
+          $parentLocator = $sl->getServiceLocator();
+        
+          // ...
+      }
+  }
+  ```
+  
+  In version 3:
+  
+  ```php
+  class MyFactory implements FactoryInterface
+  {
+      function __invoke(ServiceLocatorInterface $sl, $requestedName)
+      {
+          // $sl is already the main, parent service locator. If you need to
+          // retrieve the plugin manager again, you can retrieve it through the
+          // servicelocator:
+          $pluginManager = $sl->get(MyPluginManager::class);
+          // ...
+      }
+  }
+  ```
+
+  In practice, this should reduce code, as dependencies often come from the main
+  service locator, and not the plugin manager itself.
+
+  To assist in migration, the method `getServiceLocator()` was added to `ServiceManager`
+  to ensure that existing factories continue to work; the method emits an `E_USER_DEPRECATED`
+  message to signal developers to update their factories.
+
+- `PluginManager` now enforces the need for the main service locator in its
+  constructor. In v2.x, people often forgot to set the parent locator, which led
+  to bugs in factories trying to fetch dependencies from the parent locator.
+  Additionally, plugin managers now pull dependencies from the parent locator by
+  default; if you need to pull a peer plugin, your factories will now need to
+  pull the corresponding plugin manager first.
+
+  If you omit passing a service locator to the constructor, your plugin manager
+  will continue to work, but will emit a deprecation notice indicatin you
+  should update your initialization code.
+
+- It's so fast now that your app will fly!
 
 ## 2.7.0 - 2016-01-11
 

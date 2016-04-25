@@ -2,6 +2,157 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.2 - 2016-04-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#43](https://github.com/zendframework/zend-log/pull/43) fixes the
+  `Module::init()` method to properly receive a `ModuleManager` instance, and
+  not expect a `ModuleEvent`.
+
+## 2.8.1 - 2016-04-06
+
+### Added
+
+- [#40](https://github.com/zendframework/zend-log/pull/40) adds the
+  `LogFilterProviderInterface` and `LogFormatterProviderInterface` referenced in
+  the `Module` class starting in 2.8.0.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.8.0 - 2016-04-06
+
+### Added
+
+- [#39](https://github.com/zendframework/zend-log/pull/39) adds the following
+  factory classes for the exposed plugin managers in the component:
+  - `Zend\Log\FilterPluginManagerFactory`, which returns `FilterPluginManager` instances.
+  - `Zend\Log\FormatterPluginManagerFactory`, which returns `FormatterPluginManager` instances.
+  - `Zend\Log\ProcessorPluginManagerFactory`, which returns `ProcessorPluginManager` instances.
+  - `Zend\Log\WriterPluginManagerFactory`, which returns `WriterPluginManager` instances.
+- [#39](https://github.com/zendframework/zend-log/pull/39) exposes the
+  package as a ZF component and/or generic configuration provider, by adding the
+  following:
+  - `ConfigProvider`, which maps the available plugin managers to the
+    corresponding factories as listed above, maps the `Logger` class to the
+    `LoggerServiceFactory`, and registers the `LoggerAbstractServiceFactory` as
+    an abstract factory.
+  - `Module`, which does the same as `ConfigProvider`, but specifically for
+    zend-mvc applications. It also provices a specifications to
+    `Zend\ModuleManager\Listener\ServiceListener` to allow modules to provide
+    configuration for log filters, formatters, processors, and writers.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.7.2 - 2016-04-06
+
+### Added
+
+- [#30](https://github.com/zendframework/zend-log/pull/30) adds documentation
+  for each of the supported log writers.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#33](https://github.com/zendframework/zend-log/pull/33) fixes an issue with
+  executing `chmod` on files mounted via NFS on an NTFS partition when using the
+  stream writer.
+
+## 2.7.1 - 2016-02-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#28](https://github.com/zendframework/zend-log/pull/28) restores the "share
+  by default" flag settings of all plugin managers back to boolean `false`,
+  allowing multiple instances of each plugin type. (This restores backwards
+  compatibility with versions prior to 2.7.)
+
+## 2.7.0 - 2016-02-09
+
+### Added
+
+- [#7](https://github.com/zendframework/zend-log/pull/7) and
+  [#15](https://github.com/zendframework/zend-log/pull/15) add a new argument
+  and option to `Zend\Log\Writer\Stream` to allow setting the permission mode
+  for the stream. You can pass it as the optional fourth argument to the
+  constructor, or as the `chmod` option if using an options array.
+- [#10](https://github.com/zendframework/zend-log/pull/10) adds `array` to the
+  expected return types from `Zend\Log\Formatter\FormatterInterface::format()`,
+  codifying what we're already allowing.
+- [#24](https://github.com/zendframework/zend-log/pull/24) prepares the
+  documentation for publication, adds a chapter on processors, and publishes it
+  to https://zendframework.github.io/zend-log/
+
+### Deprecated
+
+- [#14](https://github.com/zendframework/zend-log/pull/14) deprecates the
+  following, suggesting the associated replacements:
+  - `Zend\Log\Writer\FilterPluginManager` is deprecated; use
+    `Zend\Log\FilterPluginManager` instead.
+  - `Zend\Log\Writer\FormatterPluginManager` is deprecated; use
+    `Zend\Log\FormatterPluginManager` instead.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#14](https://github.com/zendframework/zend-log/pull/14) and
+  [#17](https://github.com/zendframework/zend-log/pull/17) update the component
+  to be forwards-compatible with zend-stdlib and zend-servicemanager v3.
+
 ## 2.6.0 - 2015-07-20
 
 ### Added

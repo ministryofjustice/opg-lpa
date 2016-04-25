@@ -14,7 +14,6 @@ return array(
     'Zend\\Memory\\' => array($vendorDir . '/zendframework/zend-memory/src'),
     'Zend\\Math\\' => array($vendorDir . '/zendframework/zend-math/src'),
     'Zend\\Log\\' => array($vendorDir . '/zendframework/zend-log/src'),
-    'Zend\\Hydrator\\' => array($vendorDir . '/zendframework/zend-hydrator/src'),
     'Zend\\Filter\\' => array($vendorDir . '/zendframework/zend-filter/src'),
     'Zend\\Crypt\\' => array($vendorDir . '/zendframework/zend-crypt/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),

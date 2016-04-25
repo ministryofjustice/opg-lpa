@@ -16,10 +16,7 @@
     "require": {
         "php": ">=5.4.0",
         "ext-proctitle": "*",
-        "ext-redis": ">=2.2.4",
         "aws/aws-sdk-php": "^3.2",
-        "colinmollenhour/credis": ">=1.2",
-        "chrisboulton/php-resque": "dev-master#c335bc3",
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "^2.0.2",
         "zendframework/zend-crypt": "^2.3.4",

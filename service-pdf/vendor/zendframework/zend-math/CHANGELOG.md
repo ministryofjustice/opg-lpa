@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.0 - 2016-04-07
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#16](https://github.com/zendframework/zend-math/pull/16) updates
+  `Zend\Math\Rand` to use PHP 7's `random_bytes()` and `random_int()` or mcrypt
+  when detected, and fallback to `ircmaxell/RandomLib` otherwise, instead of using
+  openssl. This provides more cryptographically secure pseudo-random generation.
+
+
 ## 2.6.0 - 2016-02-02
 
 ### Added
