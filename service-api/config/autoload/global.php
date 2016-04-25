@@ -119,11 +119,15 @@ return array(
 
         'DynamoQueue' => [
             'settings' => [
-                'table_name' => null,
+                'table_name' => getenv('OPG_LPA_QUEUE_DYNAMODB_TABLE') ?: 'lpa-pdf-queue-shared',
             ],
             'client' => [
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
+                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
+                    'key'    => getenv('OPG_LPA_AWS_KEY'),
+                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                ] : null,
             ],
         ], // DynamoQueue
 

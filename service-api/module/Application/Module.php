@@ -37,16 +37,21 @@ class Module {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        //$sharedEvents = $eventManager->getSharedManager();
 
-        // Setup authentication listener...
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [ new AuthenticationListener, 'authenticate' ], 500);
+        //---
 
-        // Register error handler for dispatch and render errors
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
-        
-       
+        $request = $e->getApplication()->getServiceManager()->get('Request');
+
+        if( !($request instanceof \Zend\Console\Request) ) {
+
+            // Setup authentication listener...
+            $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
+
+            // Register error handler for dispatch and render errors
+            $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+            $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+
+        }
 
     } // function
 
