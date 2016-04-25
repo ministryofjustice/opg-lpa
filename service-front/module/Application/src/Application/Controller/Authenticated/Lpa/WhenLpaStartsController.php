@@ -31,6 +31,7 @@ class WhenLpaStartsController extends AbstractLpaController
         $whenValueOptions['now'] += [
             'label_attributes' => [
                 'for' => 'now',
+                'class' => 'block-label'
             ],
             'attributes' => [
                 'id' => 'now',
@@ -39,6 +40,7 @@ class WhenLpaStartsController extends AbstractLpaController
         $whenValueOptions['no-capacity'] += [
             'label_attributes' => [
                 'for' => 'no-capacity',
+                'class' => 'block-label'
             ],
             'attributes' => [
                 'id' => 'no-capacity',
