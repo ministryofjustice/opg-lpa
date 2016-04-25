@@ -24,9 +24,9 @@ return array(
             'client' => [
                 'version' => '2006-03-01',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
-                    'key'    => getenv('OPG_LPA_AWS_KEY'),
-                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ] : null,
             ],
             'settings' => [
