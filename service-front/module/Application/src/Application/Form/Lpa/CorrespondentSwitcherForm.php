@@ -22,6 +22,8 @@ class CorrespondentSwitcherForm extends AbstractForm
 
     public function __construct($name, $options)
     {
+        list($name, $options) = parent::zendFormBugFix($name, $options);
+        
         if(array_key_exists('lpa', $options)) {
             $this->lpa  = $options['lpa'];
             $this->user = $options['user'];

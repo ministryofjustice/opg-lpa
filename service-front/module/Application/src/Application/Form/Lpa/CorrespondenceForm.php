@@ -11,6 +11,8 @@ class CorrespondenceForm extends AbstractActorForm
     
     public function __construct($name, $options)
     {
+        list($name, $options) = parent::zendFormBugFix($name, $options);
+        
         if(array_key_exists('lpa', $options)) {
             $this->lpa = $options['lpa'];
             unset($options['lpa']);
