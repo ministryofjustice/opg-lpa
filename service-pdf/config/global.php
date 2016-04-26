@@ -5,11 +5,8 @@ return array(
     'service' => array(
 
         'assets'=>array(
-
             'source_template_path' => __DIR__.'/../assets/v2',
-
             'template_path_on_ram_disk' => '/tmp/pdf_ramdisk/assets/v2',
-
             'intermediate_file_path' => '/tmp/pdf_ramdisk'
         ),
 
@@ -27,17 +24,32 @@ return array(
             'client' => [
                 'version' => '2006-03-01',
                 'region' => 'eu-west-1',
+                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
+                    'key'    => getenv('OPG_LPA_AWS_KEY'),
+                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                ] : null,
             ],
             'settings' => [
                 'ACL' => 'private',
-                'Bucket' => null,
+                'Bucket' => getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') ?: null,
             ],
         ),
 
     ), // worker
 
+    'log' => [
+        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
+    ], // log
+
+
     'pdf' => [
         'encryption' => [
+            // Keys MUST be a 32 character ASCII string
+            'keys' => [
+                'queue'     => getenv('OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE') ?: null,
+                'document'  => getenv('OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT') ?: null,
+            ],
             'options' => [
                 'algorithm' => 'aes',
                 'mode' => 'cbc',

@@ -1,8 +1,5 @@
 FROM registry.service.dsd.io/opguk/base:latest
 
-ADD docker/ca/LPA_ca.crt /usr/local/share/ca-certificates/LPA_ca.crt
-RUN /usr/sbin/update-ca-certificates
-
 RUN groupadd supervisor
 
 RUN apt-get update && apt-get install -y \
@@ -27,7 +24,6 @@ RUN mkdir -p /srv/opg-lpa-pdf2/application && \
     chmod -R 755 /srv/opg-lpa-pdf2/application && \
     ln -s /app /srv/opg-lpa-pdf2/application/current
 
-ADD docker/default/opg-lpa-pdf2 /etc/default/opg-lpa-pdf2
 ADD docker/service/opg-lpa-pdf2 /etc/service/opg-lpa-pdf2
 RUN chmod a+x /etc/service/opg-lpa-pdf2/run
 

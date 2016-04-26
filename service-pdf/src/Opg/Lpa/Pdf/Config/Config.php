@@ -15,10 +15,6 @@ class Config implements Countable, ArrayAccess {
 
             $this->container = include('global.php');
 
-            if( stream_resolve_include_path('docker.php') !== false ){
-                $this->container = static::merge( $this->container, include('docker.php') );
-            }
-
             if( stream_resolve_include_path('local.php') !== false ){
                 $this->container = static::merge( $this->container, include('local.php') );
             }
