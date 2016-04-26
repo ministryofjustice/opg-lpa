@@ -20,6 +20,8 @@ class SeedDetailsPickerForm extends AbstractForm
     
     public function __construct($name, $options)
     {
+        list($name, $options) = parent::zendFormBugFix($name, $options);
+        
         if(array_key_exists('seedDetails', $options)) {
             $this->seedDetails = $options['seedDetails'];
             unset($options['seedDetails']);
