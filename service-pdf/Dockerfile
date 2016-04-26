@@ -3,7 +3,7 @@ FROM registry.service.dsd.io/opguk/base:latest
 RUN groupadd supervisor
 
 RUN apt-get update && apt-get install -y \
-    php5-cli php5-dev php5-redis pdftk php5-mcrypt
+    php5-cli php5-dev pdftk php5-mcrypt
 
 RUN php5enmod mcrypt
 
