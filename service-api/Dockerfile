@@ -4,7 +4,7 @@ RUN groupadd webservice && \
     groupadd supervisor
 
 RUN apt-get update && apt-get install -y \
-    php5-curl php-pear php5-dev php5-redis
+    php5-curl php-pear php5-dev
 
 RUN pecl install mongo && \
     echo "extension=mongo.so" > /etc/php5/mods-available/mongo.ini && \
