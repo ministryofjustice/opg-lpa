@@ -704,7 +704,7 @@ return [
                         'options' => array(
                             'route'    => '/payment',
                             'defaults' => array(
-                                'controller' => 'Authenticated\Lpa\WorldpayPaymentController',
+                                'controller' => 'PaymentControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),
