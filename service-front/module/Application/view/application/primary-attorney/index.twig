@@ -2,53 +2,52 @@
 
 {% block content %}
 
-<section id="primary-attorney-section" class="section current">
+<li id="primary-attorney-section" class="section current js-current">
 	
-    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who are your attorneys?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who are your attorneys?</h2>
 
-    <div class="accordion-content">
+    <div class="accordion-info">
+        <div class="text">
+            <p>Attorneys are people who you appoint to make decisions on your behalf.</p>
+            <ul class="list list-bullet">
+                <li>You can have 1 or more attorneys</li>
+                <li>Attorneys must be 18 or over</li>
+                <li>Attorneys must have mental capacity – the ability to make decisions</li>
+                <li>An attorney must not be bankrupt or subject to a debt relief order</li>
+            </ul>
+    		<p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
+    		<p>There are some other things you must know and consider before you decide.</p>
+    		<p><a class="js-guidance" href="/help/#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
+    	</div>
+    </div>
 
-    <div class="section-intro">
-        <p>Attorneys are people who you appoint to make decisions on your behalf.</p>
-        <ul>
-            <li>You can have 1 or more attorneys</li>
-            <li>Attorneys must be 18 or over</li>
-            <li>Attorneys must have mental capacity – the ability to make decisions</li>
-            <li>An attorney must not be bankrupt or subject to a debt relief order</li>
-        </ul>
-		<p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
-		<p>There are some other things you must know and consider before you decide.</p>
-		<p><a class="js-guidance" href="/help/#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
-	</div>
-	
     {% if (attorneys) %}
-    
-        {% for attorney in attorneys %}
-            {% include 'application/primary-attorney/partials/attorney.twig' with attorney %}
-        {% endfor %}
-        
-        <p class="add-another"><a class="add js-form-popup" href="{{ addRoute }}">Add another attorney?</a></p>
-		
-        <div class="accordion-actions group">
-            <p>
-                <a href="{{ nextRoute }}" class="button gotonextpart" role="button">Save and continue</a>
-            </p>
-        </div>
-    
-    {% else %}
-    
-        <p><a class="add button js-form-popup" href="{{ addRoute }}" role="button">Add an attorney</a></p>
-		
-		<div class="accordion-actions group">
-            <p>
-                <span class="disabled button">Save and continue</span>
-            </p>
-        </div>
-    
+
+        <ul>
+            {% for attorney in attorneys %}
+                {% include 'application/primary-attorney/partials/attorney.twig' with attorney %}
+            {% endfor %}
+        </ul>
+
     {% endif %}
-    
+
+    <div class="form-group">
+        <a href="{{ addRoute }}" class="button js-form-popup" >
+            {% if (attorneys) %}
+                Add another attorney?
+            {% else %}
+                Add an attorney
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="form-group flush--bottom">
+        <a href="{{ nextRoute }}" class="button divorced" role="button"
+            {% if not (attorneys) %} disabled="disabled"{% endif %} >
+            Save and continue
+        </a> 
     </div>
     
-</section>
+</li>
 
 {% endblock %}
