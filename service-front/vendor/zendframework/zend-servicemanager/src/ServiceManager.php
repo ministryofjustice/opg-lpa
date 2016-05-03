@@ -9,9 +9,7 @@
 
 namespace Zend\ServiceManager;
 
-use Interop\Container\ContainerInterface;
-
-class ServiceManager implements ServiceLocatorInterface, ContainerInterface
+class ServiceManager implements ServiceLocatorInterface
 {
     /**@#+
      * Constants
@@ -509,23 +507,19 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
         }
 
         $instance = null;
-        
+
         if ($usePeeringServiceManagers && $this->retrieveFromPeeringManagerFirst) {
             $instance = $this->retrieveFromPeeringManager($name);
-            
-            
+
             if (null !== $instance) {
-                
                 return $instance;
             }
-            
         }
-        
+
         if (isset($this->instances[$cName])) {
-            
             return $this->instances[$cName];
         }
-        
+
         if (!$instance) {
             $this->checkNestedContextStart($cName);
             if (isset($this->invokableClasses[$cName])
@@ -533,10 +527,7 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
                 || isset($this->aliases[$cName])
                 || $this->canCreateFromAbstractFactory($cName, $name)
             ) {
-                
                 $instance = $this->create([$cName, $name]);
-
-                
             } elseif ($isAlias && $this->canCreateFromAbstractFactory($name, $cName)) {
                 /*
                  * case of an alias leading to an abstract factory :
@@ -586,13 +577,10 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
      */
     public function create($name)
     {
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . ':' . $name[0] . PHP_EOL, FILE_APPEND);
-
         if (is_array($name)) {
             list($cName, $rName) = $name;
         } else {
             $rName = $name;
-
 
             // inlined code from ServiceManager::canonicalizeName for performance
             if (isset($this->canonicalNames[$rName])) {
@@ -640,30 +628,21 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
      */
     protected function doCreate($rName, $cName)
     {
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . ':' . print_r($cName, true) . PHP_EOL, FILE_APPEND);
-        
         $instance = null;
 
         if (isset($this->factories[$cName])) {
             $instance = $this->createFromFactory($cName, $rName);
         }
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . '-Class:' . get_class($instance) . PHP_EOL, FILE_APPEND);
-        
+
         if ($instance === null && isset($this->invokableClasses[$cName])) {
             $instance = $this->createFromInvokable($cName, $rName);
         }
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . '-Class:' . get_class($instance) . PHP_EOL, FILE_APPEND);
-        
         $this->checkNestedContextStart($cName);
         if ($instance === null && $this->canCreateFromAbstractFactory($cName, $rName)) {
-
             $instance = $this->createFromAbstractFactory($cName, $rName);
         }
         $this->checkNestedContextStop();
-        
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . '-Class:' . get_class($instance) . PHP_EOL, FILE_APPEND);
-        
-        
+
         if ($instance === null && $this->throwExceptionInCreate) {
             $this->checkNestedContextStop(true);
             throw new Exception\ServiceNotFoundException(sprintf(
@@ -678,8 +657,6 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
             return $instance;
         }
 
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . '-Initializers:' . print_r($cName, true) . PHP_EOL, FILE_APPEND);
-        
         foreach ($this->initializers as $initializer) {
             if ($initializer instanceof InitializerInterface) {
                 $initializer->initialize($instance, $this);
@@ -772,8 +749,6 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
      */
     public function canCreateFromAbstractFactory($cName, $rName)
     {
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . ':' . $cName . PHP_EOL, FILE_APPEND);
-        
         if (array_key_exists($cName, $this->nestedContext)) {
             $context = $this->nestedContext[$cName];
             if ($context === false) {
@@ -1084,8 +1059,6 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
      */
     protected function createFromInvokable($canonicalName, $requestedName)
     {
-        file_put_contents('/var/log/app/debug.txt', __CLASS__ . ':' . __FUNCTION__ . ':' . $canonicalName . PHP_EOL, FILE_APPEND);
-
         $invokable = $this->invokableClasses[$canonicalName];
         if (!class_exists($invokable)) {
             throw new Exception\ServiceNotFoundException(sprintf(
@@ -1110,8 +1083,6 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
      */
     protected function createFromFactory($canonicalName, $requestedName)
     {
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . ':' . $canonicalName . PHP_EOL, FILE_APPEND);
-        
         $factory = $this->factories[$canonicalName];
         if (is_string($factory) && class_exists($factory, true)) {
             $factory = new $factory;
@@ -1141,8 +1112,6 @@ class ServiceManager implements ServiceLocatorInterface, ContainerInterface
      */
     protected function createFromAbstractFactory($canonicalName, $requestedName)
     {
-        file_put_contents('/var/log/app/debug.txt', __FUNCTION__ . ':' . $canonicalName . PHP_EOL, FILE_APPEND);
-        
         if (isset($this->nestedContext[$canonicalName])) {
             $abstractFactory = $this->nestedContext[$canonicalName];
             $pendingKey = get_class($abstractFactory).$canonicalName;
