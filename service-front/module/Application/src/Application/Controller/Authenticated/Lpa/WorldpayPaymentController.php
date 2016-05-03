@@ -18,7 +18,7 @@ use Zend\Session\Container;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class PaymentController extends AbstractLpaController
+class WorldpayPaymentController extends AbstractLpaController
 {
     protected $contentHeader = 'registration-partial.phtml';
     
