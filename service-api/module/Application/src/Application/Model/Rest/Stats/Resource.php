@@ -59,20 +59,20 @@ class Resource extends AbstractResource {
 
         $byMonth = array();
 
-        $start = new \DateTime();
-        $start->setTime(0, 0, 0)->modify('next month'); // Seed one month ahead
+        $start = new \DateTime('first day of this month');
+        $start->setTime(0, 0, 0);
 
-        $end = new \DateTime();
-        $end->setTime(23, 59, 59)->modify('next month'); // Seed one month ahead
+        $end = new \DateTime('last day of this month');
+        $end->setTime(23, 59, 59);
 
         //---
 
         // Go back 4 months...
         for( $i = 1; $i <=4; $i++ ){
 
-            // Go back 1 (more) month...
-            $from = new MongoDate( $start->modify("first day of -1 month")->getTimestamp() );
-            $to =   new MongoDate( $end->modify("last day of -1 month")->getTimestamp() );
+            // Convert to MongoDate...
+            $from = new MongoDate( $start->getTimestamp() );
+            $to =   new MongoDate( $end->getTimestamp() );
 
             $month = array();
 
@@ -94,6 +94,12 @@ class Resource extends AbstractResource {
             //---
 
             $byMonth[date('Y-m',$start->getTimestamp())] = $month;
+
+            //---
+
+            // Modify dates, going back on month...
+            $start->modify("first day of -1 month");
+            $end->modify("last day of -1 month");
 
         } // for
 
