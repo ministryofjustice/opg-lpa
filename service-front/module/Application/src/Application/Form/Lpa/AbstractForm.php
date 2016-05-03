@@ -29,25 +29,6 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         return $this->csrfName;
     }
     
-    /**
-     * Checks to see if we are using the bugged version of zend form
-     * introduced in zend-form 2.7.0. The bugged version does not pass
-     * in the $name parameter as it relies on the AbstractPluginManager
-     * to create the invokable.
-     * 
-     * We can call this from any sub-class's constructor to fix the problem:
-     * 
-     * list($name, $options) = parent::zendFormBugFix($name, $options);
-     */
-    protected function zendFormBugFix($name, $options) {
-        if (is_array($name)) {
-            $options = $name;
-            $name = null;
-        }
-        
-        return [$name, $options];
-    }
-    
     public function init()
     {
         parent::init();

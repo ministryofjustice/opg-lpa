@@ -156,7 +156,7 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
         }
 
         $this->creationOptions = $options;
-        
+
         try {
             $instance = parent::get($name, $usePeeringServiceManagers);
         } catch (Exception\ServiceNotFoundException $exception) {

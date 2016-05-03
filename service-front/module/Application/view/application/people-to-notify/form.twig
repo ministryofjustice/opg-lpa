@@ -1,0 +1,83 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+<script type="text/javascript">
+    var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
+    var actors = {names: actorNames};
+</script>
+
+{% if (seedDetailsPickerForm) %}
+    {{ seedDetailsPickerForm.setAttribute('class', 'form') ? '' }}
+    {% set pickerCsrf = seedDetailsPickerForm.get(seedDetailsPickerForm.csrfName()) %}
+    {{ pickerCsrf.setAttributes({'id' : 'secret'}) ? '' }}
+    {{ seedDetailsPickerForm.get('pick-details') ? '' }}
+    {{ seedDetailsPickerForm.setAttributes({'id':'pick-details', 'class':'js-reusable'}) ? '' }}
+    {{ seedDetailsPickerForm.setOptions({'label': 'Use these details', 'empty_option' : 'Choose a person'}) ? '' }}
+    {% set pickerSubmit = seedDetailsPickerForm.get('submit') %}
+    {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
+    {{ seedDetailsPickerForm.prepare() ? '' }}
+{% endif %}
+   
+{% set form = formErrorTextExchange(form,  {}) %}
+ 
+{% set title = form.get('name-title') %}
+{% set firstname = form.get('name-first') %}
+{% set lastname = form.get('name-last') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+    
+{{ form.setAttribute({class:'form js-PersonForm js-PostcodeLookup'}) ? '' }}
+    
+{{ title.setOptions({label:'Address line 1'}) ? '' }}
+{{ title.setAttributes({id:'name-title'}) ? '' }}
+{{ firstname.setOptions({label:'Address line 1'}) ? '' }}
+{{ lastname.setOptions({label:'Address line 1'}) ? '' }}
+
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+{{ address1.setAttributes({id:'address-address1'}) ? '' }}
+    
+{{ form.prepare() ? '' }}
+
+<h2 class="header">Edit person to notify details</h2>
+
+{{ macros.renderPickerForm(form, pickerForm) }}
+
+{{ form().openTag( form )|raw }}
+
+{{ macros.useMyDetails(useMyDetailsRoute) }}
+
+{{ formElement(form.get( form.csrfName )) }}
+
+<fieldset>
+
+{{ macros.formGroup(title) }}
+{{ macros.formGroup(firstname) }}
+{{ macros.formGroup(lastname) }}
+
+</fieldset>
+
+<fieldset class="js-PostcodeLookup__postal-add">
+    
+    {{ macros.formGroup(address1) }}
+    {{ macros.formGroup(address2) }}
+    {{ macros.formGroup(address3) }}
+    {{ macros.formGroup(postcode) }}
+
+</fieldset>
+
+<p class="action group">
+<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<button name="cancel" type="button" class="button-secondary">Cancel</button>
+</p>
+
+{{ form().closeTag|raw }}
+
+{% endblock %}
