@@ -1,6 +1,10 @@
 // =======================================================
 // PROCESS ACCORDION
 
+.accordion {
+	@extend %contain-floats;
+}
+
 .accordion-header {
 	display: block;
 	padding: $gutter-half $gutter;
