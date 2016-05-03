@@ -1,0 +1,39 @@
+{% extends 'layout/twig/registration-stage.twig' %}
+
+{% block content %}
+
+<div class="article-container group">
+    <article role="article" class="group">
+        <div class="inner lpa created">
+            <div class="paragraph-block">
+
+                <p>That's the first step of the LPA process finished. Now you can review your LPA and edit it if you need to. Next you need to complete the registration section, then print and sign your LPA and send it to the Office of the Public Guardian.</p>
+
+            </div>
+
+            <div class="next-step-section">
+                <h2>Review your LPA</h2>
+
+                <p>Click below to review or edit your LPA. You can also print your LPA now (the review button creates a printable document) and register it later. However, we recommend that you move on to completing the registration section below as soon as you are happy with the details of your LPA. That way, the Office of the Public Guardian (OPG) can deal with any problems with the LPA in good time.</p>
+
+                <p><strong>Important: don't send your LPA to OPG without completing the registration section below. OPG can't register your LPA – and you can't use it – until you have completed the registration section.</strong></p>
+
+                <a class="button" href="{{ downloadRoute }}" target="_blank">Review LPA</a>
+                <a class="button" href="{{ url('lpa/instructions', {'lpa-id':lpa.id}) }}">Edit LPA</a>
+            </div>
+
+            <div class="next-step-section">
+                <h2>Register your LPA</h2>
+
+                <p>When you click the button below, we'll ask you some questions about registering your LPA, 
+                    such as whether you're entitled to a fee reduction and who we should send the registered document to. 
+                    You'll then be taken to an online payment page – or you can pay the fee by cheque.</p>
+
+                <a class="button" href="{{ nextRoute }}">Register your LPA now</a>
+            </div>
+
+        </div>
+    </article>
+</div>
+
+{% endblock %}
