@@ -1,5 +1,5 @@
     if ($ssl_protocol = "") {
-        rewrite ^   https://{{getv "/opg/nginx/frontenddomain"}}$request_uri? permanent;
+        rewrite ^   https://{{getv "/opg/lpa/front/nginx/frontenddomain"}}$request_uri? permanent;
     }
     if ($http_host = "lastingpowerofattorney.service.gov.uk") {
                  rewrite ^ https://www.lastingpowerofattorney.service.gov.uk$request_uri permanent;

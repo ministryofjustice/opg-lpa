@@ -3931,6 +3931,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         } else {
           // render form
           self.renderForm(html);
+          // checking date when 'my details' are populated
+          if (url.indexOf('use-my-details') !== -1) {
+            $('#dob-date-day').trigger('change');
+          }
         }
       });
     },
@@ -4597,7 +4601,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
           if ($dayObj.val() !== '') {
             day = parseInt($dayObj.val(), 10);
-            if (isNaN(day) || (day <= 1)) {
+            if (isNaN(day) || (day < 1)) {
               day = undefined;
             }
           }

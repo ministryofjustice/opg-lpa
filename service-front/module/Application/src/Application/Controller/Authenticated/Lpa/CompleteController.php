@@ -29,11 +29,17 @@ class CompleteController extends AbstractLpaController
         
         $lpa = $this->getLpa();
         
-        if (property_exists($lpa, 'metadata') && isset($lpa->metadata['updateSessionCount'])) {
-            $analyticsDimensions = [
-                'dimension2' => $lpa->startedAt,
-                'dimension3' => $lpa->metadata['updateSessionCount'],
-            ];
+        if (property_exists($lpa, 'metadata')) {
+            
+            if ($lpa->startedAt && $lpa->startedAt instanceof \DateTime) {
+                $analyticsDimensions = [
+                    'dimension2' => $lpa->startedAt->format('Y-m-d'),
+                ];
+            }
+            
+            if (isset($lpa->metadata['updateSessionCount'])) {
+                $analyticsDimensions['dimension3'] = $lpa->metadata['updateSessionCount'];
+            }
             
             $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
         }

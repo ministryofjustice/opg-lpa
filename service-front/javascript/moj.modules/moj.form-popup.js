@@ -70,6 +70,9 @@
         } else {
           // render form
           self.renderForm(html);
+          if (url.indexOf('use-my-details') !== -1) {
+            $('#dob-date-day').trigger('change');
+          }
         }
       });
     },
