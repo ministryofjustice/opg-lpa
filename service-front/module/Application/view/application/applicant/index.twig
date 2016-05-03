@@ -1,0 +1,149 @@
+{% extends 'layout/twig/registration-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form, {
+    'whoIsRegistering' : {
+        'allowed-values:1' : 'Please select the person who is registering the LPA',
+        'allowed-values:donor,Array' : 'Please select the person who is registering the LPA'
+    }
+    }) 
+%}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+
+{% set whoIsRegistering = form.get('whoIsRegistering') %}
+{% set whoIsRegisteringValueOptions = whoIsRegistering.getOptions()['value_options'] %}
+
+{% set whoIsRegisteringValueOptions = {
+			'donor' :
+				{ 
+				  label: "The donor - " ~ lpa.document.donor.name,
+	 			  label_attributes: {
+	 			       for: 'whoIsRegistering-donor',
+	 			  },
+	 			  attributes: {
+	 			       id: 'whoIsRegistering-donor'
+	 			  },
+	 			  value: whoIsRegisteringValueOptions['donor'].value
+	 		    }
+		}
+%}
+
+{% if form.has('attorneyList') %}
+
+    {% set whoIsRegisteringValueOptions = {
+    			'donor' : whoIsRegisteringValueOptions['donor'],
+    			'attorney' : 
+    				{ label: "The attorneys -",
+    	 			  label_attributes: whoIsRegisteringValueOptions['attorney'].label_attributes,
+    	 			  attributes: whoIsRegisteringValueOptions['attorney'].attributes,
+    	 			  value: whoIsRegisteringValueOptions['attorney'].value
+    	 		    }
+    		}
+    %}
+    
+    {% set attorneyList = form.get('attorneyList') %}
+
+{% else %}
+
+	{% if lpa.document.primaryAttorneys|length > 1 %}
+		{% set concatNames = concatNames(lpa.document.primaryAttorneys) %}
+	  	{% set whoIsRegisteringValueOptions = {
+    			'donor' : whoIsRegisteringValueOptions['donor'],
+    			'attorney' : 
+    				{ label: "The attorneys - " ~ concatNames,
+    	 			  value: whoIsRegisteringValueOptions['attorney'].value
+    	 		    }
+    		}
+    	%}
+	
+    {% else %}
+    	{% set attorney = lpa.document.primaryAttorneys|first %}
+    	{% set whoIsRegisteringValueOptions = {
+    			'donor' : whoIsRegisteringValueOptions['donor'],
+    			'attorney' : 
+    				{ label: "The attorney - " ~ attorney.name,
+    	 			  value: whoIsRegisteringValueOptions['attorney'].value
+    	 		    }
+    		}
+    	%}
+    
+    {% endif %}
+    
+    {% set whoIsRegisteringValueOptions = {
+    			'donor' : whoIsRegisteringValueOptions['donor'],
+    			'attorney' : 
+    				{ label: whoIsRegisteringValueOptions['attorney'].label,
+    	 			  label_attributes: {
+                          'for' : 'whoIsRegistering-attorney'
+                      },
+                      attributes : {
+                          'id' : 'whoIsRegistering-attorney'
+                      },
+    	 			  value: whoIsRegisteringValueOptions['attorney'].value
+    	 		    }
+    		}
+    	%}
+    	
+{% endif %}
+
+{{ whoIsRegistering.setOptions({value_options: whoIsRegisteringValueOptions}) ? '' }}
+{{ whoIsRegistering.setLabelOptions({disable_html_escape: true}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<section id="applicant-section" class="section current">
+	
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who’s applying to register the LPA?</h2>
+
+    <div class="accordion-content">
+    
+        <div class="section-intro">
+        
+            <p>Either the donor, or 1 or more of the attorneys, can apply to register the LPA.</p>
+            
+            <p>If the attorneys have been appointed jointly, they must <strong>all</strong> apply.</p>
+            
+            <p>Whoever's applying will have to sign the application to register form.</p>
+            
+            <p><a href="/help/#topic-applicant" class="js-guidance" data-journey-click="stageprompt.lpa:help:applicant">Find out more about the role of the applicant</a></p>
+        
+        </div>
+        
+        {{ form().openTag( form )|raw }}
+        
+        {{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+		
+		{{ formErrorList }}
+		        
+        <h3>This LPA is being registered by</h3>
+        
+        <div class="emphasised option group">
+            {{ formElement(whoIsRegistering) }}
+			{{ formElementErrors(whoIsRegistering) }}
+        </div>
+        
+        {% if (attorneyList) %}
+    		<div class="attorney-applicant js-attorney-list">
+                {{ formElement(attorneyList) }}
+                {{ formElementErrors(attorneyList) }}
+            </div>
+        {% endif %}
+
+        <div class="accordion-actions">
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+            </p>
+        </div>
+
+		{{ form().closeTag|raw }}
+    
+    </div>
+    
+</section>
+
+{% endblock %}
