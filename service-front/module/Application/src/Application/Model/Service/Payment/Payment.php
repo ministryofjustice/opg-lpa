@@ -159,7 +159,7 @@ class Payment implements ServiceLocatorAwareInterface {
             'amount' => $lpa->payment->amount,
             'currency' => $config['currency'],
             'description' => 'LPA for ' . $donorName,
-            'transactionId' => LpaIdHelper::constructWorldPayTransactionId($lpa->id),
+            'transactionId' => LpaIdHelper::constructPaymentTransactionId($lpa->id),
             'card' => new CreditCard([
                 'email' => $container->email,
             ]),
