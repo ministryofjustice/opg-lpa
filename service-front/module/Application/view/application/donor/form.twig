@@ -33,7 +33,7 @@
     },
     'dob-date' : {
         "The input does not appear to be a valid date" : "Please enter a valid date",
-        "Please enter all the date fields" : "Please enter your date of birth"
+        "Please enter all the date fields" : "Please enter the donor's date of birth"
     }
 }) %}
 
@@ -71,10 +71,6 @@
 {{ form.setAttributes({
     'class':'form form-condensed js-PersonForm js-PostcodeLookup'
 }) ? '' }}
-
-{{ dobDay.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
-{{ dobMonth.setAttributes({'maxlength':'2','pattern': '[0-9]{2}'}) ? '' }}
-{{ dobYear.setAttributes({'maxlength':'4','pattern': '[0-9]{4}'}) ? '' }}
 
 {{ title.setAttributes({
     id: 'name-title',
