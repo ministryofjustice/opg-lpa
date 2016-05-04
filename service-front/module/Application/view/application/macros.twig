@@ -34,6 +34,17 @@
 
 {% endmacro %}
 
+{% macro formGroupCheckbox(element) %}
+
+<div class="option group">
+    <label class="form-label" for="{{ element.getAttribute('id') }}">
+        {{ element.getOption('label')|raw }}
+    </label>
+    {{ formElement(element) }}
+</div>
+
+{% endmacro %}
+
 {% macro renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) %}
     {% if (isChangeAllowed) %}
         <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
