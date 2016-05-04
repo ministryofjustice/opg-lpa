@@ -14,6 +14,8 @@
 
 {{ form.setAttribute('class', 'form') ? '' }}
 
+{% set csrf = form.get(form.csrfName) %}
+
 {% set whoIsRegistering = form.get('whoIsRegistering') %}
 {% set whoIsRegisteringValueOptions = whoIsRegistering.getOptions()['value_options'] %}
 
@@ -113,15 +115,13 @@
         
         </div>
         
+        <h3>This LPA is being registered by</h3>
+        
         {{ form().openTag( form )|raw }}
         
         {{ formElement(csrf) }}
 		{{ formElementErrors(csrf) }}
 		
-		{{ formErrorList }}
-		        
-        <h3>This LPA is being registered by</h3>
-        
         <div class="emphasised option group">
             {{ formElement(whoIsRegistering) }}
 			{{ formElementErrors(whoIsRegistering) }}
