@@ -3303,16 +3303,16 @@ input[disabled="disabled"] {
   .pager-controls {
     float: right; } }
 
-.panel-cta, .panel-actions {
+.panel-cta, .js-enabled .panel-actions {
   padding: 15px 15px 30px;
   background-color: #dee0e2; }
   @media (max-width: 640px) {
-    .panel-cta, .panel-actions {
+    .panel-cta, .js-enabled .panel-actions {
       padding-bottom: 15px; } }
-  .panel-cta .panel-body, .panel-actions .panel-body {
+  .panel-cta .panel-body, .js-enabled .panel-actions .panel-body {
     font-weight: 700;
     text-align: center; }
-  .panel-cta .panel-button, .panel-actions .panel-button {
+  .panel-cta .panel-button, .js-enabled .panel-actions .panel-button {
     text-align: center; }
 
 .alert .icon {
@@ -3544,7 +3544,9 @@ input[disabled="disabled"] {
 .no-js legend.form-label {
   display: none; }
 
-.panel-actions {
+.panel-actions a {
+  display: inline-block; }
+.js-enabled .panel-actions {
   padding: 15px; }
 
 .noscroll {

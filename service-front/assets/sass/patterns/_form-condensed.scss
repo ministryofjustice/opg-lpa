@@ -159,6 +159,11 @@
 }
 
 .panel-actions {
-	@extend .panel-cta;
-	padding: $gutter-half;
+	a {
+		display: inline-block;
+	}
+	.js-enabled & {
+		@extend .panel-cta;
+		padding: $gutter-half;
+	}
 }
