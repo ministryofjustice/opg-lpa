@@ -40,7 +40,7 @@
 	}
 	.action-edit {
 		@include media(tablet) {
-			@include button;
+			@include button($grey-3);
 		}
 	}
 	.action-delete {
