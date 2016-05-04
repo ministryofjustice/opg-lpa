@@ -25,7 +25,7 @@ return array(
                     ] : null,
                 ],
                 'settings' => [
-                    'table_name' => getenv('OPG_LPA_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
+                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
 
@@ -59,7 +59,7 @@ return array(
         // Used to access generated PDFs.
         'redis' => [
             'default' => [
-                'host' => getenv('OPG_LPA_RESQUE_REDIS_HOST') ?: null,
+                'host' => getenv('OPG_LPA_COMMON_RESQUE_REDIS_HOST') ?: null,
                 'port' => 6379,
             ],
         ], // redis
@@ -69,7 +69,7 @@ return array(
 
             'default' => [
 
-                'host' => getenv('OPG_LPA_RESQUE_REDIS_HOST') ?: null,
+                'host' => getenv('OPG_LPA_COMMON_RESQUE_REDIS_HOST') ?: null,
                 'port' => 6379,
 
             ],
@@ -80,8 +80,8 @@ return array(
 
     'log' => [
 
-        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-api2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-api2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
 
     ], // log
 
@@ -103,7 +103,7 @@ return array(
 
             's3' => [
                 'settings' => [
-                    'Bucket' => getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') ?: null,
+                    'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
                 ],
                 'client' => [
                     'version' => '2006-03-01',
@@ -119,7 +119,7 @@ return array(
 
         'DynamoQueue' => [
             'settings' => [
-                'table_name' => getenv('OPG_LPA_QUEUE_DYNAMODB_TABLE') ?: 'lpa-pdf-queue-shared',
+                'table_name' => getenv('OPG_LPA_COMMON_QUEUE_DYNAMODB_TABLE') ?: 'lpa-pdf-queue-shared',
             ],
             'client' => [
                 'version' => '2012-08-10',
