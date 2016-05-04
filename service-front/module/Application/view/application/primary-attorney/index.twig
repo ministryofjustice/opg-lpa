@@ -32,7 +32,7 @@
     {% endif %}
 
     <div class="form-group">
-        <a href="{{ addRoute }}" class="button js-form-popup" >
+        <a href="{{ addRoute }}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
             {% if (attorneys) %}
                 Add another attorney?
             {% else %}
