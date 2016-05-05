@@ -31,15 +31,15 @@ return array(
             ],
             'settings' => [
                 'ACL' => 'private',
-                'Bucket' => getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') ?: null,
+                'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
             ],
         ),
 
     ), // worker
 
     'log' => [
-        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
 
 
