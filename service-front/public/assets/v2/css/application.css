@@ -3303,17 +3303,22 @@ input[disabled="disabled"] {
   .pager-controls {
     float: right; } }
 
-.panel-cta, .js-enabled .panel-actions {
+.panel-cta {
   padding: 15px 15px 30px;
   background-color: #dee0e2; }
   @media (max-width: 640px) {
-    .panel-cta, .js-enabled .panel-actions {
+    .panel-cta {
       padding-bottom: 15px; } }
-  .panel-cta .panel-body, .js-enabled .panel-actions .panel-body {
+  .panel-cta .panel-body {
     font-weight: 700;
     text-align: center; }
-  .panel-cta .panel-button, .js-enabled .panel-actions .panel-button {
+  .panel-cta .panel-button {
     text-align: center; }
+
+.js-enabled .panel-actions {
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #bfc1c3; }
 
 .alert .icon {
   float: left;
@@ -3512,11 +3517,11 @@ input[disabled="disabled"] {
       margin-left: 150px; } }
   .form-popup .form-condensed .postcodelookup {
     position: relative; }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .spinner {
-      position: absolute;
-      top: 16px;
-      right: 182px; } }
+    @media (min-width: 641px) {
+      .form-popup .form-condensed .postcodelookup .spinner {
+        position: absolute;
+        top: 16px;
+        right: 182px; } }
   @media (min-width: 641px) {
     .form-popup .form-condensed .error {
       position: relative;
@@ -3543,11 +3548,6 @@ input[disabled="disabled"] {
 
 .no-js legend.form-label {
   display: none; }
-
-.panel-actions a {
-  display: inline-block; }
-.js-enabled .panel-actions {
-  padding: 15px; }
 
 .noscroll {
   position: relative;
@@ -3609,7 +3609,7 @@ input[disabled="disabled"] {
 .popup-header {
   position: relative;
   padding: 15px;
-  border-bottom: 1px solid #d5e8f3; }
+  border-bottom: 1px solid #bfc1c3; }
   .popup-header .icon {
     position: absolute; }
   .no-js .popup-header {

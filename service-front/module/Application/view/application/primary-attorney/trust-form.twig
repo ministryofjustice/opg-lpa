@@ -19,7 +19,7 @@
         'cannot-be-blank' : 'Please enter the company\'s first line of address'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the company\'s second line of address'
+        'linked-1-cannot-be-null' : 'Please enter the second line of address'
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Please enter the company\'s postcode'
@@ -109,15 +109,15 @@
 {############################ trust corp form ############################}
 
 {% if (useTrustRoute) %}
-<p class="role-select group">
-    <a class="js-form-popup" href="{{ useTrustRoute }}">Use details of the {{ trustName }}</a>
-</p>
+<div class="panel-actions">
+    <a href="{{ useTrustRoute }}" class="js-form-popup" >Use details of the {{ trustName }}</a>
+</div>
 {% endif %}
 
 {% if (addAttorneyRoute) %}
-<p class="role-select group">
-    <a class="js-form-popup" href="{{ addAttorneyRoute }}">Using an individual?</a>
-</p>
+<div class="panel-actions">
+    <a href="{{ addAttorneyRoute }}" class="js-form-popup" >Using an individual?</a>
+</div>
 {% endif %}
 
 {# begin form #}
