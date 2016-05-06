@@ -24,7 +24,7 @@
         'cannot-be-blank' : 'Please enter the attorney\'s first line of address'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the attorney\'s second line of address'
+        'linked-1-cannot-be-null' : 'Please enter the second line of address'
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Please enter the attorney\'s postcode'
@@ -161,14 +161,11 @@
 
 {############################ attorney form ############################}
 
-{% if (addTrustCorporationRoute) or (useMyDetailsRoute) %}
+{{ macros.useMyDetails(useMyDetailsRoute) }}
+
+{% if (addTrustCorporationRoute) %}
     <div class="panel-actions">
-        {{ macros.useMyDetails(useMyDetailsRoute) }}
-        {% if (addTrustCorporationRoute) %}
-            <p>
-                <a class="js-form-popup" href="{{ addTrustCorporationRoute }}">Using a trust corporation?</a>
-            </p>
-        {% endif %}
+        <a class="js-form-popup" href="{{ addTrustCorporationRoute }}">Using a trust corporation?</a>
     </div>
 {% endif %}
 

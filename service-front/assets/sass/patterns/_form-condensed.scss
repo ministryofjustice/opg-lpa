@@ -99,16 +99,15 @@
 
 	.postcodelookup {
 		position: relative;
-	}
-
-	.spinner {
-		@include media(tablet) {
-			position: absolute;
-			top: 16px;
-			right: 182px;	
+		.spinner {
+			@include media(tablet) {
+				position: absolute;
+				top: 16px;
+				right: 182px;	
+			}
 		}
 	}
-
+	
 	.error {
 		@include media(tablet) {
 			position: relative;
@@ -155,15 +154,5 @@
 .no-js {
 	legend.form-label {
 		display: none;
-	}
-}
-
-.panel-actions {
-	a {
-		display: inline-block;
-	}
-	.js-enabled & {
-		@extend .panel-cta;
-		padding: $gutter-half;
 	}
 }
