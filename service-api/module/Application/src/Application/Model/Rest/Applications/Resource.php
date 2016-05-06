@@ -32,6 +32,26 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         return self::TYPE_COLLECTION;
     }
 
+
+    /**
+     * Filters out all top level keys that the user cannot directly set.
+     *
+     * @param array $data
+     * @return mixed
+     */
+    private function filterIncomingData( array $data ){
+
+        return array_intersect_key( $data, array_flip([
+            'document',
+            'metadata',
+            'payment',
+            'repeatCaseNumber'
+        ]));
+
+    }
+
+    //-------------------------------------------
+
     /**
      * Create a new LPA.
      *
@@ -45,6 +65,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         //------------------------
 
+        /*
         $document = new Document\Document( $data );
 
         $validation = $document->validate();
@@ -52,6 +73,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         if( $validation->hasErrors() ){
             return new ValidationApiProblem( $validation );
         }
+        */
 
         //----------------------------
         // Generate an id for the LPA
@@ -66,7 +88,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
          */
         do {
 
-            $id = $csprng->GetInt(1, 99999999999);
+            $id = $csprng->GetInt(1000000, 99999999999);
 
             // Check if the id already exists. We're looking for a value of null.
             $exists = $collection->findOne( [ '_id'=>$id ], [ '_id'=>true ] );
@@ -82,8 +104,16 @@ class Resource extends AbstractResource implements UserConsumerInterface {
             'user'              => $this->getRouteUser()->userId(),
             'locked'            => false,
             'whoAreYouAnswered' => false,
-            'document'          => $document,
+            'document'          => new Document\Document(),
         ]);
+
+        //---
+
+        $data = $this->filterIncomingData( $data );
+
+        if( !empty($data) ){
+            $lpa->populate( $data );
+        }
 
         //---
 
@@ -105,6 +135,40 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
     } // function
 
+
+    public function patch($data, $id){
+
+        $this->checkAccess();
+
+        //------------------------
+
+        $lpa = $this->fetch( $id )->getLpa();
+
+        //---
+
+        $data = $this->filterIncomingData( $data );
+
+        var_dump($data); die;
+
+        if( !empty($data) ){
+            $lpa->populate( $data );
+        }
+
+        //---
+
+        $validation = $lpa->validate();
+
+        if( $validation->hasErrors() ){
+            return new ValidationApiProblem( $validation );
+        }
+
+        //---
+
+        $this->updateLpa( $lpa );
+
+        return new Entity( $lpa );
+
+    }
 
     /**
      * Fetch a resource
@@ -262,7 +326,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         /*
          * We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
-         * So we basically just strip the document down to '_id' and 'updatedAt'.
+         * So we just strip the document down to '_id' and 'updatedAt'.
          */
 
         $result['updatedAt'] = new \MongoDate();

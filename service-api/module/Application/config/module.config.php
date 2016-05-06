@@ -106,6 +106,68 @@ return [
 
             ], // api-v1
 
+            'api-v2' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/v2',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller\Version2',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+
+                    'stats' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/stats/:type',
+                            'constraints' => [
+                                'userId' => '[a-f0-9]+',
+                                'type' => '[a-z0-9][a-z0-9-]*',
+                            ],
+                            'defaults' => [
+                                'controller'    => 'Stats',
+                                'resource'      => 'stats'
+                            ],
+                        ],
+                    ], // stats
+
+                    'user' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/users/:userId',
+                            'constraints' => [
+                                'userId' => '[a-f0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller'    => 'Users',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+
+                            'applications' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/applications[/:lpaId]',
+                                    'constraints' => [
+                                        'lpaId'     => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller'    => 'Application',
+                                        'resource'      => 'applications'
+                                    ],
+                                ],
+                            ], // applications
+
+                        ], // child_routes
+
+                    ], // user
+
+                ], // child_routes
+
+            ], // api-v2
+
         ], //routes
 
     ], // router
@@ -137,8 +199,9 @@ return [
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
             'Application\Controller\Ping' => 'Application\Controller\PingController',
-            'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
             'Application\Controller\Console\GenerateStats' => 'Application\Controller\Console\GenerateStatsController',
+            'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
+            'Application\Controller\Version2\Application' => 'Application\Controller\Version2\ApplicationController',
         ],
         'factories' => [
             //'Application\Controller\Version1\Rest' => 'Application\Factory\RestControllerFactory',
