@@ -2765,6 +2765,11 @@ input[disabled="disabled"] {
   .panel-cta .panel-button {
     text-align: center; }
 
+.js-enabled .panel-actions {
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #bfc1c3; }
+
 .alert .icon {
   float: left;
   margin-right: 10px; }
@@ -2945,7 +2950,7 @@ input[disabled="disabled"] {
 .popup-header {
   position: relative;
   padding: 15px;
-  border-bottom: 1px solid #d5e8f3; }
+  border-bottom: 1px solid #bfc1c3; }
   .popup-header .icon {
     position: absolute; }
   .no-js .popup-header {

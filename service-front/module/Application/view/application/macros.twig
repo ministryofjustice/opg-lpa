@@ -80,8 +80,8 @@
 
 {% macro useMyDetails(useMyDetailsRoute) %}
     {% if (useMyDetailsRoute) %}
-    <p>
+    <div class="panel-actions">
         <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
-    </p>
+    </div>
     {% endif %}
 {% endmacro %}

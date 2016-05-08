@@ -12,3 +12,11 @@
 		text-align: center;
 	}
 }
+
+.panel-actions {
+	.js-enabled & {
+		padding: $gutter-half;
+		background-color: $grey-4;
+		border-bottom: 1px solid $border-colour;
+	}
+}
