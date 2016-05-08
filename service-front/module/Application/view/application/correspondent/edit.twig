@@ -1,0 +1,112 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Create a lasting power of attorney 
+{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{{ switcherForm.setAttribute('class', 'form') ? '' }}
+{% set sCsrf = switcherForm.get(switcherForm.csrfName()) %}
+{{ sCsrf.setAttributes({id:'secret'}) ? '' }}
+{% set switchTo = switcherForm.get('switch-to-type') %}
+{{ switchTo.setAttributes({'id':'switch-to-type', 'class':'js-reusable'}) ? '' }}
+{{ switchTo.setOptions({label:'Use these details', empty_option: 'Choose a person'}) ? '' }}
+{% set switchSubmit = switcherForm.get('submit') %}
+{{ switchSubmit.setAttributes({value:'switch'}) ? '' }}
+{{ switcherForm.prepare() ? '' }}
+    
+{% set form = correspondentForm %}
+{{ form.setAttributes({
+    'class':'form form-condensed js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+    
+{% set csrf = form.get(form.csrfName) %}
+{% set who = form.get('who') %}
+{% set title = form.get('name-title') %}
+{% set firstname = form.get('name-first') %}
+{% set lastname = form.get('name-last') %}
+{% set company = form.get('company') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+{% set email = form.get('email-address') %}
+{% set phone = form.get('phone-number') %}
+
+{{ who.setOptions({label:'Role'}) ? '' }}
+    
+{{ title.setOptions({label:'Title'}) ? '' }}
+{{ title.setAttributes({id:'name-title'}) ? '' }}
+{{ firstname.setOptions({label:'First names'}) ? '' }}
+{{ lastname.setOptions({label:'Last name'}) ? '' }}
+{{ company.setOptions({label:'Company name'}) ? '' }}
+{{ address1.setAttributes({id:'address-address1'}) ? '' }}
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+{{ email.setOptions({label:'Email'}) ? '' }}
+{{ phone.setOptions({label:'Daytime phone No.'}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<h2 class="header">Edit the correspondent details</h2>
+
+{{ form().openTag(switcherForm)|raw }}
+{{ formElement(sCsrf) }}
+{{ formErrorList(switcherForm) }}
+
+<div class="role-select group">
+    <label for="switch-to-type" class="optional">Use these details</label>
+    {{ formSelect(switchTo) }}
+    {{ formElementErrors(switchTo) }}
+    <input type="submit" name="switcher-submit" value="Switch" class="button details-picker"> 
+</div>
+
+{{ form().closeTag|raw }}
+
+{{ form().openTag( form )|raw }}
+
+{{ formElement(form.get( form.csrfName )) }}
+
+
+<fieldset>
+
+    {{ macros.formGroup(who) }}
+    
+    {{ macros.formGroup(title) }}
+    {{ macros.formGroup(firstname) }}
+    {{ macros.formGroup(lastname) }}
+	{{ macros.formGroup(company) }}
+
+</fieldset>
+
+<fieldset class="postcodelookup">
+    <legend class="visuallyhidden">Address</legend>
+    <div class="js-PostcodeLookup__postal-add">
+        {{ macros.formGroup(address1) }}
+        {{ macros.formGroup(address2) }}
+        {{ macros.formGroup(address3) }}
+        {{ macros.formGroup(postcode) }}
+    </div>
+</fieldset>
+
+<fieldset>
+
+    {{ macros.formGroup(email) }}
+    
+    {{ macros.formGroup(phone) }}
+
+</fieldset>
+
+<p class="action group">
+<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<button name="cancel" type="button" class="button-secondary">Cancel</button>
+</p>
+
+{{ form().closeTag|raw }}
+
+{% endblock %}
