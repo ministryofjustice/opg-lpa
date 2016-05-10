@@ -44,7 +44,7 @@
           set $realm off;
         }
 
-{{if exists "/opg/nginx/auth"}}
+{{if exists "/opg/lpa/front/nginx/auth"}}
         auth_basic         $realm;
         auth_basic_user_file  /etc/nginx/htpasswd;
 {{end}}

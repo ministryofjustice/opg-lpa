@@ -27,7 +27,7 @@ return array(
 
     'account-cleanup' => [
         'notification' => [
-            'token' => getenv('OPG_LPA_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
+            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
         ],
     ], // cleanup-cleanup
 
@@ -43,11 +43,11 @@ return array(
                 ] : null,
             ],
             'settings' => [
-                'table_name' => getenv('OPG_LPA_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
         ],
 
-        'accounts' => getenv('OPG_LPA_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_ADMIN_ACCOUNTS')) : array(),
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
 
     ], // admin
 
@@ -66,7 +66,7 @@ return array(
                     ] : null,
                 ],
                 'settings' => [
-                    'table_name' => getenv('OPG_LPA_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
+                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
 
@@ -115,7 +115,7 @@ return array(
                 ] : null,
             ],
             'settings' => [
-                'table_name' => getenv('OPG_LPA_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
+                'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
                     'before' => function(){ sleep(1); },
@@ -208,8 +208,8 @@ return array(
     ], // worldpay
 
     'log' => [
-        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
     
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gsi.gov.uk',
