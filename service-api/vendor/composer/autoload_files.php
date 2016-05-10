@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    '34901568a1e26d13dd475cb2c85e0284' => $vendorDir . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
     'ad155f8f1cf0d418fe49e248db8c661b' => $vendorDir . '/react/promise/src/functions_include.php',
     '185c4e929cdca231b7544ab54e07fde3' => $vendorDir . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/functions.php',
     '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
