@@ -30,7 +30,7 @@
         "ministryofjustice/opg-lpa-datamodels": "1.1.6",
         "zf-commons/zfc-rbac": "~2.4",
         "nsmithuk/zf-config-dump": "^1.0",
-        "nsmithuk/dynamo-queue-php": "dev-master"
+        "nsmithuk/dynamo-queue-php": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.*"
