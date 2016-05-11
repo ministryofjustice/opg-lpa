@@ -11,13 +11,6 @@
 
 {% set form = formErrorTextExchange(form,  {}) %}
 
-{% if (seedDetailsPickerForm) %}
-    {{ seedDetailsPickerForm.setAttribute('class', 'form') ? '' }}
-    {% set pickerSubmit = seedDetailsPickerForm.get('submit') %}
-    {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
-    {{ seedDetailsPickerForm.prepare() ? '' }}
-{% endif %}
-    
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
