@@ -10,7 +10,7 @@
     message: 'This will replace the information which you have already entered, are you sure?',
 
     init: function () {
-      _.bindAll(this, 'linkClicked', 'selectChanged');
+      _.bindAll(this, 'render', 'linkClicked', 'selectChanged', 'useDetailsReset');
       this.bindEvents();
     },
 
@@ -18,6 +18,8 @@
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
         .on('change.moj.Modules.Reusables', 'select' + this.selector, this.selectChanged);
+      // custom render event
+      moj.Events.on('Reusables.render', this.render);
     },
 
     // <a> click
@@ -158,6 +160,15 @@
         }
       });
       return clean;
+    },
+
+    render: function(e, params) {
+      $(this.selector, params.wrap).each(this.useDetailsReset);
+    },
+
+    useDetailsReset: function(i, el){
+      // Hide the non-js button
+      $('.details-picker').hide();
     }
   };
 

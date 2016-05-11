@@ -4007,6 +4007,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          // trigger use these details event
+          moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
         } else {
@@ -4145,7 +4147,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     message: 'This will replace the information which you have already entered, are you sure?',
 
     init: function () {
-      _.bindAll(this, 'linkClicked', 'selectChanged');
+      _.bindAll(this, 'render', 'linkClicked', 'selectChanged', 'useDetailsReset');
       this.bindEvents();
     },
 
@@ -4153,6 +4155,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
         .on('change.moj.Modules.Reusables', 'select' + this.selector, this.selectChanged);
+      // custom render event
+      moj.Events.on('Reusables.render', this.render);
     },
 
     // <a> click
@@ -4297,6 +4301,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
       return clean;
+    },
+
+    render: function(e, params) {
+      $(this.selector, params.wrap).each(this.useDetailsReset);
+    },
+
+    useDetailsReset: function(i, el){
+      // Hide the non-js button
+      $('.details-picker').hide();
     }
   };
 
