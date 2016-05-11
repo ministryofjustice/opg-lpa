@@ -63,6 +63,18 @@
 
 {% macro renderPickerForm(form, pickerForm) %}
     {% if (pickerForm) %}
+    
+    {{ pickerForm.setAttribute('class', 'form') ? '' }}
+    {% set pickerSubmit = pickerForm.get('submit') %}
+    {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
+    {{ pickerForm.prepare() ? '' }}
+    
+    {% set picker = pickerForm.get('pick-details') %}
+    {{ picker.setAttributes({'id':'pick-details', 'class':'js-reusable'}) ? '' }}
+    {{ picker.setOptions({'label': 'Use these details', 'empty_option' : 'Choose a person'}) ? '' }}
+    {% set pickerCsrf = pickerForm.get(pickerForm.csrfName()) %}
+    {{ pickerCsrf.setAttributes({'id' : 'secret'}) ? '' }}
+    
     {{ form().openTag(pickerForm)|raw }}
     {{ formElement(pickerCsrf) }}
     

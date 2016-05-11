@@ -13,11 +13,6 @@
 
 {% if (seedDetailsPickerForm) %}
     {{ seedDetailsPickerForm.setAttribute('class', 'form') ? '' }}
-    {% set pickerCsrf = seedDetailsPickerForm.get(seedDetailsPickerForm.csrfName()) %}
-    {{ pickerCsrf.setAttributes({'id' : 'secret'}) ? '' }}
-    {{ seedDetailsPickerForm.get('pick-details') ? '' }}
-    {{ seedDetailsPickerForm.setAttributes({'id':'pick-details', 'class':'js-reusable'}) ? '' }}
-    {{ seedDetailsPickerForm.setOptions({'label': 'Use these details', 'empty_option' : 'Choose a person'}) ? '' }}
     {% set pickerSubmit = seedDetailsPickerForm.get('submit') %}
     {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
     {{ seedDetailsPickerForm.prepare() ? '' }}
@@ -47,7 +42,7 @@
 
 <h2 class="header">Edit certificate provider details</h2>
 
-{{ macros.renderPickerForm(form, pickerForm) }}
+{{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
 
 {{ form().openTag( form )|raw }}
 
