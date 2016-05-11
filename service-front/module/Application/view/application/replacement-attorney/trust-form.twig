@@ -3,19 +3,6 @@
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
-
-{% if (seedDetailsPickerForm) %}
-	{{ seedDetailsPickerForm.setAttribute('class', 'form') ? '' }}
-
-    {% set pickerCsrf = seedDetailsPickerForm.get(seedDetailsPickerForm.csrfName()) %}
-    {{ pickerCsrf.setAttributes({'id' : 'secret'}) ? '' }}
-    {{ seedDetailsPickerForm.get('pick-details') ? '' }}
-    {{ seedDetailsPickerForm.setAttributes({'id':'pick-details', 'class':'js-reusable'}) ? '' }}
-    {{ seedDetailsPickerForm.setOptions({'label': 'Use these details', 'empty_option' : 'Choose a person'}) ? '' }}
-    {% set pickerSubmit = seedDetailsPickerForm.get('submit') %}
-    {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
-    {{ seedDetailsPickerForm.prepare() ? '' }}
-{% endif %}
     
 {% set name = form.get('name') %}
 {% set companyNumber = form.get('number') %}
