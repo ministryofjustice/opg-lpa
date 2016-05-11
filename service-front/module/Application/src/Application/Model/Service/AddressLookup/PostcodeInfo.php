@@ -9,7 +9,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\I18n\Validator\PostCode;
 use MinistryOfJustice;
-use MinistryOfJustice\PostcodeInfo\Client\Address;
+use MinistryOfJustice\PostcodeInfo\Address;
 
 /**
  * Postcode and address lookup from Postcode Anywhere.

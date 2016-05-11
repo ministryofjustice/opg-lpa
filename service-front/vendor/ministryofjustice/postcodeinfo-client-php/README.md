@@ -10,10 +10,14 @@ Update your composer.json file to include:
         "ministryofjustice/postcodeinfo-client-php": "*"
     },
     
-Then, run
+Then install the composer dependencies.
 
 	php composer.phar install
 	
+If you are unfamiliar with Composer and don't have the composer.phar file, please [see the Composer docs here](https://getcomposer.org/download/).
+
+If you are not using a PHP framework that handles autoloading for you, you will need to include vendor/autoload.php at the top of any script that uses the PostcodeInfo client classes.
+
 # Usage
 
 Authentication
@@ -80,7 +84,13 @@ Please see the tests in spec/ministryofjustice/postcodeinfo/client/ClientSpec.ph
 
 # Tests
 
-To run the tests, add a file called spec/api_key. Inside this file place the API token for the postcode info service. Then, from the root of the repository:
+To run the tests, add a file called spec/api_key. Inside this file place the API token for the postcode info service. 
+
+Install the composer dependencies
+
+	php composer.phar install
+	
+Then, from the root of the repository
 
 	bin/phpspec run --format=pretty -vvv --stop-on-failure
 	
