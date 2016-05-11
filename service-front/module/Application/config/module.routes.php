@@ -585,6 +585,17 @@ return [
                             ],
                         ],
                     ],
+                    'summary' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route'    => '/summary[/:from-page]',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\SummaryController',
+                                'action'     => 'index',
+                                'from-page'  => 'dashboard',
+                            ],
+                        ],
+                    ],
                     'donor' => [
                         'type' => 'Literal',
                         'options' => [
