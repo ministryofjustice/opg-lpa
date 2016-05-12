@@ -3,6 +3,7 @@ namespace MinistryOfJustice\PostcodeInfo;
 
 use GuzzleHttp\Psr7\Uri;                            // Concrete PSR-7 URL representation.
 use GuzzleHttp\Psr7\Request;                        // Concrete PSR-7 HTTP Request
+use Psr\Http\Message\ResponseInterface;             // PSR-7 HTTP Response Interface
 use Http\Client\HttpClient as HttpClientInterface;  // Interface for a PSR-7 compatible HTTP Client.
 
 class Client {
@@ -23,6 +24,7 @@ class Client {
      */
     const PATH_LOOKUP_POSTCODE     = '/addresses';
     const PATH_LOOKUP_METADATA     = '/postcodes/%s/';
+
 
     /**
      * @var string base scheme and hostname
@@ -104,6 +106,30 @@ class Client {
     }
 
     //------------------------------------------------------------------------------------
+    // Public API access methods
+
+    public function lookupPostcodeAddresses( $postcode ){
+        
+        $path = self::PATH_LOOKUP_POSTCODE;
+
+        $response = $this->httpGet( $path, [ 'postcode' => $postcode ] );
+
+        return Response\AddressList::buildFromResponse( $response );
+
+    }
+
+
+    public function lookupPostcodeMetadata( $postcode ){
+
+        $path = sprintf( self::PATH_LOOKUP_METADATA, $postcode );
+
+        $response = $this->httpGet( $path );
+
+        return Response\PostcodeInfo::buildFromResponse( $response );
+
+    }
+
+    //------------------------------------------------------------------------------------
     // Internal API access methods
 
     /**
@@ -121,84 +147,27 @@ class Client {
         ];
 
     }
-    
-    //------------------------------------------------------------------------------------
-    // Lookup methods
+
+    //-------------------------------------------
+    // GET & POST requests
 
     /**
-     * Lookup information for the given postcode
-     * and return the contents in a Postcode object
+     * Performs a GET against the Pay API.
      *
-     * @param  string $postcode
-     * @return Postcode
-     */
-    public function lookupPostcode($postcode){
-
-        $url = new Uri( $this->baseUrl . self::PATH_LOOKUP_POSTCODE );
-
-        $url = Uri::withQueryValue($url, 'postcode', $postcode );
-
-        //---
-
-        $request = new Request(
-            'GET',
-            $url,
-            $this->buildHeaders()
-        );
-
-        try {
-
-            $response = $this->getHttpClient()->sendRequest( $request );
-
-        } catch (\RuntimeException $e){
-            throw new Exception\PostcodeException( $e->getMessage(), $e->getCode(), $e );
-        }
-
-        //---
-
-        $postcodeObj = new Postcode();
-
-        if( $response->getStatusCode() != 200 ){
-
-            $postcodeObj->setIsValid(false);
-            return $postcodeObj;
-
-        }
-
-        //---
-
-        $data = json_decode($response->getBody(), true);
-
-        foreach ($data as $addressData) {
-            $address = new Address();
-            $address->exchangeArray($addressData);
-            $postcodeObj->addAddress($address);
-        }
-
-        if (count($data) > 0) {
-            $postcodeObj->setIsValid(true);
-            $postcodeObj = $this->addGeneralInformation($postcodeObj, $postcode);
-        } else {
-            $postcodeObj->setIsValid(false);
-        }
-
-        return $postcodeObj;
-
-    }
-
-
-    /**
-     * Get general information for the postcode area (local authority, centre point)
+     * @param string $path
+     * @param array  $query
      *
-     * @param  Postcode $postcodeObj
-     * @return Postcode
+     * @return ResponseInterface
+     * @throw Exception\PayException | Exception\ApiException | Exception\UnexpectedValueException
      */
-    public function addGeneralInformation(Postcode $postcodeObj, $postcode){
-
-        $path = sprintf( self::PATH_LOOKUP_METADATA, $postcode );
+    private function httpGet( $path, array $query = array() ){
 
         $url = new Uri( $this->baseUrl . $path );
 
+        foreach( $query as $name => $value ){
+            $url = Uri::withQueryValue($url, $name, $value );
+        }
+
         //---
 
         $request = new Request(
@@ -218,44 +187,31 @@ class Client {
         //---
 
         if( $response->getStatusCode() != 200 ){
-
-            $postcodeObj->setIsValid(false);
-            return $postcodeObj;
-
+            throw $this->createErrorException( $response );
         }
 
-        //---
+        return $response;
 
-        $responseArray = json_decode($response->getBody(), true);
+    }
 
-        if (count($responseArray) > 0) {
+    //-------------------------------------------
+    // Response Handling
 
-            if (isset($responseArray['centre']) && $responseArray['centre'] != null) {
+    /**
+     * Called with a response from the API when the response code was unsuccessful. i.e. not 20X.
+     *
+     * @param ResponseInterface $response
+     *
+     * @return Exception\ApiException
+     */
+    protected function createErrorException( ResponseInterface $response ){
 
-                $centrePoint = new Point();
+        $body = json_decode($response->getBody(), true);
 
-                $centrePoint->setType($responseArray['centre']['type']);
-                $centrePoint->setLongitude($responseArray['centre']['coordinates'][0]);
-                $centrePoint->setLatitude($responseArray['centre']['coordinates'][1]);
+        $message = "HTTP:{$response->getStatusCode()} - ";
+        $message .= (is_array($body)) ? print_r($body, true) : 'Unexpected response from server';
 
-                $postcodeObj->setCentrePoint($centrePoint);
-            }
-
-            if (isset($responseArray['local_authority']) && $responseArray['local_authority'] != null) {
-
-                $localAuthority = new LocalAuthority();
-
-                $localAuthority->setName($responseArray['local_authority']['name']);
-                $localAuthority->setGssCode($responseArray['local_authority']['gss_code']);
-
-                $postcodeObj->setLocalAuthority($localAuthority);
-            }
-
-        } else {
-            $postcodeObj->setIsValid(false);
-        }
-
-        return $postcodeObj;
+        return new Exception\ApiException( $message, $response->getStatusCode(), $response );
 
     }
 
