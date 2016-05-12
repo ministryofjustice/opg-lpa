@@ -6,7 +6,6 @@ use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Zend\Mvc\MvcEvent;
 use Application\Form\Admin\SystemMessageForm;
-use Application\Form\Admin\PostcodeLookupMethodForm;
 
 class AdminController extends AbstractAuthenticatedController
 {
@@ -79,38 +78,5 @@ class AdminController extends AbstractAuthenticatedController
         return new ViewModel(['form'=>$form]);
 
     }
-    
-    public function postcodeLookupMethodAction()
-    {
-        $form = new PostcodeLookupMethodForm();
-    
-        $type = $form->get('postcode-service');
-        $typeValueOptions = $type->getOptions()['value_options'];
-        
-        $typeValueOptions['postcode-anywhere']['label'] = 'PCA Predict';
-        $typeValueOptions['moj-dsd']['label'] = 'MoJ Digital Postcode Service';
 
-        $type->setOptions([
-            'value_options' => $typeValueOptions
-        ]);
-        
-        if ($this->request->isPost()) {
-            $post = $this->request->getPost();
-    
-            $form->setData($post);
-
-            if ($form->isValid()) {
-                $this->cache()->setItem('use-postcode-anywhere', ($post['postcode-service'] == 'postcode-anywhere') ? 1 : 0);
-
-                return $this->redirect()->toRoute('home');
-            }
-        } else {
-            $messageElement = $form->get('postcode-service');
-            $currentValue = $this->cache()->getItem('use-postcode-anywhere');
-            $messageElement->setValue($currentValue == 1 ? 'postcode-anywhere' : 'moj-dsd');
-        }
-    
-        return new ViewModel(['form'=>$form]);
-    
-    }
 }
