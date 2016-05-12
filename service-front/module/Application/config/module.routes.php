@@ -721,6 +721,16 @@ return [
                         ),
                         'may_terminate' => true,
                         'child_routes' => array(
+                            'response' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/response',
+                                    'defaults' => array(
+                                        'action' => 'response',
+                                    ),
+                                ),
+                                'may_terminate' => true,
+                            ),
                             'return' => array(
                                 'type'    => 'Literal',
                                 'options' => array(

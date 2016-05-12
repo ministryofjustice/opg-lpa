@@ -3,16 +3,21 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 
+use Application\Model\Service\Payment\Helper\LpaIdHelper;
+
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
+use Zend\View\Helper\ServerUrl;
 
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
+use GuzzleHttp\Psr7\Uri;
 
 class GovPayPaymentController extends AbstractLpaController {
 
-    public function indexAction()
-    {
+    public function indexAction() {
+
         $lpa = $this->getLpa();
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -45,11 +50,14 @@ class GovPayPaymentController extends AbstractLpaController {
 
         //-------------------------------------------
 
+        return $this->redirectToPaymentGateway( $lpa );
+
         // Payment form
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
 
         if($this->request->isPost()) {
+
             $postData = $this->request->getPost();
 
             // set data for validation
@@ -91,6 +99,95 @@ class GovPayPaymentController extends AbstractLpaController {
             'form'=>$form,
             'payByChequeRoute' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
         ]);
+
+    }
+
+
+    public function responseAction(){
+
+        // Lookup the payment ID in play...
+
+        $inPlayId = 'e4fh5g9m5rksv7u4iejh7ll7nh';
+
+        //---
+
+        $paymentClient = $this->getServiceLocator()->get('GovPayClient');
+
+        $payment = $paymentClient->getPayment( $inPlayId );
+
+        var_dump($payment); die;
+
+
+        die('here');
+    }
+
+    private function redirectToPaymentGateway( Lpa $lpa ){
+
+        $paymentClient = $this->getServiceLocator()->get('GovPayClient');
+
+        //----------------------------
+        // Check for any existing payments in play
+
+        //$meta = $this->getLpaApplicationService()->getMetaData( $lpa->id );
+
+        //var_dump($meta); die;
+
+        $inPlayId = 'e4fh5g9m5rksv7u4iejh7ll7nh';
+
+        if( isset($inPlayId) ){
+
+            // Look the payment up on Pay
+            $payment = $paymentClient->getPayment( $inPlayId );
+
+            var_dump($payment); die;
+
+            if( $payment->isSuccessful() ) {
+                die('Payment made');
+            }
+
+            // If this payment id is still in play, direct the user back...
+            if( $payment->isInPlay() ){
+
+                $this->redirect()->toUrl( $payment->getPaymentPageUrl() );
+                return $this->getResponse();
+
+            }
+
+            // Else carry on to start a new payment.
+
+        }
+
+
+        //----------------------------
+        // Create a new payment
+
+        $baseUri = (new ServerUrl())->__invoke(false);
+
+        $callback =  $baseUri . $this->url()->fromRoute(
+                'lpa/payment/response',
+                ['lpa-id' => $lpa->id]
+        );
+
+
+        try {
+
+            $payment = $paymentClient->createPayment(
+                (int)($lpa->payment->amount * 100), // amount in pence,
+                LpaIdHelper::constructPaymentTransactionId( $lpa->id ),
+                'LPA for ' . (string)$lpa->document->donor->name,
+                new Uri($callback)
+            );
+
+        } catch (\Exception $e){
+            die( $e->getMessage() );
+            //var_dump( $e ); die;
+        }
+
+
+
+
+
+        var_dump($payment); die;
 
     }
 

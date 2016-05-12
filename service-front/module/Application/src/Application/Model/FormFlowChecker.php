@@ -54,6 +54,7 @@ class FormFlowChecker extends StateChecker
             'lpa/repeat-application'                        => 'isRepeatApplicationAccessible',
             'lpa/fee-reduction'                             => 'isFeeReductionAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
+            'lpa/payment/response'                          => 'isOnlinePaymentResponseAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
             'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
@@ -663,6 +664,17 @@ class FormFlowChecker extends StateChecker
         }
         else {
             return 'lpa/fee-reduction';
+        }
+    }
+
+    private function isOnlinePaymentResponseAccessible()
+    {
+        if(($this->lpa->payment instanceof Payment) &&
+            ($this->lpa->payment->method == 'card')) {
+            return true;
+        }
+        else {
+            return 'lpa/payment';
         }
     }
     
