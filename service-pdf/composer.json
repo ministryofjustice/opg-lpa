@@ -23,7 +23,7 @@
         "zendframework/zend-filter": "^2.4.9",
         "ministryofjustice/opg-lpa-datamodels": "1.1.6",
         "ministryofjustice/opg-lpa-logger": "^1.0.4",
-        "NSmithUK/dynamo-queue-php": "dev-master"
+        "NSmithUK/dynamo-queue-php": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.*"

@@ -224,10 +224,6 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         ),
         'R' => 
         array (
-            'Resque' => 
-            array (
-                0 => __DIR__ . '/..' . '/chrisboulton/php-resque/lib',
-            ),
             'Raven_' => 
             array (
                 0 => __DIR__ . '/..' . '/raven/raven/lib',
@@ -482,6 +478,7 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Aws\\S3\\ObjectUploader' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/ObjectUploader.php',
         'Aws\\S3\\PermanentRedirectMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/PermanentRedirectMiddleware.php',
         'Aws\\S3\\PostObject' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/PostObject.php',
+        'Aws\\S3\\PostObjectV4' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/PostObjectV4.php',
         'Aws\\S3\\PutObjectUrlMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/PutObjectUrlMiddleware.php',
         'Aws\\S3\\RetryableMalformedResponseParser' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/RetryableMalformedResponseParser.php',
         'Aws\\S3\\S3Client' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3Client.php',
@@ -499,6 +496,7 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Aws\\Signature\\S3SignatureV4' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/S3SignatureV4.php',
         'Aws\\Signature\\SignatureInterface' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureInterface.php',
         'Aws\\Signature\\SignatureProvider' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureProvider.php',
+        'Aws\\Signature\\SignatureTrait' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureTrait.php',
         'Aws\\Signature\\SignatureV4' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureV4.php',
         'Aws\\Sns\\Exception\\SnsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Sns/Exception/SnsException.php',
         'Aws\\Sns\\SnsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Sns/SnsClient.php',
@@ -522,10 +520,6 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Aws\\WorkSpaces\\WorkSpacesClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/WorkSpaces/WorkSpacesClient.php',
         'Aws\\WrappedHttpHandler' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/WrappedHttpHandler.php',
         'Collator' => __DIR__ . '/..' . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/Collator.php',
-        'CredisException' => __DIR__ . '/..' . '/colinmollenhour/credis/Client.php',
-        'Credis_Client' => __DIR__ . '/..' . '/colinmollenhour/credis/Client.php',
-        'Credis_Cluster' => __DIR__ . '/..' . '/colinmollenhour/credis/Cluster.php',
-        'Credis_Sentinel' => __DIR__ . '/..' . '/colinmollenhour/credis/Sentinel.php',
         'Doctrine\\Common\\Lexer\\AbstractLexer' => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php',
         'Doctrine\\Instantiator\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator/Exception/ExceptionInterface.php',
         'Doctrine\\Instantiator\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator/Exception/InvalidArgumentException.php',
@@ -1266,20 +1260,6 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Raven_Serializer' => __DIR__ . '/..' . '/raven/raven/lib/Raven/Serializer.php',
         'Raven_Stacktrace' => __DIR__ . '/..' . '/raven/raven/lib/Raven/Stacktrace.php',
         'Raven_Util' => __DIR__ . '/..' . '/raven/raven/lib/Raven/Util.php',
-        'Resque' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque.php',
-        'Resque_Event' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Event.php',
-        'Resque_Exception' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Exception.php',
-        'Resque_Failure' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Failure.php',
-        'Resque_Failure_Interface' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Failure/Interface.php',
-        'Resque_Failure_Redis' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Failure/Redis.php',
-        'Resque_Job' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Job.php',
-        'Resque_Job_DirtyExitException' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Job/DirtyExitException.php',
-        'Resque_Job_DontPerform' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Job/DontPerform.php',
-        'Resque_Job_Status' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Job/Status.php',
-        'Resque_Log' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Log.php',
-        'Resque_Redis' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Redis.php',
-        'Resque_Stat' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Stat.php',
-        'Resque_Worker' => __DIR__ . '/..' . '/chrisboulton/php-resque/lib/Resque/Worker.php',
         'SebastianBergmann\\Comparator\\ArrayComparator' => __DIR__ . '/..' . '/sebastian/comparator/src/ArrayComparator.php',
         'SebastianBergmann\\Comparator\\Comparator' => __DIR__ . '/..' . '/sebastian/comparator/src/Comparator.php',
         'SebastianBergmann\\Comparator\\ComparisonFailure' => __DIR__ . '/..' . '/sebastian/comparator/src/ComparisonFailure.php',
