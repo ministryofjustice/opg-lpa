@@ -18,6 +18,8 @@ use Zend\Cache\StorageFactory;
 
 use Zend\View\Model\ViewModel;
 
+use Alphagov\Pay\Client as GovPayClient;
+
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Model\Service\System\DynamoCronLock;
 
@@ -133,6 +135,9 @@ class Module{
     public function getServiceConfig(){
 
         return [
+            'shared' => [
+                'HttpClient' => false,
+            ],
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
                 'AddressLookupMoj' => 'PostcodeInfo',
@@ -218,6 +223,17 @@ class Module{
                     $dynamoDbAdapter = new DynamoCronLock($config);
 
                     return $dynamoDbAdapter;
+                },
+
+                'GovPayClient' => function( ServiceLocatorInterface $sm ){
+
+                    $config = $sm->get('config')['alphagov']['pay'];
+                    
+                    return new GovPayClient([
+                        'apiKey'        => $config['key'],
+                        'httpClient'    => $sm->get('HttpClient'),
+                    ]);
+
                 },
                 
                 'TwigEmailRenderer' => function ( ServiceLocatorInterface $sm ) {
