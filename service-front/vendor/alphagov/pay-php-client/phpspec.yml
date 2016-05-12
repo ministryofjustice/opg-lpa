@@ -1,0 +1,4 @@
+suites:
+    notify_suite:
+        namespace: Alphagov\Pay
+        psr4_prefix: Alphagov\Pay

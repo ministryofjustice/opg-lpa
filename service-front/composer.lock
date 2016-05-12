@@ -4,9 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf815fa32ab8217bc1523e5f5e5fe21b",
-    "content-hash": "f3f87dde317ad21890d366fc0571ff5b",
+    "hash": "379fa6514e15a698a90a4b0bf3142b3b",
+    "content-hash": "8d699eab670f99f40a47794eefc1c1b7",
     "packages": [
+        {
+            "name": "alphagov/pay-php-client",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NSmithUK/pay-php-client.git",
+                "reference": "1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NSmithUK/pay-php-client/zipball/1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3",
+                "reference": "1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/psr7": "^1.2",
+                "php": ">=5.4",
+                "php-http/client-implementation": "^1.0",
+                "php-http/httplug": "^1.0",
+                "psr/http-message": "^1.0"
+            },
+            "require-dev": {
+                "php-http/curl-client": "*",
+                "php-http/guzzle6-adapter": "*",
+                "php-http/message": "^1.1",
+                "php-http/mock-client": "*",
+                "php-http/socket-client": "*",
+                "phpspec/phpspec": "^2.0"
+            },
+            "suggest": {
+                "ext-curl": "To send requests using cURL"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Alphagov\\Pay\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Alphagov\\PayTests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Neil Smith",
+                    "email": "neil@nsmith.net"
+                }
+            ],
+            "description": "PHP client for GOV.UK Pay",
+            "support": {
+                "source": "https://github.com/NSmithUK/pay-php-client/tree/master",
+                "issues": "https://github.com/NSmithUK/pay-php-client/issues"
+            },
+            "time": "2016-04-28 10:41:06"
+        },
         {
             "name": "aws/aws-sdk-php",
             "version": "3.18.6",
@@ -6376,7 +6435,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ministryofjustice/postcodeinfo-client-php": 20
+        "ministryofjustice/postcodeinfo-client-php": 20,
+        "alphagov/pay-php-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
