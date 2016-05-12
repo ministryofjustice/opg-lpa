@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.8 - 2016-05-12
+
+### Added
+
+- [#22](https://github.com/zendframework/zend-view/pull/22) adds support for the
+  `async` attribute within the `headScript` helper.
+- [#59](https://github.com/zendframework/zend-view/pull/59) adds and publishes
+  the documentation to https://zendframework.github.io/zend-view/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#21](https://github.com/zendframework/zend-view/pull/21) updates the
+  `headScript` helper to allow empty attribute types to render as keys only when
+  using an HTML5 doctype.
+
 ## 2.6.7 - 2016-04-18
 
 ### Added

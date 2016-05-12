@@ -1,4 +1,4 @@
-FROM registry.service.dsd.io/opguk/php-fpm:0.1.130
+FROM registry.service.dsd.io/opguk/php-fpm:lpa-hsts
 
 RUN groupadd webservice && \
     groupadd supervisor

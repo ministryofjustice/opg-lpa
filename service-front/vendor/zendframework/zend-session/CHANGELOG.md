@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.1 - 2016-05-11
+
+### Added
+
+- [#40](https://github.com/zendframework/zend-session/pull/40) adds and
+  publishes the documentation to https://zendframework.github.io/zend-session/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#38](https://github.com/zendframework/zend-session/pull/38) ensures that the
+  value from `session.gc_maxlifetime` is cast to an integer before assigning
+  it as the `lifetime` value in the `MongoDB` adapter, ensuring sessions may be
+  deleted.
+
 ## 2.7.0 - 2016-04-12
 
 ### Added
