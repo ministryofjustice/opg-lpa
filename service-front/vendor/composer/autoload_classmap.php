@@ -6,6 +6,17 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Alphagov\\Pay\\Client' => $vendorDir . '/alphagov/pay-php-client/src/Client.php',
+    'Alphagov\\Pay\\Exception\\ApiException' => $vendorDir . '/alphagov/pay-php-client/src/Exception/ApiException.php',
+    'Alphagov\\Pay\\Exception\\InvalidArgumentException' => $vendorDir . '/alphagov/pay-php-client/src/Exception/InvalidArgumentException.php',
+    'Alphagov\\Pay\\Exception\\PayException' => $vendorDir . '/alphagov/pay-php-client/src/Exception/PayException.php',
+    'Alphagov\\Pay\\Exception\\UnexpectedValueException' => $vendorDir . '/alphagov/pay-php-client/src/Exception/UnexpectedValueException.php',
+    'Alphagov\\Pay\\Response\\AbstractData' => $vendorDir . '/alphagov/pay-php-client/src/Response/AbstractData.php',
+    'Alphagov\\Pay\\Response\\Event' => $vendorDir . '/alphagov/pay-php-client/src/Response/Event.php',
+    'Alphagov\\Pay\\Response\\Events' => $vendorDir . '/alphagov/pay-php-client/src/Response/Events.php',
+    'Alphagov\\Pay\\Response\\IncludeResponseTrait' => $vendorDir . '/alphagov/pay-php-client/src/Response/IncludeResponseTrait.php',
+    'Alphagov\\Pay\\Response\\Payment' => $vendorDir . '/alphagov/pay-php-client/src/Response/Payment.php',
+    'Alphagov\\Pay\\Response\\Payments' => $vendorDir . '/alphagov/pay-php-client/src/Response/Payments.php',
     'Aws\\Acm\\AcmClient' => $vendorDir . '/aws/aws-sdk-php/src/Acm/AcmClient.php',
     'Aws\\Acm\\Exception\\AcmException' => $vendorDir . '/aws/aws-sdk-php/src/Acm/Exception/AcmException.php',
     'Aws\\ApiGateway\\ApiGatewayClient' => $vendorDir . '/aws/aws-sdk-php/src/ApiGateway/ApiGatewayClient.php',

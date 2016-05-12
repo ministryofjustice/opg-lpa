@@ -11,16 +11,16 @@ class ComposerStaticInit9104a42370e78d6992f632c7c251ac0c
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '185c4e929cdca231b7544ab54e07fde3' => __DIR__ . '/..' . '/symfony/intl/Symfony/Component/Intl/Resources/stubs/functions.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
-        'e40631d46120a9c38ea139981f8dab26' => __DIR__ . '/..' . '/ircmaxell/password-compat/lib/password.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        'e40631d46120a9c38ea139981f8dab26' => __DIR__ . '/..' . '/ircmaxell/password-compat/lib/password.php',
         'edc6464955a37aa4d5fbf39d40fb6ee7' => __DIR__ . '/..' . '/symfony/polyfill-php55/bootstrap.php',
         '3e2471375464aac821502deb0ac64275' => __DIR__ . '/..' . '/symfony/polyfill-php54/bootstrap.php',
+        'ddc0a4d7e61c0286f0f8593b1903e894' => __DIR__ . '/..' . '/clue/stream-filter/src/functions.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
-        'ddc0a4d7e61c0286f0f8593b1903e894' => __DIR__ . '/..' . '/clue/stream-filter/src/functions.php',
+        '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
-        '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -143,6 +143,7 @@ class ComposerStaticInit9104a42370e78d6992f632c7c251ac0c
         'A' => 
         array (
             'Aws\\' => 4,
+            'Alphagov\\Pay\\' => 13,
         ),
     );
 
@@ -472,6 +473,10 @@ class ComposerStaticInit9104a42370e78d6992f632c7c251ac0c
         array (
             0 => __DIR__ . '/..' . '/aws/aws-sdk-php/src',
         ),
+        'Alphagov\\Pay\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/alphagov/pay-php-client/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -576,6 +581,17 @@ class ComposerStaticInit9104a42370e78d6992f632c7c251ac0c
     );
 
     public static $classMap = array (
+        'Alphagov\\Pay\\Client' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Client.php',
+        'Alphagov\\Pay\\Exception\\ApiException' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Exception/ApiException.php',
+        'Alphagov\\Pay\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Exception/InvalidArgumentException.php',
+        'Alphagov\\Pay\\Exception\\PayException' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Exception/PayException.php',
+        'Alphagov\\Pay\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Exception/UnexpectedValueException.php',
+        'Alphagov\\Pay\\Response\\AbstractData' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Response/AbstractData.php',
+        'Alphagov\\Pay\\Response\\Event' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Response/Event.php',
+        'Alphagov\\Pay\\Response\\Events' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Response/Events.php',
+        'Alphagov\\Pay\\Response\\IncludeResponseTrait' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Response/IncludeResponseTrait.php',
+        'Alphagov\\Pay\\Response\\Payment' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Response/Payment.php',
+        'Alphagov\\Pay\\Response\\Payments' => __DIR__ . '/..' . '/alphagov/pay-php-client/src/Response/Payments.php',
         'Aws\\Acm\\AcmClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Acm/AcmClient.php',
         'Aws\\Acm\\Exception\\AcmException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Acm/Exception/AcmException.php',
         'Aws\\ApiGateway\\ApiGatewayClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ApiGateway/ApiGatewayClient.php',

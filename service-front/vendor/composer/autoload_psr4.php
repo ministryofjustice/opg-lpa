@@ -87,4 +87,5 @@ return array(
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'Clue\\StreamFilter\\' => array($vendorDir . '/clue/stream-filter/src'),
     'Aws\\' => array($vendorDir . '/aws/aws-sdk-php/src'),
+    'Alphagov\\Pay\\' => array($vendorDir . '/alphagov/pay-php-client/src'),
 );
