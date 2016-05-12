@@ -2,22 +2,25 @@
 
 PHP API Client wrapper for [MoJ Postcode Info API](https://github.com/ministryofjustice/postcodeinfo)
 
-# Installation
 
-Update your composer.json file to include:
+#### PSR-7 HTTP
 
-    "require": {
-        "ministryofjustice/postcodeinfo-client-php": "*"
-    },
-    
-Then, run
+The Postcode Lookup PHP Client is based on a PSR-7 HTTP model. You therefore need to pick your preferred HTTP Client library to use.
 
-	php composer.phar install
-	
-# Usage
+We will show examples here using the Guzzle v6 Adapter.
 
-Authentication
---------------
+
+## Installing
+
+The Postcode Lookup PHP Client can be installed with [Composer](https://getcomposer.org/). Run this command:
+
+```sh
+composer require php-http/guzzle6-adapter ministryofjustice/postcodeinfo-client-php
+```
+
+## Usage
+
+### Authentication
 
 You will need an *authentication token* (auth token). If you're using MOJ DS's
 Postcode Info server, you can get a token by emailing
@@ -31,57 +34,76 @@ If you're running your own server, see
 https://github.com/ministryofjustice/postcodeinfo#auth_tokens for instructions
 on how to create a token.
 
-Quick Start
------------
+### Instantiation
 
-	use MinistryOfJustice\PostcodeInfo\Client\Client;
+Assuming you've installed the package via Composer, the Postcode Lookup PHP Client will be available via the autoloader.
 
-	$client = new Client(
-		'API_KEY_HERE',
-		'https://postcodeinfo-staging.dsd.io'
-	);
-	
-	$postcode = $client->lookupPostcode('AB124YA');
-	
-	$isValid = $postcode->isValid();
-	
-	$centrePoint = $postcode->getCentrePoint();
-	$centrePoint->getLatitude();
-	$centrePoint->getLongitude();
-	
-	$localAuth = $postcode->getLocalAuthority();
-	$localAuth->getName();
-	$localAuth->getGssCode();
-	
-	$addresses = $postcode->getAddresses();
-	
-	foreach ($addresses as $address) {
-	        $address->getUprn();
-	        $address->getThoroughfareName();
-	        $address->getOrganisationName();
-	        $address->getDepartmentName();
-	        $address->getPoBoxNumber();
-	        $address->getBuildingName();
-	        $address->getSubBuildingName();
-	        $address->getBuildingNumber();
-	        $address->getDependentLocality();
-	        $address->getDoubleDependentLocality();
-	        $address->getPostTown();
-	        $address->getPostcode();
-	        $address->getPostcodeType();
-	        $address->getFormattedAddress();
-	        
-	        $point = $address->getPoint();
-	        $point->getLatitude();
-	        $point->getLongitude();
- 	}
+Create a (Guzzle v6 based) instance of the Client using:
 
-Please see the tests in spec/ministryofjustice/postcodeinfo/client/ClientSpec.php to see all the interface methods and their usage.
+```php
+$client = new \MinistryOfJustice\PostcodeInfo\Client([
+    'apiKey'        => '{your api key}',
+    'httpClient'    => new \Http\Adapter\Guzzle6\Client
+]);
+```
+
+You are then able to access the Postcode Lookup API using ``$client``.
+
+
+# Usage
+
+```php
+$postcode = $client->lookupPostcode('AB124YA');
+
+$isValid = $postcode->isValid();
+
+$centrePoint = $postcode->getCentrePoint();
+$centrePoint->getLatitude();
+$centrePoint->getLongitude();
+
+$localAuth = $postcode->getLocalAuthority();
+$localAuth->getName();
+$localAuth->getGssCode();
+
+$addresses = $postcode->getAddresses();
+
+foreach ($addresses as $address) {
+        $address->getUprn();
+        $address->getThoroughfareName();
+        $address->getOrganisationName();
+        $address->getDepartmentName();
+        $address->getPoBoxNumber();
+        $address->getBuildingName();
+        $address->getSubBuildingName();
+        $address->getBuildingNumber();
+        $address->getDependentLocality();
+        $address->getDoubleDependentLocality();
+        $address->getPostTown();
+        $address->getPostcode();
+        $address->getPostcodeType();
+        $address->getFormattedAddress();
+
+        $point = $address->getPoint();
+        $point->getLatitude();
+        $point->getLongitude();
+	}
+```
+
+Please see the tests in spec/ClientSpec.php to see all the interface methods and their usage.
 
 # Tests
 
-To run the tests, add a file called spec/api_key. Inside this file place the API token for the postcode info service. Then, from the root of the repository:
+To run the tests, add a file called spec/api_key. Inside this file place the API token for the postcode info service.
+
+Install the composer dependencies
+
+	php composer.phar install
+
+Then, from the root of the repository
 
 	bin/phpspec run --format=pretty -vvv --stop-on-failure
-	
-	
+
+
+## License
+
+The Postcode Lookup PHP Client is released under the MIT license, a copy of which can be found in [LICENSE](LICENSE.txt).
