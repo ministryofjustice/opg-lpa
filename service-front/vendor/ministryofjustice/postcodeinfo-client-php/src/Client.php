@@ -15,7 +15,7 @@ class Client {
     const VERSION = '4.0.0';
 
     /**
-     * @const string The API endpoint for Pay production.
+     * @const string The API endpoint for production.
      */
     const BASE_URL_PRODUCTION = 'https://postcodeinfo.service.justice.gov.uk';
 
@@ -42,6 +42,20 @@ class Client {
     private $apiKey;
 
 
+    /**
+     * Instantiates a new PostcodeInfo client.
+     *
+     * The client constructor accepts the following options:
+     *  - httpClient: (HttpClientInterface)
+     *      Required.
+     *  - apiKey: (string)
+     *      Required.
+     *  - baseUrl: (string)
+     *      Optional. The base URL to make API calls to.
+     *      If not set, this defaults to the production API.
+     *
+     * @param array $config
+     */
     public function __construct( array $config )
     {
 
@@ -108,6 +122,12 @@ class Client {
     //------------------------------------------------------------------------------------
     // Public API access methods
 
+    /**
+     * Returns a list of addresses associated with a postcode.
+     *
+     * @param $postcode
+     * @return Response\AddressList
+     */
     public function lookupPostcodeAddresses( $postcode ){
         
         $path = self::PATH_LOOKUP_POSTCODE;
@@ -118,7 +138,12 @@ class Client {
 
     }
 
-
+    /**
+     * Returns metadata associated with a postcode.
+     *
+     * @param $postcode
+     * @return Response\PostcodeInfo
+     */
     public function lookupPostcodeMetadata( $postcode ){
 
         $path = sprintf( self::PATH_LOOKUP_METADATA, $postcode );
@@ -152,13 +177,13 @@ class Client {
     // GET & POST requests
 
     /**
-     * Performs a GET against the Pay API.
+     * Performs a GET against the API.
      *
      * @param string $path
      * @param array  $query
      *
      * @return ResponseInterface
-     * @throw Exception\PayException | Exception\ApiException | Exception\UnexpectedValueException
+     * @throw Exception\PostcodeException | Exception\ApiException | Exception\UnexpectedValueException
      */
     private function httpGet( $path, array $query = array() ){
 

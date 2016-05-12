@@ -46,7 +46,7 @@
         "zf-commons/zfc-twig": "^1.2.2",
         "nsmithuk/zf-config-dump": "^1.0",
         "php-http/message": "^1.2",
-        "php-http/guzzle5-adapter": "*"
+        "php-http/guzzle5-adapter": "^0.5"
 
     },
     "require-dev": {

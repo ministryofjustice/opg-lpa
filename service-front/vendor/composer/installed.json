@@ -3449,12 +3449,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-            "reference": "f14d8d7328cad7a0c1786c08b838e18c0a56fbd9"
+            "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/f14d8d7328cad7a0c1786c08b838e18c0a56fbd9",
-            "reference": "f14d8d7328cad7a0c1786c08b838e18c0a56fbd9",
+            "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/9d5a30e1212525bbe7fce0319eebbc695e0873cf",
+            "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf",
             "shasum": ""
         },
         "require": {
@@ -3470,7 +3470,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2016-05-12 09:35:01",
+        "time": "2016-05-12 10:34:50",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

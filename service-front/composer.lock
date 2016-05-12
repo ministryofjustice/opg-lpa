@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9cfc048f13f4f0c6fe85eacf55458ec7",
-    "content-hash": "c99f4bcc455ff57be8091a2ff36182e6",
+    "hash": "9d0391b3101b9dc42e2e42ee76756cc7",
+    "content-hash": "ce3c8c17d3920b915a8b33b155d4caf0",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -824,12 +824,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-                "reference": "f14d8d7328cad7a0c1786c08b838e18c0a56fbd9"
+                "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/f14d8d7328cad7a0c1786c08b838e18c0a56fbd9",
-                "reference": "f14d8d7328cad7a0c1786c08b838e18c0a56fbd9",
+                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/9d5a30e1212525bbe7fce0319eebbc695e0873cf",
+                "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf",
                 "shasum": ""
             },
             "require": {
@@ -859,7 +859,7 @@
                 "source": "https://github.com/ministryofjustice/postcodeinfo-client-php/tree/v4",
                 "issues": "https://github.com/ministryofjustice/postcodeinfo-client-php/issues"
             },
-            "time": "2016-05-12 09:35:01"
+            "time": "2016-05-12 10:34:50"
         },
         {
             "name": "mtdowling/jmespath.php",

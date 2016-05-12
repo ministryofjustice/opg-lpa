@@ -1,6 +1,6 @@
-# postcodeinfo-client-php
+# MoJ DS PostcodeInfo - postcodeinfo-client-php
 
-PHP API Client wrapper for [MoJ Postcode Info API](https://github.com/ministryofjustice/postcodeinfo)
+PHP API Client for the [MoJ DS PostcodeInfo](https://github.com/ministryofjustice/postcodeinfo) service.
 
 
 #### PSR-7 HTTP
@@ -8,6 +8,8 @@ PHP API Client wrapper for [MoJ Postcode Info API](https://github.com/ministryof
 The Postcode Lookup PHP Client is based on a PSR-7 HTTP model. You therefore need to pick your preferred HTTP Client library to use.
 
 We will show examples here using the Guzzle v6 Adapter.
+
+Setup instructions are also available for [Curl](docs/curl-client-setup.md) and [Guzzle v5](docs/guzzle5-client-setup.md).
 
 
 ## Installing
@@ -50,48 +52,62 @@ $client = new \MinistryOfJustice\PostcodeInfo\Client([
 You are then able to access the Postcode Lookup API using ``$client``.
 
 
-# Usage
+### Return a list of addresses for a postcode
 
 ```php
-$postcode = $client->lookupPostcode('AB124YA');
+// Return a list of addresses
+$addresses = $client->lookupPostcodeAddresses('SW19 5AL');
 
-$isValid = $postcode->isValid();
+// Check if any addresses were found
+$found = !empty($addresses);
 
-$centrePoint = $postcode->getCentrePoint();
-$centrePoint->getLatitude();
-$centrePoint->getLongitude();
+// Count the addresses found
+$numberFound = count($addresses);
 
-$localAuth = $postcode->getLocalAuthority();
-$localAuth->getName();
-$localAuth->getGssCode();
-
-$addresses = $postcode->getAddresses();
-
+// Iterate over the returned addresses
 foreach ($addresses as $address) {
-        $address->getUprn();
-        $address->getThoroughfareName();
-        $address->getOrganisationName();
-        $address->getDepartmentName();
-        $address->getPoBoxNumber();
-        $address->getBuildingName();
-        $address->getSubBuildingName();
-        $address->getBuildingNumber();
-        $address->getDependentLocality();
-        $address->getDoubleDependentLocality();
-        $address->getPostTown();
-        $address->getPostcode();
-        $address->getPostcodeType();
-        $address->getFormattedAddress();
 
-        $point = $address->getPoint();
-        $point->getLatitude();
-        $point->getLongitude();
+		// Available properties include...
+        $address->uprn;
+        $address->organisation_name;
+        $address->building_name;
+        $address->sub_building_name;
+        $address->building_number;
+        $address->post_town;
+        $address->postcode;
+        $address->postcode_type;
+        $address->formatted_address;
+        $address->thoroughfare_name;
+        $address->dependent_locality;
+        $address->double_dependent_locality;
+        $address->po_box_number;
+
+        // Coordinate info is under...
+		$address->point->getLatitude();
+        $address->point->getLongitude();
+
 	}
 ```
 
-Please see the tests in spec/ClientSpec.php to see all the interface methods and their usage.
 
-# Tests
+### Return metadata about a postcode
+```php
+$metadata = $client->lookupPostcodeMetadata('AB12 4YA');
+
+// You then have access to the following properties...
+$metadata->country->name;
+$metadata->country->gss_code;
+
+$metadata->local_authority->name;
+$metadata->local_authority->gss_code;
+
+$metadata->centre->getLatitude();
+$metadata->centre->getLongitude();
+
+```
+
+
+## Tests
 
 To run the tests, add a file called spec/api_key. Inside this file place the API token for the postcode info service.
 
