@@ -107,7 +107,7 @@ class GovPayPaymentController extends AbstractLpaController {
 
         // Lookup the payment ID in play...
 
-        $inPlayId = 'e4fh5g9m5rksv7u4iejh7ll7nh';
+        $inPlayId = '9mvipcidrqs3ugco0ku7f3895p';
 
         //---
 
@@ -132,7 +132,7 @@ class GovPayPaymentController extends AbstractLpaController {
 
         //var_dump($meta); die;
 
-        $inPlayId = 'e4fh5g9m5rksv7u4iejh7ll7nh';
+        $inPlayId = '9mvipcidrqs3ugco0ku7f3895p';
 
         if( isset($inPlayId) ){
 
@@ -146,7 +146,7 @@ class GovPayPaymentController extends AbstractLpaController {
             }
 
             // If this payment id is still in play, direct the user back...
-            if( $payment->isInPlay() ){
+            if( !$payment->isFinished() ){
 
                 $this->redirect()->toUrl( $payment->getPaymentPageUrl() );
                 return $this->getResponse();
@@ -161,33 +161,25 @@ class GovPayPaymentController extends AbstractLpaController {
         //----------------------------
         // Create a new payment
 
+        die('no');
+
         $baseUri = (new ServerUrl())->__invoke(false);
 
-        $callback =  $baseUri . $this->url()->fromRoute(
+        $callback = $baseUri . $this->url()->fromRoute(
                 'lpa/payment/response',
                 ['lpa-id' => $lpa->id]
         );
 
-
-        try {
-
-            $payment = $paymentClient->createPayment(
-                (int)($lpa->payment->amount * 100), // amount in pence,
-                LpaIdHelper::constructPaymentTransactionId( $lpa->id ),
-                'LPA for ' . (string)$lpa->document->donor->name,
-                new Uri($callback)
-            );
-
-        } catch (\Exception $e){
-            die( $e->getMessage() );
-            //var_dump( $e ); die;
-        }
+        $payment = $paymentClient->createPayment(
+            (int)($lpa->payment->amount * 100), // amount in pence,
+            LpaIdHelper::constructPaymentTransactionId( $lpa->id ),
+            'LPA for ' . (string)$lpa->document->donor->name,
+            new Uri($callback)
+        );
 
 
-
-
-
-        var_dump($payment); die;
+        $this->redirect()->toUrl( $payment->getPaymentPageUrl() );
+        return $this->getResponse();
 
     }
 

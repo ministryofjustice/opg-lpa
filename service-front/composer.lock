@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/NSmithUK/pay-php-client.git",
-                "reference": "1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3"
+                "reference": "b69df03c865d531d9a0221f8e348edf9014e2baf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NSmithUK/pay-php-client/zipball/1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3",
-                "reference": "1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3",
+                "url": "https://api.github.com/repos/NSmithUK/pay-php-client/zipball/b69df03c865d531d9a0221f8e348edf9014e2baf",
+                "reference": "b69df03c865d531d9a0221f8e348edf9014e2baf",
                 "shasum": ""
             },
             "require": {
@@ -45,11 +45,6 @@
                     "Alphagov\\Pay\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Alphagov\\PayTests\\": "tests/"
-                }
-            },
             "license": [
                 "MIT"
             ],
@@ -64,7 +59,7 @@
                 "source": "https://github.com/NSmithUK/pay-php-client/tree/master",
                 "issues": "https://github.com/NSmithUK/pay-php-client/issues"
             },
-            "time": "2016-04-28 10:41:06"
+            "time": "2016-05-13 09:13:10"
         },
         {
             "name": "aws/aws-sdk-php",
@@ -1752,20 +1747,23 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4|~5"
             },
             "type": "library",
             "autoload": {
@@ -1789,7 +1787,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -3405,16 +3403,16 @@
         },
         {
             "name": "zendframework/zend-cache",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-cache.git",
-                "reference": "33211da0598e8f20a8d425945e3d452a87c50364"
+                "reference": "2c68def8f96ce842d2f2a9a69e2f3508c2f5312d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/33211da0598e8f20a8d425945e3d452a87c50364",
-                "reference": "33211da0598e8f20a8d425945e3d452a87c50364",
+                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/2c68def8f96ce842d2f2a9a69e2f3508c2f5312d",
+                "reference": "2c68def8f96ce842d2f2a9a69e2f3508c2f5312d",
                 "shasum": ""
             },
             "require": {
@@ -3425,6 +3423,7 @@
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "1.7.*",
+                "phpbench/phpbench": "^0.10.0",
                 "phpunit/phpunit": "^4.5",
                 "zendframework/zend-serializer": "^2.6",
                 "zendframework/zend-session": "^2.6.2"
@@ -3469,7 +3468,7 @@
                 "cache",
                 "zf2"
             ],
-            "time": "2016-04-12 15:55:27"
+            "time": "2016-05-12 21:47:55"
         },
         {
             "name": "zendframework/zend-captcha",
@@ -6107,16 +6106,16 @@
         },
         {
             "name": "zendframework/zend-view",
-            "version": "2.6.8",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-view.git",
-                "reference": "2d369722f9a38a8fc0f9857f5816b309929baaad"
+                "reference": "001336925fec6bb36e8e6d2b2af60da30a9d087e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-view/zipball/2d369722f9a38a8fc0f9857f5816b309929baaad",
-                "reference": "2d369722f9a38a8fc0f9857f5816b309929baaad",
+                "url": "https://api.github.com/repos/zendframework/zend-view/zipball/001336925fec6bb36e8e6d2b2af60da30a9d087e",
+                "reference": "001336925fec6bb36e8e6d2b2af60da30a9d087e",
                 "shasum": ""
             },
             "require": {
@@ -6168,8 +6167,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev",
-                    "dev-develop": "2.7-dev"
+                    "dev-master": "2.7-dev",
+                    "dev-develop": "2.8-dev"
                 }
             },
             "autoload": {
@@ -6187,7 +6186,7 @@
                 "view",
                 "zf2"
             ],
-            "time": "2016-05-12 13:42:17"
+            "time": "2016-05-12 14:24:52"
         },
         {
             "name": "zendframework/zend-xmlrpc",

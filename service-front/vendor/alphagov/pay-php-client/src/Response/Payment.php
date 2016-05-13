@@ -8,55 +8,73 @@ use Alphagov\Pay\Exception;
 class Payment extends AbstractData {
     use IncludeResponseTrait;
 
-    const STATUS_CREATED            = 'CREATED';
-    const STATUS_IN_PROGRESS        = 'IN PROGRESS';
-    const STATUS_SUCCEEDED          = 'SUCCEEDED';
-    const STATUS_EXPIRED            = 'EXPIRED';
-    const STATUS_USER_CANCELLED     = 'USER CANCELLED';
-    const STATUS_FAILED             = 'FAILED';
-    const STATUS_SYSTEM_CANCELLED   = 'SYSTEM CANCELLED';
+    const STATUS_CREATED    = 'created';
+    const STATUS_STARTED    = 'started';
+    const STATUS_SUBMITTED  = 'submitted';
+    const STATUS_CONFIRMED  = 'confirmed';
+    const STATUS_CAPTURED   = 'captured';
 
-    /**
-     * Check if this payment is currently in play. Otherwise it's in an End State.
-     *
-     * @return bool
-     */
-    public function isInPlay(){
+    const STATUS_FAILED     = 'failed';
+    const STATUS_CANCELLED  = 'cancelled';
+    const STATUS_ERROR      = 'error';
 
-        // Payment is in play if it's status is created or in progress...
-        if( !in_array( $this->status, [ self::STATUS_CREATED, self::STATUS_IN_PROGRESS ], true ) ){
-            return false;
+
+    public function __construct( Array $details ){
+
+        if( isset($details['state']) ){
+            $details['state'] = new \ArrayObject( $details['state'], \ArrayObject::ARRAY_AS_PROPS );
         }
 
-        // and if we have a 'next_url' link.
-        if( !isset( $this['_links']['next_url']['href'] ) ){
-            return false;
-        }
-
-        return true;
+        parent::__construct( $details );
 
     }
 
     /**
-     * Is the payment both in an End State, and successful.
+     * Check is the payment has process has finished.
+     *
+     * @return bool
+     */
+    public function isFinished(){
+        return (bool)$this->state->finished;
+    }
+
+
+    /**
+     * Is the payment both finished and successful.
      *
      * @return bool
      */
     public function isSuccessful(){
 
-        return ( $this->status === self::STATUS_SUCCEEDED );
+        return ( $this->isFinished() && ( $this->isConfirmed() || $this->isCaptured() ) );
 
     }
+
+    //---------------------------
+
+    public function isCreated(){    return ( $this->state->status === self::STATUS_CREATED ); }
+    public function isStarted(){    return ( $this->state->status === self::STATUS_STARTED ); }
+    public function isSubmitted(){  return ( $this->state->status === self::STATUS_SUBMITTED ); }
+    public function isConfirmed(){  return ( $this->state->status === self::STATUS_CONFIRMED ); }
+    public function isCaptured(){   return ( $this->state->status === self::STATUS_CAPTURED ); }
+
+    public function isFailed(){     return ( $this->state->status === self::STATUS_FAILED ); }
+    public function isCancelled(){  return ( $this->state->status === self::STATUS_CANCELLED ); }
+    public function isError(){      return ( $this->state->status === self::STATUS_ERROR ); }
+
+    //---------------------------
 
     /**
      * Return the URL to the payment page to which the user needs directing to continue.
      *
-     * @return bool|Uri
+     * NULL is returned if a payment page URL is not available.
+     *
+     * @return Uri|null
      */
     public function getPaymentPageUrl(){
 
-        if( !$this->isInPlay() ){
-            throw new Exception\UnexpectedValueException('A payment needs to be In Play to return ');
+        if( $this->isFinished() || !isset($this['_links']['next_url']['href']) ){
+            return null;
         }
 
         return new Uri( $this['_links']['next_url']['href'] );
