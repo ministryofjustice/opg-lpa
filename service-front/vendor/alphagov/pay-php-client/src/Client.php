@@ -23,7 +23,7 @@ class Client {
      * @const string Current version of this client.
      * This follows Semantic Versioning (http://semver.org/)
      */
-    const VERSION = '0.2.0';
+    const VERSION = '0.3.0';
 
     /**
      * @const string The API endpoint for Pay production.
@@ -51,11 +51,25 @@ class Client {
     private $httpClient;
 
     /**
-     * @var string
+     * @var string API key
      */
     private $apiKey;
-    
 
+
+    /**
+     * Instantiates a new GOV.UK Pay client.
+     *
+     * The client constructor accepts the following options:
+     *  - httpClient: (HttpClientInterface)
+     *      Required.
+     *  - apiKey: (string)
+     *      Required.
+     *  - baseUrl: (string)
+     *      Optional. The base URL to make API calls to.
+     *      If not set, this defaults to the production API.
+     *
+     * @param array $config
+     */
     public function __construct( array $config )
     {
 
@@ -122,6 +136,15 @@ class Client {
     //------------------------------------------------------------------------------------
     // Public API access methods
 
+    /**
+     * Create a new payment.
+     *
+     * @param $amount int amount, in pence
+     * @param $reference string Application side payment reference
+     * @param $description string Payment description
+     * @param $returnUrl UriInterface URL the user will be directed back to.
+     * @return Response\Payment
+     */
     public function createPayment( $amount, $reference, $description, UriInterface $returnUrl ){
 
         if( !is_int($amount) ){
@@ -147,6 +170,15 @@ class Client {
         
     }
 
+    /**
+     * Lookup an existing payment.
+     *
+     * Returns a payment Payment Response object.
+     * If the payment was not fount, NULL is returned.
+     *
+     * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
+     * @return null|Response\Payment
+     */
     public function getPayment( $payment ){
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
@@ -161,6 +193,15 @@ class Client {
 
     }
 
+    /**
+     * Return all events associated with an existing payment.
+     *
+     * Returns a Events Response object.
+     * If no events were found, an empty array is returned.
+     *
+     * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
+     * @return array|Response\Events
+     */
     public function getPaymentEvents( $payment ){
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
@@ -175,6 +216,12 @@ class Client {
 
     }
 
+    /**
+     * Cancels an existing payment.
+     *
+     * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
+     * @return bool
+     */
     public function cancelPayment( $payment ){
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
@@ -193,6 +240,12 @@ class Client {
 
     }
 
+    /**
+     * Searches existing transactions.
+     *
+     * @param $filters array key=>value filters applied to the search.
+     * @return array|Response\Payments
+     */
     public function searchPayments( array $filters = array() ){
 
         // Only allow the following filter keys.
@@ -248,7 +301,7 @@ class Client {
         $url = new Uri( $this->baseUrl . $path );
 
         foreach( $query as $name => $value ){
-            $url = URI::withQueryValue($url, $name, $value );
+            $url = Uri::withQueryValue($url, $name, $value );
         }
 
         //---
