@@ -66,6 +66,16 @@ class ApplicationController extends AbstractRestfulController {
     public function getList()
     {
 
+        // @todo
+
+        $this->response->setStatusCode(405);
+
+        return [
+            'content' => 'Method Not Allowed'
+        ];
+
+        //---
+
         $query = $this->params()->fromQuery();
 
         if( isset($query['page']) && is_numeric($query['page']) ){
@@ -220,7 +230,7 @@ class ApplicationController extends AbstractRestfulController {
     private function generateHal( EntityInterface $entity ){
 
         $hal = new Hal(
-        // Set 'self'
+            // Set 'self'
             $this->url()->fromRoute('api-v2/user/applications', [
                 'userId'=>$this->getResource()->getRouteUser()->userId(),
                 'lpaId'=>$entity->lpaId(),
