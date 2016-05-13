@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9d0391b3101b9dc42e2e42ee76756cc7",
-    "content-hash": "ce3c8c17d3920b915a8b33b155d4caf0",
+    "hash": "a8f9e4a0600de1cfa3175521ac29f27b",
+    "content-hash": "bafc471e034f69bf3179026793bb1c67",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -820,16 +820,16 @@
         },
         {
             "name": "ministryofjustice/postcodeinfo-client-php",
-            "version": "v4.x-dev",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-                "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf"
+                "reference": "bf87ed3674eece4351481765b4016541ee6662f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/9d5a30e1212525bbe7fce0319eebbc695e0873cf",
-                "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf",
+                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/bf87ed3674eece4351481765b4016541ee6662f2",
+                "reference": "bf87ed3674eece4351481765b4016541ee6662f2",
                 "shasum": ""
             },
             "require": {
@@ -851,15 +851,12 @@
                     "MinistryOfJustice\\PostcodeInfo\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "PHP API Client wrapper for MoJ Postcode Info API",
-            "support": {
-                "source": "https://github.com/ministryofjustice/postcodeinfo-client-php/tree/v4",
-                "issues": "https://github.com/ministryofjustice/postcodeinfo-client-php/issues"
-            },
-            "time": "2016-05-12 10:34:50"
+            "time": "2016-05-13 13:40:36"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -2741,20 +2738,23 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4|~5"
             },
             "type": "library",
             "autoload": {
@@ -2778,7 +2778,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -3380,9 +3380,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "ministryofjustice/postcodeinfo-client-php": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

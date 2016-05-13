@@ -24,10 +24,6 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/ministryofjustice/postcodeinfo-client-php"
-        },
-        {
-            "type": "vcs",
             "url": "https://github.com/Netsensia/omnipay-worldpay-xml"
         }
     ],
@@ -38,7 +34,7 @@
         "sendgrid/sendgrid": "2.2.*",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-api-client": "3.0.1",
-        "ministryofjustice/postcodeinfo-client-php": "v4.x-dev",
+        "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "1.1.8",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "Netsensia/omnipay-worldpay-xml": "^1.0.1",

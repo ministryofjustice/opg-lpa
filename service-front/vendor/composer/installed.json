@@ -2004,49 +2004,6 @@
         ]
     },
     {
-        "name": "phpunit/php-timer",
-        "version": "1.0.7",
-        "version_normalized": "1.0.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sebastianbergmann/php-timer.git",
-            "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-            "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2015-06-21 08:01:12",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Sebastian Bergmann",
-                "email": "sb@sebastian-bergmann.de",
-                "role": "lead"
-            }
-        ],
-        "description": "Utility class for timing",
-        "homepage": "https://github.com/sebastianbergmann/php-timer/",
-        "keywords": [
-            "timer"
-        ]
-    },
-    {
         "name": "phpunit/php-token-stream",
         "version": "1.4.8",
         "version_normalized": "1.4.8.0",
@@ -3443,18 +3400,64 @@
         ]
     },
     {
-        "name": "ministryofjustice/postcodeinfo-client-php",
-        "version": "v4.x-dev",
-        "version_normalized": "4.9999999.9999999.9999999-dev",
+        "name": "phpunit/php-timer",
+        "version": "1.0.8",
+        "version_normalized": "1.0.8.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-            "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf"
+            "url": "https://github.com/sebastianbergmann/php-timer.git",
+            "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/9d5a30e1212525bbe7fce0319eebbc695e0873cf",
-            "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf",
+            "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+            "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4|~5"
+        },
+        "time": "2016-05-12 18:03:57",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Sebastian Bergmann",
+                "email": "sb@sebastian-bergmann.de",
+                "role": "lead"
+            }
+        ],
+        "description": "Utility class for timing",
+        "homepage": "https://github.com/sebastianbergmann/php-timer/",
+        "keywords": [
+            "timer"
+        ]
+    },
+    {
+        "name": "ministryofjustice/postcodeinfo-client-php",
+        "version": "v4.0.0",
+        "version_normalized": "4.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
+            "reference": "bf87ed3674eece4351481765b4016541ee6662f2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/bf87ed3674eece4351481765b4016541ee6662f2",
+            "reference": "bf87ed3674eece4351481765b4016541ee6662f2",
             "shasum": ""
         },
         "require": {
@@ -3470,7 +3473,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2016-05-12 10:34:50",
+        "time": "2016-05-13 13:40:36",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -3478,13 +3481,10 @@
                 "MinistryOfJustice\\PostcodeInfo\\": "src/"
             }
         },
+        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
-        "description": "PHP API Client wrapper for MoJ Postcode Info API",
-        "support": {
-            "source": "https://github.com/ministryofjustice/postcodeinfo-client-php/tree/v4",
-            "issues": "https://github.com/ministryofjustice/postcodeinfo-client-php/issues"
-        }
+        "description": "PHP API Client wrapper for MoJ Postcode Info API"
     }
 ]
