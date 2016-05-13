@@ -105,15 +105,19 @@ class GovPayPaymentController extends AbstractLpaController {
 
     public function responseAction(){
 
+        die('here');
+
         // Lookup the payment ID in play...
 
-        $inPlayId = '9mvipcidrqs3ugco0ku7f3895p';
+        if( !isset( $this->getLpa()->metadata['gov-payment-id'] ) ){
+            die('Payment id needed');
+        }
 
         //---
 
         $paymentClient = $this->getServiceLocator()->get('GovPayClient');
 
-        $payment = $paymentClient->getPayment( $inPlayId );
+        $payment = $paymentClient->getPayment( $this->getLpa()->metadata['gov-payment-id'] );
 
         var_dump($payment); die;
 
@@ -128,18 +132,10 @@ class GovPayPaymentController extends AbstractLpaController {
         //----------------------------
         // Check for any existing payments in play
 
-        //$meta = $this->getLpaApplicationService()->getMetaData( $lpa->id );
-
-        //var_dump($meta); die;
-
-        $inPlayId = '9mvipcidrqs3ugco0ku7f3895p';
-
-        if( isset($inPlayId) ){
+        if( isset( $this->getLpa()->metadata['gov-payment-id'] ) ){
 
             // Look the payment up on Pay
-            $payment = $paymentClient->getPayment( $inPlayId );
-
-            var_dump($payment); die;
+            $payment = $paymentClient->getPayment( $this->getLpa()->metadata['gov-payment-id'] );
 
             if( $payment->isSuccessful() ) {
                 die('Payment made');
@@ -153,15 +149,12 @@ class GovPayPaymentController extends AbstractLpaController {
 
             }
 
-            // Else carry on to start a new payment.
+            // else carry on to start a new payment.
 
         }
 
-
         //----------------------------
         // Create a new payment
-
-        die('no');
 
         $baseUri = (new ServerUrl())->__invoke(false);
 
@@ -177,6 +170,8 @@ class GovPayPaymentController extends AbstractLpaController {
             new Uri($callback)
         );
 
+        // Store the payment Id in metadata.
+        $this->getLpaApplicationService()->setMetaData( $lpa->id, [ 'gov-payment-id'=>$payment->payment_id ] );
 
         $this->redirect()->toUrl( $payment->getPaymentPageUrl() );
         return $this->getResponse();
