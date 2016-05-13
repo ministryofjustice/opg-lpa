@@ -148,8 +148,6 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         $data = $this->filterIncomingData( $data );
 
-        var_dump($data); die;
-
         if( !empty($data) ){
             $lpa->populate( $data );
         }

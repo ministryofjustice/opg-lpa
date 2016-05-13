@@ -213,8 +213,7 @@ class ApplicationController extends AbstractRestfulController {
             $hal = $this->generateHal( $result );
 
             $response = new HalResponse( $hal, 'json' );
-            $response->setStatusCode(201);
-            $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
+            $response->setStatusCode(200);
 
             return $response;
 
