@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "38a9c0c76389ec79abd629a978c59960",
-    "content-hash": "bc33a4aff49e22dc2ee39a383944caa4",
+    "hash": "ebe58c5d7b5c4810c3d569e2ac3fd0dc",
+    "content-hash": "4b11ceff84b27463c686d9d87ba1934c",
     "packages": [
         {
             "name": "alphagov/pay-php-client",
@@ -963,16 +963,16 @@
         },
         {
             "name": "ministryofjustice/postcodeinfo-client-php",
-            "version": "v4.x-dev",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-                "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf"
+                "reference": "bf87ed3674eece4351481765b4016541ee6662f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/9d5a30e1212525bbe7fce0319eebbc695e0873cf",
-                "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf",
+                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/bf87ed3674eece4351481765b4016541ee6662f2",
+                "reference": "bf87ed3674eece4351481765b4016541ee6662f2",
                 "shasum": ""
             },
             "require": {
@@ -994,15 +994,12 @@
                     "MinistryOfJustice\\PostcodeInfo\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "PHP API Client wrapper for MoJ Postcode Info API",
-            "support": {
-                "source": "https://github.com/ministryofjustice/postcodeinfo-client-php/tree/v4",
-                "issues": "https://github.com/ministryofjustice/postcodeinfo-client-php/issues"
-            },
-            "time": "2016-05-12 10:34:50"
+            "time": "2016-05-13 13:40:36"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -6443,7 +6440,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "ministryofjustice/opg-lpa-api-client": 20,
-        "ministryofjustice/postcodeinfo-client-php": 20,
         "alphagov/pay-php-client": 20
     },
     "prefer-stable": true,

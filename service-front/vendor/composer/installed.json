@@ -5796,17 +5796,17 @@
     },
     {
         "name": "ministryofjustice/postcodeinfo-client-php",
-        "version": "v4.x-dev",
-        "version_normalized": "4.9999999.9999999.9999999-dev",
+        "version": "v4.0.0",
+        "version_normalized": "4.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-            "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf"
+            "reference": "bf87ed3674eece4351481765b4016541ee6662f2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/9d5a30e1212525bbe7fce0319eebbc695e0873cf",
-            "reference": "9d5a30e1212525bbe7fce0319eebbc695e0873cf",
+            "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/bf87ed3674eece4351481765b4016541ee6662f2",
+            "reference": "bf87ed3674eece4351481765b4016541ee6662f2",
             "shasum": ""
         },
         "require": {
@@ -5822,7 +5822,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2016-05-12 10:34:50",
+        "time": "2016-05-13 13:40:36",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -5830,14 +5830,11 @@
                 "MinistryOfJustice\\PostcodeInfo\\": "src/"
             }
         },
+        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
-        "description": "PHP API Client wrapper for MoJ Postcode Info API",
-        "support": {
-            "source": "https://github.com/ministryofjustice/postcodeinfo-client-php/tree/v4",
-            "issues": "https://github.com/ministryofjustice/postcodeinfo-client-php/issues"
-        }
+        "description": "PHP API Client wrapper for MoJ Postcode Info API"
     },
     {
         "name": "guzzlehttp/promises",
