@@ -32,10 +32,5 @@
     "psr-4": {
       "Alphagov\\Pay\\": "src/"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Alphagov\\PayTests\\": "tests/"
-    }
   }
 }

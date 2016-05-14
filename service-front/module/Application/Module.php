@@ -136,7 +136,6 @@ class Module{
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
                 'AddressLookupMoj' => 'PostcodeInfo',
-                'AddressLookupPostcodeAnywhere' => 'PostcodeAnywhere',
                 'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
@@ -154,13 +153,12 @@ class Module{
                 'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
                 'Communication'         => 'Application\Model\Service\Lpa\Communication',
                 'PostcodeInfo'          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-                'PostcodeAnywhere'      => 'Application\Model\Service\AddressLookup\PostcodeAnywhere',
                 'SiteStatus'            => 'Application\Model\Service\System\Status',
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
-                'PostcodeInfoClient'    => 'Application\Model\Service\PostcodeInfo\PostcodeInfoClientFactory',
+                'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
 
                 // Access via 'MailTransport'
                 'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',
@@ -178,6 +176,14 @@ class Module{
                 // Generate the session container for a user's personal details
                 'UserDetailsSession' => function(){
                     return new Container('UserDetails');
+                },
+
+                // PSR-7 HTTP Client
+                'HttpClient' => function(){
+                    return new \Http\Adapter\Guzzle5\Client(
+                        new \GuzzleHttp\Client,
+                        new \Http\Message\MessageFactory\GuzzleMessageFactory
+                    );
                 },
                 
                 // Logger

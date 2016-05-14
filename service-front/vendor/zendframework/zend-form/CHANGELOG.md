@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.3 - 2016-05-03
+
+### Added
+
+- [#70](https://github.com/zendframework/zend-form/pull/70) adds and publishes
+  the documentation to https://zendframework.github.io/zend-form/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#69](https://github.com/zendframework/zend-form/pull/69) fixes aliases in the
+  `FormElementManager` polyfill for zend-servicemanager v2 to ensure they are
+  canonicalized correctly.
+
 ## 2.8.2 - 2016-05-01
 
 ### Added

@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.1 - 2016-05-09
+
+### Added
+
+- [#38](https://github.com/zendframework/zend-mail/pull/38) adds support in the
+  IMAP protocol adapter for fetching items by UID.
+- [#88](https://github.com/zendframework/zend-mail/pull/88) adds and publishes
+  documentation to https://zendframework.github.io/zend-mail/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#9](https://github.com/zendframework/zend-mail/pull/9) fixes the
+  `Zend\Mail\Header\Sender::fromString()` implementation to more closely follow
+  the ABNF defined in RFC-5322, specifically to allow addresses in the form
+  `user@domain` (with no TLD).
+- [#28](https://github.com/zendframework/zend-mail/pull/28) and
+  [#87](https://github.com/zendframework/zend-mail/pull/87) fix header value
+  validation when headers wrap using the sequence `\r\n\t`; prior to this
+  release, such sequences incorrectly marked a header value invalid.
+- [#37](https://github.com/zendframework/zend-mail/pull/37) ensures that empty
+  lines do not result in PHP errors when consuming messages from a Courier IMAP
+  server.
+- [#81](https://github.com/zendframework/zend-mail/pull/81) fixes the validation
+  in `Zend\Mail\Address` to also DNS hostnames as well as local addresses.
+
 ## 2.7.0 - 2016-04-11
 
 ### Added
