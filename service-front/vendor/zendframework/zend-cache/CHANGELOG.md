@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.1 - 2016-05-12
+
+### Added
+
+- [#35](https://github.com/zendframework/zend-cache/pull/35)
+  Added benchmarks using PHPBench
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#76](https://github.com/zendframework/zend-cache/pull/76)
+  ZendServer: fixed return null on missing item
+- [#88](https://github.com/zendframework/zend-cache/issues/88)
+  Redis: fixed segfault on storing NULL and fixed supported datatypes capabilities
+- [#95](https://github.com/zendframework/zend-cache/issues/95)
+  don't try to unserialize missing items
+- [#66](https://github.com/zendframework/zend-cache/issues/66)
+  fixed Memcached::internalSetItems in PHP-7 by reducing variables by reference
+- [#57](https://github.com/zendframework/zend-cache/pull/57)
+  Memcached: HHVM compatibility and reduced duplicated code
+- [#91](https://github.com/zendframework/zend-cache/pull/91)
+  fixed that order of adapter options may cause exception
+- [#98](https://github.com/zendframework/zend-cache/pull/98) updates the plugin
+  manager alias list to ensure all adapter name permutations commonly used are
+  accepted.
+
 ## 2.7.0 - 2016-04-12
 
 ### Added

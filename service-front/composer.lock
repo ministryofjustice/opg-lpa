@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3c0c948dd1a79d6093d3ca1980ce15e2",
-    "content-hash": "ef4001973dfae7f19c532206267202da",
+    "hash": "ebe58c5d7b5c4810c3d569e2ac3fd0dc",
+    "content-hash": "4b11ceff84b27463c686d9d87ba1934c",
     "packages": [
         {
             "name": "alphagov/pay-php-client",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/NSmithUK/pay-php-client.git",
-                "reference": "1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3"
+                "reference": "87c129a717c884d246f336265bf09da2a93610d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NSmithUK/pay-php-client/zipball/1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3",
-                "reference": "1a66d4aac84dfbfd7ef3e6da226d99714d8ec7b3",
+                "url": "https://api.github.com/repos/NSmithUK/pay-php-client/zipball/87c129a717c884d246f336265bf09da2a93610d0",
+                "reference": "87c129a717c884d246f336265bf09da2a93610d0",
                 "shasum": ""
             },
             "require": {
@@ -45,11 +45,6 @@
                     "Alphagov\\Pay\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Alphagov\\PayTests\\": "tests/"
-                }
-            },
             "license": [
                 "MIT"
             ],
@@ -64,20 +59,20 @@
                 "source": "https://github.com/NSmithUK/pay-php-client/tree/master",
                 "issues": "https://github.com/NSmithUK/pay-php-client/issues"
             },
-            "time": "2016-04-28 10:41:06"
+            "time": "2016-05-13 09:19:44"
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.18.4",
+            "version": "3.18.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "fe2b49c01e09c74218cb681d5026f0c85c5e9094"
+                "reference": "e22ee28280547dccfef2646a67a9e8fa05c811cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fe2b49c01e09c74218cb681d5026f0c85c5e9094",
-                "reference": "fe2b49c01e09c74218cb681d5026f0c85c5e9094",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e22ee28280547dccfef2646a67a9e8fa05c811cf",
+                "reference": "e22ee28280547dccfef2646a67a9e8fa05c811cf",
                 "shasum": ""
             },
             "require": {
@@ -144,7 +139,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-04-28 20:07:34"
+            "time": "2016-05-05 19:57:48"
         },
         {
             "name": "clue/stream-filter",
@@ -841,24 +836,32 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "v3.0.1",
+            "version": "dev-api2-v2-support",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "a59709ee8271a86ce9a0150a18e343df4d545878"
+                "reference": "ff3d968b91950ccd6a1bb178a5231d0a7fc294d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/a59709ee8271a86ce9a0150a18e343df4d545878",
-                "reference": "a59709ee8271a86ce9a0150a18e343df4d545878",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/ff3d968b91950ccd6a1bb178a5231d0a7fc294d0",
+                "reference": "ff3d968b91950ccd6a1bb178a5231d0a7fc294d0",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^5.1.0",
+                "guzzlehttp/psr7": "^1.2",
                 "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
-                "php": ">=5.4.0"
+                "php": ">=5.4.0",
+                "php-http/client-implementation": "^1.0",
+                "php-http/guzzle5-adapter": "^0.5",
+                "php-http/httplug": "^1.0",
+                "php-http/message": "^1.1",
+                "psr/http-message": "^1.0"
             },
             "require-dev": {
+                "php-http/guzzle5-adapter": "*",
+                "php-http/message": "^1.1",
                 "phpspec/phpspec": "~2.0",
                 "phpunit/phpunit": "4.3.*"
             },
@@ -873,10 +876,10 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v3.0.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/api2-v2-support",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-04-15 09:45:11"
+            "time": "2016-05-13 11:41:35"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -960,30 +963,35 @@
         },
         {
             "name": "ministryofjustice/postcodeinfo-client-php",
-            "version": "v3.0.1",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-                "reference": "d2aeeef9262d2905f2b073f96a42ecda9126edef"
+                "reference": "bf87ed3674eece4351481765b4016541ee6662f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/d2aeeef9262d2905f2b073f96a42ecda9126edef",
-                "reference": "d2aeeef9262d2905f2b073f96a42ecda9126edef",
+                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/bf87ed3674eece4351481765b4016541ee6662f2",
+                "reference": "bf87ed3674eece4351481765b4016541ee6662f2",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^5.1.0",
-                "php": ">=5.4.0"
+                "guzzlehttp/psr7": "^1.2",
+                "php": ">=5.4.0",
+                "php-http/client-implementation": "^1.0",
+                "php-http/httplug": "^1.0",
+                "psr/http-message": "^1.0"
             },
             "require-dev": {
+                "php-http/curl-client": "*",
+                "php-http/message": "^1.2",
                 "phpspec/phpspec": "~2.0",
                 "phpunit/phpunit": "4.3.*"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "MinistryOfJustice\\PostcodeInfo\\Client\\": "src/MinistryOfJustice/PostcodeInfo/Client/"
+                    "MinistryOfJustice\\PostcodeInfo\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -991,7 +999,7 @@
                 "MIT"
             ],
             "description": "PHP API Client wrapper for MoJ Postcode Info API",
-            "time": "2015-07-07 16:03:12"
+            "time": "2016-05-13 13:40:36"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -1245,41 +1253,45 @@
             "time": "2016-03-10 03:03:17"
         },
         {
-            "name": "php-http/curl-client",
-            "version": "v1.4.0",
+            "name": "php-http/discovery",
+            "version": "v0.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-http/curl-client.git",
-                "reference": "a31fb783f90b06b3a0306477f00798b8b4fd7bba"
+                "url": "https://github.com/php-http/discovery.git",
+                "reference": "fac1240e8a070b3e2f0e38606941de80c849fa53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/curl-client/zipball/a31fb783f90b06b3a0306477f00798b8b4fd7bba",
-                "reference": "a31fb783f90b06b3a0306477f00798b8b4fd7bba",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/fac1240e8a070b3e2f0e38606941de80c849fa53",
+                "reference": "fac1240e8a070b3e2f0e38606941de80c849fa53",
                 "shasum": ""
             },
             "require": {
-                "ext-curl": "*",
-                "php": ">=5.5",
-                "php-http/httplug": "^1.0",
-                "php-http/message-factory": "^1.0"
-            },
-            "provide": {
-                "php-http/client-implementation": "1.0"
+                "php": "^5.4|7.*"
             },
             "require-dev": {
-                "guzzlehttp/psr7": "^1.0",
-                "php-http/adapter-integration-tests": "0.4.*",
-                "php-http/discovery": "~0.8.0",
-                "php-http/message": "^1.2",
-                "phpunit/phpunit": "^4.8",
-                "puli/composer-plugin": "1.0.0-beta9",
-                "zendframework/zend-diactoros": "^1.0"
+                "henrikbjorn/phpspec-code-coverage": "^1.0",
+                "php-http/httplug": "^1.0",
+                "php-http/message-factory": "^1.0",
+                "phpspec/phpspec": "^2.4",
+                "puli/composer-plugin": "1.0.0-beta9"
             },
+            "suggest": {
+                "php-http/message": "Allow to use Guzzle or Diactoros factories",
+                "puli/composer-plugin": "Sets up Puli which is required for Discovery to work. Check http://docs.php-http.org/en/latest/discovery.html for more details."
+            },
+            "bin": [
+                "bin/puli.phar"
+            ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.9-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Http\\Client\\Curl\\": "src/"
+                    "Http\\Discovery\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1288,17 +1300,85 @@
             ],
             "authors": [
                 {
-                    "name": "Михаил Красильников",
-                    "email": "m.krasilnikov@yandex.ru"
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
                 }
             ],
-            "description": "cURL client for PHP-HTTP",
-            "homepage": "http://php-http.org",
+            "description": "Finds installed HTTPlug implementations and PSR-7 message factories",
+            "homepage": "http://httplug.io",
             "keywords": [
-                "curl",
+                "adapter",
+                "client",
+                "discovery",
+                "factory",
+                "http",
+                "message"
+            ],
+            "time": "2016-02-11 09:53:37"
+        },
+        {
+            "name": "php-http/guzzle5-adapter",
+            "version": "v0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/guzzle5-adapter.git",
+                "reference": "4edc424fe9c4c620775ee7fab77fa7ae02584765"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/guzzle5-adapter/zipball/4edc424fe9c4c620775ee7fab77fa7ae02584765",
+                "reference": "4edc424fe9c4c620775ee7fab77fa7ae02584765",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^5.1",
+                "php": ">=5.4",
+                "php-http/discovery": "^0.8",
+                "php-http/httplug": "^1.0"
+            },
+            "provide": {
+                "php-http/client-implementation": "1.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "guzzlehttp/psr7": "^1.2",
+                "guzzlehttp/ringphp": "^1.1",
+                "php-http/adapter-integration-tests": "^0.3",
+                "php-http/client-common": "^1.0",
+                "puli/composer-plugin": "1.0.0-beta9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Adapter\\Guzzle5\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eric GELOEN",
+                    "email": "geloen.eric@gmail.com"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Guzzle 5 HTTP Adapter",
+            "homepage": "http://httplug.io",
+            "keywords": [
+                "Guzzle",
                 "http"
             ],
-            "time": "2016-03-30 11:55:10"
+            "time": "2016-02-23 14:14:55"
         },
         {
             "name": "php-http/httplug",
@@ -1672,20 +1752,23 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4|~5"
             },
             "type": "library",
             "autoload": {
@@ -1709,7 +1792,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -2029,16 +2112,16 @@
         },
         {
             "name": "react/promise",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "f942da7b505d1a294284ab343d05df42d02ad6d9"
+                "reference": "8025426794f1944de806618671d4fa476dc7626f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/f942da7b505d1a294284ab343d05df42d02ad6d9",
-                "reference": "f942da7b505d1a294284ab343d05df42d02ad6d9",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/8025426794f1944de806618671d4fa476dc7626f",
+                "reference": "8025426794f1944de806618671d4fa476dc7626f",
                 "shasum": ""
             },
             "require": {
@@ -2069,7 +2152,7 @@
                 }
             ],
             "description": "A lightweight implementation of CommonJS Promises/A for PHP",
-            "time": "2016-03-31 13:10:33"
+            "time": "2016-05-03 17:50:52"
         },
         {
             "name": "sebastian/comparator",
@@ -2189,16 +2272,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.5",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf"
+                "reference": "2292b116f43c272ff4328083096114f84ea46a56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
-                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/2292b116f43c272ff4328083096114f84ea46a56",
+                "reference": "2292b116f43c272ff4328083096114f84ea46a56",
                 "shasum": ""
             },
             "require": {
@@ -2235,7 +2318,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-02-26 18:40:46"
+            "time": "2016-05-04 07:59:13"
         },
         {
             "name": "sebastian/exporter",
@@ -2537,16 +2620,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.5",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "81c4c51f7fd6d0d40961bd53dd60cade32db6ed6"
+                "reference": "a158f13992a3147d466af7a23b564ac719a4ddd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/81c4c51f7fd6d0d40961bd53dd60cade32db6ed6",
-                "reference": "81c4c51f7fd6d0d40961bd53dd60cade32db6ed6",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/a158f13992a3147d466af7a23b564ac719a4ddd8",
+                "reference": "a158f13992a3147d466af7a23b564ac719a4ddd8",
                 "shasum": ""
             },
             "require": {
@@ -2593,11 +2676,11 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-04-05 16:36:54"
+            "time": "2016-05-03 18:59:18"
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v2.8.5",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
@@ -2901,7 +2984,7 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v2.8.5",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
@@ -3037,7 +3120,7 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v3.0.5",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
@@ -3100,7 +3183,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.5",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -3325,16 +3408,16 @@
         },
         {
             "name": "zendframework/zend-cache",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-cache.git",
-                "reference": "33211da0598e8f20a8d425945e3d452a87c50364"
+                "reference": "2c68def8f96ce842d2f2a9a69e2f3508c2f5312d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/33211da0598e8f20a8d425945e3d452a87c50364",
-                "reference": "33211da0598e8f20a8d425945e3d452a87c50364",
+                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/2c68def8f96ce842d2f2a9a69e2f3508c2f5312d",
+                "reference": "2c68def8f96ce842d2f2a9a69e2f3508c2f5312d",
                 "shasum": ""
             },
             "require": {
@@ -3345,6 +3428,7 @@
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "1.7.*",
+                "phpbench/phpbench": "^0.10.0",
                 "phpunit/phpunit": "^4.5",
                 "zendframework/zend-serializer": "^2.6",
                 "zendframework/zend-session": "^2.6.2"
@@ -3389,7 +3473,7 @@
                 "cache",
                 "zf2"
             ],
-            "time": "2016-04-12 15:55:27"
+            "time": "2016-05-12 21:47:55"
         },
         {
             "name": "zendframework/zend-captcha",
@@ -4176,16 +4260,16 @@
         },
         {
             "name": "zendframework/zend-form",
-            "version": "2.8.2",
+            "version": "2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-form.git",
-                "reference": "0e8cce481470443b716a155e5f6bf40242d30635"
+                "reference": "140f82ea93180a083fe46edba17d1860ff58308e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-form/zipball/0e8cce481470443b716a155e5f6bf40242d30635",
-                "reference": "0e8cce481470443b716a155e5f6bf40242d30635",
+                "url": "https://api.github.com/repos/zendframework/zend-form/zipball/140f82ea93180a083fe46edba17d1860ff58308e",
+                "reference": "140f82ea93180a083fe46edba17d1860ff58308e",
                 "shasum": ""
             },
             "require": {
@@ -4251,7 +4335,7 @@
                 "form",
                 "zf2"
             ],
-            "time": "2016-05-01 20:34:32"
+            "time": "2016-05-03 15:16:58"
         },
         {
             "name": "zendframework/zend-http",
@@ -4687,16 +4771,16 @@
         },
         {
             "name": "zendframework/zend-mail",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mail.git",
-                "reference": "fcec5a6f32a5646ce81783f319836996bdd03110"
+                "reference": "2e817b58ebaa2b422a25d854106a91f74b6a7976"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mail/zipball/fcec5a6f32a5646ce81783f319836996bdd03110",
-                "reference": "fcec5a6f32a5646ce81783f319836996bdd03110",
+                "url": "https://api.github.com/repos/zendframework/zend-mail/zipball/2e817b58ebaa2b422a25d854106a91f74b6a7976",
+                "reference": "2e817b58ebaa2b422a25d854106a91f74b6a7976",
                 "shasum": ""
             },
             "require": {
@@ -4707,8 +4791,8 @@
                 "zendframework/zend-validator": "^2.6"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "1.7.*",
-                "phpunit/phpunit": "~4.0",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^2.3.1",
                 "zendframework/zend-config": "^2.6",
                 "zendframework/zend-crypt": "^2.6",
                 "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3"
@@ -4743,7 +4827,7 @@
                 "mail",
                 "zf2"
             ],
-            "time": "2016-04-11 20:32:54"
+            "time": "2016-05-09 21:52:30"
         },
         {
             "name": "zendframework/zend-math",
@@ -4797,28 +4881,28 @@
         },
         {
             "name": "zendframework/zend-memory",
-            "version": "2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-memory.git",
-                "reference": "ea25879c367ce2c13568640572fb79e882f5fc97"
+                "reference": "bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-memory/zipball/ea25879c367ce2c13568640572fb79e882f5fc97",
-                "reference": "ea25879c367ce2c13568640572fb79e882f5fc97",
+                "url": "https://api.github.com/repos/zendframework/zend-memory/zipball/bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c",
+                "reference": "bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.23"
+                "php": "^5.5 || ^7.0"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "1.7.*",
-                "phpunit/phpunit": "~4.0",
-                "zendframework/zend-cache": "~2.5"
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^2.3.1",
+                "zendframework/zend-cache": "^2.7"
             },
             "suggest": {
-                "zendframework/zend-cache": "To support swap the memory objects"
+                "zendframework/zend-cache": "To support swapping memory objects into and out of non-memory cache storage"
             },
             "type": "library",
             "extra": {
@@ -4841,7 +4925,7 @@
                 "memory",
                 "zf2"
             ],
-            "time": "2015-06-03 15:32:02"
+            "time": "2016-05-11 14:49:42"
         },
         {
             "name": "zendframework/zend-mime",
@@ -5319,16 +5403,16 @@
         },
         {
             "name": "zendframework/zend-psr7bridge",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-psr7bridge.git",
-                "reference": "0a310c32f8f2cb4b6b037e0ed87f03f3e18e925a"
+                "reference": "86c0b53b0c6381391c4add4a93a56e51d5c74605"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-psr7bridge/zipball/0a310c32f8f2cb4b6b037e0ed87f03f3e18e925a",
-                "reference": "0a310c32f8f2cb4b6b037e0ed87f03f3e18e925a",
+                "url": "https://api.github.com/repos/zendframework/zend-psr7bridge/zipball/86c0b53b0c6381391c4add4a93a56e51d5c74605",
+                "reference": "86c0b53b0c6381391c4add4a93a56e51d5c74605",
                 "shasum": ""
             },
             "require": {
@@ -5364,34 +5448,35 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2015-12-15 21:35:42"
+            "time": "2016-05-10 21:44:39"
         },
         {
             "name": "zendframework/zend-serializer",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-serializer.git",
-                "reference": "8b6ff840e19b5dd8eca40e20d635ff407053f7d8"
+                "reference": "95385c2342fc335d5164eb95ac3ca230aa51223b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-serializer/zipball/8b6ff840e19b5dd8eca40e20d635ff407053f7d8",
-                "reference": "8b6ff840e19b5dd8eca40e20d635ff407053f7d8",
+                "url": "https://api.github.com/repos/zendframework/zend-serializer/zipball/95385c2342fc335d5164eb95ac3ca230aa51223b",
+                "reference": "95385c2342fc335d5164eb95ac3ca230aa51223b",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.5 || ^7.0",
                 "zendframework/zend-json": "^2.5",
-                "zendframework/zend-math": "^2.6",
                 "zendframework/zend-stdlib": "^2.7 || ^3.0"
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "1.7.*",
                 "phpunit/phpunit": "^4.5",
+                "zendframework/zend-math": "^2.6",
                 "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3"
             },
             "suggest": {
+                "zendframework/zend-math": "(^2.6) To support Python Pickle serialization",
                 "zendframework/zend-servicemanager": "To support plugin manager support"
             },
             "type": "library",
@@ -5420,7 +5505,7 @@
                 "serializer",
                 "zf2"
             ],
-            "time": "2016-04-18 17:31:57"
+            "time": "2016-05-11 16:05:56"
         },
         {
             "name": "zendframework/zend-server",
@@ -5522,16 +5607,16 @@
         },
         {
             "name": "zendframework/zend-session",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-session.git",
-                "reference": "c8c2df90bc95e1c9240f58e3feb624cc696a1988"
+                "reference": "79002c7b3e83477217121936c2577526f15555b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-session/zipball/c8c2df90bc95e1c9240f58e3feb624cc696a1988",
-                "reference": "c8c2df90bc95e1c9240f58e3feb624cc696a1988",
+                "url": "https://api.github.com/repos/zendframework/zend-session/zipball/79002c7b3e83477217121936c2577526f15555b1",
+                "reference": "79002c7b3e83477217121936c2577526f15555b1",
                 "shasum": ""
             },
             "require": {
@@ -5584,7 +5669,7 @@
                 "session",
                 "zf2"
             ],
-            "time": "2016-04-12 13:08:27"
+            "time": "2016-05-11 17:01:53"
         },
         {
             "name": "zendframework/zend-soap",
@@ -6026,16 +6111,16 @@
         },
         {
             "name": "zendframework/zend-view",
-            "version": "2.6.7",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-view.git",
-                "reference": "9993386447a618a39e6e8105026f5874720c7d3f"
+                "reference": "001336925fec6bb36e8e6d2b2af60da30a9d087e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-view/zipball/9993386447a618a39e6e8105026f5874720c7d3f",
-                "reference": "9993386447a618a39e6e8105026f5874720c7d3f",
+                "url": "https://api.github.com/repos/zendframework/zend-view/zipball/001336925fec6bb36e8e6d2b2af60da30a9d087e",
+                "reference": "001336925fec6bb36e8e6d2b2af60da30a9d087e",
                 "shasum": ""
             },
             "require": {
@@ -6087,8 +6172,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev",
-                    "dev-develop": "2.7-dev"
+                    "dev-master": "2.7-dev",
+                    "dev-develop": "2.8-dev"
                 }
             },
             "autoload": {
@@ -6106,7 +6191,7 @@
                 "view",
                 "zf2"
             ],
-            "time": "2016-04-18 20:04:21"
+            "time": "2016-05-12 14:24:52"
         },
         {
             "name": "zendframework/zend-xmlrpc",
@@ -6165,12 +6250,12 @@
             "version": "2.5.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/zf2.git",
+                "url": "https://github.com/zendframework/zendframework.git",
                 "reference": "aeb432d59410cd9a4a68166738745387a9bf49ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/aeb432d59410cd9a4a68166738745387a9bf49ab",
+                "url": "https://api.github.com/repos/zendframework/zendframework/zipball/aeb432d59410cd9a4a68166738745387a9bf49ab",
                 "reference": "aeb432d59410cd9a4a68166738745387a9bf49ab",
                 "shasum": ""
             },
@@ -6354,6 +6439,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "ministryofjustice/opg-lpa-api-client": 20,
         "alphagov/pay-php-client": 20
     },
     "prefer-stable": true,
