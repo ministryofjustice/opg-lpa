@@ -5,64 +5,71 @@
 {% set form = formErrorTextExchange(form, {}) %}
 {{ form.prepare() ? '' }}
 
-<section id="replacement-attorney-section" class="section current">
-	
-    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Do you want any replacement attorneys?</h2>
+<li id="replacement-attorney-section" class="section current js-current">
 
-    <div class="accordion-content">
+	<h2 class="heading-medium accordion-header flush--top">Do you want any replacement attorneys?</h2>
 
-    <div class="section-intro">
-
-		<p>The people you add here step in if your original attorney can no longer act.</p>
-		<p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
+    <div class="accordion-info">
+    	<div class="text">
+    		<p>The people you add here step in if your original attorney can no longer act.</p>
+			<p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
         
-		{% if (lpa.document.primaryAttorneyDecisions) %}
-	        {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
-	        <div class="info-notice application-notice">
-				<h3>You appointed your original attorneys jointly</h3>
-				<p>This means if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorneys.</p>
-				<p>If you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can no longer be used.</p>
-			</div>
-			{% elseif (this.lpa.document.primaryAttorneyDecisions.how == 'depends') %}
-			<div class="info-notice application-notice">
-				<h3>You appointed your original attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
-				<p>This means the people you add here will step in once the FIRST of your attorneys can no longer act.<p>
-				<p>The rest of your original attorneys will no longer be able to make the decisions that you specified must be made jointly.</p>
-			</div>
-			{% endif %}
-        {% endif %}
+			{% if (lpa.document.primaryAttorneyDecisions) %}
+		        {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
+		        <div class="alert" role="alert">
+		        	<i class="icon icon-information" role="presentation"></i>
+		        	<div class="alert-message">
+		        		<h3 class="heading-small">You appointed your original attorneys jointly</h3>
+						<p>This means if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorneys.</p>
+						<p>If you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can no longer be used.</p>
+		        	</div>
+		        </div>
+				{% elseif (lpa.document.primaryAttorneyDecisions.how == 'depends') %}
+				<div class="alert" role="alert">
+		        	<i class="icon icon-information" role="presentation"></i>
+		        	<div class="alert-message">
+		        		<h3 class="heading-small">You appointed your original attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
+						<p>This means the people you add here will step in once the FIRST of your attorneys can no longer act.<p>
+						<p>The rest of your original attorneys will no longer be able to make the decisions that you specified must be made jointly.</p>
+		        	</div>
+		        </div>
+				{% endif %}
+	        {% endif %}
 		
-		<p><a class="js-guidance" href="/help/#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
+			<p><a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
+		</div>
 	</div>
-	
-	{% if (attorneys) %}
-    
-    	{% for attorney in attorneys %}
-            {% include 'application/replacement-attorney/partials/attorney.twig' with attorney %}
-        {% endfor %}
 
-        <p class="add-another"><a class="add js-form-popup" href="{{ addRoute }}">Add another replacement attorney?</a></p>
-		
-    {% else %}
-    
-        <p><a class="add button js-form-popup" href="{{ addRoute }}" role="button">Add replacement attorney</a></p>
-		
+	{% if (attorneys) %}
+
+        <ul>
+            {% for attorney in attorneys %}
+                {% include 'application/replacement-attorney/partials/attorney.twig' with attorney %}
+            {% endfor %}
+        </ul>
+
     {% endif %}
+
+    <div class="form-group">
+        <a href="{{ addRoute }}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
+            {% if (attorneys) %}
+                Add another replacement attorney?
+            {% else %}
+                Add replacement attorney
+            {% endif %}
+        </a>
+    </div>
     
     {{ form().openTag( form )|raw }}
     {{ formElement(form.get( form.csrfName )) }}
     {{ formElementErrorsV2(form.get( form.csrfName )) }}
-    
-    <div class="accordion-actions">
-		<p>
-            <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-        </p>
+
+    <div class="form-group flush--bottom">
+    	<input type="submit" name="save" value="Save and continue" class="button divorced">
     </div>
     
     {{ form().closeTag|raw }}
-        
-    </div>
     
-</section>
+</li>
 
 {% endblock %}
