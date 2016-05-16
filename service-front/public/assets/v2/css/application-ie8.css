@@ -1943,6 +1943,10 @@ input[disabled="disabled"] {
 .form-control {
   border-radius: 0; }
 
+.form-hint--strong {
+  margin-top: 10px;
+  color: #000; }
+
 .hidden {
   display: none !important;
   visibility: hidden !important; }

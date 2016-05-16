@@ -11,11 +11,11 @@ class WhenReplacementAttorneyStepInForm extends AbstractForm
                 'required'  => true,
                 'options'   => [
                     'value_options' => [
-                        'first'  => [
-                                'value' => 'first',
+                        'one-attorney-cannot-act'  => [
+                                'value' => 'one-attorney-cannot-act',
                         ],
-                        'last'   => [
-                                'value' => 'last',
+                        'no-attorney-can-act'   => [
+                                'value' => 'no-attorney-can-act',
                         ],
                         'depends' => [
                                 'value' => 'depends'

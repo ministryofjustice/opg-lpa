@@ -50,7 +50,7 @@ class GovPayPaymentController extends AbstractLpaController {
 
         //-------------------------------------------
 
-        return $this->redirectToPaymentGateway( $lpa );
+        //return $this->redirectToPaymentGateway( $lpa );
 
         // Payment form
 
