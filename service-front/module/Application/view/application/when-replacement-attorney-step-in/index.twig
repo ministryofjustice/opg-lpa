@@ -29,7 +29,7 @@
 }) ? ''}}
 
 {% set whenOptions = {
-	'one-attorney-cannot-act' : {
+	'first' : {
 		attributes: {
 			id: 'one-attorney-cannot-act'
 		},
@@ -37,9 +37,9 @@
 		label_attributes: {
 			for: 'one-attorney-cannot-act'
 		},
-		value: currentWhenOptions['one-attorney-cannot-act'].value
+		value: currentWhenOptions['first'].value
 	},
-	'no-attorney-can-act' : {
+	'last' : {
 		attributes: {
 			id: 'no-attorney-can-act'
 		},
@@ -47,7 +47,7 @@
 		label_attributes: {
 			for: 'no-attorney-can-act'
 		},
-		value: currentWhenOptions['no-attorney-can-act'].value 
+		value: currentWhenOptions['last'].value 
 	},
 	'depends' : {
 		attributes: {
