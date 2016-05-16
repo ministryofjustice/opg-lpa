@@ -16,6 +16,8 @@ use GuzzleHttp\Psr7\Uri;
 
 class GovPayPaymentController extends AbstractLpaController {
 
+    protected $contentHeader = 'registration-partial.phtml';
+
     public function indexAction() {
 
         $lpa = $this->getLpa();
@@ -73,9 +75,11 @@ class GovPayPaymentController extends AbstractLpaController {
                 }
 
                 // set paymentEmail in session container.
-                $container->email = $form->getData()['email'];
+                $container->email = $paymentReceipt =  $form->getData()['email'];
 
-                return $this->payOnline($lpa);
+                $this->getLpaApplicationService()->setMetaData( $lpa->id, [ 'payment-receipt-email'=>$paymentReceipt] );
+
+                return $this->redirectToPaymentGateway($lpa);
 
             } // if($form->isValid())
         }
@@ -105,7 +109,7 @@ class GovPayPaymentController extends AbstractLpaController {
 
     public function responseAction(){
 
-        die('here');
+        var_dump($this->getLpa()->metadata);
 
         // Lookup the payment ID in play...
 
