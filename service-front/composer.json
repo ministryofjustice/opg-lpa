@@ -34,13 +34,16 @@
         "sendgrid/sendgrid": "2.2.*",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-api-client": "3.0.1",
-        "ministryofjustice/postcodeinfo-client-php": "3.*",
+        "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "1.1.8",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "Netsensia/omnipay-worldpay-xml": "^1.0.1",
         "michelf/php-markdown": "1.5.0",
         "zf-commons/zfc-twig": "^1.2.2",
-        "nsmithuk/zf-config-dump": "^1.0"
+        "nsmithuk/zf-config-dump": "^1.0",
+        "php-http/message": "^1.2",
+        "php-http/guzzle5-adapter": "^0.5"
+
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*"
