@@ -7,7 +7,10 @@
 {% set form = formErrorTextExchange(form,  {
     'how' : {
         'Value is required and can\'t be empty' : 'Please choose how your attorneys make decisions',
-    }
+    },
+    'howDetails': {
+    	'Value is required and can\'t be empty' : 'Please tell us which decisions have to be made jointly, and which can be made jointly and severally'
+	}
 }) %}
 
 {# Set form fields variables #}
@@ -16,15 +19,21 @@
 {% set howDetails = form.get('howDetails') %}
 {% set currentHowValueOptions = how.getOptions()['value_options'] %}
 
-{# form fields config #}	
-{{ howDetails.setAttributes({rows:'24', cols:'80'}) ? '' }}
+{# form fields config #}
+{{ howDetails.setAttributes({
+    id: 'howDetails',
+    rows: 10,
+    cols: 67,
+    maxlength: 2000,
+    class: 'form-control'
+}) ? ''}}
     
 {% set howValueOptions = {
 	'jointly-attorney-severally' :{
 		attributes: {
 			id: 'how-jointly-attorney-severally'
 		},
-		label: '<strong class="bold-small">Jointly and severally</strong><span class="text form-hint">
+		label: '<strong class="bold-small">Jointly and severally</strong><span class="text form-hint form-hint--strong">
 			Attorneys can make decisions on their own or together. Most people choose this option because it’s the most practical.
 			</span>',
 		label_attributes: {
@@ -36,7 +45,7 @@
 		attributes: {
 			id: 'how-jointly'
 		},
-		label: '<strong class="bold-small">Jointly</strong><span class="text form-hint">
+		label: '<strong class="bold-small">Jointly</strong><span class="text form-hint form-hint--strong">
 			Attorneys must agree unanimously on every decision, however big or small. If one of your attorneys can no longer act the others will no longer be able to act.
 			</span>',
 		label_attributes: {
@@ -49,11 +58,12 @@
 			id: 'how-depends'
 		},
 		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally
-			for other decisions</strong><span class="text form-hint">
+			for other decisions</strong><span class="text form-hint form-hint--strong">
 			Attorneys must agree unanimously on some decisions, but can make others on their own. You’ll need to state which decisions need to be agreed unanimously.
 			</span>',
 		label_attributes: {
-			for: 'how-depends'
+			for: 'how-depends',
+			'data-target': 'decisions-details'
 		},
 		value: currentHowValueOptions['depends'].value
 	}
@@ -67,7 +77,7 @@
 
 <li id="primary-attorney-decision-sections" class="section current js-current">
 
-	<h2 class="heading-medium accordion-header">How should your attorneys make decisions?</h2>
+	<h2 class="heading-medium accordion-header flush--top">How should your attorneys make decisions?</h2>
 	
     <div class="accordion-info">
 		<div class="text">
@@ -95,17 +105,16 @@
             </div>
         </fieldset>
 
+		<fieldset id="decisions-details" style="display: none;">
+            <legend class="visuallyhidden">How should the attorneys make decisions?</legend>
 
+			<p class="text">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. <a class="js-guidance" href="/guide#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
 
-        <div id="toggle-how-depends" class="details-textbox" data-toggled-by="#how-depends" style="display: none;">
-				<p class="hint">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. 
-				
-				<a class="js-guidance" href="/help/#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
-				
-			{{ formElement(howDetails) }}
-			{{ formElementErrors(howDetails) }}
-
-        </div>
+            <div class="form-group {{ howDetails.getMessages|length > 0 ? 'error'}}">
+                {{ formElement(howDetails) }}
+                {{ formElementErrorsV2(howDetails) }}
+            </div>
+        </fieldset>
 
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">

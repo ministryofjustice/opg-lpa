@@ -1,7 +1,7 @@
-{{ params.idx }}. The replacement attorneys will step in 
-{% if (params.values == params.values ==  'first') %}
+The replacement attorneys will step in 
+{% if (params.values == params.values ==  'one-attorney-cannot-act') %}
 as soon as one of the original attorneys can no longer act
-{% elseif params.values == 'last' %}
+{% elseif params.values == 'no-attorney-can-act' %}
 as soon as none of the original attorneys can act
 {% else %}
 as per instructions

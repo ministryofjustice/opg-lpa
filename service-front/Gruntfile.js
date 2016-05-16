@@ -93,6 +93,8 @@ module.exports = function (grunt) {
           // GOVUK Scripts
           'assets/bower/stageprompt/script/stageprompt.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
+          // ShowHideContent function
+          'assets/js/govuk/show-hide-content.js',
 
           // UI Framework
           'assets/js/ui_framework/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
