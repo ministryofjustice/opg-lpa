@@ -10,13 +10,15 @@
 {% set csrf = form.get(form.csrfName) %}
 {% set how = form.get('how') %}
 {% set howDetails = form.get('howDetails') %}
+{% set currentHowValueOptions = how.getOptions()['value_options'] %}
+
 {# form fields config #}
 {{ howDetails.setAttributes({
     rows: 24,
     cols: 80
 }) ? ''}}
 
-{{ from.setAttributes({id:'decisions-form', class:'form'}) }}
+{{ form.setAttributes({id:'decisions-form', class:'form'}) ? '' }}
 
 {% set howValueOptions = {
 	'jointly-attorney-severally' :{
