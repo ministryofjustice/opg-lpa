@@ -4,7 +4,7 @@
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form,  {
+{% set form = formErrorTextExchange(form, {
     'how' : {
         'Value is required and can\'t be empty' : 'Please choose how your attorneys make decisions',
     },
@@ -73,7 +73,10 @@
 	value_options: howValueOptions,
 	label_attributes: {'class': 'text block-label'}
 }) ? '' }}
-{{ how.setLabelOptions({disable_html_escape: true}) ? '' }}
+
+{{ how.setLabelOptions({
+	disable_html_escape: true
+}) ? '' }}
 
 <li id="primary-attorney-decision-sections" class="section current js-current">
 
@@ -119,6 +122,7 @@
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
+        
     {{ form().closeTag|raw }}
 
 </li>
