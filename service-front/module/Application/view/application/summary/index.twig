@@ -3,9 +3,19 @@
 {% import "application/dashboard/macros.twig" as macros %}
 
 {% block pageTitle %}
-    Summary
+		Check your details
 {% endblock %}
 
 {% block content %}
-    {% include 'application/summary/partials/summary-table.twig' %}
+
+	{% include 'application/summary/partials/summary-table.twig' %}
+
+	<div class="appstatus warning" role="alert">
+		<h2 class="appstatus-title">Your LPA is incomplete</h2> 
+	</div>
+
+	<p class="text">Text informing the user what is incomplete and how to complete the LPA. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+	<a href="" class="button">Return to complete your LPA</a>
+
 {% endblock %}
