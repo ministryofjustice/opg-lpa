@@ -17,6 +17,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 
 class WorldpayPaymentController extends AbstractLpaController
 {
@@ -103,6 +104,7 @@ class WorldpayPaymentController extends AbstractLpaController
         
         return new ViewModel([
                 'form'=>$form,
+                'standardFee' => Calculator::STANDARD_FEE,
                 'payByChequeRoute' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
         ]);
         
