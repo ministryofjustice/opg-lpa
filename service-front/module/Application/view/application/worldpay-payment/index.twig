@@ -37,6 +37,8 @@
 
             <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
 
+			{% include 'application/summary/partials/summary-table.twig' %}
+
             <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
             
             {% if (lpa.payment.amount != standardFee) %}
