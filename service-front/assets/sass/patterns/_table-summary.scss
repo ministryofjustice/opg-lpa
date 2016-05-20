@@ -1,0 +1,81 @@
+// =======================================================
+// TABLE SUMMARY
+// Summary table during LPA creation
+
+.table-summary {
+    tr {
+        @include media($max-width: 400px) {
+            position: relative;
+            display: block;
+            z-index: 3;
+        }
+        &:first-child {
+            th, td {
+                border-top: 1px solid $border-colour;
+                @include media($max-width: 400px) {
+                    border: none;
+                }
+            }
+        }
+    }
+    th, td {
+        vertical-align: top;
+        @include media($max-width: 400px) {
+            display: block;
+            width: 100%;
+            padding-right: 0;
+            border: none;
+        }
+    }
+    th {
+        @include media($max-width: 400px) {
+            padding-bottom: 0;
+            padding-right: 40px;
+            box-sizing: border-box;
+            z-index: 3;
+        }
+    }
+    td {
+        @include media($max-width: 400px) {
+            padding-top: 6px;
+        }
+    }
+}
+
+.table-summary-heading {
+    padding-bottom: 0;
+}
+
+.table-summary-title {
+    font-weight: 700;
+    width: 35%;
+}
+
+.table-summary-action {
+    padding-right: 0;
+    text-align: right;
+    @include media($max-width: 400px) {
+        position: absolute;
+        top: 12px;
+        border: none;
+    }
+}
+
+.group-single {
+    padding: 6px 0;
+    border-bottom: 1px solid $border-colour;
+    &:first-child {
+        border-top: 1px solid $border-colour;
+    }
+}
+
+.group-end {
+    padding-bottom: 6px;
+    border-bottom: 1px solid $border-colour;
+}
+
+.group-element {
+    th, td {
+        border-bottom: 0;
+    }
+}
