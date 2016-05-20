@@ -3553,6 +3553,88 @@ input[disabled="disabled"] {
 .no-js legend.form-label {
   display: none; }
 
+@media (max-width: 400px) {
+  .table-summary tr {
+    position: relative;
+    display: block;
+    z-index: 3; } }
+.table-summary tr:first-child th, .table-summary tr:first-child td {
+  border-top: 1px solid #bfc1c3; }
+  @media (max-width: 400px) {
+    .table-summary tr:first-child th, .table-summary tr:first-child td {
+      border: none; } }
+.table-summary th, .table-summary td {
+  vertical-align: top; }
+  @media (max-width: 400px) {
+    .table-summary th, .table-summary td {
+      display: block;
+      width: 100%;
+      padding-right: 0;
+      border: none; } }
+@media (max-width: 400px) {
+  .table-summary th {
+    padding-bottom: 0;
+    padding-right: 40px;
+    box-sizing: border-box;
+    z-index: 3; } }
+@media (max-width: 400px) {
+  .table-summary td {
+    padding-top: 6px; } }
+
+.table-summary-heading {
+  padding-bottom: 0; }
+
+.table-summary-title {
+  font-weight: 700;
+  width: 35%; }
+
+.table-summary-action {
+  padding-right: 0;
+  text-align: right; }
+  @media (max-width: 400px) {
+    .table-summary-action {
+      position: absolute;
+      top: 12px;
+      border: none; } }
+
+.group-single {
+  padding: 6px 0;
+  border-bottom: 1px solid #bfc1c3; }
+  .group-single:first-child {
+    border-top: 1px solid #bfc1c3; }
+
+.group-end {
+  padding-bottom: 6px;
+  border-bottom: 1px solid #bfc1c3; }
+
+.group-element th, .group-element td {
+  border-bottom: 0; }
+
+.appstatus {
+  background-color: #005ea5;
+  color: #fff;
+  margin: 30px 0;
+  padding: 45px;
+  text-align: center; }
+  @media (max-width: 640px) {
+    .appstatus {
+      padding: 30px; } }
+  .appstatus.warning {
+    background-color: #f47738; }
+
+.appstatus-title {
+  font-family: "nta",Arial,sans-serif;
+  font-size: 48px;
+  line-height: 1em;
+  font-weight: 700;
+  text-transform: none; }
+  @media (max-width: 640px) {
+    .appstatus-title {
+      font-size: 32px; } }
+  @media (max-width: 300px) {
+    .appstatus-title {
+      font-size: 20px; } }
+
 .noscroll {
   position: relative;
   overflow: hidden; }
