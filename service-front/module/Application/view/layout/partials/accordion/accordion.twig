@@ -45,20 +45,85 @@
         	})
         }}
     {% endif %}
+    
+    {% if (item.routeName == 'lpa/when-lpa-starts') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
 
+    {% if (item.routeName == 'lpa/how-primary-attorneys-make-decision') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+    {% if (item.routeName == 'lpa/replacement-attorney') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+    {% if (item.routeName == 'lpa/when-replacement-attorney-step-in') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+    {% if (item.routeName == 'lpa/how-replacement-attorneys-make-decision') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+    {% if (item.routeName == 'lpa/certificate-provider') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+    {% if (item.routeName == 'lpa/people-to-notify') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+    {% if (item.routeName == 'lpa/instructions') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
 {% endfor %}
 
-{#
-'lpa/form-type'
-'lpa/donor'
-'lpa/when-lpa-starts'
-'lpa/life-sustaining'
-'lpa/primary-attorney'
-'lpa/how-primary-attorneys-make-decision'
-'lpa/replacement-attorney'
-'lpa/when-replacement-attorney-step-in'
-'lpa/how-replacement-attorneys-make-decision'
-'lpa/certificate-provider'
-'lpa/people-to-notify'
-'lpa/instructions'
-#}
