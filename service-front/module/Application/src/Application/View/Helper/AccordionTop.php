@@ -42,7 +42,8 @@ class AccordionTop extends AbstractAccordion
                                 'params'    => [
                                     'idx'    => $seq,
                                     'status' => 'Complete',
-                                    'values'=> $this->$barDataFuncName()]
+                                    'values'=> $this->$barDataFuncName()
+                                ]
                             ];
                     }
                 }
