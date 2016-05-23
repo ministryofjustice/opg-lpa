@@ -113,21 +113,17 @@
         {% block openAccordion %}
         {% endblock %}
              
-        {% set accordionItems = accordionTop(lpa) %}
+        {% set accordionTop = accordionTop(lpa) %}
         {% set accordionBottom = accordionBottom(lpa) %}
 
-
-        {% if (accordionItems) %}
-        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionItems, 'lpa':lpa } %}
+        {% if (accordionTop) %}
+        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
         {% endif %}
 
-        
         {% block content %}{% endblock %}
         
         {% if (accordionBottom) %}
-        {% for partialVars in accordionBottom %}
-        	{% include 'layout/partials/accordion/accordion.twig' with partialVars %}
-        {% endfor %}
+        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionBottom, 'lpa':lpa } %}
         {% endif %}
                          
         {% block closeAccordion %}
