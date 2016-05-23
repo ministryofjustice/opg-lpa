@@ -25,7 +25,7 @@ class CompleteController extends AbstractLpaController
             $this->getViewParams()
         );
         
-        $viewModel->setTemplate('application/complete/complete.phtml');
+        $viewModel->setTemplate('application/complete/complete.twig');
         
         $lpa = $this->getLpa();
         

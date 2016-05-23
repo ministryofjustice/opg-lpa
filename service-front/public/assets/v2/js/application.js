@@ -2718,6 +2718,251 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
   }
 };
 
+(function () {
+  "use strict";
+  var root = this,
+      $ = root.jQuery;
+
+  if (typeof GOVUK === 'undefined') { root.GOVUK = {}; }
+
+  var SelectionButtons = function (elmsOrSelector, opts) {
+    var $elms;
+
+    this.selectedClass = 'selected';
+    this.focusedClass = 'focused';
+    if (opts !== undefined) {
+      $.each(opts, function (optionName, optionObj) {
+        this[optionName] = optionObj;
+      }.bind(this));
+    }
+    if (typeof elmsOrSelector === 'string') {
+      $elms = $(elmsOrSelector);
+      this.selector = elmsOrSelector;
+      this.setInitialState($(this.selector));
+    } else if (elmsOrSelector !== undefined) {
+      this.$elms = elmsOrSelector;
+      this.setInitialState(this.$elms);
+    }
+    this.addEvents();
+  };
+  SelectionButtons.prototype.addEvents = function () {
+    if (typeof this.$elms !== 'undefined') {
+      this.addElementLevelEvents();
+    } else {
+      this.addDocumentLevelEvents();
+    }
+  };
+  SelectionButtons.prototype.setInitialState = function ($elms) {
+    $elms.each(function (idx, elm) {
+      var $elm = $(elm);
+
+      if ($elm.is(':checked')) {
+        this.markSelected($elm);
+      }
+    }.bind(this));
+  };
+  SelectionButtons.prototype.markFocused = function ($elm, state) {
+    if (state === 'focused') {
+      $elm.parent('label').addClass(this.focusedClass);
+    } else {
+      $elm.parent('label').removeClass(this.focusedClass);
+    }
+  };
+  SelectionButtons.prototype.markSelected = function ($elm) {
+    var radioName;
+
+    if ($elm.attr('type') === 'radio') {
+      radioName = $elm.attr('name');
+      $($elm[0].form).find('input[name="' + radioName + '"]')
+        .parent('label')
+        .removeClass(this.selectedClass);
+      $elm.parent('label').addClass(this.selectedClass);
+    } else { // checkbox
+      if ($elm.is(':checked')) {
+        $elm.parent('label').addClass(this.selectedClass);
+      } else {
+        $elm.parent('label').removeClass(this.selectedClass);
+      }
+    }
+  };
+  SelectionButtons.prototype.addElementLevelEvents = function () {
+    this.clickHandler = this.getClickHandler();
+    this.focusHandler = this.getFocusHandler({ 'level' : 'element' });
+
+    this.$elms
+      .on('click', this.clickHandler)
+      .on('focus blur', this.focusHandler);
+  };
+  SelectionButtons.prototype.addDocumentLevelEvents = function () {
+    this.clickHandler = this.getClickHandler();
+    this.focusHandler = this.getFocusHandler({ 'level' : 'document' });
+
+    $(document)
+      .on('click', this.selector, this.clickHandler)
+      .on('focus blur', this.selector, this.focusHandler);
+  };
+  SelectionButtons.prototype.getClickHandler = function () {
+    return function (e) {
+      this.markSelected($(e.target));
+    }.bind(this);
+  };
+  SelectionButtons.prototype.getFocusHandler = function (opts) {
+    var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus';
+
+    return function (e) {
+      var state = (e.type === focusEvent) ? 'focused' : 'blurred';
+
+      this.markFocused($(e.target), state);
+    }.bind(this);
+  };
+  SelectionButtons.prototype.destroy = function () {
+    if (typeof this.selector !== 'undefined') {
+      $(document)
+        .off('click', this.selector, this.clickHandler)
+        .off('focus blur', this.selector, this.focusHandler);
+    } else {
+      this.$elms
+        .off('click', this.clickHandler)
+        .off('focus blur', this.focusHandler);
+    }
+  };
+
+  root.GOVUK.SelectionButtons = SelectionButtons;
+}).call(this);
+
+// As found in the application.js on govuk elements
+
+function ShowHideContent() {
+  var self = this;
+
+
+  self.escapeElementName = function(str) {
+    result = str.replace('[', '\\[').replace(']', '\\]')
+    return(result);
+  };
+
+  self.showHideRadioToggledContent = function () {
+    $(".block-label input[type='radio']").each(function () {
+
+      var $radio = $(this);
+      var $radioGroupName = $radio.attr('name');
+      var $radioLabel = $radio.parent('label');
+
+      var dataTarget = $radioLabel.attr('data-target');
+
+      // Add ARIA attributes
+
+      // If the data-target attribute is defined
+      if (dataTarget) {
+
+        // Set aria-controls
+        $radio.attr('aria-controls', dataTarget);
+
+        $radio.on('click', function () {
+
+          // Select radio buttons in the same group
+          $radio.closest('form').find(".block-label input[name=" + self.escapeElementName($radioGroupName) + "]").each(function () {
+            var $this = $(this);
+
+            var groupDataTarget = $this.parent('label').attr('data-target');
+            var $groupDataTarget = $('#' + groupDataTarget);
+
+            // Hide toggled content
+            $groupDataTarget.hide();
+            // Set aria-expanded and aria-hidden for hidden content
+            $this.attr('aria-expanded', 'false');
+            $groupDataTarget.attr('aria-hidden', 'true');
+          });
+
+          var $dataTarget = $('#' + dataTarget);
+          $dataTarget.show();
+          // Set aria-expanded and aria-hidden for clicked radio
+          $radio.attr('aria-expanded', 'true');
+          $dataTarget.attr('aria-hidden', 'false');
+
+        });
+
+      } else {
+        // If the data-target attribute is undefined for a radio button,
+        // hide visible data-target content for radio buttons in the same group
+
+        $radio.on('click', function () {
+
+          // Select radio buttons in the same group
+          $(".block-label input[name=" + self.escapeElementName($radioGroupName) + "]").each(function () {
+
+            var groupDataTarget = $(this).parent('label').attr('data-target');
+            var $groupDataTarget = $('#' + groupDataTarget);
+
+            // Hide toggled content
+            $groupDataTarget.hide();
+            // Set aria-expanded and aria-hidden for hidden content
+            $(this).attr('aria-expanded', 'false');
+            $groupDataTarget.attr('aria-hidden', 'true');
+          });
+
+        });
+      }
+
+    });
+  }
+  self.showHideCheckboxToggledContent = function () {
+
+    $(".block-label input[type='checkbox']").each(function() {
+
+      var $checkbox = $(this);
+      var $checkboxLabel = $(this).parent();
+
+      var $dataTarget = $checkboxLabel.attr('data-target');
+
+      // Add ARIA attributes
+
+      // If the data-target attribute is defined
+      if (typeof $dataTarget !== 'undefined' && $dataTarget !== false) {
+
+        // Set aria-controls
+        $checkbox.attr('aria-controls', $dataTarget);
+
+        // Set aria-expanded and aria-hidden
+        $checkbox.attr('aria-expanded', 'false');
+        $('#'+$dataTarget).attr('aria-hidden', 'true');
+
+        // For checkboxes revealing hidden content
+        $checkbox.on('click', function() {
+
+          var state = $(this).attr('aria-expanded') === 'false' ? true : false;
+
+          // Toggle hidden content
+          $('#'+$dataTarget).toggle();
+
+          // Update aria-expanded and aria-hidden attributes
+          $(this).attr('aria-expanded', state);
+          $('#'+$dataTarget).attr('aria-hidden', !state);
+
+        });
+      }
+
+    });
+  }
+}
+
+$(document).ready(function() {
+
+  // Turn off jQuery animation
+  jQuery.fx.off = true;
+
+  // Where .block-label uses the data-target attribute
+  // to toggle hidden content
+  var toggleContent = new ShowHideContent();
+  toggleContent.showHideRadioToggledContent();
+  toggleContent.showHideCheckboxToggledContent();
+
+  // Open the hidden content if input is already checked
+  // (required when validation returns false)
+  var checkedInput = $('label[data-target] input[checked=checked]').attr('id');
+  var labelTarget = $('label[for='+checkedInput+']').data('target');
+  $('#'+labelTarget).show();
+});
 /*! jQuery UI - v1.10.3 - 2013-06-25
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.datepicker.js
@@ -3423,7 +3668,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           self.close();
         }
       });
-      this.$popup.on('click.moj.Modules.Popup', '.js-popup-close, button[name*="cancel"]', function (e) {
+      this.$popup.on('click.moj.Modules.Popup', '.js-popup-close, .js-cancel', function (e) {
         e.preventDefault();
         self.close();
       });
@@ -3895,6 +4140,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          // trigger use these details event
+          moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
         } else {
@@ -4033,7 +4280,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     message: 'This will replace the information which you have already entered, are you sure?',
 
     init: function () {
-      _.bindAll(this, 'linkClicked', 'selectChanged');
+      _.bindAll(this, 'render', 'linkClicked', 'selectChanged', 'useDetailsReset');
       this.bindEvents();
     },
 
@@ -4041,6 +4288,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
         .on('change.moj.Modules.Reusables', 'select' + this.selector, this.selectChanged);
+      // custom render event
+      moj.Events.on('Reusables.render', this.render);
     },
 
     // <a> click
@@ -4185,6 +4434,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
       return clean;
+    },
+
+    render: function(e, params) {
+      $(this.selector, params.wrap).each(this.useDetailsReset);
+    },
+
+    useDetailsReset: function(i, el){
+      // Hide the non-js button
+      $('.details-picker').hide();
     }
   };
 
@@ -5038,11 +5296,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     sectionScrollTo: function(){
-      if ( $('section.current').offset() !== undefined ) {
+      if ( $('.js-current').offset() !== undefined ) {
         setTimeout(function() {
-          if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) !== 'lpa-type') {
-            window.scrollTo(0, $('section.current').offset().top - 107);
-          }
+          window.scrollTo(0, $('.js-current').offset().top - 20);
         }, 200);
       }
     }
@@ -5199,7 +5455,12 @@ $(document).ready(function () {
       $emphasised.filter(':checked').parent().addClass('checked');
   });
 
+  // Remove the no-js class
   $('body').removeClass('no-js');
+
+  // Initiating the SelectionButtons GOVUK module
+  var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
+  new GOVUK.SelectionButtons($blockLabels);
 
 });
 

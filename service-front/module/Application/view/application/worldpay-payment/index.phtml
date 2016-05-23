@@ -1,0 +1,70 @@
+<?php
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+$form = $this->formErrorTextExchange($this->form, []);
+    
+    $csrf       = $form->get($form->csrfName());
+    
+    $form->setAttributes(['class' => 'form']);
+    
+    $email      = $form->get('email');
+    $email->setOptions(['label' => "Email address"]);
+    $email->setAttributes(['id' => 'email']);
+    
+    $submit     = $form->get('submit');
+    $submit->setAttributes(['class'=>'button', 'id'=>'form-submit', 'value'=>'Proceed to payment']);
+    
+    $formLabel  = $this->plugin('formLabel');
+    $form->prepare();
+?>
+<section id="payment-section" class="section current">
+    
+    <h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Payment</h2>
+
+    <div class="accordion-content">
+    
+    <?= $this->form()->openTag($form); ?>
+    
+    <?= $this->formElement($csrf) ?>
+    <?= $this->formElementErrors($csrf) ?>
+    
+    <?= $this->formErrorList(); ?>
+    
+        <div class="section-intro">
+            
+            <?php if($this->lpa->payment->amount == Calculator::STANDARD_FEE):?>
+            <h2>Application fee: £<?= sprintf('%.2f', $this->lpa->payment->amount) ?></h2>
+            <?php else:?>
+            <h2>Reduced fee: £<?= sprintf('%.2f', $this->lpa->payment->amount) ?></h2>
+            <?php endif;?>
+
+            <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
+
+            <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
+            
+            <?php if($this->lpa->payment->amount != Calculator::STANDARD_FEE):?>
+            <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+            <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
+            <p>After you've paid, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
+            <?php endif;?>
+        </div>
+        
+        <div id="contact-email">
+            <p>Please enter a contact email for correspondence regarding this payment.</p>
+            <div class="group">
+                <?= $formLabel->openTag($email) . $email->getOption('label') . $formLabel->closeTag(); ?> 
+                    <?= $this->formElement($email) ?>
+                <?= $this->formElementErrors($email) ?>
+            </div>
+        </div>
+        
+        <div class="accordion-actions group">
+            <p><?= $this->formElement($submit) ?></p>
+        </div>
+        
+    <?= $this->form()->closeTag(); ?>
+    
+    <p><a href='<?= $this->payByChequeRoute ?>'>I want to pay by cheque</a></p>
+    
+    </div>
+    
+</section>

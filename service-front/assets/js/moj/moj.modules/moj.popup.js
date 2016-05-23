@@ -45,7 +45,7 @@
           self.close();
         }
       });
-      this.$popup.on('click.moj.Modules.Popup', '.js-popup-close, button[name*="cancel"]', function (e) {
+      this.$popup.on('click.moj.Modules.Popup', '.js-popup-close, .js-cancel', function (e) {
         e.preventDefault();
         self.close();
       });

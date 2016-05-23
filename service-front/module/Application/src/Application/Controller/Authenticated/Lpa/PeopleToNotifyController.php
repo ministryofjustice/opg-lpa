@@ -66,11 +66,12 @@ class PeopleToNotifyController extends AbstractLpaActorController
     public function addAction()
     {
         $routeMatch = $this->getEvent()->getRouteMatch();
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
         
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         
-        $viewModel->setTemplate('application/people-to-notify/form.phtml');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $viewModel->setTemplate('application/people-to-notify/form.twig');
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
@@ -139,10 +140,11 @@ class PeopleToNotifyController extends AbstractLpaActorController
     public function editAction()
     {
         $routeMatch = $this->getEvent()->getRouteMatch();
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         
-        $viewModel->setTemplate('application/people-to-notify/form.phtml');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $viewModel->setTemplate('application/people-to-notify/form.twig');
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         

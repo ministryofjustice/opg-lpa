@@ -1,0 +1,71 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+<script type="text/javascript">
+    var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
+    var actors = {names: actorNames};
+</script>
+
+{% set form = formErrorTextExchange(form,  {}) %}
+
+{% set title = form.get('name-title') %}
+{% set firstname = form.get('name-first') %}
+{% set lastname = form.get('name-last') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+    
+{{ form.setAttribute('class', 'form js-PersonForm js-PostcodeLookup') ? '' }}
+    
+{{ title.setOptions( {'label' : 'Title'} ) ? '' }}
+{{ title.setAttributes({'id':'name-title'}) ? '' }}
+{{ firstname.setOptions( {'label' : 'First names'} ) ? '' }}
+{{ lastname.setOptions( {'label' : 'Last name'} ) ? '' }}
+{{ address1.setOptions( {'label' : 'Address line 1'} ) ? '' }}
+{{ address1.setAttributes({'id':'address-address1'}) ? '' }}
+{{ address2.setOptions( {'label' : 'Address line 2'} ) ? '' }}
+{{ address3.setOptions( {'label' : 'Address line 3'} ) ? '' }}
+{{ postcode.setOptions( {'label' : 'Postcode'} ) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<h2 class="header">Edit certificate provider details</h2>
+
+{{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
+
+{{ form().openTag( form )|raw }}
+
+{{ macros.useMyDetails(useMyDetailsRoute) }}
+
+{{ formElement(form.get( form.csrfName )) }}
+
+<fieldset>
+
+{{ macros.formGroup(title) }}
+{{ macros.formGroup(firstname) }}
+{{ macros.formGroup(lastname) }}
+
+</fieldset>
+
+<fieldset class="js-PostcodeLookup__postal-add">
+    
+{{ macros.formGroup(address1) }}
+{{ macros.formGroup(address2) }}
+{{ macros.formGroup(address3) }}
+{{ macros.formGroup(postcode) }}
+    
+</fieldset>
+
+<p class="action group">
+<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
+<button name="cancel" type="button" class="button-secondary">Cancel</button>
+</p>
+
+{{ form().closeTag|raw }}
+
+{% endblock %}
+

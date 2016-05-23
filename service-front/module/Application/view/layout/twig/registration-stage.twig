@@ -1,0 +1,33 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Create a lasting power of attorney 
+{% endblock %}
+
+{% block openAccordion %}
+            <header class="page-header group">
+            	<hgroup>
+            	<nav role="navigation" class="progress-indicator group static">
+            		<ol class="group">
+            			<li>About you</li>
+            			<li>Create the LPA</li>
+            			<li class="active">Registration section</li>
+            			<li>Sign and post</li>
+            		</ol>
+            	</nav>
+            		<h1>Register a lasting power of attorney</h1>
+            	</hgroup>
+        	</header>        
+	
+	<div class="article-container group">
+                            <article role="article" class="group">
+                            <div class="inner">
+    <p>Need to make changes to your LPA? <a href="{{ url('lpa/instructions', {'lpa-id':lpa.id}) }}">Edit</a> your LPA here</p>
+    <br>
+<ul class="accordion">
+{% endblock %}
+
+{% block closeAccordion %}
+</ul> <!-- Close accordion --> 
+{% endblock %}
+

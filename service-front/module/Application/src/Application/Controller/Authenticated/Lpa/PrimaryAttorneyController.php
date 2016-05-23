@@ -20,9 +20,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
 {
-    
-    protected $contentHeader = 'creation-partial.phtml';
-    
+        
     public function indexAction()
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -73,12 +71,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $isPopup = $this->getRequest()->isXmlHttpRequest();
         
         $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
+        
         $viewModel->setTemplate('application/primary-attorney/person-form.twig');
         if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
         $lpaId = $this->getLpa()->id;
+        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/primary-attorney', ['lpa-id' => $lpaId]);
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
@@ -145,11 +145,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         
         $isPopup = $this->getRequest()->isXmlHttpRequest();
         $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
+        
         if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
         $lpaId = $this->getLpa()->id;
+        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/primary-attorney', ['lpa-id' => $lpaId]);
+        
         $currentRouteName = $routeMatch->getMatchedRouteName();
         
         $attorneyIdx = $routeMatch->getParam('idx');
@@ -296,6 +299,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
         
         $lpaId = $this->getLpa()->id;
+        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/primary-attorney', ['lpa-id' => $lpaId]);
         
         // redirect to add human attorney if lpa is of hw type or a trust was added already.
         if( ($this->getLpa()->document->type == Document::LPA_TYPE_HW) || $this->hasTrust() ) {

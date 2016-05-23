@@ -70,6 +70,8 @@ class DonorController extends AbstractLpaActorController
             return $seedSelection;
         }
         
+        $viewModel->isUseMyDetails = false;
+        
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             
@@ -99,10 +101,12 @@ class DonorController extends AbstractLpaActorController
             // load user's details into the form
             if($this->params()->fromQuery('use-my-details')) {
                 $form->bind($this->getUserDetailsAsArray());
+                $viewModel->isUseMyDetails = true;
             }
         }
         
         $viewModel->form = $form;
+        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/donor', ['lpa-id' => $lpaId]);
         
         // show user my details link (if the link has not been clicked and seed dropdown is not set in the view)
         if(($viewModel->seedDetailsPickerForm==null) && !$this->params()->fromQuery('use-my-details')) {

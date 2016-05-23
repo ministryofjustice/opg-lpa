@@ -180,6 +180,15 @@ return array(
 
     ], // address
 
+    'alphagov' => [
+
+        'pay' => [
+
+            'key' => getenv('OPG_LPA_FRONT_GOV_PAY_KEY') ?: null,
+
+        ],
+
+    ],
 
     'worldpay' => [
 

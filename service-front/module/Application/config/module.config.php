@@ -18,6 +18,9 @@ return [
             'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
             'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
         ],
+        'factories' => [
+            'PaymentControllerFactory' => 'Application\ControllerFactory\PaymentControllerFactory',
+        ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],

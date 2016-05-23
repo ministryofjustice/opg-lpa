@@ -1,0 +1,8 @@
+The replacement attorneys will act 
+{% if( params['values'] == 'jointly-attorney-severally') %}
+jointly and severally
+{% elseif (params['values'] == 'jointly' ) %}
+jointly
+{% else %}
+jointly for some decisions, and jointly and severally for other decisions
+{% endif %}

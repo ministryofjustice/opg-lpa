@@ -4,7 +4,7 @@
 
 {% import "application/macros.twig" as macros %}
 
-<li id="donor-section" class="section current">
+<li id="donor-section" class="section current js-current">
 	
 	<h2 class="heading-medium accordion-header flush--top">Who is the donor for this LPA?</h2>
 	
@@ -27,10 +27,14 @@
     		
     {% if (lpa.document.donor) %}
 
-        <div class="person">
-            <h3 class="heading-small flush--ends">{{ donor['name'] }}</h3>
-            <p class="flush--ends">{{ donor['address'] }}</p>
-            <a href="{{ editDonorUrl }}" data-form="donor" class="js-form-popup">View/edit details</a>
+        <div class="person person--wider">
+            <h3 class="person-name heading-small flush--ends">{{ donor['name'] }}</h3>
+            <p class="person-address flush--ends">{{ donor['address'] }}</p>
+            <ul class="person-actions">
+                <li class="actions-item">
+                    <a href="{{ editDonorUrl }}" data-form="donor" class="action-edit js-form-popup">View/edit details</a>
+                </li>
+            </ul>
         </div>
 
         <div class="form-group">
