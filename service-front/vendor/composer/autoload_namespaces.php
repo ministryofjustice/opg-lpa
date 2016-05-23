@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZfcTwig\\' => array($vendorDir . '/zf-commons/zfc-twig/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
+    'ZFConfigDump\\' => array($vendorDir . '/nsmithuk/zf-config-dump/src'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),

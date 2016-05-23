@@ -7,7 +7,7 @@ Iterates over env variables and for each non empty variable create entry in
 import os
 import re
 
-skip_regexs = ["^LS_COLORS$","OPG_BASE_SSL_CERT$","OPG_BASE_SSL_KEY$"]
+skip_regexs = ["^LS_COLORS$","OPG_BASE_SSL_CERT$","OPG_BASE_SSL_KEY$", "OPG_BASE_CA_CERT$"]
 
 
 with open("/etc/php5/fpm/pool.d/app.conf", "a") as app_conf:
