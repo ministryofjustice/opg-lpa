@@ -1,5 +1,9 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+    Create a lasting power of attorney 
+{% endblock %}
+
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
@@ -9,14 +13,32 @@
     var actors = {names: actorNames};
 </script>
 
-{% set form = formErrorTextExchange(form,  {}) %}
+{% set form = formErrorTextExchange(form,  {
+    'name-first' : {
+        'cannot-be-blank' : 'Please enter the attorney\'s first name'
+    },
+    'name-last' : {
+        'cannot-be-blank' : 'Please enter the attorney\'s last name'
+    },
+    'address-address1' : {
+        'cannot-be-blank' : 'Please enter the attorney\'s first line of address'
+    },
+    'address-address2' : {
+        'linked-1-cannot-be-null' : 'Please enter the second line of address'
+    },
+    'address-postcode' : {
+        'linked-1-cannot-be-null' : 'Please enter the attorney\'s postcode'
+    },
+    'dob-date' : {
+        "The input does not appear to be a valid date" : "Please enter a valid date",
+        "Please enter all the date fields" : "Please enter the attorney's date of birth"
+    }
+}) %}
 
-{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
-    
+{# Set form fields variables #}  
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
-{% set email = form.get('email-address') %}
 {% set address1 = form.get('address-address1') %}
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
@@ -26,106 +48,170 @@
 {% set dobMonth = dob.get('month') %}
 {% set dobYear = dob.get('year') %}
 
-{{ form.setAttribute('class', 'form js-PersonForm js-PostcodeLookup') ? '' }}
-    
+{# form fields config #}
+{{ form.setAttributes({
+    'class':'form form-condensed js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+
+{{ title.setAttributes({
+    id: 'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ firstname.setAttributes({
+    id: 'name-first',
+    class: 'form-control'
+}) ? '' }}
+
+{{ lastname.setAttributes({
+    id: 'name-last',
+    class: 'form-control'
+}) ? '' }}
+
+{{ dobDay.setAttributes({
+    id: 'dob-date-day',
+    type: 'number',
+    class: 'form-control',
+    min: '1',
+    max: '31',
+    pattern: '[0-9]*'
+}) ? ''}}
+
+{{ dobMonth.setAttributes({
+    id: 'dob-date-month',
+    type: 'number',
+    class: 'form-control',
+    min: '1',
+    max: '12',
+    pattern: '[0-9]*'
+ }) ? ''}}
+
+{{ dobYear.setAttributes({
+    id: 'dob-date-year',
+    type: 'number',
+    class: 'form-control',
+    min: '1866',
+    max: '2016',
+    pattern: '[0-9]*'
+})  ? ''}}
+
+{{ address1.setAttributes({
+    id: 'address-address1',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address2.setAttributes({
+    id: 'address-address2',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address3.setAttributes({
+    id: 'address-address3',
+    class: 'form-control'
+}) ? ''}}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
 {{ title.setOptions({label:'Title'}) ? '' }}
-{{ title.setAttributes({id:'name-title'}) ? '' }}
 {{ firstname.setOptions({label:'First name'}) ? '' }}
 {{ lastname.setOptions({label:'Last name'}) ? '' }}
-    
 {{ dob.setOptions({label:'Date of Birth'}) ? '' }}
 {{ dobDay.setOptions({label:'Day'}) ? '' }}
 {{ dobMonth.setOptions({label:'Month'}) ? '' }}
 {{ dobYear.setOptions({label:'Year'}) ? '' }}
-{{ dobDay.setAttribute('id', 'dob-date-day') ? '' }}
-{{ dobMonth.setAttribute('id', 'dob-date-month') ? '' }}
-{{ dobYear.setAttribute('id', 'dob-date-year') ? '' }}
-    
 {{ address1.setOptions({label:'Address line 1'}) ? '' }}
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
 {{ postcode.setOptions({label:'Postcode'}) ? '' }}
-{{ address1.setAttributes({id:'address-address1'}) ? '' }}
-    
-{{ form.prepare() ? '' }}
 
-<h2 class="header">Edit replacement attorney details</h2>
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Edit replacement attorney details</h2>
+</header>
+
+{{ form.prepare() ? '' }}
 
 {{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
 
-<?php ############################ attorney form ############################ ?>
+{################# replacement attorney form #####################}
 
-{{ form().openTag( form )|raw }}
-
-{% if (useMyDetailsRoute) %}
-<p class="role-select group">
-    <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
-</p>
-{% endif %}
+{{ macros.useMyDetails(useMyDetailsRoute) }}
 
 {% if (addTrustCorporationRoute) %}
-<p class="role-select group">
-    <a class="js-form-popup" href="{{ addTrustCorporationRoute }}">Using a trust corporation?</a>
-</p>
+    <div class="panel-actions">
+        <a class="js-form-popup" href="{{ addTrustCorporationRoute }}">Using a trust corporation?</a>
+    </div>
 {% endif %}
 
-{{ formElement(form.get( form.csrfName )) }}
-{{ formElementErrors(form.get( form.csrfName )) }}
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
-<fieldset>
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElementErrorsV2(form.get( form.csrfName )) }}
 
-{{ macros.formGroup(title) }}
-{{ macros.formGroup(firstname) }}
-{{ macros.formGroup(lastname) }}
-    
-    <div class="group">
-        
-        <label for="dob" id="dob-label" class="required">Date of birth</label>
+    <h2 class="heading-medium">What is the replacement attorney's name?</h2>
 
-        <div class="dob-element">
+    <fieldset>
+        <legend class="visuallyhidden">Add replacement attorney's name</legend>
 
-            <div class="form-group form-group-day">
-                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">{{ dobDay.getOption('label') }}</label>
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium">What is the replacement attorney's date of birth?</h2>
+
+    <fieldset id="{{ dob.getAttribute('name') }}">
+        <legend class="form-label">Date of birth</legend>
+
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'error'}}">
+            <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
+
+            {{ formElementErrorsV2(dobYear) }}
+            {{ formElementErrorsV2(dobMonth) }}
+            {{ formElementErrorsV2(dobDay) }}
+            {{ formElementErrorsV2(dob) }}
+
+            <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
 
-            <div class="form-group form-group-month">
-                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">{{ dobMonth.getOption('label') }}</label>
+            <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
 
-            <div class="form-group form-group-year">
-                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">{{ dobYear.getOption('label') }}</label>
+            <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'error'}}">
+                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
-
         </div>
-        
-        {{ formElementErrorsV2(dobDay) }}
-        {{ formElementErrorsV2(dobMonth) }}
-        {{ formElementErrorsV2(dobYear) }}
-        {{ formElementErrorsV2(dob) }}
-        
-    </div>
+
+    </fieldset>
+
+    <h2 class="heading-medium">What is the replacement attorney's address?</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visuallyhidden">Address</legend>
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+    </fieldset>
+
+    <input type="submit" name="submit" id="form-save" value="Save details" class="button">
+    <a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
     
-    <div class="group">
-        {{ formElementErrors(dobYear) }}
-    </div>
-    
-</fieldset>
-
-<fieldset class="js-PostcodeLookup__postal-add">
-    {{ macros.formGroup(address1) }}
-    {{ macros.formGroup(address2) }}
-    {{ macros.formGroup(address3) }}
-    {{ macros.formGroup(postcode) }}
-</fieldset>
-
-<p class="action group">
-<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
-<button name="cancel" type="button" class="button-secondary">Cancel</button>
-</p>
-
 {{ form().closeTag|raw }}
 
 {% endblock %}
