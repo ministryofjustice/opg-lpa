@@ -4,66 +4,69 @@
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form, 
-		{'canSustainLife' : {
-				"Value is required and can't be empty" : 'Please select either option A or option B'
-			}
-		}
-    ) 
-%}
+{% set form = formErrorTextExchange(form, {
+    'canSustainLife' : {
+        'Value is required and can\'t be empty' : 'Please choose either yes or no'
+	}
+}) %}
 
-{{ form.setAttribute('class', 'form') ? '' }}
-
+{# Set form fields variables #}
 {% set csrf = form.get(form.csrfName) %}
 {% set canSustainLife = form.get('canSustainLife') %}
+
+{{ canSustainLife.setOptions({
+    label_attributes: {'class': 'text block-label'}
+}) ? '' }}
+
+{{ canSustainLife.setLabelOptions({
+    disable_html_escape: true
+}) ? '' }}
     
-{{ form.prepare() ? '' }}
 
-<section id="life-sustaining-section" class="section current">
-	
-	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Can your attorneys give or refuse consent to life-sustaining treatment?</h2>
+<li id="life-sustaining-section" class="section current js-current">
 
-    <div class="accordion-content">
-  
-		<div class="section-intro">
-
+    <h2 class="heading-medium accordion-header flush--top">Can your attorneys give or refuse consent to life-sustaining treatment?</h2>
+    
+    <div class="accordion-info">
+        <div class="text">
             <p>This is a very important decision. Read the guidance carefully before you answer.</p>
-            <ul>
-            	<li>Life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
-            	<li>If you don’t allow your attorneys to give or refuse consent on your behalf, your doctors will make decisions about life-sustaining treatment</li>
-            	<li>Your attorneys can only make decisions about life-sustaining treatment if you don't have mental capacity</li>
-            </ul>
-            
-    		<p><a href="/help/#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="stageprompt.lpa:help:life-sustaining-treatment">Read guidance on making this decision </a></p>
-
-		</div>
-
-		<h3>Do you want to give your attorneys authority to make decisions about life-sustaining treatment on your behalf?</h3>
-    
-        {{ form().openTag( form )|raw }}
-        
-        {{ formElement(csrf) }}
-		{{ formElementErrors(csrf) }}
-        
-        <div class="emphasised option group">
-            {{ formRadio(canSustainLife) }}
-            
-            {{ formElementErrors(canSustainLife) }}
+            <ul class="list list-bullet">
+                <li>Life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
+                <li>If you don’t allow your attorneys to give or refuse consent on your behalf, your doctors will make decisions about life-sustaining treatment</li>
+                <li>Your attorneys can only make decisions about life-sustaining treatment if you don't have mental capacity</li>
+            </ul> 
+            <p><a href="/guide#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="stageprompt.lpa:help:life-sustaining-treatment">Read guidance on making this decision </a></p>
         </div>
-        
-        <p>Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
-        
-        <div class="accordion-actions">
-			<p>
-                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-            </p>
-        </div>
-        
-                
-        {{ form().closeTag|raw }}
-    
     </div>
-    
-</section>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }} 
+        {{ formElement(csrf) }}
+        {{ formElementErrors(csrf) }}
+
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <fieldset id="how">
+            <legend class="visuallyhidden">Life-sustaining treatment decision</legend>
+
+            <h2 class="heading-medium flush--top text">Do you want to give your attorneys authority to make decisions about life-sustaining treatment on your behalf?</h2>
+
+            <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
+                {{ formRadio(canSustainLife) }}
+                {{ formElementErrorsV2(canSustainLife) }}
+            </div>
+        </fieldset>
+
+        
+        <p class="text">Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
+
+        <div class="form-group">
+            <input type="submit" name="save" value="Save and continue" class="button">
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
 
 {% endblock %}

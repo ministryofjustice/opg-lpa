@@ -15,7 +15,12 @@ $(document).ready(function () {
       $emphasised.filter(':checked').parent().addClass('checked');
   });
 
+  // Remove the no-js class
   $('body').removeClass('no-js');
+
+  // Initiating the SelectionButtons GOVUK module
+  var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
+  new GOVUK.SelectionButtons($blockLabels);
 
 });
 

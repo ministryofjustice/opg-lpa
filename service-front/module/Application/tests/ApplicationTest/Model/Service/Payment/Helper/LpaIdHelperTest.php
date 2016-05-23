@@ -55,7 +55,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
     
     public function testConstructWorldPayId()
     {
-        $id = LpaIdHelper::constructWorldPayTransactionId('123');
+        $id = LpaIdHelper::constructPaymentTransactionId('123');
         
         $parts = explode('-', $id);
         

@@ -10,18 +10,19 @@ class Dob extends Fieldset
         parent::__construct($name, $options);
     
         $this->add([
-                'name' => 'day',
-                'type' => 'Text',
+            'name' => 'day',
+            'type' => 'Text',
+            
         ]);
         
         $this->add([
-                'name' => 'month',
-                'type' => 'Text',
+            'name' => 'month',
+            'type' => 'Text',
         ]);
         
         $this->add([
-                'name' => 'year',
-                'type' => 'Text',
+            'name' => 'year',
+            'type' => 'Text',
         ]);
     }
     

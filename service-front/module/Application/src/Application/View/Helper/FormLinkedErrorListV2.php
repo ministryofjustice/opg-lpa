@@ -12,7 +12,19 @@ class FormLinkedErrorListV2 extends AbstractHelper
      */
     public function __invoke(Form $form)
     {
-        foreach ($form->getElements() as $element) {
+        foreach ($form->getFieldsets() as $fieldset) {
+            foreach ($fieldset->getMessages() as $elementMessage) {
+                echo '<li><a href="#' . $fieldset->getAttribute('name') . '">';
+                echo $elementMessage;
+                echo '</a></li>';
+            }
+            $this->showErrors($fieldset);
+        }
+        $this->showErrors($form);
+    }
+    
+    private function showErrors($formOrFieldset) {
+        foreach ($formOrFieldset->getElements() as $element) {
             foreach ($element->getMessages() as $elementMessage) {
                 echo '<li><a href="#' . $element->getAttribute('name') . '">';
                 echo $elementMessage;
