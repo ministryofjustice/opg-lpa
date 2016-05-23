@@ -64,11 +64,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController {
 
                 if( $result === true ){
 
-                    // Clear the old details out the session.
-                    // They will be reloaded the next time the the AbstractAuthenticatedController is called.
-                    $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
-                    unset($detailsContainer->user);
-
                     return (new ViewModel( ['email'=>$form->getData()['email']] ))->setTemplate('application/change-email-address/email-sent');
 
                 } else {

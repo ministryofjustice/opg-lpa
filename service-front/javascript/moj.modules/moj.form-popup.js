@@ -70,6 +70,9 @@
         } else {
           // render form
           self.renderForm(html);
+          if (url.indexOf('use-my-details') !== -1) {
+            $('#dob-date-day').trigger('change');
+          }
         }
       });
     },
@@ -142,6 +145,8 @@
           moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          // trigger use these details event
+          moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
         } else {

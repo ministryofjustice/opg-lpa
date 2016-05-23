@@ -196,9 +196,9 @@
             </tr>
             <tr>
                 <td>Will-writer</td>
-                <td class="numeric">{{ who.all.professional.subquestions.will-writer }}</td>
+                <td class="numeric">{{ who.all.professional.subquestions['will-writer'] }}</td>
                 {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.professional.subquestions.will-writer }}</td>
+                    <td class="numeric">{{ values.professional.subquestions['will-writer'] }}</td>
                 {% endfor %}
             </tr>
             <tr>
@@ -211,44 +211,6 @@
         </tbody>
     </table>
 </div>
-
-<h2 class="heading-medium">Digital Partners</h2>
-
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Type of user</th>
-                <th class="numeric">All time</th>
-                {% for month,values in who['by-month'] %}
-                    <th class="numeric">{{ month }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Age UK</td>
-                <td class="numeric">{{ who.all.digitalPartner.subquestions.Age-Uk }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.digitalPartner.subquestions.Age-Uk }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Alzheimer's Society</td>
-                <td class="numeric">{{ who.all.digitalPartner.subquestions.Alzheimer-Society }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.digitalPartner.subquestions.Alzheimer-Society }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Citizens Advice Bureau</td>
-                <td class="numeric">{{ who.all.digitalPartner.subquestions.Citizens-Advice-Bureau }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.digitalPartner.subquestions.Citizens-Advice-Bureau }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-</div>
+    
 
 {% endblock content %}

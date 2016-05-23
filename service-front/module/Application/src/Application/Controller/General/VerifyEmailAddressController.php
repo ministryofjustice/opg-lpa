@@ -8,19 +8,20 @@ class VerifyEmailAddressController extends AbstractBaseController {
   
     public function verifyAction()
     {
+        //---------------------------
+
+        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
+        $session = $this->getServiceLocator()->get('SessionManager');
+        $session->getStorage()->clear();
+        $session->initialise();
+
+        //---------------------------
+
         $token = $this->params()->fromRoute('token');
         
         $service = $this->getServiceLocator()->get('AboutYouDetails');
         
         if ($service->updateEmailUsingToken( $token ) === true) {
-
-            $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
-            
-            if( isset($detailsContainer->user) ) {
-                unset($detailsContainer->user);
-            }
-
-            $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
 
             $this->flashMessenger()
                 ->addSuccessMessage('Your email address was successfully updated. Please login with your new address.');

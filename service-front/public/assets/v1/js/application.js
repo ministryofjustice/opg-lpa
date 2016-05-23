@@ -2772,6 +2772,7 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
         var href = this.$el.attr('href');
         this.$el.data('href', href).removeAttr('href');
       }
+
     },
 
     enable: function () {
@@ -3551,7 +3552,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         href = source.attr('href'),
         form = source.data('form');
 
-      // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
+      // set original source to be the original link clicked from the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
       if ($('#popup').length === 0) {
         this.originalSource = source;
@@ -3579,6 +3580,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         } else {
           // render form
           self.renderForm(html);
+          if (url.indexOf('use-my-details') !== -1) {
+        	  $('#dob-date-day').trigger('change');
+          }
         }
       });
     },
@@ -3651,6 +3655,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          // trigger use these details event
+          moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
         } else {
@@ -3787,7 +3793,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     message: 'This will replace the information which you have already entered, are you sure?',
 
     init: function () {
-      _.bindAll(this, 'linkClicked', 'selectChanged');
+      _.bindAll(this, 'render', 'linkClicked', 'selectChanged', 'useDetailsReset');
       this.bindEvents();
     },
 
@@ -3795,6 +3801,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $('body')
         .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
         .on('change.moj.Modules.Reusables', 'select' + this.selector, this.selectChanged);
+      // custom render event
+      moj.Events.on('Reusables.render', this.render);
     },
 
     // <a> click
@@ -3935,6 +3943,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
       return clean;
+    },
+
+    render: function(e, params) {
+      $(this.selector, params.wrap).each(this.useDetailsReset);
+    },
+
+    useDetailsReset: function(i, el){
+      // Hide the non-js button
+      $('.details-picker').hide();
     }
   };
 
@@ -4218,9 +4235,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     formEvents: function (i, el) {
-      if (window && window.console) {
-      	window.console.log('count ' + i);
-      }
       var $form = $(el),
         $submitBtn = $('input[type="submit"]', $form),
         donorCannotSign = $('#donor_cannot_sign', $form).is(':checked'),
@@ -4278,7 +4292,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // Listen for changes to form
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
-
           var $target = $(evt.target),
             currentDate = new Date(),
             minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate()),
@@ -4338,7 +4351,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
               }
 
             }
-
 
             // Are we editing the DOB?
             if ($target.parents('.dob-element').length) {
@@ -4646,10 +4658,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     selector: '#lpa-type',
 
     init: function () {
-      if (window && window.console) {
-    	  window.console.log('RepeatApplication');
-      }
-
       _.bindAll(this, 'render');
       this.cacheEls();
       this.bindEvents();

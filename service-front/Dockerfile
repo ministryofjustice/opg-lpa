@@ -1,10 +1,10 @@
-FROM registry.service.dsd.io/opguk/php-fpm:0.1.130
+FROM registry.service.dsd.io/opguk/php-fpm:lpa-hsts
 
 RUN groupadd webservice && \
     groupadd supervisor
 
 RUN apt-get update && apt-get install -y \
-    php5-curl php-pear php5-dev php5-redis
+    php5-curl php-pear php5-dev
 
 #
 #
@@ -21,12 +21,6 @@ RUN php5enmod allow_php_short_tags
 ADD . /app
 RUN mkdir -p /srv/opg-lpa-front2/application && \
     mkdir /srv/opg-lpa-front2/application/releases && \
-    mkdir /srv/opg-lpa-front2/application/shared && \
-    mkdir /srv/opg-lpa-front2/application/shared/log && \
-    mkdir /srv/opg-lpa-front2/application/shared/pids && \
-    mkdir /srv/opg-lpa-front2/application/shared/system && \
-    mkdir /srv/opg-lpa-front2/application/shared/tmp && \
-    mkdir /srv/opg-lpa-front2/application/shared/session && \
     chown -R app:app /srv/opg-lpa-front2/application && \
     chmod -R 755 /srv/opg-lpa-front2/application && \
     ln -s /app /srv/opg-lpa-front2/application/current
