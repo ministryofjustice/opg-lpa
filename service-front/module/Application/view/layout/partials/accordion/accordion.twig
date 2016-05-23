@@ -1,9 +1,7 @@
-{% set itemPath = 'layout/partials/accordion/accordion-item.twig' %}
+{% import "layout/partials/accordion/macros.twig" as macros %}
 
 {% set block = 'lpa/form-type' %}
-{% if block in items %}
-
-	{% include itemPath with {
+{{ macros.accordionBar(items, block, {
 		'desktop' : (lpa.document.type == 'property-and-financial') ?
 					'This LPA covers property and financial affairs' :
 					'This LPA covers health and welfare',
@@ -12,100 +10,17 @@
 					'This LPA covers health and welfare',
 		'status' : 'Complete',
 		'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
+	})
+}}
 
 {% set block = 'lpa/donor' %}
-{% if block in items %}
-
-	{% include itemPath with {
-		'desktop' : 'The donor is Mr Archie Duncan',
-		'mobile' : 'The donor is Mr Archie Duncan',
+{{ macros.accordionBar(items, block, {
+		'desktop' : 'The donor is ' ~ lpa.document.donor.name,
+		'mobile' : 'The donor is ' ~ lpa.document.donor.name,
 		'status' : 'Complete',
 		'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
-
-{% set block = 'lpa/life-sustaining' %}
-{% if block in items %}
-
-	{% include itemPath with {
-	'desktop' : 'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
-	'mobile' : 'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
-	'status' : 'Complete',
-	'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
-
-{% set block = 'lpa/primary-attorney' %}
-{% if block in items %}
-
-	{% include itemPath with {
-	'desktop' : 'The attorneys are Mrs Tilly Hale and Miss Isobel Rhodes',
-	'mobile' : 'The attorneys are Mrs Tilly Hale and Miss Isobel Rhodes',
-	'status' : '2 attorneys',
-	'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
-
-{% set block = 'lpa/how-primary-attorneys-make-decision' %}
-{% if block in items %}
-
-	{% include itemPath with {
-	'desktop' : 'The attorneys will act jointly for some decisions, and jointly and severally for other decisions',
-	'mobile' : 'The attorneys will act jointly for some decisions, and jointly and severally for other decisions',
-	'status' : 'Complete',
-	'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
-
-{% set block = 'lpa/replacement-attorney' %}
-{% if block in items %}
-
-	{% include itemPath with {
-	'desktop' : 'The replacement attorneys are Ms Demi James and Ms Summer Berry',
-	'mobile' : 'The replacement attorneys are Ms Demi James and Ms Summer Berry',
-	'status' : '2 attorneys',
-	'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
-
-{% set block = 'lpa/certificate-provider' %}
-{% if block in items %}
-
-	{% include itemPath with {
-	'desktop' : 'The certificate provider is Mrs Abby Coleman',
-	'mobile' : 'The certificate provider is Mrs Abby Coleman',
-	'status' : 'Complete',
-	'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
-
-
-{% set block = 'lpa/people-to-notify' %}
-{% if block in items %}
-
-	{% include itemPath with {
-	'desktop' : 'The persons to be notified are Mrs Emily Rhodes and Miss Abigail Preston',
-	'mobile' : 'The persons to be notified are Mrs Emily Rhodes and Miss Abigail Preston',
-	'status' : '2 notifiers',
-	'edit' : url(block, {'lpa-id': lpa.id})
-	} %}
-
-{% endif %}
+	})
+}}
 
 
 
