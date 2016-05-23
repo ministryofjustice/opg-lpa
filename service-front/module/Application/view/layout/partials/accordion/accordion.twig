@@ -1,28 +1,42 @@
 {% import "layout/partials/accordion/macros.twig" as macros %}
 
-{% set block = 'lpa/form-type' %}
-{{ macros.accordionBar(items, block, {
-		'desktop' : (lpa.document.type == 'property-and-financial') ?
-					'This LPA covers property and financial affairs' :
-					'This LPA covers health and welfare',
-		'mobile' : (lpa.document.type == 'property-and-financial') ?
-					'This LPA covers property and financial affairs' :
-					'This LPA covers health and welfare',
-		'status' : 'Complete',
-		'edit' : url(block, {'lpa-id': lpa.id})
-	})
-}}
+{% for item in items %}
 
-{% set block = 'lpa/donor' %}
-{{ macros.accordionBar(items, block, {
-		'desktop' : 'The donor is ' ~ lpa.document.donor.name,
-		'mobile' : 'The donor is ' ~ lpa.document.donor.name,
-		'status' : 'Complete',
-		'edit' : url(block, {'lpa-id': lpa.id})
-	})
-}}
+	{% if (item.routeName == 'lpa/form-type') %}
+        {{ macros.accordionBar({
+        		'desktop' : (lpa.document.type == 'property-and-financial') ?
+        					'This LPA covers property and financial affairs' :
+        					'This LPA covers health and welfare',
+        		'mobile' : (lpa.document.type == 'property-and-financial') ?
+        					'This LPA covers property and financial affairs' :
+        					'This LPA covers health and welfare',
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+	{% if (item.routeName == 'lpa/donor') %}
+        {{ macros.accordionBar({
+            	'desktop' : 'The donor is ' ~ item.params.values,
+            	'mobile' : 'The donor is ' ~ item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
+	{% if (item.routeName == 'lpa/life-sustaining') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values == 1 ? 'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' : 'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf', 
+            	'mobile' : item.params.values == 1 ? 'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' : 'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
 
-
+{% endfor %}
 
 {#
 'lpa/form-type'

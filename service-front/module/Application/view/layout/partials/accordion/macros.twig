@@ -1,7 +1,5 @@
-{% macro accordionBar(items, routeName, data) %}
+{% macro accordionBar(data) %}
 
-{% for item in items %}
-{% if item.routeName == routeName %}
 <li class="section complete">
     <div class="accordion-summary">
         <div class="title-box">
@@ -9,7 +7,7 @@
         </div>
         <div class="label-and-edit-box">
             <p class="link flush--ends">
-                <a href="{{ edit|raw }}" class="link-edit">
+                <a href="{{ data.edit|raw }}" class="link-edit">
                     <span class="tablet-and-up">edit</span>
                     <span class="visuallyhidden">: </span>
                     <span class="mobile">{{ data.mobile }}</span>
@@ -19,7 +17,5 @@
         </div>
     </div>
 </li>
-{% endif %}
-{% endfor %}
 	
 {% endmacro %}
