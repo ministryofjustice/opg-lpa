@@ -35,8 +35,6 @@
     }
 }) %}
 
-{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
-
 {# Set form fields variables #}  
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
@@ -156,6 +154,9 @@
         <a class="js-form-popup" href="{{ addTrustCorporationRoute }}">Using a trust corporation?</a>
     </div>
 {% endif %}
+
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
 {# begin form #}
 {{ form().openTag( form )|raw }}

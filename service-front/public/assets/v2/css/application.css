@@ -3469,7 +3469,18 @@ input[disabled="disabled"] {
       margin: 2em 0.5em 10em 0.5em; } }
 
 .form-popup .error-summary {
-  display: none; }
+  margin: 15px 15px 0 15px;
+  padding: 10px 10px 4px 10px; }
+  @media (max-width: 640px) {
+    .form-popup .error-summary {
+      padding-bottom: 8px; } }
+  .form-popup .error-summary .heading-medium, .form-popup .error-summary .help-sections h2, .help-sections .form-popup .error-summary h2 {
+    margin-bottom: 10px; }
+    @media (min-width: 641px) {
+      .form-popup .error-summary .heading-medium, .form-popup .error-summary .help-sections h2, .help-sections .form-popup .error-summary h2 {
+        font-size: 22px; } }
+  .form-popup .error-summary p {
+    margin-bottom: 4px; }
 
 .form-popup .form-condensed {
   padding: 30px 15px; }
