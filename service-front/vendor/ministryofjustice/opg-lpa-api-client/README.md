@@ -1,42 +1,43 @@
-OPG LPA API Client
-==================
+# Lasting Power of Attorney API Client
 
-This version of the API client works with the LPA v2 Auth Server and no longer works with the LPA v1 Auth Server.
+This client if for accessing the Lasting Power of Attorney API Service.
 
-A client wrapper for the OPG LPA REST API (opg-lpa-api)
-
+Only v2 of the v2 Authentication Service is supported.
 Add to project using Composer
 -----------------------------
 
-	{
-		"repositories": [
-	        {
-	            "type": "vcs",
-	            "url": "https://github.com/ministryofjustice/opg-lpa-api-client"
-	        }
-	    ],
-	    "require": {
-	    	"ministryofjustice/opg-lpa-api-client": "dev-develop"
-	    }
-	}
-
-Configure
----------
-
-Copy config/opg-lpa-api-client.php to the config directory at the root of your project and configure to taste.
+```json
+{
+	"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-api-client"
+        }
+    ],
+    "require": {
+    	"ministryofjustice/opg-lpa-api-client": "^3.0.0"
+    }
+}
+```
 
 Development
 -----------
 
 ### Clone the repo and compose
 
-    git clone git@github.com:ministryofjustice/opg-lpa-api-client
-    cd opg-lpa-api-client
-    php composer.phar install
+```
+git clone git@github.com:ministryofjustice/opg-lpa-api-client
+cd opg-lpa-api-client
+php composer.phar install
+```
 
 ### Run the tests
 
-        bin/phpspec run --format=pretty -vvv --stop-on-failure
+`bin/phpspec run --format=pretty -vvv --stop-on-failure`
 
 
+License
+-------
+
+The Lasting Power of Attorney Attorney API Service is released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).
 

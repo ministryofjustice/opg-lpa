@@ -78,16 +78,16 @@ class ReplacementAttorneyController extends AbstractLpaActorController
     
     public function addAction()
     {
+        $lpaId = $this->getLpa()->id;
         $routeMatch = $this->getEvent()->getRouteMatch();
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
         
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         
-        $viewModel->setTemplate('application/replacement-attorney/person-form.phtml');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $viewModel->setTemplate('application/replacement-attorney/person-form.twig');
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
-        
-        $lpaId = $this->getLpa()->id;
         
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));

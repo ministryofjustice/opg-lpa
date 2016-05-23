@@ -10,25 +10,14 @@ class FormErrorTextExchange extends AbstractHelper
      * 
      * @var array - Common Generic Map
      */
-    private $commonMap = [
-        'cannot-be-blank' => 'Please enter a value for this field',
-        'invalid-email-address' => 'Please enter a valid email address',
-        'invalid-phone-number' => 'Please enter a valid phone number',
-    ];
+    private $commonMap = [];
     
     /**
      * Generic transformations for named fields
      * 
      * $var array - Common Field Map
      */
-    private $commonFieldMap = [
-        'address-postcode' => [
-            'must-be-greater-than-or-equal:5' => 'Postcode must be at least five characters',
-        ],
-        'name-title' => [
-            'must-be-less-than-or-equal:5' => 'Title must be five letters or fewer - please abbreviate, if necessary',
-        ]
-    ];
+    private $commonFieldMap = [];
     
     /**
      * Look at each element message on the form. If a transform message exists
@@ -48,7 +37,16 @@ class FormErrorTextExchange extends AbstractHelper
             $overrideMap
         );
         
-        foreach ($form->getElements() as $element) {
+        $elements = $form->getElements();
+        
+        foreach ($form->getFieldsets() as $fieldset) {
+            foreach ($fieldset->getElements() as $element) {
+                $elements[] = $element;
+            }
+            $elements[] = $fieldset;
+        }
+        
+        foreach ($elements as $element) {
             
             $name = $element->getName();
             
@@ -61,7 +59,6 @@ class FormErrorTextExchange extends AbstractHelper
             $messages = $element->getMessages();
             
             foreach ($messages as &$elementMessage) {
-
                 if (array_key_exists($elementMessage, $elementMap)) {
                     $elementMessage = $elementMap[$elementMessage];
                 } elseif (array_key_exists($elementMessage, $this->commonMap)) {

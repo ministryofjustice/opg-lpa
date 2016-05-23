@@ -2,15 +2,51 @@
 // PERSON PROFILE
 
 .person {
-	padding: 0 0 $gutter 100px;
+	position: relative;
+	padding: 7px 0 28px 75px;
 	margin-bottom: $gutter;
 	overflow: hidden;
 	border-bottom: 1px solid $border-colour;
 	background-image: url(../images/custom/person.svg);
 	background-repeat: no-repeat;
-	background-size: 80px;
+	background-size: 60px;
 	@include media(mobile) {
-		padding-left: 80px;
-		background-size: 60px;
+		padding: 0 0 $gutter 80px;
+	}
+}
+
+.person-name,
+.person-address {
+	@include media(tablet) {
+		padding-right: 275px;
+	}
+	.person--wider & {
+		@include media(tablet) {
+			padding-right: 175px;
+		}
+	}
+}
+
+.person-actions {
+	@include media(tablet) {
+		position: absolute;
+		top: 10px;
+		right: 0;
+	}
+	.action-item {
+		@include media(tablet) {
+			float: right;
+		}
+	}
+	.action-edit {
+		@include media(tablet) {
+			@include button($grey-3);
+		}
+	}
+	.action-delete {
+		@include media(tablet) {
+			display: block;
+			margin: 6px $gutter 0 0;
+		}
 	}
 }
