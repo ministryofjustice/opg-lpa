@@ -65,7 +65,7 @@ html, body, div, h1, h2, h3, h4, h5, h6, article, aside, footer, header, hgroup,
   padding: 0;
   vertical-align: baseline; }
 
-main {
+main, .form-popup {
   display: block; }
 
 .group:before,
@@ -863,7 +863,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
-main {
+main, .form-popup {
   font-family: "nta", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
@@ -2900,6 +2900,138 @@ input[disabled="disabled"] {
   .person-actions .action-delete {
     display: block;
     margin: 6px 30px 0 0; }
+
+.js-enabled #popup.form-popup {
+  max-width: 600px;
+  margin: 0 auto; }
+
+.form-popup .error-summary {
+  display: none; }
+
+.form-popup .form-condensed {
+  padding: 30px 15px; }
+  .form-popup .form-condensed .heading-medium, .form-popup .form-condensed .help-sections h2, .help-sections .form-popup .form-condensed h2 {
+    display: none; }
+  .form-popup .form-condensed .form-group {
+    margin-bottom: 15px; }
+  .form-popup .form-condensed .form-label {
+    float: left;
+    width: 150px;
+    margin-top: 6px; }
+  .form-popup .form-condensed input[type='text'].form-control,
+  .form-popup .form-condensed input[type='email'].form-control,
+  .form-popup .form-condensed select.form-control {
+    width: 420px; }
+  .form-popup .form-condensed input[type='text'].postcode-input,
+  .form-popup .form-condensed input[type='email'].postcode-input,
+  .form-popup .form-condensed select.postcode-input {
+    width: 252px; }
+  .form-popup .form-condensed .hint {
+    margin-left: 150px; }
+  .form-popup .form-condensed .form-date {
+    margin-bottom: 0; }
+    .form-popup .form-condensed .form-date .form-hint {
+      display: none; }
+  .form-popup .form-condensed .address-type-toggle {
+    margin-left: 150px; }
+  .form-popup .form-condensed .block-label {
+    width: auto;
+    margin-left: 150px;
+    padding: 15px 15px 15px 40px; }
+    .form-popup .form-condensed .block-label input {
+      top: 12px;
+      left: 12px; }
+  .form-popup .form-condensed input.button {
+    margin-left: 150px; }
+  .form-popup .form-condensed .postcodelookup {
+    position: relative; }
+    .form-popup .form-condensed .postcodelookup .spinner {
+      position: absolute;
+      top: 16px;
+      right: 182px; }
+  .form-popup .form-condensed .error {
+    position: relative;
+    padding-left: 0;
+    border-left: 0; }
+    .form-popup .form-condensed .error .form-label {
+      width: 150px; }
+    .form-popup .form-condensed .error .form-control {
+      margin-bottom: 28px; }
+  .form-popup .form-condensed .error-message {
+    position: absolute;
+    top: 42px;
+    left: 150px; }
+  .form-popup .form-condensed .form-date .error-message {
+    left: 0;
+    top: 78px; }
+
+.no-js legend.form-label {
+  display: none; }
+
+.table-summary tr {
+  position: relative;
+  display: block;
+  z-index: 3; }
+  .table-summary tr:first-child th, .table-summary tr:first-child td {
+    border-top: 1px solid #bfc1c3;
+    border: none; }
+.table-summary th, .table-summary td {
+  vertical-align: top;
+  display: block;
+  width: 100%;
+  padding-right: 0;
+  border: none; }
+.table-summary th {
+  padding-bottom: 0;
+  padding-right: 40px;
+  box-sizing: border-box;
+  z-index: 3; }
+.table-summary td {
+  padding-top: 6px; }
+
+.table-summary-heading {
+  padding-bottom: 0; }
+
+.table-summary-title {
+  font-weight: 700;
+  width: 35%; }
+
+.table-summary-action {
+  padding-right: 0;
+  text-align: right;
+  position: absolute;
+  top: 12px;
+  border: none; }
+
+.group-single {
+  padding: 6px 0;
+  border-bottom: 1px solid #bfc1c3; }
+  .group-single:first-child {
+    border-top: 1px solid #bfc1c3; }
+
+.group-end {
+  padding-bottom: 6px;
+  border-bottom: 1px solid #bfc1c3; }
+
+.group-element th, .group-element td {
+  border-bottom: 0; }
+
+.appstatus {
+  background-color: #005ea5;
+  color: #fff;
+  margin: 30px 0;
+  padding: 45px;
+  text-align: center; }
+  .appstatus.warning {
+    background-color: #f47738; }
+
+.appstatus-title {
+  font-family: "nta",Arial,sans-serif;
+  font-size: 48px;
+  line-height: 1em;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 20px; }
 
 .noscroll {
   position: relative;
