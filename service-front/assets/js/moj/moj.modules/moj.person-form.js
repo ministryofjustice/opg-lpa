@@ -55,7 +55,7 @@
 
           if ($dayObj.val() !== '') {
             day = parseInt($dayObj.val(), 10);
-            if (isNaN(day) || (day <= 1)) {
+            if (isNaN(day) || (day < 1)) {
               day = undefined;
             }
           }

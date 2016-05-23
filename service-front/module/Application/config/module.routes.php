@@ -585,6 +585,17 @@ return [
                             ],
                         ],
                     ],
+                    'summary' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route'    => '/summary[/:from-page]',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\SummaryController',
+                                'action'     => 'index',
+                                'from-page'  => 'dashboard',
+                            ],
+                        ],
+                    ],
                     'donor' => [
                         'type' => 'Literal',
                         'options' => [
@@ -704,7 +715,7 @@ return [
                         'options' => array(
                             'route'    => '/payment',
                             'defaults' => array(
-                                'controller' => 'Authenticated\Lpa\PaymentController',
+                                'controller' => 'PaymentControllerFactory',
                                 'action'     => 'index',
                             ),
                         ),

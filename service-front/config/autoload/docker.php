@@ -1,180 +1,132 @@
 <?php
 
-return call_user_func(function(){
+return array(
 
-    $config = array(
+    'stack' => [
+        'name' => getenv('OPG_LPA_STACK_NAME') ? getenv('OPG_LPA_STACK_NAME') : null,
+        'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ? getenv('OPG_LPA_STACK_ENVIRONMENT') : null,
+    ],
 
-        'stack' => [
-            'name' => 'OPG_LPA_STACK_NAME',
-            'environment' => 'OPG_LPA_STACK_ENVIRONMENT',
+
+    'account-cleanup' => [
+        'notification' => [
+            'token' => getenv('OPG_LPA_FRONT_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ? getenv('OPG_LPA_FRONT_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') : null,
+        ],
+    ], // cleanup-cleanup
+
+    'session' => [
+
+        'encryption' => [
+            // Key MUST be a 32 character string
+            'key' => getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEY') ? getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEY') : null,
+        ],
+
+        'redis' => [
+            'server' => [
+                'host' => getenv('OPG_LPA_FRONT_SESSION_REDIS_HOST') ? getenv('OPG_LPA_FRONT_SESSION_REDIS_HOST') : null,
+            ],
+        ],
+
+        'dynamodb' => [
+            'settings' => [
+                'table_name' => getenv('OPG_LPA_FRONT_SESSION_DYNAMODB_TABLE') ? getenv('OPG_LPA_FRONT_SESSION_DYNAMODB_TABLE') : null,
+            ],
+            'client' => [
+                'credentials' => [
+                    'key'    => getenv('OPG_LPA_FRONT_SESSION_DYNAMODB_KEY') ? getenv('OPG_LPA_FRONT_SESSION_DYNAMODB_KEY') : null,
+                    'secret' => getenv('OPG_LPA_FRONT_SESSION_DYNAMODB_SECRET') ? getenv('OPG_LPA_FRONT_SESSION_DYNAMODB_SECRET') : null,
+                ]
+            ],
         ],
 
 
-        'account-cleanup' => [
-            'notification' => [
-                'token' => 'OPG_LPA_FRONT_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN',
-            ],
-        ], // cleanup-cleanup
 
-        'session' => [
+    ], // session
 
-            'encryption' => [
-                // Key MUST be a 32 character string
-                'key' => 'OPG_LPA_FRONT_SESSION_ENCRYPTION_KEY',
-            ],
+    'cron' => [
 
-            'redis' => [
-                'server' => [
-                    'host' => 'OPG_LPA_FRONT_SESSION_REDIS_HOST',
-                ],
-            ],
+        'lock' => [
 
             'dynamodb' => [
                 'settings' => [
-                    'table_name' => 'OPG_LPA_FRONT_SESSION_DYNAMODB_TABLE',
+                    'table_name' => getenv('OPG_LPA_FRONT_CRONLOCK_DYNAMODB_TABLE') ? getenv('OPG_LPA_FRONT_CRONLOCK_DYNAMODB_TABLE') : null,
                 ],
                 'client' => [
                     'credentials' => [
-                        'key'    => 'OPG_LPA_FRONT_SESSION_DYNAMODB_KEY',
-                        'secret' => 'OPG_LPA_FRONT_SESSION_DYNAMODB_SECRET',
+                        'key'    => getenv('OPG_LPA_FRONT_CRONLOCK_DYNAMODB_KEY') ? getenv('OPG_LPA_FRONT_CRONLOCK_DYNAMODB_KEY') : null,
+                        'secret' => getenv('OPG_LPA_FRONT_CRONLOCK_DYNAMODB_SECRET') ? getenv('OPG_LPA_FRONT_CRONLOCK_DYNAMODB_SECRET') : null,
                     ]
                 ],
             ],
 
+        ], // lock
 
+    ], // cron
 
-        ], // session
+    'csrf' => [
+        // Salt used for generating csrf tokens
+        'salt' => getenv('OPG_LPA_FRONT_CSRF_SALT') ? getenv('OPG_LPA_FRONT_CSRF_SALT') : null,
+    ],
 
-        'cron' => [
+    'admin' => [
 
-            'lock' => [
-
-                'dynamodb' => [
-                    'settings' => [
-                        'table_name' => 'OPG_LPA_FRONT_CRONLOCK_DYNAMODB_TABLE',
-                    ],
-                    'client' => [
-                        'credentials' => [
-                            'key'    => 'OPG_LPA_FRONT_CRONLOCK_DYNAMODB_KEY',
-                            'secret' => 'OPG_LPA_FRONT_CRONLOCK_DYNAMODB_SECRET',
-                        ]
-                    ],
-                ],
-
-            ], // lock
-
-        ], // cron
-
-        'csrf' => [
-            // Salt used for generating csrf tokens
-            'salt' => 'OPG_LPA_FRONT_CSRF_SALT',
-        ],
-
-        'admin' => [
-
-            'dynamodb' => [
-                'settings' => [
-                    'table_name' => 'OPG_LPA_FRONT_ADMIN_DYNAMODB_TABLE',
-                ],
-                'client' => [
-                    'credentials' => [
-                        'key'    => 'OPG_LPA_FRONT_ADMIN_DYNAMODB_KEY',
-                        'secret' => 'OPG_LPA_FRONT_ADMIN_DYNAMODB_SECRET',
-                    ]
-                ],
+        'dynamodb' => [
+            'settings' => [
+                'table_name' => getenv('OPG_LPA_FRONT_ADMIN_DYNAMODB_TABLE') ? getenv('OPG_LPA_FRONT_ADMIN_DYNAMODB_TABLE') : null,
             ],
-
-            'accounts' => [
-                //'OPG_LPA_FRONT_ADMIN_ACCOUNTS') ? explode(',','OPG_LPA_FRONT_ADMIN_ACCOUNTS')) : null,
+            'client' => [
+                'credentials' => [
+                    'key'    => getenv('OPG_LPA_FRONT_ADMIN_DYNAMODB_KEY') ? getenv('OPG_LPA_FRONT_ADMIN_DYNAMODB_KEY') : null,
+                    'secret' => getenv('OPG_LPA_FRONT_ADMIN_DYNAMODB_SECRET') ? getenv('OPG_LPA_FRONT_ADMIN_DYNAMODB_SECRET') : null,
+                ]
             ],
         ],
 
-        'email' => [
+        'accounts' => [
+            getenv('OPG_LPA_FRONT_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_FRONT_ADMIN_ACCOUNTS')) : null,
+        ],
+    ],
 
-            'sendgrid' => [
-                'user' => 'OPG_LPA_FRONT_EMAIL_SENDGRID_USER',
-                'key' => 'OPG_LPA_FRONT_EMAIL_SENDGRID_PASSWORD',
-            ], //sendgrid
+    'email' => [
 
-        ], // email
+        'sendgrid' => [
+            'user' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_USER') ? getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_USER') : null,
+            'key' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_PASSWORD') ? getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_PASSWORD') : null,
+        ], //sendgrid
 
-        'api_client' => [
-            'api_uri' => 'OPG_LPA_FRONT_ENDPOINTS_API',
-            'auth_uri' => 'OPG_LPA_FRONT_ENDPOINTS_AUTH',
-        ], // api_client
+    ], // email
 
-        'address' => [
+    'api_client' => [
+        'api_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_API') ? getenv('OPG_LPA_FRONT_ENDPOINTS_API') : null,
+        'auth_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_AUTH') ? getenv('OPG_LPA_FRONT_ENDPOINTS_AUTH') : null,
+    ], // api_client
 
-            'postcodeanywhere' => [
-                'key' => 'OPG_LPA_FRONT_POSTCODE_LICENSE_KEY',
-            ],
+    'address' => [
 
-            'postcode_info' => [
-                'uri' => 'OPG_LPA_FRONT_POSTCODE_INFO_URI',
-                'token' => 'OPG_LPA_FRONT_POSTCODE_INFO_TOKEN',
-            ],
+        'postcodeanywhere' => [
+            'key' => getenv('OPG_LPA_FRONT_POSTCODE_LICENSE_KEY') ? getenv('OPG_LPA_FRONT_POSTCODE_LICENSE_KEY') : null,
+        ],
 
-        ], // address
+        'postcode_info' => [
+            'uri' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_URI') ? getenv('OPG_LPA_FRONT_POSTCODE_INFO_URI') : null,
+            'token' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_TOKEN') ? getenv('OPG_LPA_FRONT_POSTCODE_INFO_TOKEN') : null,
+        ],
 
-        'log' => [
-            'path' => 'OPG_LPA_FRONT_LOG_PATH',
-            'sentry-uri' => 'OPG_LPA_FRONT_SENTRY_API_URI',
-        ], // log
+    ], // address
 
-        'worldpay' => [
-            'url' => 'OPG_LPA_FRONT_WORLDPAY_URL',
-            'merchant_code' => 'OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE',
-            'xml_password' => 'OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD',
-            'administration_code' => 'OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE',
-            'installation_id' => 'OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID',
-            'mac_secret' => 'OPG_LPA_FRONT_WORLDPAY_MAC_SECRET',
-            'api_token_secret' => 'OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET',
-        ], // worldpay
+    'log' => [
+        'path' => getenv('OPG_LPA_FRONT_LOG_PATH') ? getenv('OPG_LPA_FRONT_LOG_PATH') : null,
+        'sentry-uri' => getenv('OPG_LPA_FRONT_SENTRY_API_URI') ? getenv('OPG_LPA_FRONT_SENTRY_API_URI') : null,
+    ], // log
 
-    ); // config array
+    'worldpay' => [
+        'url' => getenv('OPG_LPA_FRONT_WORLDPAY_URL') ? getenv('OPG_LPA_FRONT_WORLDPAY_URL') : null,
+        'merchant_code' => getenv('OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE') ? getenv('OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE') : null,
+        'xml_password' => getenv('OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD') ? getenv('OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD') : null,
+        'administration_code' => getenv('OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE') ? getenv('OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE') : null,
+        'installation_id' => getenv('OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID') ? getenv('OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID') : null,
+        'mac_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_MAC_SECRET') ? getenv('OPG_LPA_FRONT_WORLDPAY_MAC_SECRET') : null,
+        'api_token_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET') ? getenv('OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET') : null,
+    ], // worldpay
 
-    $filter = function(array &$array) use(&$filter) {
-
-        foreach ($array as $key => &$value) {
-
-            // If the value is an array...
-            if (is_array($value)) {
-
-                // Apply this function over that array...
-                $value = $filter($value);
-
-                // If an empty array way returned, we can remove it...
-                if (is_array($value) && count($value) == 0) {
-                    unset($array[$key]);
-                }
-
-            } else {
-
-                // Else it's a variable.
-
-                // See if it's in the environment...
-                if (getenv($value)) {
-
-                    // If so, replace the ENV name with the value.
-                    $array[$key] = getenv($value);
-
-                } else {
-
-                    // Else drop the key
-                    unset($array[$key]);
-
-                } // if
-
-            } // if
-
-        } // foreach
-
-        return $array;
-
-    };
-
-    return $filter($config);
-
-});
-
-
+);

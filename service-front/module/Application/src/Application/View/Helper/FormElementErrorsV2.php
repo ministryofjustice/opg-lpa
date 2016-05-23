@@ -11,7 +11,7 @@ class FormElementErrorsV2 extends \Zend\Form\View\Helper\FormElementErrors
             return $this;
         }
 
-        $this->setMessageOpenFormat('<span class="error-message">');
+        $this->setMessageOpenFormat('<span class="error-message text">');
         $this->setMessageCloseString('</span>');
         $this->setMessageSeparatorString('<br>');
 

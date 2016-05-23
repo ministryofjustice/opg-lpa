@@ -16,9 +16,6 @@ use Zend\View\Model\JsonModel;
 
 class CertificateProviderController extends AbstractLpaActorController
 {
-    
-    protected $contentHeader = 'creation-partial.phtml';
-    
     public function indexAction()
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -43,22 +40,22 @@ class CertificateProviderController extends AbstractLpaActorController
     
     public function addAction()
     {
-        $lpaId = $this->getLpa()->id;
-        
         if( $this->getLpa()->document->certificateProvider instanceof CertificateProvider ) {
             return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id'=>$lpaId]);
         }
         
         $routeMatch = $this->getEvent()->getRouteMatch();
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
         
-        $viewModel->setTemplate('application/certificate-provider/form.phtml');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
+        $viewModel->setTemplate('application/certificate-provider/form.twig');
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
+        $lpaId = $this->getLpa()->id;
         
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         
         $seedSelection = $this->seedDataSelector($viewModel, $form);
@@ -110,10 +107,11 @@ class CertificateProviderController extends AbstractLpaActorController
     public function editAction()
     {
         $routeMatch = $this->getEvent()->getRouteMatch();
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         
-        $viewModel->setTemplate('application/certificate-provider/form.phtml');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $viewModel->setTemplate('application/certificate-provider/form.twig');
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
 

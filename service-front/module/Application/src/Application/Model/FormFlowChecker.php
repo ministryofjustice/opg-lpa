@@ -60,6 +60,7 @@ class FormFlowChecker extends StateChecker
             'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
             'lpa/date-check'                                => 'isCreatedAccessible',
+            'lpa/summary'                                   => 'isCreatedAccessible',
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
@@ -148,7 +149,8 @@ class FormFlowChecker extends StateChecker
         // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
         if(!empty($this->lpa) && ($this->lpa->completedAt instanceof \DateTime)
                && ($currentRouteName != 'lpa/complete') 
-               && ($currentRouteName != 'lpa/date-check') 
+               && ($currentRouteName != 'lpa/date-check')
+               && ($currentRouteName != 'lpa/summary')
                && ($currentRouteName != 'lpa/download')) {
                   return 'lpa/view-docs';
         }

@@ -25,8 +25,8 @@ class LifeSustainingController extends AbstractLpaController
         $canSustainLife = $form->get('canSustainLife');
         
         $canSustainLifeValueOptions = $canSustainLife->getOptions()['value_options'];
-        $canSustainLifeValueOptions[true]['label'] = "Option A: Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf";
-        $canSustainLifeValueOptions[false]['label'] = "Option B: No. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf";
+        $canSustainLifeValueOptions[true]['label'] = '<strong class="bold-small">Yes</strong>. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf';
+        $canSustainLifeValueOptions[false]['label'] = '<strong class="bold-small">No</strong>. I don’t want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf';
         
         $canSustainLifeValueOptions[true] += [
             'label_attributes' => [

@@ -10,8 +10,8 @@ return array(
     ],
 
     'stack' => [
-        'name' => 'local',
-        'environment' => 'dev',
+        'name' => getenv('OPG_LPA_STACK_NAME') ?: 'local',
+        'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
     'terms' => [
@@ -25,30 +25,32 @@ return array(
         'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
     ],
 
-    'admin' => [
-
-        'redis' => [
-            // Set a default (longish) Redis TTL to protect against long term stale data.
-            'ttl' => (60 * 60 * 24 * 28), // 28 days
-            'namespace' => 'admin',
-            'server' => [
-                'host' => 'redisfront',
-                'port' => 6379
-            ],
-            'database' => 1, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
+    'account-cleanup' => [
+        'notification' => [
+            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
         ],
+    ], // cleanup-cleanup
+
+    'admin' => [
 
         'dynamodb' => [
             'client' => [
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
             ],
             'settings' => [
-                'table_name' => 'lpa-properties-testing',
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
         ],
 
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
+
     ], // admin
+
 
     'cron' => [
 
@@ -58,16 +60,21 @@ return array(
                 'client' => [
                     'version' => '2012-08-10',
                     'region' => 'eu-west-1',
+                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                        'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                        'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                    ] : null,
                 ],
                 'settings' => [
-                    'table_name' => 'lpa-locks-testing',
+                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
 
         ], // lock
 
     ], // cron
-    
+
+
     'session' => [
 
         // ini session.* settings...
@@ -98,24 +105,17 @@ return array(
             'gc_divisor' => 20,
         ],
 
-        'redis' => [
-            // Set a default (longish) Redis TTL to protect against long term stale data.
-            'ttl' => (60 * 60 * 24 * 7), // 7 days
-            'namespace' => 'session',
-            'server' => [
-                'host' => 'redisfront',
-                'port' => 6379
-            ],
-            'database' => 0, // WARNING: this has to be defined last otherwise Zend\Cache has a hissy fit.
-        ],
-
         'dynamodb' => [
             'client' => [
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
             ],
             'settings' => [
-                'table_name' => 'lpa-sessions-testing',
+                'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
                     'before' => function(){ sleep(1); },
@@ -126,21 +126,30 @@ return array(
         'encryption' => [
             'enabled' => true,
             // Key MUST be a 32 character ASCII string
-            'key' => null
+            'key' => getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEY') ?: null,
         ],
 
     ], // session
 
     'csrf' => [
         // Salt used for generating csrf tokens
-        'salt' => null,
+        'salt' => getenv('OPG_LPA_FRONT_CSRF_SALT') ?: null,
     ],
+
+
+    'api_client' => [
+        'api_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_API') ?: 'https://apiv2',
+        'auth_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_AUTH') ?: 'https://authv2',
+    ], // api_client
 
     'email' => [
 
         'sendgrid' => [
-            'user' => null,
-            'key' => null,
+            'user' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_USER') ?: null,
+            'key' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_PASSWORD') ?: null,
+            'webhook' => [
+                'token' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN') ?: null,
+            ],
         ], //sendgrid
 
         'sender' => [
@@ -157,13 +166,29 @@ return array(
         
     ], // email
 
+
     'address' => [
 
         'postcodeanywhere' => [
-            'key' => null,
+            'key' => getenv('OPG_LPA_FRONT_POSTCODE_LICENSE_KEY') ?: null,
         ],
 
-    ], // postcode
+        'postcode_info' => [
+            'uri' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_URI') ?: null,
+            'token' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_TOKEN') ?: null,
+        ],
+
+    ], // address
+
+    'alphagov' => [
+
+        'pay' => [
+
+            'key' => getenv('OPG_LPA_FRONT_GOV_PAY_KEY') ?: null,
+
+        ],
+
+    ],
 
     'worldpay' => [
 
@@ -172,7 +197,20 @@ return array(
         'cart_id' => 'LPAv2',
         'log' => false,
 
+        'url' => getenv('OPG_LPA_FRONT_WORLDPAY_URL') ?: null,
+        'merchant_code' => getenv('OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE') ?: null,
+        'xml_password' => getenv('OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD') ?: null,
+        'administration_code' => getenv('OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE') ?: null,
+        'installation_id' => getenv('OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID') ?: null,
+        'mac_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_MAC_SECRET') ?: null,
+        'api_token_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET') ?: null,
+
     ], // worldpay
+
+    'log' => [
+        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
+    ], // log
     
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gsi.gov.uk',
     

@@ -11,11 +11,9 @@
     },
 
     sectionScrollTo: function(){
-      if ( $('section.current').offset() !== undefined ) {
+      if ( $('.js-current').offset() !== undefined ) {
         setTimeout(function() {
-          if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) !== 'lpa-type') {
-            window.scrollTo(0, $('section.current').offset().top - 107);
-          }
+          window.scrollTo(0, $('.js-current').offset().top - 20);
         }, 200);
       }
     }

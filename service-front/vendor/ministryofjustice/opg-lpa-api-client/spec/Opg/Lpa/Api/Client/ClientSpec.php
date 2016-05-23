@@ -1134,7 +1134,7 @@ class ClientSpec extends ObjectBehavior
     {
         return [
             'beAToken' => function($subject) {
-                return is_string($subject) && strlen($subject) > 0 && strlen($subject) % 32 == 0;
+                return is_string($subject) && strlen($subject) > 0;
             },
             'beAPositiveInteger' => function($subject) {
                 return is_numeric($subject) && $subject > 0;

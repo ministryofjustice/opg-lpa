@@ -1,0 +1,126 @@
+{% extends 'layout/twig/creation-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form,  {
+    'when' : {
+        'Value is required and can\'t be empty' : 'Please choose how your replacement attorneys step in',
+    },
+    'whenDetails': {
+    	'Value is required and can\'t be empty' : 'Please tell us how you\'d like your replacement attorneys to step in'
+	}
+}) %}
+
+{# Set form fields variables #}
+{% set csrf = form.get(form.csrfName) %}
+{% set when = form.get('when') %}
+{% set whenDetails = form.get('whenDetails') %}
+{% set currentWhenOptions = when.getOptions()['value_options'] %}
+
+{# form fields config #}
+{{ whenDetails.setAttributes({
+    id: 'whenDetails',
+    rows: 10,
+    cols: 67,
+    maxlength: 2000,
+    class: 'form-control'
+}) ? ''}}
+
+{% set whenOptions = {
+	'first' : {
+		attributes: {
+			id: 'one-attorney-cannot-act'
+		},
+		label: 'As soon as one of the original attorneys can no longer act',
+		label_attributes: {
+			for: 'one-attorney-cannot-act'
+		},
+		value: currentWhenOptions['first'].value
+	},
+	'last' : {
+		attributes: {
+			id: 'no-attorney-can-act'
+		},
+		label: 'Only when none of the original attorneys can act',
+		label_attributes: {
+			for: 'no-attorney-can-act'
+		},
+		value: currentWhenOptions['last'].value 
+	},
+	'depends' : {
+		attributes: {
+			id: 'when-depends'
+		},
+		label: 'In some other way...',
+		label_attributes: {
+			for: 'when-depends',
+			'data-target': 'step-in-details'
+		},
+		value: currentWhenOptions['depends'].value
+	}
+}
+%}
+
+{{ when.setOptions({
+	value_options: whenOptions,
+	label_attributes: {'class': 'text block-label'}
+}) ? '' }}
+
+{{ when.setLabelOptions({
+	disable_html_escape: true
+}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<li id="when-replacement-attorney-step-in-section" class="section current js-current">
+
+	<h2 class="heading-medium accordion-header flush--top">How should your replacement attorneys step in?</h2>
+
+    <div class="accordion-info">
+		<div class="text">
+			<p>You can choose when your replacement attorneys step in, and in what order.</p>
+			<p>Your replacement attorneys will usually all step in together as soon as 1 of your original attorneys can no longer act. They will be able to make any decision jointly and severally along with the other original attorneys.</p>
+			<p>If you'd rather they stepped in later, or you want to choose a specific order, then select 1 of the other 2 options.</p>
+		</div>
+	</div>
+
+	{# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }} 
+        {{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+
+		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+		<fieldset id="how">
+            <legend class="visuallyhidden">How should your replacement attorneys step in?</legend>
+
+            <h2 class="heading-medium flush--top">My replacement attorneys will step in...</h2>
+
+            <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
+                {{ formElement(when) }}
+                {{ formElementErrorsV2(when) }}
+            </div>
+        </fieldset>
+
+        <fieldset id="step-in-details" style="display: none;">
+            <legend class="visuallyhidden">How should the attorneys step in?</legend>
+
+			<p class="text">Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice. <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Not sure what to put?</a>
+
+            <div class="form-group {{ whenDetails.getMessages|length > 0 ? 'error'}}">
+                {{ formElement(whenDetails) }}
+                {{ formElementErrorsV2(whenDetails) }}
+            </div>
+        </fieldset>
+	
+		<div class="form-group">
+            <input type="submit" name="save" value="Save and continue" class="button">
+        </div>
+    {{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

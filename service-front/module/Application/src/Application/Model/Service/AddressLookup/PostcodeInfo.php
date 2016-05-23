@@ -1,15 +1,12 @@
 <?php
 namespace Application\Model\Service\AddressLookup;
 
-use RuntimeException;
-
 use GuzzleHttp\Client as GuzzleClient;
 
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\I18n\Validator\PostCode;
 use MinistryOfJustice;
-use MinistryOfJustice\PostcodeInfo\Client\Address;
+use MinistryOfJustice\PostcodeInfo\Response\Address;
 
 /**
  * Postcode and address lookup from Postcode Anywhere.
@@ -32,25 +29,22 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
 
         $postcodeInfoClient = $this->getServiceLocator()->get('PostcodeInfoClient');
         
-        $postcodeObj = $postcodeInfoClient->lookupPostcode($postcode);
-        
-        if (!$postcodeObj->isValid()) {
-            return [];
+        $addresses = $postcodeInfoClient->lookupPostcodeAddresses($postcode);
+
+        if ( empty($addresses) ){
+            return array();
         }
 
         $addressArray = [];
         
-        foreach ($postcodeObj->getAddresses() as $address) {
-            
-            $addressId = $address->getUprn();
+        foreach ($addresses as $address) {
             
             $addressArray[] = [
-                'Id' => $addressId,
+                'Id' => $address->uprn,
                 'Summary' => trim($this->getSummary($address)),
                 'Detail' => $this->getAddressLines($address),
             ];
-            
-            
+
         }
 
         return $addressArray;
@@ -91,9 +85,6 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
     } // function
 
     public function getAddressLines( Address $address ) {
-
-        //----------------------------------------------
-        // Convert address to 3 lines plus a postcode
 
         $components = $this->getAddressComponents($address);
         
@@ -147,7 +138,7 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
 
         //---
         
-        $result['postcode'] = $address->getPostcode();
+        $result['postcode'] = $address->postcode;
         
         //---
 
@@ -183,9 +174,9 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
      */
     private function getAddressComponents(Address $address)
     {
-        $components = explode("\n", $address->getFormattedAddress());
+        $components = explode("\n", $address->formatted_address);
         
-        return $this->removePostcodeFromArray($components, $address->getPostcode());
+        return $this->removePostcodeFromArray($components, $address->postcode);
     }
     
     /**

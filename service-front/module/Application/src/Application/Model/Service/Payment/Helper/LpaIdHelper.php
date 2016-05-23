@@ -11,11 +11,11 @@ class LpaIdHelper
      * @param string $lpaId
      * @return string
      */
-    public static function constructWorldPayTransactionId($lpaId)
+    public static function constructPaymentTransactionId($lpaId)
     {
         return self::padLpaId($lpaId) . '-' . time();
     }
-    
+
     public static function padLpaId($lpaId)
     {
         if (strlen($lpaId) > self::LPA_ID_LENGTH) {

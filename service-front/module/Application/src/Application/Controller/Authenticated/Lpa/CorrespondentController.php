@@ -164,9 +164,11 @@ class CorrespondentController extends AbstractLpaController
     
     public function editAction()
     {
-        $viewModel = new ViewModel();
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
         
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $viewModel = new ViewModel(['isPopup' => $isPopup]);
+        
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
