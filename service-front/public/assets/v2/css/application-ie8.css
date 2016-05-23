@@ -2842,7 +2842,13 @@ input[disabled="disabled"] {
   margin: 0 auto; }
 
 .form-popup .error-summary {
-  display: none; }
+  margin: 15px 15px 0 15px;
+  padding: 10px 10px 4px 10px; }
+  .form-popup .error-summary .heading-medium, .form-popup .error-summary .help-sections h2, .help-sections .form-popup .error-summary h2 {
+    margin-bottom: 10px;
+    font-size: 22px; }
+  .form-popup .error-summary p {
+    margin-bottom: 4px; }
 
 .form-popup .form-condensed {
   padding: 30px 15px; }
