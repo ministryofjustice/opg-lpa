@@ -35,6 +35,16 @@
         	})
         }}
     {% endif %}
+    
+    {% if (item.routeName == 'lpa/primary-attorney') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(items.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
 
 {% endfor %}
 
