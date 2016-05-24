@@ -1,0 +1,117 @@
+<?php
+
+return array(
+
+    'stack' => [
+        'name' => 'neil',
+        'environment' => 'dev',
+    ],
+
+    'log' => [
+        'path' => '/var/log/opg-lpa-api2/application.log',
+        'sentry-uri' => 'http://2e501e681bc6479689fcead9a02d82c9:219dd94840d849d59bf3a0c8ae4a9a31@sentry.local:9000/2',
+    ], // log
+
+    'cron' => [
+
+        'lock' => [
+
+            'dynamodb' => [
+                'settings' => [
+                    'table_name' => 'lpa-locks-shared',
+                ],
+                'client' => [
+                    'credentials' => [
+                        'key'    => 'AKIAIMSVVDVUZ5U4ZJMQ',
+                        'secret' => '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',
+                    ]
+                ],
+            ],
+
+        ], // lock
+
+    ], // cron
+
+    'db' => [
+
+        'mongo' => [
+
+            'default' => [
+
+                'options' => [
+                    'password' => 'insecure_vagrant_password2',
+                ],
+
+            ],
+
+        ], // mongo
+
+        // Used to access generated PDFs.
+        'redis' => [
+
+            'default' => [
+
+                'host' => 'redisback',
+
+            ],
+
+        ], // redis
+
+        // The queue for PDFs to be generated.
+        'resque' => [
+
+            'default' => [
+
+                'host' => 'redisback',
+
+            ],
+
+        ], // resque
+
+    ], // db
+
+    'pdf' => [
+
+        'encryption' => [
+            // Keys MUST be a 32 character ASCII string
+            'keys' => [
+                'queue'     => '9zkY9Xxi3Z8S57xD1zYPW3E7zPfm262Z',      // Key for JSON pushed onto the queue
+                'document'  => '0L5Mn687f312aj827NQq648U7899o91r',   // Key for generated PDFs in the file store
+            ],
+        ],
+
+
+        'cache' => [
+            's3' => [
+                'settings' => [
+                    'Bucket' => 'lpa-pdf-cache-shared',
+                ],
+
+                'client' => [
+                    'credentials' => [
+                        'key'    => 'AKIAIMSVVDVUZ5U4ZJMQ',
+                        'secret' => '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',
+                    ]
+                ],
+
+            ], // S3
+        ], // cache
+
+
+        'DynamoQueue' => [
+            'settings' => [
+                'table_name' => 'lpa-pdf-queue-shared',
+            ],
+            'client' => [
+                'credentials' => [
+                    'key'    => 'AKIAIMSVVDVUZ5U4ZJMQ',
+                    'secret' => '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',
+                ]
+            ],
+        ], // DynamoQueue
+
+    ], // pdf
+
+);
+
+

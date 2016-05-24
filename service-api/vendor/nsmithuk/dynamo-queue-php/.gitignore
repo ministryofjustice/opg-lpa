@@ -1,0 +1,7 @@
+.idea
+tests-local
+vendor
+composer.phar
+composer.lock
+.DS_Store
+.vagrant

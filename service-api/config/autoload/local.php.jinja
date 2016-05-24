@@ -110,6 +110,21 @@ return array(
             ], // S3
         ], // cache
 
+
+        'DynamoQueue' => [
+            'settings' => [
+                'table_name' => '{{pillar['pdf']['queue']['dynamodb']['table']}}',
+            ],
+{% if 'key' in pillar['pdf']['queue']['dynamodb'] and 'secret' in pillar['pdf']['queue']['dynamodb'] %}
+            'client' => [
+                'credentials' => [
+                    'key'    => '{{pillar['pdf']['queue']['dynamodb']['key']}}',
+                    'secret' => '{{pillar['pdf']['queue']['dynamodb']['secret']}}',
+                ]
+            ],
+{% endif %}
+        ], // DynamoQueue
+
     ], // pdf
 
 );

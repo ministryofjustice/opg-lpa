@@ -19,20 +19,18 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ext-redis": ">=2.2.4",
         "ext-mongo": ">=1.4.5",
-        "zendframework/zendframework": "2.4.*",
-        "aws/aws-sdk-php": "3.0.*",
-        "chrisboulton/php-resque": "dev-master#c335bc3",
+        "zendframework/zendframework": "^2.5",
+        "aws/aws-sdk-php": "^3.18",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
         "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
-        "colinmollenhour/credis": "^1.2",
         "ministryofjustice/opg-lpa-datamodels": "1.1.6",
         "zf-commons/zfc-rbac": "~2.4",
-        "nsmithuk/zf-config-dump": "^1.0"
+        "nsmithuk/zf-config-dump": "^1.0",
+        "nsmithuk/dynamo-queue-php": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.*"

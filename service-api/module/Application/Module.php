@@ -27,8 +27,8 @@ use PhlyMongo\MongoConnectionFactory;
 use PhlyMongo\MongoDbFactory;
 use Application\Library\ApiProblem\ApiProblem;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Application\Model\Service\System\DynamoCronLock;
+use Aws\DynamoDb\DynamoDbClient;
+use DynamoQueue\Queue\Client as DynamoQueue;
 
 class Module {
 
@@ -102,9 +102,6 @@ class Module {
 
     public function getServiceConfig() {
         return [
-            'invokables' => [
-                'StatsService' => 'Application\Model\Service\System\Stats',
-            ],
             'initializers' => [
                 'InjectResourceEntities' => function($object, $sm) {
 
@@ -155,18 +152,6 @@ class Module {
 
                 //---------------------
 
-                'DynamoCronLock' => function ( ServiceLocatorInterface $sm ) {
-
-                    $config = $sm->get('config')['cron']['lock']['dynamodb'];
-
-                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
-
-                    return new DynamoCronLock($config);
-
-                },
-
-                //---------------------
-
                 // Create an instance of the MongoClient...
                 'Mongo-Default' => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default'];
@@ -191,8 +176,7 @@ class Module {
                 'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
                 'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
                 'MongoDB-Default-stats-who' => new MongoCollectionFactory('whoAreYou', 'MongoDB-Default'),
-                'MongoDB-Default-stats-lpas' => new MongoCollectionFactory('lpaStats', 'MongoDB-Default'),
-
+                
                 // Logger
                 'Logger' => function ( $sm ) {
                     $logger = new \Opg\Lpa\Logger\Logger();
@@ -202,6 +186,17 @@ class Module {
                     $logger->setSentryUri($logConfig['sentry-uri']);
                     
                     return $logger;
+                },
+
+                // Get Dynamo Queue Client
+                'DynamoQueueClient' => function ( $sm ) {
+
+                    $config = $sm->get('config')['pdf']['DynamoQueue'];
+
+                    $dynamoDb = new DynamoDbClient($config['client']);
+
+                    return new DynamoQueue( $dynamoDb, $config['settings'] );
+
                 },
 
             ], // factories

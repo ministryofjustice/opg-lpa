@@ -1,12 +1,6 @@
 <?php
 namespace Application\Model\Rest\Pdfs;
 
-use RuntimeException;
-
-use Credis_Client;
-
-use Resque, Resque_Job_Status;
-
 use Application\Library\Lpa\StateChecker;
 
 use Application\Model\Rest\AbstractResource;
@@ -14,8 +8,9 @@ use Application\Model\Rest\AbstractResource;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 
-use Zend\Paginator\Adapter\Null as PaginatorNull;
 use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
+
+use Zend\Filter\Compress;
 
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
@@ -26,25 +21,32 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 
 use Aws\S3\S3Client;
+use Aws\DynamoDb\DynamoDbClient;
+
+use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
+use DynamoQueue\Queue\Client as DynamoQueue;
 
 class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
 
     /**
-     * Prefix for Redis keys of blobs (files).
+     * The compression adapter to use (with ZF2 Filters)
+     * We compress JSON put into the queue with this.
      */
-    const REDIS_TRACKING_PREFIX = 'pdf2:files:tracking:';
+    const COMPRESSION_ADAPTER = 'Gz';
 
     //-----------
 
     /**
-     * @var null|Credis_Client The redis client.
-     */
-    private $redis;
-
-    /**
+     * Used for the PDF cache.
      * @var S3Client
      */
     private $s3Client;
+
+    /**
+     * Used for the PDF queue.
+     * @var DynamoQueue
+     */
+    private $dynamoQueue;
 
     //--------------------------
 
@@ -61,24 +63,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
     //----------------------------------------------------------------------
 
-    /**
-     * Get the Redis client.
-     *
-     * @return Credis_Client
-     */
-    protected function redis(){
-
-        if( $this->redis instanceof Credis_Client ){
-            return $this->redis;
-        }
-
-        $config = $this->getServiceLocator()->get('config')['db']['redis']['default'];
-
-        $this->redis = new Credis_Client( $config['host'], $config['port'], $timeout = null, $persistent = '', $db = 1);
-
-        return $this->redis;
-
-    }
 
     /**
      * Returns a configured instance of the AWS S3 client.
@@ -98,6 +82,20 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $this->s3Client = new S3Client( $config );
 
         return $this->s3Client;
+
+    }
+
+    protected function getDynamoQueueClient(){
+
+        if( $this->dynamoQueue instanceof DynamoQueue ){
+            return $this->dynamoQueue;
+        }
+
+        //---
+
+        $this->dynamoQueue = $this->getServiceLocator()->get('DynamoQueueClient');
+
+        return $this->dynamoQueue;
 
     }
 
@@ -277,13 +275,10 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $ident = $this->getPdfIdent( $type );
 
-        //-----------------------------------
+        //-------------------------------------------------
         // Check if the file already exists in the cache.
 
         $bucketConfig = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['settings'];
-
-        // By default assume it doesn't...
-        $exists = false;
 
         try {
 
@@ -291,54 +286,42 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
                     'Key' => $ident,
             ]);
 
-            // If we get here it exists...
-            $exists = true;
+            // If it's in the cache, clean it out of the queue.
+            $this->getDynamoQueueClient()->deleteJob( $ident );
 
-        } catch( \Aws\S3\Exception\S3Exception $e ){}
-
-        //---
-
-        // If the PDF is currently cached...
-        if( $exists ){
-
-            // Clean up the tracking id as it's no longer useful...
-            $this->redis()->del( self::REDIS_TRACKING_PREFIX . $ident );
-
+            // If we get here it exists in the bucket...
             return Entity::STATUS_READY;
+
+        } catch( \Aws\S3\Exception\S3Exception $e ){
+            // If it doesn't exist in the bucket we get this exception.
+            // We just carry on below.
         }
 
-        //-------------
 
-        // Check if we have a resque tracking id for this file...
-        $trackingId = $this->redis()->get( self::REDIS_TRACKING_PREFIX . $ident );
+        //-------------------------------------------------
+        // Check for the job in the queue
 
-        if( !is_string($trackingId) ){
-            return Entity::STATUS_NOT_QUEUED;
-        }
+        // Get the job's status in the queue.
+        $status = $this->getDynamoQueueClient()->checkStatus( $ident );
 
-        //---
 
-        $config = $this->getServiceLocator()->get('config')['db']['resque']['default'];
-
-        // Check if the PDF is in the queue...
-        Resque::setBackend( "{$config['host']}:{$config['port']}" );
-
-        //---
-
-        $status = (new Resque_Job_Status( $trackingId ))->get();
-
-        if( $status === Resque_Job_Status::STATUS_WAITING || $status === Resque_Job_Status::STATUS_RUNNING ){
+        if( in_array( $status, [ DynamoQueueJob::STATE_WAITING, DynamoQueueJob::STATE_PROCESSING ] ) ){
+            // Then the job is in the queue...
             return Entity::STATUS_IN_QUEUE;
         }
 
-        // We don't check for 'complete' as we do that above by checking if the file is in the cache.
+        if( in_array( $status, [ DynamoQueueJob::STATE_DONE, DynamoQueueJob::STATE_ERROR ] ) ){
 
-        //---
+            // If we get here something strange has happened because:
+            //  - The PDF should have been in the cache; or
+            //  - An error occurred.
 
-        // Clean up the tracking id as it's no longer useful...
-        $this->redis()->del( self::REDIS_TRACKING_PREFIX . $ident );
+            // For now we just remove the job from teh queue so it can be re-added.
+            $this->getDynamoQueueClient()->deleteJob( $ident );
 
-        // If we get here it's not in the queue...
+        }
+
+        // else it's not in the queue.
         return Entity::STATUS_NOT_QUEUED;
 
     } // function
@@ -349,14 +332,19 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $ident = $this->getPdfIdent( $type );
 
-        //---
+        //----------------------
+        // Setup the message
 
-        $config = $this->getServiceLocator()->get('config')['db']['resque']['default'];
+        $message = json_encode([
+            'lpa' => $lpa->toArray(),
+            'type' => strtoupper($type), // The type of document we want generating
+        ]);
 
-        // Check if the PDF is in the queue...
-        Resque::setBackend( "{$config['host']}:{$config['port']}" );
+        // Compress the message.
+        $message = (new Compress( self::COMPRESSION_ADAPTER ))->filter( $message );
 
-        //---
+        //----------------------
+        // Encrypt the message
 
         $config = $this->getServiceLocator()->get('config')['pdf']['encryption'];
 
@@ -371,23 +359,12 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $blockCipher->setKey( $config['keys']['queue'] );
 
         // Encrypt the JSON...
-        $encryptedJson = $blockCipher->encrypt( $lpa->toJson( false ) );
+        $encryptedMessage = $blockCipher->encrypt( $message );
 
-        //---
+        //----------------------
 
-        $trackingId = Resque::enqueue('pdf-queue', '\Opg\Lpa\Pdf\Worker\ResqueWorker', [
-            'docId' => $ident,
-            'type' => strtoupper($type),
-            'lpa' => $encryptedJson
-        ], true);
-
-        //---
-
-        // Store the tracking id in redis.
-        $this->redis()->set( self::REDIS_TRACKING_PREFIX . $ident, $trackingId );
-
-        // Expire the tracking after an hour, just to ensure we never have stale data.
-        $this->redis()->expire( self::REDIS_TRACKING_PREFIX . $ident, ( 60 * 60  ) );
+        // Add the message to the queue.
+        $this->getDynamoQueueClient()->enqueue( '\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $ident );
 
     } // function
 
