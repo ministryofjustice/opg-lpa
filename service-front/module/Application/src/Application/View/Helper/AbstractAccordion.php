@@ -102,7 +102,7 @@ abstract class AbstractAccordion extends AbstractHelper
         $count = count($this->lpa->document->primaryAttorneys);
         
         if($count > 0) {
-            $text = 'The ' . ((count($this->lpa->document->primaryAttorneys)==1)? 'attorney is':'attorneys are').' '.$this->concatNames($this->lpa->document->primaryAttorneys);
+            $text = $this->concatNames($this->lpa->document->primaryAttorneys);
         }
         
         return [
@@ -134,7 +134,7 @@ abstract class AbstractAccordion extends AbstractHelper
         }
         
         return [
-            'text' => 'The replacement ' . (($count==1)? 'attorney is':'attorneys are').' '.$this->concatNames($this->lpa->document->replacementAttorneys),
+            'text' => $this->concatNames($this->lpa->document->replacementAttorneys),
             'count' => $count
         ];
     }
@@ -175,7 +175,7 @@ abstract class AbstractAccordion extends AbstractHelper
             }
         }
         
-        $text = ($count==1 ? 'is':'are').' '.$this->concatNames($this->lpa->document->peopleToNotify);
+        $text = $this->concatNames($this->lpa->document->peopleToNotify);
         
         return [
             'text' => $text,
