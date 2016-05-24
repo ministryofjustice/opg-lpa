@@ -9,6 +9,11 @@
 
 namespace Zend\ServiceManager\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+use InvalidArgumentException as SplInvalidArgumentException;
+
+/**
+ * @inheritDoc
+ */
+class InvalidArgumentException extends SplInvalidArgumentException implements ExceptionInterface
 {
 }

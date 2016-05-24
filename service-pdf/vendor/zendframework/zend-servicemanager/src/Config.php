@@ -9,158 +9,113 @@
 
 namespace Zend\ServiceManager;
 
+use Zend\Stdlib\ArrayUtils\MergeRemoveKey;
+use Zend\Stdlib\ArrayUtils\MergeReplaceKeyInterface;
+
+/**
+ * Object for defining configuration and configuring an existing service manager instance.
+ *
+ * In order to provide configuration merging capabilities, this class implements
+ * the same functionality as `Zend\Stdlib\ArrayUtils::merge()`. That routine
+ * allows developers to specifically shape how values are merged:
+ *
+ * - A value which is an instance of `MergeRemoveKey` indicates the value should
+ *   be removed during merge.
+ * - A value that is an instance of `MergeReplaceKeyInterface` indicates that the
+ *   value it contains should be used to replace any previous versions.
+ *
+ * These features are advanced, and not typically used. If you wish to use them,
+ * you will need to require the zend-stdlib package in your application.
+ */
 class Config implements ConfigInterface
 {
     /**
      * @var array
      */
-    protected $config = [];
+    private $allowedKeys = [
+        'abstract_factories' => true,
+        'aliases' => true,
+        'delegators' => true,
+        'factories' => true,
+        'initializers' => true,
+        'invokables' => true,
+        'lazy_services' => true,
+        'services' => true,
+        'shared' => true,
+    ];
 
     /**
-     * Constructor
-     *
+     * @var array
+     */
+    protected $config = [
+        'abstract_factories' => [],
+        'aliases'            => [],
+        'delegators'         => [],
+        'factories'          => [],
+        'initializers'       => [],
+        'invokables'         => [],
+        'lazy_services'      => [],
+        'services'           => [],
+        'shared'             => [],
+    ];
+
+    /**
      * @param array $config
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
-        $this->config = $config;
+        // Only merge keys we're interested in
+        foreach (array_keys($config) as $key) {
+            if (! isset($this->allowedKeys[$key])) {
+                unset($config[$key]);
+            }
+        }
+        $this->config = $this->merge($this->config, $config);
     }
 
     /**
-     * Get allow override
-     *
-     * @return null|bool
-     */
-    public function getAllowOverride()
-    {
-        return (isset($this->config['allow_override'])) ? $this->config['allow_override'] : null;
-    }
-
-    /**
-     * Get factories
-     *
-     * @return array
-     */
-    public function getFactories()
-    {
-        return (isset($this->config['factories'])) ? $this->config['factories'] : [];
-    }
-
-    /**
-     * Get abstract factories
-     *
-     * @return array
-     */
-    public function getAbstractFactories()
-    {
-        return (isset($this->config['abstract_factories'])) ? $this->config['abstract_factories'] : [];
-    }
-
-    /**
-     * Get invokables
-     *
-     * @return array
-     */
-    public function getInvokables()
-    {
-        return (isset($this->config['invokables'])) ? $this->config['invokables'] : [];
-    }
-
-    /**
-     * Get services
-     *
-     * @return array
-     */
-    public function getServices()
-    {
-        return (isset($this->config['services'])) ? $this->config['services'] : [];
-    }
-
-    /**
-     * Get aliases
-     *
-     * @return array
-     */
-    public function getAliases()
-    {
-        return (isset($this->config['aliases'])) ? $this->config['aliases'] : [];
-    }
-
-    /**
-     * Get initializers
-     *
-     * @return array
-     */
-    public function getInitializers()
-    {
-        return (isset($this->config['initializers'])) ? $this->config['initializers'] : [];
-    }
-
-    /**
-     * Get shared
-     *
-     * @return array
-     */
-    public function getShared()
-    {
-        return (isset($this->config['shared'])) ? $this->config['shared'] : [];
-    }
-
-    /**
-     * Get the delegator services map, with keys being the services acting as delegates,
-     * and values being the delegator factories names
-     *
-     * @return array
-     */
-    public function getDelegators()
-    {
-        return (isset($this->config['delegators'])) ? $this->config['delegators'] : [];
-    }
-
-    /**
-     * Configure service manager
-     *
-     * @param ServiceManager $serviceManager
-     * @return void
+     * @inheritdoc
      */
     public function configureServiceManager(ServiceManager $serviceManager)
     {
-        if (($allowOverride = $this->getAllowOverride()) !== null) {
-            $serviceManager->setAllowOverride($allowOverride);
-        }
+        return $serviceManager->configure($this->config);
+    }
 
-        foreach ($this->getFactories() as $name => $factory) {
-            $serviceManager->setFactory($name, $factory);
-        }
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
+    {
+        return $this->config;
+    }
 
-        foreach ($this->getAbstractFactories() as $factory) {
-            $serviceManager->addAbstractFactory($factory);
-        }
-
-        foreach ($this->getInvokables() as $name => $invokable) {
-            $serviceManager->setInvokableClass($name, $invokable);
-        }
-
-        foreach ($this->getServices() as $name => $service) {
-            $serviceManager->setService($name, $service);
-        }
-
-        foreach ($this->getAliases() as $alias => $nameOrAlias) {
-            $serviceManager->setAlias($alias, $nameOrAlias);
-        }
-
-        foreach ($this->getInitializers() as $initializer) {
-            $serviceManager->addInitializer($initializer);
-        }
-
-        foreach ($this->getShared() as $name => $isShared) {
-            $serviceManager->setShared($name, $isShared);
-        }
-
-        foreach ($this->getDelegators() as $originalServiceName => $delegators) {
-            foreach ($delegators as $delegator) {
-                $serviceManager->addDelegator($originalServiceName, $delegator);
+    /**
+     * Copy paste from https://github.com/zendframework/zend-stdlib/commit/26fcc32a358aa08de35625736095cb2fdaced090
+     * to keep compatibility with previous version
+     *
+     * @link https://github.com/zendframework/zend-servicemanager/pull/68
+     */
+    private function merge(array $a, array $b)
+    {
+        foreach ($b as $key => $value) {
+            if ($value instanceof MergeReplaceKeyInterface) {
+                $a[$key] = $value->getData();
+            } elseif (isset($a[$key]) || array_key_exists($key, $a)) {
+                if ($value instanceof MergeRemoveKey) {
+                    unset($a[$key]);
+                } elseif (is_int($key)) {
+                    $a[] = $value;
+                } elseif (is_array($value) && is_array($a[$key])) {
+                    $a[$key] = $this->merge($a[$key], $value);
+                } else {
+                    $a[$key] = $value;
+                }
+            } else {
+                if (!$value instanceof MergeRemoveKey) {
+                    $a[$key] = $value;
+                }
             }
         }
+        return $a;
     }
 }

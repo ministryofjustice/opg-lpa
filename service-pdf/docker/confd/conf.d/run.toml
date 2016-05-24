@@ -1,0 +1,8 @@
+[template]
+src = "run.tmpl"
+dest = "/etc/service/opg-lpa-pdf2/run"
+keys = [
+    "/opg/lpa/common/queue/dynamodb",
+]
+owner = "root"
+mode = "0755"

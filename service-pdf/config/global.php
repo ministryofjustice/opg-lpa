@@ -6,8 +6,8 @@ return array(
 
         'assets'=>array(
             'source_template_path' => __DIR__.'/../assets/v2',
-            'template_path_on_ram_disk' => '/tmp/pdf_ramdisk/assets/v2',
-            'intermediate_file_path' => '/tmp/pdf_ramdisk'
+            'template_path_on_ram_disk' => '/tmp/pdf_cache/assets/v2',
+            'intermediate_file_path' => '/tmp/pdf_cache'
         ),
 
     ),
@@ -24,22 +24,22 @@ return array(
             'client' => [
                 'version' => '2006-03-01',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
-                    'key'    => getenv('OPG_LPA_AWS_KEY'),
-                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ] : null,
             ],
             'settings' => [
                 'ACL' => 'private',
-                'Bucket' => getenv('OPG_LPA_PDF_CACHE_S3_BUCKET') ?: null,
+                'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
             ],
         ),
 
     ), // worker
 
     'log' => [
-        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
 
 

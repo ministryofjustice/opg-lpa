@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.0 - 2016-02-03
+
+### Added
+
+- [#18](https://github.com/zendframework/zend-crypt/pull/18) adds documentation,
+  and publishes it to https://zendframework.github.io/zend-crypt/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Removes the (development) dependency on zend-config; tests that used it
+  previously have been updated to use `ArrayObject`, which implements the same
+  behavior being tested.
+
+### Fixed
+
+- [#4](https://github.com/zendframework/zend-crypt/pull/4) replaces
+  the zend-servicemanager with container-interop, and refactors the
+  various plugin managers to implement that interface instead of extending the
+  `AbstractPluginManager`.
+
 ## 2.5.2 - 2015-11-23
 
 ### Added
@@ -83,3 +107,4 @@ All notable changes to this project will be documented in this file, in reverse 
   `Zend\Crypt\PublicKey\Rsa::MODE_AUTO`, if you were not using them previously.)
 
   We recommend re-encrypting any such values using the new defaults.
+>>>>>>> hotfix/5
