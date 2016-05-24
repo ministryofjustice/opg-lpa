@@ -38,9 +38,9 @@
     
     {% if (item.routeName == 'lpa/primary-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.params.values,
+            	'mobile' :  item.params.values,
+        		'status' : item.params.count == 1 ? '1 Attorney' : item.params.count ~ ' Attorneys',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -48,8 +48,8 @@
     
     {% if (item.routeName == 'lpa/when-lpa-starts') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
+                'desktop' : 'The LPA starts ' ~ (item.params.values == 'now' ? 'as soon as it\'s registered (with my consent)' : 'only if I don\'t have mental capacity'),
+                'mobile' : 'The LPA starts ' ~ (item.params.values == 'now' ? 'as soon as it\'s registered (with my consent)' : 'only if I don\'t have mental capacity'),
         		'status' : item.params.status,
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})

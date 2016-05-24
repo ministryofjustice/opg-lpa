@@ -35,6 +35,13 @@ class AccordionTop extends AbstractAccordion
                 }
                 else {
                     if(method_exists($this, $barDataFuncName)) {
+                        $values = $this->$barDataFuncName();
+                        if (!is_array($values)) {
+                            $values = [
+                                'text' => $values,
+                                'count' => 0,
+                            ];
+                        }
                         $barList[$seq++] = [
                                 'name'      => $this->getViewScriptName($barDataFuncName),
                                 'routeName' => $barRouteName,
@@ -42,7 +49,8 @@ class AccordionTop extends AbstractAccordion
                                 'params'    => [
                                     'idx'    => $seq,
                                     'status' => 'Complete',
-                                    'values'=> $this->$barDataFuncName()
+                                    'values'=> $values['text'],
+                                    'count' => $values['count'],
                                 ]
                             ];
                     }
