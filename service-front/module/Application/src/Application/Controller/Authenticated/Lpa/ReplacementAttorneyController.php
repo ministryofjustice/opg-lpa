@@ -21,8 +21,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 class ReplacementAttorneyController extends AbstractLpaActorController
 {
     
-    protected $contentHeader = 'creation-partial.phtml';
-    
     public function indexAction()
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
@@ -153,9 +151,11 @@ class ReplacementAttorneyController extends AbstractLpaActorController
     public function editAction()
     {
         $routeMatch = $this->getEvent()->getRouteMatch();
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
         
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
+        
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
@@ -174,11 +174,11 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         
         if($attorney instanceof Human) {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-            $viewModel->setTemplate('application/replacement-attorney/person-form.phtml');
+            $viewModel->setTemplate('application/replacement-attorney/person-form.twig');
         }
         else {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
-            $viewModel->setTemplate('application/replacement-attorney/trust-form.phtml');
+            $viewModel->setTemplate('application/replacement-attorney/trust-form.twig');
         }
         
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx'=>$attorneyIdx]));
@@ -270,9 +270,12 @@ class ReplacementAttorneyController extends AbstractLpaActorController
     {
         $routeMatch = $this->getEvent()->getRouteMatch();
         
-        $viewModel = new ViewModel(['routeMatch' => $routeMatch]);
-        $viewModel->setTemplate('application/replacement-attorney/trust-form.phtml');
-        if ( $this->getRequest()->isXmlHttpRequest() ) {
+        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        
+        $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
+        
+        $viewModel->setTemplate('application/replacement-attorney/trust-form.twig');
+        if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
         
