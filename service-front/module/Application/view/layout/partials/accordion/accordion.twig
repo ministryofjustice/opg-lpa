@@ -38,9 +38,9 @@
     
     {% if (item.routeName == 'lpa/primary-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values,
-            	'mobile' :  item.params.values,
-        		'status' : item.params.count == 1 ? '1 Attorney' : item.params.count ~ ' Attorneys',
+            	'desktop' : 'The attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values,
+            	'mobile' :  'The attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values,
+        		'status' : item.params.count ~ ' Attorney' ~ (item.params.count != 1 ? 's' : ''),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -56,10 +56,12 @@
         }}
     {% endif %}
 
+ 
+
     {% if (item.routeName == 'lpa/how-primary-attorneys-make-decision') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
+            	'desktop' : 'The attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')), 
+            	'mobile' : 'The attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')),
         		'status' : item.params.status,
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
@@ -68,9 +70,9 @@
     
     {% if (item.routeName == 'lpa/replacement-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.params.count == 0 ? 'There are no replacement attorneys' : items.params.values,
+            	'mobile' : item.params.count == 0 ? 'There are no replacement attorneys' : items.params.values,
+        		'status' : item.params.count ~ ' Replacement attorney' ~ (item.params.count != 1 ? 's' : ''),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -98,8 +100,8 @@
     
     {% if (item.routeName == 'lpa/certificate-provider') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
+            	'desktop' : 'The certificate provider is ' ~ item.params.values, 
+            	'mobile' : 'The certificate provider is ' ~ item.params.values,
         		'status' : item.params.status,
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
@@ -108,9 +110,9 @@
     
     {% if (item.routeName == 'lpa/people-to-notify') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : 'The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values,
+            	'mobile' : 'The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values,
+        		'status' : item.params.count ~ (item.params.count != 1 ? ' people to notify' : ' person to notify'),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
