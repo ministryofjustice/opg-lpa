@@ -29,6 +29,7 @@ use Application\Library\ApiProblem\ApiProblem;
 
 use Aws\DynamoDb\DynamoDbClient;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use Application\Model\Service\System\DynamoCronLock;
 
 class Module {
 
@@ -102,6 +103,9 @@ class Module {
 
     public function getServiceConfig() {
         return [
+            'invokables' => [
+                'StatsService' => 'Application\Model\Service\System\Stats',
+            ],
             'initializers' => [
                 'InjectResourceEntities' => function($object, $sm) {
 
@@ -149,6 +153,14 @@ class Module {
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService( new NonPersistent() );
                 },
+                
+                                'DynamoCronLock' => function ( $sm ) {
+                 
+                                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
+                 
+                                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
+                                                     return new DynamoCronLock($config);
+                                                  },
 
                 //---------------------
 
