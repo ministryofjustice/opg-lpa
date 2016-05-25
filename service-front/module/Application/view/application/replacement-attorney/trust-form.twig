@@ -29,7 +29,6 @@
 {# Set form fields variables #} 
 {% set companyName = form.get('name') %}
 {% set registrationNumber = form.get('number') %}
-{% set email = form.get('email-address') %}
 {% set address1 = form.get('address-address1') %}
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
@@ -47,11 +46,6 @@
 
 {{ registrationNumber.setAttributes({
     id: 'number',
-    class: 'form-control'
-}) ? '' }}
-
-{{ email.setAttributes({
-    id: 'email-address',
     class: 'form-control'
 }) ? '' }}
 
@@ -78,7 +72,6 @@
 {# form fields labels #}
 {{ companyName.setOptions({label:'Company name'}) ? '' }}
 {{ registrationNumber.setOptions({label:'Registration No.'}) ? '' }}
-{{ email.setOptions({label:'Email address'}) ? '' }}
 {{ address1.setOptions({label:'Address line 1'}) ? '' }}
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
@@ -119,7 +112,6 @@
 
         {{ macros.formGroup(companyName) }}
         {{ macros.formGroup(registrationNumber) }}
-        {{ macros.formGroup(email) }}
 
     </fieldset>
 
