@@ -4,8 +4,6 @@
 
 {% import "application/macros.twig" as macros %}
 
-{% if (form) %}
-
 {% set form = formErrorTextExchange(form, {
        'cannot-be-blank' : 'Please choose one of the options below'
    }) 
@@ -21,219 +19,273 @@
 {{ organisation.setOptions({label:'Which organisation helped?'}) ? '' }}    
         
 {{ form.prepare() ? '' }}    
+
+{% set whoOptions = who.getOptions()['value_options'] %}
+
+{% set whoOptions = {
+			'donor' :
+				{ 
+				  label: "The donor used this online service with little or no help",
+				  label_attributes: {
+				  	   for: 'who-donor',
+				  },				  
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'who-donor',
+                       value: whoOptions['donor'].value,
+                       checked: who.getValue() == 'donor' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['donor'].value
+	 		    },
+			'friend-or-family' :
+				{ 
+				  label: "A friend or family member helped the donor get online, navigate or enter information",
+				  label_attributes: {
+				  	   for: 'who-friend-or-family',
+				  },
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'who-friend-or-family',
+                       value: whoOptions['friendOrFamily'].value,
+                       checked: who.getValue() == 'friendOrFamily' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['friend-or-family'].value
+	 		    },
+			'professional' :
+				{ 
+				  label: "A paid professional made the LPA on the donor's behalf",
+				  label_attributes: {
+				  	   for: 'who-professional',
+				  },
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'who-professional',
+                       value: whoOptions['professional'].value,
+                       checked: who.getValue() == 'professional' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['professional'].value
+	 		    },	
+			'digital-partner' :
+				{ 
+				  label: "OPG's Assisted Digital Service helped the donor",
+				  label_attributes: {
+				  	   for: 'who-digital-partner',
+				  },
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'who-digital-partner',
+                       value: whoOptions['digitalPartner'].value,
+                       checked: who.getValue() == 'digitalPartner' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['digitalPartner'].value
+	 		    },	 
+			'organisation' :
+				{ 
+				  label: "Another organisation, such as a charity, council or community group, helped the donor",
+				  label_attributes: {
+				  	   for: 'who-organisation',
+				  },
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'who-organisation',
+                       value: whoOptions['organisation'].value,
+                       checked: who.getValue() == 'organisation' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['organisation'].value
+	 		    },
+			'notSaid' :
+				{ 
+				  label: "I'd prefer not to say",
+				  label_attributes: {
+				  	   for: 'who-notSaid',
+				  },
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'who-notSaid',
+                       value: whoOptions['organisation'].value,
+                       checked: who.getValue() == 'notSaid' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['notSaid'].value
+	 		    } 		    		 		    	 		     		    
+		}
+%}
     
-    $whoOptions = [];
-    $whoOptions['donor'] = new Element('who', [
-            'label' => "The donor used this online service with little or no help",
-    ]);
-    $whoOptions['donor']->setAttributes([
-            'type' => 'radio',
-            'id' => 'who-donor',
-            'value' => $who->getOptions()['value_options']['donor']['value'],
-            'checked' => (($who->getValue() == 'donor')? 'checked':null),
-    ]);
-    
-    $whoOptions['friend-or-family'] = new Element('who', [
-            'label' => "A friend or family member helped the donor get online, navigate or enter information",
-    ]);
-    $whoOptions['friend-or-family']->setAttributes([
-            'type' => 'radio',
-            'id' => 'who-friend-or-family',
-            'value' => $who->getOptions()['value_options']['friendOrFamily']['value'],
-            'checked' => (($who->getValue() == 'friendOrFamily')? 'checked':null),
-    ]);
-    
-    $whoOptions['professional'] = new Element('who', [
-            'label' => "A paid professional made the LPA on the donor's behalf",
-    ]);
-    $whoOptions['professional']->setAttributes([
-            'type' => 'radio',
-            'id' => 'who-professional',
-            'value' => $who->getOptions()['value_options']['professional']['value'],
-            'checked' => (($who->getValue() == 'professional')? 'checked':null),
-    ]);
-    
-    $whoOptions['digital-partner'] = new Element('who', [
-            'label' => "OPG's Assisted Digital Service helped the donor",
-    ]);
-    $whoOptions['digital-partner']->setAttributes([
-            'type' => 'radio',
-            'id' => 'who-digital-partner',
-            'value' => $who->getOptions()['value_options']['digitalPartner']['value'],
-            'checked' => (($who->getValue() == 'digitalPartner')? 'checked':null),
-    ]);
-    
-    $whoOptions['organisation'] = new Element('who', [
-            'label' => "Another organisation, such as a charity, council or community group, helped the donor",
-    ]);
-    $whoOptions['organisation']->setAttributes([
-            'type' => 'radio',
-            'id' => 'who-organisation',
-            'value' => $who->getOptions()['value_options']['organisation']['value'],
-            'checked' => (($who->getValue() == 'organisation')? 'checked':null),
-    ]);
-    
-    $whoOptions['notSaid'] = new Element('who', [
-            'label' => "I'd prefer not to say",
-    ]);
-    $whoOptions['notSaid']->setAttributes([
-            'type' => 'radio',
-            'id' => 'who-notSaid',
-            'value' => $who->getOptions()['value_options']['notSaid']['value'],
-            'checked' => (($who->getValue() == 'notSaid')? 'checked':null),
-    ]);
-    
-    $professionalOptions = [];
-    $professionalOptions['solicitor'] = new Element('professional', [
-            'label' => "Solicitor",
-    ]);
-    $professionalOptions['solicitor']->setAttributes([
-            'type' => 'radio',
-            'id' => 'professional-solicitor',
-            'value' => $professional->getOptions()['value_options']['solicitor']['value'],
-            'checked' => (($professional->getValue() == 'solicitor')? 'checked':null),
-    ]);
-    
-    $professionalOptions['will-writer'] = new Element('professional', [
-            'label' => "Will-writer",
-    ]);
-    $professionalOptions['will-writer']->setAttributes([
-            'type' => 'radio',
-            'id' => 'professional-will-writer',
-            'value' => $professional->getOptions()['value_options']['will-writer']['value'],
-            'checked' => (($professional->getValue() == 'will-writer')? 'checked':null),
-    ]);
-    
-    $professionalOptions['other'] = new Element('professional', [
-            'label' => "Other",
-    ]);
-    $professionalOptions['other']->setAttributes([
-            'type' => 'radio',
-            'id' => 'professional-other',
-            'value' => $professional->getOptions()['value_options']['other']['value'],
-            'checked' => (($professional->getValue() == 'other')? 'checked':null),
-    ]);
-    
-}
-?>
+{% set professionalOptions = professional.getOptions()['value_options'] %}
+
+{% set professionalOptions = {
+			'solicitor' :
+				{ 
+				  label: "Solicitor",
+				  label_attributes: {
+				  	   for: 'professional-solicitor',
+				  },				  
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'professional-solicitor',
+                       value: whoOptions['solicitor'].value,
+                       checked: who.getValue() == 'solicitor' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['solicitor'].value
+	 		    },
+			'will-writer' :
+				{ 
+				  label: "Will-writer",
+				  label_attributes: {
+				  	   for: 'professional-will-writer',
+				  },				  
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'professional-will-writer',
+                       value: whoOptions['will-writer'].value,
+                       checked: who.getValue() == 'will-writer' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['will-writer'].value
+	 		    },
+			'other' :
+				{ 
+				  label: "Other",
+				  label_attributes: {
+				  	   for: 'professional-other',
+				  },				  
+	 			  attributes: {
+	 			       type: 'radio',
+                       id: 'professional-other',
+                       value: whoOptions['other'].value,
+                       checked: who.getValue() == 'other' ? 'checked' : null,
+	 			  },
+	 			  value: whoOptions['other'].value
+	 		    }		 		    	 		    
+		}
+%}
 
 <section id="who-are-you-section" class="section current">
 	
-	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Who was using the LPA tool?</h2>
+	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who was using the LPA tool?</h2>
 
     <div class="accordion-content">
-        <?php if(!isset($this->form)):?>
+        {% if (form) %}
         
         <div>
                 <p>Thanks, you have already answered this question.</p>
                 
 				<p>Your answer was saved separately from your LPA and is anonymous. This means that it can't now be linked to you and you can't change it.</p>
 
-				<p><a role="button" href="<?=$this->nextRoute ?>" class="button">Continue</a></p>
+				<p><a role="button" href="{{ nextRoute }}" class="button">Continue</a></p>
 
 		</div>        
-        <?php else:?>
-        <div class="section-intro">
+		{% else %}
+		<div class="section-intro">
         	<p>We think we can make this service better by finding out how people use it.</p>
         	<p>To do this, we'd like to know who was using the digital LPA tool - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
         	<p>Your answer will be completely anonymous. It will not be linked to you, your LPA or your personal information.</p>
         </div>
+        
+        {{ form().openTag( form )|raw }}
+        {{ formElement(csrf) }}
+		{{ formElementErrors(csrf) }}
+        
+        {{ formErrorList() }}
+        
+        <input type="hidden" name="who" value="">
+        <input type="hidden" name="professional" value="">
+        <input type="hidden" name="digitalPartner" value=""> 
 
-        <?= $this->form()->openTag($form); ?>
-
-        <?= $this->formElement($csrf) ?>
-        
-        <?= $this->formErrorList(); ?>
-        
-            $defaultWho = new Hidden('who');
-    $defaultProfessional = new Hidden('professional');
-    $defaultDigitalPartner = new Hidden('digitalPartner');
-    
-        <?= $this->formElement($defaultWho); ?>
-        <?= $this->formElement($defaultProfessional); ?>
-        <?= $this->formElement($defaultDigitalPartner); ?>
-        
-        <?= $this->formElementErrors($professional) ?>
-        <?= $this->formElementErrors($organisation) ?>
-        <?= $this->formElementErrors($professionalOther) ?>
-        <?= $this->formElementErrors($who) ?>
+		{{ formElementErrors(professional) }}
+		{{ formElementErrors(organisation) }}
+		{{ formElementErrors(professionalOther) }}
+		{{ formElementErrors(who) }}
         
         <div class="emphasised option group">
             <div class="set">
-                <?= $formLabel->openTag($whoOptions['donor']); ?>
-                    <?= $this->formInput($whoOptions['donor'])  . $whoOptions['donor']->getOption('label'); ?>
-                <?= $formLabel->closeTag(); ?>
+            	{{ formLabel.openTag(whoOptions['donor']) }}
+                    {{ formInput(whoOptions['donor']) }}
+                    {{ whoOptions['donor'].getOption('label') }}
+                {{ formLabel.closeTag|raw }}
             </div>
             
             <div class="set">
-                <?= $formLabel->openTag($whoOptions['friend-or-family']); ?>
-                    <?= $this->formInput($whoOptions['friend-or-family'])  . $whoOptions['friend-or-family']->getOption('label'); ?>
-                <?= $formLabel->closeTag(); ?>
+                {{ formLabel.openTag(whoOptions['friend-or-family']) }}
+                    {{ formInput(whoOptions['friend-or-family']) }}
+                    {{ whoOptions['friend-or-family'].getOption('label') }}
+                {{ formLabel.closeTag|raw }}
             </div>
             
             <div class="set">
-                <?= $formLabel->openTag($whoOptions['professional']); ?>
-                    <?= $this->formInput($whoOptions['professional'])  . $whoOptions['professional']->getOption('label'); ?>
-                <?= $formLabel->closeTag(); ?>
+                {{ formLabel.openTag(whoOptions['professional']) }}
+                    {{ formInput(whoOptions['professional'])}}
+                    {{ whoOptions['professional'].getOption('label')|raw }}
+                {{ formLabel.closeTag|raw }}
                 
                 <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em; display:none;">
-                    <?= $formLabel->openTag($professionalOptions['solicitor']); ?>
-                        <?= $this->formInput($professionalOptions['solicitor'])  . $professionalOptions['solicitor']->getOption('label'); ?>
-                    <?= $formLabel->closeTag(); ?>
+                    {{ formLabel.openTag(professionalOptions['solicitor']) }}
+                        {{ formInput(professionalOptions['solicitor']) }}
+                        {{ professionalOptions['solicitor'].getOption('label') }}
+                    {{ formLabel.closeTag|raw }}
                     
-                    <?= $formLabel->openTag($professionalOptions['will-writer']); ?>
-                        <?= $this->formInput($professionalOptions['will-writer'])  . $professionalOptions['will-writer']->getOption('label'); ?>
-                    <?= $formLabel->closeTag(); ?>
+                    {{ formLabel.openTag(professionalOptions['will-writer']) }}
+                        {{ formInput(professionalOptions['will-writer']) }}
+                        {{ professionalOptions['will-writer'].getOption('label') }}
+                    {{ formLabel.closeTag|raw }}
                     
                     <div class="set">
-                        <?= $formLabel->openTag($professionalOptions['other']); ?>
-                            <?= $this->formInput($professionalOptions['other'])  . $professionalOptions['other']->getOption('label'); ?>
-                        <?= $formLabel->closeTag(); ?>
+                        {{ formLabel.openTag(professionalOptions['other']) }}
+                            {{ formInput(professionalOptions['other']) }}
+                            {{ professionalOptions['other'].getOption('label') }}
+                        {{ formLabel.closeTag|raw }}
                         
                         <div class="subquestion" style="display: block;">
-                            <?= $formLabel->openTag($professionalOther). $professionalOther->getOption('label').$formLabel->closeTag(); ?>
-                            <?= $this->formText($professionalOther) ?>
+                            {{ formLabel.openTag(professionalOther)|raw }}
+                            {{ professionalOther.getOption('label') }}
+                            {{ form().closeTag|raw }}
+                            {{ formText(professionalOther) }}
                         </div>
                     </div>
                 </div>                
             </div>
             
             <div class="set">
-                <?= $formLabel->openTag($whoOptions['digital-partner']); ?>
-                    <?= $this->formInput($whoOptions['digital-partner'])  . $whoOptions['digital-partner']->getOption('label'); ?>
-                <?= $formLabel->closeTag(); ?>
+                {{ formLabel.openTag(whoOptions['digital-partner']) }}
+                    {{ formInput(whoOptions['digital-partner'])}}
+                    {{ whoOptions['digital-partner'].getOption('label') }}
+                {{ formLabel.closeTag|raw }}
                 
             </div>
             
             <div class="set">
-                <?= $formLabel->openTag($whoOptions['organisation']); ?>
-                    <?= $this->formInput($whoOptions['organisation'])  . $whoOptions['organisation']->getOption('label'); ?>
-                <?= $formLabel->closeTag(); ?>
+                {{ formLabel.openTag(whoOptions['organisation']) }}
+                    {{ formInput(whoOptions['organisation'])}}
+                    {{ whoOptions['organisation'].getOption('label') }}
+                {{ formLabel.closeTag|raw }}
                 
                 <div class="indent subquestion" style="padding-left: 2em; padding-bottom: 1em; display:none;">
                     <div>
-                        <?= $formLabel->openTag($organisation). $organisation->getOption('label').$formLabel->closeTag(); ?>
-                        <?= $this->formText($organisation) ?>
+                        {{ formLabel.openTag(organisation) }}
+                        {{ organisation.getOption('label') }}
+                        {{ form().closeTag|raw }}
+                        {{ formText(organisation) }}
                     </div>
                 </div>
             </div>
             
             <div class="set">
-                <?= $formLabel->openTag($whoOptions['notSaid']); ?>
-                    <?= $this->formInput($whoOptions['notSaid'])  . $whoOptions['notSaid']->getOption('label'); ?>
-                <?= $formLabel->closeTag(); ?>
+                {{ formLabel.openTag(whoOptions['notSaid']) }}
+                {{ formInput(whoOptions['notSaid']) }}
+                {{ whoOptions['notSaid'].getOption('label') }}
+                {{ formLabel.closeTag|raw }}
             </div>
             
         </div>
 
         <div class="accordion-actions">
-        	<p>
-                <?= $this->formElement($submit) ?>
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
             </p>
         </div>
         
-        <?= $this->form()->closeTag(); ?>
-        <?php endif;?>        
+        {{ form().closeTag|raw }}
+        {% endif %}    
     </div>
     
 </section>
+
+{% endblock %}
