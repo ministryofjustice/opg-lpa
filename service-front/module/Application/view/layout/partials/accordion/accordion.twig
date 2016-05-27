@@ -88,8 +88,8 @@
     
     {% if (item.routeName == 'lpa/how-replacement-attorneys-make-decision') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
+            	'desktop' : 'The replacement attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')), 
+            	'mobile' : 'The replacement attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')),
         		'status' : item.params.status,
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
