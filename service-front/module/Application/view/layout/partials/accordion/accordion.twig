@@ -56,8 +56,6 @@
         }}
     {% endif %}
 
- 
-
     {% if (item.routeName == 'lpa/how-primary-attorneys-make-decision') %}
         {{ macros.accordionBar({
             	'desktop' : 'The attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')), 
@@ -70,18 +68,18 @@
     
     {% if (item.routeName == 'lpa/replacement-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.count == 0 ? 'There are no replacement attorneys' : items.params.values,
-            	'mobile' : item.params.count == 0 ? 'There are no replacement attorneys' : items.params.values,
+            	'desktop' : item.params.count == 0 ? 'There are no replacement attorneys' : ('The replacement attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values),
+            	'mobile' : item.params.count == 0 ? 'There are no replacement attorneys' : ('The replacement attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values),
         		'status' : item.params.count ~ ' Replacement attorney' ~ (item.params.count != 1 ? 's' : ''),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/when-replacement-attorney-step-in') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
+            	'desktop' : 'The replacement attorneys will step in ' ~ ( item.params.values == 'first' ? 'as soon as one of the original attorneys can no longer act' : ((item.params.values == 'last' ) ? 'as soon as none of the original attorneys can act' : 'as per instructions')),
+            	'mobile' : 'The replacement attorneys will step in ' ~ ( item.params.values == 'first' ? 'as soon as one of the original attorneys can no longer act' : ((item.params.values == 'last' ) ? 'as soon as none of the original attorneys can act' : 'as per instructions')),
         		'status' : item.params.status,
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
@@ -110,8 +108,8 @@
     
     {% if (item.routeName == 'lpa/people-to-notify') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values,
-            	'mobile' : 'The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values,
+            	'desktop' : item.parms.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
+            	'mobile' : item.parms.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
         		'status' : item.params.count ~ (item.params.count != 1 ? ' people to notify' : ' person to notify'),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})

@@ -133,10 +133,12 @@ abstract class AbstractAccordion extends AbstractHelper
             }
         }
         
-        return [
+        $ret = [
             'text' => $this->concatNames($this->lpa->document->replacementAttorneys),
             'count' => $count
         ];
+        
+        return $ret;
     }
     
     protected function whenReplacementAttorneyStepIn()
