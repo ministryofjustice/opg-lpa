@@ -116,6 +116,16 @@
         }}
     {% endif %}
     
+    {% if (item.routeName == 'lpa/correspondent') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+    
     {% if (item.routeName == 'lpa/instructions') %}
         {{ macros.accordionBar({
             	'desktop' : item.params.values, 
@@ -125,5 +135,66 @@
         	})
         }}
     {% endif %}
+
+    {% if (item.routeName == 'lpa/who-are-you') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+
+    {% if (item.routeName == 'lpa/repeat-application') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+
+    {% if (item.routeName == 'lpa/fee-reduction') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+
+    {% if (item.routeName == 'lpa/payment') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+
+    {% if (item.routeName == 'lpa/payment/return/failure') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+
+    {% if (item.routeName == 'lpa/payment/return/cancel') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
+            
 {% endfor %}
 
