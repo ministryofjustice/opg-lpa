@@ -15,9 +15,6 @@ use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 
 class WhoAreYouController extends AbstractLpaController
 {
-    
-    protected $contentHeader = 'registration-partial.phtml';
-    
     public function indexAction()
     {
         $lpaId = $this->getLpa()->id;

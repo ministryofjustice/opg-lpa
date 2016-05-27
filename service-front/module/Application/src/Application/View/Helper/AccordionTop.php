@@ -36,7 +36,7 @@ class AccordionTop extends AbstractAccordion
                 else {
                     if(method_exists($this, $barDataFuncName)) {
                         $values = $this->$barDataFuncName();
-                        if (!is_array($values)) {
+                        if (!is_array($values) || !isset($values['text'])) {
                             $values = [
                                 'text' => $values,
                                 'count' => 0,
