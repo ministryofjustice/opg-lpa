@@ -13,7 +13,20 @@
 	@extend main;
 
 	.error-summary {
-		display: none;
+		margin: $gutter-half $gutter-half 0 $gutter-half;
+		padding: 10px 10px 4px 10px;
+		@include media(mobile) {
+			padding-bottom: 8px;
+		}
+		.heading-medium {
+			margin-bottom: 10px;
+			@include media(tablet) {
+				font-size: 22px;
+			}
+		}
+		p {
+			margin-bottom: 4px;
+		}
 	}
 }
 
