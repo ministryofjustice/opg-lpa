@@ -108,8 +108,8 @@
     
     {% if (item.routeName == 'lpa/people-to-notify') %}
         {{ macros.accordionBar({
-            	'desktop' : item.parms.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
-            	'mobile' : item.parms.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
+            	'desktop' : item.params.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
+            	'mobile' : item.params.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
         		'status' : item.params.count ~ (item.params.count != 1 ? ' people to notify' : ' person to notify'),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
