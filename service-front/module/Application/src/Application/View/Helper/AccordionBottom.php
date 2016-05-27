@@ -58,8 +58,10 @@ class AccordionBottom extends AbstractAccordion
                             'routeName' => $barRouteName,
                             'lpaId'     => $lpa->id,
                             'params'    => [
-                                    'idx'   => $seq,
-                                    'values'=> $this->$barDataFuncName()]
+                                'idx'   => $seq,
+                                'status' => 'Complete',
+                                'values'=> $this->$barDataFuncName()
+                            ]
                     ];
                 }
             }

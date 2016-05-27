@@ -1,0 +1,21 @@
+{% macro accordionBar(data) %}
+
+<li class="section complete">
+    <div class="accordion-summary">
+        <div class="title-box">
+            <p class="title flush--ends tablet-and-up">{{ data.desktop }}</p>
+        </div>
+        <div class="label-and-edit-box">
+            <p class="link flush--ends">
+                <a href="{{ data.edit|raw }}" class="link-edit">
+                    <span class="tablet-and-up">edit</span>
+                    <span class="visuallyhidden">: </span>
+                    <span class="mobile">{{ data.mobile }}</span>
+                </a>
+            </p>
+            <span class="label">{{ data.status }}</span>
+        </div>
+    </div>
+</li>
+	
+{% endmacro %}

@@ -53,7 +53,10 @@ abstract class AbstractAccordion extends AbstractHelper
             return $this->bars['creation'];
         }
         elseif(array_key_exists($routeName, $this->bars['registration'])) {
-            return $this->bars['registration'];
+            return array_merge(
+                $this->bars['creation'],
+                $this->bars['registration']
+            );
         }
         else {
             return null;
@@ -99,9 +102,16 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function primaryAttorney()
     {
-        if(count($this->lpa->document->primaryAttorneys) > 0) {
-            return 'The ' . ((count($this->lpa->document->primaryAttorneys)==1)? 'attorney is':'attorneys are').' '.$this->concatNames($this->lpa->document->primaryAttorneys);
+        $count = count($this->lpa->document->primaryAttorneys);
+        
+        if($count > 0) {
+            $text = $this->concatNames($this->lpa->document->primaryAttorneys);
         }
+        
+        return [
+            'text' => $text,
+            'count' => $count,
+        ];
     }
     
     protected function howPrimaryAttorneysMakeDecision()
@@ -113,6 +123,8 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function replacementAttorney()
     {
+        $count = count($this->lpa->document->replacementAttorneys);
+        
         if(count($this->lpa->document->replacementAttorneys) == 0) {
             // user has confirmed no replacement attorneys
             if(array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata)) {
@@ -124,7 +136,12 @@ abstract class AbstractAccordion extends AbstractHelper
             }
         }
         
-        return 'The replacement ' . ((count($this->lpa->document->replacementAttorneys)==1)? 'attorney is':'attorneys are').' '.$this->concatNames($this->lpa->document->replacementAttorneys);
+        $ret = [
+            'text' => $this->concatNames($this->lpa->document->replacementAttorneys),
+            'count' => $count
+        ];
+        
+        return $ret;
     }
     
     protected function whenReplacementAttorneyStepIn()
@@ -150,7 +167,9 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function peopleToNotify()
     {
-        if(count($this->lpa->document->peopleToNotify)==0) {
+        $count = count($this->lpa->document->peopleToNotify);
+        
+        if($count==0) {
             // user has confirmed no people to notify
             if(array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $this->lpa->metadata)) {
                     return '';
@@ -161,7 +180,12 @@ abstract class AbstractAccordion extends AbstractHelper
             }
         }
         
-        return ((count($this->lpa->document->peopleToNotify)==1)? 'is':'are').' '.$this->concatNames($this->lpa->document->peopleToNotify);
+        $text = $this->concatNames($this->lpa->document->peopleToNotify);
+        
+        return [
+            'text' => $text,
+            'count' => $count,
+        ];
     }
     
     protected function instructions()
