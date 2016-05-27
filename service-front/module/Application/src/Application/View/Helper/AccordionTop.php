@@ -57,22 +57,6 @@ class AccordionTop extends AbstractAccordion
                 }
             }
         }
-
-        // FOR TESTING
-//         return [
-//             'lpa/form-type'                              ,
-//             'lpa/donor'                                  ,
-//             'lpa/when-lpa-starts'                        ,
-//             'lpa/life-sustaining'                        ,
-//             'lpa/primary-attorney'                       ,
-//             'lpa/how-primary-attorneys-make-decision'    ,
-//             'lpa/replacement-attorney'                   ,
-//             'lpa/when-replacement-attorney-step-in'      ,
-//             'lpa/how-replacement-attorneys-make-decision',
-//             'lpa/certificate-provider'                   ,
-//             'lpa/people-to-notify'                       ,
-//             'lpa/instructions'                           ,
-//         ];
         
         return $barList;
         
