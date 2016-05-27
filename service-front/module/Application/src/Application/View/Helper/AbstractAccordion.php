@@ -53,7 +53,10 @@ abstract class AbstractAccordion extends AbstractHelper
             return $this->bars['creation'];
         }
         elseif(array_key_exists($routeName, $this->bars['registration'])) {
-            return $this->bars['registration'];
+            return array_merge(
+                $this->bars['creation'],
+                $this->bars['registration']
+            );
         }
         else {
             return null;
