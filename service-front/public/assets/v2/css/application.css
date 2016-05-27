@@ -3340,7 +3340,7 @@ input[disabled="disabled"] {
 
 .accordion-header {
   display: block;
-  padding: 15px 30px;
+  padding: 15px;
   background-color: #28a197;
   color: white; }
   @media (max-width: 640px) {
@@ -3352,15 +3352,61 @@ input[disabled="disabled"] {
   border-bottom: 1px solid #bfc1c3; }
 
 .accordion-summary {
+  position: relative;
   overflow: hidden;
   margin-bottom: 15px;
-  padding: 15px 30px;
   background-color: #f8f8f8; }
   @media (max-width: 640px) {
     .accordion-summary {
       padding-left: 15px; } }
-  .accordion-summary .edit {
-    display: none; }
+  .accordion-summary .title {
+    display: inline-block;
+    padding: 15px; }
+    @media (max-width: 640px) {
+      .accordion-summary .title {
+        padding: 15px; } }
+  .accordion-summary .label {
+    float: right;
+    margin: 16px 22px 0 0;
+    padding: 2px 5px 0;
+    border: 2px solid #28A197;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #28A197;
+    text-align: center;
+    text-transform: uppercase; }
+    @media (max-width: 640px) {
+      .accordion-summary .label {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        margin: 0; } }
+  .accordion-summary .link {
+    display: inline-block;
+    float: right; }
+    @media (max-width: 640px) {
+      .accordion-summary .link {
+        float: left;
+        padding-right: 130px; } }
+  .accordion-summary .link-edit {
+    display: block;
+    float: right;
+    padding: 15px 30px; }
+    @media (max-width: 640px) {
+      .accordion-summary .link-edit {
+        padding-left: 0; } }
+  .accordion-summary .title-box {
+    padding-right: 130px;
+    margin-right: 92px;
+    border-right: 6px solid white; }
+  .accordion-summary .label-and-edit-box {
+    position: absolute;
+    top: 0;
+    right: 0; }
+    @media (max-width: 640px) {
+      .accordion-summary .label-and-edit-box {
+        position: relative; } }
 
 .person {
   position: relative;
