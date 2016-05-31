@@ -1,0 +1,117 @@
+<?php
+    $form = $this->formErrorTextExchange($this->form, []);
+    
+    $form->setAttribute('class', 'form');
+    $csrf        = $form->get($form->csrfName());
+    
+    $reductionOptions       = $form->get('reductionOptions');
+    $reductionOptions->setLabelOptions(['disable_html_escape' => true]);
+    $reductionOptionsValueOptions = $reductionOptions->getOptions()['value_options'];
+    $reductionOptionsValueOptions['reducedFeeReceivesBenefits']['label'] = <<<EOT
+    The donor currently claims one of <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
+        <div class="revised-fee hidden" id="revised-fee-0">
+        	<h2>Reduced fee: &pound;0</h2>
+            <p>To apply for this exemption, you must enclose copies of letters from the Department for Work and Pensions or your benefit provider. The 
+        letters must confirm that the benefit was being paid at the time the LPA was sent to us for registration. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+            
+            <p>If you don't send the right evidence, your application will be delayed. If your claim is rejected, you'll need to pay the rest of the fee.</p>
+            
+            <p>On the next page, you can download the application for remission form with the application to register form.
+            Sign and date this and include it in your application.</p>
+        </div>
+EOT;
+    $reductionOptionsValueOptions['reducedFeeUniversalCredit']['label'] = <<<EOT
+    The donor receives Universal Credit
+        <div class="revised-fee hidden" id="revised-fee-uc">
+        	<h2>We'll contact you about the fee</h2>
+        	<p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
+        	<p>This means <strong>the tool will not charge you for this LPA now.</strong></p>
+        	<p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
+        	<p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
+        </div>
+EOT;
+    $reductionOptionsValueOptions['reducedFeeLowIncome']['label'] = "The donor currently has an income of less than £12,000 a year before tax";
+    $reductionOptionsValueOptions['notApply']['label'] = "I'm not applying for a reduced fee";
+    
+    $reductionOptionsValueOptions['reducedFeeReceivesBenefits'] += [
+            'label_attributes' => [
+                    'for' => 'reducedFeeReceivesBenefits',
+            ],
+            'attributes' => [
+                    'id' => 'reducedFeeReceivesBenefits'
+            ],
+    ];
+    $reductionOptionsValueOptions['reducedFeeUniversalCredit'] += [
+            'label_attributes' => [
+                    'for' => 'reducedFeeUniversalCredit',
+            ],
+            'attributes' => [
+                    'id' => 'reducedFeeUniversalCredit'
+            ],
+    ];
+    $reductionOptionsValueOptions['reducedFeeLowIncome'] += [
+            'label_attributes' => [
+                    'for' => 'reducedFeeLowIncome',
+            ],
+            'attributes' => [
+                    'id' => 'reducedFeeLowIncome'
+            ],
+    ];
+    $reductionOptionsValueOptions['notApply'] += [
+            'label_attributes' => [
+                    'for' => 'notApply',
+                    // @todo temporary inline style. use a class instead.
+                    'style' => 'margin-top:30px;font-weight:bold;',
+            ],
+            'attributes' => [
+                    'id' => 'notApply',
+            ],
+    ];
+    
+    $reductionOptions->setOptions(['value_options'=>$reductionOptionsValueOptions]);
+    
+    $submit      = $form->get('submit');
+    $submit->setAttributes(['class'=>'button gotonextpart', 'value'=>'L do not want to apply reduction']);
+    
+    $formLabel   = $this->plugin('formLabel');
+    $form->prepare();
+?>
+
+<section id="fee-reduction-section" class="section current">
+	
+	<h2 class="accordion-header"><?= $this->accordionIdx($this->lpa); ?>. Do you want to apply to pay a reduced fee?</h2>
+	
+    <div class="accordion-content">
+    	<div class="section-intro">
+                <p>If the donor has an income of less than £12,000 a year before tax or receives certain benefits, they might be eligible for a reduced fee, or no fee at all.</p>
+                
+                <p><a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
+    	
+		</div>
+	    
+    	<div class="section-intro">
+        <?= $this->form()->openTag($form); ?>
+            
+        <?= $this->formElement($csrf) ?>
+        
+        <?= $this->formErrorList(); ?>
+        
+        <div class="emphasised option group">
+        
+            <?= $this->formElement($reductionOptions)?>
+            
+            <?= $this->formElementErrors($reductionOptions) ?>
+        </div>
+        </div>
+        
+        <div class="accordion-actions">
+			<p>
+                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
+            </p>
+        </div>
+            
+        <?= $this->form()->closeTag(); ?>
+    	
+    </div>
+    
+</section>
