@@ -11,159 +11,20 @@
 
 {{ form.setAttributes({'class': 'form', 'id': 'WhoAreYou'}) ? '' }}
 
+{% set csrf = form.get(form.csrfName) %}
 {% set who = form.get('who') %}
 {% set professional = form.get('professional') %}
 {% set professionalOther = form.get('professional-other') %}
 {{ professionalOther.setOptions({label:'Please tell us your profession'}) ? '' }}    
 {% set organisation = form.get('organisation') %}
 {{ organisation.setOptions({label:'Which organisation helped?'}) ? '' }}    
-        
-{{ form.prepare() ? '' }}    
-
-{% set whoOptions = who.getOptions()['value_options'] %}
-
-{% set whoOptions = {
-			'donor' :
-				{ 
-				  label: "The donor used this online service with little or no help",
-				  label_attributes: {
-				  	   for: 'who-donor',
-				  },				  
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'who-donor',
-                       value: whoOptions['donor'].value,
-                       checked: who.getValue() == 'donor' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['donor'].value
-	 		    },
-			'friend-or-family' :
-				{ 
-				  label: "A friend or family member helped the donor get online, navigate or enter information",
-				  label_attributes: {
-				  	   for: 'who-friend-or-family',
-				  },
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'who-friend-or-family',
-                       value: whoOptions['friendOrFamily'].value,
-                       checked: who.getValue() == 'friendOrFamily' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['friend-or-family'].value
-	 		    },
-			'professional' :
-				{ 
-				  label: "A paid professional made the LPA on the donor's behalf",
-				  label_attributes: {
-				  	   for: 'who-professional',
-				  },
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'who-professional',
-                       value: whoOptions['professional'].value,
-                       checked: who.getValue() == 'professional' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['professional'].value
-	 		    },	
-			'digital-partner' :
-				{ 
-				  label: "OPG's Assisted Digital Service helped the donor",
-				  label_attributes: {
-				  	   for: 'who-digital-partner',
-				  },
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'who-digital-partner',
-                       value: whoOptions['digitalPartner'].value,
-                       checked: who.getValue() == 'digitalPartner' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['digitalPartner'].value
-	 		    },	 
-			'organisation' :
-				{ 
-				  label: "Another organisation, such as a charity, council or community group, helped the donor",
-				  label_attributes: {
-				  	   for: 'who-organisation',
-				  },
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'who-organisation',
-                       value: whoOptions['organisation'].value,
-                       checked: who.getValue() == 'organisation' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['organisation'].value
-	 		    },
-			'notSaid' :
-				{ 
-				  label: "I'd prefer not to say",
-				  label_attributes: {
-				  	   for: 'who-notSaid',
-				  },
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'who-notSaid',
-                       value: whoOptions['organisation'].value,
-                       checked: who.getValue() == 'notSaid' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['notSaid'].value
-	 		    } 		    		 		    	 		     		    
-		}
-%}
-    
-{% set professionalOptions = professional.getOptions()['value_options'] %}
-
-{% set professionalOptions = {
-			'solicitor' :
-				{ 
-				  label: "Solicitor",
-				  label_attributes: {
-				  	   for: 'professional-solicitor',
-				  },				  
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'professional-solicitor',
-                       value: whoOptions['solicitor'].value,
-                       checked: who.getValue() == 'solicitor' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['solicitor'].value
-	 		    },
-			'will-writer' :
-				{ 
-				  label: "Will-writer",
-				  label_attributes: {
-				  	   for: 'professional-will-writer',
-				  },				  
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'professional-will-writer',
-                       value: whoOptions['will-writer'].value,
-                       checked: who.getValue() == 'will-writer' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['will-writer'].value
-	 		    },
-			'other' :
-				{ 
-				  label: "Other",
-				  label_attributes: {
-				  	   for: 'professional-other',
-				  },				  
-	 			  attributes: {
-	 			       type: 'radio',
-                       id: 'professional-other',
-                       value: whoOptions['other'].value,
-                       checked: who.getValue() == 'other' ? 'checked' : null,
-	 			  },
-	 			  value: whoOptions['other'].value
-	 		    }		 		    	 		    
-		}
-%}
 
 <section id="who-are-you-section" class="section current">
 	
 	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Who was using the LPA tool?</h2>
 
     <div class="accordion-content">
-        {% if (form) %}
+        {% if not form %}
         
         <div>
                 <p>Thanks, you have already answered this question.</p>
@@ -184,7 +45,7 @@
         {{ formElement(csrf) }}
 		{{ formElementErrors(csrf) }}
         
-        {{ formErrorList() }}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
         
         <input type="hidden" name="who" value="">
         <input type="hidden" name="professional" value="">
@@ -197,19 +58,18 @@
         
         <div class="emphasised option group">
             <div class="set">
+            {{ form.prepare() ? '' }}    
             	{{ formLabel.openTag(whoOptions['donor']) }}
                     {{ formInput(whoOptions['donor']) }}
                     {{ whoOptions['donor'].getOption('label') }}
                 {{ formLabel.closeTag|raw }}
             </div>
-            
             <div class="set">
                 {{ formLabel.openTag(whoOptions['friend-or-family']) }}
                     {{ formInput(whoOptions['friend-or-family']) }}
                     {{ whoOptions['friend-or-family'].getOption('label') }}
                 {{ formLabel.closeTag|raw }}
             </div>
-            
             <div class="set">
                 {{ formLabel.openTag(whoOptions['professional']) }}
                     {{ formInput(whoOptions['professional'])}}
@@ -236,7 +96,7 @@
                         <div class="subquestion" style="display: block;">
                             {{ formLabel.openTag(professionalOther)|raw }}
                             {{ professionalOther.getOption('label') }}
-                            {{ form().closeTag|raw }}
+                            {{ formLabel.closeTag|raw }}
                             {{ formText(professionalOther) }}
                         </div>
                     </div>
@@ -261,7 +121,7 @@
                     <div>
                         {{ formLabel.openTag(organisation) }}
                         {{ organisation.getOption('label') }}
-                        {{ form().closeTag|raw }}
+                        {{ formLabel.closeTag|raw }}
                         {{ formText(organisation) }}
                     </div>
                 </div>
