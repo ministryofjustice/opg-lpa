@@ -1,12 +1,19 @@
-<?php
-    $form = $this->formErrorTextExchange($this->form, []);
-    
-    $form->setAttribute('class', 'form');
-    $csrf        = $form->get($form->csrfName());
-    
-    $reductionOptions       = $form->get('reductionOptions');
-    $reductionOptions->setLabelOptions(['disable_html_escape' => true]);
-    $reductionOptionsValueOptions = $reductionOptions->getOptions()['value_options'];
+{% extends 'layout/twig/registration-stage.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form, {}) %}
+
+{{ form.setAttribute('class', 'form') ? '' }}
+
+{% set csrf = form.get(form.csrfName) %}
+
+{% set reductionOptions = form.get('reductionOptions') %}
+{{ reductionOptions.setLabelOptions({disable_html_escape: true}) ? '' }}
+{% set reductionOptionsValueOptions = reductionOptions.getOptions()['value_options'] %}
+
     $reductionOptionsValueOptions['reducedFeeReceivesBenefits']['label'] = <<<EOT
     The donor currently claims one of <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
         <div class="revised-fee hidden" id="revised-fee-0">
