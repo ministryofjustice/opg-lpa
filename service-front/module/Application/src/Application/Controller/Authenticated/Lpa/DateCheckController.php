@@ -58,7 +58,7 @@ class DateCheckController extends AbstractLpaController
                 ]);
                 
                 if ($result === true) {
-                    $viewParams['dateError'] = '';
+                    $viewParams['valid'] = true;
                 } else {
                     $viewParams['dateError'] = $result;
                 }
