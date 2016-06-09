@@ -1,3 +1,4 @@
+{# Form Validation - Error Summary #}
 {% macro formErrorSummary(error, form, message) %}
 
     {% if (error is not empty or form.getMessages|length > 0) %}
@@ -22,6 +23,7 @@
 	
 {% endmacro %}
 
+{# Text input #}
 {% macro formGroup(element) %}
 
 <div class="form-group {{ element.getMessages|length >0 ? 'error'}}">
@@ -34,6 +36,7 @@
 
 {% endmacro %}
 
+{# Checkbox #}
 {% macro formGroupCheckbox(element) %}
 
 <div class="option group">
@@ -45,14 +48,7 @@
 
 {% endmacro %}
 
-{% macro renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) %}
-    {% if (isChangeAllowed) %}
-        <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-    {% else %}
-        <a href='{{ nextUrl }}' class="button gotonextpart">Continue</a>
-    {% endif %}
-{% endmacro %}
-
+{# JS check dob #}
 {% macro addDobCheckOnUseMyDetails(isUseMyDetails) %}
 	{% if (isUseMyDetails) %}
 		if ($('#dob-date-day').val()) {
@@ -61,9 +57,10 @@
 	{% endif %}
 {% endmacro %}
 
+{# Reuse contacts picker #}
 {% macro renderPickerForm(form, pickerForm) %}
     {% if (pickerForm) %}
-    
+
     {{ pickerForm.setAttribute('class', 'form') ? '' }}
     {% set pickerSubmit = pickerForm.get('submit') %}
     {{ pickerSubmit.setAttributes({'value': "Use this person's details", 'class' : 'button details-picker'}) ? '' }}
@@ -89,6 +86,7 @@
         
     {% endif %}
 {% endmacro %}
+
 
 {% macro useMyDetails(useMyDetailsRoute) %}
     {% if (useMyDetailsRoute) %}
