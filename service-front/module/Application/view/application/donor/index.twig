@@ -32,19 +32,19 @@
             <p class="person-address flush--ends">{{ donor['address'] }}</p>
             <ul class="person-actions">
                 <li class="actions-item">
-                    <a href="{{ editDonorUrl }}" data-form="donor" class="action-edit js-form-popup">View/edit details</a>
+                    <a href="{{ editDonorUrl }}" class="action-edit js-form-popup">View/edit details</a>
                 </li>
             </ul>
         </div>
 
         <div class="form-group">
-            <a href="{{ nextRoute }}" class="button" role="button">Save and continue</a> 
+            <a href="{{ nextRoute }}" class="button">Save and continue</a> 
         </div>
 
 	{% else %}
 
         <div class="form-group">
-            <a href="{{ addRoute }}" class="button js-form-popup" data-form="donor" role="button">Add donor details</a>
+            <a href="{{ addRoute }}" class="button js-form-popup">Add donor details</a>
         </div>
 
         <div class="form-group">

@@ -15,6 +15,7 @@
 	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetailsDetails) }}
 </script>
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-first' : {
         'cannot-be-blank' : 'Please enter the donor\'s first name'
@@ -158,9 +159,7 @@
     <h2 class="heading-small popup-header-title">Edit the donor's details</h2>
 </header>
 
-
-{{ form.prepare() ? '' }}
-
+{# Reuse contacts picker #}
 {{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
 
 {############################ donor form ############################}
@@ -175,6 +174,7 @@
 {{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
 {# begin form #}
+{{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
     {{ formElement(form.get( form.csrfName )) }}
 

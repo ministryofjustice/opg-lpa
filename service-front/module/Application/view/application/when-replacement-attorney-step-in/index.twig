@@ -4,6 +4,7 @@
 
 {% import "application/macros.twig" as macros %}
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'when' : {
         'Value is required and can\'t be empty' : 'Please choose how your replacement attorneys step in',
@@ -14,7 +15,6 @@
 }) %}
 
 {# Set form fields variables #}
-{% set csrf = form.get(form.csrfName) %}
 {% set when = form.get('when') %}
 {% set whenDetails = form.get('whenDetails') %}
 {% set currentWhenOptions = when.getOptions()['value_options'] %}
@@ -72,8 +72,6 @@
 	disable_html_escape: true
 }) ? '' }}
 
-{{ form.prepare() ? '' }}
-
 <li id="when-replacement-attorney-step-in-section" class="section current js-current">
 
 	<h2 class="heading-medium accordion-header flush--top">How should your replacement attorneys step in?</h2>
@@ -89,8 +87,7 @@
 	{# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }} 
-        {{ formElement(csrf) }}
-		{{ formElementErrors(csrf) }}
+        {{ formElement(form.get( form.csrfName )) }}
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
@@ -119,6 +116,7 @@
 		<div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
+        
     {{ form().closeTag|raw }}
 
 </li>
