@@ -4,6 +4,7 @@
 
 {% import "application/macros.twig" as macros %}
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form, {
     'canSustainLife' : {
         'Value is required and can\'t be empty' : 'Please choose either yes or no'
@@ -11,9 +12,9 @@
 }) %}
 
 {# Set form fields variables #}
-{% set csrf = form.get(form.csrfName) %}
 {% set canSustainLife = form.get('canSustainLife') %}
 
+{# form fields config #}
 {{ canSustainLife.setOptions({
     label_attributes: {'class': 'text block-label'}
 }) ? '' }}
@@ -42,8 +43,7 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }} 
-        {{ formElement(csrf) }}
-        {{ formElementErrors(csrf) }}
+        {{ formElement(form.get( form.csrfName )) }}
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
@@ -57,7 +57,6 @@
                 {{ formElementErrorsV2(canSustainLife) }}
             </div>
         </fieldset>
-
         
         <p class="text">Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
 

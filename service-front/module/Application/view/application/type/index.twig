@@ -4,6 +4,7 @@
 
 {% import "application/macros.twig" as macros %}
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'type' : {
         'cannot-be-empty' : 'Please choose a type of LPA',
@@ -12,18 +13,12 @@
 
 {# Set form fields variables #}
 {% set type = form.get('type') %}
-{% set submit = form.get('submit') %}
 
 {% if not isChangeAllowed %}
 {{ type.setAttributes({'disabled': 'disabled'}) ? '' }}
 {% endif %}
 
 {# form fields config #}
-{{ submit.setAttributes({
-    'class':'button gotonextpart',
-    'value':'Save and continue'
-}) ? '' }}
-
 {{ type.setOptions({
     label_attributes: {'class': 'block-label'}
 }) ? ''}}
@@ -76,15 +71,17 @@
                     <p>Remember, there’s an application fee for each LPA you register.</p>
                 </div>
     		</details>
-
-            <div class="form-group">
-                {{ macros.renderAccordionSaveAndContinue(isChangeAllowed, nextUrl) }}
-            </div>
     
-
-        
         </fieldset>
        
+        <div class="form-group">
+            {% if (isChangeAllowed) %}
+                <input type="submit" name="save" value="Save and continue" class="button">
+            {% else %}
+                <a href='{{ nextUrl }}' class="button">Continue</a>
+            {% endif %}
+        </div>
+
     {{ form().closeTag|raw }}
     
 </li>
