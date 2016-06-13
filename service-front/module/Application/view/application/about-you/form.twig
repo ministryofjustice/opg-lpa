@@ -10,6 +10,8 @@
 
 {% block content %}
 
+{% import "application/macros.twig" as macros %}
+
 {% block aboutyouheader %}{% endblock aboutyouheader %}
 
 {# Set form fields variables #}
@@ -110,29 +112,9 @@
     <fieldset>
         <legend class="visuallyhidden">Name</legend>
 
-        <div class="form-group {{ title.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ title.getAttribute('id') }}">
-                {{ title.getOption('label') }}
-                {{ formElementErrorsV2(title) }}
-            </label>
-            {{ formElement(title) }}
-        </div>
-
-        <div class="form-group {{ firstName.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ firstName.getAttribute('id') }}">
-                {{ firstName.getOption('label') }}
-                {{ formElementErrorsV2(firstName) }}
-            </label>
-            {{ formElement(firstName) }}
-        </div>
-        
-        <div class="form-group {{ lastName.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ lastName.getAttribute('id') }}">
-                {{ lastName.getOption('label') }}
-                {{ formElementErrorsV2(lastName) }}
-            </label>
-            {{ formElement(lastName) }}
-        </div>
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstName) }}
+        {{ macros.formGroup(lastName) }}
         
     </fieldset>
 
@@ -172,39 +154,10 @@
         <legend class="visuallyhidden">Address</legend>
 
         <div class="js-PostcodeLookup__postal-add">
-
-            <div class="form-group {{ address1.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ address1.getAttribute('id') }}">
-                    {{ address1.getOption('label') }}
-                    {{ formElementErrorsV2(address1) }}
-                </label>
-                {{ formElement(address1) }}
-            </div>
-
-            <div class="form-group {{ address2.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ address2.getAttribute('id') }}">
-                    {{ address2.getOption('label') }}
-                    {{ formElementErrorsV2(address2) }}
-                </label>
-                {{ formElement(address2) }}
-            </div>
-
-            <div class="form-group {{ address3.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ address3.getAttribute('id') }}">
-                    {{ address3.getOption('label') }}
-                    {{ formElementErrorsV2(address3) }}
-                </label>
-                {{ formElement(address3) }}
-            </div>
-
-            <div class="form-group {{ postcode.getMessages|length >0 ? 'error'}}">
-                <label class="form-label" for="{{ postcode.getAttribute('id') }}">
-                    {{ postcode.getOption('label') }}
-                    {{ formElementErrorsV2(postcode) }}
-                </label>
-                {{ formElement(postcode) }}
-            </div>
-
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
         </div>
 
     </fieldset>
