@@ -9,7 +9,7 @@
 
 {% block content %}
 
-{{ form.setAttribute('class', 'form') ? '' }}
+{% import "application/macros.twig" as macros %}
     
 {{ message.setAttributes({
     id: 'message',
@@ -34,13 +34,7 @@
     <fieldset>
         <legend class="visuallyhidden">Set the system message</legend>
 
-    	<div class="form-group {{ message.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ message.getAttribute('id') }}">
-                <span class="form-label-bold">{{ message.getOption('label') }}</span>
-                {{ formElementErrorsV2(message) }}
-            </label>
-            {{ formElement(message) }}
-        </div>
+        {{ macros.formGroup(message) }}
         
     </fieldset>
 
