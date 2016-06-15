@@ -1,11 +1,11 @@
-<div class="js-toggle-nav" id="global-nav">
+<div class="global-nav js-toggle-nav">
     <div class="inner">
         <nav role="navigation" class="content">
 
-            <ul id="navigation">
+            <ul class="navigation">
 
                 {% if name %}
-                    <li class="user">{{ name ~ ':' }} </li>
+                    <li class="user navigation-item">{{ name ~ ':' }} </li>
 
                     {% set links = {
                         'user/about-you': 'Your details',
@@ -13,7 +13,7 @@
                     } %}
 
                     {% for page,title in links %}
-                        <li>
+                        <li class="navigation-item">
                             {% if route == page %}
                                 <span>{{ title }}</span>
                             {% else %}
@@ -24,7 +24,7 @@
 
                 {% endif %}
 
-                <li><a href="{{ view.url('logout') }}">Sign out</a></li>
+                <li class="navigation-item"><a href="{{ view.url('logout') }}">Sign out</a></li>
 
             </ul>
 
