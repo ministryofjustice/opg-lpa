@@ -42,10 +42,10 @@ module.exports = function (grunt) {
     // lint scss files
     scsslint: {
       allFiles: [
-        'assets/sass/*.scss'
+        'assets/sass/**/*.scss'
       ],
       options: {
-        config: null,
+        config: '.scss-lint.yml',
         reporterOutput: null,
         colorizeOutput: true
       }
