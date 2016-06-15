@@ -5149,14 +5149,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       }
 
     },
-    render: function (e, params) {
-      var $el = $(this.selector, $(params.wrap));
-
+    render: function () {
       this.displayCaseNumber(0);
       this.initialiseEvents();
 
     },
-    onRepeatApplicationFormChangeHandler: function (evt) {
+    onRepeatApplicationFormChangeHandler: function () {
       this.displayCaseNumber(500);
     },
     onRepeatApplicationFormClickHandler: function (evt) {
