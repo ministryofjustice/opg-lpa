@@ -2,94 +2,102 @@
 // ==========================================================================
 
 .icon-property {
-	@include icon(icon-property, 55, 50);
-	@include media(mobile){
-		@include icon(icon-property, 33, 30);
-		background-size: contain;
-	}
-	@include media($max-width: 360px) {
-		display: none;
-	}
+    @include icon(icon-property, 55, 50);
+    @include media(mobile) {
+        @include icon(icon-property, 33, 30);
+        background-size: contain;
+    }
+
+    @include media($max-width: 360px) {
+        display: none;
+    }
 }
 
 .icon-finance {
-	margin-right: 10px;
-	@include icon(icon-finance, 52, 50);
-	@include media(mobile){
-		margin-right: 6px;
-		@include icon(icon-finance, 31, 30);
-		background-size: contain;
-	}
-	@include media($max-width: 360px) {
-		display: none;
-	}
+    @include icon(icon-finance, 52, 50);
+    margin-right: 10px;
+
+    @include media(mobile) {
+        @include icon(icon-finance, 31, 30);
+        margin-right: 6px;
+        background-size: contain;
+    }
+
+    @include media($max-width: 360px) {
+        display: none;
+    }
 }
 
 .icon-health {
-	@include icon(icon-health, 60, 50);
-	@include media(mobile){
-		@include icon(icon-health, 36, 30);
-		background-size: contain;
-	}
-	@include media($max-width: 360px) {
-		display: none;
-	}
+    @include icon(icon-health, 60, 50);
+    @include media(mobile) {
+        @include icon(icon-health, 36, 30);
+        background-size: contain;
+    }
+
+    @include media($max-width: 360px) {
+        display: none;
+    }
 }
 
 .icon-welfare {
-	margin-right: 10px;
-	@include icon(icon-welfare, 52, 50);
-	@include media(mobile){
-		margin-right: 6px;
-		@include icon(icon-welfare, 31, 30);
-		background-size: contain;
-	}
-	@include media($max-width: 360px) {
-		display: none;
-	}
+    @include icon(icon-welfare, 52, 50);
+    margin-right: 10px;
+
+    @include media(mobile) {
+        @include icon(icon-welfare, 31, 30);
+        margin-right: 6px;
+        background-size: contain;
+    }
+
+    @include media($max-width: 360px) {
+        display: none;
+    }
 }
 
 .icon-question {
-	margin-right: 10px;
-	@include icon(icon-question, 52, 50);
-	@include media(mobile){
-		margin-right: 6px;
-		@include icon(icon-question, 31, 30);
-		background-size: contain;
-	}
-	@include media($max-width: 360px) {
-		display: none;
-	}
+    @include icon(icon-question, 52, 50);
+    margin-right: 10px;
+
+    @include media(mobile) {
+        @include icon(icon-question, 31, 30);
+        margin-right: 6px;
+        background-size: contain;
+    }
+    
+    @include media($max-width: 360px) {
+        display: none;
+    }
 }
 
 .icon-tick {
-	@include icon(icon-tick, 22, 22);
-	@include media(mobile){
-		margin-right: 6px;
-		@include icon(icon-tick, 16, 16);
-		background-size: contain;
-	}
+    @include icon(icon-tick, 22, 22);
+    @include media(mobile) {
+        @include icon(icon-tick, 16, 16);
+        margin-right: 6px;
+        background-size: contain;
+    }
 }
 
 .icon-cross {
-	@include icon(icon-cross, 22, 22);
-	@include media(mobile){
-		margin-right: 6px;
-		@include icon(icon-cross, 16, 16);
-		background-size: contain;
-	}
+    @include icon(icon-cross, 22, 22);
+    @include media(mobile) {
+        @include icon(icon-cross, 16, 16);
+        margin-right: 6px;
+        background-size: contain;
+    }
 }
 
 .icon-important-small {
-	@include icon(icon-important, 27, 27);
-	background-size: contain;
+    @include icon(icon-important, 27, 27);
+    background-size: contain;
 }
 
 .icon-person {
-	@include icon(icon-person, 27, 27);
-	@include media(mobile){
-		margin-right: 6px;
-		@include icon(icon-person, 27, 27);
-		background-size: contain;
-	}
+    @include icon(icon-person, 27, 27);
+    @include media(mobile) {
+        @include icon(icon-person, 27, 27);
+        margin-right: 6px;
+        background-size: contain;
+    }
 }

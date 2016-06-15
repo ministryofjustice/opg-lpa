@@ -1,171 +1,193 @@
-.js-enabled #popup.form-popup {
-	max-width: 600px;
-	@include media($max-width: 1000px) {
-		margin: 0 auto;
-	}
-	@include media(mobile) {
-		width: auto;
-		margin: 2em 0.5em 10em 0.5em;
-	}
+.js-enabled .form-popup {
+    max-width: 600px;
+
+    @include media($max-width: 1000px) {
+        margin: 0 auto;
+    }
+
+    @include media(mobile) {
+        width: auto;
+        margin: 2em .5em 10em;
+    }
 }
 
 .form-popup {
-	@extend main;
+    // Taken from main (elements/elements_typography line 7) instead of extending
+    @include core-19;
+    -webkit-font-smoothing: antialiased;
 
-	.error-summary {
-		margin: $gutter-half $gutter-half 0 $gutter-half;
-		padding: 10px 10px 4px 10px;
-		@include media(mobile) {
-			padding-bottom: 8px;
-		}
-		.heading-medium {
-			margin-bottom: 10px;
-			@include media(tablet) {
-				font-size: 22px;
-			}
-		}
-		p {
-			margin-bottom: 4px;
-		}
-	}
+    .error-summary {
+        margin: $gutter-half $gutter-half 0;
+        padding: 10px 10px 4px;
+
+        @include media(mobile) {
+            padding-bottom: 8px;
+        }
+
+        .heading-medium {
+            margin-bottom: 10px;
+
+            @include media(tablet) {
+                font-size: 22px;
+            }
+        }
+
+        p {
+            margin-bottom: 4px;
+        }
+    }
 }
 
-.form-popup .form-condensed {
-	padding: $gutter $gutter-half;
-	@include media(mobile) {
-		padding-top: 0;
-	}
+.form-condensed {
+    padding: $gutter $gutter-half;
 
-	.heading-medium {
-		@include media(tablet) {
-			display: none;
-		}
-	}
+    @include media(mobile) {
+        padding-top: 0;
+    }
 
-	.form-group {
-		margin-bottom: $gutter-half;
-	}
+    .heading-medium {
+        @include media(tablet) {
+            display: none;
+        }
+    }
 
-	.form-label {
-		@include media(tablet) {
-			float: left;
-			width: 150px;
-			margin-top: 6px;
-		}
-	}
+    .form-group {
+        margin-bottom: $gutter-half;
+    }
 
-	input[type='text'],
-	input[type='email'],
-	select {
-		&.form-control {
-			@include media(tablet) {
-				width: 420px;
-			}
-		}
-		&.postcode-input {
-			@include media(tablet) {
-				width: 252px;
-			}
-		}
-	}
+    .form-label {
+        @include media(tablet) {
+            width: 150px;
+            margin-top: 6px;
+            float: left;
+        }
+    }
 
-	.hint {
-		@include media(tablet) {
-			margin-left: 150px;
-		}
-	}
+    [type='text'],
+    [type='email'],
+    select {
 
-	.form-date {
-		margin-bottom: 0;
-		.form-hint {
-			@include media(tablet) {
-				display: none;
-			}
-		}
-	}
+        &.form-control {
+            @include media(tablet) {
+                width: 420px;
+            }
+        }
 
-	.address-type-toggle {
-		@include media(tablet) {
-			margin-left: 150px;
-		}
-	}
+        &.postcode-input {
+            @include media(tablet) {
+                width: 252px;
+            }
+        }
+    }
 
-	.block-label {
-		@include media(tablet) {
-			width: auto;
-			margin-left: 150px;
-			padding: 15px 15px 15px 40px;
-		}
-		input {
-			@include media(tablet) {
-				top: 12px;
-				left: 12px;
-			}
-		}
-	}
+    .hint {
+        @include media(tablet) {
+            margin-left: 150px;
+        }
+    }
 
-	input.button {
-		@include media(tablet) {
-			margin-left: 150px;
-		}
-	}
+    .form-date {
+        margin-bottom: 0;
 
-	.postcodelookup {
-		position: relative;
-		.spinner {
-			@include media(tablet) {
-				position: absolute;
-				top: 16px;
-				right: 182px;	
-			}
-		}
-	}
-	
-	.error {
-		@include media(tablet) {
-			position: relative;
-			padding-left: 0;
-			border-left: 0;	
-		}
-		.form-label {
-			@include media(tablet) {
-				width: 150px;
-			}
-		}
-		.form-control {
-			@include media(tablet) {
-				margin-bottom: 28px;
-			}
-		}
-	}
+        .form-hint {
+            @include media(tablet) {
+                display: none;
+            }
+        }
+    }
 
-	.error-message {
-		@include media(tablet) {
-			position: absolute;
-			top: 42px;
-			left: 150px;	
-		}
-	}
+    .address-type-toggle {
+        @include media(tablet) {
+            margin-left: 150px;
+        }
+    }
 
-	.form-date {
-		.error-message {
-			@include media(tablet) {
-				left: 0;
-				top: 78px;
-			}
-		}
-	}
+    .block-label {
+        @include media(tablet) {
+            width: auto;
+            margin-left: 150px;
+            padding: 15px 15px 15px 40px;
+        }
 
-	legend.form-label {
-		@include media(mobile) {
-			display: none;		
-		}
-	}
+        input {
+            @include media(tablet) {
+                top: 12px;
+                left: 12px;
+            }
+        }
+    }
+
+    .button {
+        @include media(tablet) {
+            margin-left: 150px;
+        }
+    }
+
+    .postcode-button {
+        margin-left: 0;
+    }
+
+    .postcodelookup {
+        position: relative;
+
+        .spinner {
+            @include media(tablet) {
+                position: absolute;
+                top: 16px;
+                right: 182px;   
+            }
+        }
+    }
+    
+    .error {
+        @include media(tablet) {
+            position: relative;
+            padding-left: 0;
+            border-left: 0; 
+        }
+
+        .form-label {
+            @include media(tablet) {
+                width: 150px;
+            }
+        }
+
+        .form-control {
+            @include media(tablet) {
+                margin-bottom: 28px;
+            }
+        }
+    }
+
+    .error-message {
+        @include media(tablet) {
+            position: absolute;
+            top: 42px;
+            left: 150px;    
+        }
+    }
+
+    // scss-lint:disable MergeableSelector
+    .form-date {
+        .error-message {
+            @include media(tablet) {
+                top: 78px;
+                left: 0;
+            }
+        }
+    }
+    // scss-lint:enable MergeableSelector
+
+    .dob-label {
+        @include media(mobile) {
+            display: none;      
+        }
+    }
 
 }
 
 .no-js {
-	legend.form-label {
-		display: none;
-	}
+    .dob-label {
+        display: none;
+    }
 }

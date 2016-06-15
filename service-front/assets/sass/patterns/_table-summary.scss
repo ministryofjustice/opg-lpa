@@ -5,36 +5,33 @@
 .table-summary {
     tr {
         @include media($max-width: 400px) {
-            position: relative;
             display: block;
+            position: relative;
             z-index: 3;
         }
-        &:first-child {
-            th, td {
-                border-top: 1px solid $border-colour;
-                @include media($max-width: 400px) {
-                    border: none;
-                }
-            }
-        }
     }
-    th, td {
+
+    th,
+    td {
         vertical-align: top;
+
         @include media($max-width: 400px) {
             display: block;
             width: 100%;
             padding-right: 0;
-            border: none;
+            border: 0;
         }
     }
+
     th {
         @include media($max-width: 400px) {
-            padding-bottom: 0;
             padding-right: 40px;
-            box-sizing: border-box;
+            padding-bottom: 0;
             z-index: 3;
+            box-sizing: border-box;
         }
     }
+
     td {
         @include media($max-width: 400px) {
             padding-top: 6px;
@@ -47,23 +44,25 @@
 }
 
 .table-summary-title {
-    font-weight: 700;
     width: 35%;
+    font-weight: 700;
 }
 
 .table-summary-action {
     padding-right: 0;
     text-align: right;
+
     @include media($max-width: 400px) {
         position: absolute;
         top: 12px;
-        border: none;
+        border: 0;
     }
 }
 
 .group-single {
     padding: 6px 0;
     border-bottom: 1px solid $border-colour;
+
     &:first-child {
         border-top: 1px solid $border-colour;
     }
@@ -75,7 +74,8 @@
 }
 
 .group-element {
-    th, td {
+    th,
+    td {
         border-bottom: 0;
     }
 }
