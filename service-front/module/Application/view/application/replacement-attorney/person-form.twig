@@ -170,7 +170,7 @@
     <h2 class="heading-medium">What is the replacement attorney's date of birth?</h2>
 
     <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="form-label">Date of birth</legend>
+        <legend class="form-label dob-label">Date of birth</legend>
 
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
