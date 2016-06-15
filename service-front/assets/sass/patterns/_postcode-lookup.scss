@@ -2,17 +2,18 @@
 // POSTCODE LOOKUP
 
 .postcode-input {
-	@include media($min-width: 641px) {
-		width: 27%;
-	}
-	@include media($min-width: 800px) {
-		width: 32%;
-	}
+    @include media($min-width: 641px) {
+        width: 27%;
+    }
+    
+    @include media($min-width: 800px) {
+        width: 32%;
+    }
 }
 
 .postcode-button {
-	@include media(mobile) {
-		margin-top: $gutter-half;
-		text-align: center;
-	}
+    @include media(mobile) {
+        margin-top: $gutter-half;
+        text-align: center;
+    }
 }

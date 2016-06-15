@@ -2,7 +2,9 @@
 // ==========================================================================
 
 // Hide for both screenreaders and browsers
+// Proactive important
 .hidden {
-	display: none !important;
-	visibility: hidden !important;
+	// scss-lint:disable ImportantRule
+    display: none !important;
+    visibility: hidden !important;
 }

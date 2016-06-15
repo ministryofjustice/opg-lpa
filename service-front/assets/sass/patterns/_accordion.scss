@@ -2,86 +2,97 @@
 // PROCESS ACCORDION
 
 .accordion {
-	@extend %contain-floats;
+    @extend %contain-floats;
 }
 
 .accordion-header {
-	display: block;
-	padding: $gutter-half;
-	background-color: $turquoise;
-	color: white;
-	@include media(mobile) {
-		padding-left: $gutter-half;
-	}
+    display: block;
+    padding: $gutter-half;
+    background-color: $turquoise;
+    color: $white;
+
+    @include media(mobile) {
+        padding-left: $gutter-half;
+    }
 }
 
 .accordion-info {
-	margin-bottom: $gutter;
-	border-bottom: 1px solid $border-colour;
+    margin-bottom: $gutter;
+    border-bottom: 1px solid $border-colour;
 }
 
 .accordion-summary {
-	position: relative;
-	overflow: hidden;
-	margin-bottom: $gutter-half;
-	background-color: $highlight-colour;
-	@include media(mobile) {
-		padding-left: $gutter-half;
-	}
-	.title {
-		display: inline-block;
-		padding: $gutter-half;
-		@include media(mobile) {
-			padding: $gutter-half;
-		}
-	}
-	.label {
-		float: right;
-		margin: 16px 22px 0 0;
-		padding: 2px 5px 0;
-		border: 2px solid #28A197;
-		border-radius: 5px;
-		font-size: 13px;
-		font-weight: 700;
-		color: #28A197;
-		text-align: center;
-		text-transform: uppercase;
-		@include media(mobile) {
-			position: absolute;
-			top: 14px;
-			right: 14px;
-			margin: 0;
-		}
-	}
-	.link {
-		display: inline-block;
-		float: right;
-		@include media(mobile) {
-			float: left;
-			padding-right: 130px;
-		}
-	}
-	.link-edit {
-		display: block;
-		float: right;
-		padding: $gutter-half $gutter;
-		@include media(mobile) {
-			padding-left: 0;
-		}
-	}
+    position: relative;
+    margin-bottom: $gutter-half;
+    background-color: $highlight-colour;
+    overflow: hidden;
 
-	.title-box {
-		padding-right: 130px;
-		margin-right: 92px;
-		border-right: 6px solid white;
-	}
+    @include media(mobile) {
+        padding-left: $gutter-half;
+    }
 
-	.label-and-edit-box {
-		position: absolute;
-		top: 0;
-		right: 0;
-		@include media(mobile) {
-			position: relative;
-		}
-	}
+    .title {
+        display: inline-block;
+        padding: $gutter-half;
+
+        @include media(mobile) {
+            padding: $gutter-half;
+        }
+    }
+
+    .label {
+        margin: 16px 22px 0 0;
+        padding: 2px 5px 0;
+        float: right;
+        border: 2px solid $turquoise;
+        border-radius: 5px;
+        color: $turquoise;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+        text-transform: uppercase;
+
+        @include media(mobile) {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            margin: 0;
+        }
+    }
+
+    .link {
+        display: inline-block;
+        float: right;
+
+        @include media(mobile) {
+            padding-right: 130px;
+            float: left;
+        }
+    }
+
+    .link-edit {
+        display: block;
+        padding: $gutter-half $gutter;
+        float: right;
+
+        @include media(mobile) {
+            padding-left: 0;
+        }
+    }
+
+    .title-box {
+        margin-right: 92px;
+        padding-right: 130px;
+        border-right: 6px solid $white;
+    }
+
+    .label-and-edit-box {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        @include media(mobile) {
+            position: relative;
+        }
+    }
 }
