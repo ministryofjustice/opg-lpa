@@ -2978,62 +2978,62 @@ input[type=number] {
     .form-popup .error-summary p {
       margin-bottom: 4px; }
 
-.form-condensed {
+.form-popup .form-condensed {
   padding: 30px 15px; }
-  .form-condensed .heading-medium {
+  .form-popup .form-condensed .heading-medium {
     display: none; }
-  .form-condensed .form-group {
+  .form-popup .form-condensed .form-group {
     margin-bottom: 15px; }
-  .form-condensed .form-label {
+  .form-popup .form-condensed .form-label {
     width: 150px;
     margin-top: 6px;
     float: left; }
-  .form-condensed [type='text'].form-control,
-  .form-condensed [type='email'].form-control,
-  .form-condensed select.form-control {
+  .form-popup .form-condensed [type='text'].form-control,
+  .form-popup .form-condensed [type='email'].form-control,
+  .form-popup .form-condensed select.form-control {
     width: 420px; }
-  .form-condensed [type='text'].postcode-input,
-  .form-condensed [type='email'].postcode-input,
-  .form-condensed select.postcode-input {
+  .form-popup .form-condensed [type='text'].postcode-input,
+  .form-popup .form-condensed [type='email'].postcode-input,
+  .form-popup .form-condensed select.postcode-input {
     width: 252px; }
-  .form-condensed .hint {
+  .form-popup .form-condensed .hint {
     margin-left: 150px; }
-  .form-condensed .form-date {
+  .form-popup .form-condensed .form-date {
     margin-bottom: 0; }
-    .form-condensed .form-date .form-hint {
+    .form-popup .form-condensed .form-date .form-hint {
       display: none; }
-  .form-condensed .address-type-toggle {
+  .form-popup .form-condensed .address-type-toggle {
     margin-left: 150px; }
-  .form-condensed .block-label {
+  .form-popup .form-condensed .block-label {
     width: auto;
     margin-left: 150px;
     padding: 15px 15px 15px 40px; }
-    .form-condensed .block-label input {
+    .form-popup .form-condensed .block-label input {
       top: 12px;
       left: 12px; }
-  .form-condensed .button {
+  .form-popup .form-condensed .button {
     margin-left: 150px; }
-  .form-condensed .postcode-button {
+  .form-popup .form-condensed .postcode-button {
     margin-left: 0; }
-  .form-condensed .postcodelookup {
+  .form-popup .form-condensed .postcodelookup {
     position: relative; }
-    .form-condensed .postcodelookup .spinner {
+    .form-popup .form-condensed .postcodelookup .spinner {
       position: absolute;
       top: 16px;
       right: 182px; }
-  .form-condensed .error {
+  .form-popup .form-condensed .error {
     position: relative;
     padding-left: 0;
     border-left: 0; }
-    .form-condensed .error .form-label {
+    .form-popup .form-condensed .error .form-label {
       width: 150px; }
-    .form-condensed .error .form-control {
+    .form-popup .form-condensed .error .form-control {
       margin-bottom: 28px; }
-  .form-condensed .error-message {
+  .form-popup .form-condensed .error-message {
     position: absolute;
     top: 42px;
     left: 150px; }
-  .form-condensed .form-date .error-message {
+  .form-popup .form-condensed .form-date .error-message {
     top: 78px;
     left: 0; }
 
