@@ -4,6 +4,14 @@ $(moj.init);
 
 
 // ====================================================================================
+// INITITALISE ALL GOVUK MODULES
+
+// Initiating the SelectionButtons GOVUK module
+var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
+new GOVUK.SelectionButtons($blockLabels);
+
+
+// ====================================================================================
 // VENDOR CONFIGURATION
 
 // JQUERY UI DATEPICKER SETUP
@@ -19,3 +27,7 @@ $('.date-field input').datepicker(
 		changeYear:true
 	}
 );
+
+
+// Remove the no-js class
+$('body').removeClass('no-js');
