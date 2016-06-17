@@ -366,7 +366,7 @@ button:focus,
     margin-bottom: -3px;
     padding-top: 2px;
     border-bottom: 1px solid transparent;
-    background: url("images/gov.uk_logotype_crown.png") no-repeat;
+    background: image-url("images/gov.uk_logotype_crown.png") no-repeat;
     background-size: 35px 31px;
     background-position: 0 0; }
     #global-header #logo img {
@@ -638,10 +638,10 @@ button:focus,
             height: 17px;
             overflow: hidden;
             text-indent: -999em;
-            background: url("images/open-government-licence.png") 0 0 no-repeat; }
+            background: image-url("images/open-government-licence.png") 0 0 no-repeat; }
             @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
               #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
-                background-image: url("images/open-government-licence_2x.png");
+                background-image: image-url("images/open-government-licence_2x.png");
                 background-size: 41px 17px; } }
         #footer .footer-meta .footer-meta-inner .open-government-licence p {
           font-family: "nta", Arial, sans-serif;
@@ -677,7 +677,7 @@ button:focus,
           margin-top: 0; } }
       #footer .footer-meta .copyright a {
         display: block;
-        background-image: url("images/govuk-crest.png");
+        background-image: image-url("images/govuk-crest.png");
         background-repeat: no-repeat;
         background-position: 50% 0%;
         text-align: center;
@@ -688,7 +688,7 @@ button:focus,
             background-position: 100% 0%; } }
         @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
           #footer .footer-meta .copyright a {
-            background-image: url("images/govuk-crest-2x.png");
+            background-image: image-url("images/govuk-crest-2x.png");
             background-size: 125px 102px; } }
         @media (min-width: 641px) {
           #footer .footer-meta .copyright a {
@@ -3619,16 +3619,6 @@ input[type=number] {
     display: block;
     margin: 6px 30px 0 0; } }
 
-.js-enabled .form-popup {
-  max-width: 600px; }
-  @media (max-width: 1000px) {
-    .js-enabled .form-popup {
-      margin: 0 auto; } }
-  @media (max-width: 640px) {
-    .js-enabled .form-popup {
-      width: auto;
-      margin: 2em .5em 10em; } }
-
 .form-popup {
   font-family: "nta", Arial, sans-serif;
   font-size: 16px;
@@ -3640,6 +3630,65 @@ input[type=number] {
     .form-popup {
       font-size: 19px;
       line-height: 1.31579; } }
+  .form-popup.popup {
+    max-width: 600px; }
+    @media (max-width: 1000px) {
+      .form-popup.popup {
+        margin: 2em auto; } }
+    @media (max-width: 640px) {
+      .form-popup.popup {
+        margin: 2em .5em 10em; } }
+  .form-popup .form {
+    padding: 30px 15px; }
+    @media (max-width: 640px) {
+      .form-popup .form {
+        padding-top: 0; } }
+    @media (min-width: 641px) {
+      .form-popup .form .heading-medium {
+        display: none; } }
+  .form-popup .form-group {
+    margin-top: 0;
+    margin-bottom: 15px; }
+  @media (min-width: 641px) {
+    .form-popup .form-label {
+      width: 150px;
+      margin-top: 6px;
+      float: left; } }
+  @media (min-width: 641px) {
+    .form-popup .form-control {
+      width: 420px; } }
+  @media (min-width: 641px) {
+    .form-popup .postcode-input {
+      width: 252px; } }
+  @media (min-width: 641px) {
+    .form-popup .summary,
+    .form-popup .address-type-toggle,
+    .form-popup .block-label,
+    .form-popup .button {
+      margin-left: 150px; } }
+  @media (min-width: 641px) {
+    .form-popup .postcode-button,
+    .form-popup .button-secondary {
+      margin-left: 0; } }
+  .form-popup .form-date {
+    margin-bottom: 0; }
+    @media (min-width: 641px) {
+      .form-popup .form-date .form-hint {
+        display: none; } }
+  @media (min-width: 641px) {
+    .form-popup .block-label {
+      padding: 15px 15px 15px 40px; } }
+  @media (min-width: 641px) {
+    .form-popup .block-label [type='checkbox'] {
+      top: 12px;
+      left: 12px; } }
+  .form-popup .postcodelookup {
+    position: relative; }
+    @media (min-width: 641px) {
+      .form-popup .postcodelookup .spinner {
+        position: absolute;
+        top: 10px;
+        right: 182px; } }
   .form-popup .error-summary {
     margin: 15px 15px 0;
     padding: 10px 10px 4px; }
@@ -3653,90 +3702,26 @@ input[type=number] {
           font-size: 22px; } }
     .form-popup .error-summary p {
       margin-bottom: 4px; }
-
-.form-popup .form-condensed {
-  padding: 30px 15px; }
-  @media (max-width: 640px) {
-    .form-popup .form-condensed {
-      padding-top: 0; } }
   @media (min-width: 641px) {
-    .form-popup .form-condensed .heading-medium {
-      display: none; } }
-  .form-popup .form-condensed .form-group {
-    margin-bottom: 15px; }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .form-label {
-      width: 150px;
-      margin-top: 6px;
-      float: left; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed [type='text'].form-control,
-    .form-popup .form-condensed [type='email'].form-control,
-    .form-popup .form-condensed select.form-control {
-      width: 420px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed [type='text'].postcode-input,
-    .form-popup .form-condensed [type='email'].postcode-input,
-    .form-popup .form-condensed select.postcode-input {
-      width: 252px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .hint {
-      margin-left: 150px; } }
-  .form-popup .form-condensed .form-date {
-    margin-bottom: 0; }
-    @media (min-width: 641px) {
-      .form-popup .form-condensed .form-date .form-hint {
-        display: none; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .address-type-toggle {
-      margin-left: 150px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .block-label {
-      width: auto;
-      margin-left: 150px;
-      padding: 15px 15px 15px 40px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .block-label input {
-      top: 12px;
-      left: 12px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .button {
-      margin-left: 150px; } }
-  .form-popup .form-condensed .postcode-button {
-    margin-left: 0; }
-  .form-popup .form-condensed .postcodelookup {
-    position: relative; }
-    @media (min-width: 641px) {
-      .form-popup .form-condensed .postcodelookup .spinner {
-        position: absolute;
-        top: 16px;
-        right: 182px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .error {
+    .form-popup .error {
       position: relative;
       padding-left: 0;
       border-left: 0; } }
   @media (min-width: 641px) {
-    .form-popup .form-condensed .error .form-label {
-      width: 150px; } }
-  @media (min-width: 641px) {
-    .form-popup .form-condensed .error .form-control {
+    .form-popup .error .form-control {
       margin-bottom: 28px; } }
   @media (min-width: 641px) {
-    .form-popup .form-condensed .error-message {
+    .form-popup .error-message {
       position: absolute;
       top: 42px;
       left: 150px; } }
   @media (min-width: 641px) {
-    .form-popup .form-condensed .form-date .error-message {
+    .form-popup .form-date .error-message {
       top: 78px;
       left: 0; } }
   @media (max-width: 640px) {
-    .form-popup .form-condensed .dob-label {
+    .form-popup .dob-label {
       display: none; } }
-
-.no-js .dob-label {
-  display: none; }
 
 @media (max-width: 400px) {
   .table-summary tr {
