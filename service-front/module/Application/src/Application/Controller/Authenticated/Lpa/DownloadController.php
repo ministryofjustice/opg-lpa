@@ -30,7 +30,7 @@ class DownloadController extends AbstractLpaController
             return new ViewModel();
         }
         
-        $this->layout('layout/download.phtml');
+        $this->layout('layout/download.twig');
 
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
         
