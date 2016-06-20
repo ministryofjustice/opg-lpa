@@ -133,8 +133,7 @@
 }) ? ''}}
 
 {{ canSign.setAttributes({
-    id: 'can-sign',
-    class:'donor-cannot-sign'
+    id: 'can-sign'
 }) ? '' }}
 
 {# form fields labels #}
@@ -188,7 +187,7 @@
         {{ macros.formGroup(lastname) }}
 
         <details class="form-group flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
-            <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
+            <summary class="summary" role="button" aria-expanded="false">Is this person known by any other names?</summary>
             <div>
                 {{ macros.formGroup(otherNames) }}
             </div>

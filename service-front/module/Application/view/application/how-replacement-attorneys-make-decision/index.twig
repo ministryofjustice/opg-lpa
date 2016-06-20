@@ -72,6 +72,9 @@
 	disable_html_escape: true
 }) ? '' }}
 
+{# form fields labels #}
+{{ howDetails.setOptions({label:'Details'}) ? '' }}
+
 <li id="primary-attorney-decision-sections" class="section current js-current">
 
 	<h2 class="heading-medium accordion-header flush--top">How should your replacement attorneys make decisions?</h2>
@@ -107,10 +110,8 @@
 
 			<p class="text">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. <a class="js-guidance" href="/guide#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
 
-            <div class="form-group {{ howDetails.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(howDetails) }}
-                {{ formElementErrorsV2(howDetails) }}
-            </div>
+			{{ macros.formGroup(howDetails) }}
+
         </fieldset>
 
         <div class="form-group">
