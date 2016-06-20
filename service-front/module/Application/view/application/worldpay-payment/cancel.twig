@@ -1,3 +1,7 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block content %}
+
 <section id="payment" class='section current'>
 
 	<h2 class="accordion-header">7. Making payment online through Worldpay payment gateway</h2>
@@ -6,7 +10,7 @@
 	
 		<div class="section-intro">
 			
-			<h3>Amount due: &pound;{{ lpa.payment.amount }}></h3>
+			<h3>Amount due: &pound;{{ lpa.payment.amount }}</h3>
 			
 		</div>
 		
@@ -21,3 +25,5 @@
 	</div>
 	
 </section>
+
+{% endblock %}
