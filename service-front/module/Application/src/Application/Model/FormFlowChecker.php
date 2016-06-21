@@ -60,7 +60,7 @@ class FormFlowChecker extends StateChecker
             'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
             'lpa/date-check'                                => 'isCreatedAccessible',
-            'lpa/summary'                                   => 'isCreatedAccessible',
+            'lpa/summary'                                   => 'isInstructionsAccessible',
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
