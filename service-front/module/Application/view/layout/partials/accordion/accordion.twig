@@ -175,6 +175,16 @@
         	})
         }}
     {% endif %}
+    
+    {% if (item.routeName == 'lpa/payment/summary') %}
+        {{ macros.accordionBar({
+            	'desktop' : item.params.values, 
+            	'mobile' : item.params.values,
+        		'status' : item.params.status,
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        	})
+        }}
+    {% endif %}
 
     {% if (item.routeName == 'lpa/payment/return/failure') %}
         {{ macros.accordionBar({
