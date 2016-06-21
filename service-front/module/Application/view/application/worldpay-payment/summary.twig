@@ -1,0 +1,31 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form,  {}) %}
+        
+{{ form.setAttribute('class', 'form') ? '' }}
+    
+{% set email = form.get('email') %}
+{{ email.setOptions( {'label' : 'Email address'} ) ? '' }}
+{{ email.setAttributes({'id':'email'}) ? '' }}
+
+{{ form.prepare() ? '' }}
+
+<section id="payment-section" class="section current">
+    
+    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Summary</h2>
+
+    <div class="accordion-content">
+    
+    {% include 'application/summary/partials/summary-table.twig' %}
+    
+    </div>
+    
+    <p><a href="{{ payByChequeRoute }}">I want to pay by cheque</a></p>
+    
+</section>
+
+{% endblock %}

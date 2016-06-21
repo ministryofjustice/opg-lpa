@@ -54,6 +54,7 @@ class FormFlowChecker extends StateChecker
             'lpa/repeat-application'                        => 'isRepeatApplicationAccessible',
             'lpa/fee-reduction'                             => 'isFeeReductionAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
+            'lpa/payment/summary'                           => 'isPaymentAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
             'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
@@ -85,6 +86,7 @@ class FormFlowChecker extends StateChecker
             'lpa/repeat-application'                        => 'returnToRepeatApplication',
             'lpa/fee-reduction'                             => 'returnToFeeReduction',
             'lpa/payment'                                   => 'returnToPayment',
+            'lpa/payment/summary'                           => 'returnToPaymentSummary',
             'lpa/view-docs'                                 => 'returnToViewDocs',
     );
     
@@ -127,7 +129,8 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
             'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
-            'lpa/payment'                                   => 'lpa/complete',
+            'lpa/payment'                                   => 'lpa/payment/summary',
+            'lpa/payment/summary'                           => 'lpa/complete',
             
     );
 
@@ -985,6 +988,16 @@ class FormFlowChecker extends StateChecker
         }
         else {
             return 'lpa/fee-reduction';
+        }
+    }
+
+    private function returnToPaymentSummary()
+    {
+        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
+            return 'lpa/payment/summary';
+        }
+        else {
+            return 'lpa/payment';
         }
     }
     

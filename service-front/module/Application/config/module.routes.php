@@ -721,6 +721,16 @@ return [
                         ),
                         'may_terminate' => true,
                         'child_routes' => array(
+                            'summary' => array(
+                                'type' => 'Literal',
+                                'options' => array(
+                                    'route' => '/summary',
+                                    'defaults' => array(
+                                        'controller' => 'PaymentControllerFactory',
+                                        'action'     => 'summary',
+                                    ),
+                                ),
+                            ),
                             'return' => array(
                                 'type'    => 'Literal',
                                 'options' => array(
