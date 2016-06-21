@@ -51,6 +51,8 @@ class WorldpayPaymentController extends AbstractLpaController
                 // set paymentEmail in session container.
                 $container->email = $form->getData()['email'];
                 
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $this->getLpa()->id]);
+                
             } // if($form->isValid())
         }
         else {
