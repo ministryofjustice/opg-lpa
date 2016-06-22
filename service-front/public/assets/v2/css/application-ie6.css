@@ -2080,6 +2080,12 @@ input[type=number] {
   margin-top: 10px;
   color: #0b0c0c; }
 
+.form-group-checkbox {
+  float: left;
+  width: 100%; }
+  .form-group-checkbox.error {
+    margin-bottom: 10px; }
+
 .hidden {
   display: none !important;
   visibility: hidden !important; }
