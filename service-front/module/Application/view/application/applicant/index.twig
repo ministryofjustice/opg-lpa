@@ -126,13 +126,13 @@
 
             <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'error'}}">
                 {{ formElement(whoIsRegistering) }}
-                {{ formElementErrorsV2(whoIsRegistering) }}
                 {% if (attorneyList) %}
                     <div class="panel-indent js-attorney-list">
                         {{ formElement(attorneyList) }}
                         {{ formElementErrorsV2(attorneyList) }}
                     </div>
                 {% endif %}
+                {{ formElementErrorsV2(whoIsRegistering) }}
             </div>
 
         </fieldset>
