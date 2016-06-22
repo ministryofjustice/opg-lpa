@@ -352,10 +352,10 @@ button:focus,
     margin-bottom: -3px;
     padding-top: 2px;
     border-bottom: 1px solid transparent;
-    background: image-url("images/gov.uk_logotype_crown.png") no-repeat;
+    background: url("images/gov.uk_logotype_crown.png") no-repeat;
     background-size: 35px 31px;
     background-position: 0 0;
-    background-image: image-url("images/gov.uk_logotype_crown-1x.png"); }
+    background-image: url("images/gov.uk_logotype_crown-1x.png"); }
     #global-header #logo img {
       position: relative;
       top: -2px;
@@ -582,10 +582,10 @@ button:focus,
             height: 17px;
             overflow: hidden;
             text-indent: -999em;
-            background: image-url("images/open-government-licence.png") 0 0 no-repeat; }
+            background: url("images/open-government-licence.png") 0 0 no-repeat; }
             @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
               #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
-                background-image: image-url("images/open-government-licence_2x.png");
+                background-image: url("images/open-government-licence_2x.png");
                 background-size: 41px 17px; } }
         #footer .footer-meta .footer-meta-inner .open-government-licence p {
           font-family: "nta", Arial, sans-serif;
@@ -615,7 +615,7 @@ button:focus,
       margin-top: 0; }
       #footer .footer-meta .copyright a {
         display: block;
-        background-image: image-url("images/govuk-crest.png");
+        background-image: url("images/govuk-crest.png");
         background-repeat: no-repeat;
         background-position: 50% 0%;
         background-position: 100% 0%;
@@ -625,7 +625,7 @@ button:focus,
         padding: 115px 0 0 0; }
         @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
           #footer .footer-meta .copyright a {
-            background-image: image-url("images/govuk-crest-2x.png");
+            background-image: url("images/govuk-crest-2x.png");
             background-size: 125px 102px; } }
 
 @font-face {
@@ -2803,6 +2803,9 @@ input[type=number] {
   padding: 15px;
   border-bottom: 1px solid #bfc1c3;
   background-color: #f8f8f8; }
+
+.panel-indent {
+  margin-left: 45px; }
 
 .alert .icon {
   margin-right: 10px;
