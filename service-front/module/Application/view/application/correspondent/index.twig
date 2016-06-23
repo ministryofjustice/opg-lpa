@@ -116,7 +116,7 @@
 
             <p>You can choose more than one.</p>
 
-            <div class="form-group">
+            <div class="form-group {{ correspondence.getMessages|length >0 ? 'error'}}">
 	            <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
 	                {{ formElement(contactByPost) }}
 	                {{ contactByPost.getOption('label')|raw }}
@@ -152,6 +152,8 @@
 		            </label>
 	                {{ formElementErrorsV2(contactInWelsh) }}
 		        </div>
+		        
+		        {{ formElementErrorsV2(correspondence) }}
 
             </div>
 
