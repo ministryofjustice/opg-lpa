@@ -8,21 +8,41 @@
 
 {% import "application/macros.twig" as macros %}
 
-{{ switcherForm.setAttribute('class', 'form') ? '' }}
+{# Error messages #}
+
+{# -- Switcher form -- #}
+{# Error messages #}
+{% set switcherForm = formErrorTextExchange(switcherForm,  {
+    'switch-to-type' : {
+        'Value is required and can\'t be empty' : 'Please select a person'
+    }
+}) %}
+
+{# Set form fields variables #}
 {% set sCsrf = switcherForm.get(switcherForm.csrfName()) %}
-{{ sCsrf.setAttributes({id:'secret'}) ? '' }}
 {% set switchTo = switcherForm.get('switch-to-type') %}
-{{ switchTo.setAttributes({'id':'switch-to-type', 'class':'js-reusable'}) ? '' }}
-{{ switchTo.setOptions({label:'Use these details', empty_option: 'Choose a person'}) ? '' }}
 {% set switchSubmit = switcherForm.get('submit') %}
+
+{# form fields config #}
+{{ sCsrf.setAttributes({id:'secret'}) ? '' }}
 {{ switchSubmit.setAttributes({value:'switch'}) ? '' }}
-{{ switcherForm.prepare() ? '' }}
-    
-{% set form = correspondentForm %}
-{{ form.setAttributes({
-    'class':'form form-condensed js-PersonForm js-PostcodeLookup'
+{{ switchTo.setAttributes({
+    'id':'switch-to-type',
+    'class':'js-reusable form-control'
 }) ? '' }}
-    
+{{ switchTo.setOptions({
+    empty_option: 'Select a person'
+}) ? '' }}
+{{ switcherForm.prepare() ? '' }}
+
+{# form fields labels #}
+{{ switchTo.setOptions({
+    label:'Use these details'
+}) ? '' }}
+
+{# -- Correspondent form -- #}
+{# Set form fields variables #}
+{% set form = correspondentForm %}
 {% set csrf = form.get(form.csrfName) %}
 {% set who = form.get('who') %}
 {% set title = form.get('name-title') %}
@@ -36,14 +56,71 @@
 {% set email = form.get('email-address') %}
 {% set phone = form.get('phone-number') %}
 
-{{ who.setOptions({label:'Role'}) ? '' }}
-    
+{# form fields config #}
+{{ form.setAttributes({
+    'class':'form form-condensed js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+
+{{ who.setAttributes({
+    class: 'form-control'
+}) ? '' }}
+
+{{ title.setAttributes({
+    id:'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ firstname.setAttributes({
+    id: 'name-first',
+    class: 'form-control'
+}) ? '' }}
+
+{{ lastname.setAttributes({
+    id: 'name-last',
+    class: 'form-control'
+}) ? '' }}
+
+{{ company.setAttributes({
+    id:'company-name',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address1.setAttributes({
+    id:'address-address1',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address2.setAttributes({
+    id:'address-address2',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address3.setAttributes({
+    id:'address-address3',
+    class: 'form-control'
+}) ? '' }}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setAttributes({
+    id: 'email-address',
+    class: 'form-control'
+}) ? ''}}
+
+{{ phone.setAttributes({
+    id: 'phone-number',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ who.setOptions({label:'Role'}) ? '' }} 
 {{ title.setOptions({label:'Title'}) ? '' }}
-{{ title.setAttributes({id:'name-title'}) ? '' }}
 {{ firstname.setOptions({label:'First names'}) ? '' }}
 {{ lastname.setOptions({label:'Last name'}) ? '' }}
 {{ company.setOptions({label:'Company name'}) ? '' }}
-{{ address1.setAttributes({id:'address-address1'}) ? '' }}
 {{ address1.setOptions({label:'Address line 1'}) ? '' }}
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
@@ -53,59 +130,81 @@
 
 {{ form.prepare() ? '' }}
 
-<h2 class="header">Edit the correspondent details</h2>
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Edit the correspondent details</h2>
+</header>
 
-{{ form().openTag(switcherForm)|raw }}
-{{ formElement(sCsrf) }}
-{{ formErrorList(switcherForm) }}
+{# switcher form - error summary #}
+{{ macros.formErrorSummary(error, switcherForm, 'There was a problem submitting the form') }}
 
-<div class="role-select group">
-    <label for="switch-to-type" class="optional">Use these details</label>
-    {{ formSelect(switchTo) }}
-    {{ formElementErrors(switchTo) }}
-    <input type="submit" name="switcher-submit" value="Switch" class="button details-picker"> 
-</div>
+{# switcher form - begin form #}
+{{ switcherForm.prepare() ? '' }}
+{{ form().openTag( switcherForm )|raw }}
+    {{ formElement(sCsrf) }}
 
+    <div class="panel-actions">
+        <fieldset>
+            <legend class="visuallyhidden">Select details from a different person</legend>
+
+            {{ macros.formGroup(switchTo) }}
+
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" name="switcher-submit" value="Switch to selected person" class="button details-picker"> 
+        </div>
+    </div>
 {{ form().closeTag|raw }}
 
+{# correspondent form - begin form #}
+{{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
+    {{ formElement(csrf) }}
 
-{{ formElement(form.get( form.csrfName )) }}
+    <h2 class="heading-medium">Correspondent's details?</h2>
 
+    <fieldset>
+        <legend class="visuallyhidden">Add correspondent's details</legend>
 
-<fieldset>
+        {{ macros.formGroup(who) }}
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
 
-    {{ macros.formGroup(who) }}
-    
-    {{ macros.formGroup(title) }}
-    {{ macros.formGroup(firstname) }}
-    {{ macros.formGroup(lastname) }}
-	{{ macros.formGroup(company) }}
+    </fieldset>
 
-</fieldset>
+    <h2 class="heading-medium">Correspondent's company name?</h2>
 
-<fieldset class="postcodelookup">
-    <legend class="visuallyhidden">Address</legend>
-    <div class="js-PostcodeLookup__postal-add">
-        {{ macros.formGroup(address1) }}
-        {{ macros.formGroup(address2) }}
-        {{ macros.formGroup(address3) }}
-        {{ macros.formGroup(postcode) }}
-    </div>
-</fieldset>
+    <fieldset>
+        <legend class="visually hidden">Add company name</legend>
+    	{{ macros.formGroup(company) }}
+    </fieldset>
 
-<fieldset>
+    <h2 class="heading-medium">What is the correspondent's address?</h2>
 
-    {{ macros.formGroup(email) }}
-    
-    {{ macros.formGroup(phone) }}
+    <fieldset class="postcodelookup">
+        <legend class="visuallyhidden">Add address details</legend>
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+    </fieldset>
 
-</fieldset>
+    <h2 class="heading-medium">Correspondent's contact details?</h2>
 
-<p class="action group">
-<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
-<button name="cancel" type="button" class="button-secondary">Cancel</button>
-</p>
+    <fieldset>
+        <legend class="visuallyhidden">Add correspondent's contact details</legend>
+
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(phone) }}
+
+    </fieldset>
+
+    <input type="submit" name="submit" id="form-save" value="Save details" class="button">
+    <a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
 
 {{ form().closeTag|raw }}
 
