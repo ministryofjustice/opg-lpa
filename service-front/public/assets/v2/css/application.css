@@ -2256,6 +2256,9 @@ input[type=number] {
   .form-group-checkbox.error {
     margin-bottom: 10px; }
 
+.error .form-group-checkbox .block-label:last-child {
+  margin-bottom: 10px; }
+
 .hidden {
   display: none !important;
   visibility: hidden !important; }
