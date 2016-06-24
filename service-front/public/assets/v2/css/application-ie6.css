@@ -2008,7 +2008,7 @@ input[type=number] {
     display: block;
     color: #6f777b; }
 
-.help-sections h1, .no-js .popup-header-title.heading-small {
+.help-sections h1, .dialog__title-block, .no-js .popup-header-title.heading-small {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -2020,7 +2020,7 @@ input[type=number] {
   margin-bottom: 0.41667em;
   margin-top: 1.25em;
   margin-bottom: 0.55556em; }
-  .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
+  .help-sections h1 .heading-secondary, .dialog__title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -3120,6 +3120,25 @@ input[type=number] {
   .form-popup .form-date .error-message {
     top: 78px;
     left: 0; }
+
+.dialog {
+  font-family: "nta", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 19px;
+  line-height: 1.31579;
+  -webkit-font-smoothing: antialiased; }
+  .dialog.popup {
+    max-width: 600px;
+    margin: 2em auto; }
+
+.dialog__container {
+  padding: 0 30px 30px 30px; }
+
+.dialog__message-block {
+  margin-bottom: 30px; }
 
 .table-summary tr {
   display: block;

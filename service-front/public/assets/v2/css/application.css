@@ -2162,7 +2162,7 @@ input[type=number] {
         padding-top: 4px;
         padding-bottom: 6px; } }
 
-.help-sections h1, .no-js .popup-header-title.heading-small {
+.help-sections h1, .dialog__title-block, .no-js .popup-header-title.heading-small {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -2171,14 +2171,14 @@ input[type=number] {
   margin-top: 1.04167em;
   margin-bottom: 0.41667em; }
   @media (min-width: 641px) {
-    .help-sections h1, .no-js .popup-header-title.heading-small {
+    .help-sections h1, .dialog__title-block, .no-js .popup-header-title.heading-small {
       font-size: 36px;
       line-height: 1.11111; } }
   @media (min-width: 641px) {
-    .help-sections h1, .no-js .popup-header-title.heading-small {
+    .help-sections h1, .dialog__title-block, .no-js .popup-header-title.heading-small {
       margin-top: 1.25em;
       margin-bottom: 0.55556em; } }
-  .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
+  .help-sections h1 .heading-secondary, .dialog__title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -2189,11 +2189,11 @@ input[type=number] {
     display: block;
     color: #6f777b; }
     @media (min-width: 641px) {
-      .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
+      .help-sections h1 .heading-secondary, .dialog__title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
         font-size: 24px;
         line-height: 1.25; } }
     @media (min-width: 641px) {
-      .help-sections h1 .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
+      .help-sections h1 .heading-secondary, .dialog__title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
         padding-top: 6px;
         padding-bottom: 4px; } }
 
@@ -2667,10 +2667,14 @@ input[type=number] {
       width: 100%; } }
 
 @media (max-width: 640px) {
-  .button {
+  .button,
+  .button-secondary {
     text-align: center; } }
 @media (max-width: 640px) {
-  .button + .button {
+  .button + .button,
+  .button + .button-secondary,
+  .button-secondary + .button,
+  .button-secondary + .button-secondary {
     margin-top: 15px; } }
 
 .help-header {
@@ -3363,10 +3367,14 @@ input[type=number] {
       width: 100%; } }
 
 @media (max-width: 640px) {
-  .button {
+  .button,
+  .button-secondary {
     text-align: center; } }
 @media (max-width: 640px) {
-  .button + .button {
+  .button + .button,
+  .button + .button-secondary,
+  .button-secondary + .button,
+  .button-secondary + .button-secondary {
     margin-top: 15px; } }
 
 @media (min-width: 641px) {
@@ -3734,6 +3742,32 @@ input[type=number] {
   @media (max-width: 640px) {
     .form-popup .dob-label {
       display: none; } }
+
+.dialog {
+  font-family: "nta", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 400;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased; }
+  @media (min-width: 641px) {
+    .dialog {
+      font-size: 19px;
+      line-height: 1.31579; } }
+  .dialog.popup {
+    max-width: 600px; }
+    @media (max-width: 1000px) {
+      .dialog.popup {
+        margin: 2em auto; } }
+    @media (max-width: 640px) {
+      .dialog.popup {
+        margin: 2em .5em 10em; } }
+
+.dialog__container {
+  padding: 0 30px 30px 30px; }
+
+.dialog__message-block {
+  margin-bottom: 30px; }
 
 @media (max-width: 400px) {
   .table-summary tr {

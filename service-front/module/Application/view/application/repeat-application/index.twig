@@ -85,6 +85,9 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
         <fieldset class="inline">
             <legend class="visuallyhidden">Is this a repeat application?</legend>
 
