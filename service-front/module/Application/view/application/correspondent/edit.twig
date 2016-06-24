@@ -157,6 +157,9 @@
     </div>
 {{ form().closeTag|raw }}
 
+{# switcher form - error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
 {# correspondent form - begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
