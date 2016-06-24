@@ -65,10 +65,10 @@
           'cancelClass': 'js-dialog-cancel'
         });
         moj.Modules.Popup.open(html, {
-          ident: 'dialog-confirmation'
+          ident: 'dialog'
         });
 
-        $('.dialog-confirmation').on('click', 'a', function (evt) {
+        $('.dialog').on('click', 'a', function (evt) {
           var $target = $(evt.target);
 
           if (!formSubmitted) {
