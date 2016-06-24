@@ -20,7 +20,7 @@
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -43,7 +43,7 @@
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -302,7 +302,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -710,7 +710,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -740,7 +740,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -757,7 +757,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -771,7 +771,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }
@@ -794,7 +794,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after {
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after {
   content: "";
   display: block;
   clear: both; }

@@ -17,6 +17,7 @@
 }
 
 .accordion-info {
+    @extend %contain-floats;
     margin-bottom: $gutter;
     border-bottom: 1px solid $border-colour;
 }
