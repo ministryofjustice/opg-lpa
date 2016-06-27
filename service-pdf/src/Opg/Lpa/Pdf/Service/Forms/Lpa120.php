@@ -54,6 +54,8 @@ class Lpa120 extends AbstractForm
         $pdf->fillForm($mappings)
             ->flatten()
             ->saveAs($this->generatedPdfFilePath);
+
+        $this->protectPdf();
         
         return $this;
         

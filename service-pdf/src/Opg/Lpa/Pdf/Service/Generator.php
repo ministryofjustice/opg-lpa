@@ -29,7 +29,7 @@ class Generator implements GeneratorInterface {
 
         # CHECK $TYPE IS VALID. THROW AN EXCEPTION IF NOT.
 
-        $this->config = Config::getInstance( );
+        $this->config = Config::getInstance();
         $this->formType = $formType;
         $this->lpa = $lpa;
         $this->response = $response;

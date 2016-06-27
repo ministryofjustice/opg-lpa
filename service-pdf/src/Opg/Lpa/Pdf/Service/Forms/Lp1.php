@@ -67,6 +67,7 @@ abstract class Lp1 extends AbstractForm
         $this->generateAdditionalPages();
         $this->generateCoversheets();
         $this->mergePdfs();
+        $this->protectPdf();
         
         return $this;
         

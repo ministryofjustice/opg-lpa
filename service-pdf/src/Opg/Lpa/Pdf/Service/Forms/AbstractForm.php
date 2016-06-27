@@ -7,6 +7,8 @@ use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use ZendPdf\PdfDocument as ZendPdfDocument;
 
+use Opg\Lpa\Pdf\Service\PdftkInstance;
+
 abstract class AbstractForm
 {
     const CHECK_BOX_ON = 'On';
@@ -122,7 +124,21 @@ abstract class AbstractForm
         $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
         $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
     }
-    
+
+
+    protected function protectPdf(){
+
+        $pdf = PdftkInstance::getInstance( $this->generatedPdfFilePath );
+
+        $password = Config::getInstance()['pdf']['password'];
+
+        $pdf->allow('Printing CopyContents')
+            ->flatten()
+            ->setPassword( $password )
+            ->saveAs($this->generatedPdfFilePath);
+
+    }
+
     /**
      * Get generated PDF file path
      * @return string

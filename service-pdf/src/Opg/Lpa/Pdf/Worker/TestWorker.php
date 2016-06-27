@@ -10,7 +10,7 @@ class TestWorker extends AbstractWorker {
      * @return \Opg\Lpa\Pdf\Service\ResponseInterface
      */
     protected function getResponseObject( $docId ){
-        return new Response\S3Response( $docId );
+        return new Response\TestResponse( $docId );
     }
 
     public function run( $docId, $type, $lpa ){
