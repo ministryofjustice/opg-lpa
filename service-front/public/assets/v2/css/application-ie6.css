@@ -2877,13 +2877,14 @@ input[type=number] {
   float: right; }
 
 .panel-cta {
-  padding: 15px 15px 30px;
+  padding: 15px;
   background-color: #dee0e2; }
   .panel-cta .panel-body {
     font-weight: 700;
     text-align: center; }
   .panel-cta .panel-button {
-    text-align: center; }
+    text-align: center;
+    padding-bottom: 15px; }
 
 .js-enabled .panel-actions {
   padding: 15px;
