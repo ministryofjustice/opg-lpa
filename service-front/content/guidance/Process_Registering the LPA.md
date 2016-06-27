@@ -65,4 +65,4 @@ The registered LPA document that OPG sends you is the same form that you filled 
 ### Related help topics
 * [Signing the LPA](/help/#topic-signing-the-lpa)
 * [Fees and reductions](/help/#topic-fees-and-reductions)
-* [People to notify](/help/#topic-people-to-be-told)
+* [People to notify](/help/#topic-people-to-notify)
