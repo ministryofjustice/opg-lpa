@@ -1,103 +1,112 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+    Last steps
+{% endblock %}
+
 {% block content %}
 
-<div class='accordion-content'>
-
-    <div class="next-step-section">
+<div class="text">
         
-        {% if isPaymentSkipped %}
-       
-            <h2>Thank you for your payment of &pound;{{ paymentAmount|number_format(2, '.', ',') }}</h2>
-       
-            <h3>Your payment reference number is: {{ paymentReferenceNo }}</h3>
-            
-        {% endif %}
-    
-        <h2>Print and sign your LPA</h2>
+    {% if not isPaymentSkipped %}
+   
+        <h2>Thank you for your payment of &pound;{{ paymentAmount|number_format(2, '.', ',') }}</h2>
+   
+        <h3>Your payment reference number is: {{ paymentReferenceNo }}</h3>
+        
+    {% endif %}
 
-        <p class="block">You’re now ready to print and sign the complete LPA document, then send it to the Office of the Public Guardian.</p>
+    <h2 class="heading-large">Print and sign your LPA</h2>
 
-        <p class="block">It’s essential that you sign the parts of the LPA in the right order. If you sign in the wrong order, it will delay your registration.</p>
+    <p>You’re now ready to print and sign the complete LPA document, then send it to the Office of the Public Guardian.</p>
 
-        <p class="block"><a class="js-guidance" href="/guidance/#topic-signing-the-lpa" data-journey-click="stageprompt.lpa:help:signing-the-lpa">This guide</a> shows you how to sign in the right order – you can then use <a href="{{ dateCheckUrl }}">this tool</a> to check you’ve got it right.</p>
+    <p>It’s essential that you sign the parts of the LPA in the right order. If you sign in the wrong order, it will delay your registration.</p>
 
-        <p class="block">If you sign in the wrong order, you’ll need to print and sign the relevant parts of the LPA again.</p>
+    <p><a class="js-guidance" href="/guidance/#topic-signing-the-lpa" data-journey-click="stageprompt.lpa:help:signing-the-lpa">This guide</a> shows you how to sign in the right order – you can then use <a href="{{ dateCheckUrl }}">this tool</a> to check you’ve got it right.</p>
 
+    <p>If you sign in the wrong order, you’ll need to print and sign the relevant parts of the LPA again.</p>
 
-        <div class="form-download">
-            <p><a class="pdf_dl_lnk" href="{{ lp1Url }}" target="_blank">Download your print-ready LPA form</a></p>
-            
-            {% if lp120Url %}
-            <p><a class="pdf_dl_lnk" href="{{ lpa120Url }}" target="_blank">Download your fee remissions and exemption form</a></p>
-            {% endif %}
-            
-            {% if lp3Url %}
-            <p><a class="pdf_dl_lnk" href="{{ lp3Url }}" target="_blank">Download the letter to send to your 'people to notify' (PDF)</a></p>
-            {% endif %}
-        </div>
-
-    </div>
-
-    <div class="next-step-section">
-
-        <h2>Post your LPA to the Office of the Public Guardian</h2>
-
-        <p>You need to send us:</p>
-
-        <ul>
-            <li>Your signed LPA (all sections, from 1-15)</li>
-            <li>If you're applying for a fee reduction
-                <ul>
-                    <li>a completed application form for your exemption (LPA 120A)</li>
-                    <li>evidence to support this application</li>
-                </ul>
+    <ul class="panel-cta">
+        <li>
+            <a class="pdf_dl_lnk" href="{{ lp1Url }}" target="_blank">Download your print-ready LPA form</a> 
+        </li>
+        
+        {% if lp120Url %}
+            <li>
+                <a class="pdf_dl_lnk" href="{{ lpa120Url }}" target="_blank">Download your fee remissions and exemption form</a>
             </li>
-        </ul>
+        {% endif %}
+        
+        {% if lp3Url %}
+            <li>
+                <a class="pdf_dl_lnk" href="{{ lp3Url }}" target="_blank">Download the letter to send to your 'people to notify' (PDF)</a>
+            </li>
+        {% endif %}
+    </ul>
 
-        <p>And if you're paying by cheque:</p>
+    <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
 
-        <ul>
-            <li>A cheque for the application fee, payable to ‘Office of the Public Guardian’</li>
-        </ul>
+    <p>You need to send us:</p>
 
-        <p>Post all documents to this address:</p>
+    <ul class="list list-bullet">
+        <li>Your signed LPA (all sections, from 1-15)</li>
+        <li>If you're applying for a fee reduction
+            <ul>
+                <li>a completed application form for your exemption (LPA 120A)</li>
+                <li>evidence to support this application</li>
+            </ul>
+        </li>
+    </ul>
 
-        <p><strong>
-                Office of the Public Guardian<br>
-                PO Box 16185<br>
-                Birmingham<br>
-                B2 2WH
-            </strong></p>
+    <p>And if you're paying by cheque:</p>
 
-        {% if peeopleToNotify %}                     
-            <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
-        {% endif %}  
+    <ul class="list list-bullet">
+        <li>A cheque for the application fee, payable to ‘Office of the Public Guardian’</li>
+    </ul>
 
-        <h2>What happens next?</h2>
+    <p>Post all documents to this address:</p>
 
-        <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application. This includes a
-            waiting period in which anyone entitled to object to the registration of the LPA can lodge their objection.
-            This waiting period is an important safeguard and is required by law.</p>
+    <p>
+        <strong class="bold-small">
+            Office of the Public Guardian<br>
+            PO Box 16185<br>
+            Birmingham<br>
+            B2 2WH
+        </strong>
+    </p>
 
-        <p>We'll send the registered LPA and any correspondence to {{ correspondentName }}.</p>
+    {% if peeopleToNotify %}                     
+        <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
+    {% endif %}  
 
-        <h2>Create another LPA?</h2>
+    <h2 class="heading-large">What happens next?</h2>
 
-        <p><strong><a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a></strong>
-            (you'll be able to add people in a single click).</p>
+    <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application. This includes a waiting period in which anyone entitled to object to the registration of the LPA can lodge their objection. This waiting period is an important safeguard and is required by law.</p>
 
-        <p><a href="/user/dashboard/create">Make an LPA from scratch</a></p>
+    <p>We'll send the registered LPA and any correspondence to {{ correspondentName }}.</p>
 
-        <h2>Finished?</h2>
+    <h2 class="heading-large">Create another LPA?</h2>
 
-        <p><a href="/user/dashboard">View my LPAs</a></p>
+    <ul class="list">
+        <li>
+            <a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click). 
+        </li>
+        <li>
+            <a href="/user/dashboard/create">Make an LPA from scratch</a>
+        </li>
+    </ul>
 
-        <p><a href="/logout">Sign out of this service</a></p>
+    <h2 class="heading-large">Finished?</h2>
 
-
-    </div>
-
+    <ul class="list">
+        <li>
+            <a href="/user/dashboard">View my LPAs</a>
+        </li>
+        <li>
+            <a href="/logout">Sign out of this service</a>
+        </li>
+    </ul>
+    
 </div>
 
 {% endblock %}
