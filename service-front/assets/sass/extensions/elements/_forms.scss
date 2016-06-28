@@ -28,3 +28,20 @@
     margin-top: 10px;
     color: $black;
 }
+
+.form-group-checkbox {
+    float: left;
+    width: 100%;
+    &.error {
+        margin-bottom: 10px;
+    }
+}
+
+.error {
+    .form-group-checkbox {
+        .block-label:last-child {
+            margin-bottom: 10px;
+        }
+    }
+}
+

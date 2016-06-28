@@ -2,7 +2,7 @@
 // PANELS
 
 .panel-cta {
-    padding: $gutter-half $gutter-half $gutter;
+    padding: $gutter-half;
     background-color: $panel-colour;
 
     @include media(mobile) {
@@ -16,6 +16,7 @@
     
     .panel-button {
         text-align: center;
+        padding-bottom: $gutter-half;
     }
 }
 
@@ -25,4 +26,8 @@
         border-bottom: 1px solid $border-colour;
         background-color: $grey-4;
     }
+}
+
+.panel-indent {
+    margin-left: 45px;
 }

@@ -1,23 +1,24 @@
-{% extends 'layout/twig/registration-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form, {}) %}
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
+        'reductionOptions': {
+            'Value is required and can\'t be empty' : 'Please choose one of the options' 
+        }
+   }) 
+%}
 
-{{ form.setAttribute('class', 'form') ? '' }}
-
-{% set csrf = form.get(form.csrfName) %}
-
+{# Set form fields variables #}
 {% set reductionOptions = form.get('reductionOptions') %}
-{{ reductionOptions.setLabelOptions({disable_html_escape: true}) ? '' }}
 {% set reductionOptionsValueOptions = reductionOptions.getOptions()['value_options'] %}
 
 {% set reductionOptionsValueOptions = {
-			'reducedFeeReceivesBenefits' :
-				{ 
-				  label: "The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
+	'reducedFeeReceivesBenefits' : { 
+		label: "The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
         <div class=\"revised-fee hidden\" id=\"revised-fee-0\">
         	<h2>Reduced fee: &pound;0</h2>
             <p>To apply for this exemption, you must enclose copies of letters from the Department for Work and Pensions or your benefit provider. The 
@@ -78,45 +79,63 @@
 	 		    }		 		    	 		     		    
 		}
 %}
-    
-{{ reductionOptions.setOptions({value_options: reductionOptionsValueOptions}) ? '' }}
+  
+{# form fields config #} 
+{{ reductionOptions.setLabelOptions({
+	disable_html_escape: true
+}) ? '' }}
 
-{{ form.prepare() ? '' }}
+{{ reductionOptions.setOptions({
+	label_attributes: {'class': 'block-label'},
+	value_options: reductionOptionsValueOptions
+}) ? '' }}
 
-<section id="fee-reduction-section" class="section current">
+
+
+<li id="fee-reduction-section" class="section current js-current">
+
+	<h2 class="heading-medium accordion-header flush--top">Do you want to apply to pay a reduced fee?</h2>
 	
-	<h2 class="accordion-header">{{ accordionIdx(lpa) }}. Do you want to apply to pay a reduced fee?</h2>
-	
-    <div class="accordion-content">
-    	<div class="section-intro">
+    <div class="accordion-info">
+    	<div class="text">
                 <p>If the donor has an income of less than £12,000 a year before tax or receives certain benefits, they might be eligible for a reduced fee, or no fee at all.</p>
                 
-                <p><a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
-    	
+                <p><a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
 		</div>
-	    
-    	<div class="section-intro">
-        {{ form().openTag( form )|raw }}
-            
-        {{ formElement(csrf) }}
-		{{ formElementErrors(csrf) }}
+	</div>
+	   
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }} 
+        {{ formElement(form.get( form.csrfName )) }}
+
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <fieldset>
+            <legend class="visuallyhidden">Reduced fee options</legend>
+
+            <h2 class="heading-medium flush--top">Reduced fee options</h2>
+
+            <div class="form-group {{ reductionOptions.getMessages|length >0 ? 'error'}}">
         
-        <div class="emphasised option group">
-        	{{ formElement(reductionOptions) }}
-			{{ formElementErrors(reductionOptions) }}
-        </div>
-        </div>
+		        <div class="emphasised option group">
+		        	{{ formElement(reductionOptions) }}
+					{{ formElementErrorsV2(reductionOptions) }}
+		        </div>
+
+		    </div>
+
+	    </fieldset>
         
         <div class="accordion-actions">
 			<p>
                 <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
             </p>
         </div>
-            
-        {{ form().closeTag|raw }}
-    	
-    </div>
+
+	{{ form().closeTag|raw }}
     
-</section>
+</li>
 
 {% endblock %}

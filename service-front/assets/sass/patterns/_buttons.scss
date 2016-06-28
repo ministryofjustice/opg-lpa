@@ -22,12 +22,14 @@
     }
 }
 
-.button {
+.button,
+.button-secondary {
     @include media(mobile) {
         text-align: center;
     }
     
-    + .button {
+    + .button,
+    + .button-secondary {
         @include media(mobile) {
             margin-top: 15px;
         }

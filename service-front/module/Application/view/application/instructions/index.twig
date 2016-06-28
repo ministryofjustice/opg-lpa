@@ -1,4 +1,4 @@
-{% extends 'layout/twig/creation-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
@@ -38,7 +38,7 @@
     <div class="text">
         <p>(You've entered all the essential information needed for your LPA.)</p>
 
-        <p>You can <a href="">review your LPA</a> and check everything's correct before you continue. You can also click on any sections above to make changes.</p>
+        <p>You can <a href="{{ url('lpa/summary', {'lpa-id': lpa.id}) }}">review your LPA</a> and check everything's correct before you continue. You can also click on any sections above to make changes.</p>
 
         <p><strong class="bold-small">Your LPA is not finished until you have registered your LPA.</strong></p>
 
@@ -55,9 +55,9 @@
         
             <summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions for the attorneys? (optional)</summary>
 
-            <div>
+            <div class="panel panel-border-narrow">
 
-                <div class="text">
+                <div class="form-group text">
                     <p>You don't have to put anything here, but you can state things that the attorneys must or mustn't do, give guidance that you'd like them to follow, or provide details of how they should be paid for their time.</p>
                     
                     <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-instructions-and-preferences" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on instructions and preferences</a>. It contains useful examples and can help you avoid mistakes.</p>
