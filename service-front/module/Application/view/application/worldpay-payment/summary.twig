@@ -22,6 +22,23 @@
     
     {% include 'application/summary/partials/summary-table.twig' %}
     
+    {{ form().openTag( form )|raw }}
+    
+    {{ formElement(form.get( form.csrfName )) }}
+    
+        <div class="section-intro">
+
+            <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
+            
+        </div>
+
+        
+    <p class="action group">
+    <input type="submit" name="submit" id="form-save" value="Proceed to Worldpay" class="button"> 
+    </p>
+        
+    {{ form().closeTag|raw }}
+    
     </div>
     
     <p><a href="{{ payByChequeRoute }}">I want to pay by cheque</a></p>
