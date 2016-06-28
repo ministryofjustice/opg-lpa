@@ -33,7 +33,6 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/certificate-provider'                    => 'certificateProvider',
             'lpa/people-to-notify'                        => 'peopleToNotify',
             'lpa/instructions'                            => 'instructions',
-            'lpa/created'                                 => 'created',
         ],
         'registration' => [
             'lpa/applicant'                     => 'applicant',
