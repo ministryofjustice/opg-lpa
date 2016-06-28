@@ -192,7 +192,7 @@ return array(
 
     'worldpay' => [
 
-        'test_mode' => true,
+        'test_mode' => false,
         'currency' => 'GBP',
         'cart_id' => 'LPAv2',
         'log' => false,
