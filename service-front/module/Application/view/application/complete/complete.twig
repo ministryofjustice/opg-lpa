@@ -9,10 +9,12 @@
 <div class="text">
         
     {% if not isPaymentSkipped %}
+
+        <h2 class="heading-large">Payment received</h2>
    
-        <h2>Thank you for your payment of &pound;{{ paymentAmount|number_format(2, '.', ',') }}</h2>
+        <p>Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount|number_format(2, '.', ',') }}</strong></p>
    
-        <h3>Your payment reference number is: {{ paymentReferenceNo }}</h3>
+        <p>Your payment reference number is <strong class="bold-small">{{ paymentReferenceNo }}</strong></p>
         
     {% endif %}
 
@@ -22,24 +24,35 @@
 
     <p>It’s essential that you sign the parts of the LPA in the right order. If you sign in the wrong order, it will delay your registration.</p>
 
-    <p><a class="js-guidance" href="/guidance/#topic-signing-the-lpa" data-journey-click="stageprompt.lpa:help:signing-the-lpa">This guide</a> shows you how to sign in the right order – you can then use <a href="{{ dateCheckUrl }}">this tool</a> to check you’ve got it right.</p>
+    <p><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-journey-click="stageprompt.lpa:help:signing-the-lpa">This guide</a> shows you how to sign in the right order – you can then use <a href="{{ dateCheckUrl }}">this tool</a> to check you’ve got it right.</p>
 
     <p>If you sign in the wrong order, you’ll need to print and sign the relevant parts of the LPA again.</p>
 
-    <ul class="panel-cta">
-        <li>
-            <a class="pdf_dl_lnk" href="{{ lp1Url }}" target="_blank">Download your print-ready LPA form</a> 
+    <ul class="panel-cta list iconlinks">
+        <li class="iconlinks-item">
+            <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
+                <i class="icon icon-file-download"></i>
+                <span class="iconlinks-text">Download your print-ready LPA form</span>
+            </a> 
         </li>
         
         {% if lp120Url %}
-            <li>
-                <a class="pdf_dl_lnk" href="{{ lpa120Url }}" target="_blank">Download your fee remissions and exemption form</a>
+            <li class="iconlinks-item">
+                <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
+                    <i class="icon icon-file-download"></i>
+                    <span class="iconlinks-text">Download your fee remissions and exemption form</span>
+                    
+                </a>
             </li>
         {% endif %}
         
         {% if lp3Url %}
-            <li>
-                <a class="pdf_dl_lnk" href="{{ lp3Url }}" target="_blank">Download the letter to send to your 'people to notify' (PDF)</a>
+            <li class="iconlinks-item">
+                <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
+                    <i class="icon icon-file-download"></i>
+                    <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
+                    
+                </a>
             </li>
         {% endif %}
     </ul>
