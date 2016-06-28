@@ -91,6 +91,10 @@ class WorldpayPaymentController extends AbstractLpaController
     
         // session container for storing online payment email address
         $container = new Container('paymentEmail');
+        
+        if (empty($container->email)) {
+            return $this->redirect()->toRoute('lpa/payment', ['lpa-id' => $this->getLpa()->id]);
+        }
     
         // make payment by cheque
         if($this->params()->fromQuery('pay-by-cheque')) {
@@ -127,9 +131,6 @@ class WorldpayPaymentController extends AbstractLpaController
             if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
                 throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpa->id);
             }
-
-            // set paymentEmail in session container.
-            $container->email = $form->getData()['email'];
 
             return $this->payOnline($lpa);
         }
