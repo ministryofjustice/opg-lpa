@@ -1,9 +1,10 @@
-{% extends 'layout/twig/registration-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'isRepeatApplication' : {
         "Value is required and can't be empty": 'Please choose Yes or No',
@@ -13,111 +14,110 @@
     }
 }) %}
 
-{{ form.setAttribute('class', 'form') ? '' }}
+{# Set form fields variables #}
 {% set csrf = form.get(form.csrfName) %}
-
+{% set repeatCaseNumber = form.get('repeatCaseNumber') %}
 {% set isRepeatApplication = form.get('isRepeatApplication') %}
 {% set isRepeatApplicationValueOptions = isRepeatApplication.getOptions()['value_options'] %}
 
 {% set isRepeatApplicationValueOptions = {
-			'is-repeat' :
-				{ 
-				  label: "Yes",
-	 			  label_attributes: {
-	 			       for: 'is-repeat-application',
-	 			  },
-	 			  attributes: {
-	 			       id: 'is-repeat-application'
-	 			  },
-	 			  value: isRepeatApplicationValueOptions['is-repeat'].value
-	 		    },
-			'is-new' :
-				{ 
-				  label: "No",
-	 			  label_attributes: {
-	 			       for: 'is-new',
-	 			  },
-	 			  attributes: {
-	 			       id: 'is-new'
-	 			  },
-	 			  value: isRepeatApplicationValueOptions['is-new'].value
-	 		    }	 		    
-		}
-%}
+    'is-repeat': { 
+        label: "Yes",
+        label_attributes: {
+            for: 'is-repeat-application'
+        },
+        attributes: {
+             id: 'is-repeat-application'
+        },
+        value: isRepeatApplicationValueOptions['is-repeat'].value
+    },
+    'is-new': { 
+        label: "No",
+        label_attributes: {
+            for: 'is-new'
+        },
+       attributes: {
+            id: 'is-new'
+        },
+        value: isRepeatApplicationValueOptions['is-new'].value
+    }               
+} %}
 
-{{ isRepeatApplication.setOptions({value_options: isRepeatApplicationValueOptions}) ? '' }}
-{{ isRepeatApplication.setLabelOptions({disable_html_escape: true}) ? '' }}
+{# form fields config #}
+{{ isRepeatApplication.setOptions({
+    value_options: isRepeatApplicationValueOptions
+}) ? '' }}
 
-{% set repeatCaseNumber = form.get('repeatCaseNumber') %}
-{{ repeatCaseNumber.setOptions({label: "Case number"}) ? '' }}
+{{ isRepeatApplication.setLabelOptions({
+    disable_html_escape: true
+}) ? '' }}
 
-<div class="accordion-actions">
-	<p>
-        <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-    </p>
-</div>
-        
-{{ form.prepare() ? '' }}
+{{ isRepeatApplication.setOptions({
+    label_attributes: {'class': 'block-label'}
+}) ? ''}}
 
-<section id="repeat-application-section" class="section current">
+{{ repeatCaseNumber.setAttributes({
+    class: 'form-control'
+}) ? '' }}
 
-    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Are you making a repeat application to register your LPA?</h2>
+{# form fields labels #}
+{{ repeatCaseNumber.setOptions({
+    label: 'Case number'
+}) ? '' }}
 
-    <div class="accordion-content">
+<li id="repeat-application-section" class="section current js-current">
 
-        <div class="section-intro">
-            <details>
+    <h2 class="heading-medium accordion-header flush--top">Are you making a repeat application to register your LPA?</h2>
 
-                <summary
-                    data-journey-click="stageprompt.lpa:help.inline:register/fees:applying-for-a-reduction-of-the-fee"
-                    role="button" aria-expanded="false">What is a repeat application?
-                </summary>
-
+    <div class="accordion-info">
+        <div class="text">
+            <details class="form-group">
+                <summary data-journey-click="stageprompt.lpa:help.inline:register/fees:applying-for-a-reduction-of-the-fee" role="button" aria-expanded="false">What is a repeat application?</summary>
                 <div>
-                    <p>A repeat application is when a previously submitted LPA can’t be registered and has been sent back to 
-                        you. It will contain instructions on how to submit a repeat application within 3 months for a reduced fee.
-                        You will need the case number from OPG’s letter saying that you can make a
-                        repeat application.</p>
+                    <p>A repeat application is when a previously submitted LPA can’t be registered and has been sent back to you. It will contain instructions on how to submit a repeat application within 3 months for a reduced fee. You will need the case number from OPG’s letter saying that you can make a repeat application.</p>
                 </div>
-
-
             </details>
         </div>
-
-
-        {{ form().openTag( form )|raw }}
-
-        {{ formElement(csrf) }}
-		{{ formElementErrors(csrf) }}
-
-        <div class="emphasised option group">
-            {{ formElement(isRepeatApplication) }}
-			{{ formElementErrors(isRepeatApplication) }}
-        </div>
-
-        <div class="js-case-number emphasised option group">
-            {{ formLabel.openTag(repeatCaseNumber) }}
-            {{ repeatCaseNumber.getOption('label') }}
-            {{ formLabel.closeTag()|raw }}
-            {{ formElement(repeatCaseNumber) }}
-            <p>Your case number is in the letter that came with your returned LPA application.</p>
-
-            <p>By clicking on the Save and continue button, you confirm that the Office of the Public Guardian has told you
-                that you can apply to make a repeat application for £55 within 3 months.</p>
-
-            {{ formElementErrors(repeatCaseNumber) }}
-        </div>
-
-        <div class="accordion-actions">
-            <p>
-                <input type="submit" name="save" value="Save and continue" class="button gotonextpart">
-            </p>
-        </div>
-
-        {{ form().closeTag|raw }}
-
     </div>
 
-</section>
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.get( form.csrfName )) }}
+
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <fieldset class="inline">
+            <legend class="visuallyhidden">Is this a repeat application?</legend>
+
+            <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'error'}}">
+                {{ formElement(isRepeatApplication) }}
+                {{ formElementErrorsV2(isRepeatApplication) }}
+
+                <div class="panel panel-border-narrow js-case-number js-hidden">
+                    <h3 class="visuallyhidden">Repeat application details</h3>
+
+                    {{ macros.formGroup(repeatCaseNumber) }}
+
+                    <div class="text">
+                        <p>Your case number is in the letter that came with your returned LPA application.</p>
+
+                        <p>By clicking on the Save and continue button, you confirm that the Office of the Public Guardian has told you that you can apply to make a repeat application for £55 within 3 months.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" name="save" value="Save and continue" class="button">
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
 
 {% endblock %}

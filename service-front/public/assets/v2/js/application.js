@@ -5178,10 +5178,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           'cancelClass': 'js-dialog-cancel'
         });
         moj.Modules.Popup.open(html, {
-          ident: 'dialog-confirmation'
+          ident: 'dialog'
         });
 
-        $('.dialog-confirmation').on('click', 'a', function (evt) {
+        $('.dialog').on('click', 'a', function (evt) {
           var $target = $(evt.target);
 
           if (!formSubmitted) {
@@ -5304,18 +5304,24 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         // Toggle all checkboxes under Attorneys
         $('[name="whoIsRegistering"]').change(function(){
           if($(this).val() === 'donor' ){
-            $('.attorney-applicant input:checkbox').prop('checked', false);
+            $('.js-attorney-list input:checkbox').prop('checked', false);
+            $('.js-attorney-list label').removeClass('selected');
+            $('')
           } else {
-            $('.attorney-applicant input:checkbox').prop('checked', true);
+            $('.js-attorney-list input:checkbox').prop('checked', true);
+            $('.js-attorney-list label').addClass('selected');
           }
         });
 
         // Revert to Donor if no Attorneys are checked
-        $('.attorney-applicant input').change(function(){
-          if($('.attorney-applicant input').is(':checked')){
-            $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
+        $('.js-attorney-list input').change(function(){
+          if($('.js-attorney-list input').is(':checked')){
+            $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true).parent().addClass('selected');
+            $('input[name="whoIsRegistering"][value="donor"]').parent().removeClass('selected');
+
           } else {
-            $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true);
+            $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true).parent().addClass('selected');
+            $('input[name="whoIsRegistering"][value!="donor"]').parent().removeClass('selected');
           }
         });
 
