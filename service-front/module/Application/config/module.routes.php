@@ -588,7 +588,7 @@ return [
                     'summary' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route'    => '/summary[/:from-page]',
+                            'route'    => '/:from-page/summary',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\SummaryController',
                                 'action'     => 'index',
