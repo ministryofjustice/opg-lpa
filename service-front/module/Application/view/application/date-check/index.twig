@@ -1,0 +1,154 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Check signature dates
+{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% if valid is defined %}
+
+	<div class="text">
+		<div style="background-repeat: no-repeat; background-position: 10px 50%; border-left:6px solid #28A197; margin-top:1em; margin-bottom:2em; padding:1em 1em 1em 1.5em; font-size:1.5em; background-color:#EBF5F4; background-image:url('/assets/v1/images/icon/progress-tick.png')">
+	    	The LPA was signed in the correct order.
+	    	{% if ('dashboard' in returnRoute) %}
+	    	Return to dashboard
+	    	{% else %}
+	    	Return to your LPA
+	    	{% endif %}
+	    	<a class="button" style='float: right;' href="{{ returnRoute }}" role="button">
+	    	{{ buttonText }}
+	    	</a>
+		</div>
+	</div>
+    
+{% else %}
+
+	{% set form = formErrorTextExchange(form,  {}) %}
+
+	{% set donorElement = form.get('sign-date-donor') %}
+	{{ donorElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
+
+	{% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
+	{{ certificateProviderElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
+	    
+	{{ form.setAttributes({class: 'form'}) ? '' }}
+
+{% if dateError is defined %}
+
+	<div style="border:2px solid red; margin-top:1em; padding:1em; color:#ffffff; font-size:1.5em; background-color:#bb0000">
+		There was a problem with the order in which the LPA was signed. 
+		<br>
+		{{ dateError }}
+		<br>
+		Please see the <a href="/help/#topic-signing-the-lpa" style="color:#ffffff" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">guidance</a> on signing and, if necessary,
+		<a href="{{ url( 'lpa/view-docs', {'lpa-id': lpa.id}) }}">reprint</a> and re-sign your LPA.
+	</div>
+
+{% endif %}
+
+	<div class="text">
+		
+		<p>This page is optional. It can be used to verify that your LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">signed in the correct order</a> before sending it to us.</p>
+
+		<p>Please give the date each person below signed the LPA.</p>
+	</div>
+
+	{# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }} 
+        {{ formElement(form.get( form.csrfName )) }}
+	
+		<input type="hidden" name="returnRoute" value="{{ returnRoute }}">
+
+		<div class="person person--wider">
+            <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }} (the donor)</h3>
+            <p class="person-address flush--ends">
+            	<p class="date-field">
+					<label for="donor">
+						This person signed Section 9 of the LPA on
+						
+						{{ formElement(donorElement) }}
+						{{ formElementErrors(donorElement) }}
+			            
+			        </label>
+				</p>
+				<div class="application-notice help-notice">
+  					<p class="hint">Remember, if any continuation sheets 1 or 2 were used they must also<br> have been signed by the donor at the same time as or before the donor signed Section 9.</p>
+				</div>
+            </p>
+        </div>
+    
+		<div class="person-summary group">
+		  <div class="person">
+		      <h3>{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
+		      <p class="date-field">
+		      	<label for="certificateProvider_0">This person signed Section 10 of the LPA on
+		      	
+		            {{ formElement(certificateProviderElement) }}
+					{{ formElementErrors(certificateProviderElement) }}
+		            
+		        </label>
+		      </p>
+		  </div>
+		</div>
+
+{% for idx, attorney in lpa.document.primaryAttorneys %}
+	
+	{% set element = form.get('sign-date-attorney-' ~ idx) %}
+	{{ element.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
+	
+    <div class="person-summary group">
+        <div class="person">
+  			<h3>{{ attorney.name }} (attorney)</h3>
+				<p class="date-field">
+			<label for="attorney_0">
+			     {% if attorney.dob is defined %}
+			     This person signed Section 11 of the LPA on
+			     {% else %}
+			     This corporation signed Continuation Sheet 4 of the LPA on
+			     {% endif %}
+			     {{ formElement(element) }}
+				 {{ formElementErrors(element) }}
+            </label>
+		</p>
+	  </div>
+
+{% endfor %}
+
+{% for idx, attorney in lpa.document.replacementAttorneys %}
+
+	{% set element = form.get('sign-date-replacement-attorney-' ~ idx) %}
+	{{ element.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
+	
+    <div class="person-summary group">
+        <div class="person">
+  			<h3>{{ attorney.name }} (replacement attorney)</h3>
+				<p class="date-field">
+			<label for="attorney_0">
+				 {% if attorney.dob is defined %}
+			     This person signed Section 11 of the LPA on
+			     {% else %}
+			     This corporation signed Continuation Sheet 4 of the LPA on
+			     {% endif %}
+			     {{ formElement(element) }}
+				 {{ formElementErrors(element) }}
+            </label>
+		</p>
+	  </div>
+
+{% endfor %}
+
+        <div class="accordion-actions">
+            <p>
+                <input type="submit" name="save" value="Check dates" class="button gotonextpart">
+            </p>
+        </div>
+            {{ form().closeTag|raw }}        
+		</div>
+
+{% endif %}
+
+{% endblock %}

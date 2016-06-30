@@ -1,37 +1,47 @@
 // Forms
 // ==========================================================================
 
-input[disabled="disabled"] {
-	opacity: .5;
+[disabled="disabled"] {
+    opacity: .5;
 }
 
 .form-date {
-	margin-bottom: 30px;
-	overflow: hidden;
-	&.error {
-		.form-control {
-			border: 2px solid $grey-1;
-		}
-		.error {
-			@extend .error;
-		}
-	}
+    margin-bottom: 30px;
+    overflow: hidden;
 }
 
 .form-group-day,
 .form-group-month,
 .form-group-year {
-	&.error {
-		border-left: 0;
-		padding-left: 0;
-	}
+
+    &.error {
+        padding-left: 0;
+        border-left: 0;
+    }
 }
 
 .form-control {
-	border-radius: 0;
+    border-radius: 0;
 }
 
 .form-hint--strong {
-	margin-top: 10px;
-	color: #000;
+    margin-top: 10px;
+    color: $black;
 }
+
+.form-group-checkbox {
+    float: left;
+    width: 100%;
+    &.error {
+        margin-bottom: 10px;
+    }
+}
+
+.error {
+    .form-group-checkbox {
+        .block-label:last-child {
+            margin-bottom: 10px;
+        }
+    }
+}
+

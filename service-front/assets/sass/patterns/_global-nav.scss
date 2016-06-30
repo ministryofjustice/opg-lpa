@@ -2,20 +2,14 @@
 // GLOBAL NAVIGATION
 
 @mixin global-nav {
-    #global-nav {
+    .global-nav {
         border-bottom: 1px solid $border-colour;
         overflow: hidden;
 
         .lastsigned {
-            @include media(tablet){
-                float: left;
+            @include media(tablet) {
                 padding: 10px 8px;
-            }
-        }
-
-        #navigation {
-            @include media(tablet){
-                float: right;
+                float: left;
             }
         }
 
@@ -24,44 +18,53 @@
             @include media(mobile) {
                 padding: 6px 0;
             }
+        }
+    }
 
-            a,
-            .user {
-                @include media(tablet) {
-                    padding: 10px 8px;
-                }
+    .navigation {
+        @include media(tablet) {
+            float: right;
+        }
+
+        a,
+        .user {
+            @include media(tablet) {
+                padding: 10px 8px;
+            }
+        }
+
+        .user {
+            @include media(mobile) {
+                display: block;
+            }
+        }
+
+        a {
+            display: inline-block;
+
+            @include media(mobile) {
+                padding: 10px;
             }
 
-            .user {
-                @include media(mobile) {
-                    display: block;
-                }
-            }
-
-            a {
-                display: inline-block;
-                @include media(mobile) {
-                    padding: 10px 10px;
-                }
-                @include media($max-width: 300px) {
-                    padding: 10px 5px;
-                }
-            }
-
-            li {
-                @include media(mobile) {
-                    display: inline;
-                    &:nth-child(2) {
-                        a {
-                            padding-left: 0;
-                        }
-                    }
-                }
-                @include media(tablet){
-                    display: inline;
-                }
+            @include media($max-width: 300px) {
+                padding: 10px 5px;
             }
         }
     }
-}
 
+    .navigation-item {
+        @include media(mobile) {
+            display: inline;
+
+            &:nth-child(2) {
+                a {
+                    padding-left: 0;
+                }
+            }
+        }
+        
+        @include media(tablet) {
+            display: inline;
+        }
+    }
+}

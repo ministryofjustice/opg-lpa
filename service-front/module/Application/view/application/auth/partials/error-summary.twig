@@ -1,3 +1,5 @@
+{% import "application/macros.twig" as macros %}
+
 {% set form = formErrorTextExchange(form,  {
     'email' : {
         'cannot-be-empty' : 'Please enter your email address'
@@ -31,12 +33,4 @@
     </div>
 {% endif %}
 
-{% if form.getMessages|length > 0 %}
-    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
-        <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem signing you in</h1>
-        <p>You need to do the following:</p>
-        <ul class="error-summary-list">
-            {{ formLinkedErrorListV2(form) }}
-        </ul>
-    </div>
-{% endif %}
+{{ macros.formErrorSummary(error,form,'There was a problem signing you in') }}

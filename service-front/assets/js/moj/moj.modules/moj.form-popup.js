@@ -39,8 +39,7 @@
 
     btnClick: function (e) {
       var source = $(e.target),
-        href = source.attr('href'),
-        form = source.data('form');
+        href = source.attr('href');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -55,7 +54,7 @@
         // set loading spinner
         source.spinner();
         // show form
-        this.loadContent(href, form);
+        this.loadContent(href);
       }
 
       return false;

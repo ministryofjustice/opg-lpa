@@ -3504,7 +3504,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close\" title=\"Click or press escape to close this window\">Close</a>\n</p>";
+  return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\">Close</a>\n</p>";
   });
 
 this["lpa"]["templates"]["popup.container"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3513,7 +3513,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div id=\"popup\" role=\"dialog\"></div>";
+  return "<div id=\"popup\" role=\"dialog\" class=\"popup\"></div>";
   });
 
 this["lpa"]["templates"]["popup.content"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3690,7 +3690,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $('body > *').addClass('print-hidden');
 
       // Join it all together
-      this.$popup.data('settings', opts).attr('class', opts.ident).append(this.$close).append(this.$content.html(html)).appendTo(this.$mask);
+      this.$popup.data('settings', opts).addClass(opts.ident).append(this.$close).append(this.$content.html(html)).appendTo(this.$mask);
 
       // bind event handlers
       this._bindEvents();
@@ -4033,8 +4033,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     btnClick: function (e) {
       var source = $(e.target),
-        href = source.attr('href'),
-        form = source.data('form');
+        href = source.attr('href');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -4049,7 +4048,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         // set loading spinner
         source.spinner();
         // show form
-        this.loadContent(href, form);
+        this.loadContent(href);
       }
 
       return false;
@@ -4939,13 +4938,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   'use strict';
 
   moj.Modules.Validation = {
-    selector: '.validation-summary[role=alert]',
+    selector: '.error-summary[role=group]',
 
     init: function () {
       _.bindAll(this, 'render');
       this.bindEvents();
       this.render(null, {wrap: 'body'});
-      this.oldValidation();
     },
 
     bindEvents: function () {
@@ -4955,24 +4953,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     render: function (e, params) {
       var $el = $(this.selector, $(params.wrap));
 
+      // Focus on error summary
       if ($el.length > 0) {
         $el.focus();
       }
-    },
-
-    // TO DO: replace with newer validation
-    oldValidation: function(){
-      $('body').on('click', 'form [role="alert"] a', function() {
-        var $target = $($(this).attr('href'));
-        $('html, body')
-          .animate({
-            scrollTop: $target.offset().top
-          }, 300)
-          .promise()
-          .done(function() {
-            $target.closest('.group').find('input,select').first().focus();
-          });
-      });
     }
   };
 
@@ -5165,14 +5149,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       }
 
     },
-    render: function (e, params) {
-      var $el = $(this.selector, $(params.wrap));
-
+    render: function () {
       this.displayCaseNumber(0);
       this.initialiseEvents();
 
     },
-    onRepeatApplicationFormChangeHandler: function (evt) {
+    onRepeatApplicationFormChangeHandler: function () {
       this.displayCaseNumber(500);
     },
     onRepeatApplicationFormClickHandler: function (evt) {
@@ -5196,10 +5178,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           'cancelClass': 'js-dialog-cancel'
         });
         moj.Modules.Popup.open(html, {
-          ident: 'dialog-confirmation'
+          ident: 'dialog'
         });
 
-        $('.dialog-confirmation').on('click', 'a', function (evt) {
+        $('.dialog').on('click', 'a', function (evt) {
           var $target = $(evt.target);
 
           if (!formSubmitted) {
@@ -5322,18 +5304,24 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         // Toggle all checkboxes under Attorneys
         $('[name="whoIsRegistering"]').change(function(){
           if($(this).val() === 'donor' ){
-            $('.attorney-applicant input:checkbox').prop('checked', false);
+            $('.js-attorney-list input:checkbox').prop('checked', false);
+            $('.js-attorney-list label').removeClass('selected');
+            $('')
           } else {
-            $('.attorney-applicant input:checkbox').prop('checked', true);
+            $('.js-attorney-list input:checkbox').prop('checked', true);
+            $('.js-attorney-list label').addClass('selected');
           }
         });
 
         // Revert to Donor if no Attorneys are checked
-        $('.attorney-applicant input').change(function(){
-          if($('.attorney-applicant input').is(':checked')){
-            $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
+        $('.js-attorney-list input').change(function(){
+          if($('.js-attorney-list input').is(':checked')){
+            $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true).parent().addClass('selected');
+            $('input[name="whoIsRegistering"][value="donor"]').parent().removeClass('selected');
+
           } else {
-            $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true);
+            $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true).parent().addClass('selected');
+            $('input[name="whoIsRegistering"][value!="donor"]').parent().removeClass('selected');
           }
         });
 
@@ -5423,6 +5411,14 @@ $(moj.init);
 
 
 // ====================================================================================
+// INITITALISE ALL GOVUK MODULES
+
+// Initiating the SelectionButtons GOVUK module
+var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
+new GOVUK.SelectionButtons($blockLabels);
+
+
+// ====================================================================================
 // VENDOR CONFIGURATION
 
 // JQUERY UI DATEPICKER SETUP
@@ -5438,29 +5434,15 @@ $('.date-field input').datepicker(
 		changeYear:true
 	}
 );
+
+
+// Remove the no-js class
+$('body').removeClass('no-js');
 // SHAME.JS
 // This is a temporary dumping ground which should NEVER go into production
 
 $(document).ready(function () {
   'use strict';
-
-  // ====================================================================================
-  // EMPHASISED CHECKBOX AND RADIO BUTTON LABEL STYLES
-  // NOTE: Only on older pages. This won't be needed when new styles come in
-
-  var $emphasised = $('.emphasised input');
-  $emphasised.filter(':checked').parent().addClass('checked');
-  $emphasised.change(function() {
-      $emphasised.parent().removeClass('checked');
-      $emphasised.filter(':checked').parent().addClass('checked');
-  });
-
-  // Remove the no-js class
-  $('body').removeClass('no-js');
-
-  // Initiating the SelectionButtons GOVUK module
-  var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
-  new GOVUK.SelectionButtons($blockLabels);
 
 });
 

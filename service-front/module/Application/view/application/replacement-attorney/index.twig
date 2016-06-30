@@ -1,9 +1,8 @@
-{% extends 'layout/twig/creation-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% set form = formErrorTextExchange(form, {}) %}
-{{ form.prepare() ? '' }}
 
 <li id="replacement-attorney-section" class="section current js-current">
 
@@ -59,14 +58,15 @@
             {% endif %}
         </a>
     </div>
-    
-    {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
-    {{ formElementErrorsV2(form.get( form.csrfName )) }}
 
-    <div class="form-group flush--bottom">
-    	<input type="submit" name="save" value="Save and continue" class="button divorced">
-    </div>
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+	    {{ formElement(form.get( form.csrfName )) }}
+
+	    <div class="form-group flush--bottom">
+	    	<input type="submit" name="save" value="Save and continue" class="button divorced">
+	    </div>
     
     {{ form().closeTag|raw }}
     

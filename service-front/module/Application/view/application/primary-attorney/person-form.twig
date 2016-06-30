@@ -13,6 +13,7 @@
     var actors = {names: actorNames};
 </script>
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-first' : {
         'cannot-be-blank' : 'Please enter the attorney\'s first name'
@@ -34,8 +35,6 @@
         "Please enter all the date fields" : "Please enter the attorney's date of birth"
     }
 }) %}
-
-{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
 {# Set form fields variables #}  
 {% set title = form.get('name-title') %}
@@ -157,6 +156,9 @@
     </div>
 {% endif %}
 
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
 {# begin form #}
 {{ form().openTag( form )|raw }}
     {{ formElement(form.get( form.csrfName )) }}
@@ -175,7 +177,7 @@
     <h2 class="heading-medium">What is the attorney's date of birth?</h2>
 
     <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="form-label">Date of birth</legend>
+        <legend class="form-label dob-label">Date of birth</legend>
 
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>

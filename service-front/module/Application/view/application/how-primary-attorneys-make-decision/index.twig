@@ -1,10 +1,11 @@
-{% extends 'layout/twig/creation-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form,  {
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
     'how' : {
         'Value is required and can\'t be empty' : 'Please choose how your attorneys make decisions',
     },
@@ -14,7 +15,6 @@
 }) %}
 
 {# Set form fields variables #}
-{% set csrf = form.get(form.csrfName) %}
 {% set how = form.get('how') %}
 {% set howDetails = form.get('howDetails') %}
 {% set currentHowValueOptions = how.getOptions()['value_options'] %}
@@ -73,7 +73,13 @@
 	value_options: howValueOptions,
 	label_attributes: {'class': 'text block-label'}
 }) ? '' }}
-{{ how.setLabelOptions({disable_html_escape: true}) ? '' }}
+
+{{ how.setLabelOptions({
+	disable_html_escape: true
+}) ? '' }}
+
+{# form fields labels #}
+{{ howDetails.setOptions({label:'Details'}) ? '' }}
 
 <li id="primary-attorney-decision-sections" class="section current js-current">
 
@@ -82,15 +88,14 @@
     <div class="accordion-info">
 		<div class="text">
 			<p>Your choice here is very important as it affects how your LPA can be used. Whichever option you choose, your attorneys must always act in your best interests.</p>
-			<p><a class="js-guidance" href="/help/#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Get help with making this decision</a></p>
+			<p><a class="js-guidance" href="/guide#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Get help with making this decision</a></p>
 		</div>
 	</div>
 
 	{# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }} 
-        {{ formElement(csrf) }}
-		{{ formElementErrors(csrf) }}
+        {{ formElement(form.get( form.csrfName )) }}
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
@@ -110,15 +115,14 @@
 
 			<p class="text">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. <a class="js-guidance" href="/guide#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
 
-            <div class="form-group {{ howDetails.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(howDetails) }}
-                {{ formElementErrorsV2(howDetails) }}
-            </div>
+			{{ macros.formGroup(howDetails) }}
+
         </fieldset>
 
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
+        
     {{ form().closeTag|raw }}
 
 </li>

@@ -1,3 +1,5 @@
+{% import "application/macros.twig" as macros %}
+
 {% set form = formErrorTextExchange(form,  {
     'rating' : {
         'cannot-be-empty' : 'Please select a rating for this service',
@@ -8,22 +10,4 @@
     } 
 }) %}
 
-{% if (error is not empty or form.getMessages|length > 0) %}
-<div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
-    <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem submitting your feedback</h1>
-    {# Show this only if it's a form error #}
-    {% if form.getMessages|length > 0 %}
-        <p>You need to do the following:</p>
-    {% endif %}
-
-    <ul class="error-summary-list">
-        {# Form errors #}
-        {{ formLinkedErrorListV2(form) ? '' }}
-
-        {# API errors #}
-        {% if error is not empty %}
-            <li><p>{{ error }}</p></li>
-        {% endif %}
-    </ul>
-</div>
-{% endif %}
+{{ macros.formErrorSummary(error,form,'There was a problem submitting your feedback') }}

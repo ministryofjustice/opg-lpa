@@ -284,6 +284,8 @@ class Details implements ServiceLocatorAwareInterface {
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
+        $email = $client->getEmail();
+
         $result = $client->updateAuthPassword(
             $details->getDataForModel()['password_current'],
             $details->getDataForModel()['password'] 
@@ -297,12 +299,72 @@ class Details implements ServiceLocatorAwareInterface {
 
         } // if
 
+        //---
+
+        $this->sendPasswordUpdatedEmail( $email );
+
+        //---
+
         // Update the identity with the new token to avoid being
         // logged out after the redirect. We don't need to update the token
         // on the API client because this will happen on the next request
         // when it reads it from the identity.
         $identity->setToken($result);
         
+        return true;
+
+    } // function
+
+    public function sendPasswordUpdatedEmail( $email ){
+
+        $message = new MailMessage();
+
+        $config = $this->getServiceLocator()->get('config');
+        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
+
+        $message->addTo( $email );
+
+        //---
+
+        $message->addCategory('opg');
+        $message->addCategory('opg-lpa');
+        $message->addCategory('opg-lpa-password');
+        $message->addCategory('opg-lpa-password-changed');
+
+        //---
+
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-changed.twig')->render([
+            'email' => $email
+        ]);
+
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            $message->setSubject( 'You have changed your LPA account password' );
+        }
+
+        //---
+
+        $html = new MimePart( $content );
+        $html->type = "text/html";
+
+        $body = new MimeMessage();
+        $body->setParts([$html]);
+
+        $message->setBody($body);
+
+        //--------------------
+
+        try {
+
+            $this->getServiceLocator()->get('MailTransport')->send($message);
+
+        } catch ( \Exception $e ){
+
+            return "failed-sending-email";
+
+        }
+
         return true;
 
     } // function

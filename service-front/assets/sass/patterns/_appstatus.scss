@@ -1,0 +1,35 @@
+// =======================================================
+// APPSTATUS
+// Page wide large panel with status messages
+
+.appstatus {
+    margin: $gutter 0;
+    padding: ($gutter*1.5);
+    background-color: $govuk-blue;
+    color: $white;
+    text-align: center;
+
+    @include media(mobile) {
+        padding: 30px;
+    }
+
+    &.warning {
+        background-color: $orange;
+    }
+}
+
+.appstatus-title {
+    font-family: "nta",Arial,sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1em;
+    text-transform: none;
+
+    @include media(mobile) {
+        font-size: 32px;
+    }
+
+    @include media($max-width: 300px) {
+        font-size: 20px;
+    }
+}

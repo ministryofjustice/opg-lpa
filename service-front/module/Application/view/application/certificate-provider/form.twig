@@ -1,5 +1,9 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+    Create a lasting power of attorney 
+{% endblock %}
+
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
@@ -9,8 +13,26 @@
     var actors = {names: actorNames};
 </script>
 
-{% set form = formErrorTextExchange(form,  {}) %}
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'name-first' : {
+        'cannot-be-blank' : 'Please enter first names'
+    },
+    'name-last' : {
+        'cannot-be-blank' : 'Please enter the last name'
+    },
+    'address-address1' : {
+        'cannot-be-blank' : 'Please enter the first line of address'
+    },
+    'address-address2' : {
+        'linked-1-cannot-be-null' : 'Please enter the second line of address'
+    },
+    'address-postcode' : {
+        'linked-1-cannot-be-null' : 'Please enter the postcode'
+    }
+}) %}
 
+{# Set form fields variables #}  
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
@@ -18,53 +40,103 @@
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
 {% set postcode = form.get('address-postcode') %}
-    
-{{ form.setAttribute('class', 'form js-PersonForm js-PostcodeLookup') ? '' }}
-    
-{{ title.setOptions( {'label' : 'Title'} ) ? '' }}
-{{ title.setAttributes({'id':'name-title'}) ? '' }}
-{{ firstname.setOptions( {'label' : 'First names'} ) ? '' }}
-{{ lastname.setOptions( {'label' : 'Last name'} ) ? '' }}
-{{ address1.setOptions( {'label' : 'Address line 1'} ) ? '' }}
-{{ address1.setAttributes({'id':'address-address1'}) ? '' }}
-{{ address2.setOptions( {'label' : 'Address line 2'} ) ? '' }}
-{{ address3.setOptions( {'label' : 'Address line 3'} ) ? '' }}
-{{ postcode.setOptions( {'label' : 'Postcode'} ) ? '' }}
+
+{# form fields config #}
+{{ form.setAttributes({
+    'class':'form form-condensed js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+
+{{ title.setAttributes({
+    id: 'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ firstname.setAttributes({
+    id: 'name-first',
+    class: 'form-control'
+}) ? '' }}
+
+{{ lastname.setAttributes({
+    id: 'name-last',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address1.setAttributes({
+    id: 'address-address1',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address2.setAttributes({
+    id: 'address-address2',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address3.setAttributes({
+    id: 'address-address3',
+    class: 'form-control'
+}) ? ''}}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ title.setOptions({label:'Title'}) ? '' }}
+{{ firstname.setOptions({label:'First names'}) ? '' }}
+{{ lastname.setOptions({label:'Last name'}) ? '' }}
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Edit certificate provider details</h2>
+</header>
 
 {{ form.prepare() ? '' }}
 
-<h2 class="header">Edit certificate provider details</h2>
-
 {{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
 
-{{ form().openTag( form )|raw }}
+{################# certificate provider form #####################}
 
 {{ macros.useMyDetails(useMyDetailsRoute) }}
 
-{{ formElement(form.get( form.csrfName )) }}
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
-<fieldset>
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElementErrorsV2(form.get( form.csrfName )) }}
 
-{{ macros.formGroup(title) }}
-{{ macros.formGroup(firstname) }}
-{{ macros.formGroup(lastname) }}
+    <h2 class="heading-medium">What is the certificate provider's name?</h2>
 
-</fieldset>
+    <fieldset>
+        <legend class="visuallyhidden">Add certificate provider's name</legend>
 
-<fieldset class="js-PostcodeLookup__postal-add">
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium">What is the certificate provider's address?</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visuallyhidden">Address</legend>
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+    </fieldset>
+
+    <input type="submit" name="submit" id="form-save" value="Save details" class="button">
+    <a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
     
-{{ macros.formGroup(address1) }}
-{{ macros.formGroup(address2) }}
-{{ macros.formGroup(address3) }}
-{{ macros.formGroup(postcode) }}
-    
-</fieldset>
-
-<p class="action group">
-<input type="submit" name="submit" id="form-save" value="Save details" class="button"> 
-<button name="cancel" type="button" class="button-secondary">Cancel</button>
-</p>
-
 {{ form().closeTag|raw }}
 
 {% endblock %}
