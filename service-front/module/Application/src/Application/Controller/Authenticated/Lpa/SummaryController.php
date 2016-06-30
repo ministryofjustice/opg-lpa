@@ -21,7 +21,17 @@ class SummaryController extends AbstractLpaController
         
         $fromPage = $this->params()->fromRoute('from-page');
         
-        $viewParams = [];
+        switch ($fromPage) {
+            case 'instructions':
+                $returnRoute = 'lpa/instructions';
+                break;
+            default:
+                throw new \Exception('Invalid return route provided for summary page');
+        }
+        
+        $viewParams = [
+            'returnRoute' => $returnRoute,
+        ];
 
         
         return new ViewModel($viewParams);

@@ -16,6 +16,6 @@
 
 	<p class="text">Text informing the user what is incomplete and how to complete the LPA. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 
-	<a href="" class="button">Return to complete your LPA</a>
+	<a href="{{ url(returnRoute, {'lpa-id': lpa.id}) }}" class="button">Return to complete your LPA</a>
 
 {% endblock %}
