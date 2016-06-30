@@ -37,30 +37,6 @@ class WorldpayPaymentController extends AbstractLpaController
         // session container for storing online payment email address 
         $container = new Container('paymentEmail');
         
-        // make payment by cheque
-        if($this->params()->fromQuery('pay-by-cheque')) {
-        
-            $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
-        
-            if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
-            }
-        
-            // send email
-            $communicationService = $this->getServiceLocator()->get('Communication');
-            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
-        
-            // to complete page
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
-            
-        }
-        elseif($this->params()->fromQuery('retry') && 
-            ($lpa->payment->method = Payment::PAYMENT_TYPE_CARD) && 
-            ($container->email != null)) {
-            
-            return $this->payOnline($lpa);
-        }
-        
         // Payment form page
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
         
@@ -72,17 +48,10 @@ class WorldpayPaymentController extends AbstractLpaController
             
             if($form->isValid()) {
                 
-                $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-                
-                // persist data
-                if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                    throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpa->id);
-                }
-                
                 // set paymentEmail in session container.
                 $container->email = $form->getData()['email'];
                 
-                return $this->payOnline($lpa);
+                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $this->getLpa()->id]);
                 
             } // if($form->isValid())
         }
@@ -105,9 +74,85 @@ class WorldpayPaymentController extends AbstractLpaController
         return new ViewModel([
                 'form'=>$form,
                 'standardFee' => Calculator::STANDARD_FEE,
-                'payByChequeRoute' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
         ]);
         
+    }
+    
+    /**
+     * Gathers the LPA information and forwards the payment request to Worldpay
+     * Uses the Omnipay purchase interface to obtain a URL to which to redirect
+     * the user for payment.
+     */
+    public function summaryAction()
+    {
+        $lpa = $this->getLpa();
+    
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+    
+        // session container for storing online payment email address
+        $container = new Container('paymentEmail');
+        
+        if (empty($container->email)) {
+            return $this->redirect()->toRoute('lpa/payment', ['lpa-id' => $this->getLpa()->id]);
+        }
+    
+        // make payment by cheque
+        if($this->params()->fromQuery('pay-by-cheque')) {
+    
+            $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
+    
+            if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
+            }
+    
+            // send email
+            $communicationService = $this->getServiceLocator()->get('Communication');
+            $communicationService->sendRegistrationCompleteEmail($lpa, $this->url()->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+    
+            // to complete page
+            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+    
+        }
+        elseif($this->params()->fromQuery('retry') &&
+            ($lpa->payment->method = Payment::PAYMENT_TYPE_CARD) &&
+            ($container->email != null)) {
+    
+                return $this->payOnline($lpa);
+        }
+    
+        // Payment form page
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+    
+        if($this->request->isPost()) {
+    
+            $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+
+            // persist data
+            if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpa->id);
+            }
+
+            return $this->payOnline($lpa);
+        }
+        else {
+            // when landing on payment page, show the payment form
+    
+            $data = [];
+            if($this->getLpa()->payment instanceof Payment) {
+                $data['method'] =  $this->getLpa()->payment->method;
+            }
+    
+            $container = new Container('paymentEmail');
+            if(isset($container->email)) {
+                $data['email'] = $container->email;
+            }
+        }
+    
+        return new ViewModel([
+            'form'=>$form,
+            'payByChequeRoute' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
+        ]);
+    
     }
     
     public function successAction()

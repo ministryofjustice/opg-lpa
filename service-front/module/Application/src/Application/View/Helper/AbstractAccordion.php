@@ -33,7 +33,6 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/certificate-provider'                    => 'certificateProvider',
             'lpa/people-to-notify'                        => 'peopleToNotify',
             'lpa/instructions'                            => 'instructions',
-            'lpa/created'                                 => 'created',
         ],
         'registration' => [
             'lpa/applicant'                     => 'applicant',
@@ -42,6 +41,7 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/repeat-application'            => 'repeatApplication',
             'lpa/fee-reduction'                 => 'feeReduction',
             'lpa/payment'                       => 'payment',
+            'lpa/payment/summary'               => 'paymentSummary',
             'lpa/payment/return/failure'        => null,
             'lpa/payment/return/cancel'         => null,
         ],
@@ -252,6 +252,11 @@ abstract class AbstractAccordion extends AbstractHelper
     }
     
     protected function payment()
+    {
+        return 'Application fee: £'.sprintf('%.2f', $this->lpa->payment->amount);
+    }
+    
+    protected function paymentSummary()
     {
         if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
             return 'Application fee: £'.sprintf('%.2f', $this->lpa->payment->amount). ' (Payment method: '.$this->lpa->payment->method.')';

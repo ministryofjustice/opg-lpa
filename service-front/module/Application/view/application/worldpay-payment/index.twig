@@ -24,7 +24,6 @@
     
     {{ formElement(form.get( form.csrfName )) }}
     
-    
         <div class="section-intro">
             <h2>
             {% if (lpa.payment.amount == standardFee) %}
@@ -37,10 +36,6 @@
 
             <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
 
-			{% include 'application/summary/partials/summary-table.twig' %}
-
-            <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
-            
             {% if (lpa.payment.amount != standardFee) %}
             <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
             <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
@@ -48,20 +43,18 @@
             {% endif %}
         </div>
         
-        <div id="contact-email">
-            <p>Please enter a contact email for correspondence regarding this payment.</p>
-            <div class="group">
-                {{ macros.formGroup(email) }}
-            </div>
+    <div id="contact-email">
+        <p>Please enter a contact email for correspondence regarding this payment.</p>
+        <div class="group">
+            {{ macros.formGroup(email) }}
         </div>
+    </div>    
         
-<p class="action group">
-<input type="submit" name="submit" id="form-save" value="Proceed to payment" class="button"> 
-</p>
+    <p class="action group">
+    <input type="submit" name="submit" id="form-save" value="Save and continue" class="button"> 
+    </p>
         
     {{ form().closeTag|raw }}
-    
-    <p><a href="{{ payByChequeRoute }}">I want to pay by cheque</a></p>
     
     </div>
     
