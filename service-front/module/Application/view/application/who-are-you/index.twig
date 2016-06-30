@@ -1,0 +1,170 @@
+{% extends 'layout/twig/accordion-header.twig' %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
+        'who': {
+            'cannot-be-blank' : 'Please choose one of the options' 
+        }
+   }) 
+%}
+
+{# Set form fields variables #}
+{% set who = form.get('who') %}
+{% set professional = form.get('professional') %}
+{% set professionalOther = form.get('professional-other') %}
+{% set organisation = form.get('organisation') %}
+
+{# form fields config #}
+{{ form.setAttributes({
+    'id': 'WhoAreYou'
+}) ? '' }}
+
+{{ professionalOther.setAttributes({
+    'class': 'form-control'
+}) ? '' }}
+
+{{ organisation.setAttributes({
+    'class': 'form-control'
+}) ? '' }}
+
+{# form fields labels #}
+{{ professionalOther.setOptions({
+    label:'Please tell us your profession'
+}) ? '' }}  
+
+{{ organisation.setOptions({
+    label:'Which organisation helped?'
+}) ? '' }}    
+
+<li id="who-are-you-section" class="section current js-current">
+
+    <h2 class="heading-medium accordion-header flush--top">Who was using the LPA service?</h2>
+
+    {% if not form %}
+    <div class="accordion-info">
+        <div class="text">
+            <p>Thanks, you have already answered this question.</p>
+            
+            <p>Your answer was saved separately from your LPA and is anonymous. This means that it can't now be linked to you and you can't change it.</p>
+
+            <p><a href="{{ nextRoute }}" class="button">Continue</a></p>
+
+        </div> 
+    </div>       
+    {% else %}
+    <div class="accordion-info">
+		<div class="text">
+        	<p>We think we can make this service better by finding out how people use it.</p>
+        	<p>To do this, we'd like to know who was using the digital LPA service - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
+        	<p>Your answer will be completely anonymous. It will not be linked to you, your LPA or your personal information.</p>
+        </div>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }} 
+        {{ formElement(form.get( form.csrfName )) }}
+
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        
+        <input type="hidden" name="who" value="">
+        <input type="hidden" name="professional" value="">
+        <input type="hidden" name="digitalPartner" value=""> 
+
+        <fieldset>
+            <legend class="visuallyhidden">Who was using the LPA service</legend>
+
+            <div class="form-group {{ who.getMessages|length >0 ? 'error'}}">
+                
+                <label class="text block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['donor']) }}
+                    {{ whoOptions['donor'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['donor']) }}
+
+                <label class="text block-label" for="{{ whoOptions['friend-or-family'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['friend-or-family']) }}
+                    {{ whoOptions['friend-or-family'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['friend-or-family']) }}
+
+                <label class="text block-label" data-target="professional-group" for="{{ whoOptions['professional'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['professional']) }}
+                    {{ whoOptions['professional'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['professional']) }}
+
+                <div id="professional-group" class="panel-indent js-hidden">
+                    <label class="text block-label" for="{{ professionalOptions['solicitor'].getAttribute('id') }}">
+                        {{ formInput(professionalOptions['solicitor']) }}
+                        {{ professionalOptions['solicitor'].getOption('label')|raw }}
+                    </label>
+                    {{ formElementErrorsV2(professionalOptions['solicitor']) }}
+
+                    <label class="text block-label" for="{{ professionalOptions['will-writer'].getAttribute('id') }}">
+                        {{ formInput(professionalOptions['will-writer']) }}
+                        {{ professionalOptions['will-writer'].getOption('label')|raw }}
+                    </label>
+                    {{ formElementErrorsV2(professionalOptions['will-writer']) }}
+
+                    <label class="text block-label" data-target="professional-other-input" for="{{ professionalOptions['other'].getAttribute('id') }}">
+                        {{ formInput(professionalOptions['other']) }}
+                        {{ professionalOptions['other'].getOption('label')|raw }}
+                    </label>
+                    {{ formElementErrorsV2(professionalOptions['other']) }}
+
+                    <div class="panel panel-border-narrow js-hidden" id="professional-other-input">
+                        <label class="form-label" for="{{ professionalOther.getAttribute('id') }}">
+                            {{ professionalOther.getOption('label') }}
+                            {{ formElementErrorsV2(professionalOther) }}
+                        </label>
+                        {{ formText(professionalOther) }}
+                    </div>                            
+                </div> 
+
+                <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['digital-partner']) }}
+                    {{ whoOptions['digital-partner'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['digital-partner']) }}
+
+                <label class="text block-label" data-target="organisation-input" for="{{ whoOptions['organisation'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['organisation']) }}
+                    {{ whoOptions['organisation'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['organisation']) }}
+
+                <div class="panel panel-border-narrow js-hidden" id="organisation-input">
+                    <label class="form-label" for="{{ organisation.getAttribute('id') }}">
+                        {{ organisation.getOption('label') }}
+                        {{ formElementErrorsV2(organisation) }}
+                    </label>
+                    {{ formText(organisation) }}
+                </div>  
+
+                <label class="text block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['notSaid']) }}
+                    {{ whoOptions['notSaid'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['notSaid']) }}
+
+                {{ formElementErrorsV2(who) }}
+            </div>
+
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" name="save" value="Save and continue" class="button">
+        </div>
+        
+    {{ form().closeTag|raw }}
+    {% endif %}
+    
+</li>
+
+{% endblock %}

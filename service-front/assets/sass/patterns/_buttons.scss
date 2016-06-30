@@ -3,31 +3,35 @@
 
 
 .button-secondary {
-	@include button($panel-colour);
-	@extend %button-extended;
+    @extend %button-extended;
+    @include button($panel-colour);
 }
 
 .button-warning {
-	@include button($error-colour);
-	@extend %button-extended;
+    @extend %button-extended;
+    @include button($error-colour);
 }
 
 %button-extended {
-	@include box-sizing (border-box);
-  	padding: em(10) em(15) em(5) em(15);
-  	vertical-align: top;
-  	@include media (mobile) {
-    	width: 100%;
-  	}
+    @include box-sizing (border-box);
+    padding: em(10) em(15) em(5);
+    vertical-align: top;
+
+    @include media (mobile) {
+        width: 100%;
+    }
 }
 
-.button {
-	@include media(mobile) {
-		text-align: center;
-	}
-	+ .button {
-		@include media(mobile) {
-			margin-top: 15px;
-		}
-	}
+.button,
+.button-secondary {
+    @include media(mobile) {
+        text-align: center;
+    }
+    
+    + .button,
+    + .button-secondary {
+        @include media(mobile) {
+            margin-top: 15px;
+        }
+    }
 }

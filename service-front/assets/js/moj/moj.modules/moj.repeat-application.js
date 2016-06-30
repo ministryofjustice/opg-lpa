@@ -36,14 +36,12 @@
       }
 
     },
-    render: function (e, params) {
-      var $el = $(this.selector, $(params.wrap));
-
+    render: function () {
       this.displayCaseNumber(0);
       this.initialiseEvents();
 
     },
-    onRepeatApplicationFormChangeHandler: function (evt) {
+    onRepeatApplicationFormChangeHandler: function () {
       this.displayCaseNumber(500);
     },
     onRepeatApplicationFormClickHandler: function (evt) {
@@ -67,10 +65,10 @@
           'cancelClass': 'js-dialog-cancel'
         });
         moj.Modules.Popup.open(html, {
-          ident: 'dialog-confirmation'
+          ident: 'dialog'
         });
 
-        $('.dialog-confirmation').on('click', 'a', function (evt) {
+        $('.dialog').on('click', 'a', function (evt) {
           var $target = $(evt.target);
 
           if (!formSubmitted) {

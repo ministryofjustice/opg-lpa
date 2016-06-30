@@ -1,22 +1,33 @@
+// =======================================================
+// PANELS
+
 .panel-cta {
-	padding: $gutter-half $gutter-half $gutter;
-	background-color: $panel-colour;
-	@include media(mobile) {
-		padding-bottom: $gutter-half;
-	}
-	.panel-body {
-		font-weight: 700;
-		text-align: center;
-	}
-	.panel-button {
-		text-align: center;
-	}
+    padding: $gutter-half;
+    background-color: $panel-colour;
+
+    @include media(mobile) {
+        padding-bottom: $gutter-half;
+    }
+
+    .panel-body {
+        font-weight: 700;
+        text-align: center;
+    }
+    
+    .panel-button {
+        text-align: center;
+        padding-bottom: $gutter-half;
+    }
 }
 
 .panel-actions {
-	.js-enabled & {
-		padding: $gutter-half;
-		background-color: $grey-4;
-		border-bottom: 1px solid $border-colour;
-	}
+    .js-enabled & {
+        padding: $gutter-half;
+        border-bottom: 1px solid $border-colour;
+        background-color: $grey-4;
+    }
+}
+
+.panel-indent {
+    margin-left: 45px;
 }

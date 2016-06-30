@@ -12,6 +12,8 @@
 
 {% block content %}
 
+{% import "application/macros.twig" as macros %}
+
 {{ form.setAttribute('class', 'form') ? '' }}
 
 {% set type = form.get('rating') %}
@@ -80,13 +82,9 @@
     <fieldset>
         <legend class="group text">
         </legend>
-        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
-            <label class="form-label text" for="{{ email.getAttribute('id') }}">
-                <span class="visuallyhidden">Your email address (optional)</span>
-                {{ formElementErrorsV2(email) }}
-            </label>
-            {{ formElement(email) }}
-        </div>
+
+        {{ macros.formGroup(email) }}
+
     </fieldset>
 
     <input type="submit" name="send" id="send" class="button" value="Send feedback">

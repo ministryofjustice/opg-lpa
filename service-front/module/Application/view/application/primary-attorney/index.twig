@@ -1,4 +1,4 @@
-{% extends 'layout/twig/creation-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
@@ -42,8 +42,7 @@
     </div>
 
     <div class="form-group flush--bottom">
-        <a href="{{ nextRoute }}" class="button divorced" role="button"
-            {% if not (attorneys) %} disabled="disabled"{% endif %} >
+        <a href="{{ nextRoute }}" class="button divorced {% if not (attorneys) %}disabled{% endif %}">
             Save and continue
         </a> 
     </div>

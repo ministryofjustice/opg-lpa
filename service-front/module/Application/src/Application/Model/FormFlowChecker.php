@@ -45,7 +45,6 @@ class FormFlowChecker extends StateChecker
             'lpa/people-to-notify/edit'                     => 'isPeopleToNotifyEditAccessible',
             'lpa/people-to-notify/delete'                   => 'isPeopleToNotifyDeleteAccessible',
             'lpa/instructions'                              => 'isInstructionsAccessible',
-            'lpa/created'                                   => 'isCreatedAccessible',
             'lpa/download'                                  => 'isDownloadAccessible',
             'lpa/applicant'                                 => 'isApplicantAccessible',
             'lpa/correspondent'                             => 'isCorrespondentAccessible',
@@ -54,14 +53,14 @@ class FormFlowChecker extends StateChecker
             'lpa/repeat-application'                        => 'isRepeatApplicationAccessible',
             'lpa/fee-reduction'                             => 'isFeeReductionAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
-            'lpa/payment/response'                          => 'isOnlinePaymentResponseAccessible',
+            'lpa/payment/summary'                           => 'isPaymentAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
             'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
             'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
-            'lpa/date-check'                                => 'isCreatedAccessible',
-            'lpa/summary'                                   => 'isCreatedAccessible',
+            'lpa/date-check'                                => 'isApplicantAccessible',
+            'lpa/summary'                                   => 'isInstructionsAccessible',
             'lpa/view-docs'                                 => 'isViewDocsAccessible',
     );
     
@@ -79,13 +78,13 @@ class FormFlowChecker extends StateChecker
             'lpa/certificate-provider'                      => 'returnToCertificateProvider',
             'lpa/people-to-notify'                          => 'returnToPeopleToNotify',
             'lpa/instructions'                              => 'returnToInstructions',
-            'lpa/created'                                   => 'returnToCreateLpa',
             'lpa/applicant'                                 => 'returnToApplicant',
             'lpa/correspondent'                             => 'returnToCorrespondent',
             'lpa/who-are-you'                               => 'returnToWhoAreYou',
             'lpa/repeat-application'                        => 'returnToRepeatApplication',
             'lpa/fee-reduction'                             => 'returnToFeeReduction',
             'lpa/payment'                                   => 'returnToPayment',
+            'lpa/payment/summary'                           => 'returnToPaymentSummary',
             'lpa/view-docs'                                 => 'returnToViewDocs',
     );
     
@@ -121,14 +120,15 @@ class FormFlowChecker extends StateChecker
             'lpa/people-to-notify/add'                      => 'lpa/people-to-notify',
             'lpa/people-to-notify/edit'                     => 'lpa/people-to-notify',
             'lpa/people-to-notify/delete'                   => 'lpa/people-to-notify',
-            'lpa/instructions'                              => 'lpa/created',
+            'lpa/instructions'                              => 'lpa/applicant',
             'lpa/applicant'                                 => 'lpa/correspondent',
             'lpa/correspondent'                             => 'lpa/who-are-you',
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
             'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
-            'lpa/payment'                                   => 'lpa/complete',
+            'lpa/payment'                                   => 'lpa/payment/summary',
+            'lpa/payment/summary'                           => 'lpa/complete',
             
     );
 
@@ -581,16 +581,6 @@ class FormFlowChecker extends StateChecker
         }
     }
     
-    private function isCreatedAccessible()
-    {
-        if(($this->isInstructionsAccessible() === true) && $this->lpaHasFinishedCreation()) {
-            return true;
-        }
-        else {
-            return 'lpa/instructions';
-        }
-    }
-    
     // accessibility is checked in controller, and will not be redirected when not available.
     private function isDownloadAccessible($pdfType)
     {
@@ -603,7 +593,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/created';
+            return 'lpa/instructions';
         }
     }
     
@@ -664,17 +654,6 @@ class FormFlowChecker extends StateChecker
         }
         else {
             return 'lpa/fee-reduction';
-        }
-    }
-
-    private function isOnlinePaymentResponseAccessible()
-    {
-        if(($this->lpa->payment instanceof Payment) &&
-            ($this->lpa->payment->method == 'card')) {
-            return true;
-        }
-        else {
-            return 'lpa/payment';
         }
     }
     
@@ -930,23 +909,13 @@ class FormFlowChecker extends StateChecker
         }
     }
     
-    private function returnToCreateLpa()
-    {
-        if($this->lpa->createdAt !== null) {
-            return 'lpa/created';
-        }
-        else {
-            return 'lpa/instructions';
-        }
-    }
-    
     private function returnToApplicant()
     {
         if($this->lpaHasApplicant()) {
             return 'lpa/applicant';
         }
         else {
-            return 'lpa/created';
+            return 'lpa/instructions';
         }
     }
     
@@ -997,6 +966,16 @@ class FormFlowChecker extends StateChecker
         }
         else {
             return 'lpa/fee-reduction';
+        }
+    }
+
+    private function returnToPaymentSummary()
+    {
+        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
+            return 'lpa/payment/summary';
+        }
+        else {
+            return 'lpa/payment';
         }
     }
     

@@ -1,9 +1,10 @@
-{% extends 'layout/twig/creation-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'when' : {
         'Value is required and can\'t be empty' : 'Please choose how your replacement attorneys step in',
@@ -14,7 +15,6 @@
 }) %}
 
 {# Set form fields variables #}
-{% set csrf = form.get(form.csrfName) %}
 {% set when = form.get('when') %}
 {% set whenDetails = form.get('whenDetails') %}
 {% set currentWhenOptions = when.getOptions()['value_options'] %}
@@ -29,7 +29,7 @@
 }) ? ''}}
 
 {% set whenOptions = {
-	'one-attorney-cannot-act' : {
+	'first' : {
 		attributes: {
 			id: 'one-attorney-cannot-act'
 		},
@@ -37,9 +37,9 @@
 		label_attributes: {
 			for: 'one-attorney-cannot-act'
 		},
-		value: currentWhenOptions['one-attorney-cannot-act'].value
+		value: currentWhenOptions['first'].value
 	},
-	'no-attorney-can-act' : {
+	'last' : {
 		attributes: {
 			id: 'no-attorney-can-act'
 		},
@@ -47,7 +47,7 @@
 		label_attributes: {
 			for: 'no-attorney-can-act'
 		},
-		value: currentWhenOptions['no-attorney-can-act'].value 
+		value: currentWhenOptions['last'].value 
 	},
 	'depends' : {
 		attributes: {
@@ -72,7 +72,8 @@
 	disable_html_escape: true
 }) ? '' }}
 
-{{ form.prepare() ? '' }}
+{# form fields labels #}
+{{ whenDetails.setOptions({label:'Details'}) ? '' }}
 
 <li id="when-replacement-attorney-step-in-section" class="section current js-current">
 
@@ -89,8 +90,7 @@
 	{# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }} 
-        {{ formElement(csrf) }}
-		{{ formElementErrors(csrf) }}
+        {{ formElement(form.get( form.csrfName )) }}
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
@@ -110,15 +110,14 @@
 
 			<p class="text">Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice. <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Not sure what to put?</a>
 
-            <div class="form-group {{ whenDetails.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(whenDetails) }}
-                {{ formElementErrorsV2(whenDetails) }}
-            </div>
+			{{ macros.formGroup(whenDetails) }}
+
         </fieldset>
 	
 		<div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
+        
     {{ form().closeTag|raw }}
 
 </li>

@@ -3,442 +3,531 @@
 
 // Headings
 .type-heading {
-	margin-bottom: $gutter;
-	padding-bottom: $gutter-half;
-	border-bottom: 1px solid $border-colour;
-	@include media(mobile) {
-		margin-bottom: $gutter-half;
-		padding-bottom: 12px;
-		padding-top: 6px;
-		border-top: 1px solid $border-colour;
-	}
-	@include media($max-width: 360px) {
-		padding: 8px 0 6px;
-	}
-	.icon {
-		position: relative;
-		top: 10px;
-		@include media(mobile) {
-			top: 5px;
-		}
-	}
+    margin-bottom: $gutter;
+    padding-bottom: $gutter-half;
+    border-bottom: 1px solid $border-colour;
+
+    @include media(mobile) {
+        margin-bottom: $gutter-half;
+        padding-top: 6px;
+        padding-bottom: 12px;
+        border-top: 1px solid $border-colour;
+    }
+
+    @include media($max-width: 360px) {
+        padding: 8px 0 6px;
+    }
+
+    .icon {
+        position: relative;
+        top: 10px;
+
+        @include media(mobile) {
+            top: 5px;
+        }
+    }
 }
 
 // Table View
 .lpa-table {
-	.lpa-donor {
-		@include media($min-width: 750px) {
-			width: 30%;
-		}
-		@include media($min-width: 861px) {
-			width: 23%;
-		}
-		@include media($min-width: 950px) {
-			width: 25%;
-		}
-	}
-	.lpa-number {
-		color: $secondary-text-colour;
-		@include media($min-width: 861px) {
-			width: 150px;
-		}
-		@include media($min-width: 950px) {
-			width: 120px;
-		}
-		@include media($max-width: 860px) {
-			display: none;
-		}
-		display: table-cell;
-	}
-	.lpa-number-alt {
-		@include media($max-width: 860px) {
-			display: inline-block;
-		}
-		color: $secondary-text-colour;
-		display: none;
-	}
-	th {
-		&.lpa-donor-header {
-			&:after {
-				@include media($max-width: 860px) {
-					content: ' / LPA number';
-				}
-				content: '';
-			}
-		}
-		&.lpa-number-header {
-			@include media($max-width: 860px) {
-				display: none;
-			}
-			display: table-cell;
-		}
-	}
-	.lpa-type {
-		color: $secondary-text-colour;
-		@include media($min-width: 861px) {
-			width: 70px;
-		}
-		@include media($min-width: 950px) {
-			width: 80px;
-		}
-	}
-	.lpa-progress {
-		@include media($min-width: 770px) {
-			width: 60px;
-		}
-		@include media($min-width: 861px) {
-			width: 70px;
-		}
-		@include media($min-width: 950px) {
-			width: 80px;
-		}
-		.progress-started {
-			color: $orange;
-		}
-		.progress-completed {
-			color: $green;
-		}
-	}
-	.lpa-date {
-		color: $secondary-text-colour;
-		width: 80px;
-	}
-	.lpa-actions {
-		width: 190px;
-		.button {
-			float: right;
-			margin-top: 13px;
-		}
-	}
-	.lpa-manage {
-		float: left;
-		margin-top: 21px;
-		a span {
-			@include media(tablet) {
-				display: none;
-			}
-		}
-	}
-	@include media($min-width: 641px) {
-		td:nth-child(6) {
-			padding: 0;
-		}
-	}
+    .lpa-donor {
+        @include media($min-width: 750px) {
+            width: 30%;
+        }
 
-	.button {
-		@include media($min-width: 641px) {
-			margin-bottom: 14px;
-		}
-	}
+        @include media($min-width: 861px) {
+            width: 23%;
+        }
+
+        @include media($min-width: 950px) {
+            width: 25%;
+        }
+    }
+
+    .lpa-number {
+        display: table-cell;
+        color: $secondary-text-colour;
+
+        @include media($min-width: 861px) {
+            width: 150px;
+        }
+
+        @include media($min-width: 950px) {
+            width: 120px;
+        }
+        
+        @include media($max-width: 860px) {
+            display: none;
+        }
+    }
+
+    .lpa-number-alt {
+        display: none;
+        color: $secondary-text-colour;
+
+        @include media($max-width: 860px) {
+            display: inline-block;
+        }
+    }
+
+    .lpa-donor-header {
+        &:after {
+            content: '';
+
+            @include media($max-width: 860px) {
+                content: ' / LPA number';
+            }
+        }
+    }
+
+    .lpa-number-header {
+        display: table-cell;
+
+        @include media($max-width: 860px) {
+            display: none;
+        }
+    }
+
+    .lpa-type {
+        color: $secondary-text-colour;
+
+        @include media($min-width: 861px) {
+            width: 70px;
+        }
+
+        @include media($min-width: 950px) {
+            width: 80px;
+        }
+    }
+
+    .lpa-progress {
+        @include media($min-width: 770px) {
+            width: 60px;
+        }
+
+        @include media($min-width: 861px) {
+            width: 70px;
+        }
+
+        @include media($min-width: 950px) {
+            width: 80px;
+        }
+
+        .progress-started {
+            color: $orange;
+        }
+
+        .progress-completed {
+            color: $green;
+        }
+    }
+
+    .lpa-date {
+        width: 80px;
+        color: $secondary-text-colour;
+    }
+
+    .lpa-actions {
+        width: 190px;
+
+        .button {
+            margin-top: 13px;
+            float: right;
+        }
+    }
+
+    .lpa-manage {
+        margin-top: 21px;
+        float: left;
+
+        .extra-text {
+            @include media(tablet) {
+                display: none;
+            }
+        }
+    }
+
+    td:nth-child(6) {
+        @include media($min-width: 641px) {
+            padding: 0;
+        }
+    }
+
+    .button {
+        @include media($min-width: 641px) {
+            margin-bottom: 14px;
+        }
+    }
 }
 
 .lpa-actions {
-	padding-top: 12px;
+    padding-top: 12px;
 }
 
 // Cards View
 .lpa-cards {
-	thead {
-		display: none;
-	}
-	tr {
-		display: block;
-		position: relative;
-		width: 48.5%;
-		float: left;
-		@include box-sizing (border-box);
-		margin-bottom: $gutter;
-		padding: $gutter-half;
-		border: 1px solid $border-colour;
-		&:nth-child(2n-1) {
-			margin-right: 3%;
-		}
-		&.odd {
-			margin-right: 3%;
-		}
-	}
-	td {
-		display: block;
-		position: relative;
-		padding: 0;
-		border-bottom: 0;
-		font-size: 19px;
-	}
-	.lpa-donor {
-		float: left;
-		width: 100%;
-		.heading-medium {
-			padding-right: 120px;
-			@include media($min-width: 870px) {
-				padding-right: 210px;
-			}
-		}
-	}
-	.lpa-number {
-		float: left;
-		width: 100%;
-		padding-top: 6px;
-		color: $secondary-text-colour;
-	}
-	.lpa-type {
-		display: none;
-	}
-	.lpa-progress,
-	.lpa-date {
-		position: absolute;
-		width: 128px;
-		top: 19px;
-		right: 0;
-		padding: 0;
-		line-height: 1.31579em;
-		@include media($min-width: 870px) {
-			width: 210px;
-		}
-		@include media(mobile) {
-			position: static;
-		}
-		@include media($max-width: 380px) {
-			//width: 100px;
-		}
-		span {
-			display: block;
-			position: relative;
-			width: 100%;
-			text-align: left;
-			@include media(mobile) {
-				position: static;
-				display: inline;
-			}
-		}
-	}
-	.lpa-progress {
-		.progress-started {
-			color: $orange;
-		}
-		.progress-completed {
-			color: $green;
-		}
-		span {
-			&:before {
-				color: $secondary-text-colour;
-				content: 'Status: ';
-				@include media($min-width: 641px) {
-					content: '';
-				}
-				@include media($min-width: 870px) {
-					content: 'Status: ';
-				}
-				@include media(mobile) {
-					content: '';
-				}
-			}
-		}
-	}
-	.lpa-date span {
-		top: 24px;
-		color: $secondary-text-colour;
-		&:before {
-			content: 'Last saved on: ';
-			@include media($min-width: 641px) {
-				content: '';
-			}
-			@include media($min-width: 870px) {
-				content: 'Last saved on: ';
-			}
-			@include media(mobile) {
-				content: '';
-			}
-		}
-	}
-	.lpa-actions {
-		float: left;
-		width: 100%;
-		position: relative;
-		min-height: 80px;
-	}
-	.button {
-		@include media(tablet) {
-			position: absolute;
-			bottom: 2px;
-			&:active {
-				top: inherit;
-			}
-		}
-	}
-	.lpa-cta {
-		float: left;
-		width: 100%;
-	}
-	.lpa-manage {
-		@include media(tablet) {
-			position: absolute;
-			width: 112px;
-			right: 0;
-			bottom: 0;
-			padding: 0;
-			a span {
-				display: none;
-			}
-		}
-		@include media($min-width: 870px) {
-			width: 194px;
-			a span {
-				display: inline;
-			}
-		}
-	}
-	@include media(mobile) {
-		tr {
-			width: 100%;
-		}
-	}
+    thead {
+        display: none;
+    }
+
+    tr {
+        @include box-sizing (border-box);
+        display: block;
+        position: relative;
+        width: 48.5%;
+        margin-bottom: $gutter;
+        padding: $gutter-half;
+        float: left;
+        border: 1px solid $border-colour;
+
+        @include media(mobile) {
+            width: 100%; 
+        }
+
+        &:nth-child(2n-1) {
+            margin-right: 3%;
+        }
+
+        &.odd {
+            margin-right: 3%;
+        }
+    }
+
+    td {
+        display: block;
+        position: relative;
+        padding: 0;
+        border-bottom: 0;
+        font-size: 19px;
+    }
+
+    .lpa-donor {
+        width: 100%;
+        float: left;
+
+        .heading-medium {
+            padding-right: 120px;
+
+            @include media($min-width: 870px) {
+                padding-right: 210px;
+            }
+        }
+    }
+
+    .lpa-number {
+        width: 100%;
+        padding-top: 6px;
+        float: left;
+        color: $secondary-text-colour;
+    }
+
+    .lpa-type {
+        display: none;
+    }
+
+    .lpa-progress,
+    .lpa-date {
+        position: absolute;
+        top: 19px;
+        right: 0;
+        width: 128px;
+        padding: 0;
+        line-height: 1.31579em;
+
+        @include media($min-width: 870px) {
+            width: 210px;
+        }
+
+        @include media(mobile) {
+            position: static;
+        }
+
+        @include media($max-width: 380px) {
+            //width: 100px;
+        }
+
+        span {
+            display: block;
+            position: relative;
+            width: 100%;
+            text-align: left;
+
+            @include media(mobile) {
+                display: inline;
+                position: static;
+            }
+        }
+    }
+
+    .progress {
+        &:before {
+            color: $secondary-text-colour;
+            content: 'Status: ';
+
+            @include media($min-width: 641px) {
+                content: '';
+            }
+
+            @include media($min-width: 870px) {
+                content: 'Status: ';
+            }
+
+            @include media(mobile) {
+                content: '';
+            }
+        }
+
+        &.progress-started {
+            color: $orange;
+        }
+
+        &.progress-completed {
+            color: $green;
+        }
+    }
+
+    .lpa-date span {
+        top: 24px;
+        color: $secondary-text-colour;
+
+        &:before {
+            content: 'Last saved on: ';
+
+            @include media($min-width: 641px) {
+                content: '';
+            }
+
+            @include media($min-width: 870px) {
+                content: 'Last saved on: ';
+            }
+
+            @include media(mobile) {
+                content: '';
+            }
+        }
+    }
+
+    .lpa-actions {
+        position: relative;
+        width: 100%;
+        min-height: 80px;
+        float: left;
+    }
+
+    .button {
+        @include media(tablet) {
+            position: absolute;
+            bottom: 2px;
+
+            &:active {
+                top: inherit;
+            }
+        }
+    }
+
+    .lpa-cta {
+        width: 100%;
+        float: left;
+    }
+
+    .lpa-manage {
+        @include media(tablet) {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 112px;
+            padding: 0;
+        }
+
+        @include media($min-width: 870px) {
+            width: 194px;
+        }
+
+        .extra-text {
+            @include media(tablet) {
+                display: none;
+            }
+
+            @include media($min-width: 870px) {
+                display: inline;
+            }
+        }
+    }
 }
 
 // Mobile View
 .lpa-table,
 .lpa-cards {
-	@include media(mobile) {
-		thead {
-			display: none;
-		}
-		tr {
-			position: relative;
-			display: block;
-			margin-bottom: $gutter-half;
-			border: 1px solid $border-colour;
-			padding: $gutter-half;
-			overflow: hidden;
-			&:last-child {
-				margin-bottom: 0;
-			}
-			&:after {
-				position: absolute;
-				background-color: blue;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
-			}
-		}
-		td {
-			display: block;
-			position: relative;
-			border-bottom: 0;
-			padding: 0 0 6px 0;
-		}
-		.lpa-donor {
-			.heading-medium {
-				padding-right: 90px;
-				@include media($max-width: 300px) {
-					padding-right: 50px;
-				}
-			}
-		}
-		.lpa-number {
-			display: block;
-			margin-bottom: $gutter-half;
-			padding-top: 0;
-			color: $secondary-text-colour;
-			font-size: 16px;
-			&:after {
-				position: absolute;
-				top: 0;
-				left: 135px;
-				content: '|';
-				@include media($max-width: 420px) {
-					content: '';
-				}
-			}
-		}
-		.lpa-number-alt {
-			display: none;
-		}
-		.lpa-type {
-			color: $secondary-text-colour;
-			font-size: 16px;
-			&:before {
-				content: 'Type: ';
-			}
-		}
-		.lpa-progress {
-			position: absolute;
-			top: 39px;
-			left: 170px;
-			width: 150px;
-			font-size: 16px;
-			&:before {
-				content: '';
-				color: $secondary-text-colour;
-				@include media($min-width: 460px){
-					content: 'Status: ';
-				}
-				@include media($max-width: 420px) {
-					content: 'Status: ';
-				}
-			}
-			@include media($max-width: 420px) {
-				position: static;
-			}
-		}
-		.lpa-date {
-			display: block;
-			width: 100%;
-			color: $secondary-text-colour;
-			font-size: 16px;
-			&:before {
-				content: 'Last saved: ';
-				@include media($max-width: 320px) {
-					content: '';
-				}
-			}
-		}
-		.lpa-actions {
-			position: static;
-			width: 70%;
-			padding-bottom: 0;
-			min-height: 0;
-		}
-		.lpa-cta {
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			.button {
-				position: absolute;
-				width: 90px;
-				height: 100%;
-				float: none;
-				display: block;
-				margin-top: 0;
-				right: 0;
-				box-shadow: 0 0 0;
-				vertical-align: middle;
-				background-image: url(../images/custom/arrow-in-circle.png);
-				background-repeat: no-repeat;
-				background-position: center;
-				text-indent: -9999px;
-				border-left: 1px solid $border-colour;
-				@include media($max-width: 300px) {
-					width: 50px;
-					background-size: 60%;
-				}
-			}
-		}
-		.lpa-manage {
-			position: relative;
-			float: none;
-			font-size: 16px;
-			margin-top: $gutter-half;
-			.summary:after {
-				content: ' this LPA';
-			}
-			li {
-				margin-bottom: 4px;
-				&:last-child {
-					margin-bottom: 0;
-				}
-			}
-		}
-	}
+    @include media(mobile) {
+        thead {
+            display: none;
+        }
+
+        tr {
+            display: block;
+            position: relative;
+            margin-bottom: $gutter-half;
+            padding: $gutter-half;
+            border: 1px solid $border-colour;
+            overflow: hidden;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            &:after {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+            }
+        }
+
+        td {
+            display: block;
+            position: relative;
+            padding: 0 0 6px;
+            border-bottom: 0;
+        }
+
+        .lpa-donor {
+            .heading-medium {
+                padding-right: 90px;
+
+                @include media($max-width: 300px) {
+                    padding-right: 50px;
+                }
+            }
+        }
+
+        .lpa-number {
+            display: block;
+            margin-bottom: $gutter-half;
+            padding-top: 0;
+            color: $secondary-text-colour;
+            font-size: 16px;
+
+            &:after {
+                position: absolute;
+                top: 0;
+                left: 135px;
+                content: '|';
+
+                @include media($max-width: 420px) {
+                    content: '';
+                }
+            }
+        }
+
+        .lpa-number-alt {
+            display: none;
+        }
+
+        .lpa-type {
+            color: $secondary-text-colour;
+            font-size: 16px;
+
+            &:before {
+                content: 'Type: ';
+            }
+        }
+
+        .lpa-progress {
+            position: absolute;
+            top: 39px;
+            left: 170px;
+            width: 150px;
+            font-size: 16px;
+
+            @include media($max-width: 420px) {
+                position: static;
+            }
+
+            &:before {
+                color: $secondary-text-colour;
+                content: '';
+
+                @include media($min-width: 460px) {
+                    content: 'Status: ';
+                }
+
+                @include media($max-width: 420px) {
+                    content: 'Status: ';
+                }
+            }
+
+        }
+
+        .lpa-date {
+            display: block;
+            width: 100%;
+            color: $secondary-text-colour;
+            font-size: 16px;
+
+            &:before {
+                content: 'Last saved: ';
+
+                @include media($max-width: 320px) {
+                    content: '';
+                }
+            }
+        }
+
+        .lpa-actions {
+            position: static;
+            width: 70%;
+            min-height: 0;
+            padding-bottom: 0;
+        }
+
+        .lpa-cta {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            .button {
+                display: block;
+                position: absolute;
+                right: 0;
+                width: 90px;
+                height: 100%;
+                margin-top: 0;
+                float: none;
+                border-left: 1px solid $border-colour;
+                background-image: url('../images/custom/arrow-in-circle.png');
+                background-repeat: no-repeat;
+                background-position: center;
+                text-indent: -9999px;
+                box-shadow: 0 0 0;
+                vertical-align: middle;
+
+                @include media($max-width: 300px) {
+                    width: 50px;
+                    background-size: 60%;
+                }
+            }
+        }
+
+        .lpa-manage {
+            position: relative;
+            margin-top: $gutter-half;
+            float: none;
+            font-size: 16px;
+
+            .summary:after {
+                content: ' this LPA';
+            }
+
+            li {
+                margin-bottom: 4px;
+            }
+
+            .last {
+                margin-bottom: 0;
+            }
+        }
+    }
 }

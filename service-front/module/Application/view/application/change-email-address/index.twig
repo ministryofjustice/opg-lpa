@@ -10,6 +10,8 @@
 
 {% block content %}
 
+{% import "application/macros.twig" as macros %}
+
 {# Set form fields variables #}
 {% set password = form.get('password_current') %}
 {% set email = form.get('email') %}
@@ -50,29 +52,9 @@
             <input type="text" name="email_current" id="email_current" autocomplete="off" class="form-control disabled" value="{{ currentAddress }}" disabled="disabled">
         </div>
 
-        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ password.getAttribute('id') }}">
-                {{ password.getOption('label') }}
-                {{ formElementErrorsV2(password) }}
-            </label>
-            {{ formElement(password) }}
-        </div>
-
-        <div class="form-group {{ email.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ email.getAttribute('id') }}">
-                {{ email.getOption('label') }}
-                {{ formElementErrorsV2(email) }}
-            </label>
-            {{ formElement(email) }}
-        </div>
-
-        <div class="form-group {{ email_confirm.getMessages|length >0 ? 'error'}}">
-            <label class="form-label" for="{{ email_confirm.getAttribute('id') }}">
-                {{ email_confirm.getOption('label') }}
-                {{ formElementErrorsV2(email_confirm) }}
-            </label>
-            {{ formElement(email_confirm) }}
-        </div>
+        {{ macros.formGroup(password) }}
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(email_confirm) }}
 
         <div class="form-group">
             <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">

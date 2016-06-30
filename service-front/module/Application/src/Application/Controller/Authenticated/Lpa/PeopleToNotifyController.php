@@ -17,9 +17,6 @@ use Application\Controller\AbstractLpaActorController;
 
 class PeopleToNotifyController extends AbstractLpaActorController
 {
-    
-    protected $contentHeader = 'creation-partial.phtml';
-    
     public function indexAction()
     {
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();

@@ -15,6 +15,7 @@
 	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetailsDetails) }}
 </script>
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-first' : {
         'cannot-be-blank' : 'Please enter the donor\'s first name'
@@ -36,8 +37,6 @@
         "Please enter all the date fields" : "Please enter the donor's date of birth"
     }
 }) %}
-
-{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
 {# Set form fields variables #}
 {% set title = form.get('name-title') %}
@@ -134,8 +133,7 @@
 }) ? ''}}
 
 {{ canSign.setAttributes({
-    id: 'can-sign',
-    class:'donor-cannot-sign'
+    id: 'can-sign'
 }) ? '' }}
 
 {# form fields labels #}
@@ -160,9 +158,7 @@
     <h2 class="heading-small popup-header-title">Edit the donor's details</h2>
 </header>
 
-
-{{ form.prepare() ? '' }}
-
+{# Reuse contacts picker #}
 {{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
 
 {############################ donor form ############################}
@@ -173,7 +169,11 @@
 </div>
 {% endif %}
 
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
 {# begin form #}
+{{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
     {{ formElement(form.get( form.csrfName )) }}
 
@@ -187,7 +187,7 @@
         {{ macros.formGroup(lastname) }}
 
         <details class="form-group flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
-            <summary class="hint" role="button" aria-expanded="false">Is this person known by any other names?</summary>
+            <summary class="summary" role="button" aria-expanded="false">Is this person known by any other names?</summary>
             <div>
                 {{ macros.formGroup(otherNames) }}
             </div>
@@ -198,7 +198,7 @@
     <h2 class="heading-medium">What is the donor's date of birth?</h2>
 
     <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="form-label">Date of birth</legend>
+        <legend class="form-label dob-label">Date of birth</legend>
 
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>

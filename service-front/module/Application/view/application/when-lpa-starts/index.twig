@@ -1,19 +1,19 @@
-{% extends 'layout/twig/creation-stage.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
+{# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'when' : {
         "Value is required and can't be empty" : 'Please choose when your LPA can be used',
     }
 }) %}
-    
-{% set csrf = form.get(form.csrfName) %}
+  
+{# Set form fields variables #}  
 {% set when = form.get('when') %}
         
-
 <li id="when-lpa-starts-section" class="section current js-current">
 	
 	<h2 class="heading-medium accordion-header flush--top">When can your LPA be used?</h2>
@@ -30,26 +30,25 @@
 	{# begin form #}
 	{{ form.prepare() ? '' }}
 	{{ form().openTag( form )|raw }}
+		{{ formElement(form.get( form.csrfName )) }}
 
-	{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-	<div class="{{ elementGroupClass(csrf) }}">
-	{{ formElement(csrf) }}
-	{{ formElementErrors(csrf) }}
-	</div>
+		<fieldset>
+			<legend class="visuallyhidden">When can your LPA be used?</legend>
 
-	<fieldset>
-		<legend class="visuallyhidden">When can your LPA be used?</legend>
+			<h2 class="heading-medium flush--top">My LPA can be used</h2>
 
-		<h2 class="heading-medium flush--top">My LPA can be used</h2>
+		    <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
+		        {{ formRadio(when) }}
+		        {{ formElementErrorsV2(when) }}
+		    </div>
+		</fieldset>
 
-	    <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
-	        {{ formRadio(when) }}
-	        {{ formElementErrorsV2(when) }}
-	    </div>
-	</fieldset>
+		<div class="form-group">
+			<input type="submit" name="save" value="Save and continue" class="button">
+		</div>
 
-	{{ macros.renderAccordionSaveAndContinue(true, nextUrl) }}
 	{{ form().closeTag|raw }}
     
 </li>

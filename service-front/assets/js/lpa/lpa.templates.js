@@ -94,7 +94,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close\" title=\"Click or press escape to close this window\">Close</a>\n</p>";
+  return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\">Close</a>\n</p>";
   });
 
 this["lpa"]["templates"]["popup.container"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -103,7 +103,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div id=\"popup\" role=\"dialog\"></div>";
+  return "<div id=\"popup\" role=\"dialog\" class=\"popup\"></div>";
   });
 
 this["lpa"]["templates"]["popup.content"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
