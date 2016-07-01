@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2016-06-12
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#38](https://github.com/zendframework/zend-navigation/pull/38) fixes the
+  `AbstractNavigationFactory` to allow either zend-router or zend-mvc v2
+  `RouteMatch` or `RouteStackInterface` implementations when injecting pages
+  with URIs.
+
+## 2.8.0 - 2016-06-11
+
+### Added
+
+- [#33](https://github.com/zendframework/zend-navigation/pull/33) adds support
+  for zend-mvc v3.0. Specifically, the `Mvc` page type now allows usage of
+  either `Zend\Mvc\Router` or `Zend\Router` for URI generation.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.7.2 - 2016-06-11
+
+### Added
+
+- [#27](https://github.com/zendframework/zend-navigation/pull/27) adds and
+  publishes the documentation to https://zendframework.github.io/zend-navigation/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#35](https://github.com/zendframework/zend-navigation/pull/35) fixes errors
+  in the `ConfigProvider` that prevented its use.
+
 ## 2.7.1 - 2016-04-08
 
 ### Added

@@ -56,14 +56,22 @@ class MiddlewareListener extends AbstractListenerAggregate
             $event->setResult($return);
             return $return;
         }
+
+        $caughtException = null;
         try {
             $return = $middleware(Psr7Request::fromZend($request), Psr7Response::fromZend($response));
-        } catch (\Exception $exception) {
+        } catch (\Throwable $ex) {
+            $caughtException = $ex;
+        } catch (\Exception $ex) {  // @TODO clean up once PHP 7 requirement is enforced
+            $caughtException = $ex;
+        }
+
+        if ($caughtException !== null) {
             $event->setName(MvcEvent::EVENT_DISPATCH_ERROR);
             $event->setError($application::ERROR_EXCEPTION);
             $event->setController($middlewareName);
             $event->setControllerClass(get_class($middleware));
-            $event->setParam('exception', $exception);
+            $event->setParam('exception', $caughtException);
 
             $events  = $application->getEventManager();
             $results = $events->triggerEvent($event);

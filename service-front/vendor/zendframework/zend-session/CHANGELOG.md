@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.2 - 2016-06-24
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#46](https://github.com/zendframework/zend-session/pull/46) provides fixes to
+  each of the `Cache` and `DbTaleGateway` save handlers to ensure they work
+  when used under PHP 7.
+
 ## 2.7.1 - 2016-05-11
 
 ### Added

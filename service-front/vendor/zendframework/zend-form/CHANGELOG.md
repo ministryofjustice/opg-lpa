@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - 2016-06-07
+
+### Added
+
+- [#57](https://github.com/zendframework/zend-form/pull/57) adds new elements,
+  `FormSearch` and `FormTel`, which map to the `FormSearch` and `FormTel` view
+  helpers.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Updates the composer suggestions list to remove those that were redundant, and
+  to add explicit constraints and reasons for each listed (e.g., zend-code is
+  required for annotations support).
+
+## 2.8.4 - 2016-06-07
+
+### Added
+
+- [#74](https://github.com/zendframework/zend-form/pull/74) adds an 
+  alias for the `FormTextarea` view helper that is referenced in the
+  documentation.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#77](https://github.com/zendframework/zend-form/pull/77) updates
+  `Zend\Form\View\HelperConfig` to improve performance when running under
+  zend-servicemanager v3.
+- [#19](https://github.com/zendframework/zend-form/pull/19) provides a thorough
+  fix for an issue when removing all items in a collection associated with a
+  form. Prior to this release, values that existed in the collection persisted
+  when a form submission intended to remove them.
+
 ## 2.8.3 - 2016-05-03
 
 ### Added
