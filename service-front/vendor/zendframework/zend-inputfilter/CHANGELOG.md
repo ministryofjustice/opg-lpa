@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.2 - 2016-06-11
+
+### Added
+
+- [#105](https://github.com/zendframework/zend-inputfilter/pull/105) adds and
+  publishes the documentation to https://zendframework.github.io/zend-inputfilter
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#110](https://github.com/zendframework/zend-inputfilter/pull/110) fixes an
+  issue with `InputFilterAbstractServiceFactory` whereby it was not working when
+  the provided container is not a plugin manager, but rather the application
+  container.
+
 ## 2.7.1 - 2016-04-18
 
 ### Added

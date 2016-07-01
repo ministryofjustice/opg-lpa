@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1ead671a9764c969d80511a14f87dd0b",
-    "content-hash": "473b7929155540bda1953575e48520dd",
+    "hash": "4426c8b988d640f73cf28e79abdde9eb",
+    "content-hash": "f98bd21f26f74693a5757438e657f1db",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -878,7 +878,7 @@
             "time": "2015-06-14 21:17:01"
         },
         {
-            "name": "fabpot/php-cs-fixer",
+            "name": "friendsofphp/php-cs-fixer",
             "version": "v1.7.1",
             "source": {
                 "type": "git",

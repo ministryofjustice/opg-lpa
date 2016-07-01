@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#42](https://github.com/zendframework/zend-i18n/pull/42) fixes the
+  behavior of the `PhoneNumber` validator to store the country using the casing
+  provided, but validate based on the uppercased country value. This ensures
+  the same validation behavior, and prevents the value from being transformed,
+  potentially breaking later retrieval.
+- [#47](https://github.com/zendframework/zend-i18n/pull/47) provides a
+  performance improvement to the `Zend\I18n\View\HelperConfig` implementation
+  when operating under zend-servicemanager v3.
+
 ## 2.7.2 - 2016-04-18
 
 ### Added

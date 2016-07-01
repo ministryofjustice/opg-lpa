@@ -24,10 +24,6 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/NSmithUK/pay-php-client"
-        },
-        {
-            "type": "vcs",
             "url": "https://github.com/Netsensia/omnipay-worldpay-xml"
         }
     ],
@@ -47,7 +43,7 @@
         "nsmithuk/zf-config-dump": "^1.0",
         "php-http/message": "^1.2",
         "php-http/guzzle5-adapter": "^0.5",
-        "alphagov/pay-php-client": "dev-master"
+        "alphagov/pay-integration-php": "v1.x-dev"
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*"

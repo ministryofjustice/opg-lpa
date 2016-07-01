@@ -20,6 +20,8 @@ class GovPayPaymentController extends AbstractLpaController {
 
     public function indexAction() {
 
+        die('here');
+
         $lpa = $this->getLpa();
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();

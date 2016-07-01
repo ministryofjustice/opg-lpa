@@ -10,11 +10,18 @@
 namespace Zend\Mvc\Service;
 
 use Interop\Container\ContainerInterface;
+use Zend\Mvc\Exception;
 use Zend\ServiceManager\Di\DiAbstractServiceFactory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * @deprecated Since 2.7.9. The factory is now defined in zend-servicemanager-di,
+ *     and removed in 3.0.0. Use Zend\ServiceManager\Di\DiAbstractServiceFactoryFactory
+ *     from zend-servicemanager-di if you are using zend-servicemanager v3, and/or when
+ *     ready to migrate to zend-mvc 3.0.
+ */
 class DiAbstractServiceFactoryFactory implements FactoryInterface
 {
     /**
@@ -24,13 +31,23 @@ class DiAbstractServiceFactoryFactory implements FactoryInterface
      * @param string $name
      * @param null|array $options
      * @return DiAbstractServiceFactory
+     * @throws Exception\RuntimeException if zend-servicemanager v3 is in use.
      */
     public function __invoke(ContainerInterface $container, $name, array $options = null)
     {
+        if (! class_exists(DiAbstractServiceFactory::class)) {
+            throw new Exception\RuntimeException(sprintf(
+                "%s is not compatible with zend-servicemanager v3, which you are currently using. \n"
+                . "Please run 'composer require zendframework/zend-servicemanager-di', and then update\n"
+                . "your configuration to use Zend\ServiceManager\Di\DiAbstractServiceFactoryFactory instead.",
+                __CLASS__
+            ));
+        }
+
         $factory = new DiAbstractServiceFactory($container->get('Di'), DiAbstractServiceFactory::USE_SL_BEFORE_DI);
 
-        if ($serviceLocator instanceof ServiceManager) {
-            $serviceLocator->addAbstractFactory($factory, false);
+        if ($container instanceof ServiceManager) {
+            $container->addAbstractFactory($factory, false);
         }
 
         return $factory;
