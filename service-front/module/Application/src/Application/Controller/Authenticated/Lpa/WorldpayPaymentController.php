@@ -150,7 +150,7 @@ class WorldpayPaymentController extends AbstractLpaController
     
         return new ViewModel([
             'form'=>$form,
-            'payByChequeRoute' => $this->url()->fromRoute('lpa/payment', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
+            'payByChequeRoute' => $this->url()->fromRoute('lpa/payment/summary', ['lpa-id'=>$this->getLpa()->id], ['query'=>['pay-by-cheque'=>true]]),
         ]);
     
     }
