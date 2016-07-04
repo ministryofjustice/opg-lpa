@@ -2,7 +2,7 @@
 
 It costs £110 to apply to register an LPA. If you (the donor) have a low income or get certain means-tested benefits, you can pay a lower fee or no fee.
 
-1. If you receive particular means-tested benefits, you won't have to pay anything (this called an 'exemption').
+1. If you receive particular means-tested benefits, you won't have to pay anything (this is called an 'exemption').
 
 2. If you have an income before tax of less than £12,000 a year, you will only have to pay half (this is known as a '50 per cent remission').
 
