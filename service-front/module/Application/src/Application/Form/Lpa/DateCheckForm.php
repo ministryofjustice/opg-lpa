@@ -1,6 +1,7 @@
 <?php
 namespace Application\Form\Lpa;
 
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class DateCheckForm extends AbstractForm
 {
@@ -42,6 +43,10 @@ class DateCheckForm extends AbstractForm
     
     public function init ()
     {
+        if( $this->lpa->document->type === Document::LPA_TYPE_HW ){
+            $this->formElements['sign-date-donor-life-sustaining'] = [];
+        }
+
         foreach($this->lpa->document->primaryAttorneys as $idx => $attorney) {
             $this->formElements['sign-date-attorney-' . $idx] = [];
         }

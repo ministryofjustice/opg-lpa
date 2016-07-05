@@ -53,6 +53,7 @@ class DateCheckController extends AbstractLpaController
                 
                 $result = DateCheck::checkDates([
                     'donor' => $postArray['sign-date-donor'],
+                    'donor-life-sustaining' => $postArray['sign-date-donor-life-sustaining'] ?: null,
                     'certificate-provider' => $postArray['sign-date-certificate-provider'],
                     'attorneys' => $attorneySignatureDates,
                 ]);
