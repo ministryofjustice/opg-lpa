@@ -36,6 +36,10 @@ class DateCheck implements ServiceLocatorAwareInterface
         
         $donor = self::convertUkDateToTimestamp($dates['donor']);
         $certificateProvider = self::convertUkDateToTimestamp($dates['certificate-provider']);
+
+        if( isset($dates['donor-life-sustaining']) ){
+            $donorLifeSustaining = self::convertUkDateToTimestamp($dates['donor-life-sustaining']);
+        }
         
         $minAttorneyDate = self::convertUkDateToTimestamp($dates['attorneys'][0]);
         for ($i=1; $i<count($dates['attorneys']); $i++) {
@@ -48,6 +52,10 @@ class DateCheck implements ServiceLocatorAwareInterface
         // Donor must be first
         if ($donor > $certificateProvider || $donor > $minAttorneyDate) {
             return 'The donor must be the first person to sign the LPA.';
+        }
+
+        if( isset($donorLifeSustaining) && $donor != $donorLifeSustaining ){
+            return 'The donor must sign Section 5 and Section 9 on the same date.';
         }
         
         // CP must be next

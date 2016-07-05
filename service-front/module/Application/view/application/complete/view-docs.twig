@@ -1,75 +1,101 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+    View LPA documents
+{% endblock %}
+
 {% block content %}
 
-<div class="accordion-content">
+<div class="text">
 
 	<p>This document is for reference only. If you need to change anything in your LPA you'll have to create a new one.</p>
 
-	<h2>LPA form</h2>
-	<div class="form-download">
-		<p><a id="registration_fm_lnk" class="pdf_dl_lnk" href="{{ lp1Url }}" target="_blank">Download your print-ready LPA form (PDF)</a></p>
 
-		{% if (lpa120Url) %}
-		  	<h2>Remission form</h2>
-		    <p><a id="notification_lnk" class="pdf_dl_lnk" href="{{ lpa120Url }}" target="_blank">Download the fee remission form (PDF)</a></p>
-		{% endif %}
+	<h2 class="heading-large">Documents</h2>
 
-		{% if (lp3Url) %}
-		  	<h2>Notification letters</h2>
-		 	<p><a id="notification_lnk" class="pdf_dl_lnk" href="{{ lp3Url }}" target="_blank">Download the letter to send to your 'people to notify' (PDF)</a></p>
-		{% endif %}
-		
-	</div>
+	<ul class="panel-cta list iconlinks">
+        <li class="iconlinks-item">
+            <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
+                <i class="icon icon-file-download"></i>
+                <span class="iconlinks-text">Download your print-ready LPA form</span>
+            </a> 
+        </li>
+        
+        {% if not lp120Url %}
+            <li class="iconlinks-item">
+                <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
+                    <i class="icon icon-file-download"></i>
+                    <span class="iconlinks-text">Download your fee remissions and exemption form</span>
+                    
+                </a>
+            </li>
+        {% endif %}
+        
+        {% if not lp3Url %}
+            <li class="iconlinks-item">
+                <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
+                    <i class="icon icon-file-download"></i>
+                    <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
+                    
+                </a>
+            </li>
+        {% endif %}
+    </ul>
 
-	<h2>Post your LPA to the Office of the Public Guardian</h2>
 
-	<p>You need to send us:</p>
+    <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
 
-	<ul>
-	    <li>Your signed LPA (all sections, from 1-15)</li>
-	    <li>If you're applying for a fee reduction
-	        <ul>
-	            <li>a completed application form for your exemption (LPA 120A)</li>
-	            <li>evidence to support this application</li>
-	        </ul>
-	    </li>
-	</ul>
+    <p>You need to send us:</p>
 
-	<p>And if you're paying by cheque:</p>
+    <ul class="list list-bullet">
+        <li>Your signed LPA (all sections, from 1-15)</li>
+        <li>If you're applying for a fee reduction
+            <ul>
+                <li>a completed application form for your exemption (LPA 120A)</li>
+                <li>evidence to support this application</li>
+            </ul>
+        </li>
+    </ul>
 
-	<ul>
-	    <li>A cheque for the application fee, payable to ‘Office of the Public Guardian’</li>
-	</ul>
+    <p>And if you're paying by cheque:</p>
 
-	<p>Post all documents to this address:</p>
+    <ul class="list list-bullet">
+        <li>A cheque for the application fee, payable to ‘Office of the Public Guardian’</li>
+    </ul>
 
-	<p><strong>
-	        Office of the Public Guardian<br>
-	        PO Box 16185<br>
-	        Birmingham<br>
-	        B2 2WH
-	    </strong></p>
+    <p>Post all documents to this address:</p>
 
-	{% if (peopleToNotify) %}                     
-	    <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
-	{% endif %}            
+    <p>
+        <strong class="bold-small">
+            Office of the Public Guardian<br>
+            PO Box 16185<br>
+            Birmingham<br>
+            B2 2WH
+        </strong>
+    </p>
 
-	<h2>What happens next?</h2>
+    {% if peeopleToNotify %}                     
+        <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
+    {% endif %}
 
-	<p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application. This includes a
-	    waiting period in which anyone entitled to object to the registration of the LPA can lodge their objection.
-	    This waiting period is an important safeguard and is required by law.</p>
 
-	<p>We'll send the registered LPA and any correspondence to {{ correspondentName }}.</p>
+    <h2 class="heading-large">What happens next?</h2>
 
-    <h2>Create another LPA?</h2>
+    <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application. This includes a waiting period in which anyone entitled to object to the registration of the LPA can lodge their objection. This waiting period is an important safeguard and is required by law.</p>
 
-    <p><a href="{{ cloneUrl }}">Make an LPA based on this one</a> (you'll be able to add people in a single click).</p>
+    <p>We'll send the registered LPA and any correspondence to {{ correspondentName }}.</p>
 
-    <p><a href="/user/dashboard/create">Make an LPA from scratch</a>.</p>
 
-                        
+    <h2 class="heading-large">Create another LPA?</h2>
+
+    <ul class="list">
+        <li>
+            <a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click). 
+        </li>
+        <li>
+            <a href="/user/dashboard/create">Make an LPA from scratch</a>
+        </li>
+    </ul>
 </div>
 
 {% endblock %}
