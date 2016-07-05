@@ -1,63 +1,80 @@
-{% extends 'layout/twig/layout.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form,  {}) %}
-        
-{{ form.setAttribute('class', 'form') ? '' }}
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'Value is required and can\'t be empty' : 'Please enter an email address'
+    }
+}) %}
     
+{# Set form fields variables #} 
 {% set email = form.get('email') %}
-{{ email.setOptions( {'label' : 'Email address'} ) ? '' }}
-{{ email.setAttributes({'id':'email'}) ? '' }}
 
-{{ form.prepare() ? '' }}
+{# form fields config #}
+{{ email.setAttributes({
+    id:'email',
+    class: 'form-control'
+}) ? '' }}
 
-<section id="payment-section" class="section current">
-    
-    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Payment</h2>
+{# form fields labels #}
+{{ email.setOptions( {
+    label: 'Email address'
+} ) ? '' }}
 
-    <div class="accordion-content">
-    
-    {{ form().openTag( form )|raw }}
-    
-    {{ formElement(form.get( form.csrfName )) }}
-    
-        <div class="section-intro">
-            <h2>
-            {% if (lpa.payment.amount == standardFee) %}
-            Application fee:
-            {% else %}
-            Reduced fee:
-            {% endif %}
-            £{{ "%.2f"|format(lpa.payment.amount) }}
+<li id="payment-section" class="section current js-current">
+
+    <h2 class="heading-medium accordion-header flush--top">Payment</h2>
+
+    <div class="accordion-info">
+        <div class="text">
+            <h2 class="heading-medium flush--top">
+                {% if (lpa.payment.amount == standardFee) %}
+                Application fee:
+                {% else %}
+                Reduced fee:
+                {% endif %}
+                £{{ "%.2f"|format(lpa.payment.amount) }}
             </h2>
 
             <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
 
             {% if (lpa.payment.amount != standardFee) %}
-            <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/help/#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
-            <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
-            <p>After you've paid, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
+                <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/guidance#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+
+                <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
+
+                <p>After you've paid, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
             {% endif %}
         </div>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.get( form.csrfName )) }}
+
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <fieldset>
+            <legend class="visuallyhidden">Contact email</legend>
         
-    <div id="contact-email">
-        <p>Please enter a contact email for correspondence regarding this payment.</p>
-        <div class="group">
+            <h2 class="heading-medium flush--top text">Please enter a contact email for correspondence regarding this payment.</h2>
+
             {{ macros.formGroup(email) }}
+
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" name="save" value="Save and continue" class="button">
         </div>
-    </div>    
-        
-    <p class="action group">
-    <input type="submit" name="submit" id="form-save" value="Save and continue" class="button"> 
-    </p>
         
     {{ form().closeTag|raw }}
     
-    </div>
-    
-</section>
+</li>
 
 {% endblock %}
