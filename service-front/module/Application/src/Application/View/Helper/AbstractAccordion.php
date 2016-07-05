@@ -49,6 +49,10 @@ abstract class AbstractAccordion extends AbstractHelper
     
     protected function getBarConfig ($routeName)
     {
+        if ($routeName == 'lpa/payment/summary') {
+            // No accordion summary when viewing table summary
+            return [];
+        }
         if(array_key_exists($routeName, $this->bars['creation'])) {
             return $this->bars['creation'];
         }
