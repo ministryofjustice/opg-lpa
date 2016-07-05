@@ -31,6 +31,11 @@
 	{% set donorElement = form.get('sign-date-donor') %}
 	{{ donorElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
 
+	{% if form.has('sign-date-donor-life-sustaining') %}
+		{% set donorLifeSustainingElement = form.get('sign-date-donor-life-sustaining') %}
+		{{ donorLifeSustainingElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
+	{% endif %}
+
 	{% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
 	{{ certificateProviderElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
 	    
@@ -65,20 +70,33 @@
 
 		<div class="person person--wider">
             <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }} (the donor)</h3>
-            <p class="person-address flush--ends">
-            	<p class="date-field">
+			{% if donorLifeSustainingElement is defined %}
+				<p class="person-address flush--ends">
+					<p class="date-field">
+						<label for="donor">
+							This person signed Section 5 of the LPA on
+
+							{{ formElement(donorLifeSustainingElement) }}
+							{{ formElementErrors(donorLifeSustainingElement) }}
+
+						</label>
+					</p>
+				</p>
+			{% endif %}
+			<p class="person-address flush--ends">
+				<p class="date-field">
 					<label for="donor">
 						This person signed Section 9 of the LPA on
-						
+
 						{{ formElement(donorElement) }}
 						{{ formElementErrors(donorElement) }}
-			            
-			        </label>
+
+					</label>
 				</p>
 				<div class="application-notice help-notice">
-  					<p class="hint">Remember, if any continuation sheets 1 or 2 were used they must also<br> have been signed by the donor at the same time as or before the donor signed Section 9.</p>
+					<p class="hint">Remember, if any continuation sheets 1 or 2 were used they must also<br> have been signed by the donor at the same time as or before the donor signed Section 9.</p>
 				</div>
-            </p>
+			</p>
         </div>
     
 		<div class="person-summary group">
