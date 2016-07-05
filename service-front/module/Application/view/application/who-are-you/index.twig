@@ -5,40 +5,42 @@
 {% import "application/macros.twig" as macros %}
 
 {# Error messages #}
-{% set form = formErrorTextExchange(form, {
-        'who': {
-            'cannot-be-blank' : 'Please choose one of the options' 
-        }
-   }) 
-%}
-
-{# Set form fields variables #}
-{% set who = form.get('who') %}
-{% set professional = form.get('professional') %}
-{% set professionalOther = form.get('professional-other') %}
-{% set organisation = form.get('organisation') %}
-
-{# form fields config #}
-{{ form.setAttributes({
-    'id': 'WhoAreYou'
-}) ? '' }}
-
-{{ professionalOther.setAttributes({
-    'class': 'form-control'
-}) ? '' }}
-
-{{ organisation.setAttributes({
-    'class': 'form-control'
-}) ? '' }}
-
-{# form fields labels #}
-{{ professionalOther.setOptions({
-    label:'Please tell us your profession'
-}) ? '' }}  
-
-{{ organisation.setOptions({
-    label:'Which organisation helped?'
-}) ? '' }}    
+{% if form %}
+    {% set form = formErrorTextExchange(form, {
+            'who': {
+                'cannot-be-blank' : 'Please choose one of the options' 
+            }
+       }) 
+    %}
+    
+    {# Set form fields variables #}
+    {% set who = form.get('who') %}
+    {% set professional = form.get('professional') %}
+    {% set professionalOther = form.get('professional-other') %}
+    {% set organisation = form.get('organisation') %}
+    
+    {# form fields config #}
+    {{ form.setAttributes({
+        'id': 'WhoAreYou'
+    }) ? '' }}
+    
+    {{ professionalOther.setAttributes({
+        'class': 'form-control'
+    }) ? '' }}
+    
+    {{ organisation.setAttributes({
+        'class': 'form-control'
+    }) ? '' }}
+    
+    {# form fields labels #}
+    {{ professionalOther.setOptions({
+        label:'Please tell us your profession'
+    }) ? '' }}  
+    
+    {{ organisation.setOptions({
+        label:'Which organisation helped?'
+    }) ? '' }} 
+{% endif %}   
 
 <li id="who-are-you-section" class="section current js-current">
 
