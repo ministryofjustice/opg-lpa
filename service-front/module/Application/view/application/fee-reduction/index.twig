@@ -12,19 +12,6 @@
    }) 
 %}
 
-{# Set form fields variables #}
-  
-{# form fields config #} 
-{{ reductionOptions.setLabelOptions({
-	disable_html_escape: true
-}) ? '' }}
-
-{{ reductionOptions.setOptions({
-	label_attributes: {'class': 'block-label'},
-	value_options: reductionOptionsValueOptions
-}) ? '' }}
-
-
 <li id="fee-reduction-section" class="section current js-current">
 
 	<h2 class="heading-medium accordion-header flush--top">Do you want to apply to pay a reduced fee?</h2>
@@ -58,6 +45,23 @@
                 </label>
                 {{ formElementErrorsV2(reductionOptions['reducedFeeReceivesBenefits']) }}
 
+				<label class="text block-label" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                    {{ formInput(reductionOptions['reducedFeeUniversalCredit']) }}
+                    {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(reductionOptions['reducedFeeUniversalCredit']) }}
+                
+                <label class="text block-label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
+                    {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
+                    {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(reductionOptions['reducedFeeLowIncome']) }}
+                
+                <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
+                    {{ formInput(reductionOptions['notApply']) }}
+                    {{ reductionOptions['notApply'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(reductionOptions['notApply']) }}
 		    </div>
 
 	    </fieldset>

@@ -29,7 +29,7 @@ class FeeReductionController extends AbstractLpaController
         
         $reductionOptions = [];
         
-        $reductionOptions['receivesBenefits'] = new Element('who', [
+        $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
             'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/help/#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000
         <div class=\"revised-fee hidden\" id=\"revised-fee-0\">
         	<h2>Reduced fee: &pound;0</h2>
@@ -42,14 +42,14 @@ class FeeReductionController extends AbstractLpaController
             Sign and date this and include it in your application.</p>
         </div>",
         ]);
-        $reductionOptions['receivesBenefits']->setAttributes([
+        $reductionOptions['reducedFeeReceivesBenefits']->setAttributes([
             'type' => 'radio',
             'id' => 'reducedFeeReceivesBenefits',
-            'value' => $reduction->getOptions()['value_options']['receivesBenefits']['value'],
-            'checked' => (($reduction->getValue() == 'receivesBenefits')? 'checked':null),
+            'value' => $reduction->getOptions()['value_options']['reducedFeeReceivesBenefits']['value'],
+            'checked' => (($reduction->getValue() == 'reducedFeeReceivesBenefits')? 'checked':null),
         ]);
         
-        $reductionOptions['reducedFeeUniversalCredit'] = new Element('who', [
+        $reductionOptions['reducedFeeUniversalCredit'] = new Element('reductionOptions', [
             'label' => "The donor receives Universal Credit
         <div class=\"revised-fee hidden\" id=\"revised-fee-uc\">
         	<h2>We'll contact you about the fee</h2>
@@ -66,7 +66,7 @@ class FeeReductionController extends AbstractLpaController
             'checked' => (($reduction->getValue() == 'reducedFeeUniversalCredit')? 'checked':null),
         ]);
         
-        $reductionOptions['reducedFeeLowIncome'] = new Element('who', [
+        $reductionOptions['reducedFeeLowIncome'] = new Element('reductionOptions', [
             'label' => "The donor currently has an income of less than £12,000 a year before tax",
         ]);
         $reductionOptions['reducedFeeLowIncome']->setAttributes([
@@ -76,7 +76,7 @@ class FeeReductionController extends AbstractLpaController
             'checked' => (($reduction->getValue() == 'reducedFeeLowIncome')? 'checked':null),
         ]);
         
-        $reductionOptions['notApply'] = new Element('who', [
+        $reductionOptions['notApply'] = new Element('reductionOptions', [
             'label' => "I'm not applying for a reduced fee",
         ]);
         $reductionOptions['notApply']->setAttributes([
