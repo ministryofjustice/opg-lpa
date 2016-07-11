@@ -4,6 +4,8 @@
 
 {% import "application/macros.twig" as macros %}
 
+{% set reductionOptionsElement = form.get('reductionOptions') %}
+
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
         'reductionOptions': {
@@ -37,7 +39,7 @@
 
             <h2 class="heading-medium flush--top">Reduced fee options</h2>
 
-            <div class="form-group text {{ form.getMessages|length >0 ? 'error'}}">
+            <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'error'}}">
         
                 <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
