@@ -5,7 +5,7 @@
 .appstatus {
     margin: $gutter 0;
     padding: ($gutter*1.5);
-    background-color: $govuk-blue;
+    background-color: $turquoise;
     color: $white;
     text-align: center;
 
@@ -14,22 +14,15 @@
     }
 
     &.warning {
-        background-color: $orange;
-    }
-}
-
-.appstatus-title {
-    font-family: "nta",Arial,sans-serif;
-    font-size: 48px;
-    font-weight: 700;
-    line-height: 1em;
-    text-transform: none;
-
-    @include media(mobile) {
-        font-size: 32px;
+        background-color: $yellow;
+        color: $black;
     }
 
-    @include media($max-width: 300px) {
-        font-size: 20px;
+    .heading-xlarge {
+        margin: 0 0 10px 0;
+    }
+
+    .heading-medium {
+        margin: 0;
     }
 }
