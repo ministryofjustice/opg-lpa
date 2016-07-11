@@ -76,6 +76,8 @@ class Lp3 extends AbstractForm
         
         // merge intermediate files.
         $this->mergePdfs();
+
+        $this->protectPdf();
         
         return $this;
         

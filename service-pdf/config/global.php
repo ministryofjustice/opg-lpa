@@ -55,6 +55,7 @@ return array(
                 'mode' => 'cbc',
             ],
         ],
+        'password' => getenv('OPG_LPA_PDF_OWNER_PASSWORD') ?: 'default-password',
     ], // pdf
 
     'footer' => [
