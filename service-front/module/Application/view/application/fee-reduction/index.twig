@@ -37,19 +37,41 @@
 
             <h2 class="heading-medium flush--top">Reduced fee options</h2>
 
-            <div class="form-group {{ reductionOptions.getMessages|length >0 ? 'error'}}">
+            <div class="form-group text {{ reductionOptions.getMessages|length >0 ? 'error'}}">
         
-                <label class="text block-label" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
+                <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
                     {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(reductionOptions['reducedFeeReceivesBenefits']) }}
 
-				<label class="text block-label" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                <div id="receives-benefits" class="panel panel-border-narrow js-hidden">
+                    <h2 class="heading-small">Reduced fee: &pound;0</h2>
+
+                    <p>To apply for this exemption, you must enclose copies of letters from the Department for Work and Pensions or your benefit provider. The letters must confirm that the benefit was being paid at the time the LPA was sent to us for registration. <a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+
+                    <p>If you don't send the right evidence, your application will be delayed. If your claim is rejected, you'll need to pay the rest of the fee.</p>
+
+                    <p>On the next page, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
+                </div>
+
+				<label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeUniversalCredit']) }}
                     {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(reductionOptions['reducedFeeUniversalCredit']) }}
+
+                <div id="universal-credit" class="panel panel-border-narrow js-hidden">
+                    <h2 class="heading-small">We'll contact you about the fee</h2>
+
+                    <p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
+
+                    <p>This means <strong class="bold-small">the tool will not charge you for this LPA now.</strong></p>
+
+                    <p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
+
+                    <p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
+                </div>
                 
                 <label class="text block-label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
