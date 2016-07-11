@@ -4,7 +4,6 @@
 
 {% import "application/macros.twig" as macros %}
 
-{% set reductionOptionsElement = form.get('reductionOptions') %}
 
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
@@ -13,6 +12,9 @@
         }
    }) 
 %}
+
+{# Set form fields variables #}
+{% set reductionOptionsElement = form.get('reductionOptions') %}
 
 <li id="fee-reduction-section" class="section current js-current">
 
@@ -87,7 +89,7 @@
                 </label>
                 {{ formElementErrorsV2(reductionOptions['notApply']) }}
 
-                {{ formElementErrorsV2(form) }}
+                {{ formElementErrorsV2(reductionOptionsElement) }}
 		    </div>
 
 	    </fieldset>
