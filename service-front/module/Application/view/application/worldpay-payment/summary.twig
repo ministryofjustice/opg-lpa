@@ -1,48 +1,28 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block pageTitle %}
+        Check your details
+{% endblock %}
+
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form,  {}) %}
-        
-{{ form.setAttribute('class', 'form') ? '' }}
-    
-{% set email = form.get('email') %}
-{{ email.setOptions( {'label' : 'Email address'} ) ? '' }}
-{{ email.setAttributes({'id':'email'}) ? '' }}
+{% include 'application/summary/partials/summary-table.twig' %}
 
-{{ form.prepare() ? '' }}
+<div class="appstatus" role="alert">
+    <h2 class="heading-xlarge">Confirm and pay</h2> 
+    <h3 class="heading-medium">Application fee: £110.00</h3>
+</div>
 
-<section id="payment-section" class="section current">
-    
-    <h2 class="accordion-header">{{ accordionIdx(lpa) }}. Summary</h2>
+<div class="text">
+    <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
 
-    <div class="accordion-content">
-    
-    {% include 'application/summary/partials/summary-table.twig' %}
-    
-    {{ form().openTag( form )|raw }}
-    
-    {{ formElement(form.get( form.csrfName )) }}
-    
-        <div class="section-intro">
+    <p>On the next screen you'll be taken to our payment partner, Worldpay, where you can pay by debit or credit card. This is a secure transaction.</p>
+</div>
 
-            <p>On the next screen you'll be taken to our payment partner, WorldPay, where you can pay by debit or credit card. This is a secure transaction.</p>
-            
-        </div>
+<p class="divorced"><a href="#" class="button">Make online payment now</a></p>
 
-        
-    <p class="action group">
-    <input type="submit" name="submit" id="form-save" value="Proceed to Worldpay" class="button"> 
-    </p>
-        
-    {{ form().closeTag|raw }}
-    
-    </div>
-    
-    <p><a href="{{ payByChequeRoute }}">I want to pay by cheque</a></p>
-    
-</section>
+<p><a href="{{ payByChequeRoute }}">I want to pay by cheque</a></p>  
 
 {% endblock %}

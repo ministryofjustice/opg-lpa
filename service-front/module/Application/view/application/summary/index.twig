@@ -8,14 +8,45 @@
 
 {% block content %}
 
+	<div class="iconlinks iconlinks--right">
+        <div class="iconlinks-item">
+            <a class="iconlinks-link" href="#" target="_blank">
+                <i class="icon icon-file-download"></i>
+                <span class="iconlinks-text">Print summary</span>
+            </a> 
+        </div>
+    </div>
+
 	{% include 'application/summary/partials/summary-table.twig' %}
 
 	<div class="appstatus warning" role="alert">
-		<h2 class="appstatus-title">Your LPA is incomplete</h2> 
+		<h2 class="heading-xlarge">Your LPA is incomplete</h2> 
 	</div>
 
 	<p class="text">Text informing the user what is incomplete and how to complete the LPA. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 
-	<a href="{{ url(returnRoute, {'lpa-id': lpa.id}) }}" class="button">Return to complete your LPA</a>
+	<div class="grid-row">
+
+		<div class="column-one-half">
+			<p class="divorced">
+				<a href="{{ url(returnRoute, {'lpa-id': lpa.id}) }}" class="button">Return to complete your LPA</a>
+			</p>
+		</div>
+
+		<div class="column-one-half">
+			<div class="iconlinks iconlinks--right">
+		        <div class="iconlinks-item">
+		            <a class="iconlinks-link" href="#" target="_blank">
+		                <i class="icon icon-file-download"></i>
+		                <span class="iconlinks-text">Print summary</span>
+		            </a> 
+		        </div>
+		    </div>
+		</div>
+
+	</div>
+
+
+
 
 {% endblock %}
