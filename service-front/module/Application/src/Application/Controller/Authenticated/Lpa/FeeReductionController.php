@@ -13,6 +13,7 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Zend\Form\Element;
 
 class FeeReductionController extends AbstractLpaController
 {
@@ -23,6 +24,50 @@ class FeeReductionController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeReductionForm');
         $lpa = $this->getLpa();
+        
+        $reduction = $form->get('reductionOptions');
+        
+        $reductionOptions = [];
+        
+        $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
+            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000"
+        ]);
+        $reductionOptions['reducedFeeReceivesBenefits']->setAttributes([
+            'type' => 'radio',
+            'id' => 'reducedFeeReceivesBenefits',
+            'value' => $reduction->getOptions()['value_options']['reducedFeeReceivesBenefits']['value'],
+            'checked' => (($reduction->getValue() == 'reducedFeeReceivesBenefits')? 'checked':null),
+        ]);
+        
+        $reductionOptions['reducedFeeUniversalCredit'] = new Element('reductionOptions', [
+            'label' => "The donor receives Universal Credit"
+        ]);
+        $reductionOptions['reducedFeeUniversalCredit']->setAttributes([
+            'type' => 'radio',
+            'id' => 'reducedFeeUniversalCredit',
+            'value' => $reduction->getOptions()['value_options']['reducedFeeUniversalCredit']['value'],
+            'checked' => (($reduction->getValue() == 'reducedFeeUniversalCredit')? 'checked':null),
+        ]);
+        
+        $reductionOptions['reducedFeeLowIncome'] = new Element('reductionOptions', [
+            'label' => "The donor currently has an income of less than £12,000 a year before tax",
+        ]);
+        $reductionOptions['reducedFeeLowIncome']->setAttributes([
+            'type' => 'radio',
+            'id' => 'reducedFeeLowIncome',
+            'value' => $reduction->getOptions()['value_options']['reducedFeeLowIncome']['value'],
+            'checked' => (($reduction->getValue() == 'reducedFeeLowIncome')? 'checked':null),
+        ]);
+        
+        $reductionOptions['notApply'] = new Element('reductionOptions', [
+            'label' => "I'm not applying for a reduced fee",
+        ]);
+        $reductionOptions['notApply']->setAttributes([
+            'type' => 'radio',
+            'id' => 'notApply',
+            'value' => $reduction->getOptions()['value_options']['notApply']['value'],
+            'checked' => (($reduction->getValue() == 'notApply')? 'checked':null),
+        ]);
         
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -109,7 +154,8 @@ class FeeReductionController extends AbstractLpaController
         }
         
         return new ViewModel([
-                'form'=>$form, 
+                'form'=>$form,
+                'reductionOptions' => $reductionOptions,
         ]);
     }
 }

@@ -54,6 +54,7 @@ class FeedbackController extends AbstractBaseController
                     'rating' => $data['rating'],
                     'details' => $data['details'],
                     'email' => $data['email'],
+                    'phone' => $data['phone'],
                     'agent' => $_SERVER['HTTP_USER_AGENT'],
                     'fromPage' => $container->feedbackLinkClickedFromPage,
                 ]);

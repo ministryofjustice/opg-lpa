@@ -1,31 +1,34 @@
-{% extends 'layout/twig/layout.twig' %}
+{% extends 'layout/twig/accordion-header.twig' %}
 
 {% block content %}
 
-<section id="payment" class='section current'>
+<li id="payment" class="section current js-current">
 
-	<h2 class="accordion-header">7. Making payment online through Worldpay payment gateway</h2>
+	<h2 class="heading-medium accordion-header flush--top">Making payment online through Worldpay payment gateway</h2>
 	
-	<div class='accordion-content'>
-	
-		<div class="section-intro">
-			
-			<h3>Amount due: &pound;{{ lpa.payment.amount }}</h3>
+	<div class="accordion-info">
+		<div class="text">
+
+			<div class="alert panel" role="alert">
+				<i class="icon icon-cross" role="presentation"></i>
+				<div class="alert-message">
+					<p>Payment failed</p>
+				</div>
+			</div>
+
+			<h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
+
+			<p>Sorry, but there appears to be a problem with this payment. Please click the button below to try again. If the problem continues, visit <a href="http://www.worldpay.com/shopper/" target="_blank">Worldpay's support pages</a> for help.</p>
+
+			<p>If you would like to choose an alternative payment method, please go to <a href="{{ paymentUrl }}">payment options page</a></p>
 			
 		</div>
-		
-		<h3>Sorry, but there appears to be a problem with this payment. Please click the button below to try again. If the problem continues, visit <a href="http://www.worldpay.com/shopper/" target="_blank">WorldPay's support pages</a> for help.</h3>
-		
-		<h3>If you would like to choose an alternative payment method, please go to <a href="{{ paymentUrl }}">payment options page</a></h3>
-		
-		<div class="accordion-actions group">
-			<p>
-				<a href='{{ returnUrl }}' class="button gotonextpart">Try again</a>
-			</p>
-		</div>
-		
 	</div>
+
+	<div class="form-group">
+        <a href="{{ returnUrl }}" class="button">Try again</a>
+    </div>
 	
-</section>
+</li>
 
 {% endblock %}

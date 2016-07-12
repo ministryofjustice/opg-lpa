@@ -1,4 +1,4 @@
-FROM registry.service.dsd.io/opguk/php-fpm:lpa-hsts
+FROM registry.service.dsd.io/opguk/php-fpm:0.1.170
 
 RUN groupadd webservice && \
     groupadd supervisor
@@ -25,10 +25,7 @@ RUN mkdir -p /srv/opg-lpa-front2/application && \
     chmod -R 755 /srv/opg-lpa-front2/application && \
     ln -s /app /srv/opg-lpa-front2/application/current
 
-# Following line has some elements that are required and some that need fixing in the image
-RUN mkdir /etc/nginx/app.conf.d/
 ADD docker/confd /etc/confd
-
 ADD docker/my_init/* /etc/my_init.d/
 
 ENV OPG_SERVICE front
