@@ -172,7 +172,7 @@
 
     useDetailsReset: function(i, el){
       // Hide the non-js button
-      $('.details-picker').hide();
+      $('.js-details-picker').hide();
     }
   };
 

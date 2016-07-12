@@ -1,1 +1,7 @@
-
+.no-js {
+	.form-group {
+		+ .form-group.js-hidden {
+			margin-top: 30px;
+		}
+	}
+}

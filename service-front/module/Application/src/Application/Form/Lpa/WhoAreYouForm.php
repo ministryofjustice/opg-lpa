@@ -93,7 +93,7 @@ class WhoAreYouForm extends AbstractForm
      * 
      * @param array $formData. e.g. ['who'=>'professional','professional'=>'solicitor', 'professional-other'=>null, 'digitalPartner'=>null, 'orgaisation'=>null]
      * 
-     * @return array. e.g. ['who'=>'prefessiona', 'subquestion'=>'solicitor', 'qualifier'=>null]
+     * @return array. e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
      */
     protected function convertFormDataForModel($formData)
     {
