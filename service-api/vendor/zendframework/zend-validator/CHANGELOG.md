@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2016-06-23
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#92](https://github.com/zendframework/zend-validator/pull/92) adds message
+  templates to the `ExcludeMimeType` validator, to allow differentiating
+  validation error messages from the `MimeType` validator.
+
+## 2.8.0 - 2016-05-16
+
+### Added
+
+- [#58](https://github.com/zendframework/zend-validator/pull/58) adds a new
+  `Uuid` validator, capable of validating if Versions 1-5 UUIDs are well-formed.
+- [#64](https://github.com/zendframework/zend-validator/pull/64) ports
+  `Zend\ModuleManager\Feature\ValidatorProviderInterface` to
+  `Zend\Validator\ValidatorProviderInterface`, and updates the `Module::init()`
+  to typehint against the new interface instead of the one from
+  zend-modulemanager. Applications targeting zend-mvc v3 can start updating
+  their code to implement the new interface, or simply duck-type against it.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.7.3 - 2016-05-16
+
+### Added
+
+- [#67](https://github.com/zendframework/zend-validator/pull/67) adds support
+  for Punycoded top-level domains in the `Hostname` validator.
+- [#79](https://github.com/zendframework/zend-validator/pull/79) adds and
+  publishes the documentation to https://zendframework.github.io/zend-validator/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.7.2 - 2016-04-18
 
 ### Added

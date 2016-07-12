@@ -31,7 +31,7 @@
         "zendframework/zend-json": "^2.6.1",
         "zendframework/zend-log": "^2.7",
         "zendframework/zend-modulemanager": "^2.7.1",
-        "zendframework/zend-mvc": "^2.7",
+        "zendframework/zend-mvc": "^2.7 || ^3.0",
         "zendframework/zend-navigation": "^2.5",
         "zendframework/zend-paginator": "^2.5",
         "zendframework/zend-permissions-acl": "^2.6",
@@ -62,13 +62,16 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.6-dev",
-            "dev-develop": "2.7-dev"
+            "dev-master": "2.8-dev",
+            "dev-develop": "2.9-dev"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "ZendTest\\View\\": "test/"
         }
-    }
+    },
+    "bin": [
+        "bin/templatemap_generator.php"
+    ]
 }

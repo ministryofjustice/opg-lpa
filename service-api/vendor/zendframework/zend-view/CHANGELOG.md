@@ -2,6 +2,105 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2016-06-30
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#78](https://github.com/zendframework/zend-view/pull/78) and
+  [#79](https://github.com/zendframework/zend-view/pull/79) ensure that all
+  helpers work with both version 2 and version 3 of zend-mvc.
+
+## 2.8.0 - 2016-06-21
+
+### Added
+
+- [#67](https://github.com/zendframework/zend-view/pull/67) adds a script,
+  `templatemap_generator.php`, which is available in
+  `vendor/bin/templatemap_generator.php` once installed. This script replaces
+  the original present in the zendframework/zendframework package, and
+  simplifies it for the most common use case. Usage is:
+
+  ```bash
+  $ cd module/ModuleName/config
+  $ ../../../vendor/bin/templatemap_generator.php ../view > template_map.config.php
+  ```
+
+  You can also provide a list of files via globbing or usage of `find` after the
+  initial directory argument; if provided that list of files will be used to
+  generate the map. (The directory argument is then used to strip the path
+  information when generating the template name.)
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.7.0 - 2016-05-12
+
+### Added
+
+- [#1](https://github.com/zendframework/zend-view/pull/1) adds a new `loop()`
+  method to the `partialLoop()` helper, allowing the ability to chain setters
+  with rendering:
+  `$this->partialLoop()->setObjectKey('foo')->loop('partial', $data)`
+- [#60](https://github.com/zendframework/zend-view/pull/60) adds the ability to
+  register and consume arbitrary callables as view helpers within the
+  `HelperPluginManager`.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.6.8 - 2016-05-12
+
+### Added
+
+- [#22](https://github.com/zendframework/zend-view/pull/22) adds support for the
+  `async` attribute within the `headScript` helper.
+- [#59](https://github.com/zendframework/zend-view/pull/59) adds and publishes
+  the documentation to https://zendframework.github.io/zend-view/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#21](https://github.com/zendframework/zend-view/pull/21) updates the
+  `headScript` helper to allow empty attribute types to render as keys only when
+  using an HTML5 doctype.
+
 ## 2.6.7 - 2016-04-18
 
 ### Added

@@ -168,8 +168,8 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Validates the concrete class which this method is called on.
      *
-     * @param $properties array An array of property names to check. An empty array means all properties.
-     * @param $groups array An array of what validator groups to check (if any).
+     * @param $properties Array An array of property names to check. An empty array means all properties.
+     * @param $groups Array An array of what validator groups to check (if any).
      * @return ValidatorResponse
      * @throws InvalidArgumentException
      */
