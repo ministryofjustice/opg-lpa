@@ -128,8 +128,8 @@
     
     {% if (item.routeName == 'lpa/instructions') %}
         {{ macros.accordionBar({
-            	'desktop' : '<strong class="bold-small">Your LPA has been created</strong>.<br>You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": "instructions", "lpa-id": lpa.id}) ~ '">review your LPA</a>', 
-            	'mobile' : '<strong class="bold-small">Your LPA has been created</strong>.<br>You can edit your LPA above or review your LPA',
+				'desktop' : 'instructions and preferences',
+				'mobile' : 'instructions and preferences',
         		'status' : item.params.status,
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
