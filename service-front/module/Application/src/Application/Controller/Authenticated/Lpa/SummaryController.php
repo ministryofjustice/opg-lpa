@@ -20,7 +20,8 @@ class SummaryController extends AbstractLpaController
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         
         $fromPage = $this->params()->fromRoute('from-page');
-        
+
+        /*
         switch ($fromPage) {
             case 'instructions':
                 $returnRoute = 'lpa/instructions';
@@ -28,7 +29,10 @@ class SummaryController extends AbstractLpaController
             default:
                 throw new \Exception('Invalid return route provided for summary page');
         }
-        
+        */
+
+        $returnRoute = 'lpa/instructions';
+
         $viewParams = [
             'returnRoute' => $returnRoute,
         ];

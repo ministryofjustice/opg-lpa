@@ -5,51 +5,61 @@
 	<tbody>
 
 		{# LPA TYPE #}
-	
-		<tr class="group-single">
-			<th class="table-summary-title" scope="row">Type of LPA</th>
-			<td class="table-summary-content" itemprop="name">Property and financial affairs</td>
-			<td class="table-summary-action"><a href="#">Edit</a></td>
-		</tr>
+		{% if lpa.document.type is defined %}
+			<tr class="group-single">
+				<th class="table-summary-title" scope="row">Type of LPA</th>
+				<td class="table-summary-content" itemprop="name">
+					{{ lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance' }}
+				</td>
+				<td class="table-summary-action"><a href="#">Edit</a></td>
+			</tr>
+		{% endif %}
 
 		{# DONOR #}
+		{% if lpa.document.donor is defined %}
 
-		<tr class="group-start">
-			<th class="table-summary-heading" scope="row" colspan="3">
-				<h3 class="heading-small">Donor</h3>
-			</th>
-		</tr>
+			<tr class="group-start">
+				<th class="table-summary-heading" scope="row" colspan="3">
+					<h3 class="heading-small">Donor</h3>
+				</th>
+			</tr>
 
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Name</th>
-			<td class="table-summary-content">Adam Warner</td>
-			<td class="table-summary-action"><a href="#">Edit</a></td>
-		</tr>
-		
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Date of birth</th>
-			<td class="table-summary-content">20/08/1981</td>
-			<td class="table-summary-action"></td>
-		</tr>
+			{% if lpa.document.donor.name is defined %}
+				<tr class="group-element">
+					<th class="table-summary-title" scope="row">Name</th>
+					<td class="table-summary-content">{{ lpa.document.donor.name }}</td>
+					<td class="table-summary-action"><a href="#">Edit</a></td>
+				</tr>
+			{% endif %}
 
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Address</th>
-			<td class="table-summary-content">
-				<div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
-					<div itemprop="streetAddress">50 Harrogate Road</div>
-					<div itemprop="addressLocality">Saddington</div>
-					<div itemprop="postalCode">LE8 5XS</div>
-					<div itemprop="addressCountry">United Kingdom</div>
-				</div>
-			</td>
-			<td class="table-summary-action"></td>
-		</tr>
+			{% if lpa.document.donor.dob is defined %}
+				<tr class="group-element">
+					<th class="table-summary-title" scope="row">Date of birth</th>
+					<td class="table-summary-content">{{ lpa.document.donor.dob.date.format('j F Y') }}</td>
+					<td class="table-summary-action"></td>
+				</tr>
+			{% endif %}
 
-		<tr class="group-end">
-			<th class="table-summary-title" scope="row">Email address</th>
-			<td class="table-summary-content">adamwarner@inbound.plus</td>
-			<td class="table-summary-action"></td>
-		</tr>
+			<tr class="group-element">
+				<th class="table-summary-title" scope="row">Address</th>
+				<td class="table-summary-content">
+					<div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
+						<div itemprop="streetAddress">50 Harrogate Road</div>
+						<div itemprop="addressLocality">Saddington</div>
+						<div itemprop="postalCode">LE8 5XS</div>
+						<div itemprop="addressCountry">United Kingdom</div>
+					</div>
+				</td>
+				<td class="table-summary-action"></td>
+			</tr>
+
+			<tr class="group-end">
+				<th class="table-summary-title" scope="row">Email address</th>
+				<td class="table-summary-content">adamwarner@inbound.plus</td>
+				<td class="table-summary-action"></td>
+			</tr>
+
+		{% endif %}
 
 		{# WHEN LPA STARTS #}
 
