@@ -33,7 +33,7 @@
         "zendframework/zendframework": "^2.5",
         "sendgrid/sendgrid": "2.2.*",
         "aws/aws-sdk-php": "^3.0",
-        "ministryofjustice/opg-lpa-api-client": "dev-api2-v2-support",
+        "ministryofjustice/opg-lpa-api-client": "v4.x-dev",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "1.1.8",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",

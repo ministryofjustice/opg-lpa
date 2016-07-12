@@ -14,7 +14,7 @@ class Client {
      * @const string Current version of this client.
      * This follows Semantic Versioning (http://semver.org/)
      */
-    const VERSION = '3.1.0';
+    const VERSION = '3.1.1';
 
 
     /**

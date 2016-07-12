@@ -258,7 +258,7 @@ class Response
      *
      * @param Request $request A Request instance
      *
-     * @return Response The current response.
+     * @return Response The current response
      */
     public function prepare(Request $request)
     {
@@ -345,7 +345,11 @@ class Response
 
         // cookies
         foreach ($this->headers->getCookies() as $cookie) {
-            setcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+            if ($cookie->isRaw()) {
+                setrawcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+            } else {
+                setcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+            }
         }
 
         return $this;
@@ -372,12 +376,6 @@ class Response
     {
         $this->sendHeaders();
         $this->sendContent();
-
-        if (function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
-        } elseif ('cli' !== PHP_SAPI) {
-            static::closeOutputBuffers(0, true);
-        }
 
         return $this;
     }
@@ -1153,6 +1151,7 @@ class Response
     {
         $status = ob_get_status(true);
         $level = count($status);
+        // PHP_OUTPUT_HANDLER_* are not defined on HHVM 3.3
         $flags = defined('PHP_OUTPUT_HANDLER_REMOVABLE') ? PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? PHP_OUTPUT_HANDLER_FLUSHABLE : PHP_OUTPUT_HANDLER_CLEANABLE) : -1;
 
         while ($level-- > $targetLevel && ($s = $status[$level]) && (!isset($s['del']) ? !isset($s['flags']) || $flags === ($s['flags'] & $flags) : $s['del'])) {
