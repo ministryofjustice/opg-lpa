@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2016-06-30
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#78](https://github.com/zendframework/zend-view/pull/78) and
+  [#79](https://github.com/zendframework/zend-view/pull/79) ensure that all
+  helpers work with both version 2 and version 3 of zend-mvc.
+
 ## 2.8.0 - 2016-06-21
 
 ### Added
