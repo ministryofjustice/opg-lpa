@@ -34,7 +34,8 @@ class AccordionTop extends AbstractAccordion
                     break;
                 }
                 else {
-                    if(method_exists($this, $barDataFuncName)) {
+                    //if(method_exists($this, $barDataFuncName)) {
+                        /*
                         $values = $this->$barDataFuncName();
                         if (!is_array($values) || !isset($values['text'])) {
                             $values = [
@@ -42,8 +43,10 @@ class AccordionTop extends AbstractAccordion
                                 'count' => 0,
                             ];
                         }
+                        */
+
                         $barList[$seq++] = [
-                                'name'      => $this->getViewScriptName($barDataFuncName),
+                                //'name'      => $this->getViewScriptName($barDataFuncName),
                                 'routeName' => $barRouteName,
                                 'lpaId'     => $lpa->id,
                                 'params'    => [
@@ -53,7 +56,7 @@ class AccordionTop extends AbstractAccordion
                                     'count' => $values['count'],
                                 ]
                             ];
-                    }
+                    //}
                 }
             }
         }
