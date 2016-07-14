@@ -5,7 +5,8 @@
         <div class="title-box">
             <p class="title flush--ends tablet-and-up">{{ data.desktop|raw }}</p>
         </div>
-        <div class="label-and-edit-box">
+        {% if data.edit is defined %}
+            <div class="label-and-edit-box">
             <p class="link flush--ends">
                 <a href="{{ data.edit|raw }}" class="link-edit">
                     <span class="tablet-and-up">edit</span>
@@ -13,8 +14,11 @@
                     <span class="mobile">{{ data.mobile|raw }}</span>
                 </a>
             </p>
-            <span class="label">{{ data.status }}</span>
+            {% if data.status is defined %}
+                <span class="label">{{ data.status }}</span>
+            {% endif %}
         </div>
+        {% endif %}
     </div>
 </li>
 	
