@@ -12,7 +12,8 @@
     overflow: hidden;
 
     @include media(mobile) {
-        padding: 0 0 $gutter 80px;
+        padding: 0 0 $gutter 55px;
+        background-size: 40px;
     }
 
     &.person--full {

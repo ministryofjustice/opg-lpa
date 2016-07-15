@@ -2,6 +2,36 @@
 
 {% import "application/macros.twig" as macros %}
 
+{% set form = formErrorTextExchange(form,  {
+	'sign-date-donor-life-sustaining': {
+		'Value is required and can\'t be empty': 'Please enter the donor\'s signature date'
+	},
+	'sign-date-donor': {
+		'Value is required and can\'t be empty': 'Please enter the donor\'s signature date'
+	},
+	'sign-date-certificate-provider': {
+		'Value is required and can\'t be empty': 'Please enter the certificate provider\'s signature date'
+	},
+	'sign-date-attorney-0': {
+		'Value is required and can\'t be empty': 'Please enter the attorney\'s signature date'
+	},
+	'sign-date-attorney-1': {
+		'Value is required and can\'t be empty': 'Please enter the attorney\'s signature date'
+	},
+	'sign-date-attorney-2': {
+		'Value is required and can\'t be empty': 'Please enter the attorney\'s signature date'
+	},
+	'sign-date-replacement-attorney-0': {
+		'Value is required and can\'t be empty': 'Please enter the replacements attorney\'s signature date'
+	},
+	'sign-date-replacement-attorney-1': {
+		'Value is required and can\'t be empty': 'Please enter the replacements attorney\'s signature date'
+	},
+	'sign-date-replacement-attorney-2': {
+		'Value is required and can\'t be empty': 'Please enter the replacements attorney\'s signature date'
+	}
+}) %}
+
 {% block errorSummary %}
     {# Error summary #}
     {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
@@ -16,51 +46,16 @@
 
 {% if valid is defined %}
 
-	<div class="text">
-		<div style="background-repeat: no-repeat; background-position: 10px 50%; border-left:6px solid #28A197; margin-top:1em; margin-bottom:2em; padding:1em 1em 1em 1.5em; font-size:1.5em; background-color:#EBF5F4; background-image:url('/assets/v1/images/icon/progress-tick.png')">
-	    	The LPA was signed in the correct order.
-	    	{% if ('dashboard' in returnRoute) %}
-	    	Return to dashboard
-	    	{% else %}
-	    	Return to your LPA
-	    	{% endif %}
-	    	<a class="button" style='float: right;' href="{{ returnRoute }}" role="button">
-	    	{{ buttonText }}
-	    	</a>
+	<div class="alert panel" role="alert">
+		<i class="icon icon-tick" role="presentation"></i>
+		<div class="alert-message">
+			<p>The LPA was signed in the correct order</p>
 		</div>
 	</div>
+
+	<a href="{{ returnRoute }}">Return to dashboard</a>
     
 {% else %}
-
-	{% set form = formErrorTextExchange(form,  {
-		'sign-date-donor-life-sustaining': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-donor': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-certificate-provider': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-attorney-0': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-attorney-1': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-attorney-2': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-replacement-attorney-0': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-replacement-attorney-1': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		},
-		'sign-date-replacement-attorney-2': {
-			'Value is required and can\'t be empty': 'Please enter the signature date'
-		}
-	}) %}
 
 	{# Set form fields variables #}
 	{% set donorElement = form.get('sign-date-donor') %}
@@ -90,14 +85,23 @@
 
 {% if dateError is defined %}
 
-	<div style="border:2px solid red; margin-top:1em; padding:1em; color:#ffffff; font-size:1.5em; background-color:#bb0000">
-		There was a problem with the order in which the LPA was signed. 
-		<br>
-		{{ dateError }}
-		<br>
-		Please see the <a href="/help/#topic-signing-the-lpa" style="color:#ffffff" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">guidance</a> on signing and, if necessary,
-		<a href="{{ url( 'lpa/view-docs', {'lpa-id': lpa.id}) }}">reprint</a> and re-sign your LPA.
+	<div class="alert panel" role="alert">
+		<i class="icon icon-cross" role="presentation"></i>
+		<div class="alert-message">
+			<p>There was a problem with the order in which the LPA was signed</p>
+		</div>
 	</div>
+
+	<div class="text error">
+		<p class="error-message">{{ dateError }}</p>
+	</div>
+
+	<div class="text divorced">
+		<p>Please see the <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">guidance</a> on signing and, if necessary,
+		<a href="{{ url( 'lpa/view-docs', {'lpa-id': lpa.id}) }}">reprint</a> and re-sign your LPA.</p>
+	</div>
+
+	<hr>
 
 {% endif %}
 

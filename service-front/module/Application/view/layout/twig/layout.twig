@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>Make a lasting power of attorney | GOV.UK</title>
-    <meta http-equiv="refresh" content="4505">
+    <meta http-equiv="refresh" content="4800">
 
     <script type="text/javascript">
         (function(){if(navigator.userAgent.match(/IEMobile\/10\.0/)){var d=document,c="appendChild",a=d.createElement("style");a[c](d.createTextNode("@-ms-viewport{width:auto!important}"));d.getElementsByTagName("head")[0][c](a);}})();
@@ -102,32 +102,36 @@
             {% block pageTitle %} Make a lasting power of attorney {% endblock %}
         </h1>
 
-        {% import 'layout/twig/flash.twig' as flash %}
+        <div class="content-body">
 
-        {{ flash.render('error', 'alert-error', 'icon-cross') }}
-        {{ flash.render('info', 'alert-info', 'icon-information') }}
-        {{ flash.render('default', 'alert-warning', 'icon-important-small') }}
-        {{ flash.render('success', 'alert-success', 'icon-tick') }}
-        {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
+            {% import 'layout/twig/flash.twig' as flash %}
 
-        {% block openAccordion %}
-        {% endblock %}
-             
-        {% set accordionTop = accordionTop(lpa) %}
-        {% set accordionBottom = accordionBottom(lpa) %}
+            {{ flash.render('error', 'alert-error', 'icon-cross') }}
+            {{ flash.render('info', 'alert-info', 'icon-information') }}
+            {{ flash.render('default', 'alert-warning', 'icon-important-small') }}
+            {{ flash.render('success', 'alert-success', 'icon-tick') }}
+            {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
 
-        {% if (accordionTop) %}
-        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
-        {% endif %}
+            {% block openAccordion %}
+            {% endblock %}
+                 
+            {% set accordionTop = accordionTop(lpa) %}
+            {% set accordionBottom = accordionBottom(lpa) %}
 
-        {% block content %}{% endblock %}
-        
-        {% if (accordionBottom) %}
-        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionBottom, 'lpa':lpa } %}
-        {% endif %}
-                         
-        {% block closeAccordion %}
-        {% endblock %}
+            {% if (accordionTop) %}
+            	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+            
+            {% if (accordionBottom) %}
+            	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionBottom, 'lpa':lpa } %}
+            {% endif %}
+                             
+            {% block closeAccordion %}
+            {% endblock %}
+            
+        </div>
 
         {% block divider %}
         <hr>
