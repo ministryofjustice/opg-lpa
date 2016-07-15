@@ -142,6 +142,8 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
                 $messages = array_merge($messages, $modelValidationResult['messages']);
             }
             
+            // Process model validation messages so they relate to fields on the form, 
+            // e.g. "name/company-name" becomes "name" and "name/company-company" becomes company.
             $multiFieldMessages = [];
             foreach ($messages as $key => $message) {
                 if (preg_match('|(.*/.*)-(.*)|', $key, $matches)) {
