@@ -7,6 +7,9 @@
 }
 
 .date-field {
+	&.error {
+		margin-right: 0;
+	}
 	input {
 		float: right;
 		width: 140px;
@@ -14,11 +17,14 @@
 		@include media(mobile) {
 			float: none;
 			display: block;
-			margin-top: 0;
+			width: 100%;
+			margin-top: 6px;
 		}
 	}
 }
 
 .content-body {
-	min-height: 400px;
+	@include media(tablet) {
+		min-height: 400px;
+	}
 }
