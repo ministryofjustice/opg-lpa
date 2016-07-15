@@ -142,7 +142,21 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
                 $messages = array_merge($messages, $modelValidationResult['messages']);
             }
             
-            $this->setMessages($messages);
+            $multiFieldMessages = [];
+            foreach ($messages as $key => $message) {
+                if (preg_match('|(.*/.*)-(.*)|', $key, $matches)) {
+                    $field = $matches[2];
+                    $multiFieldMessages[$field] = $message;
+                }
+            }
+            
+            $this->setMessages(
+                array_merge(
+                    $messages,
+                    $multiFieldMessages
+                    )
+                );
+            
         }
         
         //@todo: to be removed - logging received CSRF
@@ -180,7 +194,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
             $multiFieldsNames = [];
             
             // loop through stubs.
-            for($i=1; $i<count($errorKeyStubs); $i++) {
+            for($i=0; $i<count($errorKeyStubs); $i++) {
                 
                 // test if it's a multi-fields validation error.
                 if(strstr($errorKeyStubs[$i], '/')) {
