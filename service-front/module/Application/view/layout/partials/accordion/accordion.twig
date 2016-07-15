@@ -172,7 +172,7 @@
 
 	{% if (item.routeName == 'lpa/summary') %}
 		{{ macros.accordionBar({
-			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": "instructions", "lpa-id": lpa.id}) ~ '">review your LPA</a>',
+			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a> ',
 			'mobile' : '',
 		})
 		}}
