@@ -1,12 +1,18 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% import "application/macros.twig" as macros %}
+
+{% block errorSummary %}
+    {# Error summary #}
+    {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+{% endblock %}
+
 {% block pageTitle %}
     Check signature dates
 {% endblock %}
 
 {% block content %}
 
-{% import "application/macros.twig" as macros %}
 
 {% if valid is defined %}
 
@@ -26,20 +32,61 @@
     
 {% else %}
 
-	{% set form = formErrorTextExchange(form,  {}) %}
+	{% set form = formErrorTextExchange(form,  {
+		'sign-date-donor-life-sustaining': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-donor': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-certificate-provider': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-attorney-0': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-attorney-1': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-attorney-2': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-replacement-attorney-0': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-replacement-attorney-1': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		},
+		'sign-date-replacement-attorney-2': {
+			'Value is required and can\'t be empty': 'Please enter the signature date'
+		}
+	}) %}
 
+	{# Set form fields variables #}
 	{% set donorElement = form.get('sign-date-donor') %}
-	{{ donorElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
+	{% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
+
+	{# form fields config #}
+	{{ donorElement.setAttributes({
+		placeholder: 'DD/MM/YYYY',
+		class: 'form-control'
+	}) ? '' }}
+
+	{{ certificateProviderElement.setAttributes({
+		placeholder: 'DD/MM/YYYY',
+		class: 'form-control'
+	}) ? '' }}
 
 	{% if form.has('sign-date-donor-life-sustaining') %}
-		{% set donorLifeSustainingElement = form.get('sign-date-donor-life-sustaining') %}
-		{{ donorLifeSustainingElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
-	{% endif %}
 
-	{% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
-	{{ certificateProviderElement.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
-	    
-	{{ form.setAttributes({class: 'form'}) ? '' }}
+		{% set donorLifeSustainingElement = form.get('sign-date-donor-life-sustaining') %}
+
+		{{ donorLifeSustainingElement.setAttributes({
+			placeholder: 'DD/MM/YYYY',
+			class: 'form-control'
+		}) ? '' }}
+
+	{% endif %}
 
 {% if dateError is defined %}
 
@@ -54,12 +101,15 @@
 
 {% endif %}
 
-	<div class="text">
-		
-		<p>This page is optional. It can be used to verify that your LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">signed in the correct order</a> before sending it to us.</p>
+	<div class="accordion-info">
+		<div class="text">
+			
+			<p>This page is optional. It can be used to verify that your LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="stageprompt.lpa:help:signing-the-lpa">signed in the correct order</a> before sending it to us.</p>
 
-		<p>Please give the date each person below signed the LPA.</p>
+			<p>Please give the date each person below signed the LPA.</p>
+		</div>
 	</div>
+
 
 	{# begin form #}
     {{ form.prepare() ? '' }}
@@ -68,104 +118,99 @@
 	
 		<input type="hidden" name="returnRoute" value="{{ returnRoute }}">
 
-		<div class="person person--wider">
+		<div class="person person--full">
             <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }} (the donor)</h3>
 			{% if donorLifeSustainingElement is defined %}
-				<p class="person-address flush--ends">
-					<p class="date-field">
-						<label for="donor">
-							This person signed Section 5 of the LPA on
-
-							{{ formElement(donorLifeSustainingElement) }}
-							{{ formElementErrors(donorLifeSustainingElement) }}
-
-						</label>
+				<div class="person-address flush--ends">
+					<p class="date-field {{ donorLifeSustainingElement.getMessages|length >0 ? 'error'}}">
+						{{ formElementErrorsV2(donorLifeSustainingElement) }}
+						<label for="donor">This person signed Section 5 of the LPA on</label>
+						{{ formElement(donorLifeSustainingElement) }}
 					</p>
-				</p>
-			{% endif %}
-			<p class="person-address flush--ends">
-				<p class="date-field">
-					<label for="donor">
-						This person signed Section 9 of the LPA on
-
-						{{ formElement(donorElement) }}
-						{{ formElementErrors(donorElement) }}
-
-					</label>
-				</p>
-				<div class="application-notice help-notice">
-					<p class="hint">Remember, if any continuation sheets 1 or 2 were used they must also<br> have been signed by the donor at the same time as or before the donor signed Section 9.</p>
 				</div>
-			</p>
+			{% endif %}
+			<div class="person-address flush--ends">
+				<p class="date-field {{ donorElement.getMessages|length >0 ? 'error'}}">
+					{{ formElementErrorsV2(donorElement) }}
+					<label for="donor">This person signed Section 9 of the LPA on</label>
+					{{ formElement(donorElement) }}
+				</p>
+				<div class="panel panel-border-wide text">
+					<p>Remember, if any continuation sheets 1 or 2 were used they must also have been signed by the donor at the same time as or before the donor signed Section 9.</p>
+				</div>
+			</div>
         </div>
-    
-		<div class="person-summary group">
-		  <div class="person">
-		      <h3>{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
-		      <p class="date-field">
-		      	<label for="certificateProvider_0">This person signed Section 10 of the LPA on
-		      	
-		            {{ formElement(certificateProviderElement) }}
-					{{ formElementErrors(certificateProviderElement) }}
-		            
-		        </label>
-		      </p>
-		  </div>
+
+        <div class="person person--full">
+            <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
+			<div class="person-address flush--ends">
+				<p class="date-field {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
+					{{ formElementErrorsV2(certificateProviderElement) }}
+					<label for="certificateProvider_0">This person signed Section 10 of the LPA on</label>
+					{{ formElement(certificateProviderElement) }}
+				</p>
+			</div>
 		</div>
 
-{% for idx, attorney in lpa.document.primaryAttorneys %}
-	
-	{% set element = form.get('sign-date-attorney-' ~ idx) %}
-	{{ element.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
-	
-    <div class="person-summary group">
-        <div class="person">
-  			<h3>{{ attorney.name }} (attorney)</h3>
-				<p class="date-field">
-			<label for="attorney_0">
-			     {% if attorney.dob is defined %}
-			     This person signed Section 11 of the LPA on
-			     {% else %}
-			     This corporation signed Continuation Sheet 4 of the LPA on
-			     {% endif %}
-			     {{ formElement(element) }}
-				 {{ formElementErrors(element) }}
-            </label>
-		</p>
-	  </div>
+		{% for idx, attorney in lpa.document.primaryAttorneys %}
+		
+			{% set element = form.get('sign-date-attorney-' ~ idx) %}
+			{{ element.setAttributes({
+				placeholder: 'DD/MM/YYYY',
+				class: 'form-control'
+			}) ? '' }}
 
-{% endfor %}
+			<div class="person person--full">
+		        <h3 class="person-name heading-small flush--ends">{{ attorney.name }} (attorney)</h3>
+				<div class="person-address flush--ends">
+					<p class="date-field {{ element.getMessages|length >0 ? 'error'}}">
+						{{ formElementErrorsV2(element) }}
+						<label for="attorney_0">
+							{% if attorney.dob is defined %}
+							This person signed Section 11 of the LPA on
+							{% else %}
+							This corporation signed Continuation Sheet 4 of the LPA on
+							{% endif %}
+						</label>
+						{{ formElement(element) }}
+					</p>
+				</div>
+			</div>
 
-{% for idx, attorney in lpa.document.replacementAttorneys %}
+		{% endfor %}
 
-	{% set element = form.get('sign-date-replacement-attorney-' ~ idx) %}
-	{{ element.setAttributes({placeholder: 'DD/MM/YYYY'}) ? '' }}
-	
-    <div class="person-summary group">
-        <div class="person">
-  			<h3>{{ attorney.name }} (replacement attorney)</h3>
-				<p class="date-field">
-			<label for="attorney_0">
-				 {% if attorney.dob is defined %}
-			     This person signed Section 11 of the LPA on
-			     {% else %}
-			     This corporation signed Continuation Sheet 4 of the LPA on
-			     {% endif %}
-			     {{ formElement(element) }}
-				 {{ formElementErrors(element) }}
-            </label>
-		</p>
-	  </div>
+		{% for idx, attorney in lpa.document.replacementAttorneys %}
 
-{% endfor %}
+			{% set element = form.get('sign-date-replacement-attorney-' ~ idx) %}
+			{{ element.setAttributes({
+				placeholder: 'DD/MM/YYYY',
+				class: 'form-control'
+			}) ? '' }}
 
-        <div class="accordion-actions">
-            <p>
-                <input type="submit" name="save" value="Check dates" class="button gotonextpart">
-            </p>
-        </div>
-            {{ form().closeTag|raw }}        
-		</div>
+			<div class="person person--full">
+		        <h3 class="person-name heading-small flush--ends">{{ attorney.name }} (replacement attorney)</h3>
+				<div class="person-address flush--ends">
+					<p class="date-field {{ element.getMessages|length >0 ? 'error'}}">
+						{{ formElementErrorsV2(element) }}
+						<label for="attorney_0">
+							{% if attorney.dob is defined %}
+							This person signed Section 11 of the LPA on
+							{% else %}
+							This corporation signed Continuation Sheet 4 of the LPA on
+							{% endif %}
+						</label>
+						{{ formElement(element) }}
+					</p>
+				</div>
+			</div>
+
+		{% endfor %}
+
+	    <div class="divorced">
+	    	<input type="submit" name="save" value="Check dates" class="button">
+	    </div>
+
+    {{ form().closeTag|raw }}        
 
 {% endif %}
 

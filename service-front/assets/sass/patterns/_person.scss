@@ -14,6 +14,11 @@
     @include media(mobile) {
         padding: 0 0 $gutter 80px;
     }
+
+    &.person--full {
+        margin-bottom: 20px;
+        padding-bottom: 4px;
+    }
 }
 
 .person-name,
@@ -26,6 +31,10 @@
         @include media(tablet) {
             padding-right: 175px;
         }
+    }
+
+    .person--full & {
+        padding-right: 0;
     }
 }
 
