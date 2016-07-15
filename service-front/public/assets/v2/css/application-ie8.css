@@ -2885,6 +2885,9 @@ input[type=number] {
   background-repeat: no-repeat;
   background-size: 60px;
   overflow: hidden; }
+  .person.person--full {
+    margin-bottom: 20px;
+    padding-bottom: 4px; }
 
 .person-name,
 .person-address {
@@ -2892,6 +2895,9 @@ input[type=number] {
   .person--wider .person-name, .person--wider
   .person-address {
     padding-right: 175px; }
+  .person--full .person-name, .person--full
+  .person-address {
+    padding-right: 0; }
 
 .person-actions {
   position: absolute;
