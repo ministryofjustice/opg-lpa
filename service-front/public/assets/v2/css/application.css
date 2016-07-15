@@ -4201,4 +4201,7 @@ input[type=number] {
       display: block;
       margin-top: 0; } }
 
+.content-body {
+  min-height: 400px; }
+
 /*# sourceMappingURL=application.css.map */
