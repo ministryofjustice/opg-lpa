@@ -102,32 +102,36 @@
             {% block pageTitle %} Make a lasting power of attorney {% endblock %}
         </h1>
 
-        {% import 'layout/twig/flash.twig' as flash %}
+        <div class="content-body">
 
-        {{ flash.render('error', 'alert-error', 'icon-cross') }}
-        {{ flash.render('info', 'alert-info', 'icon-information') }}
-        {{ flash.render('default', 'alert-warning', 'icon-important-small') }}
-        {{ flash.render('success', 'alert-success', 'icon-tick') }}
-        {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
+            {% import 'layout/twig/flash.twig' as flash %}
 
-        {% block openAccordion %}
-        {% endblock %}
-             
-        {% set accordionTop = accordionTop(lpa) %}
-        {% set accordionBottom = accordionBottom(lpa) %}
+            {{ flash.render('error', 'alert-error', 'icon-cross') }}
+            {{ flash.render('info', 'alert-info', 'icon-information') }}
+            {{ flash.render('default', 'alert-warning', 'icon-important-small') }}
+            {{ flash.render('success', 'alert-success', 'icon-tick') }}
+            {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
 
-        {% if (accordionTop) %}
-        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
-        {% endif %}
+            {% block openAccordion %}
+            {% endblock %}
+                 
+            {% set accordionTop = accordionTop(lpa) %}
+            {% set accordionBottom = accordionBottom(lpa) %}
 
-        {% block content %}{% endblock %}
-        
-        {% if (accordionBottom) %}
-        	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionBottom, 'lpa':lpa } %}
-        {% endif %}
-                         
-        {% block closeAccordion %}
-        {% endblock %}
+            {% if (accordionTop) %}
+            	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+            
+            {% if (accordionBottom) %}
+            	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionBottom, 'lpa':lpa } %}
+            {% endif %}
+                             
+            {% block closeAccordion %}
+            {% endblock %}
+            
+        </div>
 
         {% block divider %}
         <hr>
