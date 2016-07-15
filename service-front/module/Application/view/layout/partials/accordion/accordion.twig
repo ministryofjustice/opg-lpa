@@ -10,7 +10,7 @@
         		'mobile' : (lpa.document.type == 'property-and-financial') ?
         					'This LPA covers property and financial affairs' :
         					'This LPA covers health and welfare',
-        		'status' : item.params.status,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -18,9 +18,9 @@
     
 	{% if (item.routeName == 'lpa/donor') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The donor is ' ~ item.params.values,
-            	'mobile' : 'The donor is ' ~ item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : 'The donor is ' ~ lpa.document.donor.name,
+            	'mobile' : 'The donor is ' ~ lpa.document.donor.name,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -28,9 +28,13 @@
     
 	{% if (item.routeName == 'lpa/life-sustaining') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values == 1 ? 'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' : 'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf', 
-            	'mobile' : item.params.values == 1 ? 'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' : 'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
-        		'status' : item.params.status,
+            	'desktop' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
+					'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' :
+					'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
+            	'mobile' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
+					'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' :
+					'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -38,9 +42,9 @@
     
     {% if (item.routeName == 'lpa/primary-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values,
-            	'mobile' :  'The attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values,
-        		'status' : item.params.count ~ ' Attorney' ~ (item.params.count != 1 ? 's' : ''),
+            	'desktop' : 'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
+            	'mobile' :  'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
+        		'status' : lpa.document.primaryAttorneys|length ~ ' Attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's' : ''),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -48,9 +52,13 @@
     
     {% if (item.routeName == 'lpa/when-lpa-starts') %}
         {{ macros.accordionBar({
-                'desktop' : 'The LPA starts ' ~ (item.params.values == 'now' ? 'as soon as it\'s registered (with my consent)' : 'only if I don\'t have mental capacity'),
-                'mobile' : 'The LPA starts ' ~ (item.params.values == 'now' ? 'as soon as it\'s registered (with my consent)' : 'only if I don\'t have mental capacity'),
-        		'status' : item.params.status,
+                'desktop' : 'The LPA starts ' ~ (lpa.document.primaryAttorneyDecisions.when == 'now' ?
+					'as soon as it\'s registered (with my consent)' :
+					'only if I don\'t have mental capacity'),
+                'mobile' : 'The LPA starts ' ~ (lpa.document.primaryAttorneyDecisions.when == 'now' ?
+					'as soon as it\'s registered (with my consent)' :
+					'only if I don\'t have mental capacity'),
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -58,9 +66,17 @@
 
     {% if (item.routeName == 'lpa/how-primary-attorneys-make-decision') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')), 
-            	'mobile' : 'The attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')),
-        		'status' : item.params.status,
+            	'desktop' : 'The attorneys will act ' ~ ( lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' ?
+					'jointly and severally' :
+					((lpa.document.primaryAttorneyDecisions.how == 'jointly' ) ?
+						'jointly' :
+						'jointly for some decisions, and jointly and severally for other decisions')),
+            	'mobile' : 'The attorneys will act ' ~ ( lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' ?
+					'jointly and severally' :
+					((lpa.document.primaryAttorneyDecisions.how == 'jointly' ) ?
+						'jointly' :
+						'jointly for some decisions, and jointly and severally for other decisions')),
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -68,9 +84,13 @@
     
     {% if (item.routeName == 'lpa/replacement-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.count == 0 ? 'There are no replacement attorneys' : ('The replacement attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values),
-            	'mobile' : item.params.count == 0 ? 'There are no replacement attorneys' : ('The replacement attorney' ~ (item.params.count != 1 ? 's are ' : ' is ') ~ item.params.values),
-        		'status' : item.params.count ~ ' Replacement attorney' ~ (item.params.count != 1 ? 's' : ''),
+            	'desktop' : lpa.document.replacementAttorneys|length == 0 ?
+					'There are no replacement attorneys' :
+					('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
+            	'mobile' : lpa.document.replacementAttorneys|length == 0 ?
+					'There are no replacement attorneys' :
+					('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
+        		'status' : lpa.document.replacementAttorneys|length ~ ' Replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's' : ''),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -78,9 +98,19 @@
 
     {% if (item.routeName == 'lpa/when-replacement-attorney-step-in') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The replacement attorneys will step in ' ~ ( item.params.values == 'first' ? 'as soon as one of the original attorneys can no longer act' : ((item.params.values == 'last' ) ? 'as soon as none of the original attorneys can act' : 'as per instructions')),
-            	'mobile' : 'The replacement attorneys will step in ' ~ ( item.params.values == 'first' ? 'as soon as one of the original attorneys can no longer act' : ((item.params.values == 'last' ) ? 'as soon as none of the original attorneys can act' : 'as per instructions')),
-        		'status' : item.params.status,
+            	'desktop' : 'The replacement attorneys will step in ' ~
+					( lpa.document.replacementAttorneyDecisions.when == 'first' ?
+					'as soon as one of the original attorneys can no longer act' :
+					((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
+						'as soon as none of the original attorneys can act' :
+						'as per instructions')),
+            	'mobile' : 'The replacement attorneys will step in ' ~
+					( lpa.document.replacementAttorneyDecisions.when == 'first' ?
+					'as soon as one of the original attorneys can no longer act' :
+					((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
+						'as soon as none of the original attorneys can act' :
+						'as per instructions')),
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -88,9 +118,19 @@
     
     {% if (item.routeName == 'lpa/how-replacement-attorneys-make-decision') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The replacement attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')), 
-            	'mobile' : 'The replacement attorneys will act ' ~ ( item.params.values == 'jointly-attorney-severally' ? 'jointly and severally' : ((item.params.values == 'jointly' ) ? 'jointly' : 'jointly for some decisions, and jointly and severally for other decisions')),
-        		'status' : item.params.status,
+            	'desktop' : 'The replacement attorneys will act ' ~
+					( lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' ?
+					'jointly and severally' :
+					((lpa.document.replacementAttorneyDecisions.how == 'jointly' ) ?
+						'jointly' :
+						'jointly for some decisions, and jointly and severally for other decisions')),
+            	'mobile' : 'The replacement attorneys will act ' ~
+					( lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' ?
+					'jointly and severally' :
+					((lpa.document.replacementAttorneyDecisions.how == 'jointly' ) ?
+						'jointly' :
+						'jointly for some decisions, and jointly and severally for other decisions')),
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -98,9 +138,9 @@
     
     {% if (item.routeName == 'lpa/certificate-provider') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The certificate provider is ' ~ item.params.values, 
-            	'mobile' : 'The certificate provider is ' ~ item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
+            	'mobile' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -108,19 +148,13 @@
     
     {% if (item.routeName == 'lpa/people-to-notify') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
-            	'mobile' : item.params.count == 0 ? 'There are no people to notify' : ('The ' ~ (item.params.count != 1 ? 'people to notify are ' : 'person to notify is ') ~ item.params.values),
-        		'status' : item.params.count ~ (item.params.count != 1 ? ' people to notify' : ' person to notify'),
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
-        }}
-    {% endif %}
-    
-    {% if (item.routeName == 'lpa/correspondent') %}
-        {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : lpa.document.peopleToNotify|length == 0 ?
+					'There are no people to notify' :
+					('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
+            	'mobile' : lpa.document.peopleToNotify|length == 0 ?
+					'There are no people to notify' :
+					('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
+        		'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -130,17 +164,35 @@
         {{ macros.accordionBar({
 				'desktop' : 'instructions and preferences',
 				'mobile' : 'instructions and preferences',
-        		'status' : item.params.status,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
     {% endif %}
 
+	{% if (item.routeName == 'lpa/summary') %}
+		{{ macros.accordionBar({
+			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a> ',
+			'mobile' : '',
+		})
+		}}
+	{% endif %}
+
+	{% if (item.routeName == 'lpa/correspondent') %}
+		{{ macros.accordionBar({
+			'desktop' : item.routeName,
+			'mobile' : item.routeName,
+			'status' : 'Complete',
+			'edit' : url(item.routeName, {'lpa-id': lpa.id})
+		})
+		}}
+	{% endif %}
+
     {% if (item.routeName == 'lpa/who-are-you') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -148,9 +200,9 @@
 
     {% if (item.routeName == 'lpa/repeat-application') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -158,9 +210,9 @@
 
     {% if (item.routeName == 'lpa/fee-reduction') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -168,9 +220,9 @@
 
     {% if (item.routeName == 'lpa/payment') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -178,9 +230,9 @@
     
     {% if (item.routeName == 'lpa/payment/summary') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -188,9 +240,9 @@
 
     {% if (item.routeName == 'lpa/payment/return/failure') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}
@@ -198,9 +250,9 @@
 
     {% if (item.routeName == 'lpa/payment/return/cancel') %}
         {{ macros.accordionBar({
-            	'desktop' : item.params.values, 
-            	'mobile' : item.params.values,
-        		'status' : item.params.status,
+            	'desktop' : item.routeName,
+            	'mobile' : item.routeName,
+        		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
         }}

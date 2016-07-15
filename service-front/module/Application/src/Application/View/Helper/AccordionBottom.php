@@ -47,23 +47,11 @@ class AccordionBottom extends AbstractAccordion
                     $seq++;
                     continue;
                 }
+
+                $barList[$seq++] = [
+                    'routeName' => $barRouteName
+                ];
                 
-                // generate bar items starting from the next page.
-                if(method_exists($this, $barDataFuncName)) {
-                    if($this->$barDataFuncName() === null) break;
-                    
-                    $seq++;
-                    $barList[$seq-1] = [
-                            'name'      => $this->getViewScriptName($barDataFuncName),
-                            'routeName' => $barRouteName,
-                            'lpaId'     => $lpa->id,
-                            'params'    => [
-                                'idx'   => $seq,
-                                'status' => 'Complete',
-                                'values'=> $this->$barDataFuncName()
-                            ]
-                    ];
-                }
             }
         }
         

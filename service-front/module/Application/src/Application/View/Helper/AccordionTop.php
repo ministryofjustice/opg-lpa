@@ -29,36 +29,25 @@ class AccordionTop extends AbstractAccordion
         $seq = 0;
         $barList = [];
         foreach($barConfig as $barRouteName => $barDataFuncName) {
+
             if($barRouteName == $flowChecker->getNearestAccessibleRoute($barRouteName)) {
+
                 if($barRouteName == $routeName) {
                     break;
-                }
-                else {
-                    if(method_exists($this, $barDataFuncName)) {
-                        $values = $this->$barDataFuncName();
-                        if (!is_array($values) || !isset($values['text'])) {
-                            $values = [
-                                'text' => $values,
-                                'count' => 0,
-                            ];
-                        }
-                        $barList[$seq++] = [
-                                'name'      => $this->getViewScriptName($barDataFuncName),
-                                'routeName' => $barRouteName,
-                                'lpaId'     => $lpa->id,
-                                'params'    => [
-                                    'idx'    => $seq,
-                                    'status' => 'Complete',
-                                    'values'=> $values['text'],
-                                    'count' => $values['count'],
-                                ]
-                            ];
-                    }
-                }
-            }
-        }
+                } else {
+
+                    $barList[$seq++] = [
+                        'routeName' => $barRouteName
+                    ];
+
+                } // if
+
+            } // if
+
+        } // foreach
         
         return $barList;
         
     }
+    
 }
