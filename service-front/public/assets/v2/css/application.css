@@ -3639,7 +3639,8 @@ input[type=number] {
   overflow: hidden; }
   @media (max-width: 640px) {
     .person {
-      padding: 0 0 30px 80px; } }
+      padding: 0 0 30px 55px;
+      background-size: 40px; } }
   .person.person--full {
     margin-bottom: 20px;
     padding-bottom: 4px; }
@@ -4010,11 +4011,14 @@ input[type=number] {
     width: 100%; }
   .ui-datepicker thead td, .ui-datepicker thead th, .ui-datepicker tbody td, .ui-datepicker tbody th {
     width: 40px;
-    padding: 0.35em 0.15em; }
+    padding: 0.45em 0.15em; }
   .ui-datepicker thead th {
-    font-weight: bold; }
-  .ui-datepicker tbody td {
+    border-bottom: none;
+    font-weight: bold;
     text-align: center; }
+  .ui-datepicker tbody td {
+    text-align: center;
+    border-bottom: none; }
     .ui-datepicker tbody td:hover {
       cursor: pointer;
       background: #ffe2ad;
@@ -4191,6 +4195,8 @@ input[type=number] {
 .no-js .form-group + .form-group.js-hidden {
   margin-top: 30px; }
 
+.date-field.error {
+  margin-right: 0; }
 .date-field input {
   float: right;
   width: 140px;
@@ -4199,9 +4205,11 @@ input[type=number] {
     .date-field input {
       float: none;
       display: block;
-      margin-top: 0; } }
+      width: 100%;
+      margin-top: 6px; } }
 
-.content-body {
-  min-height: 400px; }
+@media (min-width: 641px) {
+  .content-body {
+    min-height: 400px; } }
 
 /*# sourceMappingURL=application.css.map */
