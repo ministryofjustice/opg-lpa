@@ -6,6 +6,7 @@
 	}
 }
 
+// Signature Date Checker page
 .date-field {
 	&.error {
 		margin-right: 0;
@@ -23,8 +24,16 @@
 	}
 }
 
+// General layout
 .content-body {
 	@include media(tablet) {
 		min-height: 400px;
+	}
+}
+
+// Accordion layout
+.current {
+	+ .complete {
+		margin-top: $gutter;
 	}
 }
