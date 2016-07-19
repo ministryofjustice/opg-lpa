@@ -15,7 +15,7 @@
     id: 'instruction',
     rows: 10,
     cols: 67,
-    maxlength: 2000,
+    maxlength: 10000,
     class: 'form-control'
 }) ? ''}}
 
@@ -23,7 +23,7 @@
     id: 'preferences',
     rows: 10,
     cols: 67,
-    maxlength: 2000,
+    maxlength: 10000,
     class: 'form-control'
 }) ? ''}}
 
@@ -33,18 +33,19 @@
 
 <li id="instructions-and-preferences-section" class="section current js-current">
     
-    <h2 class="heading-medium accordion-header flush--top">Your LPA has been created</h2>
+    <h2 class="heading-medium accordion-header flush--top">Instructions and preferences</h2>
 
-    <div class="text">
-        <p>(You've entered all the essential information needed for your LPA.)</p>
+    <div class="accordion-info">
+        <div class="text">
+            <p>You've entered all the essential information needed for your LPA.</p>
 
-        <p>You can <a href="{{ url('lpa/summary', {'from-page': 'instructions', 'lpa-id': lpa.id}) }}">review your LPA</a> and check everything's correct before you continue. You can also click on any sections above to make changes.</p>
+            <p>Please read back through the details above and check everything's correct before you continue. You can click on any section to make changes.</p>
 
-        <p><strong class="bold-small">Your LPA is not finished until you have registered your LPA.</strong></p>
+            <p>The optional section below lets you add instructions for your attorneys. You don't have to put anything there, but you can state things that the attorneys must or mustn't do, give guidance that you'd like them to follow, or provide details of how they should be paid for their time.</p>
 
-        <p>(The optional section below lets you add instructions for your attorneys.)</p>
-
+        </div>
     </div>
+
 
     {# begin form #}
     {{ form.prepare() ? '' }}
@@ -55,11 +56,9 @@
         
             <summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions for the attorneys? (optional)</summary>
 
-            <div class="panel panel-border-narrow">
+            <div>
 
-                <div class="form-group text">
-                    <p>You don't have to put anything here, but you can state things that the attorneys must or mustn't do, give guidance that you'd like them to follow, or provide details of how they should be paid for their time.</p>
-                    
+                <div class="form-group text">   
                     <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-instructions-and-preferences" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on instructions and preferences</a>. It contains useful examples and can help you avoid mistakes.</p>
                 </div>
 
@@ -74,7 +73,7 @@
                         {{ formElement(instructions) }}
                     </div>
 
-                    <div class="form-group {{ preferences.getMessages|length >0 ? 'error'}}">
+                    <div class="form-group {{ preferences.getMessages|length >0 ? 'error'}} flush--bottom">
                         <label class="form-label text" for="{{ preferences.getAttribute('id') }}">
                             {{ preferences.getOption('label') }}<br>
                             <span class="form-hint">These are things you would like attorneys to think about when making decisions. <a href="/guide#topic-instructions-and-preferences" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a><br></span>
@@ -87,9 +86,7 @@
             </div>
         </details>
 
-        <div class="form-group">
-            <input type="submit" name="save" value="Save and continue" class="button">
-        </div>
+        <input type="submit" name="save" value="Save and continue" class="button">
                          
     {{ form().closeTag|raw }}
     
