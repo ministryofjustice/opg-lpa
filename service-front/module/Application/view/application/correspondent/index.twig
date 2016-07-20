@@ -17,6 +17,8 @@
 {% set contactByPhone = correspondence.get('contactByPhone') %}
 {% set contactByPost  = correspondence.get('contactByPost') %}
 {% set contactInWelsh = correspondence.get('contactInWelsh') %}
+{% set email = correspondence.get('email-address') %}
+{% set phone = correspondence.get('phone-number') %}
 
 {# form fields config #}
 {{ contactByPost.setOptions({
@@ -130,6 +132,8 @@
 		            </label>
 	                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
 	                	Please <a href="{{ editRoute }}" class="js-form-popup">add phone number</a> to the person's contact details
+						{{ formElement(phone) }}
+						{{ formElementErrorsV2(phone) }}
 	                </div>
 	                {{ formElementErrorsV2(contactByPhone) }}
 		        </div>
@@ -139,8 +143,10 @@
 		                {{ formElement(contactByEmail) }}
 		                {{ contactByEmail.getOption('label')|raw }}
 		            </label>
-	                <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
+	                <div class="panel panel-border-narrow" id="contact-by-email">
 	                	Please <a href="{{ editRoute }}" class="js-form-popup">add email</a> to the person's contact details
+						{{ formElement(email) }}
+						{{ formElementErrorsV2(email) }}
 	                </div>
 	                {{ formElementErrorsV2(contactByEmail) }}
 		        </div>
