@@ -24,7 +24,47 @@ class CorrespondentController extends AbstractLpaController
 {
     
     protected $contentHeader = 'registration-partial.phtml';
-    
+
+    /**
+     * Returns the correspondent's details. If no correspondent is set, the default
+     * correspondent details are returned.
+     */
+    protected function getCorrespondentDetails(){
+
+        if($this->getLpa()->document->correspondent !== null) {
+
+            // We have one
+            return $this->getLpa()->document->correspondent;
+
+        } else {
+
+            // We need default details.
+            if($this->getLpa()->document->whoIsRegistering == 'donor') {
+                return $this->getLpa()->document->donor;
+            }
+            else {
+                $firstAttorneyId = array_values($this->getLpa()->document->whoIsRegistering)[0];
+                foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
+                    if($attorney->id == $firstAttorneyId) {
+                        return $attorney;
+                    }
+                }
+            }
+
+        }
+
+    }//
+
+    /*
+     * Page loads:
+     *  If correspondent details are set, they are used;
+     *  Else we should the details of the default correspondent (taken from applicant).
+     *
+     * Page saved:
+     *  If correspondent details are set, the fields are merged.
+     *  Else we pull in the details of the default correspondent, then merge in other fields.
+     *
+     */
     public function indexAction()
     {
         $viewModel = new ViewModel();
@@ -94,8 +134,8 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'address'   => $correspondent->address,
-                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$correspondent->email:null,
-                            'phone'     => null,
+                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
+                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
                             'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
                             'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
                     ];
@@ -109,18 +149,24 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => $correspondent->name,
                             'company'   => $correspondent->company,
                             'address'   => $correspondent->address,
-                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$correspondent->email:null,
-                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$correspondent->phone:null,
+                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
+                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
                             'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
                             'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
                     ];
                 }
+
+
+                var_dump($validatedFormData, $params); die;
                 
                 if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence($params))) {
                     throw new \RuntimeException('API client failed to set correspondent for id: '.$lpaId);
                 }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            } else {
+                //var_dump( $form->getMessages() );
+                //die('invalid');
             }
         }
         
@@ -137,6 +183,8 @@ class CorrespondentController extends AbstractLpaController
             }
             
             $form->bind(['correspondence'=>[
+                    'email-address' => ($correspondent->email instanceof EmailAddress)?$correspondent->email:null,
+                    'phone-number'  => ($correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
                     'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
                     'contactByPhone'  => ($correspondent->phone instanceof PhoneNumber)?true:false,
                     'contactByPost' => $correspondent->contactByPost,
@@ -145,7 +193,10 @@ class CorrespondentController extends AbstractLpaController
         }
         else { // donor or attorney is correspondent
             $correspondentName = (string)$correspondent->name;
+
             $form->bind(['correspondence'=>[
+                    'email-address' => ($correspondent->email instanceof EmailAddress)?$correspondent->email:null,
+                    'phone-number'  => (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
                     'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
             ]]);
         }
@@ -156,7 +207,7 @@ class CorrespondentController extends AbstractLpaController
                         'name'      => $correspondentName,
                         'address'   => $correspondent->address,
                         'contactEmail' => ($correspondent->email instanceof EmailAddress)?$correspondent->email->address:null,
-                        'contactPhone' => ($correspondent instanceof Correspondence && $correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
+                        'contactPhone' => (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
         ]);
