@@ -162,8 +162,8 @@
     
     {% if (item.routeName == 'lpa/instructions') %}
         {{ macros.accordionBar({
-				'desktop' : 'instructions and preferences',
-				'mobile' : 'instructions and preferences',
+				'desktop' : 'Instructions and preferences',
+				'mobile' : 'Instructions and preferences',
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
@@ -177,6 +177,16 @@
 		})
 		}}
 	{% endif %}
+
+    {% if (item.routeName == 'lpa/applicant') %}
+        {{ macros.accordionBar({
+            'desktop' : 'The LPA will be registered by the ' ~ lpa.document.whoIsRegistering,
+            'mobile' : 'The LPA will be registered by the ' ~ lpa.document.whoIsRegistering,
+            'status' : 'Complete',
+            'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        })
+        }}
+    {% endif %}
 
 	{% if (item.routeName == 'lpa/correspondent') %}
 		{{ macros.accordionBar({
