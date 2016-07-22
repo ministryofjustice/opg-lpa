@@ -49,6 +49,16 @@ class CorrespondenceFieldset extends Fieldset //implements InputFilterProviderIn
                         'unchecked_value' => false,
                 ],
         ]);
+
+        $this->add([
+            'name' => 'email-address',
+            'type' => 'Zend\Form\Element\Email',
+        ]);
+
+        $this->add([
+            'name' => 'phone-number',
+            'type' => 'Zend\Form\Element\Text',
+        ]);
         
     }
     

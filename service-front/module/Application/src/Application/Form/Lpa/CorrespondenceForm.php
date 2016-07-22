@@ -50,26 +50,34 @@ class CorrespondenceForm extends AbstractActorForm
     public function validateByModel()
     {
         $error = ['correspondence' => []];
+
+        $correspondent = new Correspondence([
+            'contactByPost' => (bool)$this->data['correspondence']['contactByPost'],
+            'contactByInWelsh' => (bool)$this->data['correspondence']['contactInWelsh'],
+        ]);
+
         
         if($this->data['correspondence']['contactByEmail'] == "1") {
-            if(($this->lpa->document->correspondent instanceof Correspondence) && !($this->lpa->document->correspondent->email instanceof EmailAddress)) {
+            if(  !isset($this->data['correspondence']['email-address']) ) {
                 $error['correspondence']['contactByEmail'] = ["Email address is not provided"];
+            } else {
+                $correspondent->email = [ 'address' => $this->data['correspondence']['email-address'] ];
             }
         }
-        
+
+
+
         if($this->data['correspondence']['contactByPhone'] == "1") {
-            if(!($this->lpa->document->correspondent->phone instanceof PhoneNumber)) {
+            if( !isset( $this->data['correspondence']['phone-number']) ) {
                 $error['correspondence']['contactByPhone'] = ["Phone number is not provided"];
+            } else {
+                $correspondent->phone = [ 'number' => $this->data['correspondence']['phone-number'] ];
             }
         }
+
         
-        $correspondent = new Correspondence([
-                'contactByPost' => (bool)$this->data['correspondence']['contactByPost'],
-                'contactByInWelsh' => (bool)$this->data['correspondence']['contactInWelsh'],
-        ]);
-        
-        $modelValidation = $correspondent->validate(['contactByPost', 'contactInWelsh']);
-        
+        $modelValidation = $correspondent->validate(['contactByPost', 'contactInWelsh', 'email', 'phone']);
+
         if(count($modelValidation) == 0) {
             if(count($error['correspondence']) == 0) {
                 return ['isValid'=>true, 'messages' => []];
@@ -82,9 +90,17 @@ class CorrespondenceForm extends AbstractActorForm
             }
         }
         else {
+
+            $errors = $this->modelValidationMessageConverter($modelValidation);
+
+            $errors['phone-number'] = $errors['phone-phone-number'];
+            unset( $errors['phone-phone-number'] );
+
+            //var_dump($errors); die;
+
             return [
                     'isValid'=>false,
-                    'messages' => array_merge(['correspondence' => $this->modelValidationMessageConverter($modelValidation)], $error),
+                    'messages' => array_merge( $error, ['correspondence' => $errors] ),
             ];
         }
     }

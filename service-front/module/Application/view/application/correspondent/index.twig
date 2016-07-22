@@ -7,7 +7,13 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
     'correspondence' : {
-        "at-least-one-option-needs-to-be-selected" : "At least one option must be selected"
+        "at-least-one-option-needs-to-be-selected" : "At least one option must be selected",
+		"phone-number" : {
+				"invalid-phone-number" : "Phone"
+		},
+		"invalid-phone-number" : {
+			"phone-number" : "Phone"
+		}
     }
 }) %}
 
@@ -17,6 +23,8 @@
 {% set contactByPhone = correspondence.get('contactByPhone') %}
 {% set contactByPost  = correspondence.get('contactByPost') %}
 {% set contactInWelsh = correspondence.get('contactInWelsh') %}
+{% set email = correspondence.get('email-address') %}
+{% set phone = correspondence.get('phone-number') %}
 
 {# form fields config #}
 {{ contactByPost.setOptions({
@@ -79,7 +87,7 @@
 
 		<div class="text">
 
-			<p>We’ll normally write to the applicant if we have any questions and send them the LPA once we’ve registered it.</p>
+			<p>We'll normally write to the applicant if we have any questions and send them the LPA once we’ve registered it.</p>
 
             <p>However, you might prefer to choose someone else, such as a legal professional, to take care of these things.</p>
 
@@ -130,6 +138,7 @@
 		            </label>
 	                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
 	                	Please <a href="{{ editRoute }}" class="js-form-popup">add phone number</a> to the person's contact details
+						{{ formElement(phone) }}
 	                </div>
 	                {{ formElementErrorsV2(contactByPhone) }}
 		        </div>
@@ -139,8 +148,9 @@
 		                {{ formElement(contactByEmail) }}
 		                {{ contactByEmail.getOption('label')|raw }}
 		            </label>
-	                <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
+	                <div class="panel panel-border-narrow" id="contact-by-email">
 	                	Please <a href="{{ editRoute }}" class="js-form-popup">add email</a> to the person's contact details
+						{{ formElement(email) }}
 	                </div>
 	                {{ formElementErrorsV2(contactByEmail) }}
 		        </div>
