@@ -93,6 +93,11 @@ class CorrespondenceForm extends AbstractActorForm
 
             $errors = $this->modelValidationMessageConverter($modelValidation);
 
+            $errors['phone-number'] = $errors['phone-phone-number'];
+            unset( $errors['phone-phone-number'] );
+
+            //var_dump($errors); die;
+
             return [
                     'isValid'=>false,
                     'messages' => array_merge( $error, ['correspondence' => $errors] ),

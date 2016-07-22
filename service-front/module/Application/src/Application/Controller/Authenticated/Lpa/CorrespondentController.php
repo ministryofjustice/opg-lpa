@@ -25,36 +25,6 @@ class CorrespondentController extends AbstractLpaController
     
     protected $contentHeader = 'registration-partial.phtml';
 
-    /**
-     * Returns the correspondent's details. If no correspondent is set, the default
-     * correspondent details are returned.
-     */
-    protected function getCorrespondentDetails(){
-
-        if($this->getLpa()->document->correspondent !== null) {
-
-            // We have one
-            return $this->getLpa()->document->correspondent;
-
-        } else {
-
-            // We need default details.
-            if($this->getLpa()->document->whoIsRegistering == 'donor') {
-                return $this->getLpa()->document->donor;
-            }
-            else {
-                $firstAttorneyId = array_values($this->getLpa()->document->whoIsRegistering)[0];
-                foreach($this->getLpa()->document->primaryAttorneys as $attorney) {
-                    if($attorney->id == $firstAttorneyId) {
-                        return $attorney;
-                    }
-                }
-            }
-
-        }
-
-    }//
-
     /*
      * Page loads:
      *  If correspondent details are set, they are used;
@@ -157,48 +127,48 @@ class CorrespondentController extends AbstractLpaController
                 }
 
 
-                var_dump($validatedFormData, $params); die;
+                //var_dump($validatedFormData, $params); die;
                 
                 if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence($params))) {
                     throw new \RuntimeException('API client failed to set correspondent for id: '.$lpaId);
                 }
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-            } else {
-                //var_dump( $form->getMessages() );
-                //die('invalid');
             }
-        }
-        
-        // bind data to the form and set params to the view.
-        if($correspondent instanceof Correspondence) {
-            $correspondentName = trim((string)$correspondent->name);
-            if($correspondentName == '') {
-                $correspondentName = $correspondent->company;
-            }
-            else {
-                if($correspondent->company != null) {
-                    $correspondentName .= ', '.$correspondent->company;
-                }
-            }
-            
-            $form->bind(['correspondence'=>[
-                    'email-address' => ($correspondent->email instanceof EmailAddress)?$correspondent->email:null,
-                    'phone-number'  => ($correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
-                    'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
-                    'contactByPhone'  => ($correspondent->phone instanceof PhoneNumber)?true:false,
-                    'contactByPost' => $correspondent->contactByPost,
-                    'contactInWelsh'=> $correspondent->contactInWelsh,
-            ]]);
-        }
-        else { // donor or attorney is correspondent
-            $correspondentName = (string)$correspondent->name;
 
-            $form->bind(['correspondence'=>[
-                    'email-address' => ($correspondent->email instanceof EmailAddress)?$correspondent->email:null,
-                    'phone-number'  => (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
-                    'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
-            ]]);
+           // var_dump( $form->getMessages() ); die;
+
+        } else {
+
+            // bind data to the form and set params to the view.
+            if ($correspondent instanceof Correspondence) {
+                $correspondentName = trim((string)$correspondent->name);
+                if ($correspondentName == '') {
+                    $correspondentName = $correspondent->company;
+                } else {
+                    if ($correspondent->company != null) {
+                        $correspondentName .= ', ' . $correspondent->company;
+                    }
+                }
+
+                $form->bind(['correspondence' => [
+                    'email-address' => ($correspondent->email instanceof EmailAddress) ? $correspondent->email : null,
+                    'phone-number' => ($correspondent->phone instanceof PhoneNumber) ? $correspondent->phone->number : null,
+                    'contactByEmail' => ($correspondent->email instanceof EmailAddress) ? true : false,
+                    'contactByPhone' => ($correspondent->phone instanceof PhoneNumber) ? true : false,
+                    'contactByPost' => $correspondent->contactByPost,
+                    'contactInWelsh' => $correspondent->contactInWelsh,
+                ]]);
+            } else { // donor or attorney is correspondent
+                $correspondentName = (string)$correspondent->name;
+
+                $form->bind(['correspondence' => [
+                    'email-address' => ($correspondent->email instanceof EmailAddress) ? $correspondent->email : null,
+                    'phone-number' => (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber) ? $correspondent->phone->number : null,
+                    'contactByEmail' => ($correspondent->email instanceof EmailAddress) ? true : false,
+                ]]);
+            }
+
         }
         
         return new ViewModel([

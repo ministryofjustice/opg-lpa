@@ -7,7 +7,13 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
     'correspondence' : {
-        "at-least-one-option-needs-to-be-selected" : "At least one option must be selected"
+        "at-least-one-option-needs-to-be-selected" : "At least one option must be selected",
+		"phone-number" : {
+				"invalid-phone-number" : "Phone"
+		},
+		"invalid-phone-number" : {
+			"phone-number" : "Phone"
+		}
     }
 }) %}
 
@@ -81,7 +87,7 @@
 
 		<div class="text">
 
-			<p>We’ll normally write to the applicant if we have any questions and send them the LPA once we’ve registered it.</p>
+			<p>We'll normally write to the applicant if we have any questions and send them the LPA once we’ve registered it.</p>
 
             <p>However, you might prefer to choose someone else, such as a legal professional, to take care of these things.</p>
 
@@ -133,7 +139,6 @@
 	                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
 	                	Please <a href="{{ editRoute }}" class="js-form-popup">add phone number</a> to the person's contact details
 						{{ formElement(phone) }}
-						{{ formElementErrorsV2(phone) }}
 	                </div>
 	                {{ formElementErrorsV2(contactByPhone) }}
 		        </div>
@@ -146,7 +151,6 @@
 	                <div class="panel panel-border-narrow" id="contact-by-email">
 	                	Please <a href="{{ editRoute }}" class="js-form-popup">add email</a> to the person's contact details
 						{{ formElement(email) }}
-						{{ formElementErrorsV2(email) }}
 	                </div>
 	                {{ formElementErrorsV2(contactByEmail) }}
 		        </div>
