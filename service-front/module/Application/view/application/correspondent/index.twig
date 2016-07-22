@@ -9,7 +9,7 @@
     'correspondence' : {
         "at-least-one-option-needs-to-be-selected" : "At least one option must be selected",
 		"phone-number" : {
-				"invalid-phone-number" : "Phone"
+				"cannot-be-blank" : "Please enter the phone number"
 		},
 		"invalid-phone-number" : {
 			"phone-number" : "Phone"
@@ -27,16 +27,11 @@
 {% set phone = correspondence.get('phone-number') %}
 
 {# form fields config #}
-{{ contactByPost.setOptions({
-	label_attributes: {'class': 'text block-label'},
-	use_hidden_element: true
-}) ? '' }}
-
 {{ contactByPost.setAttributes({
 	id: 'contactByPost'
 }) ? '' }}
 
-{{ contactByPhone.setOptions({ 
+{{ contactByPost.setOptions({
 	use_hidden_element: true
 }) ? '' }}
 
@@ -44,7 +39,7 @@
 	id: 'contactByPhone'
 }) ? '' }}
 
-{{ contactByEmail.setOptions({
+{{ contactByPhone.setOptions({ 
 	use_hidden_element: true
 }) ? '' }}
 
@@ -52,13 +47,28 @@
 	id: 'contactByEmail'
 }) ? '' }}
 
-{{ contactInWelsh.setOptions({
+{{ contactByEmail.setOptions({
 	use_hidden_element: true
 }) ? '' }}
 
 {{ contactInWelsh.setAttributes({
 	id: 'contactInWelsh'
 }) ? '' }}
+
+{{ contactInWelsh.setOptions({
+	use_hidden_element: true
+}) ? '' }}
+
+{{ phone.setAttributes({
+	id: 'phone-number',
+	class: 'form-control'
+}) ? '' }}
+
+{{ email.setAttributes({
+	id: 'email-address',
+	class: 'form-control'
+}) ? '' }}
+
 
 {# form fields labels #}
 {{ contactByPost.setOptions({
@@ -77,7 +87,13 @@
 	label: 'In Welsh'
 }) ? '' }}
 
-{{ form.prepare() ? '' }}
+{{ phone.setOptions({
+	label: 'Phone number'
+}) ? '' }}
+
+{{ email.setOptions({
+	label: 'Email address'
+}) ? '' }}
 
 <li id="correspondent-section" class="section current js-current">
 
@@ -131,37 +147,37 @@
 	            </label>
                 {{ formElementErrorsV2(contactByPost) }}
 
-		        <div class="form-group-checkbox {{ contactByPhone.getMessages|length >0 ? 'error'}}">
-		            <label class="text block-label" {{ (correspondent['contactPhone']) ? '' : 'data-target="contact-by-phone"' }} for="{{ contactByPhone.getAttribute('id') }}">
-		                {{ formElement(contactByPhone) }}
-		                {{ contactByPhone.getOption('label')|raw }}
-		            </label>
-	                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
-	                	Please <a href="{{ editRoute }}" class="js-form-popup">add phone number</a> to the person's contact details
-						{{ formElement(phone) }}
-	                </div>
-	                {{ formElementErrorsV2(contactByPhone) }}
-		        </div>
+	            <label class="text block-label" {{ (correspondent['contactPhone']) ? '' : 'data-target="contact-by-phone"' }} for="{{ contactByPhone.getAttribute('id') }}">
+	                {{ formElement(contactByPhone) }}
+	                {{ contactByPhone.getOption('label')|raw }}
+	            </label>
+                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
+                	<label class="form-label" for="{{ phone.getAttribute('id') }}">
+                        {{ phone.getOption('label') }}
+                        {{ formElementErrorsV2(phone) }}
+                    </label>
+                    {{ formText(phone) }}
+                </div>
+                {{ formElementErrorsV2(contactByPhone) }}
 
-		        <div class="form-group-checkbox {{ contactByEmail.getMessages|length >0 ? 'error'}}">
-		            <label class="text block-label" {{ (correspondent['contactEmail']) ? '' : 'data-target="contact-by-email"' }} for="{{ contactByEmail.getAttribute('id') }}">
-		                {{ formElement(contactByEmail) }}
-		                {{ contactByEmail.getOption('label')|raw }}
-		            </label>
-	                <div class="panel panel-border-narrow" id="contact-by-email">
-	                	Please <a href="{{ editRoute }}" class="js-form-popup">add email</a> to the person's contact details
-						{{ formElement(email) }}
-	                </div>
-	                {{ formElementErrorsV2(contactByEmail) }}
-		        </div>
+	            <label class="text block-label" {{ (correspondent['contactEmail']) ? '' : 'data-target="contact-by-email"' }} for="{{ contactByEmail.getAttribute('id') }}">
+	                {{ formElement(contactByEmail) }}
+	                {{ contactByEmail.getOption('label')|raw }}
+	            </label>
+                <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
+                	<label class="form-label" for="{{ email.getAttribute('id') }}">
+                        {{ email.getOption('label') }}
+                        {{ formElementErrorsV2(email) }}
+                    </label>
+                    {{ formText(email) }}
+                </div>
+                {{ formElementErrorsV2(contactByEmail) }}
 
-		        <div class="form-group-checkbox {{ contactInWelsh.getMessages|length >0 ? 'error'}}">
-		            <label class="text block-label" for="{{ contactInWelsh.getAttribute('id') }}">
-		                {{ formElement(contactInWelsh) }}
-		                {{ contactInWelsh.getOption('label')|raw }}
-		            </label>
-	                {{ formElementErrorsV2(contactInWelsh) }}
-		        </div>
+	            <label class="text block-label" for="{{ contactInWelsh.getAttribute('id') }}">
+	                {{ formElement(contactInWelsh) }}
+	                {{ contactInWelsh.getOption('label')|raw }}
+	            </label>
+                {{ formElementErrorsV2(contactInWelsh) }}
 		        
 		        {{ formElementErrorsV2(correspondence) }}
 
