@@ -104,10 +104,10 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'address'   => $correspondent->address,
-                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
-                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
-                            'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
-                            'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
+                            //'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
+                            //'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
+                            //'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
+                            //'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
                     ];
                 }
                 else {
@@ -119,11 +119,24 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => $correspondent->name,
                             'company'   => $correspondent->company,
                             'address'   => $correspondent->address,
-                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
-                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
-                            'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
-                            'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
+                            //'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
+                            //'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
+                            //'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
+                            //'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
                     ];
+                }
+
+                $params = array_merge($params,[
+                    'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
+                    'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
+                ]);
+
+                if( $validatedFormData['correspondence']['contactByEmail'] ){
+                    $params['email'] = [ 'address'=>$validatedFormData['correspondence']['email-address'] ];
+                }
+
+                if( $validatedFormData['correspondence']['contactByPhone'] ){
+                    $params['phone'] = [ 'number'=>$validatedFormData['correspondence']['phone-number'] ];
                 }
 
 
