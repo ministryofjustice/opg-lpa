@@ -23,8 +23,24 @@ class PingController extends AbstractActionController {
 
         $response = $this->getResponse();
 
-        //$response->setStatusCode(500);
-        $response->setContent('Happy face');
+        //---
+
+        // Include a sanity check on ssl certs
+
+        $path = '/etc/ssl/certs/b204d74a.0';
+
+        if( !is_link($path) | !is_readable($path) || !is_link($path) || empty(file_get_contents($path)) ){
+
+            $response->setStatusCode(500);
+            $response->setContent('Sad face');
+
+        } else {
+
+            $response->setContent('Happy face');
+
+        }
+
+        //---
 
         return $response;
 
