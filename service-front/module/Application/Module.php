@@ -373,7 +373,7 @@ class Module{
         
         if ($exception) {
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
-            $logger->err($exception->getMessage());
+            $logger->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
             
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
