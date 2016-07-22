@@ -24,7 +24,17 @@ class CorrespondentController extends AbstractLpaController
 {
     
     protected $contentHeader = 'registration-partial.phtml';
-    
+
+    /*
+     * Page loads:
+     *  If correspondent details are set, they are used;
+     *  Else we should the details of the default correspondent (taken from applicant).
+     *
+     * Page saved:
+     *  If correspondent details are set, the fields are merged.
+     *  Else we pull in the details of the default correspondent, then merge in other fields.
+     *
+     */
     public function indexAction()
     {
         $viewModel = new ViewModel();
@@ -94,8 +104,8 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => ((!$correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'company'   => (($correspondent instanceof TrustCorporation)? $correspondent->name:null),
                             'address'   => $correspondent->address,
-                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$correspondent->email:null,
-                            'phone'     => null,
+                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
+                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
                             'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
                             'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
                     ];
@@ -109,12 +119,15 @@ class CorrespondentController extends AbstractLpaController
                             'name'      => $correspondent->name,
                             'company'   => $correspondent->company,
                             'address'   => $correspondent->address,
-                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$correspondent->email:null,
-                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$correspondent->phone:null,
+                            'email'     => $validatedFormData['correspondence']['contactByEmail']?$validatedFormData['correspondence']['email-address']:null,
+                            'phone'     => $validatedFormData['correspondence']['contactByPhone']?$validatedFormData['correspondence']['phone-number']:null,
                             'contactByPost'  => (bool)$validatedFormData['correspondence']['contactByPost'],
                             'contactInWelsh' => (bool)$validatedFormData['correspondence']['contactInWelsh'],
                     ];
                 }
+
+
+                //var_dump($validatedFormData, $params); die;
                 
                 if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence($params))) {
                     throw new \RuntimeException('API client failed to set correspondent for id: '.$lpaId);
@@ -122,32 +135,40 @@ class CorrespondentController extends AbstractLpaController
                 
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
-        }
-        
-        // bind data to the form and set params to the view.
-        if($correspondent instanceof Correspondence) {
-            $correspondentName = trim((string)$correspondent->name);
-            if($correspondentName == '') {
-                $correspondentName = $correspondent->company;
-            }
-            else {
-                if($correspondent->company != null) {
-                    $correspondentName .= ', '.$correspondent->company;
+
+           // var_dump( $form->getMessages() ); die;
+
+        } else {
+
+            // bind data to the form and set params to the view.
+            if ($correspondent instanceof Correspondence) {
+                $correspondentName = trim((string)$correspondent->name);
+                if ($correspondentName == '') {
+                    $correspondentName = $correspondent->company;
+                } else {
+                    if ($correspondent->company != null) {
+                        $correspondentName .= ', ' . $correspondent->company;
+                    }
                 }
-            }
-            
-            $form->bind(['correspondence'=>[
-                    'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
-                    'contactByPhone'  => ($correspondent->phone instanceof PhoneNumber)?true:false,
+
+                $form->bind(['correspondence' => [
+                    'email-address' => ($correspondent->email instanceof EmailAddress) ? $correspondent->email : null,
+                    'phone-number' => ($correspondent->phone instanceof PhoneNumber) ? $correspondent->phone->number : null,
+                    'contactByEmail' => ($correspondent->email instanceof EmailAddress) ? true : false,
+                    'contactByPhone' => ($correspondent->phone instanceof PhoneNumber) ? true : false,
                     'contactByPost' => $correspondent->contactByPost,
-                    'contactInWelsh'=> $correspondent->contactInWelsh,
-            ]]);
-        }
-        else { // donor or attorney is correspondent
-            $correspondentName = (string)$correspondent->name;
-            $form->bind(['correspondence'=>[
-                    'contactByEmail' => ($correspondent->email instanceof EmailAddress)?true:false,
-            ]]);
+                    'contactInWelsh' => $correspondent->contactInWelsh,
+                ]]);
+            } else { // donor or attorney is correspondent
+                $correspondentName = (string)$correspondent->name;
+
+                $form->bind(['correspondence' => [
+                    'email-address' => ($correspondent->email instanceof EmailAddress) ? $correspondent->email : null,
+                    'phone-number' => (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber) ? $correspondent->phone->number : null,
+                    'contactByEmail' => ($correspondent->email instanceof EmailAddress) ? true : false,
+                ]]);
+            }
+
         }
         
         return new ViewModel([
@@ -156,7 +177,7 @@ class CorrespondentController extends AbstractLpaController
                         'name'      => $correspondentName,
                         'address'   => $correspondent->address,
                         'contactEmail' => ($correspondent->email instanceof EmailAddress)?$correspondent->email->address:null,
-                        'contactPhone' => ($correspondent instanceof Correspondence && $correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
+                        'contactPhone' => (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber)?$correspondent->phone->number:null,
                 ],
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
         ]);
