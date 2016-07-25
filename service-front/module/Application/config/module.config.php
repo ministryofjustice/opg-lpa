@@ -96,6 +96,7 @@ return [
             'cellStyles'            => 'Application\View\Helper\CellStyles',
             'systemMessage'         => 'Application\View\Helper\SystemMessage',
             'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
+            'ordinalSuffix'           => 'Application\View\Helper\OrdinalSuffix',
         ],
     ],
 

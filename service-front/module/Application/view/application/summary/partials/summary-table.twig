@@ -1,3 +1,5 @@
+{% import "application/summary/partials/macros.twig" as macros %}
+
 <table class="table-summary" itemtype="http://schema.org/Organization" itemscope>
 
 	<caption class="visuallyhidden">Caption to identify a table</caption>
@@ -24,128 +26,46 @@
 				</td>
 			</tr>
 
-			{% if lpa.document.donor.name is defined %}
-				<tr class="group-element">
-					<th class="table-summary-title" scope="row">Name</th>
-					<td class="table-summary-content">{{ lpa.document.donor.name }}</td>
-					<td class="table-summary-action"><a href="#">Edit</a></td>
-				</tr>
-			{% endif %}
+			{{ macros.outputActor( lpa.document.donor, '#') }}
 
-			{% if lpa.document.donor.dob is defined %}
-				<tr class="group-element">
-					<th class="table-summary-title" scope="row">Date of birth</th>
-					<td class="table-summary-content">{{ lpa.document.donor.dob.date.format('j F Y') }}</td>
+			{% if lpa.document.donor.canSign is defined %}
+				<tr class="group-end">
+					<th class="table-summary-title" scope="row">I can physically sign the LPA</th>
+					<td class="table-summary-content">{{ lpa.document.donor.canSign ? 'Yes' : 'No' }}</td>
 					<td class="table-summary-action"></td>
 				</tr>
 			{% endif %}
 
-			<tr class="group-element">
-				<th class="table-summary-title" scope="row">Address</th>
-				<td class="table-summary-content">
-					<div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
-						<div itemprop="streetAddress">50 Harrogate Road</div>
-						<div itemprop="addressLocality">Saddington</div>
-						<div itemprop="postalCode">LE8 5XS</div>
-						<div itemprop="addressCountry">United Kingdom</div>
-					</div>
-				</td>
-				<td class="table-summary-action"></td>
-			</tr>
-
-			<tr class="group-end">
-				<th class="table-summary-title" scope="row">Email address</th>
-				<td class="table-summary-content">adamwarner@inbound.plus</td>
-				<td class="table-summary-action"></td>
-			</tr>
-
 		{% endif %}
 
 		{# WHEN LPA STARTS #}
+		{% if lpa.document.type is defined and lpa.document.primaryAttorneyDecisions.when is defined and lpa.document.type == 'property-and-financial' %}
+			<tr class="group-single">
+				<th class="table-summary-title" scope="row">My LPA can be used</th>
+				<td class="table-summary-content">
+					{{ lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (with my consent)' : 'Only if I don\'t have mental capacity' }}
+				</td>
+				<td class="table-summary-action"><a href="#">Edit</a></td>
+			</tr>
+		{% endif %}
 
-		<tr class="group-single">
-			<th class="table-summary-title" scope="row">My LPA can be used</th>
-			<td class="table-summary-content">Only if I don't have mental capacity</td>
-			<td class="table-summary-action"><a href="#">Edit</a></td>
-		</tr>
+		{# PRIMARY ATTORNEYS #}
+		{% if lpa.document.primaryAttorneys is defined and lpa.document.primaryAttorneys|length > 0 %}
 
-		{# PRIMARY ATTORNEY 1 #}
+			{% for key,attorney in lpa.document.primaryAttorneys %}
 
-		<tr class="group-start">
-			<td class="table-summary-heading" colspan="3">
-				<h3 class="heading-small">1st Primary Attorney</h3>
-			</td>
-		</tr>
+				<tr class="group-start">
+					<td class="table-summary-heading" colspan="3">
+						<h3 class="heading-small">{{ ordinalSuffix(loop.index) }} Primary Attorney</h3>
+					</td>
+				</tr>
 
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Name</th>
-			<td class="table-summary-content">Peter Charlton</td>
-			<td class="table-summary-action"><a href="#">Edit</a></td>
-		</tr>
+				{{ macros.outputActor( attorney, '#') }}
 
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Date of birth</th>
-			<td class="table-summary-content">04/02/1976</td>
-			<td class="table-summary-action"></td>
-		</tr>
+			{% endfor %}
 
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Address</th>
-			<td class="table-summary-content">
-				<div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
-					<div itemprop="streetAddress">39 Coast Rd</div>
-					<div itemprop="addressLocality">Kirkleatham</div>
-					<div itemprop="postalCode">TS10 9GT</div>
-					<div itemprop="addressCountry">United Kingdom</div>
-				</div>
-			</td>
-			<td class="table-summary-action"></td>
-		</tr>
+		{% endif %}
 
-		<tr class="group-end">
-			<th class="table-summary-title" scope="row">Email address</th>
-			<td class="table-summary-content">petercharlton@inbound.plus</td>
-			<td class="table-summary-action"></td>
-		</tr>
-
-		{# PRIMARY ATTORNEY 2 #}
-
-		<tr class="group-start">
-			<td class="table-summary-heading" colspan="3">
-				<h3 class="heading-small">2nd Primary Attorney</h3>
-			</td>
-		</tr>
-
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Name</th>
-			<td class="table-summary-content">Sofia Wilson</td>
-			<td class="table-summary-action"><a href="#">Edit</a></td>
-		</tr>
-
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Date of birth</th>
-			<td class="table-summary-content">04/04/1957</td>
-			<td class="table-summary-action"></td>
-		</tr>
-
-		<tr class="group-element">
-			<th class="table-summary-title" scope="row">Address</th>
-			<td class="table-summary-content">
-				<div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
-					<div itemprop="streetAddress">13 Walwyn Rd</div>
-					<div itemprop="addressLocality">Charlestown</div>
-					<div itemprop="postalCode">DT4 5QU</div>
-					<div itemprop="addressCountry">United Kingdom</div>
-				</div>
-			</td>
-			<td class="table-summary-action"></td>
-		</tr>
-
-		<tr class="group-end">
-			<th class="table-summary-title" scope="row">Email address</th>
-			<td class="table-summary-content">sofiawilson@inbound.plus</td>
-			<td class="table-summary-action"></td>
-		</tr>
 
 		{# HOW PRIMARY ATTORNEYS MAKE DECISIONS #}
 
