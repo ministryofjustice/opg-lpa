@@ -58,7 +58,7 @@ class CorrespondenceForm extends AbstractActorForm
 
         
         if($this->data['correspondence']['contactByEmail'] == "1") {
-            if(  !isset($this->data['correspondence']['email-address']) ) {
+            if(  empty($this->data['correspondence']['email-address']) ) {
                 $error['correspondence']['contactByEmail'] = ["Email address is not provided"];
             } else {
                 $correspondent->email = [ 'address' => $this->data['correspondence']['email-address'] ];
@@ -68,7 +68,7 @@ class CorrespondenceForm extends AbstractActorForm
 
 
         if($this->data['correspondence']['contactByPhone'] == "1") {
-            if( !isset( $this->data['correspondence']['phone-number']) ) {
+            if( empty( $this->data['correspondence']['phone-number']) ) {
                 $error['correspondence']['contactByPhone'] = ["Phone number is not provided"];
             } else {
                 $correspondent->phone = [ 'number' => $this->data['correspondence']['phone-number'] ];
