@@ -33,7 +33,7 @@
     {% endif %}
 
     {% if data.address is defined %}
-        <tr class="group-element">
+        <tr class="{{ data.email is not defined ? 'group-end' : 'group-element' }}">
             <th class="table-summary-title" scope="row">Address</th>
             <td class="table-summary-content">
                 <div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
