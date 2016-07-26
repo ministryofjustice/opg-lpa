@@ -24,6 +24,14 @@
         </tr>
     {% endif %}
 
+    {% if data.company is defined and data.company is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Company Name</th>
+            <td class="table-summary-content">{{ data.company }}</td>
+            <td class="table-summary-action"></td>
+        </tr>
+    {% endif %}
+
     {% if data.dob is defined %}
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Date of birth</th>
@@ -32,9 +40,25 @@
         </tr>
     {% endif %}
 
+    {% if data.email is defined and data.email is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Email address</th>
+            <td class="table-summary-content">{{ data.email }}</td>
+            <td class="table-summary-action"></td>
+        </tr>
+    {% endif %}
+
+    {% if data.phone is defined and data.phone is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Phone number</th>
+            <td class="table-summary-content">{{ data.phone.number }}</td>
+            <td class="table-summary-action"></td>
+        </tr>
+    {% endif %}
+
     {% if data.address is defined %}
-        <tr class="{{ data.email is not defined ? 'group-end' : 'group-element' }}">
-            <th class="table-summary-title" scope="row">Address</th>
+        <tr class="group-end">
+            <th class="table-summary-title" scope="row">Postal Address</th>
             <td class="table-summary-content">
                 <div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
                     {% if data.address.address1 is defined %}
@@ -51,14 +75,6 @@
                     {% endif %}
                 </div>
             </td>
-            <td class="table-summary-action"></td>
-        </tr>
-    {% endif %}
-
-    {% if data.email is defined %}
-        <tr class="group-end">
-            <th class="table-summary-title" scope="row">Email address</th>
-            <td class="table-summary-content">{{ data.email }}</td>
             <td class="table-summary-action"></td>
         </tr>
     {% endif %}

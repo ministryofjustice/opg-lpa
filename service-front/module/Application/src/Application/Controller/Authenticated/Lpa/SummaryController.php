@@ -18,8 +18,10 @@ class SummaryController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        
+
         $fromPage = $this->params()->fromRoute('from-page');
+
+        //var_dump($fromPage); die;
 
         /*
         switch ($fromPage) {
@@ -31,7 +33,9 @@ class SummaryController extends AbstractLpaController
         }
         */
 
-        $returnRoute = 'lpa/instructions';
+        //var_dump($lpa); die;
+
+        $returnRoute = 'lpa/'.$fromPage;
 
         $viewParams = [
             'returnRoute' => $returnRoute,

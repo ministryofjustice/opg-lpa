@@ -244,6 +244,34 @@
 				<td class="table-summary-action"><a href="#">Edit</a></td>
 			</tr>
 		{% endif %}
+
+		{# Who is Registering #}
+		{% if lpa.document.whoIsRegistering is defined and lpa.document.whoIsRegistering is not empty %}
+			<tr class="group-single">
+				<th class="table-summary-title" scope="row">Who is registering the LPA</th>
+				<td class="table-summary-content" itemprop="name">
+					{% if lpa.document.whoIsRegistering == 'donor' %}
+						Donor
+					{% else %}
+						One or more of the attorneys
+					{% endif %}
+				</td>
+				<td class="table-summary-action"><a href="#">Edit</a></td>
+			</tr>
+		{% endif %}
+
+		{# Correspondence #}
+		{% if lpa.document.correspondent is defined %}
+
+			<tr class="group-start">
+				<td class="table-summary-heading" colspan="3">
+					<h3 class="heading-small">Correspondent</h3>
+				</td>
+			</tr>
+
+			{{ macros.outputActor( lpa.document.correspondent, '#') }}
+
+		{% endif %}
 	
 	</tbody>
 
