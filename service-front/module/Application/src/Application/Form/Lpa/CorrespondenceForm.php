@@ -56,22 +56,19 @@ class CorrespondenceForm extends AbstractActorForm
             'contactByInWelsh' => (bool)$this->data['correspondence']['contactInWelsh'],
         ]);
 
-        
-        if($this->data['correspondence']['contactByEmail'] == "1") {
-            if(  empty($this->data['correspondence']['email-address']) ) {
-                $error['correspondence']['contactByEmail'] = ["Email address is not provided"];
+        if($this->data['correspondence']['contactByPhone'] == "1") {
+            if( empty( $this->data['correspondence']['phone-number']) ) {
+                $error['correspondence']['contactByPhone'] = ["Please enter the correspondent's phone number"];
             } else {
-                $correspondent->email = [ 'address' => $this->data['correspondence']['email-address'] ];
+                $correspondent->phone = [ 'number' => $this->data['correspondence']['phone-number'] ];
             }
         }
 
-
-
-        if($this->data['correspondence']['contactByPhone'] == "1") {
-            if( empty( $this->data['correspondence']['phone-number']) ) {
-                $error['correspondence']['contactByPhone'] = ["Phone number is not provided"];
+        if($this->data['correspondence']['contactByEmail'] == "1") {
+            if(  empty($this->data['correspondence']['email-address']) ) {
+                $error['correspondence']['contactByEmail'] = ["Please enter the correspondent's email address"];
             } else {
-                $correspondent->phone = [ 'number' => $this->data['correspondence']['phone-number'] ];
+                $correspondent->email = [ 'address' => $this->data['correspondence']['email-address'] ];
             }
         }
 

@@ -154,11 +154,11 @@
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
                 	<label class="form-label" for="{{ phone.getAttribute('id') }}">
                         {{ phone.getOption('label') }}
+		                {{ formElementErrorsV2(contactByPhone) }}
                         {{ formElementErrorsV2(phone) }}
                     </label>
                     {{ formText(phone) }}
                 </div>
-                {{ formElementErrorsV2(contactByPhone) }}
 
 	            <label class="text block-label" {{ (correspondent['contactEmail']) ? '' : 'data-target="contact-by-email"' }} for="{{ contactByEmail.getAttribute('id') }}">
 	                {{ formElement(contactByEmail) }}
@@ -167,11 +167,11 @@
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
                 	<label class="form-label" for="{{ email.getAttribute('id') }}">
                         {{ email.getOption('label') }}
+		                {{ formElementErrorsV2(contactByEmail) }}
                         {{ formElementErrorsV2(email) }}
                     </label>
                     {{ formText(email) }}
                 </div>
-                {{ formElementErrorsV2(contactByEmail) }}
 
 	            <label class="text block-label" for="{{ contactInWelsh.getAttribute('id') }}">
 	                {{ formElement(contactInWelsh) }}
