@@ -34,6 +34,6 @@
 
     <p class="divorced"><a href="#" class="button">Make online payment now</a></p>
 
-    <p><a href="#">I want to pay by cheque</a></p>
+    <p><a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">I want to pay by cheque</a></p>
 
 {% endblock %}

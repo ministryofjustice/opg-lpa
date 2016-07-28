@@ -77,7 +77,22 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         
         return $view;
     }
-    
+
+
+    /**
+     * Returns a redirect to the next section in the LPA flow.
+     *
+     * @return \Zend\Http\Response
+     */
+    protected function getNextSectionRedirect(){
+
+        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute(
+            $this->getEvent()->getRouteMatch()->getMatchedRouteName()
+        ), ['lpa-id' => $this->getLpa()->id]);
+
+    }
+
+
     /**
      * Returns the LPA currently referenced in to the URL
      *

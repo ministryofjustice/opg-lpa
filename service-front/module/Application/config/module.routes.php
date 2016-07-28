@@ -719,6 +719,36 @@ return [
                                 'action'     => 'index',
                             ],
                         ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'cheque' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route'    => '/cheque',
+                                    'defaults' => [
+                                        'action'     => 'cheque',
+                                    ],
+                                ],
+                            ],
+                            'pay' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route'    => '/pay',
+                                    'defaults' => [
+                                        'action'     => 'pay',
+                                    ],
+                                ],
+                            ],
+                            'worldpay' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route'    => '/worldpay',
+                                    'defaults' => [
+                                        'action'     => 'worldpay',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'payment' => array(
                         'type' => 'Literal',
