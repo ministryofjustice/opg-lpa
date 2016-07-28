@@ -710,6 +710,16 @@ return [
                             ],
                         ],
                     ],
+                    'checkout' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/checkout',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\CheckoutController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                     'payment' => array(
                         'type' => 'Literal',
                         'options' => array(
