@@ -52,6 +52,7 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'isWhoAreYouAccessible',
             'lpa/repeat-application'                        => 'isRepeatApplicationAccessible',
             'lpa/fee-reduction'                             => 'isFeeReductionAccessible',
+            'lpa/checkout'                                  => 'isPaymentAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
             'lpa/payment/summary'                           => 'isPaymentAccessible',
             'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
@@ -126,7 +127,8 @@ class FormFlowChecker extends StateChecker
             'lpa/correspondent/edit'                        => 'lpa/correspondent',
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
-            'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
+            'lpa/fee-reduction'                             => 'lpa/checkout',
+            //'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
             'lpa/payment'                                   => 'lpa/payment/summary',
             'lpa/payment/summary'                           => 'lpa/complete',
             
