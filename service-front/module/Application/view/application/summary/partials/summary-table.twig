@@ -67,7 +67,13 @@
 
 				<tr class="group-start">
 					<td class="table-summary-heading" colspan="3">
-						<h3 class="heading-small">{{ ordinalSuffix(loop.index) }} Primary Attorney</h3>
+						<h3 class="heading-small">
+							{% if lpa.document.primaryAttorneys|length > 1 %}
+								{{ ordinalSuffix(loop.index) }} primary attorney
+							{% else %}
+								Primary attorney
+							{% endif %}
+						</h3>
 					</td>
 				</tr>
 
@@ -120,7 +126,13 @@
 
 				<tr class="group-start">
 					<td class="table-summary-heading" colspan="3">
-						<h3 class="heading-small">{{ ordinalSuffix(loop.index) }} Replacement Attorney</h3>
+						<h3 class="heading-small">
+							{% if lpa.document.replacementAttorneys|length > 1 %}
+								{{ ordinalSuffix(loop.index) }} replacement attorney
+							{% else %}
+								Replacement attorney
+							{% endif %}
+						</h3>
 					</td>
 				</tr>
 
@@ -201,7 +213,7 @@
 
 			<tr class="group-start">
 				<td class="table-summary-heading" colspan="3">
-					<h3 class="heading-small">Certificate Provider</h3>
+					<h3 class="heading-small">Certificate provider</h3>
 				</td>
 			</tr>
 
@@ -210,14 +222,20 @@
 		{% endif %}
 
 
-		{# PEOPLE TO NOTIFY 1 #}
+		{# PEOPLE TO NOTIFY #}
 		{% if lpa.document.peopleToNotify is defined and lpa.document.peopleToNotify|length > 0 %}
 
 			{% for key,actor in lpa.document.peopleToNotify %}
 
 				<tr class="group-start">
 					<td class="table-summary-heading" colspan="3">
-						<h3 class="heading-small">{{ ordinalSuffix(loop.index) }} person to notify</h3>
+						<h3 class="heading-small">
+							{% if lpa.document.peopleToNotify|length > 1 %}
+								{{ ordinalSuffix(loop.index) }} person to notify
+							{% else %}
+								Person to notify
+							{% endif %}
+						</h3>
 					</td>
 				</tr>
 
