@@ -6,6 +6,30 @@
 
 {% block content %}
 
+    {# worldpay #}
+
+        {% set worldpayForm = formErrorTextExchange(worldpayForm,  {
+        'email' : {
+        'Value is required and can\'t be empty' : 'Please enter an email address'
+        }
+        }) %}
+
+        {# Set form fields variables #}
+        {% set email = worldpayForm.get('email') %}
+
+        {# form fields config #}
+        {{ email.setAttributes({
+            id:'email',
+            class: 'form-control'
+        }) ? '' }}
+
+        {# form fields labels #}
+        {{ email.setOptions( {
+            label: 'Email address'
+        } ) ? '' }}
+
+    {# /worldpay #}
+
     {% import "application/macros.twig" as macros %}
 
     {% include 'application/summary/partials/summary-table.twig' %}
@@ -21,19 +45,41 @@
         <p>On the next screen you'll be taken to our payment partner, Worldpay, where you can pay by debit or credit card. This is a secure transaction.</p>
     </div>
 
-    {#
-    <div>
-        <form action="/lpa/18024684361/checkout">
 
-            <input type="email" name="email" />
-            <input type="submit" value="Make online payment now" />
+    {# -- Worldpay -- #}
+    {# begin form #}
+    {{ worldpayForm.prepare() ? '' }}
+    {{ form().openTag( worldpayForm )|raw }}
+        {{ formElement(worldpayForm.get( worldpayForm.csrfName )) }}
 
-        </form>
-    </div>
-    #}
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,worldpayForm,'There was a problem submitting the form') }}
 
-    <p class="divorced"><a href="#" class="button">Make online payment now</a></p>
+        <fieldset>
+            <legend class="visuallyhidden">Contact email</legend>
 
+            <h2 class="heading-medium flush--top text">Please enter a contact email for correspondence regarding this payment.</h2>
+
+            {{ macros.formGroup(email) }}
+
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" name="save" value="Make online payment now (World)" class="button">
+        </div>
+
+    {{ form().closeTag|raw }}
+
+
+    {# -- GDS Pay -- #}
+    <p class="divorced"><a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Make online payment now (GDS)</a></p>
+
+
+    {# -- Cheque -- #}
     <p><a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">I want to pay by cheque</a></p>
+
+
+    {# -- Nothing to pay -- #}
+    <p><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}">Confirm and finish (nothing to pay)</a></p>
 
 {% endblock %}

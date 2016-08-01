@@ -147,12 +147,10 @@ class Payment implements ServiceLocatorAwareInterface {
      * @param Lpa $lpa
      * @return array
      */
-    public function getOptions($lpa)
+    public function getOptions($lpa, $emailAddress)
     {
         $config = $this->getServiceLocator()->get('config')['worldpay'];
-        
-        $container = new Container('paymentEmail');
-    
+
         $donorName = (string)$lpa->document->donor->name;
     
         $options = [
@@ -161,7 +159,7 @@ class Payment implements ServiceLocatorAwareInterface {
             'description' => 'LPA for ' . $donorName,
             'transactionId' => LpaIdHelper::constructPaymentTransactionId($lpa->id),
             'card' => new CreditCard([
-                'email' => $container->email,
+                'email' => $emailAddress,
             ]),
             'token' => $config['api_token_secret'],
         ];

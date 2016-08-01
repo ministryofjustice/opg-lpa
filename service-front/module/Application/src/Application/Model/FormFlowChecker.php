@@ -55,13 +55,13 @@ class FormFlowChecker extends StateChecker
             'lpa/checkout'                                  => 'isPaymentAccessible',
             'lpa/checkout/cheque'                           => 'isPaymentAccessible',
             'lpa/checkout/pay'                              => 'isPaymentAccessible',
+            'lpa/checkout/confirm'                          => 'isPaymentAccessible',
             'lpa/checkout/worldpay'                         => 'isPaymentAccessible',
             'lpa/payment'                                   => 'isPaymentAccessible',
             'lpa/payment/summary'                           => 'isPaymentAccessible',
-            'lpa/payment/return/success'                    => 'isOnlinePaymentSuccessAccessible',
-            'lpa/payment/return/failure'                    => 'isOnlinePaymentFailureAccessible',
-            'lpa/payment/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
-            'lpa/payment/return/pending'                    => 'isOnlinePaymentPendingAccessible',
+            'lpa/checkout/worldpay/return/success'                    => 'isOnlinePaymentSuccessAccessible',
+            'lpa/checkout/worldpay/return/failure'                    => 'isOnlinePaymentFailureAccessible',
+            'lpa/checkout/worldpay/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
             'lpa/complete'                                  => 'isCompleteAccessible',
             'lpa/date-check'                                => 'isApplicantAccessible',
             'lpa/summary'                                   => 'isInstructionsAccessible',
@@ -669,7 +669,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     
@@ -680,7 +680,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     
@@ -691,7 +691,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     
@@ -702,7 +702,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     
@@ -712,7 +712,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     
@@ -722,7 +722,7 @@ class FormFlowChecker extends StateChecker
             return true;
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     

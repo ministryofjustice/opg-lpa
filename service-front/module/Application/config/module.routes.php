@@ -743,8 +743,53 @@ return [
                                 'type' => 'Literal',
                                 'options' => [
                                     'route'    => '/worldpay',
+                                ],
+                                'may_terminate' => false,
+                                'child_routes' => [
+                                    'return' => array(
+                                        'type'    => 'Literal',
+                                        'options' => array(
+                                            'route'    => '/return',
+                                        ),
+                                        'may_terminate' => false,
+                                        'child_routes' => array(
+                                            'success' => array(
+                                                'type'    => 'Literal',
+                                                'options' => array(
+                                                    'route'    => '/success',
+                                                    'defaults' => array(
+                                                        'action' => 'worldpaySuccess',
+                                                    ),
+                                                ),
+                                            ),
+                                            'cancel' => array(
+                                                'type'    => 'Literal',
+                                                'options' => array(
+                                                    'route'    => '/cancel',
+                                                    'defaults' => array(
+                                                        'action' => 'worldpayCancel',
+                                                    ),
+                                                ),
+                                            ),
+                                            'failure' => array(
+                                                'type'    => 'Literal',
+                                                'options' => array(
+                                                    'route'    => '/failure',
+                                                    'defaults' => array(
+                                                        'action' => 'worldpayFailure',
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ],
+                            ],
+                            'confirm' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route'    => '/confirm',
                                     'defaults' => [
-                                        'action'     => 'worldpay',
+                                        'action'     => 'confirm',
                                     ],
                                 ],
                             ],
