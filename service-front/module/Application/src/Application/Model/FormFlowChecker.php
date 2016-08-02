@@ -57,8 +57,6 @@ class FormFlowChecker extends StateChecker
             'lpa/checkout/pay'                              => 'isPaymentAccessible',
             'lpa/checkout/confirm'                          => 'isPaymentAccessible',
             'lpa/checkout/worldpay'                         => 'isPaymentAccessible',
-            'lpa/payment'                                   => 'isPaymentAccessible',
-            'lpa/payment/summary'                           => 'isPaymentAccessible',
             'lpa/checkout/worldpay/return/success'                    => 'isOnlinePaymentSuccessAccessible',
             'lpa/checkout/worldpay/return/failure'                    => 'isOnlinePaymentFailureAccessible',
             'lpa/checkout/worldpay/return/cancel'                     => 'isOnlinePaymentCancelAccessible',
@@ -967,7 +965,7 @@ class FormFlowChecker extends StateChecker
     private function returnToPayment()
     {
         if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
         else {
             return 'lpa/fee-reduction';
@@ -977,10 +975,10 @@ class FormFlowChecker extends StateChecker
     private function returnToPaymentSummary()
     {
         if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
-            return 'lpa/payment/summary';
+            return 'lpa/checkout';
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
     
@@ -990,7 +988,7 @@ class FormFlowChecker extends StateChecker
             return 'lpa/view-docs';
         }
         else {
-            return 'lpa/payment';
+            return 'lpa/checkout';
         }
     }
 
