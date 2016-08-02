@@ -192,7 +192,7 @@ return array(
 
     'worldpay' => [
 
-        'test_mode' => ( getenv('OPG_LPA_FRONT_WORLDPAY_TEST_MODE') === 'true' ),
+        'test_mode' => ( strtolower(getenv('OPG_LPA_FRONT_WORLDPAY_TEST_MODE')) === 'true' ),
         'currency' => 'GBP',
         'cart_id' => 'LPAv2',
         'log' => false,
