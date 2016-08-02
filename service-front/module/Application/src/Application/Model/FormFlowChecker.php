@@ -85,6 +85,7 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'returnToWhoAreYou',
             'lpa/repeat-application'                        => 'returnToRepeatApplication',
             'lpa/fee-reduction'                             => 'returnToFeeReduction',
+            'lpa/checkout'                                  => 'returnToPayment',
             'lpa/payment'                                   => 'returnToPayment',
             'lpa/payment/summary'                           => 'returnToPaymentSummary',
             'lpa/view-docs'                                 => 'returnToViewDocs',
