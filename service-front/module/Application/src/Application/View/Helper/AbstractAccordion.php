@@ -33,7 +33,7 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/certificate-provider'                    => 'certificateProvider',
             'lpa/people-to-notify'                        => 'peopleToNotify',
             'lpa/instructions'                            => 'instructions',
-            'lpa/summary'                                 => 'summary',
+            //'lpa/summary'                                 => 'summary',
         ],
         'registration' => [
             'lpa/applicant'                     => 'applicant',
@@ -41,7 +41,7 @@ abstract class AbstractAccordion extends AbstractHelper
             'lpa/who-are-you'                   => 'whoAreYou',
             'lpa/repeat-application'            => 'repeatApplication',
             'lpa/fee-reduction'                 => 'feeReduction',
-            'lpa/payment'                       => 'payment',
+            //'lpa/payment'                       => 'payment',
             //'lpa/payment/summary'               => 'paymentSummary',
             //'lpa/payment/return/failure'        => null,
             //'lpa/payment/return/cancel'         => null,
