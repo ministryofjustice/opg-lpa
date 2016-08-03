@@ -183,8 +183,10 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
     {
         $messages = [];
         $linkIdx = 1;
-        
-        // loop through all form elements.
+
+        var_dump($validationResponse);
+
+
         foreach($validationResponse as $validationErrorKey => $validationErrors) {
 
             if (!strstr($validationErrorKey, '/')) {
@@ -198,44 +200,42 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 
             } else {
 
-                // else it relates to multiple fields...
+                // else it relates to double fields...
 
                 $errorKeyStubs = explode('.', $validationErrorKey);
 
-                // set the first stub of a form element name
-                $formElementName = $errorKeyStubs[0];
+                $fields = array(
+                    0 => '',
+                    1 => '',
+                );
 
-                // store multi fields element names which they are validated together.
-                $multiFieldsNames = [];
+                foreach( $errorKeyStubs as $stub ){
 
-                // loop through stubs.
-                for ($i = 0; $i < count($errorKeyStubs); $i++) {
+                    if (!strstr($stub, '/')) {
 
-                    // test if it's a multi-fields validation error.
-                    if (strstr($errorKeyStubs[$i], '/')) {
-                        $linkedElements = explode('/', $errorKeyStubs[$i]);
-                        $prefix = 'linked-' . $linkIdx++ . '-';
-                        $multiFieldsNames[$prefix] = [];
+                        $fields[0] .= "{$stub}-";
+                        $fields[1] .= "{$stub}-";
 
-                        // store multi fields element names
-                        foreach ($linkedElements as $name) {
-                            $multiFieldsNames[$prefix][] = $formElementName . '-' . $name;
-                        }
                     } else {
-                        $formElementName .= '-' . $errorKeyStubs[$i];
+
+                        $subFields = explode('/', $stub);
+                        $fields[0] .= "{$subFields[0]}-";
+                        $fields[1] .= "{$subFields[1]}-";
+
                     }
+
                 }
 
-                if (count($multiFieldsNames) > 0) {
-                    // store validations errors for multi fields elements.
-                    foreach ($multiFieldsNames as $prefix => $multiFields) {
-                        foreach ($multiFields as $name) {
-                            $messages[$name] = $validationErrors['messages'];
-                            $messages[$name][0] = $prefix . $messages[$name][0];
-                        }
-                    }
-                } else {
-                    $messages[$formElementName] = $validationErrors['messages'];
+                //---
+
+                foreach($fields as $field){
+
+                    $field = rtrim( $field, '-' );
+
+                    $messages[$field] = array_map(function ($v) {
+                        return 'linked-1-'.$v;
+                    }, $validationErrors['messages']);
+
                 }
 
             } // if
