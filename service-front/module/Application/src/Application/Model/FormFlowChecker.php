@@ -86,8 +86,6 @@ class FormFlowChecker extends StateChecker
             'lpa/repeat-application'                        => 'returnToRepeatApplication',
             'lpa/fee-reduction'                             => 'returnToFeeReduction',
             'lpa/checkout'                                  => 'returnToPayment',
-            'lpa/payment'                                   => 'returnToPayment',
-            'lpa/payment/summary'                           => 'returnToPaymentSummary',
             'lpa/view-docs'                                 => 'returnToViewDocs',
     );
     
@@ -130,10 +128,6 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
             'lpa/fee-reduction'                             => 'lpa/checkout',
-            //'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
-            'lpa/payment'                                   => 'lpa/payment/summary',
-            'lpa/payment/summary'                           => 'lpa/complete',
-            
     );
 
     /**
