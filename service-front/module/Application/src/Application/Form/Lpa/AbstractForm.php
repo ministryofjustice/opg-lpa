@@ -186,50 +186,65 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         
         // loop through all form elements.
         foreach($validationResponse as $validationErrorKey => $validationErrors) {
-            
-            $errorKeyStubs = explode('.', $validationErrorKey);
-            
-            // set the first stub of a form element name
-            $formElementName = $errorKeyStubs[0];
-            
-            // store multi fields element names which they are validated together.
-            $multiFieldsNames = [];
-            
-            // loop through stubs.
-            for($i=0; $i<count($errorKeyStubs); $i++) {
-                
-                // test if it's a multi-fields validation error.
-                if(strstr($errorKeyStubs[$i], '/')) {
-                    $linkedElements = explode('/', $errorKeyStubs[$i]);
-                    $prefix = 'linked-'.$linkIdx++.'-';
-                    $multiFieldsNames[$prefix] = [];
-                    
-                    // store multi fields element names
-                    foreach($linkedElements as $name) {
-                        $multiFieldsNames[$prefix][] = $formElementName.'-'.$name;
+
+            if (!strstr($validationErrorKey, '/')) {
+
+                // If the error only relates to a single field...
+
+                // Swap dots for dashes...
+                $field = str_replace( '.', '-',  $validationErrorKey);
+
+                $messages[$field] = $validationErrors['messages'];
+
+            } else {
+
+                // else it relates to multiple fields...
+
+                $errorKeyStubs = explode('.', $validationErrorKey);
+
+                // set the first stub of a form element name
+                $formElementName = $errorKeyStubs[0];
+
+                // store multi fields element names which they are validated together.
+                $multiFieldsNames = [];
+
+                // loop through stubs.
+                for ($i = 0; $i < count($errorKeyStubs); $i++) {
+
+                    // test if it's a multi-fields validation error.
+                    if (strstr($errorKeyStubs[$i], '/')) {
+                        $linkedElements = explode('/', $errorKeyStubs[$i]);
+                        $prefix = 'linked-' . $linkIdx++ . '-';
+                        $multiFieldsNames[$prefix] = [];
+
+                        // store multi fields element names
+                        foreach ($linkedElements as $name) {
+                            $multiFieldsNames[$prefix][] = $formElementName . '-' . $name;
+                        }
+                    } else {
+                        $formElementName .= '-' . $errorKeyStubs[$i];
                     }
                 }
-                else {
-                    $formElementName.='-'.$errorKeyStubs[$i];
-                }
-            }
-            
-            if(count($multiFieldsNames) > 0) {
-                // store validations errors for multi fields elements.
-                foreach($multiFieldsNames as $prefix=>$multiFields) {
-                    foreach($multiFields as $name) {
-                        $messages[$name] = $validationErrors['messages'];
-                        $messages[$name][0] = $prefix.$messages[$name][0];
+
+                if (count($multiFieldsNames) > 0) {
+                    // store validations errors for multi fields elements.
+                    foreach ($multiFieldsNames as $prefix => $multiFields) {
+                        foreach ($multiFields as $name) {
+                            $messages[$name] = $validationErrors['messages'];
+                            $messages[$name][0] = $prefix . $messages[$name][0];
+                        }
                     }
+                } else {
+                    $messages[$formElementName] = $validationErrors['messages'];
                 }
-            }
-            else {
-                $messages[$formElementName] = $validationErrors['messages'];
-            }
-        }
+
+            } // if
+
+        } // foreach
         
         return $messages;
-    }
+
+    } // function
     
     /**
      * Convert form data to model-compatible input data format.
