@@ -18,6 +18,9 @@ RUN echo "expose_php = Off" > /etc/php5/mods-available/do_not_expose_php.ini && 
 RUN echo "short_open_tag = On" > /etc/php5/mods-available/allow_php_short_tags.ini
 RUN php5enmod allow_php_short_tags
 
+# Add application logging config(s)
+ADD docker/beaver.d /etc/beaver.d
+
 ADD . /app
 RUN mkdir -p /srv/opg-lpa-front2/application && \
     mkdir /srv/opg-lpa-front2/application/releases && \
