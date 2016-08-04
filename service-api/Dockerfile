@@ -18,6 +18,9 @@ RUN echo "expose_php = Off" > /etc/php5/mods-available/do_not_expose_php.ini && 
 #
 #
 
+# Add application logging config(s)
+ADD docker/beaver.d /etc/beaver.d
+
 ADD . /app
 RUN mkdir -p /srv/opg-lpa-api2/application && \
     mkdir /srv/opg-lpa-api2/application/releases && \
