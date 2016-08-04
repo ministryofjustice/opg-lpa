@@ -11,6 +11,9 @@ RUN pecl install proctitle-0.1.2 && \
     echo "extension=proctitle.so" > /etc/php5/mods-available/proctitle.ini && \
     php5enmod proctitle
 
+# Add application logging config(s)
+ADD docker/beaver.d /etc/beaver.d
+
 ADD . /app
 RUN mkdir -p /srv/opg-lpa-pdf2/application && \
     mkdir /srv/opg-lpa-pdf2/application/releases && \
