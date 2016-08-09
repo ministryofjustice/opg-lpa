@@ -132,6 +132,8 @@ class FormFlowChecker extends StateChecker
             'lpa/fee-reduction'                             => 'lpa/checkout',
             'lpa/payment'                                   => 'lpa/payment/summary',
             'lpa/payment/summary'                           => 'lpa/complete',
+            'lpa/checkout/cheque'                           => 'lpa/complete',
+            'lpa/checkout/confirm'                          => 'lpa/complete',
             
     );
 
@@ -154,7 +156,6 @@ class FormFlowChecker extends StateChecker
         if(!empty($this->lpa) && ( $this->lpa->locked === true )
             && ($currentRouteName != 'lpa/complete')
             && ($currentRouteName != 'lpa/date-check')
-            && ($currentRouteName != 'lpa/checkout')
             && ($currentRouteName != 'lpa/download') ) {
                 return 'lpa/view-docs';
         }

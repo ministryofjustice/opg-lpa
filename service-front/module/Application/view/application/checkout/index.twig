@@ -36,20 +36,25 @@
 
     <div class="appstatus" role="alert">
         <h2 class="heading-xlarge">Confirm and pay</h2>
-        <h3 class="heading-medium">Application fee: £110.00</h3>
+        <h3 class="heading-medium">Application fee: £{{ lpa.payment.amount }}</h3>
     </div>
 
-    <div class="text">
-        <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
+    {% if lpa.payment.amount == 0 %}
 
-        <p>On the next screen you'll be taken to our payment partner, Worldpay, where you can pay by debit or credit card. This is a secure transaction.</p>
-    </div>
+        {# -- Nothing to pay -- #}
+        <p class="divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" class="button">Confirm and finish</a></p>
 
+    {% else %}
 
-    {# -- Worldpay -- #}
-    {# begin form #}
-    {{ worldpayForm.prepare() ? '' }}
-    {{ form().openTag( worldpayForm )|raw }}
+        <div class="text">
+            <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
+            <p>On the next screen you'll be taken to our payment partner, Worldpay, where you can pay by debit or credit card. This is a secure transaction.</p>
+        </div>
+
+        {# -- Worldpay -- #}
+        {# begin form #}
+        {{ worldpayForm.prepare() ? '' }}
+        {{ form().openTag( worldpayForm )|raw }}
         {{ formElement(worldpayForm.get( worldpayForm.csrfName )) }}
 
         {# Error summary #}
@@ -65,21 +70,19 @@
         </fieldset>
 
         <div class="form-group">
-            <input type="submit" name="save" value="Make online payment now (World)" class="button">
+            <input type="submit" name="save" value="Make online payment now" class="button">
         </div>
 
-    {{ form().closeTag|raw }}
+        {{ form().closeTag|raw }}
 
 
-    {# -- GDS Pay -- #}
-    <p class="divorced"><a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Make online payment now (GDS)</a></p>
+        {# -- GDS Pay
+        <p class="divorced"><a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Make online payment now (GDS)</a></p>
+        -- #}
 
+        {# -- Cheque -- #}
+        <p><a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">I want to pay by cheque</a></p>
 
-    {# -- Cheque -- #}
-    <p><a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">I want to pay by cheque</a></p>
-
-
-    {# -- Nothing to pay -- #}
-    <p><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}">Confirm and finish (nothing to pay)</a></p>
+    {% endif %}
 
 {% endblock %}
