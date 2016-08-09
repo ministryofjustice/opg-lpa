@@ -67,13 +67,29 @@ class CheckoutController extends AbstractLpaController {
 
     public function confirmAction(){
 
-        die('confirm');
+        $lpa = $this->getLpa();
+
+        // Sanity check; making sure this method isn't called if there's something to pay.
+        if( $lpa->payment->amount != 0 ){
+            throw new \RuntimeException('Invalid option');
+        }
+
+        //---
+
+        return $this->finishCheckout();
 
     }
 
     private function finishCheckout(){
 
         $lpa = $this->getLpa();
+
+        //---
+
+        // Lock the LPA form future changes.
+        $this->getLpaApplicationService()->lockLpa( $this->getLpa()->id );
+
+        //---
 
         // Send confirmation email.
         $this->getServiceLocator()->get('Communication')
