@@ -18,9 +18,28 @@ class CompleteController extends AbstractLpaController
 {
     
     protected $contentHeader = 'complete-partial.phtml';
+
+    /**
+     * Ensure the LPA is always locked by this stage.
+     */
+    private function ensureLpaIsLocked(){
+
+        $lpa = $this->getLpa();
+
+        if( $lpa->locked !== true ){
+            $this->getLpaApplicationService()->lockLpa( $this->getLpa()->id );
+        }
+
+    }
+
+    //---
     
     public function indexAction()
     {
+        $this->ensureLpaIsLocked();
+
+        //---
+
         $viewModel = new ViewModel(
             $this->getViewParams()
         );
@@ -49,6 +68,10 @@ class CompleteController extends AbstractLpaController
     
     public function viewDocsAction()
     {
+        $this->ensureLpaIsLocked();
+
+        //---
+
         $this->layout()->contentHeader = 'blank-header-partial.phtml';
         return new ViewModel($this->getViewParams());
     }
