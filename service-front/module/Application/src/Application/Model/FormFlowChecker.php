@@ -130,7 +130,6 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'lpa/repeat-application',
             'lpa/repeat-application'                        => 'lpa/fee-reduction',
             'lpa/fee-reduction'                             => 'lpa/checkout',
-            //'lpa/fee-reduction'                             => ['lpa/complete', 'lpa/payment'],
             'lpa/payment'                                   => 'lpa/payment/summary',
             'lpa/payment/summary'                           => 'lpa/complete',
             
@@ -150,14 +149,14 @@ class FormFlowChecker extends StateChecker
         if(!array_key_exists($currentRouteName, static::$accessibleFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
-        
-        // once payment date has been set, user will not be able to view any page other than lpa/view-docs and lpa/complete.
-        if(!empty($this->lpa) && ($this->lpa->completedAt instanceof \DateTime)
-               && ($currentRouteName != 'lpa/complete') 
-               && ($currentRouteName != 'lpa/date-check')
-               && ($currentRouteName != 'lpa/summary')
-               && ($currentRouteName != 'lpa/download')) {
-                  return 'lpa/view-docs';
+
+        // Once an LPA has been locked, only allow the following LPAs.
+        if(!empty($this->lpa) && ( $this->lpa->locked === true )
+            && ($currentRouteName != 'lpa/complete')
+            && ($currentRouteName != 'lpa/date-check')
+            && ($currentRouteName != 'lpa/checkout')
+            && ($currentRouteName != 'lpa/download') ) {
+                return 'lpa/view-docs';
         }
         
         $checkFunction = static::$accessibleFunctionMap[$currentRouteName];
