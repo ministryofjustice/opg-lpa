@@ -13,7 +13,7 @@
 				<td class="table-summary-content" itemprop="name">
 					{{ lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance' }}
 				</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/form-type', {'lpa-id': lpa.id}) }}">View</a></td>
 			</tr>
 		{% endif %}
 
@@ -26,7 +26,7 @@
 				</td>
 			</tr>
 
-			{{ macros.outputActor( lpa.document.donor, '#') }}
+			{{ macros.outputActor( lpa.document.donor, url('lpa/donor', {'lpa-id': lpa.id}) ) }}
 
 			{% if lpa.document.donor.canSign is defined %}
 				<tr class="group-end">
@@ -45,7 +45,7 @@
 				<td class="table-summary-content">
 					{{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'The attorneys can make decisions' : 'The attorneys cannot make decisions' }}
 				</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 		{% endif %}
 
@@ -56,7 +56,7 @@
 				<td class="table-summary-content">
 					{{ lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (with my consent)' : 'Only if I don\'t have mental capacity' }}
 				</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/when-lpa-starts', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 		{% endif %}
 
@@ -77,7 +77,7 @@
 					</td>
 				</tr>
 
-				{{ macros.outputActor( attorney, '#') }}
+				{{ macros.outputActor( attorney, url('lpa/primary-attorney', {'lpa-id': lpa.id}) ) }}
 
 			{% endfor %}
 
@@ -102,7 +102,7 @@
 					'jointly' :
 					'jointly for some decisions, and jointly and severally for other decisions')) }}
 				</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 
 
@@ -136,7 +136,7 @@
 					</td>
 				</tr>
 
-				{{ macros.outputActor( attorney, '#') }}
+				{{ macros.outputActor( attorney, url('lpa/replacement-attorney', {'lpa-id': lpa.id}) ) }}
 
 			{% endfor %}
 
@@ -164,7 +164,7 @@
 					'as soon as none of the original attorneys can act' :
 					'as per instructions')) }}
 				</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 
 			{% if lpa.document.replacementAttorneyDecisions.how is not empty %}
@@ -179,7 +179,7 @@
 						'jointly' :
 						'jointly for some decisions, and jointly and severally for other decisions')) }}
 					</td>
-					<td class="table-summary-action"><a href="#">Edit</a></td>
+					<td class="table-summary-action"><a href="{{ url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id}) }}">Edit</a></td>
 				</tr>
 			{% endif %}
 
@@ -217,7 +217,7 @@
 				</td>
 			</tr>
 
-			{{ macros.outputActor( lpa.document.certificateProvider, '#') }}
+			{{ macros.outputActor( lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}) ) }}
 
 		{% endif %}
 
@@ -239,7 +239,7 @@
 					</td>
 				</tr>
 
-				{{ macros.outputActor( actor, '#') }}
+				{{ macros.outputActor( actor, url('lpa/people-to-notify', {'lpa-id': lpa.id}) ) }}
 
 			{% endfor %}
 
@@ -250,7 +250,7 @@
 			<tr class="group-single">
 				<th class="table-summary-title" scope="row">Instructions</th>
 				<td class="table-summary-content">{{ lpa.document.instruction }}</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 		{% endif %}
 
@@ -259,7 +259,7 @@
 			<tr class="group-single">
 				<th class="table-summary-title" scope="row">Preferences</th>
 				<td class="table-summary-content">{{ lpa.document.preference }}</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 		{% endif %}
 
@@ -274,7 +274,7 @@
 						One or more of the attorneys
 					{% endif %}
 				</td>
-				<td class="table-summary-action"><a href="#">Edit</a></td>
+				<td class="table-summary-action"><a href="{{ url('lpa/applicant', {'lpa-id': lpa.id}) }}">Edit</a></td>
 			</tr>
 		{% endif %}
 
@@ -287,7 +287,7 @@
 				</td>
 			</tr>
 
-			{{ macros.outputActor( lpa.document.correspondent, '#') }}
+			{{ macros.outputActor( lpa.document.correspondent, url('lpa/correspondent', {'lpa-id': lpa.id}) ) }}
 
 		{% endif %}
 	
