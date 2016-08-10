@@ -1,10 +1,18 @@
+
+{% macro outputEditLink( editLink ) %}
+    <td class="table-summary-action"><a href="{{ editLink|raw }}">Edit</a></td>
+{% endmacro %}
+
 {% macro outputActor(data, editLink) %}
+
+    {% set editLinkOutput = false %}
 
     {% if data.name is defined %}
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Name</th>
             <td class="table-summary-content">{{ data.name }}</td>
-            <td class="table-summary-action"><a href="{{ editLink|raw }}">Edit</a></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
@@ -20,7 +28,8 @@
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Company Number</th>
             <td class="table-summary-content">{{ data.number }}</td>
-            <td class="table-summary-action"></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
@@ -28,7 +37,8 @@
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Company Name</th>
             <td class="table-summary-content">{{ data.company }}</td>
-            <td class="table-summary-action"></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
@@ -36,7 +46,8 @@
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Date of birth</th>
             <td class="table-summary-content">{{ data.dob.date.format('j F Y') }}</td>
-            <td class="table-summary-action"></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
@@ -44,7 +55,8 @@
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Email address</th>
             <td class="table-summary-content">{{ data.email }}</td>
-            <td class="table-summary-action"></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
@@ -52,7 +64,8 @@
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Phone number</th>
             <td class="table-summary-content">{{ data.phone.number }}</td>
-            <td class="table-summary-action"></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
@@ -75,7 +88,8 @@
                     {% endif %}
                 </div>
             </td>
-            <td class="table-summary-action"></td>
+            {{ not editLinkOutput ? _self.outputEditLink(editLink) }}
+            {% set editLinkOutput = true %}
         </tr>
     {% endif %}
 
