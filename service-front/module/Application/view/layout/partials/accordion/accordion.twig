@@ -190,8 +190,8 @@
 
 	{% if (item.routeName == 'lpa/correspondent') %}
 		{{ macros.accordionBar({
-			'desktop' : item.routeName,
-			'mobile' : item.routeName,
+			'desktop' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
+			'mobile' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
 			'status' : 'Complete',
 			'edit' : url(item.routeName, {'lpa-id': lpa.id})
 		})
@@ -200,8 +200,12 @@
 
     {% if (item.routeName == 'lpa/who-are-you') %}
         {{ macros.accordionBar({
-            	'desktop' : item.routeName,
-            	'mobile' : item.routeName,
+				'desktop' : ( lpa.whoAreYouAnswered == true ) ?
+					'Who was using the LPA service has been answered' :
+					'Who was using the LPA service has not been answered',
+				'mobile' : ( lpa.whoAreYouAnswered == true ) ?
+					'Who was using the LPA service has been answered' :
+					'Who was using the LPA service has not been answered',
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
@@ -210,8 +214,12 @@
 
     {% if (item.routeName == 'lpa/repeat-application') %}
         {{ macros.accordionBar({
-            	'desktop' : item.routeName,
-            	'mobile' : item.routeName,
+				'desktop' : ( lpa.repeatCaseNumber is not empty ) ?
+					'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
+					'This is not a repeat application',
+				'mobile' : ( lpa.repeatCaseNumber is not empty	 ) ?
+					'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
+					'This is not a repeat application',
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
@@ -220,47 +228,10 @@
 
     {% if (item.routeName == 'lpa/fee-reduction') %}
         {{ macros.accordionBar({
-            	'desktop' : item.routeName,
-            	'mobile' : item.routeName,
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
-        }}
-    {% endif %}
-
-    {% if (item.routeName == 'lpa/payment') %}
-        {{ macros.accordionBar({
-            	'desktop' : item.routeName,
-            	'mobile' : item.routeName,
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
-        }}
-    {% endif %}
-    
-    {% if (item.routeName == 'lpa/payment/summary') %}
-        {{ macros.accordionBar({
-            	'desktop' : item.routeName,
-            	'mobile' : item.routeName,
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
-        }}
-    {% endif %}
-
-    {% if (item.routeName == 'lpa/payment/return/failure') %}
-        {{ macros.accordionBar({
-            	'desktop' : item.routeName,
-            	'mobile' : item.routeName,
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
-        }}
-    {% endif %}
-
-    {% if (item.routeName == 'lpa/payment/return/cancel') %}
-        {{ macros.accordionBar({
-            	'desktop' : item.routeName,
+            	'desktop' : ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
+							( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
+							( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
+							'The donor is not applying for a reduced fee' ))),
             	'mobile' : item.routeName,
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
