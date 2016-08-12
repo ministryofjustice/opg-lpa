@@ -290,6 +290,33 @@
 			{{ macros.outputActor( lpa.document.correspondent, url('lpa/correspondent', {'lpa-id': lpa.id}) ) }}
 
 		{% endif %}
+
+		{# Reapeat Applicaiton. Correspondent is checked as we only show this post-then #}
+		{% if lpa.document.correspondent is defined %}
+			<tr class="group-single">
+				<th class="table-summary-title" scope="row">Repeat application</th>
+				<td class="table-summary-content" itemprop="name">
+					{{ lpa.repeatCaseNumber is not empty ? 'This is a repeat application with case number ' ~ lpa.repeatCaseNumber
+					: "This is not a repeat application" }}
+				</td>
+				<td class="table-summary-action"><a href="{{ url('lpa/repeat-application', {'lpa-id': lpa.id}) }}">Edit</a></td>
+			</tr>
+		{% endif %}
+
+
+		{# Fee #}
+		{% if lpa.payment is defined %}
+			<tr class="group-single">
+				<th class="table-summary-title" scope="row">Application fee</th>
+				<td class="table-summary-content" itemprop="name">
+					{{ ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
+					( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
+					( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
+					'The donor is not applying for a reduced fee' ))) }}
+				</td>
+				<td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}">Edit</a></td>
+			</tr>
+		{% endif %}
 	
 	</tbody>
 
