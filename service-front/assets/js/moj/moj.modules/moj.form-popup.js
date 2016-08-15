@@ -70,6 +70,10 @@
         } else {
           // render form
           self.renderForm(html);
+          // checking date when 'my details' are populated
+          if (url.indexOf('use-my-details') !== -1) {
+            $('#dob-date-day').trigger('change');
+          }
         }
       });
     },

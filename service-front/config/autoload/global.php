@@ -27,7 +27,7 @@ return array(
 
     'account-cleanup' => [
         'notification' => [
-            'token' => getenv('OPG_LPA_FRONT_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
+            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
         ],
     ], // cleanup-cleanup
 
@@ -37,17 +37,17 @@ return array(
             'client' => [
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
-                    'key'    => getenv('OPG_LPA_AWS_KEY'),
-                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ] : null,
             ],
             'settings' => [
-                'table_name' => getenv('OPG_LPA_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
         ],
 
-        'accounts' => getenv('OPG_LPA_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_ADMIN_ACCOUNTS')) : array(),
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
 
     ], // admin
 
@@ -60,13 +60,13 @@ return array(
                 'client' => [
                     'version' => '2012-08-10',
                     'region' => 'eu-west-1',
-                    'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
-                        'key'    => getenv('OPG_LPA_AWS_KEY'),
-                        'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                        'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                        'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                     ] : null,
                 ],
                 'settings' => [
-                    'table_name' => getenv('OPG_LPA_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
+                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
 
@@ -109,13 +109,13 @@ return array(
             'client' => [
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('OPG_LPA_AWS_KEY') && getenv('OPG_LPA_AWS_SECRET') ) ? [
-                    'key'    => getenv('OPG_LPA_AWS_KEY'),
-                    'secret' => getenv('OPG_LPA_AWS_SECRET'),
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ] : null,
             ],
             'settings' => [
-                'table_name' => getenv('OPG_LPA_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
+                'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
                     'before' => function(){ sleep(1); },
@@ -183,7 +183,7 @@ return array(
 
     'worldpay' => [
 
-        'test_mode' => false,
+        'test_mode' => ( getenv('OPG_LPA_FRONT_WORLDPAY_TEST_MODE') === 'true' ),
         'currency' => 'GBP',
         'cart_id' => 'LPAv2',
         'log' => false,
@@ -199,8 +199,8 @@ return array(
     ], // worldpay
 
     'log' => [
-        'path' => getenv('OPG_LPA_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_SENTRY_API_URI') ?: null,
+        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
     
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gsi.gov.uk',

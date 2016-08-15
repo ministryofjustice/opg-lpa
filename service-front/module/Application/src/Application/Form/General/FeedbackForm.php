@@ -57,6 +57,11 @@ class FeedbackForm extends AbstractForm {
             'type' => 'Email',
         ));
         
+        $this->add(array(
+            'name' => 'phone',
+            'type' => 'Text',
+        ));
+        
         //--------------------------------
 
         $inputFilter = $this->getInputFilter();
@@ -108,6 +113,14 @@ class FeedbackForm extends AbstractForm {
             ],
         ));
         
+        $inputFilter->add(array(
+            'name'     => 'phone',
+            'required' => false,
+            'filters'  => array(
+                array('name' => 'StripTags'),
+                array('name' => 'StringTrim'),
+            ),
+        ));
         $this->setInputFilter( $inputFilter );
 
     } // function
