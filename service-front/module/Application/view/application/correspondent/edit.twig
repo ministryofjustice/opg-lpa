@@ -48,23 +48,23 @@
 {# Error messages #}
     {% set form = formErrorTextExchange(form,  {
     'name-first' : {
-        'cannot-be-blank' : 'Please enter the correspondent\'s first name'
+        'cannot-be-blank' : 'Please enter the first name'
     },
     'name-last' : {
-        'cannot-be-blank' : 'Please enter the correspondent\'s last name'
+        'cannot-be-blank' : 'Please enter the last name'
     },
     'company' : {
-        'linked-1-cannot-be-null' : 'Please enter the correspondent\'s first and last name or Company name'
+        'linked-1-cannot-be-null' : 'Please enter the name or company name'
     },
     'address-address1' : {
-        'cannot-be-blank' : 'Please enter the correspondent\'s first line of address'
+        'cannot-be-blank' : 'Please enter the first line of address'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the correspondent\'s second line of address or postcode'
+        'linked-1-cannot-be-null' : 'Please enter the second line of address'
     },
     'address-postcode' : {
-        'linked-1-cannot-be-null' : 'Please enter the correspondent\'s second line of address or postcode'
-    },
+        'linked-1-cannot-be-null' : 'Please enter the postcode'
+    }
 }) %}
 
 {% set csrf = form.get(form.csrfName) %}
