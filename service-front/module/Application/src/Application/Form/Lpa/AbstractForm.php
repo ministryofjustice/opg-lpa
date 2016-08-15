@@ -184,9 +184,6 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
         $messages = [];
         $linkIdx = 1;
 
-        var_dump($validationResponse);
-
-
         foreach($validationResponse as $validationErrorKey => $validationErrors) {
 
             if (!strstr($validationErrorKey, '/')) {
