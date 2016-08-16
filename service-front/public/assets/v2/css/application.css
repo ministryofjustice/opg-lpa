@@ -3778,7 +3778,8 @@ input[type=number] {
     .form-popup .block-label,
     .form-popup .button,
     .form-popup .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary,
-    .ui-datepicker .ui-datepicker-buttonpane .form-popup .ui-priority-primary {
+    .ui-datepicker .ui-datepicker-buttonpane .form-popup .ui-priority-primary,
+    .form-popup .alert {
       margin-left: 150px; } }
   @media (min-width: 641px) {
     .form-popup .postcode-button,

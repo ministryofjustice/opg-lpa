@@ -85,6 +85,7 @@
         },
         tplFormElementErrors = lpa.templates['errors.formElement'],
         tplErrorsFormSummary = lpa.templates['errors.formSummary'],
+        tplAlert = lpa.templates['alert.withinForm'],
         tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
@@ -93,6 +94,7 @@
       // Listen for changes to form
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
+
 
           var $target = $(evt.target),
             currentDate = new Date(),
@@ -103,7 +105,6 @@
             actionGroup = $('.group.action'),
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
-            $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
             duplicateName = null,
             loop,
             item;
@@ -127,20 +128,20 @@
                 }
               }
 
-              $('.js-confirm-name').remove();
-              $nameGroups.removeClass('validation').find('.form-element-errors').remove();
+              // Cleanup
+              $('.js-duplication-alert').remove();
 
+              // Display alert if duplicate
               if (duplicateName !== null) {
-                $nameGroups.addClass('validation');
-                $nameGroups.append(tplFormElementErrors({'validationMessage': 'Is this a duplicate name?' }));
 
-                actionGroup.before($(tplInputCheckbox({
-                  'elementJSref': 'js-confirm-name',
-                  'elementName': 'confirmName',
-                  'elementLabel': 'The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. Click here to confirm that these are 2 different people with the same name.'
-                })).addClass('validation'));
+                $('label[for="name-last"]', $form)
+                  .parents('.form-group')
+                  .after($(tplAlert({
+                    'elementJSref': 'js-duplication-alert',
+                    'alertType': 'important-small',
+                    'alertMessage': '<p>The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles.</p><p>Click here to confirm that these are 2 different people with the same name.</p>'
+                })));
               }
-
             }
 
 

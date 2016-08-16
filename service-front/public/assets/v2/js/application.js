@@ -3411,6 +3411,28 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
 this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
 
+this["lpa"]["templates"]["alert.withinForm"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"form-group ";
+  if (helper = helpers.elementJSref) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.elementJSref); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n	<div class=\"alert panel text\" role=\"alert\">\n		<i class=\"icon icon-";
+  if (helper = helpers.alertType) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.alertType); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" role=\"presentation\"></i>\n		<div class=\"alert-message\">\n			";
+  if (helper = helpers.alertMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.alertMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		</div>\n	</div>\n</div>";
+  return buffer;
+  });
+
 this["lpa"]["templates"]["dialog.confirmRepeatApplication"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -4776,6 +4798,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
         tplFormElementErrors = lpa.templates['errors.formElement'],
         tplErrorsFormSummary = lpa.templates['errors.formSummary'],
+        tplAlert = lpa.templates['alert.withinForm'],
         tplInputCheckbox = lpa.templates['input.checkbox'];
 
       // disable submit if empty form
@@ -4784,6 +4807,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // Listen for changes to form
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
+
 
           var $target = $(evt.target),
             currentDate = new Date(),
@@ -4794,7 +4818,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             actionGroup = $('.group.action'),
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
-            $nameGroups = $('input[name^="name"]:not(input[name="name-title"])', $form).parents('.group'),
             duplicateName = null,
             loop,
             item;
@@ -4818,20 +4841,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 }
               }
 
-              $('.js-confirm-name').remove();
-              $nameGroups.removeClass('validation').find('.form-element-errors').remove();
+              // Cleanup
+              $('.js-duplication-alert').remove();
 
+              // Display alert if duplicate
               if (duplicateName !== null) {
-                $nameGroups.addClass('validation');
-                $nameGroups.append(tplFormElementErrors({'validationMessage': 'Is this a duplicate name?' }));
 
-                actionGroup.before($(tplInputCheckbox({
-                  'elementJSref': 'js-confirm-name',
-                  'elementName': 'confirmName',
-                  'elementLabel': 'The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. Click here to confirm that these are 2 different people with the same name.'
-                })).addClass('validation'));
+                $('label[for="name-last"]', $form)
+                  .parents('.form-group')
+                  .after($(tplAlert({
+                    'elementJSref': 'js-duplication-alert',
+                    'alertType': 'important-small',
+                    'alertMessage': '<p>The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles.</p><p>Click here to confirm that these are 2 different people with the same name.</p>'
+                })));
               }
-
             }
 
 
