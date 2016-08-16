@@ -60,7 +60,8 @@
     .summary,
     .address-type-toggle,
     .block-label,
-    .button {
+    .button,
+    .alert {
         @include media(tablet) {
             margin-left: 150px;
         }
