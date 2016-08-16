@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.2 - 2016-08-09
+
+### Added
+
+- [#110](https://github.com/zendframework/zend-db/pull/110) prepared the
+  documentation for publication at https://zendframework.github.io/zend-db/
+- [#114](https://github.com/zendframework/zend-db/pull/114) add
+  Adapter\Adapter::class to alias against Adapter\AdapterInterface::class
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#154](https://github.com/zendframework/zend-db/pull/154) fixes the how the
+  COMBINE operator is applied to SQLite adapters, ensuring a valid UNION
+  statement is generated.
+- [#112](https://github.com/zendframework/zend-db/pull/112) fixes the test on
+  the number of replacements when using the same variable name.
+- [#115](https://github.com/zendframework/zend-db/pull/115) TableGateway update
+  method was incorrect when specifying default join declaration.
+- [#145](https://github.com/zendframework/zend-db/pull/145) Fix MSSQL Select
+  when encounting DISTINCT and OFFSET and LIMIT together.
+- [#153](https://github.com/zendframework/zend-db/pull/153) Runtime exception
+  threw fatal error due to incorrect spelling of the class when a DSN did not
+  exist.
+
 ## 2.8.1 - 2016-04-14
 
 ### Added
