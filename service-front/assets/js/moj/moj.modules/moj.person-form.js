@@ -119,8 +119,8 @@
               if ((typeof actors !== 'undefined') && actors.names && actors.names.length) {
                 for (loop = 0; loop < actors.names.length; loop++) {
                   item = actors.names[loop];
-                  if ($firstName.val().toLocaleLowerCase() === item.firstname.toLocaleLowerCase()) {
-                    if ($lastName.val().toLocaleLowerCase() === item.lastname.toLocaleLowerCase()) {
+                  if ($firstName.val().toLocaleLowerCase().trim() === item.firstname.toLocaleLowerCase()) {
+                    if ($lastName.val().toLocaleLowerCase().trim() === item.lastname.toLocaleLowerCase()) {
                       duplicateName = item;
                       break;
                     }
