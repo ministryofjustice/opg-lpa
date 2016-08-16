@@ -1,4 +1,4 @@
-FROM registry.service.dsd.io/opguk/base:latest
+FROM registry.service.dsd.io/opguk/base:0.1.170
 
 RUN groupadd supervisor
 
@@ -10,6 +10,9 @@ RUN php5enmod mcrypt
 RUN pecl install proctitle-0.1.2 && \
     echo "extension=proctitle.so" > /etc/php5/mods-available/proctitle.ini && \
     php5enmod proctitle
+
+# Add application logging config(s)
+ADD docker/beaver.d /etc/beaver.d
 
 ADD . /app
 RUN mkdir -p /srv/opg-lpa-pdf2/application && \

@@ -14,15 +14,14 @@ use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use ProxyManager\Configuration as ProxyConfiguration;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
+use ProxyManager\FileLocator\FileLocator;
 use ProxyManager\GeneratorStrategy\EvaluatingGeneratorStrategy;
+use ProxyManager\GeneratorStrategy\FileWriterGeneratorStrategy;
 use Zend\ServiceManager\Exception\ContainerModificationsNotAllowedException;
 use Zend\ServiceManager\Exception\CyclicAliasException;
 use Zend\ServiceManager\Exception\InvalidArgumentException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
-use Zend\ServiceManager\Initializer\InitializerInterface;
 
 /**
  * Service Manager.
@@ -42,7 +41,7 @@ use Zend\ServiceManager\Initializer\InitializerInterface;
 class ServiceManager implements ServiceLocatorInterface
 {
     /**
-     * @var AbstractFactoryInterface[]
+     * @var Factory\AbstractFactoryInterface[]
      */
     protected $abstractFactories = [];
 
@@ -68,7 +67,7 @@ class ServiceManager implements ServiceLocatorInterface
     protected $creationContext;
 
     /**
-     * @var string[][]|DelegatorFactoryInterface[][]
+     * @var string[][]|Factory\DelegatorFactoryInterface[][]
      */
     protected $delegators = [];
 
@@ -80,7 +79,7 @@ class ServiceManager implements ServiceLocatorInterface
     protected $factories = [];
 
     /**
-     * @var InitializerInterface[]
+     * @var Initializer\InitializerInterface[]
      */
     protected $initializers = [];
 
@@ -341,10 +340,8 @@ class ServiceManager implements ServiceLocatorInterface
         }
 
         if (isset($config['aliases'])) {
-            $this->aliases = $config['aliases'] + $this->aliases;
-        }
-
-        if (! empty($this->aliases)) {
+            $this->configureAliases($config['aliases']);
+        } elseif (! $this->configured && ! empty($this->aliases)) {
             $this->resolveAliases($this->aliases);
         }
 
@@ -372,6 +369,35 @@ class ServiceManager implements ServiceLocatorInterface
         $this->configured = true;
 
         return $this;
+    }
+
+    /**
+     * @param string[] $aliases
+     *
+     * @return void
+     */
+    private function configureAliases(array $aliases)
+    {
+        if (! $this->configured) {
+            $this->aliases = $aliases + $this->aliases;
+
+            $this->resolveAliases($this->aliases);
+
+            return;
+        }
+
+        // Performance optimization. If there are no collisions, then we don't need to recompute loops
+        $intersecting  = $this->aliases && \array_intersect_key($this->aliases, $aliases);
+        $this->aliases = $this->aliases ? \array_merge($this->aliases, $aliases) : $aliases;
+
+        if ($intersecting) {
+            $this->resolveAliases($this->aliases);
+
+            return;
+        }
+
+        $this->resolveAliases($aliases);
+        $this->resolveNewAliasesWithPreviouslyResolvedAliases($aliases);
     }
 
     /**
@@ -446,7 +472,7 @@ class ServiceManager implements ServiceLocatorInterface
     /**
      * Add an initializer.
      *
-     * @param string|callable|InitializerInterface $initializer
+     * @param string|callable|Initializer\InitializerInterface $initializer
      */
     public function addInitializer($initializer)
     {
@@ -478,7 +504,7 @@ class ServiceManager implements ServiceLocatorInterface
     /**
      * Instantiate abstract factories for to avoid checks during service construction.
      *
-     * @param string[]|AbstractFactoryInterface[] $abstractFactories
+     * @param string[]|Factory\AbstractFactoryInterface[] $abstractFactories
      *
      * @return void
      */
@@ -489,7 +515,7 @@ class ServiceManager implements ServiceLocatorInterface
                 $abstractFactory = new $abstractFactory();
             }
 
-            if ($abstractFactory instanceof AbstractFactoryInterface) {
+            if ($abstractFactory instanceof Factory\AbstractFactoryInterface) {
                 $this->abstractFactories[] = $abstractFactory;
                 continue;
             }
@@ -524,7 +550,7 @@ class ServiceManager implements ServiceLocatorInterface
     /**
      * Instantiate initializers for to avoid checks during service construction.
      *
-     * @param string[]|callable[]|InitializerInterface[] $initializers
+     * @param string[]|callable[]|Initializer\InitializerInterface[] $initializers
      *
      * @return void
      */
@@ -549,7 +575,7 @@ class ServiceManager implements ServiceLocatorInterface
                         'which does not exist; please provide a valid function name or class ' .
                         'name resolving to an implementation of %s',
                         $initializer,
-                        InitializerInterface::class
+                        Initializer\InitializerInterface::class
                     )
                 );
             }
@@ -560,7 +586,7 @@ class ServiceManager implements ServiceLocatorInterface
                     'An invalid initializer was registered. Expected a callable, or an instance of ' .
                     '(or string class name resolving to) "%s", ' .
                     'but "%s" was received',
-                    InitializerInterface::class,
+                    Initializer\InitializerInterface::class,
                     (is_object($initializer) ? get_class($initializer) : gettype($initializer))
                 )
             );
@@ -568,7 +594,11 @@ class ServiceManager implements ServiceLocatorInterface
     }
 
     /**
-     * Resolve all aliases to their canonical service names.
+     * Resolve aliases to their canonical service names.
+     *
+     * @param string[] $aliases
+     *
+     * @returns void
      */
     private function resolveAliases(array $aliases)
     {
@@ -586,6 +616,23 @@ class ServiceManager implements ServiceLocatorInterface
             }
 
             $this->resolvedAliases[$alias] = $name;
+        }
+    }
+
+    /**
+     * Rewrites the map of aliases by resolving the given $aliases with the existing resolved ones.
+     * This is mostly done for performance reasons.
+     *
+     * @param string[] $aliases
+     *
+     * @return void
+     */
+    private function resolveNewAliasesWithPreviouslyResolvedAliases(array $aliases)
+    {
+        foreach ($this->resolvedAliases as $name => $target) {
+            if (isset($aliases[$target])) {
+                $this->resolvedAliases[$name] = $this->resolvedAliases[$target];
+            }
         }
     }
 
@@ -750,6 +797,10 @@ class ServiceManager implements ServiceLocatorInterface
 
         if (! isset($this->lazyServices['write_proxy_files']) || ! $this->lazyServices['write_proxy_files']) {
             $factoryConfig->setGeneratorStrategy(new EvaluatingGeneratorStrategy());
+        } else {
+            $factoryConfig->setGeneratorStrategy(new FileWriterGeneratorStrategy(
+                new FileLocator($factoryConfig->getProxiesTargetDir())
+            ));
         }
 
         spl_autoload_register($factoryConfig->getProxyAutoloader());
