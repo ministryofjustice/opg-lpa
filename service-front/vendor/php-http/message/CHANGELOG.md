@@ -1,5 +1,24 @@
 # Change Log
 
+## 1.3.1 - 2016-07-15
+
+### Fixed
+
+- FullHttpMessageFormatter will not read from streams that you cannot rewind (non-seekable)
+- FullHttpMessageFormatter will not read from the stream if $maxBodyLength is zero
+- FullHttpMessageFormatter rewinds streams after they are read.
+
+## 1.3.0 - 2016-07-14
+
+### Added
+
+- FullHttpMessageFormatter to include headers and body in the formatted message
+
+### Fixed
+ 
+- #41: Response builder broke header value
+
+
 ## 1.2.0 - 2016-03-29
 
 ### Added
