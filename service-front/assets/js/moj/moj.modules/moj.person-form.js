@@ -88,9 +88,6 @@
         tplAlert = lpa.templates['alert.withinForm'],
         tplInputCheckbox = lpa.templates['input.checkbox'];
 
-      // disable submit if empty form
-      $submitBtn.attr('disabled', $('#address-address1', $form).val() === '');
-
       // Listen for changes to form
       $form
         .on('change.moj.Modules.PersonForm', 'input, select', function (evt) {
@@ -219,9 +216,6 @@
           if (countAddr < 2) {
             allPopulated = false;
           }
-
-
-          $submitBtn.attr('disabled', !allPopulated);
         }
       )
         // Relationship: other toggle
