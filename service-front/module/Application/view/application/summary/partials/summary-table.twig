@@ -271,7 +271,7 @@
 					{% if lpa.document.whoIsRegistering == 'donor' %}
 						Donor
 					{% else %}
-						One or more of the attorneys
+						{{ applicantNames( lpa ) }}
 					{% endif %}
 				</td>
 				<td class="table-summary-action"><a href="{{ url('lpa/applicant', {'lpa-id': lpa.id}) }}">Edit</a></td>

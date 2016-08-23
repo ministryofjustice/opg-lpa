@@ -97,6 +97,7 @@ return [
             'systemMessage'         => 'Application\View\Helper\SystemMessage',
             'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
             'ordinalSuffix'           => 'Application\View\Helper\OrdinalSuffix',
+            'applicantNames'           => 'Application\View\Helper\ApplicantNames',
         ],
     ],
 
