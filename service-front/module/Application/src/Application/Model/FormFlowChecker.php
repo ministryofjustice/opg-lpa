@@ -153,7 +153,7 @@ class FormFlowChecker extends StateChecker
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
         }
 
-        // Once an LPA has been locked, only allow the following LPAs.
+        // Once an LPA has been locked, only allow the following pages.
         if(!empty($this->lpa) && ( $this->lpa->locked === true )
             && ($currentRouteName != 'lpa/complete')
             && ($currentRouteName != 'lpa/date-check')
