@@ -41,11 +41,15 @@
         </a>
     </div>
 
-    <div class="form-group flush--bottom">
-        <a href="{{ nextRoute }}" class="button divorced {% if not (attorneys) %}disabled{% endif %}">
-            Save and continue
-        </a> 
-    </div>
+    {% if (attorneys) %}
+
+        <div class="form-group flush--bottom">
+            <a href="{{ nextRoute }}" class="button divorced">
+                Save and continue
+            </a> 
+        </div>
+
+    {% endif %}
     
 </li>
 
