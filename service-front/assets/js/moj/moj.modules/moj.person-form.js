@@ -37,6 +37,8 @@
       if (window && window.console) {
       	window.console.log('count ' + i);
       }
+
+      // Set variables
       var $form = $(el),
         $submitBtn = $('input[type="submit"]', $form),
         $allFields = $('input[required], label.required + input, label.required ~ select', $form),
