@@ -11,6 +11,13 @@
 <script type="text/javascript">
     var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
     var actors = {names: actorNames};
+
+    var user = {
+        firstName: '{{ signedInUser.name.first }}',
+        lastName: '{{ signedInUser.name.last }}'
+    };
+
+    moj.Modules.UseMyDetails.init();
 </script>
 
 {# Error messages #}

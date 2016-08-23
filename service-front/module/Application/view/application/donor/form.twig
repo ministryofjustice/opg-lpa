@@ -11,6 +11,12 @@
 <script type="text/javascript">
 	var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
 	var actors = {names: actorNames};
+    var user = {
+        firstName: '{{ signedInUser.name.first }}',
+        lastName: '{{ signedInUser.name.last }}'
+    }
+
+    moj.Modules.UseMyDetails.init();
 
 	{{ macros.addDobCheckOnUseMyDetails(isUseMyDetailsDetails) }}
 </script>
@@ -163,11 +169,7 @@
 
 {############################ donor form ############################}
 
-{% if (useMyDetailsRoute) %}
-<div class="panel-actions">
-    <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
-</div>
-{% endif %}
+{{ macros.useMyDetails(useMyDetailsRoute) }}
 
 {# Error summary #}
 {{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
