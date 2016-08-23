@@ -40,7 +40,9 @@ class InstructionsController extends AbstractLpaController
                 if(!$this->getLpaApplicationService()->setPreferences($lpaId, $form->getData()['preference'])) {
                     throw new \RuntimeException('API client failed to set LPA preferences for id: '.$lpaId);
                 }
-                
+
+                $this->getLpaApplicationService()->setMetaData( $lpaId, [ 'instruction-confirmed'=>true ] );
+
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
         }
