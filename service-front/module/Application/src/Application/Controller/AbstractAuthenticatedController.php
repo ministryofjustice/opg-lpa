@@ -9,6 +9,9 @@ use Zend\Session\Container as SessionContainer;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Zend\Session\Container;
 
+use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
+
 abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
 {
     /**
@@ -99,7 +102,15 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
 
         //---
 
-        return parent::onDispatch( $e );
+        // inject lpa into view
+        $view = parent::onDispatch($e);
+
+        if(($view instanceof ViewModel) && !($view instanceof JsonModel)) {
+            //var_dump($this->getUserDetails()); die;
+            $view->setVariable('singedInUser', $this->getUserDetails());
+        }
+
+        return $view;
 
     } // function
 
