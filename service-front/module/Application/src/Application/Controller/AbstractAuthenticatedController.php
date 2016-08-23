@@ -107,7 +107,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
 
         if(($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             //var_dump($this->getUserDetails()); die;
-            $view->setVariable('singedInUser', $this->getUserDetails());
+            $view->setVariable('signedInUser', $this->getUserDetails());
         }
 
         return $view;
