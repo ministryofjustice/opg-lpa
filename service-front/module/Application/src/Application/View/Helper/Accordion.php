@@ -49,6 +49,15 @@ class Accordion extends AbstractHelper {
         $currentRoute = $this->getRouteName();
         $includeUpToRoute = $flowChecker->backToForm();
 
+        //---
+
+        if ( in_array( $currentRoute, ['lpa/summary', 'lpa/checkout'] ) ) {
+            // No accordion summary when viewing table summary
+            return [];
+        }
+
+        //---
+
         // If the route for us to include up to is earlier than the current route...
         if( array_search( $includeUpToRoute, $this->bars ) < array_search( $currentRoute, $this->bars ) ){
             $includeUpToRoute = $currentRoute;
@@ -100,6 +109,13 @@ class Accordion extends AbstractHelper {
 
         $currentRoute = $this->getRouteName();
         $includeUpToRoute = $flowChecker->backToForm();
+
+        //---
+
+        if ( in_array( $currentRoute, ['lpa/summary', 'lpa/checkout'] ) ) {
+            // No accordion summary when viewing table summary
+            return [];
+        }
 
         //---
 
