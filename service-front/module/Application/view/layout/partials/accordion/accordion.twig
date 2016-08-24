@@ -170,10 +170,10 @@
         }}
     {% endif %}
 
-	{% if (item.routeName == 'lpa/summary') %}
+	{% if (item.routeName == 'review-link') %}
 		{{ macros.accordionBar({
-			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a> ',
-			'mobile' : '',
+			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a>',
+			'mobile' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a>',
 		})
 		}}
 	{% endif %}
