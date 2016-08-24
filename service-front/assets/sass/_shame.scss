@@ -40,5 +40,6 @@
 .current {
 	+ .complete {
 		margin-top: $gutter;
+		clear: left;
 	}
 }

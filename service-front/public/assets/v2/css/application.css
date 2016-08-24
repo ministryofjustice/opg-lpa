@@ -4214,6 +4214,7 @@ input[type=number] {
     min-height: 400px; } }
 
 .current + .complete {
-  margin-top: 30px; }
+  margin-top: 30px;
+  clear: left; }
 
 /*# sourceMappingURL=application.css.map */
