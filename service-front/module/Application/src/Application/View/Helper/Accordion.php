@@ -50,6 +50,11 @@ class Accordion extends AbstractHelper {
         $currentRoute = $this->getRouteName();
         $includeUpToRoute = $flowChecker->backToForm();
 
+        // If the route for us to include up to is earlier than the current route...
+        if( array_search( $includeUpToRoute, $this->bars ) < array_search( $currentRoute, $this->bars ) ){
+            $includeUpToRoute = $currentRoute;
+        }
+
         foreach( $this->bars as $route ){
 
             // Break at the route we are up to...
