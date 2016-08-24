@@ -22,7 +22,6 @@ class Accordion extends AbstractHelper {
         'lpa/certificate-provider'                   ,
         'lpa/people-to-notify'                       ,
         'lpa/instructions'                           ,
-        'lpa/summary'                                ,
         'lpa/applicant'                              ,
         'lpa/correspondent'                          ,
         'lpa/who-are-you'                            ,
@@ -75,6 +74,15 @@ class Accordion extends AbstractHelper {
             }
 
         } // foreach
+
+        //---
+
+        // Added the special case bar for the review link.
+        if( array_search( $currentRoute, $this->bars ) >= array_search( 'lpa/applicant', $this->bars ) ){
+            $barsInPlay[] = [ 'routeName' =>  'review-link' ];
+        }
+
+        //---
 
         return $barsInPlay;
 
