@@ -97,14 +97,14 @@ class Accordion extends AbstractHelper {
 
         foreach( $bars as $route ){
 
-            // Skip the current route...
-            if( $currentRoute == $route ){
-                continue;
-            }
-
             // Break at the route we are up to...
             if( $includeUpToRoute == $route ){
                 break;
+            }
+
+            // Skip the current route...
+            if( $currentRoute == $route ){
+                continue;
             }
 
             // True iff the user is allowed to view this route name...
