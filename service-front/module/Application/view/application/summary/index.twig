@@ -8,15 +8,6 @@
 
 {% block content %}
 
-	<div class="iconlinks iconlinks--right">
-        <div class="iconlinks-item">
-            <a class="iconlinks-link" href="#" target="_blank">
-                <i class="icon icon-file-download"></i>
-                <span class="iconlinks-text">Print summary</span>
-            </a> 
-        </div>
-    </div>
-
 	{% include 'application/summary/partials/summary-table.twig' %}
 
 	<div class="appstatus warning" role="alert">
@@ -36,9 +27,9 @@
 		<div class="column-one-half">
 			<div class="iconlinks iconlinks--right">
 		        <div class="iconlinks-item">
-		            <a class="iconlinks-link" href="#" target="_blank">
+		            <a class="iconlinks-link" href="{{ url( 'lpa/download', {'lpa-id': lpa.id, 'pdf-type':'lp1'} ) }}" target="_blank">
 		                <i class="icon icon-file-download"></i>
-		                <span class="iconlinks-text">Print summary</span>
+		                <span class="iconlinks-text">Download PDF preview</span>
 		            </a> 
 		        </div>
 		    </div>
