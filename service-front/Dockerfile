@@ -31,4 +31,8 @@ RUN mkdir -p /srv/opg-lpa-front2/application && \
 ADD docker/confd /etc/confd
 ADD docker/my_init/* /etc/my_init.d/
 
+ADD docker/bin/update-ca-certificates /usr/bin/update-ca-certificates
+RUN chmod 755 /usr/bin/update-ca-certificates
+RUN chown root:root /usr/bin/update-ca-certificates
+
 ENV OPG_SERVICE front
