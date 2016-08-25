@@ -4,6 +4,7 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Checks *this* API service is operating correctly. Includes:
@@ -61,6 +62,12 @@ class PingController extends AbstractActionController {
             $result['database'] = [ 'ok' => $this->canConnectToMongo() ];
 
         } catch( \Exception $e ){}
+
+
+        //----------------------------
+        // Check Auth
+
+        $result['auth'] = $this->auth();
 
 
         //----------------------------
@@ -145,5 +152,46 @@ class PingController extends AbstractActionController {
         return $primaryFound;
 
     }
+
+    /**
+     * Check we can ping Auth
+     *
+     * @return array
+     */
+    private function auth(){
+
+        $result = array( 'ok'=> false, 'details'=>array( '200'=>false ) );
+
+        try {
+
+            $config = $this->getServiceLocator()->get('config')['authentication'];
+
+            $client = new GuzzleClient();
+            $client->setDefaultOption('exceptions', false);
+
+            $response = $client->get(
+                $config['ping'],
+                ['connect_timeout' => 5, 'timeout' => 10]
+            );
+
+            // There should be no JSON if we don't get a 200, so return.
+            if ($response->getStatusCode() != 200) {
+                return $result;
+            }
+
+            //---
+
+            $result['details']['200'] = true;
+
+            $api = $response->json();
+
+            $result['ok'] = $api['ok'];
+            $result['details'] = $result['details'] + $api;
+
+        } catch( \Exception $e ){ /* Don't throw exceptions; we just return ok==false */ }
+
+        return $result;
+
+    } // function
 
 } // class

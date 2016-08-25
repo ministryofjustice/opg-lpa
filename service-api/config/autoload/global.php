@@ -8,6 +8,7 @@ return array(
     ],
 
     'authentication' => [
+        'ping' => getenv('OPG_LPA_API_ENDPOINTS_AUTH_PING') ?: 'https://authv2/ping',
         'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://authv2/v1/authenticate',
     ],
 
