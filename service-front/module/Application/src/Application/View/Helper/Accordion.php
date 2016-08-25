@@ -128,6 +128,12 @@ class Accordion extends AbstractHelper {
 
             // Break at the route we are up to...
             if( $includeUpToRoute == $route ){
+
+                // But still output the bar if it's not the current page...
+                if( $currentRoute != $route ) {
+                    $barsInPlay[] = ['routeName' => $route];
+                }
+
                 break;
             }
 
