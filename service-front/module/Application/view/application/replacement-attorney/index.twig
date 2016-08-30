@@ -12,7 +12,7 @@
     	<div class="text">
     		<p>The people you add here step in if your original attorney can no longer act.</p>
 			<p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
-        
+
 			{% if (lpa.document.primaryAttorneyDecisions) %}
 		        {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
 		        <div class="alert" role="alert">
@@ -34,7 +34,7 @@
 		        </div>
 				{% endif %}
 	        {% endif %}
-		
+
 			<p><a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
 		</div>
 	</div>
@@ -64,12 +64,12 @@
     {{ form().openTag( form )|raw }}
 	    {{ formElement(form.get( form.csrfName )) }}
 
-	    <div class="form-group flush--bottom">
+	    <div class="form-group">
 	    	<input type="submit" name="save" value="Save and continue" class="button divorced">
 	    </div>
-    
+
     {{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}
