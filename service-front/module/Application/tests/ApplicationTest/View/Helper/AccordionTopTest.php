@@ -22,7 +22,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     protected function tearDown ()
     {
         $this->lpa = null;
-        
+
         parent::tearDown();
     }
 
@@ -33,7 +33,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
-        
+
         $this->assertEmpty(
                 $this->getAccordion('lpa/type')
                     ->__invoke($lpa));
@@ -43,7 +43,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/donor')->__invoke($lpa);
         $this->assertEquals(
                 [
@@ -63,7 +63,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -93,7 +93,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -123,7 +123,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -162,10 +162,10 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion(
                 'lpa/how-primary-attorneys-make-decision')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         0 => array(
@@ -211,10 +211,10 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         0 => array(
@@ -263,14 +263,14 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 )
                         )
                 ), $helperReturns);
-        
+
         $lpa->document->primaryAttorneys = [
                 $lpa->document->primaryAttorneys[0]
         ];
-        
+
         $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         0 => array(
@@ -316,10 +316,10 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion(
                 'lpa/when-replacement-attorney-step-in')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         0 => array(
@@ -383,7 +383,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion(
                 'lpa/how-replacement-attorneys-make-decision')->__invoke($lpa);
         $this->assertEquals(
@@ -458,7 +458,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -536,12 +536,12 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 )
                         )
                 ), $helperReturns);
-        
+
         $lpa->document->replacementAttorneyDecisions->when = 'first';
-        
+
         $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         0 => array(
@@ -608,12 +608,12 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 )
                         )
                 ), $helperReturns);
-        
+
         $lpa->document->primaryAttorneyDecisions->how = 'depends';
-        
+
         $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         0 => array(
@@ -677,7 +677,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/people-to-notify')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -770,7 +770,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/instructions')->__invoke($lpa);
         $this->assertEquals(
                 array(
@@ -872,7 +872,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/applicant')->__invoke($lpa);
         $this->assertEquals(array(), $helperReturns);
     }
@@ -882,7 +882,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/correspondent')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -907,7 +907,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/who-are-you')->__invoke(
                 $lpa);
         $this->assertEquals(
@@ -941,7 +941,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke($lpa);
         $this->assertEquals(
                 array(
@@ -972,7 +972,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 3,
-                                        'values' => 'Who was using the LPA tool answered'
+                                        'values' => 'Who was using the LPA service answered'
                                 )
                         )
                 ), $helperReturns);
@@ -983,7 +983,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
-    
+
         $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa);
         $this->assertEquals(
                 array(
@@ -1014,7 +1014,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 3,
-                                        'values' => 'Who was using the LPA tool answered'
+                                        'values' => 'Who was using the LPA service answered'
                                 )
                         ),
                         3 => array(
@@ -1026,7 +1026,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                         'values' => 'I’m making a repeat application',
                                 )
                         ),
-                        
+
                 ), $helperReturns);
     }
 
@@ -1035,7 +1035,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->completedAt = new \DateTime();
-    
+
         $helperReturns = $this->getAccordion('lpa/payment')->__invoke($lpa);
         $this->assertEquals(
                 array(
@@ -1066,7 +1066,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => $lpa->id,
                                 'params' => array(
                                         'idx' => 3,
-                                        'values' => 'Who was using the LPA tool answered'
+                                        'values' => 'Who was using the LPA service answered'
                                 )
                         ),
                         3 => array(
@@ -1089,7 +1089,7 @@ class AccordionTopTest extends \PHPUnit_Framework_TestCase
                         ),
                 ), $helperReturns);
     }
-    
+
     private function getAccordion ($routeName)
     {
         $accordion = $this->getMockBuilder(

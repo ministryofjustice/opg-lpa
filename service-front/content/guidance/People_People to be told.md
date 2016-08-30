@@ -8,7 +8,7 @@ Letting people know about your LPA when it's about to be registered provides ext
 
 This safeguard is especially important if there's a long time between making your LPA and registering it.
 
-However, you don't have to choose any people to notify to make your LPA valid – it's an optional extra precaution.  
+However, you don't have to choose any people to notify to make your LPA valid – it's an optional extra precaution.
 
 ## Choose people to notify
 
@@ -22,7 +22,7 @@ Talk to the people before you name them and explain that:
 
 ## How people are notified
 
-Just before you apply to register your LPA, you must send each of the people to notify a form (LP3) to let them know about it. If your attorneys apply to register your LPA, they must do the same. You can download this form when you apply to register the LPA with this tool.
+Just before you apply to register your LPA, you must send each of the people to notify a form (LP3) to let them know about it. If your attorneys apply to register your LPA, they must do the same. You can download this form when you apply to register the LPA with this service.
 
 The form sets out reasons why people can object and how to object.
 
