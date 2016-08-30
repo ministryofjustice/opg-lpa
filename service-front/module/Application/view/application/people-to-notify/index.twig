@@ -3,7 +3,7 @@
 {% block content %}
 
 <li id="people-to-notify-section" class="section current js-current">
-    
+
     <h2 class="heading-medium accordion-header flush--top">Who should be notified about your LPA?</h2>
 
     <div class="accordion-info">
@@ -40,12 +40,12 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
-        <div class="form-group flush--bottom">
+        <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button divorced">
         </div>
-    
+
     {{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}
