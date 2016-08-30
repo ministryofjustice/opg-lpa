@@ -10,8 +10,8 @@
         'Value is required and can\'t be empty' : 'Please enter an email address'
     }
 }) %}
-    
-{# Set form fields variables #} 
+
+{# Set form fields variables #}
 {% set email = form.get('email') %}
 
 {# form fields config #}
@@ -43,7 +43,7 @@
             <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
 
             {% if (lpa.payment.amount != standardFee) %}
-                <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/guidance#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+                <p>In order to apply for this reduction, you should send us proof of your gross annual income, such as wage slips, tax returns or statements from a pension provider. The evidence provided should cover a period of at least three months. <a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
 
                 <p>Insufficient evidence will result in delays to your application and if your claim is rejected you'll need to pay the rest of the fee.</p>
 
@@ -62,7 +62,7 @@
 
         <fieldset>
             <legend class="visuallyhidden">Contact email</legend>
-        
+
             <h2 class="heading-medium flush--top text">Please enter a contact email for correspondence regarding this payment.</h2>
 
             {{ macros.formGroup(email) }}
@@ -72,9 +72,9 @@
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
-        
+
     {{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}

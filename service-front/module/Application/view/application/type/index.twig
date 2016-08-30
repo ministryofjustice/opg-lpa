@@ -26,11 +26,11 @@
 <li id="lpa-type-section" class="section current">
 
     <h2 class="heading-medium accordion-header">What type of LPA do you want to create?</h2>
-    
+
     <div class="accordion-info">
         <div class="text">
             <p>You can make an LPA to cover either your property and financial affairs, or your health and welfare.</p>
-            <p><a class="js-guidance" href="/guidance#topic-the-2-types-of-lpa" data-journey-click="stageprompt.lpa:help:the-2-types-of-lpa">Find out about the 2 types of LPA</a></p>
+            <p><a class="js-guidance" href="/guide#topic-the-2-types-of-lpa" data-journey-click="stageprompt.lpa:help:the-2-types-of-lpa">Find out about the 2 types of LPA</a></p>
         </div>
     </div>
 
@@ -55,11 +55,11 @@
             {% if not (isChangeAllowed) %}
             <div class="text">
                 <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a
-                 {{ 
+                 {{
                     (lpa.document.type == 'health-and-welfare')
                     ?'Property  and financial affairs'
-                    :'Health and welfare' 
-                 }} 
+                    :'Health and welfare'
+                 }}
                  LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
             </div>
             {% endif %}
@@ -72,9 +72,9 @@
                     <p>Remember, there’s an application fee for each LPA you register.</p>
                 </div>
     		</details>
-    
+
         </fieldset>
-       
+
         <div class="form-group">
             {% if (isChangeAllowed) %}
                 <input type="submit" name="save" value="Save and continue" class="button">
@@ -84,7 +84,7 @@
         </div>
 
     {{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}
