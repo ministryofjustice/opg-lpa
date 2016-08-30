@@ -86,7 +86,7 @@ If you receive Universal Credit, you may also be able to pay less.
 
 Because Universal Credit is being tested and replaces several existing benefits, OPG will have to look at your application before it can say how much of the fee you'll have to pay.
 
-If you state that you get Universal Credit, you won't be charged through this digital service to make your application. This tool will still create all the documents you need, but you won't be asked to pay.
+If you state that you get Universal Credit, you won't be charged through this digital service to make your application. This service will still create all the documents you need, but you won't be asked to pay.
 
 ### Proof of Universal Credit
 

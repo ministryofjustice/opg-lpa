@@ -8,9 +8,9 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
         'reductionOptions': {
-            'Value is required and can\'t be empty' : 'Please choose one of the options' 
+            'Value is required and can\'t be empty' : 'Please choose one of the options'
         }
-   }) 
+   })
 %}
 
 {# Set form fields variables #}
@@ -19,18 +19,18 @@
 <li id="fee-reduction-section" class="section current js-current">
 
 	<h2 class="heading-medium accordion-header flush--top">Do you want to apply to pay a reduced fee?</h2>
-	
+
     <div class="accordion-info">
     	<div class="text">
                 <p>If the donor has an income of less than £12,000 a year before tax or receives certain benefits, they might be eligible for a reduced fee, or no fee at all.</p>
-                
+
                 <p><a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
 		</div>
 	</div>
-	   
+
     {# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
         {# Error summary #}
@@ -42,7 +42,7 @@
             <h2 class="heading-medium flush--top">Reduced fee options</h2>
 
             <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'error'}}">
-        
+
                 <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
                     {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
@@ -70,19 +70,19 @@
 
                     <p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
 
-                    <p>This means <strong class="bold-small">the tool will not charge you for this LPA now.</strong></p>
+                    <p>This means <strong class="bold-small">the service will not charge you for this LPA now.</strong></p>
 
                     <p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
 
                     <p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
                 </div>
-                
+
                 <label class="text block-label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
                     {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(reductionOptions['reducedFeeLowIncome']) }}
-                
+
                 <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['notApply']) }}
                     {{ reductionOptions['notApply'].getOption('label')|raw }}
@@ -93,13 +93,13 @@
 		    </div>
 
 	    </fieldset>
-        
+
         <div class="form-group flush--bottom">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
 
 	{{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}

@@ -22,7 +22,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     protected function tearDown ()
     {
         $this->lpa = null;
-        
+
         parent::tearDown();
     }
 
@@ -33,9 +33,9 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/form-type')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         1 => array(
@@ -117,9 +117,9 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/donor')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         2 => array(
@@ -192,10 +192,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         3 => array(
@@ -259,10 +259,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         3 => array(
@@ -344,10 +344,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         4 => array(
@@ -420,10 +420,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion(
                 'lpa/how-primary-attorneys-make-decision')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         5 => array(
@@ -487,10 +487,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         6 => array(
@@ -539,14 +539,14 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 )
                         )
                 ), $helperReturns);
-        
+
         $lpa->document->primaryAttorneys = [
                 $lpa->document->primaryAttorneys[0]
         ];
-        
+
         $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         5 => array(
@@ -592,10 +592,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion(
                 'lpa/when-replacement-attorney-step-in')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         7 => array(
@@ -641,10 +641,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion(
                 'lpa/how-replacement-attorneys-make-decision')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         8 => array(
@@ -681,10 +681,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         9 => array(
@@ -706,12 +706,12 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 )
                         )
                 ), $helperReturns);
-        
+
         $lpa->document->replacementAttorneyDecisions->when = 'first';
-        
+
         $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         8 => array(
@@ -733,12 +733,12 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 )
                         )
                 ), $helperReturns);
-        
+
         $lpa->document->primaryAttorneyDecisions->how = 'depends';
-        
+
         $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         7 => array(
@@ -766,10 +766,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/people-to-notify')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         10 => array(
@@ -788,9 +788,9 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        
+
         $helperReturns = $this->getAccordion('lpa/instructions')->__invoke($lpa);
-        
+
         $this->assertEquals([], $helperReturns);
     }
 
@@ -799,9 +799,9 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/applicant')->__invoke($lpa);
-        
+
         $this->assertEquals(
                 array(
                         1 => array(
@@ -819,7 +819,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 3,
-                                        'values' => 'Who was using the LPA tool answered'
+                                        'values' => 'Who was using the LPA service answered'
                                 )
                         ),
                         3 => array(
@@ -845,7 +845,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                             'name' => 'payment.phtml',
                             'routeName' => 'lpa/payment',
                             'lpaId' => 99999999,
-                            'params' => 
+                            'params' =>
                                 array (
                                   'idx' => 6,
                                   'values' => 'Application fee: £0.00 (Payment method: card)',
@@ -859,10 +859,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/correspondent')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         2 => array(
@@ -871,7 +871,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                                 'lpaId' => 99999999,
                                 'params' => array(
                                         'idx' => 3,
-                                        'values' => 'Who was using the LPA tool answered'
+                                        'values' => 'Who was using the LPA service answered'
                                 )
                         ),
                         3 => array(
@@ -897,7 +897,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                             'name' => 'payment.phtml',
                             'routeName' => 'lpa/payment',
                             'lpaId' => 99999999,
-                            'params' => 
+                            'params' =>
                                 array (
                                   'idx' => 6,
                                   'values' => 'Application fee: £0.00 (Payment method: card)',
@@ -911,10 +911,10 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/who-are-you')->__invoke(
                 $lpa);
-        
+
         $this->assertEquals(
                 array(
                         3 => array(
@@ -930,7 +930,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                             'name' => 'fee-reduction.phtml',
                             'routeName' => 'lpa/fee-reduction',
                             'lpaId' => 99999999,
-                            'params' => 
+                            'params' =>
                                 array (
                                   'idx' => 5,
                                   'values' => 'I am applying for reduced fee',
@@ -940,7 +940,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                             'name' => 'payment.phtml',
                             'routeName' => 'lpa/payment',
                             'lpaId' => 99999999,
-                            'params' => 
+                            'params' =>
                                 array (
                                   'idx' => 6,
                                   'values' => 'Application fee: £0.00 (Payment method: card)',
@@ -948,16 +948,16 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                         ),
                 ), $helperReturns);
     }
-    
+
     public function testRepeatApplication ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-    
+
         $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke(
                 $lpa);
-    
+
         $this->assertEquals(
                 array(
                         4 => array (
@@ -974,7 +974,7 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                             'name' => 'payment.phtml',
                             'routeName' => 'lpa/payment',
                             'lpaId' => 99999999,
-                            'params' => 
+                            'params' =>
                                 array (
                                   'idx' => 6,
                                   'values' => 'Application fee: £0.00 (Payment method: card)',
@@ -982,15 +982,15 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
                         ),
                 ), $helperReturns);
     }
-    
+
     public function testFeeReduction ()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-        
+
         $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa);
-        
+
         $this->assertEquals([
                 5 => array (
                         'name' => 'payment.phtml',
@@ -1010,22 +1010,22 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
         $lpa->createdAt = new \DateTime();
-    
+
         $helperReturns = $this->getAccordion('lpa/payment')->__invoke($lpa);
-    
+
         $this->assertEquals([], $helperReturns);
     }
-    
+
     private function getAccordion ($routeName)
     {
         $accordion = $this->getMockBuilder('Application\View\Helper\AccordionBottom')
             ->setMethods(array('getRouteName'))
             ->getMock();
-        
+
         $accordion->expects($this->any())
             ->method('getRouteName')
             ->willReturn($routeName);
-        
+
         return $accordion;
     }
 }
