@@ -61,6 +61,14 @@
         }
     }
 
+    &.wide-label {
+        .label {
+            @include media($max-width: 750px) {
+                width: 103px;
+            }
+        }
+    }
+
     .link {
         display: inline-block;
         float: right;
@@ -85,6 +93,14 @@
         margin-right: 92px;
         padding-right: 130px;
         border-right: 6px solid $white;
+    }
+
+    &.wide-label {
+        .title-box {
+            @include media($min-width: 750px) {
+                padding-right: 215px;
+            }
+        }
     }
 
     .label-and-edit-box {

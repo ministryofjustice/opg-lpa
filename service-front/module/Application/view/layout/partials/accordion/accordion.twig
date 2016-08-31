@@ -15,7 +15,7 @@
         	})
         }}
     {% endif %}
-    
+
 	{% if (item.routeName == 'lpa/donor') %}
         {{ macros.accordionBar({
             	'desktop' : 'The donor is ' ~ lpa.document.donor.name,
@@ -25,7 +25,7 @@
         	})
         }}
     {% endif %}
-    
+
 	{% if (item.routeName == 'lpa/life-sustaining') %}
         {{ macros.accordionBar({
             	'desktop' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
@@ -39,7 +39,7 @@
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/primary-attorney') %}
         {{ macros.accordionBar({
             	'desktop' : 'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
@@ -49,7 +49,7 @@
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/when-lpa-starts') %}
         {{ macros.accordionBar({
                 'desktop' : 'The LPA starts ' ~ (lpa.document.primaryAttorneyDecisions.when == 'now' ?
@@ -81,7 +81,7 @@
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/replacement-attorney') %}
         {{ macros.accordionBar({
             	'desktop' : lpa.document.replacementAttorneys|length == 0 ?
@@ -91,7 +91,8 @@
 					'There are no replacement attorneys' :
 					('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
         		'status' : lpa.document.replacementAttorneys|length ~ ' Replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's' : ''),
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'cssClass': 'wide-label'
         	})
         }}
     {% endif %}
@@ -115,7 +116,7 @@
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/how-replacement-attorneys-make-decision') %}
         {{ macros.accordionBar({
             	'desktop' : 'The replacement attorneys will act ' ~
@@ -135,7 +136,7 @@
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/certificate-provider') %}
         {{ macros.accordionBar({
             	'desktop' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
@@ -145,7 +146,7 @@
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/people-to-notify') %}
         {{ macros.accordionBar({
             	'desktop' : lpa.document.peopleToNotify|length == 0 ?
@@ -155,11 +156,13 @@
 					'There are no people to notify' :
 					('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
         		'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'cssClass': lpa.document.peopleToNotify|length == 0 ?
+                    '' : 'wide-label'
         	})
         }}
     {% endif %}
-    
+
     {% if (item.routeName == 'lpa/instructions') %}
         {{ macros.accordionBar({
 				'desktop' : 'Instructions and preferences',
@@ -238,6 +241,6 @@
         	})
         }}
     {% endif %}
-            
+
 {% endfor %}
 
