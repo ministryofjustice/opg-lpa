@@ -2897,6 +2897,8 @@ input[type=number] {
 .alert .icon {
   margin-right: 10px;
   float: left; }
+.alert:focus {
+  outline: 3px solid #ffbf47; }
 
 .alert-message {
   overflow: hidden; }

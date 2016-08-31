@@ -6,6 +6,9 @@
         margin-right: 10px;
         float: left;
     }
+    &:focus {
+        outline: 3px solid $focus-colour;
+    }
 }
 
 .alert-message {
