@@ -1,7 +1,7 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Create a lasting power of attorney 
+    Create a lasting power of attorney
 {% endblock %}
 
 {% block content %}
@@ -141,7 +141,7 @@
 }) ? ''}}
 
 {# form fields labels #}
-{{ who.setOptions({label:'Role'}) ? '' }} 
+{{ who.setOptions({label:'Role'}) ? '' }}
 {{ title.setOptions({label:'Title'}) ? '' }}
 {{ firstname.setOptions({label:'First names'}) ? '' }}
 {{ lastname.setOptions({label:'Last name'}) ? '' }}
@@ -151,7 +151,7 @@
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
 {{ postcode.setOptions({label:'Postcode'}) ? '' }}
 {{ email.setOptions({label:'Email'}) ? '' }}
-{{ phone.setOptions({label:'Daytime phone No.'}) ? '' }}
+{{ phone.setOptions({label:'Phone number'}) ? '' }}
 
 {{ form.prepare() ? '' }}
 
@@ -177,7 +177,7 @@
         </fieldset>
 
         <div class="form-group">
-            <input type="submit" name="switcher-submit" value="Switch to selected person" class="button js-details-picker"> 
+            <input type="submit" name="switcher-submit" value="Switch to selected person" class="button js-details-picker">
         </div>
     </div>
 {{ form().closeTag|raw }}
