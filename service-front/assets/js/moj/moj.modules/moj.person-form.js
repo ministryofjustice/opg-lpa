@@ -139,7 +139,10 @@
                     'elementJSref': 'js-duplication-alert',
                     'alertType': 'important-small',
                     'alertMessage': '<p>The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles.</p><p>Click here to confirm that these are 2 different people with the same name.</p>'
-                })));
+                  })));
+
+                // Focus on alert panel for accessibility
+                $('.alert.panel').focus();
               }
             }
 
