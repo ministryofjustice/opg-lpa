@@ -8,34 +8,21 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Helper\ServerUrl;
 
+use Zend\Http\Response as HttpResponse;
+
 class CheckoutController extends AbstractLpaController {
 
     public function indexAction(){
 
         $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
 
-        // If POST, it's a worldpay payment...
-        if($this->request->isPost()) {
+        $response = $this->processWorldPayForm( $worldPayForm );
 
-            $worldPayForm->setData( $this->request->getPost() );
-
-            if($worldPayForm->isValid()) {
-
-                $lpa = $this->getLpa();
-
-                $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-
-                if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                    throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
-                }
-
-                //---
-
-                return $this->getWorldpayRedirect( $worldPayForm->getData()['email'] );
-
-            }
-
+        if( $response instanceof HttpResponse ){
+            return $response;
         }
+
+        //---
 
         return new ViewModel([
             'worldpayForm' => $worldPayForm,
@@ -156,18 +143,38 @@ class CheckoutController extends AbstractLpaController {
 
     public function worldpayCancelAction(){
 
+        $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+
+        $response = $this->processWorldPayForm( $worldPayForm );
+
+        if( $response instanceof HttpResponse ){
+            return $response;
+        }
+
+        //---
+
         // Shows cancel page
         return new ViewModel([
-            'worldpayForm' => $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm')
+            'worldpayForm' => $worldPayForm,
         ]);
 
     }
 
     public function worldpayFailureAction(){
 
+        $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+
+        $response = $this->processWorldPayForm( $worldPayForm );
+
+        if( $response instanceof HttpResponse ){
+            return $response;
+        }
+
+        //---
+
         // Shows failure page
         return new ViewModel([
-            'worldpayForm' => $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm')
+            'worldpayForm' => $worldPayForm,
         ]);
 
     }
@@ -211,5 +218,34 @@ class CheckoutController extends AbstractLpaController {
         );
 
     }
+
+    //-------------------------------------
+
+    private function processWorldPayForm( $worldPayForm ){
+
+        // If POST, it's a worldpay payment...
+        if($this->request->isPost()) {
+
+            $worldPayForm->setData( $this->request->getPost() );
+
+            if($worldPayForm->isValid()) {
+
+                $lpa = $this->getLpa();
+
+                $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+
+                if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                    throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
+                }
+
+                //---
+
+                return $this->getWorldpayRedirect( $worldPayForm->getData()['email'] );
+
+            }
+
+        }
+
+    } // processWorldPayForm
 
 }
