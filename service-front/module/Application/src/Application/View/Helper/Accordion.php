@@ -29,6 +29,16 @@ class Accordion extends AbstractHelper {
         'lpa/fee-reduction'                          ,
     ];
 
+    private $excludedRoutes = [
+        'lpa/summary',
+        'lpa/checkout',
+        'lpa/checkout',
+        'lpa/checkout/worldpay',
+        'lpa/checkout/worldpay/return/cancel',
+        'lpa/checkout/worldpay/return/success',
+        'lpa/checkout/worldpay/return/failure',
+    ];
+
     public function __invoke( Lpa $lpa = null ){
 
         $this->lpa = $lpa;
@@ -51,7 +61,7 @@ class Accordion extends AbstractHelper {
 
         //---
 
-        if ( in_array( $currentRoute, ['lpa/summary', 'lpa/checkout'] ) ) {
+        if ( in_array( $currentRoute, $this->excludedRoutes ) ) {
             // No accordion summary when viewing table summary
             return [];
         }
@@ -112,7 +122,7 @@ class Accordion extends AbstractHelper {
 
         //---
 
-        if ( in_array( $currentRoute, ['lpa/summary', 'lpa/checkout'] ) ) {
+        if ( in_array( $currentRoute, $this->excludedRoutes ) ) {
             // No accordion summary when viewing table summary
             return [];
         }

@@ -13,11 +13,6 @@
         {# Set form fields variables #}
         {% set email = worldpayForm.get('email') %}
 
-        {# form fields config #}
-        {{ worldpayForm.setAttributes({
-            action: url('lpa/checkout', {'lpa-id': lpa.id}),
-        }) ? '' }}
-
         {# form fields con  fig #}
         {{ email.setAttributes({
             id:'email',
