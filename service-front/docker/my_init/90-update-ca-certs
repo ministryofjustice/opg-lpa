@@ -19,9 +19,13 @@ def update_certificates():
             result = check_output(['/usr/sbin/update-ca-certificates', '--verbose'], stderr=STDOUT)
             results[index] = SCRIPT_SUCCESS
             print result
-        except CalledProcessError:
+        except CalledProcessError as e:
+            print "A CalledProcessError exception occurred"
+            print(e)
+            results[index] = SCRIPT_FAILURE
+        except Exception as e:
             print "An exception occurred"
-            print(CalledProcessError)
+            print(e)
             results[index] = SCRIPT_FAILURE
 
         if results[index] is 0:
