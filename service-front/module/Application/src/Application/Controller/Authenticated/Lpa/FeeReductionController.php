@@ -30,7 +30,7 @@ class FeeReductionController extends AbstractLpaController
         $reductionOptions = [];
         
         $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
-            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these benefits</a>, but has not been awarded personal injury damages of more than £16,000"
+            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these means-tested benefits</a>, and has not been awarded personal injury damages of more than £16,000"
         ]);
         $reductionOptions['reducedFeeReceivesBenefits']->setAttributes([
             'type' => 'radio',
