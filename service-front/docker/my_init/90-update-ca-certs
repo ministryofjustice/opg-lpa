@@ -3,7 +3,7 @@
 from subprocess import check_output, CalledProcessError
 
 try:
-    result = check_output(['/usr/sbin/update-ca-certificates', '--verbose',  '2>&1'])
+    result = check_output(['/usr/sbin/update-ca-certificates --verbose 2>&1'])
 except CalledProcessError:
     print "An exception occurred"
     print(CalledProcessError)
