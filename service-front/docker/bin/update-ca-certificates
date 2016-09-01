@@ -140,7 +140,7 @@ then
   then
     c_rehash . > /dev/null
   else
-    c_rehash . 2>&1
+    c_rehash -v . 2>&1
   fi
 fi
 
