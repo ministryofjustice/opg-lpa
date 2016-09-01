@@ -17,19 +17,17 @@ def update_certificates():
     for index in range(1, 3):
         try:
             result = check_output(['/usr/sbin/update-ca-certificates', '--verbose'], stderr=STDOUT)
-            results[index] = SCRIPT_SUCCESS
+            results.append(SCRIPT_SUCCESS)
             print result
         except CalledProcessError as e:
             print "A CalledProcessError exception occurred"
             print(e)
-            results[index] = SCRIPT_FAILURE
+            results.append(SCRIPT_FAILURE)
+            break
         except Exception as e:
             print "An exception occurred"
             print(e)
-            results[index] = SCRIPT_FAILURE
-
-        if results[index] is 0:
-            break
+            results.append(SCRIPT_FAILURE)
 
     return results
 
