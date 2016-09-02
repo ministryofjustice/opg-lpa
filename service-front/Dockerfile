@@ -27,6 +27,7 @@ RUN mkdir -p /srv/opg-lpa-front2/application && \
 
 ADD docker/confd /etc/confd
 ADD docker/my_init/* /etc/my_init.d/
+ADD docker/certificates/* /usr/local/share/ca-certificates/
 
 ADD docker/bin/update-ca-certificates /usr/sbin/update-ca-certificates
 RUN chmod 755 /usr/sbin/update-ca-certificates && \
