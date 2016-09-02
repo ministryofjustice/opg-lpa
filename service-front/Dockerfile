@@ -30,7 +30,6 @@ ADD docker/my_init/* /etc/my_init.d/
 ADD docker/certificates/* /usr/local/share/ca-certificates/
 
 ADD docker/bin/update-ca-certificates /usr/sbin/update-ca-certificates
-RUN chmod 755 /usr/sbin/update-ca-certificates && \
-    chown root:root /usr/sbin/update-ca-certificates
+RUN chmod 755 /usr/sbin/update-ca-certificates; sync; /usr/sbin/update-ca-certificates --verbose
 
 ENV OPG_SERVICE front
