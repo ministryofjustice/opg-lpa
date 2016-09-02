@@ -1,3 +1,58 @@
-#!/bin/sh
+#!/usr/bin/python
 
-/usr/sbin/update-ca-certificates --verbose
+from subprocess import check_output, CalledProcessError, STDOUT
+from time import sleep
+
+SCRIPT_FAILURE = -1
+SCRIPT_SUCCESS = 0
+
+
+def update_certificates():
+    """
+    Run the update certificates script up to 3 times, if we get a success we leave early
+    :return: array of results
+    """
+
+    results = []
+
+    for index in range(1, 3):
+        try:
+            result = check_output(['/usr/sbin/update-ca-certificates', '--verbose'], stderr=STDOUT)
+            results.append(SCRIPT_SUCCESS)
+            print result
+        except CalledProcessError as e:
+            print "A CalledProcessError exception occurred"
+            print(e)
+            results.append(SCRIPT_FAILURE)
+            break
+        except Exception as e:
+            print "An exception occurred"
+            print(e)
+            results.append(SCRIPT_FAILURE)
+
+        print "Waiting to re-run script"
+        sleep(1)
+    return results
+
+
+def validate_results(results):
+    """
+    Check our returned result set, we need 1 success to pass
+    :param results: list of results
+    :return:
+    """
+    valid = False
+
+    for result in results:
+        if result is SCRIPT_SUCCESS:
+            valid |= True
+        else:
+            valid |= False
+
+    if not valid:
+        print("Update ca certs failed")
+        exit(-1)
+
+
+validate_results(update_certificates())
+
