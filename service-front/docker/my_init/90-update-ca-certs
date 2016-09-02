@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from subprocess import check_output, CalledProcessError, STDOUT
+from time import sleep
 
 SCRIPT_FAILURE = -1
 SCRIPT_SUCCESS = 0
@@ -29,6 +30,8 @@ def update_certificates():
             print(e)
             results.append(SCRIPT_FAILURE)
 
+        print "Waiting to re-run script"
+        sleep(1)
     return results
 
 
