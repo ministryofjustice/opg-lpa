@@ -1,6 +1,0 @@
-[template]
-src = "LPA_ca.crt.tmpl"
-dest = "/usr/local/share/ca-certificates/LPA_ca.crt"
-keys = [
-    "/opg/base/ca",
-]
