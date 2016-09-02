@@ -19,7 +19,6 @@ def update_certificates():
         try:
             result = check_output(['/usr/sbin/update-ca-certificates', '--verbose'], stderr=STDOUT)
             results.append(SCRIPT_SUCCESS)
-            print result
         except CalledProcessError as e:
             print "A CalledProcessError exception occurred"
             print(e)
@@ -30,6 +29,7 @@ def update_certificates():
             print(e)
             results.append(SCRIPT_FAILURE)
 
+        print(result)
         print "Waiting to re-run script"
         sleep(1)
     return results
