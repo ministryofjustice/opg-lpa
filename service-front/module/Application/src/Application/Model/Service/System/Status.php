@@ -31,32 +31,41 @@ class Status implements ServiceLocatorAwareInterface {
 
     public function check(){
 
-        $result = array();
+        $result = [ 'ok' => false ];
 
-        //-----------------------------------
-        // DynamoDB
+        for( $i=1; $i <= 6; $i++ ){
 
-        $result['dynamo'] = $this->dynamo();
+            $result = array();
 
-        //-----------------------------------
-        // Check API 2
+            //-----------------------------------
+            // DynamoDB
 
-        $result['api'] = $this->api();
+            $result['dynamo'] = $this->dynamo();
 
-        //-----------------------------------
-        // Check Auth 2
+            //-----------------------------------
+            // Check API 2
 
-        $result['auth'] = $this->auth();
+            $result['api'] = $this->api();
 
-        //-----------------------------------
+            //-----------------------------------
+            // Check Auth 2
 
-        $ok = true;
+            $result['auth'] = $this->auth();
 
-        foreach( $result as $service ){
-            $ok = $ok && $service['ok'];
+            //-----------------------------------
+
+            $ok = true;
+
+            foreach( $result as $service ){
+                $ok = $ok && $service['ok'];
+            }
+
+            $result['ok'] = $ok;
+            $result['iterations'] = $i;
+
+            if( !$result['ok'] ){ return $result; }
+
         }
-
-        $result['ok'] = $ok;
 
         return $result;
 
