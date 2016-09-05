@@ -15,9 +15,6 @@ RUN php5enmod mcrypt
 RUN echo "expose_php = Off" > /etc/php5/mods-available/do_not_expose_php.ini && \
     php5enmod do_not_expose_php
 
-#
-#
-
 # Add application logging config(s)
 ADD docker/beaver.d /etc/beaver.d
 
@@ -28,10 +25,10 @@ RUN mkdir -p /srv/opg-lpa-api2/application && \
     chmod -R 755 /srv/opg-lpa-api2/application && \
     ln -s /app /srv/opg-lpa-api2/application/current
 
-#
-#
-ADD docker/confd /etc/confd
-
 ADD docker/my_init/* /etc/my_init.d/
+ADD docker/certificates/* /usr/local/share/ca-certificates/
+
+ADD docker/bin/update-ca-certificates /usr/sbin/update-ca-certificates
+RUN chmod 755 /usr/sbin/update-ca-certificates; sync; /usr/sbin/update-ca-certificates --verbose
 
 ENV OPG_SERVICE api
