@@ -864,6 +864,8 @@ return array(
     'Http\\Client\\Exception\\TransferException' => $vendorDir . '/php-http/httplug/src/Exception/TransferException.php',
     'Http\\Client\\HttpAsyncClient' => $vendorDir . '/php-http/httplug/src/HttpAsyncClient.php',
     'Http\\Client\\HttpClient' => $vendorDir . '/php-http/httplug/src/HttpClient.php',
+    'Http\\Client\\Promise\\HttpFulfilledPromise' => $vendorDir . '/php-http/httplug/src/Promise/HttpFulfilledPromise.php',
+    'Http\\Client\\Promise\\HttpRejectedPromise' => $vendorDir . '/php-http/httplug/src/Promise/HttpRejectedPromise.php',
     'Http\\Discovery\\ClassDiscovery' => $vendorDir . '/php-http/discovery/src/ClassDiscovery.php',
     'Http\\Discovery\\HttpAsyncClientDiscovery' => $vendorDir . '/php-http/discovery/src/HttpAsyncClientDiscovery.php',
     'Http\\Discovery\\HttpClientDiscovery' => $vendorDir . '/php-http/discovery/src/HttpClientDiscovery.php',
