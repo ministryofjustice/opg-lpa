@@ -15,6 +15,15 @@ class RegisterController extends AbstractBaseController {
      */
     public function indexAction(){
 
+        // gov.uk is not allowed to point users directly at this page.
+        if( $this->getRequest()->getHeader('Referer') != false ){
+            if( $this->getRequest()->getHeader('Referer')->uri()->getHost() === 'www.gov.uk' ){
+                return $this->redirect()->toRoute('home');
+            }
+        }
+
+        //---
+
         $check = $this->preventAuthenticatedUser();
         
         if( $check !== true ) {

@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.3 - 2016-08-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#115](https://github.com/zendframework/zend-inputfilter/pull/115) fixes
+  retrieval of unknown fields when using a `CollectionInputFilter`. Previously,
+  it returned all fields in the collection, not just the unknown fields, which
+  was a different behavior from all other input filters. Now it will return only
+  the unknown fields for each collection.
+- [#108](https://github.com/zendframework/zend-inputfilter/pull/108) fixes
+  the `InputFilterPluginManager::populateFactory()` method to restore behavior
+  from prior to the 2.7 series; specifically, previously it would inject itself
+  as the plugin manager to input filter factories when under zend-servicemanager
+  v2; it now will do so again.
+- [#116](https://github.com/zendframework/zend-inputfilter/pull/116) fixes the
+  behavior of `CollectionInputFilter::setData()`. Prior to this release, it
+  would validate whether the data represented a collection (i.e., it was an
+  array or traversable) and whether individual items in the collection were data
+  sets (i.e., arrays or traversables) only during `isValid()` and/or
+  `getUnknown()` calls, raising exceptions during runtime. These should have
+  been considered invalid arguments when the data was provided; they now are. As
+  such, `setData()` now raises `Zend\InputFilter\Exception\InvalidArgumentException`
+  for invalid data, ensuring that `isValid()` and `getUnknown()` only ever
+  operate on usable collections and collection sets.
+- [#118](https://github.com/zendframework/zend-inputfilter/pull/118) fixes
+  aggregation of error messages when validating collections to ensure only the
+  error messages specific to a given datum are presented.
+
 ## 2.7.2 - 2016-06-11
 
 ### Added

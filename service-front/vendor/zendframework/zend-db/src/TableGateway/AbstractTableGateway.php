@@ -14,6 +14,7 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Join;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\TableIdentifier;
@@ -221,7 +222,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
                 && end($selectState['table']) != $this->table)
         ) {
             throw new Exception\RuntimeException(
-                'The table name of the provided select object must match that of the table'
+                'The table name of the provided Select object must match that of the table'
             );
         }
 
@@ -340,7 +341,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         if ($joins) {
             foreach ($joins as $join) {
-                $type = isset($join['type']) ? $join['type'] : $update::JOIN_INNER;
+                $type = isset($join['type']) ? $join['type'] : Join::JOIN_INNER;
                 $update->join($join['name'], $join['on'], $type);
             }
         }
@@ -442,7 +443,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $deleteState = $delete->getRawState();
         if ($deleteState['table'] != $this->table) {
             throw new Exception\RuntimeException(
-                'The table name of the provided Update object must match that of the table'
+                'The table name of the provided Delete object must match that of the table'
             );
         }
 

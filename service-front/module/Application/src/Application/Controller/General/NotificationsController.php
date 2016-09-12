@@ -34,11 +34,24 @@ class NotificationsController extends AbstractBaseController {
 
         $posts = $this->request->getPost();
 
-        if( !isset($posts['Username']) || !isset($posts['Type']) ){
+        if( !isset($posts['Username']) || !isset($posts['Type']) || !isset($posts['Date']) ){
 
             $response = $this->getResponse();
             $response->setStatusCode(400);
             $response->setContent('Missing parameters');
+            return $response;
+
+        }
+
+        //---
+
+        $deletionDate = new DateTime( $posts['Date'] );
+
+        if( $deletionDate < (new DateTime('+48 hours')) ){
+
+            $response = $this->getResponse();
+            $response->setStatusCode(400);
+            $response->setContent('Date must be at least 48 hours in the future.');
             return $response;
 
         }
@@ -62,26 +75,16 @@ class NotificationsController extends AbstractBaseController {
 
         //--
 
+
         switch($posts['Type']){
             case '1-week-notice':
 
-                $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('notification-1-week-notice.twig');
-
-                if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $template, $matches) === 1) {
-                    $email->setSubject($matches[1]);
-                } else {
-                    $email->setSubject( 'If you still need your lasting power of attorney online account, please sign back in in the next seven days' );
-                }
+                $email->setSubject( 'Final reminder: do you still need your online LPA account?' );
 
                 break;
             case '1-month-notice':
-                $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('notification-1-month-notice.twig');
 
-                if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $template, $matches) === 1) {
-                    $email->setSubject($matches[1]);
-                } else {
-                    $email->setSubject( 'Do you still need your lasting power of attorney online account?' );
-                }
+                $email->setSubject( 'Do you still need your online lasting power of attorney account?' );
 
                 break;
             default:
@@ -94,7 +97,11 @@ class NotificationsController extends AbstractBaseController {
 
         //---
 
-        $content = $template->render([]);
+        $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('account-deletion-notification.twig');
+
+        $content = $template->render([
+            'deletionDate' => $deletionDate
+        ]);
 
         //---
 

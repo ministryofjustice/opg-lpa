@@ -125,8 +125,12 @@ return array(
 
         'encryption' => [
             'enabled' => true,
-            // Key MUST be a 32 character ASCII string
-            'key' => getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEY') ?: null,
+            // Keys must be in the format: <ident: int> => <key: 32 character ASCII string>
+            'keys' => getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEYS') ?
+                array_combine(
+                    array_map( function( $v ){ return explode(':', trim($v))[0]; } , explode(',', trim(getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEYS')))),
+                    array_map( function( $v ){ return explode(':', trim($v))[1]; } , explode(',', trim(getenv('OPG_LPA_FRONT_SESSION_ENCRYPTION_KEYS'))))
+                ) : array(),
         ],
 
     ], // session
