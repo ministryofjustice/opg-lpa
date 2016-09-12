@@ -132,7 +132,53 @@ class Accordion extends AbstractHelper {
         // Skip all routes before the current route...
         $startAt = array_search( $currentRoute, $this->bars );
         $startAt = is_int($startAt) ? $startAt : 0;
-        $bars = array_slice($this->bars, $startAt );
+        $bars = array_slice($this->bars, $startAt+1 ); // +1 to start one past the page the current page.
+
+        // For each possible page, starting from the user's current location...
+        foreach( $bars as $key=>$route ){
+
+            //echo "Current route to check: $route<br />";
+
+            // We only want to include 'this' bar if we can access 'this' page; AND
+            // only if we can also access ANY other page after it.
+
+            // Check we can access 'this' page...
+            if( $route == $flowChecker->getNearestAccessibleRoute($route) ) {
+
+                //echo "Can access: $route<br />";
+
+                // Then check there are more pages...
+                if( isset($bars[ $key+1]) ){
+
+                    // And that we can access at least one of them...
+                    foreach( array_slice($bars, $key+1 ) as $futureRoute ){
+
+                        //$found = ($futureRoute == $flowChecker->getNearestAccessibleRoute($futureRoute));
+                        //echo "From $route, can we access$futureRoute = ".(int)$found."<br />";
+
+                        // If we are able to access a future route, then this page is complete.
+                        if ( $futureRoute == $flowChecker->getNearestAccessibleRoute($futureRoute) ) {
+
+                            // All conditions met, so add the bar.
+                            $barsInPlay[] = ['routeName' => $route];
+
+                            // We only need one page, so break when the first is found.
+                            break;
+
+                        } // if
+
+                    } // foreach
+
+                } // if
+
+            } // if
+
+            // Give up here as we'd never show a bar past where the user has been.
+            if( $includeUpToRoute == $route ){ break; }
+
+        } // foreach
+
+        return $barsInPlay;
 
         foreach( $bars as $route ){
 
