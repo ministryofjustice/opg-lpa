@@ -29,15 +29,30 @@ class EncryptedDynamoDB extends DynamoDB {
      */
     private $blockCipher;
 
+
+    /**
+     * Array of currently active keys.
+     *
+     * The format should be:
+     *  <int ident> => <string key>
+     *
+     * The biggest ident value should be treated the the 'current' key.
+     *
+     * @var array
+     */
+    private $keys;
+
     //--------------------
 
     /**
      * Sets the pre-configured BlockCipher to use for encryption.
      *
      * @param BlockCipher $blockCipher
+     * @param array $keys
      */
-    public function setBlockCipher( BlockCipher $blockCipher ){
+    public function setBlockCipher( BlockCipher $blockCipher, array $keys ){
 
+        $this->keys = $keys;
         $this->blockCipher = $blockCipher;
 
     }
@@ -60,30 +75,73 @@ class EncryptedDynamoDB extends DynamoDB {
 
     public function read($id){
 
-        // Return the data from the cache
+        // Return the data from the DynamoDB
         $data = parent::read( $id );
 
-        // If there's no data, just return it (null)
-        if( empty($data) ){ return $data; }
+        // If there's no data, just return
+        if( empty($data) ){ return null; }
+
+        // Split the data into encryption key ident, and actual session data.
+        $data = explode( '.', $data );
+
+        // If not key ident was found.
+        if( count($data) != 2 ){
+
+            // For now, assume it's an old style session value, and default to the oldest key.
+
+            // @todo - this should just return null once no old values exist anymore.
+
+            // Ensure keys are sorted, newest to oldest.
+            krsort($this->keys);
+
+            // Try the last (oldest) key/value
+            $sessionKey = end($this->keys);
+            $sessionData = $data[0];
+
+        } else {
+
+            // If the key ident doesn't match a known key...
+            if( !isset( $this->keys[$data[0]] ) ){
+                return null;
+            }
+
+            $sessionKey = $this->keys[$data[0]];
+            $sessionData = $data[1];
+
+        }
+
+        //---
 
         // Decrypt and return the data
-        $data =  $this->getBlockCipher()->decrypt( $data );
+        $decryptedData =  $this->getBlockCipher()->setKey( $sessionKey )->decrypt( $sessionData );
 
         // Decompress the data.
-        return (new Decompress( self::COMPRESSION_ADAPTER ))->filter( $data );
+        return (new Decompress( self::COMPRESSION_ADAPTER ))->filter( $decryptedData );
 
     }
 
     public function write($id, $data){
 
+        // Ensure keys are sorted, oldest to newest.
+        ksort($this->keys);
+
+        // Use the last (newest) key/value
+        $keyValue = end($this->keys);
+        $keyIdent = key($this->keys);
+
+        //---
+
         // Compress the data.
-        $data = (new Compress( self::COMPRESSION_ADAPTER ))->filter( $data );
+        $compressedData = (new Compress( self::COMPRESSION_ADAPTER ))->filter( $data );
 
         // Encrypt the data
-        $data = $this->getBlockCipher()->encrypt( $data );
+        $encryptedData = $this->getBlockCipher()->setKey( $keyValue )->encrypt( $compressedData );
 
-        // Save it to the cache
-        return parent::write( $id, $data );
+        // Add the encryption key ident that was used, separated with a period.
+        $encryptedDataWithIdent = $keyIdent . '.' . $encryptedData;
+
+        // Save it to DynamoDB
+        return parent::write( $id, $encryptedDataWithIdent );
 
     }
 

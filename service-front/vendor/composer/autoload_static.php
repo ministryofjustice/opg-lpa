@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
+class ComposerStaticInitf2a561e6eea3f1284d64805a71106219
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -14,10 +14,10 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'ddc0a4d7e61c0286f0f8593b1903e894' => __DIR__ . '/..' . '/clue/stream-filter/src/functions.php',
         '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
         '34901568a1e26d13dd475cb2c85e0284' => __DIR__ . '/..' . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
-        'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
-        '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
+        'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -676,6 +676,7 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Aws\\Credentials\\CredentialProvider' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Credentials/CredentialProvider.php',
         'Aws\\Credentials\\Credentials' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Credentials/Credentials.php',
         'Aws\\Credentials\\CredentialsInterface' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Credentials/CredentialsInterface.php',
+        'Aws\\Credentials\\EcsCredentialProvider' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Credentials/EcsCredentialProvider.php',
         'Aws\\Credentials\\InstanceProfileProvider' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Credentials/InstanceProfileProvider.php',
         'Aws\\DataPipeline\\DataPipelineClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/DataPipeline/DataPipelineClient.php',
         'Aws\\DataPipeline\\Exception\\DataPipelineException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/DataPipeline/Exception/DataPipelineException.php',
@@ -714,6 +715,8 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Aws\\ElastiCache\\Exception\\ElastiCacheException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElastiCache/Exception/ElastiCacheException.php',
         'Aws\\ElasticBeanstalk\\ElasticBeanstalkClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticBeanstalk/ElasticBeanstalkClient.php',
         'Aws\\ElasticBeanstalk\\Exception\\ElasticBeanstalkException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticBeanstalk/Exception/ElasticBeanstalkException.php',
+        'Aws\\ElasticLoadBalancingV2\\ElasticLoadBalancingV2Client' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticLoadBalancingV2/ElasticLoadBalancingV2Client.php',
+        'Aws\\ElasticLoadBalancingV2\\Exception\\ElasticLoadBalancingV2Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticLoadBalancingV2/Exception/ElasticLoadBalancingV2Exception.php',
         'Aws\\ElasticLoadBalancing\\ElasticLoadBalancingClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticLoadBalancing/ElasticLoadBalancingClient.php',
         'Aws\\ElasticLoadBalancing\\Exception\\ElasticLoadBalancingException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticLoadBalancing/Exception/ElasticLoadBalancingException.php',
         'Aws\\ElasticTranscoder\\ElasticTranscoderClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ElasticTranscoder/ElasticTranscoderClient.php',
@@ -762,6 +765,8 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Aws\\Iot\\Exception\\IotException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Iot/Exception/IotException.php',
         'Aws\\Iot\\IotClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Iot/IotClient.php',
         'Aws\\JsonCompiler' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/JsonCompiler.php',
+        'Aws\\KinesisAnalytics\\Exception\\KinesisAnalyticsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/KinesisAnalytics/Exception/KinesisAnalyticsException.php',
+        'Aws\\KinesisAnalytics\\KinesisAnalyticsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/KinesisAnalytics/KinesisAnalyticsClient.php',
         'Aws\\Kinesis\\Exception\\KinesisException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Kinesis/Exception/KinesisException.php',
         'Aws\\Kinesis\\KinesisClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Kinesis/KinesisClient.php',
         'Aws\\Kms\\Exception\\KmsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Kms/Exception/KmsException.php',
@@ -802,6 +807,7 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Aws\\S3\\ApplyChecksumMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/ApplyChecksumMiddleware.php',
         'Aws\\S3\\BatchDelete' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/BatchDelete.php',
         'Aws\\S3\\BucketEndpointMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/BucketEndpointMiddleware.php',
+        'Aws\\S3\\DualStackMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/DualStackMiddleware.php',
         'Aws\\S3\\Exception\\DeleteMultipleObjectsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/Exception/DeleteMultipleObjectsException.php',
         'Aws\\S3\\Exception\\PermanentRedirectException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/Exception/PermanentRedirectException.php',
         'Aws\\S3\\Exception\\S3Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/Exception/S3Exception.php',
@@ -835,6 +841,8 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Aws\\Signature\\SignatureProvider' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureProvider.php',
         'Aws\\Signature\\SignatureTrait' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureTrait.php',
         'Aws\\Signature\\SignatureV4' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Signature/SignatureV4.php',
+        'Aws\\SnowBall\\Exception\\SnowBallException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/SnowBall/Exception/SnowBallException.php',
+        'Aws\\SnowBall\\SnowBallClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/SnowBall/SnowBallClient.php',
         'Aws\\Sns\\Exception\\SnsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Sns/Exception/SnsException.php',
         'Aws\\Sns\\SnsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Sns/SnsClient.php',
         'Aws\\Sqs\\Exception\\SqsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Sqs/Exception/SqsException.php',
@@ -1429,6 +1437,8 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Http\\Client\\Exception\\TransferException' => __DIR__ . '/..' . '/php-http/httplug/src/Exception/TransferException.php',
         'Http\\Client\\HttpAsyncClient' => __DIR__ . '/..' . '/php-http/httplug/src/HttpAsyncClient.php',
         'Http\\Client\\HttpClient' => __DIR__ . '/..' . '/php-http/httplug/src/HttpClient.php',
+        'Http\\Client\\Promise\\HttpFulfilledPromise' => __DIR__ . '/..' . '/php-http/httplug/src/Promise/HttpFulfilledPromise.php',
+        'Http\\Client\\Promise\\HttpRejectedPromise' => __DIR__ . '/..' . '/php-http/httplug/src/Promise/HttpRejectedPromise.php',
         'Http\\Discovery\\ClassDiscovery' => __DIR__ . '/..' . '/php-http/discovery/src/ClassDiscovery.php',
         'Http\\Discovery\\HttpAsyncClientDiscovery' => __DIR__ . '/..' . '/php-http/discovery/src/HttpAsyncClientDiscovery.php',
         'Http\\Discovery\\HttpClientDiscovery' => __DIR__ . '/..' . '/php-http/discovery/src/HttpClientDiscovery.php',
@@ -1463,6 +1473,7 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Http\\Message\\Encoding\\GzipEncodeStream' => __DIR__ . '/..' . '/php-http/message/src/Encoding/GzipEncodeStream.php',
         'Http\\Message\\Encoding\\InflateStream' => __DIR__ . '/..' . '/php-http/message/src/Encoding/InflateStream.php',
         'Http\\Message\\Formatter' => __DIR__ . '/..' . '/php-http/message/src/Formatter.php',
+        'Http\\Message\\Formatter\\FullHttpMessageFormatter' => __DIR__ . '/..' . '/php-http/message/src/Formatter/FullHttpMessageFormatter.php',
         'Http\\Message\\Formatter\\SimpleFormatter' => __DIR__ . '/..' . '/php-http/message/src/Formatter/SimpleFormatter.php',
         'Http\\Message\\MessageFactory' => __DIR__ . '/..' . '/php-http/message-factory/src/MessageFactory.php',
         'Http\\Message\\MessageFactory\\DiactorosMessageFactory' => __DIR__ . '/..' . '/php-http/message/src/MessageFactory/DiactorosMessageFactory.php',
@@ -3540,6 +3551,8 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
         'Zend\\Db\\Sql\\Platform\\SqlServer\\Ddl\\CreateTableDecorator' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Platform/SqlServer/Ddl/CreateTableDecorator.php',
         'Zend\\Db\\Sql\\Platform\\SqlServer\\SelectDecorator' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Platform/SqlServer/SelectDecorator.php',
         'Zend\\Db\\Sql\\Platform\\SqlServer\\SqlServer' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Platform/SqlServer/SqlServer.php',
+        'Zend\\Db\\Sql\\Platform\\Sqlite\\SelectDecorator' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Platform/Sqlite/SelectDecorator.php',
+        'Zend\\Db\\Sql\\Platform\\Sqlite\\Sqlite' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Platform/Sqlite/Sqlite.php',
         'Zend\\Db\\Sql\\Predicate\\Between' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Predicate/Between.php',
         'Zend\\Db\\Sql\\Predicate\\Expression' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Predicate/Expression.php',
         'Zend\\Db\\Sql\\Predicate\\In' => __DIR__ . '/..' . '/zendframework/zend-db/src/Sql/Predicate/In.php',
@@ -5354,10 +5367,10 @@ class ComposerStaticInitf5ef73884248aed6b9452485da652bb0
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf5ef73884248aed6b9452485da652bb0::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf5ef73884248aed6b9452485da652bb0::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitf5ef73884248aed6b9452485da652bb0::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitf5ef73884248aed6b9452485da652bb0::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf2a561e6eea3f1284d64805a71106219::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf2a561e6eea3f1284d64805a71106219::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitf2a561e6eea3f1284d64805a71106219::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitf2a561e6eea3f1284d64805a71106219::$classMap;
 
         }, null, ClassLoader::class);
     }
