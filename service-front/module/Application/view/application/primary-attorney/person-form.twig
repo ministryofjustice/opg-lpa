@@ -1,7 +1,7 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Create a lasting power of attorney 
+    Create a lasting power of attorney
 {% endblock %}
 
 {% block content %}
@@ -43,7 +43,7 @@
     }
 }) %}
 
-{# Set form fields variables #}  
+{# Set form fields variables #}
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
@@ -99,8 +99,6 @@
     id: 'dob-date-year',
     type: 'number',
     class: 'form-control',
-    min: '1866',
-    max: '2016',
     pattern: '[0-9]*'
 })  ? ''}}
 
@@ -220,7 +218,7 @@
         {{ macros.formGroup(email) }}
 
     </fieldset>
-    
+
     <h2 class="heading-medium">What is the attorney's address?</h2>
 
     <fieldset class="postcodelookup">
@@ -235,7 +233,7 @@
 
     <input type="submit" name="submit" id="form-save" value="Save details" class="button">
     <a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
-    
+
 {{ form().closeTag|raw }}
 
 {% endblock %}

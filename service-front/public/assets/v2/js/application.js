@@ -4824,6 +4824,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           if (!$target.hasClass('confirmation-validation')) {
             // If the input changed is not a confirmation tick box, then do the form checks...
 
+
             // Are we editing the name fields?
             if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
 
@@ -4863,43 +4864,36 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             // Are we editing the DOB?
             if ($target.parents('.dob-element').length) {
 
-              $dobGroup = $dobElement.parents('.group');
-              $dobGroup.removeClass('validation');
-              $dobGroup.find('.form-element-errors').remove();
+              // Cleanup
               $('.js-age-check').remove();
 
               dob = getDOB();
               if (dob !== null) {
 
+                // Display alerts if under 18 or over 100 years old
+                // Under 18
                 if (dob > minAge) {
-                  $dobGroup.addClass('validation');
-                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                  actionGroup.before($(tplInputCheckbox({
-                    'elementJSref': 'js-age-check',
-                    'elementName': 'ageCheck',
-                    'elementLabel': 'This attorney is currently under 18. I understand they must be at least 18 <strong>when the donor sign the LPA,</strong> otherwise it may be rejected.'
-                  })).addClass('validation'));
-
+                  $('.dob-element', $form)
+                    .after($(tplAlert({
+                      'elementJSref': 'js-age-check',
+                      'alertType': 'important-small',
+                      'alertMessage': 'This attorney is currently under 18. I understand they must be at least 18 <strong class="bold-small">when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                    })));
                 }
+                // Over 100
                 else if (dob <= maxAge) {
-                  $dobGroup.addClass('validation');
-                  $dobGroup.append(tplFormElementErrors({'validationMessage': 'Please confirm age' }));
-                  actionGroup.before($(tplInputCheckbox({
-                    'elementJSref': 'js-age-check',
-                    'elementName': 'ageCheck',
-                    'elementLabel': 'Please confirm that they are over 100 years old.'
-                  })).addClass('validation'));
-
+                  $('.dob-element', $form)
+                    .after($(tplAlert({
+                      'elementJSref': 'js-age-check',
+                      'alertType': 'important-small',
+                      'alertMessage': 'Please confirm that they are over 100 years old.'
+                    })));
                 }
+
+                // Focus on alert panel for accessibility
+                $('.alert.panel').focus();
 
               }
-
-            }
-
-
-            $('.validation-summary').remove();
-            if ($form.find('.group.validation').length > 0) {
-              $form.prepend(tplErrorsFormSummary());
 
             }
 
