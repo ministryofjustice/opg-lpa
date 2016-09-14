@@ -137,8 +137,14 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
          * Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
          */
         if( class_exists('\MongoDate') && $value instanceof \MongoDate ){
-            // sprintf %06d ensures a full 6 digit value is returns, even if there are prefixing zeros.
-            $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".".sprintf("%06d", $value->usec)."+0000" );
+
+            if( (float)phpversion("mongo") >= 1.6 ){
+                $value = $value->toDateTime();
+            } else {
+                // sprintf %06d ensures a full 6 digit value is returns, even if there are prefixing zeros.
+                $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".".sprintf("%06d", $value->usec)."+0000" );
+            }
+
         }
 
         //---
