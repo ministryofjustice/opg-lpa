@@ -644,7 +644,7 @@ class FormFlowChecker extends StateChecker
 
     private function isFeeReductionAccessible()
     {
-        if(array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata)) {
+        if( $this->isRepeatApplicationAccessible() === true && array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata)) {
             return true;
         }
         else {

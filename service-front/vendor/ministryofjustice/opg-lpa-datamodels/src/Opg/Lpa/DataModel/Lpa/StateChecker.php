@@ -238,8 +238,11 @@ class StateChecker {
      */
     protected function lpaHasFinishedCreation()
     {
-        return ($this->lpaHasCertificateProvider() &&
-                (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)));
+        return (
+                $this->lpaHasCertificateProvider() &&
+                (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)) &
+                ( !$this->lpaHasMultiplePrimaryAttorneys() || $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() )
+        );
     }
     
     /**
