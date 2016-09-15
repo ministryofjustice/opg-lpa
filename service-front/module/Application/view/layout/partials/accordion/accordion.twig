@@ -177,6 +177,7 @@
 		{{ macros.accordionBar({
 			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a>',
 			'mobile' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"from-page": routeName()|replace({'lpa/':''}), "lpa-id": lpa.id}) ~ '">review your LPA</a>',
+            'titleBoxCssClass': 'title-box--full'
 		})
 		}}
 	{% endif %}
