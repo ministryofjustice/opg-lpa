@@ -93,6 +93,11 @@
         margin-right: 92px;
         padding-right: 130px;
         border-right: 6px solid $white;
+        &--full {
+            margin-right: 0;
+            padding-right: 0;
+            border-right: none;
+        }
     }
 
     &.wide-label {

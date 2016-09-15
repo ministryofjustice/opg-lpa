@@ -2952,6 +2952,10 @@ input[type=number] {
     margin-right: 92px;
     padding-right: 130px;
     border-right: 6px solid #fff; }
+    .accordion-summary .title-box--full {
+      margin-right: 0;
+      padding-right: 0;
+      border-right: none; }
   .accordion-summary.wide-label .title-box {
     padding-right: 215px; }
   .accordion-summary .label-and-edit-box {

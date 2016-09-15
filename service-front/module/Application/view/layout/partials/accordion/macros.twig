@@ -2,7 +2,7 @@
 
 <li class="section complete">
     <div class="accordion-summary {% if data.cssClass is defined %}{{ data.cssClass }}{% endif %}">
-        <div class="title-box">
+        <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %}">
             <p class="title flush--ends tablet-and-up">{{ data.desktop|raw }}</p>
         </div>
         {% if data.edit is defined %}
@@ -18,6 +18,11 @@
                 <span class="label">{{ data.status }}</span>
             {% endif %}
         </div>
+        {% else %}
+            {# No edit link. This is currently only for the 'review your LPA' bar #}
+            <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %} mobile">
+                <p class="title flush--ends hard--left">{{ data.mobile|raw }}</p>
+            </div>
         {% endif %}
     </div>
 </li>
