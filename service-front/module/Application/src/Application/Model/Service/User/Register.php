@@ -9,6 +9,8 @@ use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 
+use Opg\Lpa\Api\Client\Response\ErrorInterface as ApiClientError;
+
 class Register implements ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
@@ -26,20 +28,15 @@ class Register implements ServiceLocatorAwareInterface {
         // A successful response is a string...
         if( !is_string($activationToken) ){
 
-            // Error...
-            $body = $client->getLastContent();
+            if( $activationToken instanceof ApiClientError ){
 
-            if( isset($body['reason']) ){
-                return trim( $body['reason'] );
-            } elseif( isset($body['detail']) ){
-
-                if( $body['detail'] == 'username-already-exists' ){
+                if( $activationToken->getDetail() == 'username-already-exists' ){
                     return "address-already-registered";
-                } else {
-                    return trim( $body['error_description'] );
                 }
 
-            } // if
+                return $activationToken->getDetail();
+
+            }
 
             return "unknown-error";
 
