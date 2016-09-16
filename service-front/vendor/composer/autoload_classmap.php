@@ -999,6 +999,8 @@ return array(
     'Opg\\Lpa\\Api\\Client\\Exception\\ResponseException' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Exception/ResponseException.php',
     'Opg\\Lpa\\Api\\Client\\Exception\\RuntimeException' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Exception/RuntimeException.php',
     'Opg\\Lpa\\Api\\Client\\Response\\AuthResponse' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/AuthResponse.php',
+    'Opg\\Lpa\\Api\\Client\\Response\\Error' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/Error.php',
+    'Opg\\Lpa\\Api\\Client\\Response\\ErrorInterface' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/ErrorInterface.php',
     'Opg\\Lpa\\Api\\Client\\Response\\Lpa' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/Lpa.php',
     'Opg\\Lpa\\Api\\Client\\Response\\LpaStatusResponse' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/LpaStatusResponse.php',
     'Opg\\Lpa\\Api\\Client\\Service\\ApplicationResourceService' => $vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Service/ApplicationResourceService.php',
