@@ -57,14 +57,6 @@ trait ClientGuzzleTrait
 
 
     /**
-     * @return the $authBaseUri
-     */
-    public function getAuthBaseUri()
-    {
-        return $this->authBaseUri;
-    }
-
-    /**
      * @param field_type $apiBaseUri
      */
     public function setApiBaseUri($apiBaseUri)
@@ -118,40 +110,7 @@ trait ClientGuzzleTrait
 
     }
     
-    /**
-     * Register a new account
-     *
-     * @param array $params
-     * @return string $activationToken | boolean false
-     */
-    public function registerAccount(
-        $email,
-        $password
-    )
-    {
 
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users' ,[
-            'body' => [
-                'Username' => strtolower($email),
-                'Password' => $password,
-            ]
-        ]);
-        
-        if( $response->getStatusCode() != 200 ){
-            return $this->log($response, false);
-        }
-        
-        $jsonDecode = json_decode($response->getBody());
-        
-        if (!property_exists($jsonDecode, 'activation_token')) {
-            return $this->log($response, false);
-        }
-        
-        $this->log($response, true);
-        
-        return $jsonDecode->activation_token;
-    }
-    
     /**
      * Create a new LPA
      *
@@ -264,113 +223,6 @@ trait ClientGuzzleTrait
         } while (!is_null($path));
         
         return $applicationList;
-    }
-
-    
-    /**
-     * Activate an account from an activation token (generated at registration)
-     *
-     * @param string $activationToken
-     * @return boolean
-     */
-    public function activateAccount(
-        $activationToken
-    )
-    {
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users/activate' ,[
-            'body' => [
-                'Token' => $activationToken,
-            ]
-        ]);
-        
-        if ($response->getStatusCode() != 204) {
-            return $this->log($response, false);
-        }
-
-        return $this->log($response, true);
-    }
-    
-    /**
-     * Authenticate against the authentication server and store the token
-     * for future calls.
-     *
-     * @param string $email
-     * @param string $password
-     *
-     * @return AuthResponse
-     */
-    public function authenticate(
-        $email,
-        $password
-    )
-    {
-
-        $authResponse = new AuthResponse();
-
-        //-------------------------
-        // Authenticate the user
-
-        $response = $this->client()->post( $this->authBaseUri . '/v1/authenticate' ,[
-            'body' => [
-                'Username' => strtolower($email),
-                'Password' => $password,
-            ]
-        ]);
-
-        if( $response->getStatusCode() != 200 ){
-            $this->log($response, false);
-            
-            $json = $response->json();
-
-            if( isset($json['detail']) && $json['detail'] == 'account-locked/max-login-attempts' ){
-                return $authResponse->setErrorDescription( "locked" );
-            }
-
-            if( isset($json['detail']) && $json['detail'] == 'account-not-active' ){
-                return $authResponse->setErrorDescription( "not-activated" );
-            }
-
-            return $authResponse->setErrorDescription( "authentication-failed" );
-
-        }
-
-        $authResponse->exchangeJson( $response->getBody() );
-
-        //---
-
-        // Cache a local copy of the details.
-
-        $this->setUserId( $authResponse->getUserId() );
-        $this->setToken( $authResponse->getToken() );
-        $this->setEmail( $authResponse->getUsername() );
-
-        //---
-
-        return $authResponse;
-
-    }
-
-    /**
-     * Gets all the info relating to a token from the authentication service.
-     *
-     * @param string $token
-     * @return array|boolean Token details or false if token invalid
-     */
-    public function getTokenInfo($token)
-    {
-
-        $response = $this->client()->post( $this->authBaseUri . '/v1/authenticate' ,[
-            'body' => [
-                'Token' => $token,
-            ]
-        ]);
-
-        if( $response->getStatusCode() != 200 ){
-            return false;
-        }
-
-        return $response->json();
-
     }
 
     /**
