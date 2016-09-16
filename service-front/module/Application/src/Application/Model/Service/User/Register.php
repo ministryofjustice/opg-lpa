@@ -116,24 +116,23 @@ class Register implements ServiceLocatorAwareInterface {
 
         /**
          * This returns:
-         *      TRUE - If the user account exists. The account has been activated, or was already activated.
-         *      FALSE - If the user account does not exist.
+         *      TRUE - If the user account exists. The account has been activated.
+         *      ApiClientError - If the user account does not exist, or was already activated.
          *
-         *  Alas no other details are returned.
          */
-        $success = $client->activateAccount( $token );
+        $result = $client->activateAccount( $token );
 
-        if ($success) {
+        if ( $result === true ) {
             $this->getServiceLocator()->get('Logger')->info(
-                'Account activation attempt with token was successful, or was already activated'
+                'Account activation attempt with token was successful'
             );
         } else {
             $this->getServiceLocator()->get('Logger')->info(
-                'Account activation attempt with token failed'
+                'Account activation attempt with token failed, or was already activated'
             );
         }
         
-        return $success;
+        return ( $result === true );
 
     } // function
 
