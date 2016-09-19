@@ -1,24 +1,5 @@
 @charset "UTF-8";
 /* govuk_frontend_toolkit includes */
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
@@ -35,20 +16,12 @@
 .grid-row, #global-breadcrumb {
   margin: 0 -15px; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 /* local styleguide includes */
 /* Old depricated greys, new things should use the toolkit greys */
 html, body, button, input, table, td, th {
@@ -121,10 +94,10 @@ a:visited {
   color: #4c2c92; }
 
 a:hover {
-  color: #2e8aca; }
+  color: #2b8cc4; }
 
 a:active {
-  color: #2e8aca; }
+  color: #2b8cc4; }
 
 a[rel="external"]:after {
   background-image: url("/assets/v2/images/external-links/external-link.png");
@@ -141,9 +114,9 @@ a[rel="external"]:hover:after {
 
 .external-link:after {
   content: "        ";
-  background-position: right 0px; }
+  background-position: right 0; }
 .external-link:hover:after {
-  background-position: right 0px; }
+  background-position: right 0; }
 .external-link:after {
   background-image: url("/assets/v2/images/external-links/external-link-black-12x12.png");
   background-repeat: no-repeat; }
@@ -288,20 +261,12 @@ button:focus,
 #global-header a:focus {
   color: #0b0c0c; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 #global-header {
   background-color: #0b0c0c;
   width: 100%; }
@@ -628,21 +593,6 @@ button:focus,
             background-image: url("images/govuk-crest-2x.png");
             background-size: 125px 102px; } }
 
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
@@ -659,48 +609,18 @@ button:focus,
 .grid-row, #global-breadcrumb {
   margin: 0 -15px; }
 
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
@@ -717,20 +637,12 @@ button:focus,
 .grid-row, #global-breadcrumb {
   margin: 0 -15px; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .grid-row:after, #global-breadcrumb:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-group:after, .form-block:after, .accordion:after, .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
 .example-highlight-grid .grid-row {
   background: #bfc1c3; }
 .example-highlight-grid .column-highlight {
@@ -960,6 +872,7 @@ main {
     text-transform: none;
     font-size: 27px;
     line-height: 1.11111;
+    display: block;
     padding-top: 8px;
     padding-bottom: 7px;
     padding-top: 4px;
@@ -987,6 +900,7 @@ main {
     text-transform: none;
     font-size: 24px;
     line-height: 1.25;
+    display: block;
     padding-top: 9px;
     padding-bottom: 6px;
     padding-top: 6px;
@@ -1048,7 +962,7 @@ p {
   color: #4c2c92; }
 
 .link:hover {
-  color: #2e8aca; }
+  color: #2b8cc4; }
 
 .link:active {
   color: #005ea5; }
@@ -1135,7 +1049,7 @@ hr {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
-  padding: 0.3em 0.6em 0.2em 0.6em;
+  padding: .526315em .789473em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -1198,7 +1112,7 @@ hr {
     margin-left: 0;
     margin-right: 0; }
   .button[type="submit"], .ui-datepicker .ui-datepicker-buttonpane [type="submit"].ui-priority-primary, .button[type="reset"], .ui-datepicker .ui-datepicker-buttonpane [type="reset"].ui-priority-primary, .button[type="button"], .ui-datepicker .ui-datepicker-buttonpane [type="button"].ui-priority-primary {
-    filter: chroma(color=#000000); }
+    filter: chroma(color=#0b0c0c); }
   .button[type=submit].button, .ui-datepicker .ui-datepicker-buttonpane [type=submit].ui-priority-primary {
     filter: none; }
 
@@ -1523,7 +1437,7 @@ details {
     position: relative;
     margin-bottom: 0.26316em; }
     details summary:hover {
-      color: #2e8aca; }
+      color: #2b8cc4; }
     details summary:focus {
       outline: 3px solid #ffbf47; }
   details .summary {
@@ -1837,10 +1751,11 @@ input[type=number] {
       margin-right: 0; }
 
 .phase-banner-alpha {
-  padding: 10px 0 8px 0;
+  padding: 10px 0 8px;
   padding-bottom: 10px;
   border-bottom: 1px solid #bfc1c3; }
   .phase-banner-alpha p {
+    display: table;
     margin: 0;
     color: #000;
     font-family: "nta", Arial, sans-serif;
@@ -1853,8 +1768,6 @@ input[type=number] {
   .phase-banner-alpha .phase-tag {
     display: -moz-inline-stack;
     display: inline-block;
-    vertical-align: top;
-    vertical-align: baseline;
     margin: 0 8px 0 0;
     padding: 2px 5px 0;
     font-family: "nta", Arial, sans-serif;
@@ -1870,14 +1783,15 @@ input[type=number] {
     color: #fff;
     background-color: #d53880; }
   .phase-banner-alpha span {
-    vertical-align: top;
+    display: table-cell;
     vertical-align: baseline; }
 
 .phase-banner-beta {
-  padding: 10px 0 8px 0;
+  padding: 10px 0 8px;
   padding-bottom: 10px;
   border-bottom: 1px solid #bfc1c3; }
   .phase-banner-beta p {
+    display: table;
     margin: 0;
     color: #000;
     font-family: "nta", Arial, sans-serif;
@@ -1890,8 +1804,6 @@ input[type=number] {
   .phase-banner-beta .phase-tag {
     display: -moz-inline-stack;
     display: inline-block;
-    vertical-align: top;
-    vertical-align: baseline;
     margin: 0 8px 0 0;
     padding: 2px 5px 0;
     font-family: "nta", Arial, sans-serif;
@@ -1907,7 +1819,7 @@ input[type=number] {
     color: #fff;
     background-color: #f47738; }
   .phase-banner-beta span {
-    vertical-align: top;
+    display: table-cell;
     vertical-align: baseline; }
 
 .govuk-box-highlight {
@@ -1941,6 +1853,7 @@ input[type=number] {
     text-transform: none;
     font-size: 27px;
     line-height: 1.11111;
+    display: block;
     padding-top: 8px;
     padding-bottom: 7px;
     padding-top: 4px;
@@ -1968,6 +1881,7 @@ input[type=number] {
     text-transform: none;
     font-size: 24px;
     line-height: 1.25;
+    display: block;
     padding-top: 9px;
     padding-bottom: 6px;
     padding-top: 6px;
@@ -2197,7 +2111,7 @@ input[type=number] {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
-  padding: 0.3em 0.6em 0.2em 0.6em;
+  padding: .526315em .789473em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -2255,7 +2169,7 @@ input[type=number] {
     margin-left: 0;
     margin-right: 0; }
   .button-secondary[type="submit"], .ui-datepicker .ui-datepicker-header [type="submit"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [type="submit"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [type="submit"].ui-priority-secondary, .button-secondary[type="reset"], .ui-datepicker .ui-datepicker-header [type="reset"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [type="reset"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [type="reset"].ui-priority-secondary, .button-secondary[type="button"], .ui-datepicker .ui-datepicker-header [type="button"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [type="button"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [type="button"].ui-priority-secondary {
-    filter: chroma(color=#000000); }
+    filter: chroma(color=#0b0c0c); }
   .button-secondary[type=submit].button, .ui-datepicker .ui-datepicker-header [type=submit].button.ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-buttonpane [type=submit].ui-datepicker-prev.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .ui-datepicker-header [type=submit].ui-datepicker-prev.ui-priority-primary, .ui-datepicker .ui-datepicker-header [type=submit].button.ui-datepicker-next, .ui-datepicker .ui-datepicker-header .ui-datepicker-buttonpane [type=submit].ui-datepicker-next.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .ui-datepicker-header [type=submit].ui-datepicker-next.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane [type=submit].button.ui-priority-secondary, .ui-datepicker .ui-datepicker-buttonpane [type=submit].ui-priority-secondary.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .button-secondary[type=submit].ui-priority-primary {
     filter: none; }
 
@@ -2264,7 +2178,7 @@ input[type=number] {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
-  padding: 0.3em 0.6em 0.2em 0.6em;
+  padding: .526315em .789473em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -2322,7 +2236,7 @@ input[type=number] {
     margin-left: 0;
     margin-right: 0; }
   .button-warning[type="submit"], .button-warning[type="reset"], .button-warning[type="button"] {
-    filter: chroma(color=#000000); }
+    filter: chroma(color=#0b0c0c); }
   .button-warning[type=submit].button, .ui-datepicker .ui-datepicker-buttonpane .button-warning[type=submit].ui-priority-primary {
     filter: none; }
 
@@ -2621,7 +2535,7 @@ input[type=number] {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
-  padding: 0.3em 0.6em 0.2em 0.6em;
+  padding: .526315em .789473em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -2679,7 +2593,7 @@ input[type=number] {
     margin-left: 0;
     margin-right: 0; }
   .button-secondary[type="submit"], .ui-datepicker .ui-datepicker-header [type="submit"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [type="submit"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [type="submit"].ui-priority-secondary, .button-secondary[type="reset"], .ui-datepicker .ui-datepicker-header [type="reset"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [type="reset"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [type="reset"].ui-priority-secondary, .button-secondary[type="button"], .ui-datepicker .ui-datepicker-header [type="button"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [type="button"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [type="button"].ui-priority-secondary {
-    filter: chroma(color=#000000); }
+    filter: chroma(color=#0b0c0c); }
   .button-secondary[type=submit].button, .ui-datepicker .ui-datepicker-header [type=submit].button.ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-buttonpane [type=submit].ui-datepicker-prev.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .ui-datepicker-header [type=submit].ui-datepicker-prev.ui-priority-primary, .ui-datepicker .ui-datepicker-header [type=submit].button.ui-datepicker-next, .ui-datepicker .ui-datepicker-header .ui-datepicker-buttonpane [type=submit].ui-datepicker-next.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .ui-datepicker-header [type=submit].ui-datepicker-next.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane [type=submit].button.ui-priority-secondary, .ui-datepicker .ui-datepicker-buttonpane [type=submit].ui-priority-secondary.ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .button-secondary[type=submit].ui-priority-primary {
     filter: none; }
 
@@ -2688,7 +2602,7 @@ input[type=number] {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
-  padding: 0.3em 0.6em 0.2em 0.6em;
+  padding: .526315em .789473em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -2746,7 +2660,7 @@ input[type=number] {
     margin-left: 0;
     margin-right: 0; }
   .button-warning[type="submit"], .button-warning[type="reset"], .button-warning[type="button"] {
-    filter: chroma(color=#000000); }
+    filter: chroma(color=#0b0c0c); }
   .button-warning[type=submit].button, .ui-datepicker .ui-datepicker-buttonpane .button-warning[type=submit].ui-priority-primary {
     filter: none; }
 
@@ -2920,7 +2834,7 @@ input[type=number] {
     position: relative;
     display: -moz-inline-stack;
     display: inline-block;
-    padding: 0.3em 0.6em 0.2em 0.6em;
+    padding: .526315em .789473em .263157em;
     border: none;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
@@ -2978,7 +2892,7 @@ input[type=number] {
       margin-left: 0;
       margin-right: 0; }
     .person-actions .action-edit[type="submit"], .person-actions .action-edit[type="reset"], .person-actions .action-edit[type="button"] {
-      filter: chroma(color=#000000); }
+      filter: chroma(color=#0b0c0c); }
     .person-actions .action-edit[type=submit].button, .person-actions .ui-datepicker .ui-datepicker-buttonpane .action-edit[type=submit].ui-priority-primary, .ui-datepicker .ui-datepicker-buttonpane .person-actions .action-edit[type=submit].ui-priority-primary {
       filter: none; }
   .person-actions .action-delete {
