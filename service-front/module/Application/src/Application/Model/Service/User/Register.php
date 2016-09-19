@@ -9,6 +9,8 @@ use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 
+use Opg\Lpa\Api\Client\Response\ErrorInterface as ApiClientError;
+
 class Register implements ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
@@ -26,20 +28,15 @@ class Register implements ServiceLocatorAwareInterface {
         // A successful response is a string...
         if( !is_string($activationToken) ){
 
-            // Error...
-            $body = $client->getLastContent();
+            if( $activationToken instanceof ApiClientError ){
 
-            if( isset($body['reason']) ){
-                return trim( $body['reason'] );
-            } elseif( isset($body['detail']) ){
-
-                if( $body['detail'] == 'username-already-exists' ){
+                if( $activationToken->getDetail() == 'username-already-exists' ){
                     return "address-already-registered";
-                } else {
-                    return trim( $body['error_description'] );
                 }
 
-            } // if
+                return $activationToken->getDetail();
+
+            }
 
             return "unknown-error";
 
@@ -119,24 +116,23 @@ class Register implements ServiceLocatorAwareInterface {
 
         /**
          * This returns:
-         *      TRUE - If the user account exists. The account has been activated, or was already activated.
-         *      FALSE - If the user account does not exist.
+         *      TRUE - If the user account exists. The account has been activated.
+         *      ApiClientError - If the user account does not exist, or was already activated.
          *
-         *  Alas no other details are returned.
          */
-        $success = $client->activateAccount( $token );
+        $result = $client->activateAccount( $token );
 
-        if ($success) {
+        if ( $result === true ) {
             $this->getServiceLocator()->get('Logger')->info(
-                'Account activation attempt with token was successful, or was already activated'
+                'Account activation attempt with token was successful'
             );
         } else {
             $this->getServiceLocator()->get('Logger')->info(
-                'Account activation attempt with token failed'
+                'Account activation attempt with token failed, or was already activated'
             );
         }
         
-        return $success;
+        return ( $result === true );
 
     } // function
 

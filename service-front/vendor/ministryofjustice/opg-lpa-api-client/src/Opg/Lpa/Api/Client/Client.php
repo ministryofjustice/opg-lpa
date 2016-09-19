@@ -49,12 +49,192 @@ class Client {
      */
     private $token;
 
-
-
     //------------------------------------------------------------------------------------
     // Public Auth access methods
 
+    /**
+     * Authenticate the user with an email address and password.
+     *
+     * @param $email
+     * @param $password
+     * @return Response\AuthResponse
+     */
+    public function authenticate( $email, $password ){
 
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/authenticate' );
+
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Username' => strtolower($email),
+                'Password' => $password,
+            ]);
+
+            if( $response->getStatusCode() == 200 ){
+
+                $authResponse = Response\AuthResponse::buildFromResponse( $response );
+
+                $this->setUserId( $authResponse->getUserId() );
+                $this->setToken( $authResponse->getToken() );
+                $this->setEmail( $authResponse->getUsername() );
+
+                return $authResponse;
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+
+            switch ( $e->getDetail() ) {
+                case 'account-locked/max-login-attempts':
+                    return (new Response\AuthResponse)->setErrorDescription( 'locked' );
+                case 'account-not-active':
+                    return (new Response\AuthResponse)->setErrorDescription( 'not-activated' );
+            }
+
+        }
+
+        return (new Response\AuthResponse)->setErrorDescription( 'authentication-failed' );
+
+    } // function
+
+
+    /**
+     * Registers an (unactivated) account with Auth and returns the activation token as a string.
+     *
+     * @param $email
+     * @param $password
+     * @return string|\Exception|Exception\ResponseException
+     */
+    public function registerAccount( $email, $password ) {
+
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/users' );
+
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Username' => strtolower($email),
+                'Password' => $password,
+            ]);
+
+            if( $response->getStatusCode() == 200 ){
+
+                $body = json_decode($response->getBody(), true);
+
+                if( isset($body['activation_token']) ){
+
+                    return $body['activation_token'];
+
+                }
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Response\Error( 'unknown-error' );
+
+    } // function
+
+
+    /**
+     * Activates an account using an Activation Token.
+     *
+     * @param $activationToken
+     * @return bool|\Exception|Exception\ResponseException|Response\Error
+     */
+    public function activateAccount( $activationToken ) {
+
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/users/activate' );
+
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Token' => $activationToken,
+            ]);
+
+            if( $response->getStatusCode() == 204 ){
+
+                return true;
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Response\Error( 'unknown-error' );
+
+    } // function
+
+
+    /**
+     * Returns user account details for a passed authentication token.
+     *
+     * @param $token
+     * @return array|Exception\ResponseException|Response\Error
+     */
+    public function getTokenInfo( $token ) {
+
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/authenticate' );
+
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Token' => $token,
+            ]);
+
+            if( $response->getStatusCode() == 200 ){
+
+                $body = json_decode($response->getBody(), true);
+
+                if( is_array($body) ){
+                    return $body;
+                }
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Response\Error( 'unknown-error' );
+
+    }
+
+    /*
+    public function getEmailFromToken( $token ) {
+
+    }
+
+    private function setEmailAndUserIdFromToken(){
+
+    }
+
+    public function deleteUserAndAllTheirLpas(){
+
+    }
+
+    public function requestPasswordReset( $email ) {
+
+    }
+
+    public function updateAuthPasswordWithToken( $token, $newPassword ) {
+
+    }
+
+    public function requestEmailUpdate( $newEmailAddress ) {
+
+    }
+
+    public function updateAuthEmail( $emailUpdateToken ) {
+
+    }
+
+    public function updateAuthPassword( $currentPassword, $newPassword ){
+
+    }
+    */
 
     //------------------------------------------------------------------------------------
     // Public API access methods
@@ -159,6 +339,8 @@ class Client {
 
             $response = $this->getHttpClient()->sendRequest( $request );
 
+            $this->setLastStatusCode( $response->getStatusCode() );
+
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
@@ -186,13 +368,15 @@ class Client {
 
             $response = $this->getHttpClient()->sendRequest($request);
 
+            $this->setLastStatusCode( $response->getStatusCode() );
+
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
 
         //---
 
-        if( $response->getStatusCode() != 201 ){
+        if( !in_array($response->getStatusCode(), [200, 201, 204]) ){
             throw $this->createErrorException( $response );
         }
 
@@ -212,6 +396,8 @@ class Client {
         try {
 
             $response = $this->getHttpClient()->sendRequest($request);
+
+            $this->setLastStatusCode( $response->getStatusCode() );
 
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
@@ -261,6 +447,14 @@ class Client {
         }
 
         return $this->userId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthBaseUri()
+    {
+        return $this->authBaseUri;
     }
 
     /**

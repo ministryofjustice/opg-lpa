@@ -3,6 +3,9 @@ namespace Opg\Lpa\Api\Client\Response;
 
 use Opg\Lpa\Api\Client\Traits\JsonSerializer;
 
+use Psr\Http\Message\ResponseInterface;
+use Opg\Lpa\Api\Client\Exception;
+
 /**
  * 
  * @author Chris Moreton
@@ -13,6 +16,39 @@ use Opg\Lpa\Api\Client\Traits\JsonSerializer;
 class AuthResponse
 {
     use JsonSerializer;
+
+    private $response;
+
+    //---------------------
+
+    public static function buildFromResponse( ResponseInterface $response ){
+
+        $body = json_decode($response->getBody(), true);
+
+        // The expected response should always be JSON, thus now an array.
+        if( !is_array($body) ){
+            throw new Exception\ResponseException( 'Malformed JSON response from server', $response->getStatusCode(), $response );
+        }
+
+        $authResponse = new static();
+
+        $authResponse->exchangeArray( $body );
+
+        $authResponse->setResponse( $response );
+
+        return $authResponse;
+
+    }
+
+    public function setResponse( ResponseInterface $response ){
+        $this->response = $response;
+    }
+
+    public function getResponse(){
+        return $this->response;
+    }
+
+    //---------------------
 
     /**
      * The ID of the currently authenticated user.
