@@ -19,13 +19,13 @@ class ClientSpec extends ObjectBehavior
     
     function it_will_return_a_registration_error_on_bad_email()
     {
-        $this->registerAccount(
+        $result = $this->registerAccount(
             'deleteme-' . uniqid() . 'example.com',
             'P$ssword' . uniqid()
         );
-         
-        $this->getLastStatusCode()->shouldBe(400);
-        $this->getLastContent()['detail']->shouldBe('invalid-username');
+
+        $result->shouldImplement('Opg\Lpa\Api\Client\Response\ErrorInterface');
+        $result->getDetail()->shouldBe('invalid-username');
     }
     
     function it_will_report_an_email_already_exists_error()
@@ -36,15 +36,14 @@ class ClientSpec extends ObjectBehavior
             $email,
             'P$assword' . uniqid()
         )->shouldBeAToken();
-         
-        $this->registerAccount(
+
+        $result = $this->registerAccount(
             $email,
             'P$assword' . uniqid()
         );
-         
-        $this->getLastStatusCode()->shouldBe(400);
-         
-        $this->getLastContent()['detail']->shouldBe('username-already-exists');
+
+        $result->shouldImplement('Opg\Lpa\Api\Client\Response\ErrorInterface');
+        $result->getDetail()->shouldBe('username-already-exists');
     }
     
     function it_can_activate_a_registered_account()
@@ -59,14 +58,11 @@ class ClientSpec extends ObjectBehavior
      
     function it_will_not_activate_when_given_a_bad_token()
     {
-        $this->activateAccount('IAmABadToken')->shouldBe(false);
-    }
-    
-    function it_will_log_an_activation_failure()
-    {
-        $this->activateAccount('IAmABadToken')->shouldBe(false);
-    
-        $this->getLastStatusCode()->shouldBe(400);
+        $result = $this->activateAccount('IAmABadToken');
+
+        $result->shouldImplement('Opg\Lpa\Api\Client\Response\ErrorInterface');
+        $result->getDetail()->shouldBe('account-not-found');
+
     }
     
     /**

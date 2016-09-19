@@ -1561,6 +1561,8 @@ class ComposerStaticInitf2a561e6eea3f1284d64805a71106219
         'Opg\\Lpa\\Api\\Client\\Exception\\ResponseException' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Exception/ResponseException.php',
         'Opg\\Lpa\\Api\\Client\\Exception\\RuntimeException' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Exception/RuntimeException.php',
         'Opg\\Lpa\\Api\\Client\\Response\\AuthResponse' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/AuthResponse.php',
+        'Opg\\Lpa\\Api\\Client\\Response\\Error' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/Error.php',
+        'Opg\\Lpa\\Api\\Client\\Response\\ErrorInterface' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/ErrorInterface.php',
         'Opg\\Lpa\\Api\\Client\\Response\\Lpa' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/Lpa.php',
         'Opg\\Lpa\\Api\\Client\\Response\\LpaStatusResponse' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Response/LpaStatusResponse.php',
         'Opg\\Lpa\\Api\\Client\\Service\\ApplicationResourceService' => __DIR__ . '/..' . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client/Service/ApplicationResourceService.php',
