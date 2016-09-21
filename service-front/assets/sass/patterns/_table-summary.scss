@@ -21,6 +21,10 @@
             padding-right: 0;
             border: 0;
         }
+
+        @include ie-lte(8) {
+            width: auto;
+        }
     }
 
     th {
@@ -56,6 +60,10 @@
         position: absolute;
         top: 12px;
         border: 0;
+    }
+
+    @include ie-lte(8) {
+        position: static;
     }
 }
 
