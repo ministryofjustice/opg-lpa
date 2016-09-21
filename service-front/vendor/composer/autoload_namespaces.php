@@ -15,7 +15,6 @@ return array(
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
     'Raven_' => array($vendorDir . '/raven/raven/lib'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
     'Omnipay\\Common\\' => array($vendorDir . '/omnipay/common/src'),
     'Michelf' => array($vendorDir . '/michelf/php-markdown'),

@@ -76,7 +76,6 @@ class Client {
 
                 $this->setUserId( $authResponse->getUserId() );
                 $this->setToken( $authResponse->getToken() );
-                $this->setEmail( $authResponse->getUsername() );
 
                 return $authResponse;
 
@@ -132,7 +131,7 @@ class Client {
             return $e;
         }
 
-        return new Response\Error( 'unknown-error' );
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
 
     } // function
 
@@ -154,16 +153,14 @@ class Client {
             ]);
 
             if( $response->getStatusCode() == 204 ){
-
                 return true;
-
             }
 
         } catch ( Exception\ResponseException $e ){
             return $e;
         }
 
-        return new Response\Error( 'unknown-error' );
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
 
     } // function
 
@@ -198,43 +195,235 @@ class Client {
             return $e;
         }
 
-        return new Response\Error( 'unknown-error' );
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
 
-    }
+    } // function
 
-    /*
-    public function getEmailFromToken( $token ) {
 
-    }
-
-    private function setEmailAndUserIdFromToken(){
-
-    }
-
+    /**
+     * Deletes all of a user's LPAs, and then deletes the user's account on Auth.
+     *
+     * @return bool|\Exception|Exception\ResponseException|Response\Error
+     */
     public function deleteUserAndAllTheirLpas(){
 
-    }
+        $success = $this->deleteAllLpas();
 
+        if (!$success) {
+            return new Response\Error( 'cannot-delete-lpas' );
+        }
+
+        //---
+
+        $path = sprintf( '/v1/users/%s', $this->getUserId() );
+
+        $url = new Uri( $this->getAuthBaseUri() . $path );
+
+        try {
+
+            $response = $this->httpDelete( $url );
+
+            if( $response->getStatusCode() == 204 ){
+                return true;
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
+
+    } // function
+
+
+    /**
+     * Returns a password reset token for a given email address.
+     *
+     * @param $email
+     * @return string|\Exception|mixed|Exception\ResponseException|Response\Error
+     */
     public function requestPasswordReset( $email ) {
 
-    }
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/users/password-reset' );
 
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Username' => strtolower($email),
+            ]);
+
+            if( $response->getStatusCode() == 200 ){
+
+                $body = json_decode($response->getBody(), true);
+
+                if( is_array($body) ){
+
+                    // If we have the token, return it.
+                    if( isset($body['token']) ){
+                        return $body['token'];
+                    }
+
+                    // If we have activation_token, then the account has not been activated.
+                    if( isset($body['activation_token']) ){
+                        return new Exception\ResponseException( 'account-not-activated', $response->getStatusCode(), $response );
+                    }
+
+                } // if
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
+
+    } // function
+
+
+    /**
+     * Takes a password reset token to apply a new password to a user account.
+     *
+     * @param $token
+     * @param $newPassword
+     * @return bool|\Exception|Exception\ResponseException|Response\Error
+     */
     public function updateAuthPasswordWithToken( $token, $newPassword ) {
 
-    }
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/users/password-reset-update' );
 
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Token' => $token,
+                'NewPassword' => $newPassword,
+            ]);
+
+
+            if( $response->getStatusCode() == 204 ){
+                return true;
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
+
+    } // function
+
+
+    /**
+     * Returns a token to be used for updating the current user's email address.
+     *
+     * @param $newEmailAddress
+     * @return string|\Exception|Exception\ResponseException|Response\Error
+     */
     public function requestEmailUpdate( $newEmailAddress ) {
 
-    }
+        $path = sprintf( '/v1/users/%s/email/%s', $this->getUserId(), $newEmailAddress );
 
+        $url = new Uri( $this->getAuthBaseUri() . $path );
+
+        try {
+
+            $response = $this->httpGet( $url );
+
+            if( $response->getStatusCode() == 200 ){
+
+                $body = json_decode($response->getBody(), true);
+
+                if( is_array($body) && isset($body['token']) ){
+                    return $body['token'];
+                }
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
+
+    } // function
+
+
+    /**
+     * Updates a user's email address based on the passed token.
+     *
+     * @param $emailUpdateToken
+     * @return bool|\Exception|Exception\ResponseException|Response\Error
+     */
     public function updateAuthEmail( $emailUpdateToken ) {
 
-    }
+        $url = new Uri( $this->getAuthBaseUri() . '/v1/users/confirm-new-email' );
 
+        try {
+
+            $response = $this->httpPost( $url, [
+                'Token' => $emailUpdateToken,
+            ]);
+
+            if( $response->getStatusCode() == 204 ){
+                return true;
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
+
+    } // function
+
+
+    /**
+     * Updates a user's password, checked against their existing password.
+     *
+     * The password should be validated in advance to:
+     *  - Be >= 6 characters
+     *  - Contain at least one numeric digit
+     *  - Contain at least one alphabet character
+     *
+     * The auth service will also validate this, but not return detailed error messages.
+     *
+     * @param $currentPassword
+     * @param $newPassword
+     * @return \Exception|string|Exception\ResponseException|Response\Error
+     */
     public function updateAuthPassword( $currentPassword, $newPassword ){
 
-    }
-    */
+        $path = sprintf( '/v1/users/%s/password', $this->getUserId() );
+
+        $url = new Uri( $this->getAuthBaseUri() . $path );
+
+        try {
+
+            $response = $this->httpPost( $url, [
+                'CurrentPassword' => $currentPassword,
+                'NewPassword' => $newPassword,
+            ]);
+
+            if( $response->getStatusCode() == 200 ){
+
+                $body = json_decode($response->getBody(), true);
+
+                if( is_array($body) && isset($body['token']) ){
+                    return $body['token'];
+                }
+
+            }
+
+        } catch ( Exception\ResponseException $e ){
+            return $e;
+        }
+
+        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
+
+
+    } // function
+
 
     //------------------------------------------------------------------------------------
     // Public API access methods
@@ -413,6 +602,34 @@ class Client {
 
     }
 
+    private function httpDelete( Uri $url ){
+
+        $request = new Request(
+            'DELETE',
+            $url,
+            $this->buildHeaders()
+        );
+
+        try {
+
+            $response = $this->getHttpClient()->sendRequest( $request );
+
+            $this->setLastStatusCode( $response->getStatusCode() );
+
+        } catch (\RuntimeException $e) {
+            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        //---
+
+        if( !in_array($response->getStatusCode(), [204]) ){
+            throw $this->createErrorException( $response );
+        }
+
+        return $response;
+
+    }
+
     //-------------------------------------------
     // Response Handling
 
@@ -438,15 +655,43 @@ class Client {
     // Getters and setters
 
     /**
+     * @param string $userId
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    /**
      * @return string
      */
     public function getUserId()
     {
-        if (is_null($this->userId) && !is_null($this->token)) {
-            $this->setEmailAndUserIdFromToken();
+
+        if ( is_null($this->userId) ) {
+
+            $response = $this->getTokenInfo( $this->getToken() );
+
+            if( $response instanceof Response\ErrorInterface ){
+
+                if( $response instanceof \Exception ){
+                    throw $response;
+                }
+
+                return $response;
+
+            }
+
+            if( !is_array($response) || !isset($response['userId']) ){
+                return false;
+            }
+
+            $this->setUserId( $response['userId'] );
+
         }
 
         return $this->userId;
+
     }
 
     /**

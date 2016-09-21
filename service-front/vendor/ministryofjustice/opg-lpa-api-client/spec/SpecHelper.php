@@ -12,8 +12,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 date_default_timezone_set('UTC');
 
-const TEST_AUTH_EMAIL = 'phpSpecTestAccount2222512312@example.com';
-const TEST_AUTH_PASSWORD = 'phpSpec$12Password';
+const TEST_AUTH_EMAIL = 'phpSpecTestAccount2222512313@example.com';
+const TEST_AUTH_PASSWORD = 'phpSpec2$Pa%ssword';
 
 destroyAndRecreateTestUser();
 
