@@ -16,6 +16,8 @@
 
         access_log off;
 
+        gzip_static on;
+
         if ($uri ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|htm|html|xml|txt|woff|eot|ttf)$ ){
             expires           24h;
         }
