@@ -9,7 +9,7 @@ use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 
-use Opg\Lpa\Api\Client\Response\ErrorInterface as ApiClientError;
+use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientError;
 
 class Register implements ServiceLocatorAwareInterface {
 
