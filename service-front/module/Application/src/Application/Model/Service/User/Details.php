@@ -10,7 +10,8 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
-use Opg\Lpa\Api\Client\Client;
+
+use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientError;
 
 class Details implements ServiceLocatorAwareInterface {
 
@@ -115,22 +116,21 @@ class Details implements ServiceLocatorAwareInterface {
 
         if( !is_string($updateToken) ){
 
-            // Error...
-            $body = $client->getLastContent();
 
-            if( isset($body['detail']) ){
-                switch ($body['detail']) {
-                    case 'User already has this email' : 
+            if( $updateToken instanceof ApiClientError ){
+
+                switch ( $updateToken->getDetail() ){
+                    case 'User already has this email' :
                         return 'user-already-has-email';
-                    case 'Email already exists for another user': 
+
+                    case 'Email already exists for another user':
                         return 'email-already-exists';
-                    default: 
-                        return 'unknown-error';
                 }
-            }
+
+            } // if
 
             return "unknown-error";
-            
+
         } // if
 
         $this->sendNotifyNewEmailEmail( $currentAddress, $details->getDataForModel()['email'] );

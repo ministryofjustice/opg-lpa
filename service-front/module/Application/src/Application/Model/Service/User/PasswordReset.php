@@ -7,6 +7,8 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
+use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientError;
+
 use Application\Model\Service\Mail\Message as MailMessage;
 
 class PasswordReset implements ServiceLocatorAwareInterface {
@@ -28,23 +30,31 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         // A successful response is a string...
         if( !is_string($resetToken) ){
 
-            // Error...
-            $body = $client->getLastContent();
+            if( $resetToken instanceof ApiClientError ){
 
-            if( isset($body['activation_token']) ){
+                if( $resetToken->getMessage() == 'account-not-activated' ){
 
-                // If they have not yet activated their account, we re-send them the activation link.
-                $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
-                
-                return 'account-not-activated';
+                    $body = json_decode($resetToken->getResponse()->getBody(), true);
 
-            }elseif( isset($body['status']) && $body['status'] == 404 ){
+                    if( isset($body['activation_token']) ){
 
-                return "user-not-found";
+                        // If they have not yet activated their account, we re-send them the activation link.
+                        $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
 
-            }elseif( isset($body['reason']) ){
+                        return 'account-not-activated';
 
-                return trim( $body['reason'] );
+                    } // if
+
+                } // if
+
+                // 404 response means user not found...
+                if( $resetToken->getCode() == 404 ){
+                    return "user-not-found";
+                }
+
+                if( $resetToken->getDetail() != null ){
+                    return trim( $resetToken->getDetail() );
+                }
 
             }
 
@@ -91,18 +101,16 @@ class PasswordReset implements ServiceLocatorAwareInterface {
         
         if ($result !== true) {
 
-            // Error...
-            $body = $client->getLastContent();
+            if( $result instanceof ApiClientError ){
 
-            if( isset($body['detail']) ){
-
-                if( $body['detail'] == 'Invalid token' ){
-
+                if( $result->getDetail() == 'Invalid token' ){
                     return "invalid-token";
-
                 }
 
-                return $body['detail'];
+                if( $result->getDetail() != null ){
+                    return trim( $result->getDetail() );
+                }
+
             }
 
             return "unknown-error";
