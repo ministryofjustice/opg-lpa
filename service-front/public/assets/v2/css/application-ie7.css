@@ -3074,7 +3074,8 @@ input[type=number] {
   display: block;
   width: 100%;
   padding-right: 0;
-  border: 0; }
+  border: 0;
+  width: auto; }
 .table-summary th {
   padding-right: 40px;
   padding-bottom: 0;
@@ -3095,7 +3096,8 @@ input[type=number] {
   text-align: right;
   position: absolute;
   top: 12px;
-  border: 0; }
+  border: 0;
+  position: static; }
 
 .group-single {
   padding: 6px 0;
