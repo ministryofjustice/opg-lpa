@@ -23,6 +23,8 @@ trait ClientGuzzleTrait
     
     /**
      * The email of the logged in account
+     *
+     * Deprecated in v4
      * 
      * @var string
      */
@@ -225,47 +227,6 @@ trait ClientGuzzleTrait
         return $applicationList;
     }
 
-    /**
-     * Get the email from a token
-     * 
-     * @param string $token
-     * @return string|boolean User email or false if token invalid
-     */
-    public function getEmailFromToken($token)
-    {
-
-        $response = $this->getTokenInfo( $token );
-        
-        if( !isset($response['username']) ){
-            return false;
-        }
-        
-        return $response['username'];
-    }
-    
-    /**
-     * Set the email and user id from the current token
-     *
-     * @return boolean
-     */
-    private function setEmailAndUserIdFromToken()
-    {
-
-        $response = $this->getTokenInfo( $this->token );
-
-        if( !isset($response['userId']) ){
-            return false;
-        }
-        
-        if( !isset($response['username']) ){
-            return false;
-        }
-    
-        $this->setEmail($response['username']);
-        $this->setUserId($response['userId']);
-        
-        return true;
-    }
     
     /**
      * Delete all the LPAs from an account
@@ -284,186 +245,6 @@ trait ClientGuzzleTrait
         }
         
         return true;
-    }
-    
-    /**
-     * Delete an account from the auth server, delete the user from
-     * the account server and delete all the account's LPAs
-     *
-     * @return boolean
-     */
-    public function deleteUserAndAllTheirLpas()
-    {
-
-        $success = $this->deleteAllLpas();
-        
-        if (!$success) {
-            return false;
-        }
-
-        $response = $this->client()->delete( $this->authBaseUri . '/v1/users/' . $this->getUserId(), [
-            'headers' => ['Token' => $this->getToken()]
-        ]);
-        
-        if ($response->getStatusCode() != 204) {
-            return $this->log($response, false);
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Request a password reset. API server will send email with further instructions.
-     *
-     * @param string $email
-     * @return bool|string Returns false on an error or the reset token on success.
-     */
-    public function requestPasswordReset( $email )
-    {
-
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users/password-reset' ,[
-            'body' => [
-                'Username' => strtolower($email),
-            ]
-        ]);
-
-        if( $response->getStatusCode() != 200 ){
-            return $this->log($response, false);
-        }
-
-        $data = $response->json();
-
-        if( !isset( $data['token'] ) ){
-            return $this->log($response, false);
-        }
-
-        return $data['token'];
-    }
-    
-    /**
-     * Update the password using a password reset token.
-     *
-     * @param string $token
-     * $param string $newPassword
-     * 
-     * @return bool|string Returns true on success, false otherwise
-     */
-    public function updateAuthPasswordWithToken( $token, $newPassword )
-    {
-    
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users/password-reset-update' ,[
-            'body' => [
-                'Token' => $token,
-                'NewPassword' => $newPassword,
-            ]
-        ]);
-    
-        if( $response->getStatusCode() != 204 ){
-            return $this->log($response, false);
-        }
-    
-        return true;
-    }
-    
-    /**
-     * Update auth email
-     *
-     * @param string $newEmail
-     *
-     * @return boolean
-     */
-    public function requestEmailUpdate(
-        $newEmailAddress
-    )
-    {
-        $response = $this->client()->get( $this->authBaseUri . '/v1/users/' . $this->getUserId() . '/email/' . $newEmailAddress, [
-            'headers' => ['Token' => $this->getToken()]
-        ]);
-
-        if ($response->getStatusCode() != 200) {
-            
-            $data = $response->json();
-            
-            $this->log($response, false);
-                
-            if (isset($data['detail'])) {
-                return $data;
-            }
-            
-            return false;
-        }
-        
-        $data = $response->json();
-        
-        if ( !isset($data['token']) ){
-            return $this->log($response, false);
-        }
-        
-        return $data['token'];
-    }
-    
-    /**
-     * Update auth email
-     *
-     * @param string $emailUpdateToken The token returned by requestEmailUpdate()
-     * 
-     * @return boolean
-     */
-    public function updateAuthEmail(
-        $emailUpdateToken
-    )
-    {
-
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users/confirm-new-email', [
-            'body' => ['Token' => $emailUpdateToken]
-        ]);
-        
-        if ($response->getStatusCode() != 204) {
-            return $this->log($response, false);
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Update the user's password.
-     *
-     * The password should be validated in advance to:
-     *  - Be >= 6 characters
-     *  - Contain at least one numeric digit
-     *  - Contain at least one alphabet character
-     *
-     * (The auth service will also validate this, but not return meaningful error messages)
-     *
-     * @param string $currentPassword
-     * @param string $newPassword
-     * 
-     * @return string The new user auth token
-     */
-    public function updateAuthPassword(
-        $currentPassword,
-        $newPassword
-    )
-    {
-        $response = $this->client()->post( $this->authBaseUri . '/v1/users/' . $this->getUserId() . '/password', [
-            'body' => [
-                'CurrentPassword' => $currentPassword,
-                'NewPassword' => $newPassword
-            ],
-            'headers' => ['Token' => $this->getToken()]
-        ]);
-        
-        if ($response->getStatusCode() != 200) {
-            return $this->log($response, false);
-        }
-        
-        $body = $response->json();
-        
-        if (!isset($body['token'])) {
-            return $this->log($response, false);
-        }
-        
-        return $body['token'];
     }
     
     /**
@@ -1502,32 +1283,30 @@ trait ClientGuzzleTrait
         $this->isError = $isError;
     }
 
-    /**
-     * @return the $email
-     */
-    public function getEmail()
-    {
-        if (is_null($this->email) && !is_null($this->token)) {
-            $this->setEmailAndUserIdFromToken();
-        }
-        
-        return $this->email;
-    }
+
     
     /**
      * @param string $email
      */
     public function setEmail($email)
     {
+        die('Deprecated in v4');
+
         $this->email = $email;
     }
 
     /**
-     * @param string $userId
+     * @return string
      */
-    public function setUserId($userId)
+    public function getEmail()
     {
-        $this->userId = $userId;
+        die('Deprecated in v4');
+
+        if (is_null($this->email) && !is_null($this->token)) {
+            $this->setEmailAndUserIdFromToken();
+        }
+
+        return $this->email;
     }
     
     /**

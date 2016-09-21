@@ -1,11 +1,9 @@
 <?php
 namespace Opg\Lpa\Api\Client\Exception;
 
-use Opg\Lpa\Api\Client\Response\ErrorInterface;
-
 use Psr\Http\Message\ResponseInterface;
 
-class ResponseException extends RuntimeException implements ErrorInterface {
+class ResponseException extends RuntimeException {
 
     private $response;
 
@@ -33,7 +31,7 @@ class ResponseException extends RuntimeException implements ErrorInterface {
             return $body['detail'];
         }
 
-        return null;
+        return $this->getMessage();
 
     }
 

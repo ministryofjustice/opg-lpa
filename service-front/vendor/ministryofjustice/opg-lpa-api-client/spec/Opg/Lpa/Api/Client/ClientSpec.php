@@ -24,7 +24,7 @@ class ClientSpec extends ObjectBehavior
             'P$ssword' . uniqid()
         );
 
-        $result->shouldImplement('Opg\Lpa\Api\Client\Response\ErrorInterface');
+        $result->shouldImplement('Opg\Lpa\Api\Client\Exception\ResponseException');
         $result->getDetail()->shouldBe('invalid-username');
     }
     
@@ -42,7 +42,7 @@ class ClientSpec extends ObjectBehavior
             'P$assword' . uniqid()
         );
 
-        $result->shouldImplement('Opg\Lpa\Api\Client\Response\ErrorInterface');
+        $result->shouldImplement('Opg\Lpa\Api\Client\Exception\ResponseException');
         $result->getDetail()->shouldBe('username-already-exists');
     }
     
@@ -60,7 +60,7 @@ class ClientSpec extends ObjectBehavior
     {
         $result = $this->activateAccount('IAmABadToken');
 
-        $result->shouldImplement('Opg\Lpa\Api\Client\Response\ErrorInterface');
+        $result->shouldImplement('Opg\Lpa\Api\Client\Exception\ResponseException');
         $result->getDetail()->shouldBe('account-not-found');
 
     }
@@ -153,24 +153,7 @@ class ClientSpec extends ObjectBehavior
         destroyAndRecreateTestUser();
         
     }
-    
-    function it_will_return_the_username_when_given_a_valid_token()
-    {
-        $email = 'deleteme-' . uniqid() . '@example.com';
-        $password = 'Test$' . uniqid();
-         
-        $activationToken = $this->registerAccount($email, $password);
-         
-        $this->activateAccount($activationToken)->shouldBe(true);
-         
-        $authToken = $this->authenticate(
-            $email,
-            $password
-        )->getToken();
-         
-        $this->getEmailFromToken($authToken)->shouldBe($email);
-    }
-     
+
     function it_can_delete_an_account()
     {
         $email = 'deleteme-' . uniqid() . '@example.com';
