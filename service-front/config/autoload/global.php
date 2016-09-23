@@ -81,7 +81,7 @@ return array(
         'native_settings' => [
 
             // The cookie name used in the session
-            'name' => 'seshy',
+            'name' => 'lpa',
 
             // Hash settings
             'hash_function' => 'sha512',
