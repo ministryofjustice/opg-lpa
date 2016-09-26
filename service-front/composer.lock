@@ -60,16 +60,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.19.9",
+            "version": "3.19.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "55da42fee5ff26f962b2366b08e4f32e348cd1d9"
+                "reference": "eb9488f671175e708cf68c74cc04bd9115c96761"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/55da42fee5ff26f962b2366b08e4f32e348cd1d9",
-                "reference": "55da42fee5ff26f962b2366b08e4f32e348cd1d9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/eb9488f671175e708cf68c74cc04bd9115c96761",
+                "reference": "eb9488f671175e708cf68c74cc04bd9115c96761",
                 "shasum": ""
             },
             "require": {
@@ -136,7 +136,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-09-20 22:11:12"
+            "time": "2016-09-22 19:32:03"
         },
         {
             "name": "clue/stream-filter",
@@ -789,12 +789,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "a636090d3f82782fc2a79e80d9a6525210583bbc"
+                "reference": "353cb076e0dd942b887f3cac2c9d3218723a0263"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/a636090d3f82782fc2a79e80d9a6525210583bbc",
-                "reference": "a636090d3f82782fc2a79e80d9a6525210583bbc",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/353cb076e0dd942b887f3cac2c9d3218723a0263",
+                "reference": "353cb076e0dd942b887f3cac2c9d3218723a0263",
                 "shasum": ""
             },
             "require": {
@@ -828,7 +828,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v4",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-09-21 17:17:53"
+            "time": "2016-09-26 15:58:15"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -3079,16 +3079,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.24.2",
+            "version": "v1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7"
+                "reference": "f16a634ab08d87e520da5671ec52153d627f10f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
-                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/f16a634ab08d87e520da5671ec52153d627f10f6",
+                "reference": "f16a634ab08d87e520da5671ec52153d627f10f6",
                 "shasum": ""
             },
             "require": {
@@ -3101,7 +3101,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.24-dev"
+                    "dev-master": "1.25-dev"
                 }
             },
             "autoload": {
@@ -3136,7 +3136,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-09-01 17:50:53"
+            "time": "2016-09-21 23:05:12"
         },
         {
             "name": "zendframework/zend-authentication",
@@ -4107,16 +4107,16 @@
         },
         {
             "name": "zendframework/zend-form",
-            "version": "2.9.1",
+            "version": "2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-form.git",
-                "reference": "a0f0ce0f4c11e1c78939b4e8a212f6ba44559253"
+                "reference": "2d076100e4c6a779b7676d098192e3d1cf74f34e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-form/zipball/a0f0ce0f4c11e1c78939b4e8a212f6ba44559253",
-                "reference": "a0f0ce0f4c11e1c78939b4e8a212f6ba44559253",
+                "url": "https://api.github.com/repos/zendframework/zend-form/zipball/2d076100e4c6a779b7676d098192e3d1cf74f34e",
+                "reference": "2d076100e4c6a779b7676d098192e3d1cf74f34e",
                 "shasum": ""
             },
             "require": {
@@ -4180,7 +4180,7 @@
                 "form",
                 "zf2"
             ],
-            "time": "2016-09-14 17:47:35"
+            "time": "2016-09-22 15:56:15"
         },
         {
             "name": "zendframework/zend-http",
