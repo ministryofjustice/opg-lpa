@@ -296,6 +296,7 @@ trait ClientGuzzleTrait
      */
     public function getStatus(Lpa $lpa)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         return new LpaStatusResponse();
     }
     
@@ -310,6 +311,7 @@ trait ClientGuzzleTrait
      */
     public function getRepeatCaseNumber($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
         return $helper->getSingleValueResource('repeatCaseNumber');
     }
@@ -351,6 +353,7 @@ trait ClientGuzzleTrait
      */
     public function getType($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'type', $this);
         return $helper->getSingleValueResource('type');
     }
@@ -392,6 +395,7 @@ trait ClientGuzzleTrait
      */
     public function getInstructions($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
         return $helper->getSingleValueResource('instruction');
     }
@@ -433,6 +437,7 @@ trait ClientGuzzleTrait
      */
     public function getPreferences($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'preference', $this);
         return $helper->getSingleValueResource('preference');    
     }
@@ -470,6 +475,7 @@ trait ClientGuzzleTrait
      */
     public function getPrimaryAttorneyDecisions($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions');
     }
@@ -510,6 +516,7 @@ trait ClientGuzzleTrait
      */
     public function getReplacementAttorneyDecisions($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions');
     }
@@ -566,6 +573,7 @@ trait ClientGuzzleTrait
      */
     public function getDonor($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'donor', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Donor');
     }
@@ -606,6 +614,7 @@ trait ClientGuzzleTrait
      */
     public function getCorrespondent($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Correspondence');
     }
@@ -646,6 +655,7 @@ trait ClientGuzzleTrait
      */
     public function getPayment($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'payment', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Payment\Payment');
     }
@@ -686,6 +696,7 @@ trait ClientGuzzleTrait
      */
     public function isWhoAreYouSet($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this);
         return $helper->getSingleValueResource('whoAreYouAnswered');
     }
@@ -714,6 +725,7 @@ trait ClientGuzzleTrait
      */
     public function isLpaLocked($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'lock', $this);
         return $helper->getSingleValueResource('locked');
     }
@@ -787,6 +799,7 @@ trait ClientGuzzleTrait
      */
     public function getNotifiedPersons($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
         return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson');
     }
@@ -819,6 +832,7 @@ trait ClientGuzzleTrait
         $notifiedPersonId
     )
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson', $notifiedPersonId);
     }
@@ -897,6 +911,7 @@ trait ClientGuzzleTrait
         $primaryAttorneyId
     )
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney', $primaryAttorneyId);
     }
@@ -943,6 +958,7 @@ trait ClientGuzzleTrait
      */
     public function getReplacementAttorneys($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
         return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney');
     }
@@ -975,6 +991,7 @@ trait ClientGuzzleTrait
         $replacementAttorneyId
     )
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney', $replacementAttorneyId);
     }
@@ -1021,6 +1038,7 @@ trait ClientGuzzleTrait
      */
     public function getCertificateProvider($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
         return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider');
     }
@@ -1061,6 +1079,7 @@ trait ClientGuzzleTrait
      */
     public function getWhoIsRegistering($lpaId)
     {
+        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
         $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
         $result = $helper->getSingleValueResource('who');
 
