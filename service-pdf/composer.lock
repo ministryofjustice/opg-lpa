@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "769487c1c8d3100216dd5d3bcf44951c",
-    "content-hash": "a5a34c7b0ed81dec27c0eed1f030b625",
+    "hash": "101cf42425e9d99ac09a8b3fb6a71da9",
+    "content-hash": "2b7cd160355c71475087342a4ada85d2",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.19.5",
+            "version": "3.19.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8fbd79d2f7c771b97879cbab09190d77a4fce9fb"
+                "reference": "33e8f7083fcb54fd926a8569cb81a0795e8c2633"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8fbd79d2f7c771b97879cbab09190d77a4fce9fb",
-                "reference": "8fbd79d2f7c771b97879cbab09190d77a4fce9fb",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/33e8f7083fcb54fd926a8569cb81a0795e8c2633",
+                "reference": "33e8f7083fcb54fd926a8569cb81a0795e8c2633",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-09-06 22:14:20"
+            "time": "2016-09-13 20:35:16"
         },
         {
             "name": "container-interop/container-interop",
@@ -510,16 +510,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.1.6",
+            "version": "v1.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "6b90faf661db487a84c4ada4efeaacb2c38066de"
+                "reference": "56f7ac80896b1b36abce68b7eb6d895e24b5b94b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/6b90faf661db487a84c4ada4efeaacb2c38066de",
-                "reference": "6b90faf661db487a84c4ada4efeaacb2c38066de",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/56f7ac80896b1b36abce68b7eb6d895e24b5b94b",
+                "reference": "56f7ac80896b1b36abce68b7eb6d895e24b5b94b",
                 "shasum": ""
             },
             "require": {
@@ -543,10 +543,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.6",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.9",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2015-10-29 09:57:21"
+            "time": "2016-09-14 09:48:17"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

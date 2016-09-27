@@ -40,7 +40,9 @@ class StateChecker {
      */
     public function __construct(Lpa $lpa = null)
     {
-        $this->setLpa($lpa);
+        if ($lpa) {
+            $this->setLpa($lpa);
+        }
     }
 
     /**
@@ -236,8 +238,19 @@ class StateChecker {
      */
     protected function lpaHasFinishedCreation()
     {
-        return ($this->lpaHasCertificateProvider() &&
-                (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)));
+        return (
+            $this->lpaHasCertificateProvider() &&
+            (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)) &
+
+            // Blocks if a second Primary attorney is added, post Replacement attorney.
+            ( !$this->lpaHasMultiplePrimaryAttorneys() || $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() ) &
+
+            // Blocks if a second Replacement attorney is added, post Cert Provider.
+            ( !$this->lpaHasReplacementAttorney() || !$this->lpaHasMultipleReplacementAttorneys() || $this->lpaHowReplacementAttorneysMakeDecisionHasValue() ) &
+
+            // Blocks if a second Primary attorney is added, and we have one or more Replacement attorney, post Cert Provider.
+            ( !$this->lpaHasMultiplePrimaryAttorneys() || !$this->lpaHasReplacementAttorney() || !$this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() || $this->lpaWhenReplacementAttorneyStepInHasValue() )
+        );
     }
     
     /**
