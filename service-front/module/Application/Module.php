@@ -23,6 +23,8 @@ use Alphagov\Pay\Client as GovPayClient;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Model\Service\System\DynamoCronLock;
 
+use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientResponseException;
+
 class Module{
     
     public function onBootstrap(MvcEvent $e){
@@ -113,8 +115,8 @@ class Module{
             // Get the tokens details...
             $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
 
-            // If the token has not expired...
-            if( isset($info['expiresIn']) ){
+
+            if( is_array($info) && isset($info['expiresIn']) ){
 
                 // update the time the token expires in the session
                 $identity->tokenExpiresIn( $info['expiresIn'] );
