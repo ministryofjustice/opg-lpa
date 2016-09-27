@@ -36,7 +36,11 @@
 
     <div class="appstatus" role="alert">
         <h2 class="heading-xlarge">Confirm and pay</h2>
-        <h3 class="heading-medium">Application fee: £{{ lpa.payment.amount }}</h3>
+        {% if paymentAmount == null %}
+            <h3 class="heading-medium">We'll contact you about the fee</h3>
+        {% else %}
+            <h3 class="heading-medium">Application fee: £{{ paymentAmount }}</h3>
+        {% endif %}
     </div>
 
     {% if lpa.payment.amount == 0 %}
