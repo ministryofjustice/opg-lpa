@@ -13,7 +13,9 @@
                 <li>You can have 1 or more attorneys</li>
                 <li>Attorneys must be 18 or over</li>
                 <li>Attorneys must have mental capacity – the ability to make decisions</li>
-                <li>An attorney must not be bankrupt or subject to a debt relief order</li>
+                {% if lpa.document.type == 'property-and-financial' %}
+                    <li>An attorney must not be bankrupt or subject to a debt relief order</li>
+                {% endif %}
             </ul>
     		<p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
     		<p>There are some other things you must know and consider before you decide.</p>
