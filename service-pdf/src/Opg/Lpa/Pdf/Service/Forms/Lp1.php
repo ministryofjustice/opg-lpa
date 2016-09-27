@@ -14,6 +14,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -85,7 +86,7 @@ abstract class Lp1 extends AbstractForm
             ]
         );
         
-        // register a randem generated temp file path, and store it $interFileStack.
+        // register a random generated temp file path, and store it $interFileStack.
         $filePath = $this->registerTempFile('LP1');
         
         // data mapping
@@ -95,6 +96,9 @@ abstract class Lp1 extends AbstractForm
         $this->pdf->fillForm($mappings)
             ->flatten()
             ->saveAs($filePath);
+
+
+        $this->addLpaIdBarcode( $filePath );
         
         // draw cross lines if there's any blank slot
         if(!empty($this->drawingTargets)) {
@@ -102,6 +106,21 @@ abstract class Lp1 extends AbstractForm
         }
         
     } // function generateDefaultPdf()
+
+    protected function addLpaIdBarcode( $filePath ){
+
+        $pdf = PdftkInstance::getInstance( $filePath );
+
+        $pdf->cat(19);
+        $pdf->flatten()->saveAs('/app/tests/local/single.pdf');
+
+
+        $pdf = new Pdf($pdf);
+        $pdf->stamp('/app/tests/local/new.pdf');
+
+
+        $pdf->flatten()->saveAs('/app/tests/local/flibble.pdf');
+    }
     
     /**
      * Generate additional pages depending on the LPA's composition.
