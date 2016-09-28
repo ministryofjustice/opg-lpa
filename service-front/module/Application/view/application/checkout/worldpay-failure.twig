@@ -1,7 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Payment Failed
+    Online payment failed
 {% endblock %}
 
 {% block content %}
@@ -32,53 +32,34 @@
 
     {# /worldpay #}
 
-    <li id="payment" class="section current js-current">
+    <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
 
-        <h2 class="heading-medium accordion-header flush--top">Making payment online through Worldpay payment gateway</h2>
+    <div class="text">
+        <p>Sorry, but there appears to be a problem with this payment. Please click the button below to try again. If the problem continues, visit <a href="http://www.worldpay.com/shopper/" target="_blank">Worldpay's support pages</a> for help.</p>
 
-        <div class="accordion-info">
-            <div class="text">
+        <p>If you would like you can choose to <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+    </div>
 
-                <div class="alert panel" role="alert">
-                    <i class="icon icon-cross" role="presentation"></i>
-                    <div class="alert-message">
-                        <p>Payment failed</p>
-                    </div>
-                </div>
+    {# -- Worldpay -- #}
+    {# begin form #}
+    {{ worldpayForm.prepare() ? '' }}
+    {{ form().openTag( worldpayForm )|raw }}
+    {{ formElement(worldpayForm.get( worldpayForm.csrfName )) }}
 
-                <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
+    {# Error summary #}
+    {{ macros.formErrorSummary(error,worldpayForm,'There was a problem submitting the form') }}
 
-                <p>Sorry, but there appears to be a problem with this payment. Please click the button below to try again. If the problem continues, visit <a href="http://www.worldpay.com/shopper/" target="_blank">Worldpay's support pages</a> for help.</p>
+    <fieldset>
+        <legend class="visuallyhidden">Contact email</legend>
 
-                <p>If you would like you can choose to <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+        <h2 class="heading-medium text">Enter a contact email for correspondence regarding this payment.</h2>
 
-            </div>
-        </div>
+        {{ macros.formGroup(email) }}
 
-        {# -- Worldpay -- #}
-        {# begin form #}
-        {{ worldpayForm.prepare() ? '' }}
-        {{ form().openTag( worldpayForm )|raw }}
-        {{ formElement(worldpayForm.get( worldpayForm.csrfName )) }}
+    </fieldset>
 
-        {# Error summary #}
-        {{ macros.formErrorSummary(error,worldpayForm,'There was a problem submitting the form') }}
+    <input type="submit" name="save" value="Try again" class="button">
 
-        <fieldset>
-            <legend class="visuallyhidden">Contact email</legend>
-
-            <h2 class="heading-medium flush--top text">Please enter a contact email for correspondence regarding this payment.</h2>
-
-            {{ macros.formGroup(email) }}
-
-        </fieldset>
-
-        <div class="form-group">
-            <input type="submit" name="save" value="Try again" class="button">
-        </div>
-
-        {{ form().closeTag|raw }}
-
-    </li>
+    {{ form().closeTag|raw }}
 
 {% endblock %}
