@@ -27,6 +27,15 @@ class LpaAwareInitializer implements InitializerInterface {
 
             //---
 
+            $auth = $locator->get('AuthenticationService');
+
+            // We don't do anything here without a user.
+            if ( !$auth->hasIdentity() ) {
+                return;
+            }
+
+            //---
+
             // Find the LPA ID form the URL...
             $lpaId = $locator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpa-id');
 
@@ -50,17 +59,12 @@ class LpaAwareInitializer implements InitializerInterface {
                  * there's no reason not to check again here.
                  */
 
-                $auth = $locator->get('AuthenticationService');
-
-                if ( !$auth->hasIdentity() ) {
-                    throw new RuntimeException('Cannot load an LPA without an identity');
-                }
-
                 if( $auth->getIdentity()->id() !== $lpa->user ){
                     throw new RuntimeException('Invalid LPA ID');
                 }
 
                 //---
+
                 $instance->setLpa( $lpa );
 
             } // if
