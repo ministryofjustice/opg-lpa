@@ -55,7 +55,7 @@ class LpaAwareInitializer implements InitializerInterface {
 
                 /**
                  * Conduct some paranoia checks. Check the owner of the LPA matches the current user.
-                 * The client would not have been allowed access to it if there was a miss-match, but
+                 * The API client would not have been allowed access to it if there was a miss-match, but
                  * there's no reason not to check again here.
                  */
 
