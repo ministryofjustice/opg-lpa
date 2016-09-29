@@ -246,7 +246,17 @@ class StateChecker {
             ( !$this->lpaHasMultiplePrimaryAttorneys() || $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() ) &
 
             // Blocks if a second Replacement attorney is added, post Cert Provider.
-            ( !$this->lpaHasReplacementAttorney() || !$this->lpaHasMultipleReplacementAttorneys() || $this->lpaHowReplacementAttorneysMakeDecisionHasValue() ) &
+            ( !$this->lpaHasReplacementAttorney() || !$this->lpaHasMultipleReplacementAttorneys() ||
+
+                (
+                    // Either we're good if this is answered; or
+                    $this->lpaHowReplacementAttorneysMakeDecisionHasValue() ||
+
+                    // If PA is JandS, and RA Steps in when first PA cannot.
+                    ( $this->lpaReplacementAttorneyStepInWhenFirstPrimaryUnableAct() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() )
+                )
+
+            ) &
 
             // Blocks if a second Primary attorney is added, and we have one or more Replacement attorney, post Cert Provider.
             ( !$this->lpaHasMultiplePrimaryAttorneys() || !$this->lpaHasReplacementAttorney() || !$this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() || $this->lpaWhenReplacementAttorneyStepInHasValue() )
