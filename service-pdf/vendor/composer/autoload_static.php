@@ -42,6 +42,7 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
         ),
         'O' => 
@@ -133,6 +134,10 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Symfony\\Component\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -227,13 +232,6 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
             'Raven_' => 
             array (
                 0 => __DIR__ . '/..' . '/raven/raven/lib',
-            ),
-        ),
-        'P' => 
-        array (
-            'Psr\\Log\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/psr/log',
             ),
         ),
         'E' => 

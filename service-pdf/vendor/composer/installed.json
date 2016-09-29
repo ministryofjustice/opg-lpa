@@ -1,45 +1,5 @@
 [
     {
-        "name": "psr/log",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/php-fig/log.git",
-            "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-            "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
-            "shasum": ""
-        },
-        "time": "2012-12-21 11:40:51",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Psr\\Log\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "PHP-FIG",
-                "homepage": "http://www.php-fig.org/"
-            }
-        ],
-        "description": "Common interface for logging libraries",
-        "keywords": [
-            "log",
-            "psr",
-            "psr-3"
-        ]
-    },
-    {
         "name": "mikehaertl/php-tmpfile",
         "version": "1.0.0",
         "version_normalized": "1.0.0.0",
@@ -2394,17 +2354,17 @@
     },
     {
         "name": "aws/aws-sdk-php",
-        "version": "3.19.7",
-        "version_normalized": "3.19.7.0",
+        "version": "3.19.11",
+        "version_normalized": "3.19.11.0",
         "source": {
             "type": "git",
             "url": "https://github.com/aws/aws-sdk-php.git",
-            "reference": "33e8f7083fcb54fd926a8569cb81a0795e8c2633"
+            "reference": "19bac3bdd7988cbf7f89d5ce8e2748d774e2cde8"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/33e8f7083fcb54fd926a8569cb81a0795e8c2633",
-            "reference": "33e8f7083fcb54fd926a8569cb81a0795e8c2633",
+            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/19bac3bdd7988cbf7f89d5ce8e2748d774e2cde8",
+            "reference": "19bac3bdd7988cbf7f89d5ce8e2748d774e2cde8",
             "shasum": ""
         },
         "require": {
@@ -2435,7 +2395,7 @@
             "ext-curl": "To send requests using cURL",
             "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
         },
-        "time": "2016-09-13 20:35:16",
+        "time": "2016-09-27 19:38:36",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2476,17 +2436,17 @@
     },
     {
         "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "v1.1.9",
-        "version_normalized": "1.1.9.0",
+        "version": "v1.1.10",
+        "version_normalized": "1.1.10.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "56f7ac80896b1b36abce68b7eb6d895e24b5b94b"
+            "reference": "81be109562f99ed5bb4120a2fa03d1508a8cdd43"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/56f7ac80896b1b36abce68b7eb6d895e24b5b94b",
-            "reference": "56f7ac80896b1b36abce68b7eb6d895e24b5b94b",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/81be109562f99ed5bb4120a2fa03d1508a8cdd43",
+            "reference": "81be109562f99ed5bb4120a2fa03d1508a8cdd43",
             "shasum": ""
         },
         "require": {
@@ -2499,7 +2459,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2016-09-14 09:48:17",
+        "time": "2016-09-29 10:05:10",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2512,8 +2472,57 @@
         ],
         "description": "PHP data models that represent a Lasting Power of Attorney",
         "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.9",
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.10",
             "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
         }
+    },
+    {
+        "name": "psr/log",
+        "version": "1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/php-fig/log.git",
+            "reference": "5277094ed527a1c4477177d102fe4c53551953e0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/5277094ed527a1c4477177d102fe4c53551953e0",
+            "reference": "5277094ed527a1c4477177d102fe4c53551953e0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-09-19 16:02:08",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Psr\\Log\\": "Psr/Log/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "PHP-FIG",
+                "homepage": "http://www.php-fig.org/"
+            }
+        ],
+        "description": "Common interface for logging libraries",
+        "homepage": "https://github.com/php-fig/log",
+        "keywords": [
+            "log",
+            "psr",
+            "psr-3"
+        ]
     }
 ]
