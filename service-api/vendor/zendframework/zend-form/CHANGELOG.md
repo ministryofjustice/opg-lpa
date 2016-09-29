@@ -2,6 +2,55 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.2 - 2016-09-22
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#122](https://github.com/zendframework/zend-form/pull/122) fixes collection
+  binding following successful validation. The fix introduced in #106, while it
+  corrected the behavior around binding a collection that was not re-submitted,
+  broke behavior around binding submitted collections. #122 corrects the issue,
+  retaining the fix from #106.
+
+## 2.9.1 - 2016-09-14
+
+### Added
+
+- [#85](https://github.com/zendframework/zend-form/pull/85) adds support for the
+  zend-code 3.0 series (retaining support for the 2.* series).
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#119](https://github.com/zendframework/zend-form/pull/119) fixes the order in
+  which the default initializers are injected into the `FormElementManager`,
+  ensuring that the initializer injecting a factory into a `FormFactoryAware`
+  instance is triggered before the initializer that calls `init()`, and also
+  that the initializer calling `init()` is always triggered last.
+- [#106](https://github.com/zendframework/zend-form/pull/106) updates behavior
+  around binding collection values to a fieldset or form such that if the
+  collection is not part of the current validation group, its value will not be
+  overwritten with an empty set.
+
 ## 2.9.0 - 2016-06-07
 
 ### Added

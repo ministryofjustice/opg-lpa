@@ -14,7 +14,6 @@ return array(
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Rbac\\' => array($vendorDir . '/zfr/rbac/src'),
     'Raven_' => array($vendorDir . '/raven/raven/lib'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Nocarrier' => array($vendorDir . '/nocarrier/hal/src'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
