@@ -253,7 +253,7 @@ class StateChecker {
                     $this->lpaHowReplacementAttorneysMakeDecisionHasValue() ||
 
                     // If PA is JandS, and RA Steps in when first PA cannot.
-                    ( $this->lpaReplacementAttorneyStepInWhenFirstPrimaryUnableAct() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() )
+                    ( !$this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() )
                 )
 
             ) &
