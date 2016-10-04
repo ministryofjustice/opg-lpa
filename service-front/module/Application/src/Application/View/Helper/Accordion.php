@@ -148,7 +148,7 @@ class Accordion extends AbstractHelper {
                 //echo "Can access: $route<br />";
 
                 // Then check there are more pages...
-                if( isset($bars[ $key+1]) ){
+                if( isset($bars[ $key+1 ]) ){
 
                     // And that we can access at least one of them...
                     foreach( array_slice($bars, $key+1 ) as $futureRoute ){
@@ -169,41 +169,21 @@ class Accordion extends AbstractHelper {
 
                     } // foreach
 
+                } elseif( $route == 'lpa/fee-reduction' ) {
+
+                    // The last page is a special case as we cannot check past it.
+
+                    // Therefore we have a custom check.
+                    if($this->lpa->payment instanceof \Opg\Lpa\DataModel\Lpa\Payment\Payment) {
+                        $barsInPlay[] = ['routeName' => $route];
+                    }
+
                 } // if
 
             } // if
 
             // Give up here as we'd never show a bar past where the user has been.
             if( $includeUpToRoute == $route ){ break; }
-
-        } // foreach
-
-        return $barsInPlay;
-
-        foreach( $bars as $route ){
-
-            // Break at the route we are up to...
-            if( $includeUpToRoute == $route ){
-
-                // But still output the bar if it's not the current page...
-                if( $currentRoute != $route ) {
-                    $barsInPlay[] = ['routeName' => $route];
-                }
-
-                break;
-            }
-
-            // Skip the current route...
-            if( $currentRoute == $route ){
-                continue;
-            }
-
-            // True iff the user is allowed to view this route name...
-            if( $route == $flowChecker->getNearestAccessibleRoute($route) ) {
-
-                $barsInPlay[] = [ 'routeName' =>  $route ];
-
-            }
 
         } // foreach
 
