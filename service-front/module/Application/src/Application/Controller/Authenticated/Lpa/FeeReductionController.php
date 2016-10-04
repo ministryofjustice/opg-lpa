@@ -24,6 +24,32 @@ class FeeReductionController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeReductionForm');
         $lpa = $this->getLpa();
+
+        //---
+
+        // If a option has already been selected before...
+        if($lpa->payment instanceof Payment) {
+
+            if($lpa->payment->reducedFeeReceivesBenefits && $lpa->payment->reducedFeeAwardedDamages) {
+                $reductionOptionsValue = 'reducedFeeReceivesBenefits';
+            }
+            elseif($lpa->payment->reducedFeeUniversalCredit) {
+                $reductionOptionsValue = 'reducedFeeUniversalCredit';
+            }
+            elseif($lpa->payment->reducedFeeLowIncome) {
+                $reductionOptionsValue = 'reducedFeeLowIncome';
+            }
+            else {
+                $reductionOptionsValue = 'notApply';
+            }
+
+            $form->bind([
+                'reductionOptions' => $reductionOptionsValue,
+            ]);
+
+        }
+
+        //---
         
         $reduction = $form->get('reductionOptions');
         
@@ -127,30 +153,11 @@ class FeeReductionController extends AbstractLpaController
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
             }
         }
-        else {
-            if($lpa->payment instanceof Payment) {
-                if($lpa->payment->reducedFeeReceivesBenefits && $lpa->payment->reducedFeeAwardedDamages) {
-                    $reductionOptionsValue = 'reducedFeeReceivesBenefits';
-                }
-                elseif($lpa->payment->reducedFeeUniversalCredit) {
-                    $reductionOptionsValue = 'reducedFeeUniversalCredit';
-                }
-                elseif($lpa->payment->reducedFeeLowIncome) {
-                    $reductionOptionsValue = 'reducedFeeLowIncome';
-                }
-                else {
-                    $reductionOptionsValue = 'notApply';
-                }
-                
-                $form->bind([
-                        'reductionOptions' => $reductionOptionsValue,
-                ]);
-            }
-        }
         
         return new ViewModel([
                 'form'=>$form,
                 'reductionOptions' => $reductionOptions,
         ]);
+
     }
 }
