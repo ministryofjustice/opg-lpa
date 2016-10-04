@@ -56,7 +56,7 @@
 
                     <p>If you don't send the right evidence, your application will be delayed. If your claim is rejected, you'll need to pay the rest of the fee.</p>
 
-                    <p>On the next page, you can download the application for remission form with the application to register form. Sign and date this and include it in your application.</p>
+                    <p>On the final page you will be able to download the application for exemption form along with your LPA, you should sign and date this and send it along with your evidence and LPA to OPG.</p>
                 </div>
 
 				<label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
@@ -72,16 +72,26 @@
 
                     <p>This means <strong class="bold-small">the service will not charge you for this LPA now.</strong></p>
 
-                    <p>You must still send us the remissions form that you'll download on the next page, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter. </p>
+                    <p>You must still send us the remissions form which you can download on the final page, along with supporting evidence for your application. This should be a copy of the donors benefit award letter.</p>
 
                     <p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
                 </div>
 
-                <label class="text block-label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
+                <label class="text block-label" data-target="reduced-fee-low-income" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
                     {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(reductionOptions['reducedFeeLowIncome']) }}
+
+                <div id="reduced-fee-low-income" class="panel panel-border-narrow js-hidden">
+
+                    <p>To apply for this remission you have to send OPG documents that prove you have a low income. These must be documents that have your title, full name, address and postcode printed on them and they must be from the current tax year. (Tax years run from 6 April one year to 5 April the next year.) <a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about acceptable proof</a>.</p>
+
+                    <p>If you don't send the right evidence, your application will be delayed. If your claim is rejected, you'll need to pay the rest of the fee.</p>
+
+                    <p>On the final page you will be able to download the application for exemption form along with your LPA, you should sign and date this and send it along with your evidence and LPA to OPG.</p>
+
+                </div>
 
                 <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['notApply']) }}
