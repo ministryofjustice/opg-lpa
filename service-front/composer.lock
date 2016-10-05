@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b3fe1d5650f45e3dddc4696d3e99b5f1",
-    "content-hash": "fac284bf442e950308fcc28540c15956",
+    "hash": "e41b82af1e234e6c7d914b2d050c9bb6",
+    "content-hash": "8a17dcfd3302422973035551e3a489ce",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -60,16 +60,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.19.11",
+            "version": "3.19.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "19bac3bdd7988cbf7f89d5ce8e2748d774e2cde8"
+                "reference": "5d5697c7bc9ab22ce718afb51e5496d0c5cb8778"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/19bac3bdd7988cbf7f89d5ce8e2748d774e2cde8",
-                "reference": "19bac3bdd7988cbf7f89d5ce8e2748d774e2cde8",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5d5697c7bc9ab22ce718afb51e5496d0c5cb8778",
+                "reference": "5d5697c7bc9ab22ce718afb51e5496d0c5cb8778",
                 "shasum": ""
             },
             "require": {
@@ -136,7 +136,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-09-27 19:38:36"
+            "time": "2016-09-29 21:07:49"
         },
         {
             "name": "clue/stream-filter",
@@ -789,18 +789,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "353cb076e0dd942b887f3cac2c9d3218723a0263"
+                "reference": "b5cc86ea867faaa341be63eba39c0476237568d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/353cb076e0dd942b887f3cac2c9d3218723a0263",
-                "reference": "353cb076e0dd942b887f3cac2c9d3218723a0263",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/b5cc86ea867faaa341be63eba39c0476237568d1",
+                "reference": "b5cc86ea867faaa341be63eba39c0476237568d1",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^5.1.0",
                 "guzzlehttp/psr7": "^1.2",
-                "ministryofjustice/opg-lpa-datamodels": "^1.0.1",
+                "ministryofjustice/opg-lpa-datamodels": "*",
                 "php": ">=5.4.0",
                 "php-http/client-implementation": "^1.0",
                 "php-http/guzzle5-adapter": "^0.5",
@@ -828,20 +828,20 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v4",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-09-26 15:58:15"
+            "time": "2016-10-05 10:59:14"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v1.1.10",
+            "version": "dev-lpaHasFinishedCreation-tests",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "81be109562f99ed5bb4120a2fa03d1508a8cdd43"
+                "reference": "eb79f4aee25581e309bfb9424cd2fd08967be2c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/81be109562f99ed5bb4120a2fa03d1508a8cdd43",
-                "reference": "81be109562f99ed5bb4120a2fa03d1508a8cdd43",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/eb79f4aee25581e309bfb9424cd2fd08967be2c7",
+                "reference": "eb79f4aee25581e309bfb9424cd2fd08967be2c7",
                 "shasum": ""
             },
             "require": {
@@ -865,10 +865,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v1.1.10",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/lpaHasFinishedCreation-tests",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2016-09-29 10:05:10"
+            "time": "2016-10-05 10:54:42"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -2583,7 +2583,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.11",
+            "version": "v2.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
@@ -2643,16 +2643,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.1.4",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "63592e00fd90632b57ee50220a1ddb29b6bf3bb4"
+                "reference": "5114f1becca9f29e3af94374f1689c83c1aa3d97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/63592e00fd90632b57ee50220a1ddb29b6bf3bb4",
-                "reference": "63592e00fd90632b57ee50220a1ddb29b6bf3bb4",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/5114f1becca9f29e3af94374f1689c83c1aa3d97",
+                "reference": "5114f1becca9f29e3af94374f1689c83c1aa3d97",
                 "shasum": ""
             },
             "require": {
@@ -2692,7 +2692,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-08-22 12:11:19"
+            "time": "2016-09-21 20:55:10"
         },
         {
             "name": "symfony/intl",
@@ -2831,7 +2831,7 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v2.8.11",
+            "version": "v2.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
@@ -2967,16 +2967,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v3.1.4",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "62ee73706c421654a4c840028954510277f7dfc8"
+                "reference": "70bfe927b86ba9999aeebd829715b0bb2cd39a10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/62ee73706c421654a4c840028954510277f7dfc8",
-                "reference": "62ee73706c421654a4c840028954510277f7dfc8",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/70bfe927b86ba9999aeebd829715b0bb2cd39a10",
+                "reference": "70bfe927b86ba9999aeebd829715b0bb2cd39a10",
                 "shasum": ""
             },
             "require": {
@@ -3026,11 +3026,11 @@
                 "debug",
                 "dump"
             ],
-            "time": "2016-08-31 09:05:42"
+            "time": "2016-09-29 14:13:09"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.11",
+            "version": "v2.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -3079,16 +3079,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.25.0",
+            "version": "v1.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "f16a634ab08d87e520da5671ec52153d627f10f6"
+                "reference": "81c2b5fd36581370c7731387f05dcdb577050513"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/f16a634ab08d87e520da5671ec52153d627f10f6",
-                "reference": "f16a634ab08d87e520da5671ec52153d627f10f6",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/81c2b5fd36581370c7731387f05dcdb577050513",
+                "reference": "81c2b5fd36581370c7731387f05dcdb577050513",
                 "shasum": ""
             },
             "require": {
@@ -3101,7 +3101,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.25-dev"
+                    "dev-master": "1.26-dev"
                 }
             },
             "autoload": {
@@ -3136,7 +3136,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-09-21 23:05:12"
+            "time": "2016-10-02 16:19:13"
         },
         {
             "name": "zendframework/zend-authentication",
@@ -6291,6 +6291,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "ministryofjustice/opg-lpa-api-client": 20,
+        "ministryofjustice/opg-lpa-datamodels": 20,
         "alphagov/pay-integration-php": 20
     },
     "prefer-stable": true,
