@@ -2399,6 +2399,7 @@ return array(
     'Twig_Profiler_Node_EnterProfile' => $vendorDir . '/twig/twig/lib/Twig/Profiler/Node/EnterProfile.php',
     'Twig_Profiler_Node_LeaveProfile' => $vendorDir . '/twig/twig/lib/Twig/Profiler/Node/LeaveProfile.php',
     'Twig_Profiler_Profile' => $vendorDir . '/twig/twig/lib/Twig/Profiler/Profile.php',
+    'Twig_RuntimeLoaderInterface' => $vendorDir . '/twig/twig/lib/Twig/RuntimeLoaderInterface.php',
     'Twig_Sandbox_SecurityError' => $vendorDir . '/twig/twig/lib/Twig/Sandbox/SecurityError.php',
     'Twig_Sandbox_SecurityNotAllowedFilterError' => $vendorDir . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedFilterError.php',
     'Twig_Sandbox_SecurityNotAllowedFunctionError' => $vendorDir . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedFunctionError.php',

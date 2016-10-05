@@ -286,36 +286,8 @@ trait ClientGuzzleTrait
         
         return new User($response->json());
     }
-    
-    /**
-     * The current validation / state of the LPA. Includes whether the LPA is
-     * currently locked, is valid (i.e. complete), and general metadata.
-     * 
-     * @param Lpa $lpa
-     * @return \Opg\Lpa\Api\Client\Response\LpaStatusResponse
-     */
-    public function getStatus(Lpa $lpa)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        return new LpaStatusResponse();
-    }
-    
-    /**
-     * Return the repeat case number
-     *
-     * If property not yet set, return null
-     * If error, return false
-     *
-     * @param string $lpaId
-     * @return boolean|null|string
-     */
-    public function getRepeatCaseNumber($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
-        return $helper->getSingleValueResource('repeatCaseNumber');
-    }
-    
+
+
     /**
      * Set the LPA type
      *
@@ -340,24 +312,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Return the type of the LPA
-     * 
-     * If property not yet set, return null
-     * If error, return false
-     * Else, return type of LPA - Document::LPA_TYPE_PF or Document::LPA_TYPE_HW
-     * 
-     * @param string $lpaId
-     * @return boolean|null|string
-     */
-    public function getType($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'type', $this);
-        return $helper->getSingleValueResource('type');
-    }
-    
+
     /**
      * Set the LPA type
      * 
@@ -382,24 +337,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'type', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Return the instructions of the LPA
-     * 
-     * If property not yet set, return null
-     * If error, return false
-     * Else, return instructions of LPA - Document::LPA_TYPE_PF or Document::LPA_TYPE_HW
-     * 
-     * @param string $lpaId
-     * @return boolean|null|string
-     */
-    public function getInstructions($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
-        return $helper->getSingleValueResource('instruction');
-    }
-    
+
     /**
      * Set the LPA instructions
      * 
@@ -424,24 +362,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Return the preferences 
-     * 
-     * If property not yet set, return null
-     * If error, return false
-     * Else, return preferences
-     * 
-     * @param string $lpaId
-     * @return boolean|null|string
-     */
-    public function getPreferences($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'preference', $this);
-        return $helper->getSingleValueResource('preference');    
-    }
-    
+
     /**
      * Set the LPA preferences
      * 
@@ -467,19 +388,6 @@ trait ClientGuzzleTrait
         return $helper->deleteResource();
     }
 
-    /**
-     * Get the primary attorney decisions
-     *
-     * @param string $lpaId
-     * @return PrimaryAttorneyDecisions
-     */
-    public function getPrimaryAttorneyDecisions($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions');
-    }
-    
     /**
      * Set the primary attorney decisions
      *
@@ -507,19 +415,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Get the replacement attorney decisions
-     *
-     * @param string $lpaId
-     * @return ReplacementAttorneyDecisions
-     */
-    public function getReplacementAttorneyDecisions($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions');
-    }
+
     
     /**
      * Set the replacement attorney decisions
@@ -564,19 +460,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Get the donor
-     *
-     * @param string $lpaId
-     * @return Donor
-     */
-    public function getDonor($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'donor', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Donor');
-    }
+
     
     /**
      * Set the donor
@@ -605,19 +489,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'donor', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Get the correspondent
-     *
-     * @param string $lpaId
-     * @return Correspondence
-     */
-    public function getCorrespondent($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Correspondence');
-    }
+
     
     /**
      * Set the correspondent
@@ -646,19 +518,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Get the payment information
-     *
-     * @param string $lpaId
-     * @return Correspondence
-     */
-    public function getPayment($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'payment', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Payment\Payment');
-    }
+
     
     /**
      * Set the payment information
@@ -687,19 +547,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'payment', $this);
         return $helper->deleteResource();
     }
-    
-    /**
-     * Returns whether or not the Who Are You information has been provided
-     * 
-     * @param unknown $lpaId
-     * @return boolean
-     */
-    public function isWhoAreYouSet($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this);
-        return $helper->getSingleValueResource('whoAreYouAnswered');
-    }
+
     
     /**
      * Sets the person/organisation of who completed the application
@@ -716,19 +564,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this);
         return $helper->addResource($whoAreYou->toJson());
     }
-    
-    /**
-     * Returns whether the LPA is currently locked
-     * 
-     * @param string $lpaId
-     * @return boolean
-     */
-    public function isLpaLocked($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'lock', $this);
-        return $helper->getSingleValueResource('locked');
-    }
+
     
     /**
      * Locks the LPA. Once locked the LPA becomes read-only. It can however still be deleted.
@@ -791,19 +627,7 @@ trait ClientGuzzleTrait
         return $helper->deleteResource();
     }
     
-    /**
-     * Returns a list of all currently set notified persons
-     *
-     * @param string $lpaId
-     * @return array
-     */
-    public function getNotifiedPersons($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
-        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson');
-    }
-    
+
     /**
      * Adds a new notified person
      *
@@ -819,24 +643,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
         return $helper->addResource($notifiedPerson->toJson());
     }
-    
-    /**
-     * Returns the notified person for the given notified person id
-     *
-     * @param string $lpaId
-     * @param string $notifiedPersonId
-     * @return \Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson
-     */
-    public function getNotifiedPerson(
-        $lpaId,
-        $notifiedPersonId
-    )
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson', $notifiedPersonId);
-    }
-    
+
     /**
      * Sets the notified person for the given notified person id
      *
@@ -899,23 +706,7 @@ trait ClientGuzzleTrait
         return $helper->addResource($primaryAttorney->toJson());
     }
     
-    /**
-     * Returns the primary attorney for the given primary attorney id
-     *
-     * @param string $lpaId
-     * @param string $primaryAttorneyId
-     * @return \Opg\Lpa\DataModel\Lpa\Document\PrimaryAttorney
-     */
-    public function getPrimaryAttorney(
-        $lpaId,
-        $primaryAttorneyId
-    )
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney', $primaryAttorneyId);
-    }
-    
+
     /**
      * Sets the primary attorney for the given primary attorney id
      *
@@ -949,20 +740,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
         return $helper->deleteResource($primaryAttorneyId);
     }
-    
-    /**
-     * Returns a list of all currently set replacement attorneys
-     *
-     * @param string $lpaId
-     * @return array
-     */
-    public function getReplacementAttorneys($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
-        return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney');
-    }
-    
+
     /**
      * Adds a new replacement attorney
      *
@@ -978,24 +756,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
         return $helper->addResource($replacementAttorney->toJson());
     }
-    
-    /**
-     * Returns the replacement attorney for the given replacement attorney id
-     *
-     * @param string $lpaId
-     * @param string $replacementAttorneyId
-     * @return \Opg\Lpa\DataModel\Lpa\Document\ReplacementAttorney
-     */
-    public function getReplacementAttorney(
-        $lpaId,
-        $replacementAttorneyId
-    )
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney', $replacementAttorneyId);
-    }
-    
+
     /**
      * Sets the replacement attorney for the given replacement attorney id
      *
@@ -1029,20 +790,7 @@ trait ClientGuzzleTrait
         $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
         return $helper->deleteResource($replacementAttorneyId);
     }
-    
-    /**
-     * Get the certificate provider
-     *
-     * @param string $lpaId
-     * @return CertificateProvider
-     */
-    public function getCertificateProvider($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
-        return $helper->getEntityResource('\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider');
-    }
-    
+
     /**
      * Set the certificate provider
      *
@@ -1071,30 +819,6 @@ trait ClientGuzzleTrait
         return $helper->deleteResource();
     }
 
-    /**
-     * Get Who Is Registering
-     *
-     * @param string $lpaId
-     * @return string|array
-     */
-    public function getWhoIsRegistering($lpaId)
-    {
-        die( 'Unused. If you see this tell Neil. - ' . __METHOD__ );
-        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
-        $result = $helper->getSingleValueResource('who');
-
-        if( is_array($result) ){
-
-            // If it's an array, returns instances of Attorneys
-            $result = array_map( function( $v ){
-                return AbstractAttorney::factory( $v );
-            }, $result );
-
-        }
-
-        return $result;
-
-    }
 
     /**
      * Set Who Is Registering

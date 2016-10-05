@@ -141,6 +141,8 @@ class TwigTestExtension extends Twig_Extension
             new Twig_SimpleFilter('nl2br', array($this, 'nl2br'), array('pre_escape' => 'html', 'is_safe' => array('html'))),
             new Twig_SimpleFilter('escape_something', array($this, 'escape_something'), array('is_safe' => array('something'))),
             new Twig_SimpleFilter('preserves_safety', array($this, 'preserves_safety'), array('preserves_safety' => array('html'))),
+            new Twig_SimpleFilter('static_call_string', 'TwigTestExtension::staticCall'),
+            new Twig_SimpleFilter('static_call_array', array('TwigTestExtension', 'staticCall')),
             new Twig_SimpleFilter('*_path', array($this, 'dynamic_path')),
             new Twig_SimpleFilter('*_foo_*_bar', array($this, 'dynamic_foo')),
         );
@@ -152,6 +154,8 @@ class TwigTestExtension extends Twig_Extension
             new Twig_SimpleFunction('§', array($this, '§Function')),
             new Twig_SimpleFunction('safe_br', array($this, 'br'), array('is_safe' => array('html'))),
             new Twig_SimpleFunction('unsafe_br', array($this, 'br')),
+            new Twig_SimpleFunction('static_call_string', 'TwigTestExtension::staticCall'),
+            new Twig_SimpleFunction('static_call_array', array('TwigTestExtension', 'staticCall')),
             new Twig_SimpleFunction('*_path', array($this, 'dynamic_path')),
             new Twig_SimpleFunction('*_foo_*_bar', array($this, 'dynamic_foo')),
         );
@@ -212,6 +216,11 @@ class TwigTestExtension extends Twig_Extension
         return strtoupper($value);
     }
 
+    public static function staticCall($value)
+    {
+        return "*$value*";
+    }
+
     public function br()
     {
         return '<br />';
@@ -220,10 +229,5 @@ class TwigTestExtension extends Twig_Extension
     public function is_multi_word($value)
     {
         return false !== strpos($value, ' ');
-    }
-
-    public function getName()
-    {
-        return 'integration_test';
     }
 }

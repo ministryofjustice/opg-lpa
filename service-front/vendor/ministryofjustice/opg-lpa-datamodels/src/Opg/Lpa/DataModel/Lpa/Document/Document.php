@@ -128,7 +128,7 @@ class Document extends AbstractData {
 
             //---
 
-
+            // Strip out any rogue empty array elements.
             $value = array_filter( $value, function( $val ){
                 return !empty( $val );
             });
