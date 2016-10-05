@@ -271,17 +271,27 @@ class StateChecker {
                     // If the Replacement Attorneys don't step in until all the Primary Attorney are gone...
                     if( $this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct() ){
 
-                        // We also need to know how they will make decision when they do step in.
-                        $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+                        // AND we have > 1 Replacement Attorneys
+                        if( $this->lpaHasMultipleReplacementAttorneys() ){
+
+                            // We also need to know how they will make decision when they do step in.
+                            $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+
+                        }
 
                     }
 
-                }elseif( $this->lpaPrimaryAttorneysMakeDecisionJointly() ){
+                } elseif ( $this->lpaPrimaryAttorneysMakeDecisionJointly() ){
 
                     // AND Primary Attorney are J...
 
-                    // We need to know how Replacement Attorneys will make decisions.
-                    $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+                    // AND we have > 1 Replacement Attorneys
+                    if( $this->lpaHasMultipleReplacementAttorneys() ){
+
+                        // We need to know how Replacement Attorneys will make decisions.
+                        $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+
+                    }
 
                 }
 
