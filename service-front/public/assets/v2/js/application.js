@@ -4868,7 +4868,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                   .after($(tplAlert({
                     'elementJSref': 'js-duplication-alert',
                     'alertType': 'important-small',
-                    'alertMessage': '<p>The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles.</p><p>Click here to confirm that these are 2 different people with the same name.</p>'
+                    'alertMessage': '<p>The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. By saving this section, you confirm that these are two different people with the same name.</p>'
                   })));
 
                 // Focus on alert panel for accessibility
@@ -4893,7 +4893,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     .after($(tplAlert({
                       'elementJSref': 'js-age-check',
                       'alertType': 'important-small',
-                      'alertMessage': 'This attorney is currently under 18. I understand they must be at least 18 <strong class="bold-small">when the donor sign the LPA,</strong> otherwise it may be rejected.'
+                      'alertMessage': 'This person is under 18. I understand they must be at least 18 <strong class="bold-small">on the date the donor signs the LPA</strong>, otherwise it will be rejected.'
                     })));
                 }
                 // Over 100
@@ -4902,7 +4902,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     .after($(tplAlert({
                       'elementJSref': 'js-age-check',
                       'alertType': 'important-small',
-                      'alertMessage': 'Please confirm that they are over 100 years old.'
+                      'alertMessage': 'By saving this section, you confirm that the attorney is more than 100 years old. If not, please change the date.'
                     })));
                 }
 
