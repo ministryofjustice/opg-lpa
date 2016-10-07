@@ -17,14 +17,18 @@
             {# API errors #}
             {% if error is not empty %}
                 <li><p>
-                {% if error == 'user-not-found' %}
-                    We could not find an account for this email address.
-                {% elseif error == 'address-already-registered' %}
-                    <p>This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.</p>
-                {% else %}
-                    {{ error }}
-                {% endif %}
-            </p></li>
+                    {% if error == 'user-not-found' %}
+                        We could not find an account for this email address.
+                    {% elseif error == 'address-already-registered' %}
+                        This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.
+                    {% elseif error == 'user-already-has-email' %}
+                        The new email address you have entered is the same as the one already in use on your account.
+                    {% elseif error == 'email-already-exists' %}
+                        The new email address you have entered is already registered to another LPA online tool account.
+                    {% else %}
+                        {{ error }}
+                    {% endif %}
+                </p></li>
             {% endif %}
         </ul>
     </div>
