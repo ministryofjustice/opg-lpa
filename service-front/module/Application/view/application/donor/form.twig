@@ -186,12 +186,14 @@
         {{ macros.formGroup(firstname) }}
         {{ macros.formGroup(lastname) }}
 
-        <details class="form-group flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
-            <summary class="summary" role="button" aria-expanded="false">Is this person known by any other names?</summary>
-            <div>
-                {{ macros.formGroup(otherNames) }}
-            </div>
-        </details>
+        <div class="form-group">
+            <details class="flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
+                <summary class="summary" role="button" aria-expanded="false">Is this person known by any other names?</summary>
+                <div>
+                    {{ macros.formGroup(otherNames) }}
+                </div>
+            </details>
+        </div>
 
     </fieldset>
 
