@@ -90,10 +90,34 @@ class CorrespondenceForm extends AbstractActorForm
 
             $errors = $this->modelValidationMessageConverter($modelValidation);
 
-            $errors['phone-number'] = $errors['phone-phone-number'];
-            unset( $errors['phone-phone-number'] );
+            //---------------------------
 
-            //var_dump($errors); die;
+            /*
+             * The following 2 if statements are a hack to ensure human readable error messages are show.
+             * The present our computer -> human method does not support this FieldSet use case.
+             */
+
+            if( is_array($errors) && isset($errors['phone-number']) && is_array($errors['phone-number']) ){
+
+                foreach( $errors['phone-number'] as $key=>$message ){
+                    if( $message == 'invalid-phone-number' ){
+                        $errors['phone-number'][$key] = 'Invalid phone number';
+                    }
+                }
+
+            }
+
+            if( is_array($errors) && isset($errors['email-address']) && is_array($errors['email-address']) ){
+
+                foreach( $errors['email-address'] as $key=>$message ){
+                    if( $message == 'invalid-email-address' ){
+                        $errors['email-address'][$key] = 'Invalid email address';
+                    }
+                }
+
+            }
+
+            //---------------------------
 
             return [
                     'isValid'=>false,
