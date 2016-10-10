@@ -183,7 +183,7 @@
                     .after($(tplAlert({
                       'elementJSref': 'js-age-check',
                       'alertType': 'important-small',
-                      'alertMessage': 'By saving this section, you confirm that the attorney is more than 100 years old. If not, please change the date.'
+                      'alertMessage': 'By saving this section, you confirm that the person is more than 100 years old. If not, please change the date.'
                     })));
                 }
 
