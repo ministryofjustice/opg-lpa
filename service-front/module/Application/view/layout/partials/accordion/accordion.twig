@@ -236,7 +236,10 @@
 							( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
 							( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
 							'The donor is not applying for a reduced fee' ))),
-            	'mobile' : item.routeName,
+            	'mobile' : ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
+							( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
+							( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
+			'The donor is not applying for a reduced fee' ))),
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
