@@ -160,28 +160,7 @@ trait ClientGuzzleTrait
     
         return true;
     }
-    
-    /**
-     * Get a single application
-     *
-     * @param string $lpaId
-     * @return Lpa
-     */
-    /*
-    public function getApplication($lpaId)
-    {
-        $response = $this->client()->get( $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId, [
-            'headers' => ['Content-Type' => 'application/json']
-        ]);
-    
-        if ($response->getStatusCode() != 200) {
-            return $this->log($response, false);
-        }
-    
-        return new Lpa($response->json());
-    }
-    */
-    
+
     /**
      * Get list of applications for the current user
      * Combine pages, if necessary

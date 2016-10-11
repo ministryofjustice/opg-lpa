@@ -112,7 +112,7 @@ class ClientSpec extends ObjectBehavior
     {
         $stats = $this->getAuthStats()->shouldBeTheAuthStatsArray();
     }
-    
+
     function it_will_get_an_email_update_token()
     {
         $this->beConstructedWith(getTestUserToken());
@@ -371,7 +371,7 @@ class ClientSpec extends ObjectBehavior
         $this->deleteReplacementAttorney($lpaId, 3)->shouldBe(true);
         $this->deleteReplacementAttorney($lpaId, 1)->shouldBe(true);
         $this->getApplication($lpaId)->document->replacementAttorneys->shouldBeAnArrayOfAttorneys(1);
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'Jane' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'Jane' );
     }
      
     function it_can_return_a_list_of_replacement_attorneys()
@@ -386,8 +386,8 @@ class ClientSpec extends ObjectBehavior
         $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
 
         $this->getApplication($lpaId)->document->replacementAttorneys->shouldBeAnArrayOfAttorneys(2);
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'John' );
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 1, 'name-first', 'Jane' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 1, 'name-first', 'Jane' );
     }
      
     function it_will_return_an_empty_array_if_no_replacement_attorneys_have_been_set()
@@ -404,11 +404,11 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->addReplacementAttorney($lpaId, $replacementAttorney)->shouldBe(true);
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'John' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
 
         $replacementAttorney->name->first = 'Henry';
         $this->setReplacementAttorney($lpaId, $replacementAttorney, 1)->shouldBe(true);
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'Henry' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'Henry' );
     }
      
     function it_can_add_and_update_multiple_replacement_attorneys()
@@ -421,15 +421,15 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
         $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'John' );
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 1, 'name-first', 'Sally' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 1, 'name-first', 'Sally' );
 
         $replacementAttorney1->name->first = 'Henry';
         $replacementAttorney2->name->first = 'Beth';
         $this->setReplacementAttorney($lpaId, $replacementAttorney1, 1)->shouldBe(true);
         $this->setReplacementAttorney($lpaId, $replacementAttorney2, 2)->shouldBe(true);
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'Henry' );
-        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInFirstArrayItem( 1, 'name-first', 'Beth' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'Henry' );
+        $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 1, 'name-first', 'Beth' );
     }
     
     function it_will_return_a_password_reset_token(){
@@ -531,7 +531,7 @@ class ClientSpec extends ObjectBehavior
         $this->deletePrimaryAttorney($lpaId, 3)->shouldBe(true);
         $this->deletePrimaryAttorney($lpaId, 1)->shouldBe(true);
         $this->getApplication($lpaId)->document->primaryAttorneys->shouldBeAnArrayOfAttorneys(1);
-        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name', 'Solicitors Limited' );
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name', 'Solicitors Limited' );
     }
      
     function it_can_return_a_list_of_primary_attorneys()
@@ -546,8 +546,8 @@ class ClientSpec extends ObjectBehavior
         $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
 
         $this->getApplication($lpaId)->document->primaryAttorneys->shouldBeAnArrayOfAttorneys(2);
-        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInFirstArrayItem( 0, 'name-first', 'John' );
-        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInFirstArrayItem( 1, 'name', 'Solicitors Limited' );
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 1, 'name', 'Solicitors Limited' );
     }
      
     function it_will_return_an_empty_array_if_no_primary_attorneys_have_been_set()
@@ -556,6 +556,7 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->getApplication($lpaId)->document->primaryAttorneys->shouldBe([]);
     }
+
      
     function it_can_add_and_update_a_primary_attorney()
     {
@@ -564,10 +565,11 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->addPrimaryAttorney($lpaId, $primaryAttorney)->shouldBe(true);
-        //$this->getPrimaryAttorney($lpaId, 1)->name->first->shouldBe('John');
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
+        
         $primaryAttorney->name->first = 'Henry';
         $this->setPrimaryAttorney($lpaId, $primaryAttorney, 1)->shouldBe(true);
-        //$this->getPrimaryAttorney($lpaId, 1)->name->first->shouldBe('Henry');
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'Henry' );
     }
      
     function it_can_add_and_update_multiple_primary_attorneys()
@@ -580,14 +582,15 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
-        //$this->getPrimaryAttorney($lpaId, 1)->name->first->shouldBe('John');
-        //$this->getPrimaryAttorney($lpaId, 2)->name->first->shouldBe('Sally');
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 1, 'name-first', 'Sally' );
+
         $primaryAttorney1->name->first = 'Henry';
         $primaryAttorney2->name->first = 'Beth';
         $this->setPrimaryAttorney($lpaId, $primaryAttorney1, 1)->shouldBe(true);
         $this->setPrimaryAttorney($lpaId, $primaryAttorney2, 2)->shouldBe(true);
-        //$this->getPrimaryAttorney($lpaId, 1)->name->first->shouldBe('Henry');
-        //$this->getPrimaryAttorney($lpaId, 2)->name->first->shouldBe('Beth');
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'Henry' );
+        $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 1, 'name-first', 'Beth' );
     }
      
     function it_will_return_null_if_seed_has_not_been_set()
@@ -596,6 +599,7 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->getSeedDetails($lpaId)->shouldBe(null);
     }
+
      
     function it_will_correctly_report_if_the_who_are_details_are_set()
     {
@@ -603,7 +607,7 @@ class ClientSpec extends ObjectBehavior
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->isWhoAreYouSet($lpaId, $whoAreYou)->shouldBe(false);
+        $this->getApplication($lpaId)->whoAreYouAnswered->shouldBe(false);
     }
      
     function it_will_correctly_report_if_the_who_are_details_are_not_set()
@@ -613,7 +617,7 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
-        //$this->isWhoAreYouSet($lpaId, $whoAreYou)->shouldBe(true);
+        $this->getApplication($lpaId)->whoAreYouAnswered->shouldBe(true);
     }
      
     function it_can_set_the_who_are_you_details()
@@ -634,20 +638,21 @@ class ClientSpec extends ObjectBehavior
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(false);
     }
-     
+
+
     function it_will_return_the_lock_status_when_locked()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->lockLpa($lpaId)->shouldBe(true);
-        //$this->isLpaLocked($lpaId)->shouldBe(true);
+        $this->getApplication($lpaId)->locked->shouldBe(true);
     }
      
     function it_will_return_the_lock_status_when_not_locked()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->isLpaLocked($lpaId)->shouldBe(false);
+        $this->getApplication($lpaId)->locked->shouldBe(false);
     }
      
     function it_can_lock_an_application()
@@ -683,6 +688,7 @@ class ClientSpec extends ObjectBehavior
         $this->deleteSeed($lpaId)->shouldBe(true);
         $this->getSeedDetails($lpaId)->shouldBe(null);
     }
+
      
     function it_can_delete_a_notified_person()
     {
@@ -700,8 +706,9 @@ class ClientSpec extends ObjectBehavior
          
         $this->deleteNotifiedPerson($lpaId, 3)->shouldBe(true);
         $this->deleteNotifiedPerson($lpaId, 1)->shouldBe(true);
-        //$this->getNotifiedPersons($lpaId)->shouldBeAnArrayOfNotifiedPeople(1);
-        //$this->getNotifiedPersons($lpaId)[0]->name->first->shouldBe('Sally');
+
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldBeAnArrayOfNotifiedPeople(1);
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Sally' );
     }
      
     function it_can_return_a_list_of_notified_people()
@@ -714,18 +721,19 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->addNotifiedPerson($lpaId, $notifiedPerson1)->shouldBe(true);
         $this->addNotifiedPerson($lpaId, $notifiedPerson2)->shouldBe(true);
-         
-        //$this->getNotifiedPersons($lpaId)->shouldBeAnArrayOfNotifiedPeople(2);
-        //$this->getNotifiedPersons($lpaId)[0]->name->first->shouldBe('Bob');
-        //$this->getNotifiedPersons($lpaId)[1]->name->first->shouldBe('Sally');
+
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldBeAnArrayOfNotifiedPeople(2);
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Bob' );
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 1, 'name-first', 'Sally' );
     }
      
     function it_will_return_an_empty_array_if_no_notified_people_have_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getNotifiedPersons($lpaId)->shouldBe([]);
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldBe([]);
     }
+
      
     function it_can_add_and_update_a_notified_person()
     {
@@ -734,11 +742,13 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->addNotifiedPerson($lpaId, $notifiedPerson)->shouldBe(true);
-        //$this->getNotifiedPerson($lpaId, 1)->name->first->shouldBe('Bob');
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Bob' );
+
         $notifiedPerson->name->first = 'Henry';
         $this->setNotifiedPerson($lpaId, $notifiedPerson, 1)->shouldBe(true);
-        //$this->getNotifiedPerson($lpaId, 1)->name->first->shouldBe('Henry');
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Henry' );
     }
+
      
     function it_can_add_and_update_multiple_notified_people()
     {
@@ -750,21 +760,24 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->addNotifiedPerson($lpaId, $notifiedPerson1)->shouldBe(true);
         $this->addNotifiedPerson($lpaId, $notifiedPerson2)->shouldBe(true);
-       // $this->getNotifiedPerson($lpaId, 1)->name->first->shouldBe('Bob');
-        //$this->getNotifiedPerson($lpaId, 2)->name->first->shouldBe('Sally');
+
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Bob' );
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 1, 'name-first', 'Sally' );
+
         $notifiedPerson1->name->first = 'Henry';
         $notifiedPerson2->name->first = 'Beth';
         $this->setNotifiedPerson($lpaId, $notifiedPerson1, 1)->shouldBe(true);
         $this->setNotifiedPerson($lpaId, $notifiedPerson2, 2)->shouldBe(true);
-       // $this->getNotifiedPerson($lpaId, 1)->name->first->shouldBe('Henry');
-       // $this->getNotifiedPerson($lpaId, 2)->name->first->shouldBe('Beth');
+
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Henry' );
+        $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 1, 'name-first', 'Beth' );
     }
      
     function it_will_return_null_if_the_certificate_provider_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getDonor($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->donor->shouldBe(null);
     }
      
     function it_can_set_and_get_the_certificate_provider()
@@ -776,11 +789,12 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setCertificateProvider($lpaId, $certificateProvider)->shouldBe(true);
-        //$this->getCertificateProvider($lpaId)->toJson()->shouldBe($certificateProvider->toJson());
-        //$this->getCertificateProvider($lpaId)->address->address1->shouldBe('Line 1');
+        $this->getApplication($lpaId)->document->certificateProvider->toJson()->shouldBe($certificateProvider->toJson());
+        $this->getApplication($lpaId)->document->certificateProvider->address->address1->shouldBe('Line 1');
+
         $this->setCertificateProvider($lpaId, $certificateProvider2)->shouldBe(true);
-        //$this->getCertificateProvider($lpaId)->toJson()->shouldBe($certificateProvider2->toJson());
-        //$this->getCertificateProvider($lpaId)->address->address1->shouldBe('Line 1');
+        $this->getApplication($lpaId)->document->certificateProvider->toJson()->shouldBe($certificateProvider2->toJson());
+        $this->getApplication($lpaId)->document->certificateProvider->address->address1->shouldBe('Line 1');
     }
      
     function it_can_delete_the_certificate_provider()
@@ -789,14 +803,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setCertificateProvider($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider'));
         $this->deleteCertificateProvider($lpaId)->shouldBe(true);
-        //$this->getCertificateProvider($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->certificateProvider->shouldBe(null);
     }
      
     function it_will_return_null_if_replacement_attorney_decisions_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getReplacementAttorneyDecisions($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->replacementAttorneyDecisions->shouldBe(null);
     }
      
     function it_can_set_and_get_and_update_the_replacement_attorney_decisions()
@@ -809,16 +823,17 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setReplacementAttorneyDecisions($lpaId, $decisions)->shouldBe(true);
-        //$this->getReplacementAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions->toJson());
+        $this->getApplication($lpaId)->document->replacementAttorneyDecisions->toJson()->shouldBe($decisions->toJson());
+
         $this->setReplacementAttorneyDecisions($lpaId, $decisions2)->shouldBe(true);
-        //$this->getReplacementAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions2->toJson());
+        $this->getApplication($lpaId)->document->replacementAttorneyDecisions->toJson()->shouldBe($decisions2->toJson());
     
         $decisions3->when = $decisions3::LPA_DECISION_WHEN_FIRST;
         $this->setReplacementAttorneyDecisions($lpaId, $decisions3)->shouldBe(true);
         $this->updateReplacementAttorneyDecisions($lpaId, ['when'=>$decisions3::LPA_DECISION_WHEN_LAST])->shouldBe(true);
     
         $decisions3->when = $decisions3::LPA_DECISION_WHEN_LAST;
-        //$this->getReplacementAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions3->toJson());
+        $this->getApplication($lpaId)->document->replacementAttorneyDecisions->toJson()->shouldBe($decisions3->toJson());
     }
      
     function it_can_delete_the_replacement_attorney_decisions()
@@ -827,14 +842,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setReplacementAttorneyDecisions($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions'));
         $this->deleteReplacementAttorneyDecisions($lpaId)->shouldBe(true);
-        //$this->getReplacementAttorneyDecisions($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->replacementAttorneyDecisions->shouldBe(null);
     }
      
     function it_will_return_null_if_primary_attorney_decisions_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getPrimaryAttorneyDecisions($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->primaryAttorneyDecisions->shouldBe(null);
     }
     
     function it_can_set_and_get_and_update_the_primary_attorney_decisions()
@@ -848,13 +863,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
     
         $this->setPrimaryAttorneyDecisions($lpaId, $decisions)->shouldBe(true);
-        //$this->getPrimaryAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions->toJson());
+        $this->getApplication($lpaId)->document->primaryAttorneyDecisions->toJson()->shouldBe($decisions->toJson());
     
         $this->setPrimaryAttorneyDecisions($lpaId, $decisions2)->shouldBe(true);
-        //$this->getPrimaryAttorneyDecisions($lpaId)->toJson()->shouldBe($decisions2->toJson());
+        $this->getApplication($lpaId)->document->primaryAttorneyDecisions->toJson()->shouldBe($decisions2->toJson());
     
         $decisions3->canSustainLife = true;
-        //$this->setPrimaryAttorneyDecisions($lpaId, $decisions3)->shouldBe(true);
+        $this->setPrimaryAttorneyDecisions($lpaId, $decisions3)->shouldBe(true);
+        $this->getApplication($lpaId)->document->primaryAttorneyDecisions->toJson()->shouldBe($decisions3->toJson());
 
     }
      
@@ -864,14 +880,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setPrimaryAttorneyDecisions($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions'));
         $this->deletePrimaryAttorneyDecisions($lpaId)->shouldBe(true);
-        //$this->getPrimaryAttorneyDecisions($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->primaryAttorneyDecisions->shouldBe(null);
     }
      
     function it_will_return_null_if_donor_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getDonor($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->donor->shouldBe(null);
     }
      
     function it_can_set_and_get_the_donor()
@@ -883,11 +899,12 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setDonor($lpaId, $donor)->shouldBe(true);
-        //$this->getDonor($lpaId)->toJson()->shouldBe($donor->toJson());
-        //$this->getDonor($lpaId)->otherNames->shouldBe('Fred');
+        $this->getApplication($lpaId)->document->donor->toJson()->shouldBe($donor->toJson());
+        $this->getApplication($lpaId)->document->donor->otherNames->shouldBe('Fred');
+
         $this->setDonor($lpaId, $donor2)->shouldBe(true);
-        //$this->getDonor($lpaId)->toJson()->shouldBe($donor2->toJson());
-        //$this->getDonor($lpaId)->otherNames->shouldBe('Fred');
+        $this->getApplication($lpaId)->document->donor->toJson()->shouldBe($donor2->toJson());
+        $this->getApplication($lpaId)->document->donor->otherNames->shouldBe('Fred');
     }
      
     function it_can_delete_the_donor()
@@ -896,14 +913,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setDonor($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Donor'));
         $this->deleteDonor($lpaId)->shouldBe(true);
-        //$this->getDonor($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->donor->shouldBe(null);
     }
      
     function it_will_return_null_if_correspondent_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getCorrespondent($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->correspondent->shouldBe(null);
     }
     
     function it_can_set_and_get_the_correspondent()
@@ -915,10 +932,11 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setCorrespondent($lpaId, $correspondent)->shouldBe(true);
-        //$this->getCorrespondent($lpaId)->toJson()->shouldBe($correspondent->toJson());
-        //$this->getCorrespondent($lpaId)->who->shouldBe('other');
+        $this->getApplication($lpaId)->document->correspondent->toJson()->shouldBe($correspondent->toJson());
+        $this->getApplication($lpaId)->document->correspondent->who->shouldBe('other');
+
         $this->setCorrespondent($lpaId, $correspondent2)->shouldBe(true);
-        //$this->getCorrespondent($lpaId)->toJson()->shouldBe($correspondent2->toJson());
+        $this->getApplication($lpaId)->document->correspondent->toJson()->shouldBe($correspondent2->toJson());
     }
      
     function it_can_delete_the_correspondent()
@@ -928,14 +946,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setCorrespondent($lpaId, $correspondent);
         $this->deleteCorrespondent($lpaId)->shouldBe(true);
-        //$this->getCorrespondent($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->correspondent->shouldBe(null);
     }
      
     function it_will_return_null_if_payment_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getPayment($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->payment->shouldBe(null);
     }
      
     function it_can_set_and_get_the_payment()
@@ -947,9 +965,9 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setPayment($lpaId, $payment)->shouldBe(true);
-        //$this->getPayment($lpaId)->toJson()->shouldBe($payment->toJson());
+        $this->getApplication($lpaId)->payment->toJson()->shouldBe($payment->toJson());
         $this->setPayment($lpaId, $payment2)->shouldBe(true);
-        //$this->getPayment($lpaId)->toJson()->shouldBe($payment2->toJson());
+        $this->getApplication($lpaId)->payment->toJson()->shouldBe($payment2->toJson());
     }
      
     function it_can_delete_the_payment()
@@ -958,14 +976,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setPayment($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Payment\Payment'));
         $this->deletePayment($lpaId)->shouldBe(true);
-        //$this->getPayment($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->payment->shouldBe(null);
     }
     
     function it_will_return_null_if_instructions_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getInstructions($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->instruction->shouldBe(null);
     }
      
     function it_can_set_and_get_the_lpa_instructions()
@@ -976,9 +994,9 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setInstructions($lpaId, $prefString1)->shouldBe(true);
-        //$this->getInstructions($lpaId)->shouldBe($prefString1);
+        $this->getApplication($lpaId)->document->instruction->shouldBe($prefString1);
         $this->setInstructions($lpaId, $prefString2)->shouldBe(true);
-        //$this->getInstructions($lpaId)->shouldBe($prefString2);
+        $this->getApplication($lpaId)->document->instruction->shouldBe($prefString2);
     }
      
     function it_can_delete_the_instructions()
@@ -987,14 +1005,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setInstructions($lpaId, 'some-dummy-string');
         $this->deleteInstructions($lpaId)->shouldBe(true);
-        //$this->getInstructions($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->instruction->shouldBe(null);
     }
      
     function it_will_return_null_if_preferences_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getPreferences($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->preference->shouldBe(null);
     }
      
     function it_can_set_and_get_the_lpa_preferences()
@@ -1005,9 +1023,9 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setPreferences($lpaId, $prefString1)->shouldBe(true);
-        //$this->getPreferences($lpaId)->shouldBe($prefString1);
+        $this->getApplication($lpaId)->document->preference->shouldBe($prefString1);
         $this->setPreferences($lpaId, $prefString2)->shouldBe(true);
-        //$this->getPreferences($lpaId)->shouldBe($prefString2);
+        $this->getApplication($lpaId)->document->preference->shouldBe($prefString2);
     }
      
     function it_can_delete_the_preferences()
@@ -1016,14 +1034,14 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setPreferences($lpaId, 'some-dummy-string');
         $this->deletePreferences($lpaId)->shouldBe(true);
-        //$this->getPreferences($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->preference->shouldBe(null);
     }
      
     function it_will_return_null_if_type_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
-        //$this->getType($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->type->shouldBe(null);
     }
      
     function it_can_set_and_get_the_lpa_type()
@@ -1031,9 +1049,9 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
         $lpaId = $this->createApplication();
         $this->setType($lpaId, Document::LPA_TYPE_HW)->shouldBe(true);
-        //$this->getType($lpaId)->shouldBe(Document::LPA_TYPE_HW);
+        $this->getApplication($lpaId)->document->type->shouldBe(Document::LPA_TYPE_HW);
         $this->setType($lpaId, Document::LPA_TYPE_PF)->shouldBe(true);
-        //$this->getType($lpaId)->shouldBe(Document::LPA_TYPE_PF);
+        $this->getApplication($lpaId)->document->type->shouldBe(Document::LPA_TYPE_PF);
     }
      
     function it_will_fail_if_attempting_to_set_an_invalid_type()
@@ -1049,7 +1067,7 @@ class ClientSpec extends ObjectBehavior
         $lpaId = $this->createApplication();
         $this->setType($lpaId, Document::LPA_TYPE_PF);
         $this->deleteType($lpaId)->shouldBe(true);
-        //$this->getType($lpaId)->shouldBe(null);
+        $this->getApplication($lpaId)->document->type->shouldBe(null);
     }
      
     function it_can_get_an_existing_application()
@@ -1131,7 +1149,7 @@ class ClientSpec extends ObjectBehavior
                     count($subject) == $count &&
                     array_shift($subject) instanceof \Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
             },
-            'haveValueInFirstArrayItem' => function($subject, $nthItem, $path, $value) {
+            'haveValueInArrayItem' => function($subject, $nthItem, $path, $value) {
 
                 if( !is_array($subject) || count($subject) < 1 ){
                     return false;
