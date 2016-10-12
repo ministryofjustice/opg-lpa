@@ -65,6 +65,7 @@
         .label {
             @include media($max-width: 750px) {
                 width: 103px;
+                line-height: 1;
             }
         }
     }

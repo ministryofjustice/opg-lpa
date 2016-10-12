@@ -2854,7 +2854,8 @@ input[type=number] {
     text-align: center;
     text-transform: uppercase; }
   .accordion-summary.wide-label .label {
-    width: 103px; }
+    width: 103px;
+    line-height: 1; }
   .accordion-summary .link {
     display: inline-block;
     float: right; }
