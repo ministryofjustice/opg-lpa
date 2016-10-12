@@ -27,7 +27,7 @@
     maxlength: 2000,
     class: 'form-control'
 }) ? ''}}
-    
+
 {% set howValueOptions = {
 	'jointly-attorney-severally' :{
 		attributes: {
@@ -51,7 +51,7 @@
 		label_attributes: {
 			for: 'how-jointly'
 		},
-		value: currentHowValueOptions['jointly'].value 
+		value: currentHowValueOptions['jointly'].value
 	},
 	'depends' : {
 		attributes: {
@@ -84,7 +84,7 @@
 <li id="primary-attorney-decision-sections" class="section current js-current">
 
 	<h2 class="heading-medium accordion-header flush--top">How should your attorneys make decisions?</h2>
-	
+
     <div class="accordion-info">
 		<div class="text">
 			<p>Your choice here is very important as it affects how your LPA can be used. Whichever option you choose, your attorneys must always act in your best interests.</p>
@@ -94,7 +94,7 @@
 
 	{# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
@@ -105,8 +105,8 @@
             <h2 class="heading-medium flush--top">How should the attorneys make decisions?</h2>
 
             <div class="form-group {{ how.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(how) }}
                 {{ formElementErrorsV2(how) }}
+                {{ formElement(how) }}
             </div>
         </fieldset>
 
@@ -122,7 +122,7 @@
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
-        
+
     {{ form().closeTag|raw }}
 
 </li>

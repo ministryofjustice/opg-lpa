@@ -137,11 +137,12 @@
             <p>You can choose more than one.</p>
 
             <div class="form-group {{ correspondence.getMessages|length >0 ? 'error'}}">
+		        {{ formElementErrorsV2(correspondence) }}
+
 	            <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
 	                {{ formElement(contactByPost) }}
 	                {{ contactByPost.getOption('label')|raw }}
 	            </label>
-                {{ formElementErrorsV2(contactByPost) }}
 
 	            <label class="text block-label" {{ (correspondent['contactPhone']) ? '' : 'data-target="contact-by-phone"' }} for="{{ contactByPhone.getAttribute('id') }}">
 	                {{ formElement(contactByPhone) }}
@@ -173,9 +174,7 @@
 	                {{ formElement(contactInWelsh) }}
 	                {{ contactInWelsh.getOption('label')|raw }}
 	            </label>
-                {{ formElementErrorsV2(contactInWelsh) }}
 
-		        {{ formElementErrorsV2(correspondence) }}
 
             </div>
 

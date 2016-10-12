@@ -8,41 +8,41 @@
 {% if form %}
     {% set form = formErrorTextExchange(form, {
             'who': {
-                'cannot-be-blank' : 'Please choose one of the options' 
+                'cannot-be-blank' : 'Please choose one of the options'
             }
-       }) 
+       })
     %}
-    
+
     {# Set form fields variables #}
     {% set who = form.get('who') %}
     {% set professional = form.get('professional') %}
     {% set professionalOther = form.get('professional-other') %}
     {% set organisation = form.get('organisation') %}
-    
+
     {# form fields config #}
     {{ form.setAttributes({
         'id': 'WhoAreYou'
     }) ? '' }}
-    
+
     {{ professionalOther.setAttributes({
         id: 'profession',
         'class': 'form-control'
     }) ? '' }}
-    
+
     {{ organisation.setAttributes({
         id: 'organisation',
         'class': 'form-control'
     }) ? '' }}
-    
+
     {# form fields labels #}
     {{ professionalOther.setOptions({
         label:'Please tell us your profession'
-    }) ? '' }}  
-    
+    }) ? '' }}
+
     {{ organisation.setOptions({
         label:'Which organisation helped?'
-    }) ? '' }} 
-{% endif %}   
+    }) ? '' }}
+{% endif %}
 
 <li id="who-are-you-section" class="section current js-current">
 
@@ -52,14 +52,14 @@
     <div class="accordion-info">
         <div class="text">
             <p>Thanks, you have already answered this question.</p>
-            
+
             <p>Your answer was saved separately from your LPA and is anonymous. This means that it can't now be linked to you and you can't change it.</p>
 
-        </div> 
-    </div> 
+        </div>
+    </div>
 
-    <p><a href="{{ nextRoute }}" class="button">Continue</a></p>  
-     
+    <p><a href="{{ nextRoute }}" class="button">Continue</a></p>
+
     {% else %}
     <div class="accordion-info">
 		<div class="text">
@@ -71,21 +71,22 @@
 
     {# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
         {# Error summary #}
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
-        
+
         <input type="hidden" name="who" value="">
         <input type="hidden" name="professional" value="">
-        <input type="hidden" name="digitalPartner" value=""> 
+        <input type="hidden" name="digitalPartner" value="">
 
         <fieldset>
             <legend class="visuallyhidden">Who was using the LPA service</legend>
 
             <div class="form-group {{ who.getMessages|length >0 ? 'error'}}">
-                
+                {{ formElementErrorsV2(who) }}
+
                 <label class="text block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">
                     {{ formInput(whoOptions['donor']) }}
                     {{ whoOptions['donor'].getOption('label')|raw }}
@@ -129,8 +130,8 @@
                             {{ formElementErrorsV2(professionalOther) }}
                         </label>
                         {{ formText(professionalOther) }}
-                    </div>                            
-                </div> 
+                    </div>
+                </div>
 
                 <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
                     {{ formInput(whoOptions['digital-partner']) }}
@@ -150,7 +151,7 @@
                         {{ formElementErrorsV2(organisation) }}
                     </label>
                     {{ formText(organisation) }}
-                </div>  
+                </div>
 
                 <label class="text block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
                     {{ formInput(whoOptions['notSaid']) }}
@@ -158,7 +159,6 @@
                 </label>
                 {{ formElementErrorsV2(whoOptions['notSaid']) }}
 
-                {{ formElementErrorsV2(who) }}
             </div>
 
         </fieldset>
@@ -166,10 +166,10 @@
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
-        
+
     {{ form().closeTag|raw }}
     {% endif %}
-    
+
 </li>
 
 {% endblock %}

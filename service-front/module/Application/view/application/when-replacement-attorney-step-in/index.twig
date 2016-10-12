@@ -47,7 +47,7 @@
 		label_attributes: {
 			for: 'no-attorney-can-act'
 		},
-		value: currentWhenOptions['last'].value 
+		value: currentWhenOptions['last'].value
 	},
 	'depends' : {
 		attributes: {
@@ -89,7 +89,7 @@
 
 	{# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
@@ -100,8 +100,8 @@
             <h2 class="heading-medium flush--top">My replacement attorneys will step in...</h2>
 
             <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(when) }}
                 {{ formElementErrorsV2(when) }}
+                {{ formElement(when) }}
             </div>
         </fieldset>
 
@@ -113,11 +113,11 @@
 			{{ macros.formGroup(whenDetails) }}
 
         </fieldset>
-	
+
 		<div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
-        
+
     {{ form().closeTag|raw }}
 
 </li>

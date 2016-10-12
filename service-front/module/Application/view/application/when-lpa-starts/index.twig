@@ -40,8 +40,8 @@
 			<h2 class="heading-medium flush--top">My LPA can be used</h2>
 
 		    <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
-		        {{ formRadio(when) }}
 		        {{ formElementErrorsV2(when) }}
+		        {{ formRadio(when) }}
 		    </div>
 		</fieldset>
 

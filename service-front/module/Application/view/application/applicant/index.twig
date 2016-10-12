@@ -17,7 +17,7 @@
 {% set whoIsRegisteringValueOptions = whoIsRegistering.getOptions()['value_options'] %}
 
 {% set whoIsRegisteringValueOptions = {
-	'donor' : { 
+	'donor' : {
         label: "The donor - " ~ lpa.document.donor.name,
         label_attributes: {
             for: 'whoIsRegistering-donor',
@@ -41,7 +41,7 @@
             value: whoIsRegisteringValueOptions['attorney'].value
  		}
 	} %}
-    
+
     {% set attorneyList = form.get('attorneyList') %}
 
 {% else %}
@@ -55,7 +55,7 @@
                 value: whoIsRegisteringValueOptions['attorney'].value
 	 		}
 		} %}
-	
+
     {% else %}
     	{% set attorney = lpa.document.primaryAttorneys|first %}
     	{% set whoIsRegisteringValueOptions = {
@@ -65,9 +65,9 @@
                 value: whoIsRegisteringValueOptions['attorney'].value
 	 		}
 		} %}
-    
+
     {% endif %}
-    
+
     {% set whoIsRegisteringValueOptions = {
 		'donor' : whoIsRegisteringValueOptions['donor'],
 		'attorney' : {
@@ -81,7 +81,7 @@
             value: whoIsRegisteringValueOptions['attorney'].value
         }
 	} %}
-    	
+
 {% endif %}
 
 {{ whoIsRegistering.setOptions({
@@ -103,19 +103,19 @@
 
     <div class="accordion-info">
         <div class="text">
-        
+
             <p>Either the donor, or 1 or more of the attorneys, can apply to register the LPA.</p>
-            
+
             <p>If the attorneys have been appointed jointly, they must <strong class="bold-small">all</strong> apply.</p>
 
             <p><a href="/guide#topic-applicant" class="js-guidance" data-journey-click="stageprompt.lpa:help:applicant">Find out more about the role of the applicant</a></p>
-        
+
         </div>
     </div>
-        
+
     {# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
@@ -124,14 +124,14 @@
             <legend class="heading-medium flush--top">This LPA is being registered by</legend>
 
             <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'error'}}">
+                {{ formElementErrorsV2(whoIsRegistering) }}
                 {{ formElement(whoIsRegistering) }}
                 {% if (attorneyList) %}
                     <div class="panel-indent js-attorney-list">
-                        {{ formElement(attorneyList) }}
                         {{ formElementErrorsV2(attorneyList) }}
+                        {{ formElement(attorneyList) }}
                     </div>
                 {% endif %}
-                {{ formElementErrorsV2(whoIsRegistering) }}
             </div>
 
         </fieldset>
@@ -141,7 +141,7 @@
         </div>
 
 	{{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}
