@@ -3384,7 +3384,10 @@ input[type=number] {
   @media (max-width: 640px) {
     .spinner {
       display: block;
-      margin: 15px auto 0; } }
+      margin: 15px auto 0; }
+      .action-item .spinner {
+        display: inline;
+        margin: -3px 6px; } }
 
 .loading {
   text-align: center; }
