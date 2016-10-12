@@ -7,11 +7,11 @@ module.exports = function (grunt) {
     watch: {
       scss: {
         files: 'assets/sass/**/*.scss',
-        tasks: ['sass', 'replace:image_url']
+        tasks: ['sass', 'replace:image_url', 'cssmin']
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['concat']
+        tasks: ['concat', 'uglify']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
@@ -178,7 +178,9 @@ module.exports = function (grunt) {
         bsFiles: {
           src: [
             'public/assets/v2/css/application.css',
+            'public/assets/v2/css/application.min.css',
             'public/assets/v2/js/application.js',
+            'public/assets/v2/js/application.min.js',
             'module/Application/view/**/*.twig'
           ]
         },
