@@ -7,6 +7,12 @@
     @include media(mobile) {
         display: block;
         margin: $gutter-half auto 0;
+        // special cases with action links - needs to be
+        // next to the link instead of under
+        .action-item & {
+            display: inline;
+            margin: -3px 6px;
+        }
     }
 }
 
