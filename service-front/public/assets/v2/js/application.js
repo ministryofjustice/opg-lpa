@@ -2961,9 +2961,11 @@ $(document).ready(function() {
 
   // Open the hidden content if input is already checked
   // (required when validation returns false)
-  var checkedInput = $('label[data-target] input[checked=checked]').attr('id');
-  var labelTarget = $('label[for='+checkedInput+']').data('target');
-  $('#'+labelTarget).show();
+  $('label[data-target] input[checked=checked]').each(function() {
+    var checkedInput = $(this).attr('id');
+    var labelTarget = $('label[for='+checkedInput+']').data('target');
+    $('#'+labelTarget).show();
+  })
 });
 /*! jQuery UI - v1.10.3 - 2013-06-25
 * http://jqueryui.com
