@@ -22,12 +22,12 @@
 {{ canSustainLife.setLabelOptions({
     disable_html_escape: true
 }) ? '' }}
-    
+
 
 <li id="life-sustaining-section" class="section current js-current">
 
     <h2 class="heading-medium accordion-header flush--top">Can your attorneys give or refuse consent to life-sustaining treatment?</h2>
-    
+
     <div class="accordion-info">
         <div class="text">
             <p>This is a very important decision. Read the guidance carefully before you answer.</p>
@@ -35,14 +35,14 @@
                 <li>Life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
                 <li>If you don’t allow your attorneys to give or refuse consent on your behalf, your doctors will make decisions about life-sustaining treatment</li>
                 <li>Your attorneys can only make decisions about life-sustaining treatment if you don't have mental capacity</li>
-            </ul> 
+            </ul>
             <p><a href="/guide#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="stageprompt.lpa:help:life-sustaining-treatment">Read guidance on making this decision </a></p>
         </div>
     </div>
 
     {# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
@@ -53,11 +53,11 @@
             <h2 class="heading-medium flush--top text">Do you want to give your attorneys authority to make decisions about life-sustaining treatment on your behalf?</h2>
 
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
-                {{ formRadio(canSustainLife) }}
                 {{ formElementErrorsV2(canSustainLife) }}
+                {{ formRadio(canSustainLife) }}
             </div>
         </fieldset>
-        
+
         <p class="text">Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
 
         <div class="form-group">

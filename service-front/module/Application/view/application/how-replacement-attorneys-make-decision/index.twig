@@ -46,7 +46,7 @@
 		label_attributes: {
 			for: 'how-jointly'
 		},
-		value: currentHowValueOptions['jointly'].value 
+		value: currentHowValueOptions['jointly'].value
 	},
 	'depends' : {
 		attributes: {
@@ -78,7 +78,7 @@
 <li id="replacement-attorney-decision-sections" class="section current js-current">
 
 	<h2 class="heading-medium accordion-header flush--top">How should your replacement attorneys make decisions?</h2>
-	
+
     <div class="accordion-info">
 		<div class="text">
 			<p>Most people want their replacement attorneys to work together in the same way that their original attorneys did.</p>
@@ -89,7 +89,7 @@
 
 	{# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
@@ -100,8 +100,8 @@
             <h2 class="heading-medium flush--top">How should the replacement attorneys make decisions?</h2>
 
             <div class="form-group {{ how.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(how) }}
                 {{ formElementErrorsV2(how) }}
+                {{ formElement(how) }}
             </div>
         </fieldset>
 
@@ -117,7 +117,7 @@
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
         </div>
-        
+
     {{ form().closeTag|raw }}
 
 </li>

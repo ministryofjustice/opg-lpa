@@ -21,7 +21,7 @@
 {% set isRepeatApplicationValueOptions = isRepeatApplication.getOptions()['value_options'] %}
 
 {% set isRepeatApplicationValueOptions = {
-    'is-repeat': { 
+    'is-repeat': {
         label: "Yes",
         label_attributes: {
             for: 'is-repeat-application'
@@ -31,7 +31,7 @@
         },
         value: isRepeatApplicationValueOptions['is-repeat'].value
     },
-    'is-new': { 
+    'is-new': {
         label: "No",
         label_attributes: {
             for: 'is-new'
@@ -40,7 +40,7 @@
             id: 'is-new'
         },
         value: isRepeatApplicationValueOptions['is-new'].value
-    }               
+    }
 } %}
 
 {# form fields config #}
@@ -93,8 +93,8 @@
             <legend class="visuallyhidden">Is this a repeat application?</legend>
 
             <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'error'}}">
-                {{ formElement(isRepeatApplication) }}
                 {{ formElementErrorsV2(isRepeatApplication) }}
+                {{ formElement(isRepeatApplication) }}
 
                 <div class="panel panel-border-narrow js-case-number js-hidden">
                     <h3 class="visuallyhidden">Repeat application details</h3>

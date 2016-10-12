@@ -42,12 +42,12 @@
             <h2 class="heading-medium flush--top">Reduced fee options</h2>
 
             <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'error'}}">
+                {{ formElementErrorsV2(reductionOptionsElement) }}
 
                 <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
                     {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
                 </label>
-                {{ formElementErrorsV2(reductionOptions['reducedFeeReceivesBenefits']) }}
 
                 <div id="receives-benefits" class="panel panel-border-narrow js-hidden">
                     <h2 class="heading-small">Reduced fee: &pound;0</h2>
@@ -59,11 +59,10 @@
                     <p>On the final page you will be able to download the application for exemption form along with your LPA, you should sign and date this and send it along with your evidence and LPA to OPG.</p>
                 </div>
 
-				<label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                <label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
                     {{ formInput(reductionOptions['reducedFeeUniversalCredit']) }}
                     {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
                 </label>
-                {{ formElementErrorsV2(reductionOptions['reducedFeeUniversalCredit']) }}
 
                 <div id="universal-credit" class="panel panel-border-narrow js-hidden">
                     <h2 class="heading-small">We'll contact you about the fee</h2>
@@ -81,7 +80,6 @@
                     {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
                     {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
                 </label>
-                {{ formElementErrorsV2(reductionOptions['reducedFeeLowIncome']) }}
 
                 <div id="reduced-fee-low-income" class="panel panel-border-narrow js-hidden">
 
@@ -97,9 +95,7 @@
                     {{ formInput(reductionOptions['notApply']) }}
                     {{ reductionOptions['notApply'].getOption('label')|raw }}
                 </label>
-                {{ formElementErrorsV2(reductionOptions['notApply']) }}
 
-                {{ formElementErrorsV2(reductionOptionsElement) }}
 		    </div>
 
 	    </fieldset>
