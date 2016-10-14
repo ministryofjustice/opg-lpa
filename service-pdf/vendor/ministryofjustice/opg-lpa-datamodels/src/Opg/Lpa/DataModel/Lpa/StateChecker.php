@@ -238,29 +238,75 @@ class StateChecker {
      */
     protected function lpaHasFinishedCreation()
     {
-        return (
-            $this->lpaHasCertificateProvider() &&
-            (($this->lpa->document->instruction!==null)||($this->lpa->document->preference!==null)) &
 
-            // Blocks if a second Primary attorney is added, post Replacement attorney.
-            ( !$this->lpaHasMultiplePrimaryAttorneys() || $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() ) &
+        // For an LPA instrument to be considered complete, the LPA must...
 
-            // Blocks if a second Replacement attorney is added, post Cert Provider.
-            ( !$this->lpaHasReplacementAttorney() || !$this->lpaHasMultipleReplacementAttorneys() ||
+        // Have a Certificate provider...
+        $complete = $this->lpaHasCertificateProvider();
 
-                (
-                    // Either we're good if this is answered; or
-                    $this->lpaHowReplacementAttorneysMakeDecisionHasValue() ||
+        // AND have > 0 Primary Attorneys
+        $complete = $complete && $this->lpaHasPrimaryAttorney();
 
-                    // If PA is JandS, and RA Steps in when first PA cannot.
-                    ( $this->lpaReplacementAttorneyStepInWhenFirstPrimaryUnableAct() && $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() )
-                )
+        // AND one of these must not be null...
+        $complete = $complete && ($this->lpa->document->instruction!==null) || ($this->lpa->document->preference!==null);
 
-            ) &
+        //---
 
-            // Blocks if a second Primary attorney is added, and we have one or more Replacement attorney, post Cert Provider.
-            ( !$this->lpaHasMultiplePrimaryAttorneys() || !$this->lpaHasReplacementAttorney() || !$this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() || $this->lpaWhenReplacementAttorneyStepInHasValue() )
-        );
+        /// AND if there is > 1 Primary Attorney
+        if( $this->lpaHasMultiplePrimaryAttorneys() ){
+
+            // we need how Primary Attorney make decisions.
+            $complete = $complete && $this->lpaHowPrimaryAttorneysMakeDecisionHasValue();
+
+            // AND if we also have > 0 Replacement Attorneys...
+            if( $this->lpaHasReplacementAttorney() ){
+
+                if( $this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally() ){
+
+                    // AND Primary Attorney are J&S...
+
+                    // we need to know when Replacement Attorneys Step In.
+                    $complete = $complete && $this->lpaWhenReplacementAttorneyStepInHasValue();
+
+                    // If the Replacement Attorneys don't step in until all the Primary Attorney are gone...
+                    if( $this->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct() ){
+
+                        // AND we have > 1 Replacement Attorneys
+                        if( $this->lpaHasMultipleReplacementAttorneys() ){
+
+                            // We also need to know how they will make decision when they do step in.
+                            $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+
+                        }
+
+                    }
+
+                } elseif ( $this->lpaPrimaryAttorneysMakeDecisionJointly() ){
+
+                    // AND Primary Attorney are J...
+
+                    // AND we have > 1 Replacement Attorneys
+                    if( $this->lpaHasMultipleReplacementAttorneys() ){
+
+                        // We need to know how Replacement Attorneys will make decisions.
+                        $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+
+                    }
+
+                }
+
+            }
+
+        } elseif( $this->lpaHasMultipleReplacementAttorneys() ){
+
+            // Else if there are > 0  Replacement Attorneys (but only 1 Primary Attorney)
+
+            $complete = $complete && $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
+
+        }
+
+        return $complete;
+
     }
     
     /**
