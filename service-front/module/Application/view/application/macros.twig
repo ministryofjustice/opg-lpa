@@ -22,9 +22,9 @@
                     {% elseif error == 'address-already-registered' %}
                         This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.
                     {% elseif error == 'user-already-has-email' %}
-                        The new email address you have entered is the same as the one already in use on your account.
+                        You're already using that email address for this account – please enter another email address.
                     {% elseif error == 'email-already-exists' %}
-                        The new email address you have entered is already registered to another LPA online tool account.
+                        Another LPA account is already using that email address – please enter a different email address.
                     {% else %}
                         {{ error }}
                     {% endif %}
