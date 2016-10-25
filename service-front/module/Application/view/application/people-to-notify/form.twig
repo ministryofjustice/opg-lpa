@@ -22,6 +22,9 @@
 
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
+    'name-title' : {
+        'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
+    },
     'name-first' : {
         'cannot-be-blank' : 'Please enter first names'
     },
