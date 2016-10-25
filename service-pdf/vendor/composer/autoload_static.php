@@ -42,6 +42,7 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
         ),
         'O' => 
@@ -133,6 +134,10 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Symfony\\Component\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -227,13 +232,6 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
             'Raven_' => 
             array (
                 0 => __DIR__ . '/..' . '/raven/raven/lib',
-            ),
-        ),
-        'P' => 
-        array (
-            'Psr\\Log\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/psr/log',
             ),
         ),
         'E' => 
@@ -476,12 +474,10 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Aws\\Route53Domains\\Route53DomainsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Route53Domains/Route53DomainsClient.php',
         'Aws\\Route53\\Exception\\Route53Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Route53/Exception/Route53Exception.php',
         'Aws\\Route53\\Route53Client' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Route53/Route53Client.php',
-        'Aws\\S3\\AccelerateMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/AccelerateMiddleware.php',
         'Aws\\S3\\AmbiguousSuccessParser' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/AmbiguousSuccessParser.php',
         'Aws\\S3\\ApplyChecksumMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/ApplyChecksumMiddleware.php',
         'Aws\\S3\\BatchDelete' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/BatchDelete.php',
         'Aws\\S3\\BucketEndpointMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/BucketEndpointMiddleware.php',
-        'Aws\\S3\\DualStackMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/DualStackMiddleware.php',
         'Aws\\S3\\Exception\\DeleteMultipleObjectsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/Exception/DeleteMultipleObjectsException.php',
         'Aws\\S3\\Exception\\PermanentRedirectException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/Exception/PermanentRedirectException.php',
         'Aws\\S3\\Exception\\S3Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/Exception/S3Exception.php',
@@ -499,6 +495,7 @@ class ComposerStaticInitb573b4b08a37d38e751c2fa5b8319158
         'Aws\\S3\\S3Client' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3Client.php',
         'Aws\\S3\\S3ClientInterface' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3ClientInterface.php',
         'Aws\\S3\\S3ClientTrait' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3ClientTrait.php',
+        'Aws\\S3\\S3EndpointMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3EndpointMiddleware.php',
         'Aws\\S3\\S3MultiRegionClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3MultiRegionClient.php',
         'Aws\\S3\\S3UriParser' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/S3UriParser.php',
         'Aws\\S3\\SSECMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/S3/SSECMiddleware.php',
