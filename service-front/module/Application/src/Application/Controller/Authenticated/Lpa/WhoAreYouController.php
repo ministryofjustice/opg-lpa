@@ -45,7 +45,7 @@ class WhoAreYouController extends AbstractLpaController
         ]);
         
         $whoOptions['friend-or-family'] = new Element('who', [
-                'label' => "A friend or family member helped the donor get online, navigate or enter information",
+                'label' => "A friend or family member (who may also be the attorney) helped the donor use this online service",
         ]);
         $whoOptions['friend-or-family']->setAttributes([
                 'type' => 'radio',
