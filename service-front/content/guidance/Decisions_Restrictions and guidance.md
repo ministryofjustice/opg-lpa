@@ -44,7 +44,7 @@ Workable examples:
 
 > I consent to the disclosure to my attorneys of all relevant information concerning me.
 
-> My attorneys must not consent to any medical treatment involving blood products, as this is against my religion.
+> My attorneys must refer to my advance decision to refuse treatment involving blood products, which is against my religion.
 
 > My attorneys must not decide that I am to move into residential care unless my doctor says that I can no longer live independently.
 
