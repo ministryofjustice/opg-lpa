@@ -56,6 +56,20 @@ class AccountInfo extends AbstractHelper
             $params['route'] = $routeMatch->getMatchedRouteName();
         }
 
+        //---------------------------------------------
+        // Check if the user has one or more LPAs
+
+        // Once a user has more than one, we cache the result in the session to save a lookup for every page load.
+        if( !isset($details->hasOneOrMoreLPAs) || $details->hasOneOrMoreLPAs == false ){
+
+            $lpas = $serviceLocator->get('ApplicationList')->getAllALpaSummaries();
+
+            $details->hasOneOrMoreLPAs = !empty($lpas);
+
+        }
+
+        $params['hasOneOrMoreLPAs'] = $details->hasOneOrMoreLPAs;
+
         //---
 
         $template = $this->view->getHelperPluginManager()->getServiceLocator()->get('TwigViewRenderer')->loadTemplate('account-info/account-info.twig');

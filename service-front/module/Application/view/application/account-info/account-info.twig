@@ -7,20 +7,24 @@
                 {% if name %}
                     <li class="user navigation-item">{{ name ~ ':' }} </li>
 
-                    {% set links = {
-                        'user/about-you': 'Your details',
-                        'user/dashboard': 'Your LPAs'
-                    } %}
+                    <li class="navigation-item">
+                        {% if route == 'user/about-you' %}
+                            <span>Your details</span>
+                        {% else %}
+                            <a href="{{ view.url('user/about-you') }}">Your details</a>
+                        {% endif %}
+                    </li>
 
-                    {% for page,title in links %}
-                        <li class="navigation-item">
-                            {% if route == page %}
-                                <span>{{ title }}</span>
-                            {% else %}
-                                <a href="{{ view.url(page) }}">{{ title }}</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
+
+                    <li class="navigation-item">
+                        {% if route == 'lpa-type-no-id' and hasOneOrMoreLPAs == false %}
+                            <span>Your LPAs</span>
+                        {% elseif route == 'user/dashboard' %}
+                            <span>Your LPAs</span>
+                        {% else %}
+                            <a href="{{ view.url('user/dashboard') }}">Your LPAs</a>
+                        {% endif %}
+                    </li>
 
                 {% endif %}
 
