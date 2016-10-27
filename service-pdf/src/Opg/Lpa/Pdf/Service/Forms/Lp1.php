@@ -16,6 +16,8 @@ use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 use mikehaertl\pdftk\Pdf;
 
+use Zend\Barcode\Barcode;
+
 abstract class Lp1 extends AbstractForm
 {
     const BOX_CHARS_PER_ROW = 84;
@@ -97,8 +99,14 @@ abstract class Lp1 extends AbstractForm
             ->flatten()
             ->saveAs($filePath);
 
+        //---
 
-        $this->addLpaIdBarcode( $filePath );
+        // If registration is complete add the tracking barcode.
+        if( $this->registrationIsComplete ){
+            $this->addLpaIdBarcode( $filePath );
+        }
+
+        //---
         
         // draw cross lines if there's any blank slot
         if(!empty($this->drawingTargets)) {
@@ -109,17 +117,72 @@ abstract class Lp1 extends AbstractForm
 
     protected function addLpaIdBarcode( $filePath ){
 
-        $pdf = PdftkInstance::getInstance( $filePath );
+        //------------------------------------------
+        // Generate the barcode
 
-        $pdf->cat(19);
-        $pdf->flatten()->saveAs('/app/tests/local/single.pdf');
+        // Zero pad the ID, and prepend the 'A'.
+        $formattedLpaId = 'A'.sprintf("%011d", $this->lpa->id);
+
+        $renderer = Barcode::factory(
+            'code39',
+            'pdf',
+            [
+                'text' => $formattedLpaId,
+                'drawText' => false,
+                'factor' => 2,
+                'barHeight' => 25,
+            ],
+            [
+                'topOffset' => 789,
+                'leftOffset' => 40,
+            ]
+        );
+
+        $imageResource = $renderer->draw();
+
+        $barcodeTmpFile = $this->getTmpFilePath('barcode');
+
+        // Save to temporary file...
+        $imageResource->save( $barcodeTmpFile );
 
 
-        $pdf = new Pdf($pdf);
-        $pdf->stamp('/app/tests/local/new.pdf');
+        //------------------------------------------
+        // Merge the barcode into the page
 
 
-        $pdf->flatten()->saveAs('/app/tests/local/flibble.pdf');
+        // Take a copy of the PDF to work with.
+        $pdfWithBarcode = PdftkInstance::getInstance( $filePath );
+
+        // Pull out the page the barcode is appended to.
+        $pdfWithBarcode->cat(19);
+
+
+        // Add the barcode to the page.
+        $pdfWithBarcode = new Pdf($pdfWithBarcode);
+        $pdfWithBarcode->stamp( $barcodeTmpFile );
+
+
+        //------------------------------------------
+        // Re-integrate the page into the full PDF.
+
+        $pdf = new Pdf;
+
+        $pdf->addFile( $filePath , 'A');
+        $pdf->addFile( $pdfWithBarcode, 'B');
+
+        // Swap out page 19 for the one with the barcode.
+        $pdf->cat(1, 18, 'A');
+        $pdf->cat(1, null, 'B');
+        $pdf->cat(20, 'end', 'A');
+
+        $pdf->flatten()->saveAs( $filePath );
+
+
+        //------------------------------------------
+        // Cleanup
+
+        // Remove tmp barcode file.
+        unlink( $barcodeTmpFile );
     }
     
     /**

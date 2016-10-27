@@ -6,26 +6,19 @@ require_once '../../vendor/autoload.php';
 
 use Zend\Barcode\Barcode;
 
-// Only the text to draw is required.
-$barcodeOptions = [
-    'text' => 'A11234567891',
-    'drawText' => false,
-    'factor' => 2,
-    'barHeight' => 25,
-];
-
-// No required options.
-$rendererOptions = [
-    //'horizontalPosition' => 'center',
-    'topOffset' => 787,
-    'leftOffset' => 40,
-];
-
 $renderer = Barcode::factory(
     'code39',
     'pdf',
-    $barcodeOptions,
-    $rendererOptions
+    [
+        'text' => 'A11234567891',
+        'drawText' => false,
+        'factor' => 2,
+        'barHeight' => 25,
+    ],
+    [
+        'topOffset' => 789,
+        'leftOffset' => 40,
+    ]
 );
 
 $imageResource = $renderer->draw();
