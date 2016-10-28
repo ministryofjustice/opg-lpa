@@ -3751,16 +3751,17 @@ input[type=number] {
       padding-left: 0;
       border-left: 0; } }
   @media (min-width: 641px) {
-    .form-popup .error .form-control, .form-popup .error .ui-datepicker-header select, .ui-datepicker-header .form-popup .error select {
-      margin-bottom: 28px; } }
-  @media (min-width: 641px) {
     .form-popup .error-message {
-      position: absolute;
-      top: 42px;
+      position: relative;
+      width: 280%;
+      top: 13px;
       left: 150px; } }
   @media (min-width: 641px) {
+    .form-popup .form-date.error .form-group {
+      top: -37px; } }
+  @media (min-width: 641px) {
     .form-popup .form-date .error-message {
-      top: 78px;
+      top: 80px;
       left: 0; } }
   @media (max-width: 640px) {
     .form-popup .dob-label {

@@ -104,7 +104,7 @@
             @include media(tablet) {
                 position: absolute;
                 top: 10px;
-                right: 182px;   
+                right: 182px;
             }
         }
     }
@@ -127,36 +127,38 @@
 
         p {
             margin-bottom: 4px;
-        }     
+        }
     }
-    
+
     .error {
         @include media(tablet) {
             position: relative;
             padding-left: 0;
-            border-left: 0; 
-        }
-
-        .form-control {
-            @include media(tablet) {
-                margin-bottom: 28px;
-            }
+            border-left: 0;
         }
     }
 
     .error-message {
         @include media(tablet) {
-            position: absolute;
-            top: 42px;
-            left: 150px;    
+            position: relative;
+            width: 280%;
+            top: 13px;
+            left: 150px;
         }
     }
 
     // scss-lint:disable MergeableSelector
     .form-date {
+        &.error {
+            .form-group {
+                @include media(tablet) {
+                    top: -37px;
+                }
+            }
+        }
         .error-message {
             @include media(tablet) {
-                top: 78px;
+                top: 80px;
                 left: 0;
             }
         }
@@ -165,7 +167,7 @@
 
     .dob-label {
         @include media(mobile) {
-            display: none;      
+            display: none;
         }
     }
 }

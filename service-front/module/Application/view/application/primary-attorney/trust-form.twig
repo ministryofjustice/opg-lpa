@@ -1,7 +1,7 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Create a lasting power of attorney 
+    Create a lasting power of attorney
 {% endblock %}
 
 {% block content %}
@@ -20,15 +20,15 @@
         'cannot-be-blank' : 'Please enter the company\'s first line of address'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the second line of address'
+        'linked-1-cannot-be-null' : 'Please enter the company\'s second line of address'
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Please enter the company\'s postcode',
-        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines below rather than in the postcode field.'
+        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}
 
-{# Set form fields variables #} 
+{# Set form fields variables #}
 {% set companyName = form.get('name') %}
 {% set registrationNumber = form.get('number') %}
 {% set email = form.get('email-address') %}
@@ -90,7 +90,7 @@
     <i class="icon icon-person"></i>
     <h2 class="heading-small popup-header-title">Edit trust corporation details</h2>
 </header>
-    
+
 {{ form.prepare() ? '' }}
 
 {############################ trust corp form ############################}

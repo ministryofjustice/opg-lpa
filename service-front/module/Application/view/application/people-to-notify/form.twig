@@ -1,7 +1,7 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Create a lasting power of attorney 
+    Create a lasting power of attorney
 {% endblock %}
 
 {% block content %}
@@ -39,11 +39,11 @@
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Please enter the postcode',
-        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines below rather than in the postcode field.'
+        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}
 
-{# Set form fields variables #}  
+{# Set form fields variables #}
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
@@ -147,7 +147,7 @@
 
     <input type="submit" name="submit" id="form-save" value="Save details" class="button">
     <a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
-    
+
 {{ form().closeTag|raw }}
 
 {% endblock %}
