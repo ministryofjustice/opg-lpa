@@ -8,7 +8,10 @@
 {% if form %}
     {% set form = formErrorTextExchange(form, {
             'who': {
-                'cannot-be-blank' : 'Please choose one of the options'
+                'cannot-be-blank' : 'Please choose one of the options',
+            },
+            'professional': {
+                'allowed-values:solicitor,will-writer,other' : 'Please choose the type of professional'
             }
        })
     %}
@@ -104,6 +107,7 @@
                     {{ whoOptions['professional'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(whoOptions['professional']) }}
+                {{ formElementErrorsV2(professional) }}
 
                 <div id="professional-group" class="panel-indent js-hidden">
                     <label class="text block-label" for="{{ professionalOptions['solicitor'].getAttribute('id') }}">
