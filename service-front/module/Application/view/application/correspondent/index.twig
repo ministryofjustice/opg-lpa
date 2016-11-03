@@ -10,9 +10,6 @@
         "at-least-one-option-needs-to-be-selected" : "At least one option must be selected",
 		"phone-number" : {
 				"cannot-be-blank" : "Please enter the phone number"
-		},
-		"invalid-phone-number" : {
-			"phone-number" : "Phone"
 		}
     }
 }) %}
@@ -25,6 +22,10 @@
 {% set contactInWelsh = correspondence.get('contactInWelsh') %}
 {% set email = correspondence.get('email-address') %}
 {% set phone = correspondence.get('phone-number') %}
+
+{# We have a top level error when the form has a message, but it's not related to the email of phone fields. #}
+{% set topLevelError = correspondence.getMessages|length >0
+		and not ( phone.getMessages|length >0 or contactByPhone.getMessages|length >0 or email.getMessages|length >0 or contactByEmail.getMessages|length >0) %}
 
 {# form fields config #}
 {{ contactByPost.setAttributes({
@@ -136,7 +137,7 @@
 
             <p>You can choose more than one.</p>
 
-            <div class="form-group {{ correspondence.getMessages|length >0 ? 'error'}}">
+            <div class="form-group {{ topLevelError ? 'error'}}">
 
 	            <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
 	                {{ formElement(contactByPost) }}
@@ -148,7 +149,7 @@
 	                {{ contactByPhone.getOption('label')|raw }}
 	            </label>
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
-                	<div class="form-group error">
+                	<div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'error'}}">
 	                	<label class="form-label" for="{{ phone.getAttribute('id') }}">
 	                        {{ phone.getOption('label') }}
 			                {{ formElementErrorsV2(contactByPhone) }}
@@ -163,7 +164,7 @@
 	                {{ contactByEmail.getOption('label')|raw }}
 	            </label>
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
-                	<div class="form-group error">
+                	<div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'error'}}">
 	                	<label class="form-label" for="{{ email.getAttribute('id') }}">
 	                        {{ email.getOption('label') }}
 			                {{ formElementErrorsV2(contactByEmail) }}
