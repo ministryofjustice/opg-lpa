@@ -108,7 +108,7 @@
                 </label>
                 {{ formElementErrorsV2(whoOptions['professional']) }}
 
-                    <div id="professional-group" class="form-group panel-indent js-hidden error">
+                    <div id="professional-group" class="form-group panel-indent js-hidden {{ professional.getMessages|length >0 ? 'error'}}">
                         {{ formElementErrorsV2(professional) }}
                         <label class="text block-label" for="{{ professionalOptions['solicitor'].getAttribute('id') }}">
                             {{ formInput(professionalOptions['solicitor']) }}
