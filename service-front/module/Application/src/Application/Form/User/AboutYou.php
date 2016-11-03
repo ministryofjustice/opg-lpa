@@ -315,7 +315,7 @@ class AboutYou extends AbstractForm {
     {
         if(!empty($this->data['dob-date-day'])||!empty($this->data['dob-date-month'])||!empty($this->data['dob-date-year'])) {
             if(!checkdate($this->data['dob-date-month'], $this->data['dob-date-day'], $this->data['dob-date-year'])) {
-                $this->setMessages(['dob-date-day' => ['invalid date']]);
+                $this->setMessages(['dob-date-day' => ['invalid-date']]);
                 return parent::isValid() & false;
             }
         }
