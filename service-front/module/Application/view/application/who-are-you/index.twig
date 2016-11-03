@@ -107,35 +107,35 @@
                     {{ whoOptions['professional'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(whoOptions['professional']) }}
-                {{ formElementErrorsV2(professional) }}
 
-                <div id="professional-group" class="panel-indent js-hidden">
-                    <label class="text block-label" for="{{ professionalOptions['solicitor'].getAttribute('id') }}">
-                        {{ formInput(professionalOptions['solicitor']) }}
-                        {{ professionalOptions['solicitor'].getOption('label')|raw }}
-                    </label>
-                    {{ formElementErrorsV2(professionalOptions['solicitor']) }}
-
-                    <label class="text block-label" for="{{ professionalOptions['will-writer'].getAttribute('id') }}">
-                        {{ formInput(professionalOptions['will-writer']) }}
-                        {{ professionalOptions['will-writer'].getOption('label')|raw }}
-                    </label>
-                    {{ formElementErrorsV2(professionalOptions['will-writer']) }}
-
-                    <label class="text block-label" data-target="professional-other-input" for="{{ professionalOptions['other'].getAttribute('id') }}">
-                        {{ formInput(professionalOptions['other']) }}
-                        {{ professionalOptions['other'].getOption('label')|raw }}
-                    </label>
-                    {{ formElementErrorsV2(professionalOptions['other']) }}
-
-                    <div class="panel panel-border-narrow js-hidden" id="professional-other-input">
-                        <label class="form-label" for="{{ professionalOther.getAttribute('id') }}">
-                            {{ professionalOther.getOption('label') }}
-                            {{ formElementErrorsV2(professionalOther) }}
+                    <div id="professional-group" class="form-group panel-indent js-hidden error">
+                        {{ formElementErrorsV2(professional) }}
+                        <label class="text block-label" for="{{ professionalOptions['solicitor'].getAttribute('id') }}">
+                            {{ formInput(professionalOptions['solicitor']) }}
+                            {{ professionalOptions['solicitor'].getOption('label')|raw }}
                         </label>
-                        {{ formText(professionalOther) }}
+                        {{ formElementErrorsV2(professionalOptions['solicitor']) }}
+
+                        <label class="text block-label" for="{{ professionalOptions['will-writer'].getAttribute('id') }}">
+                            {{ formInput(professionalOptions['will-writer']) }}
+                            {{ professionalOptions['will-writer'].getOption('label')|raw }}
+                        </label>
+                        {{ formElementErrorsV2(professionalOptions['will-writer']) }}
+
+                        <label class="text block-label" data-target="professional-other-input" for="{{ professionalOptions['other'].getAttribute('id') }}">
+                            {{ formInput(professionalOptions['other']) }}
+                            {{ professionalOptions['other'].getOption('label')|raw }}
+                        </label>
+                        {{ formElementErrorsV2(professionalOptions['other']) }}
+
+                        <div class="panel panel-border-narrow js-hidden" id="professional-other-input">
+                            <label class="form-label" for="{{ professionalOther.getAttribute('id') }}">
+                                {{ professionalOther.getOption('label') }}
+                                {{ formElementErrorsV2(professionalOther) }}
+                            </label>
+                            {{ formText(professionalOther) }}
+                        </div>
                     </div>
-                </div>
 
                 <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
                     {{ formInput(whoOptions['digital-partner']) }}
