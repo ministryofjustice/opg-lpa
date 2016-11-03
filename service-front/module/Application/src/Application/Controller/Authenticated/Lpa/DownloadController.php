@@ -36,23 +36,56 @@ class DownloadController extends AbstractLpaController
         
         $this->log()->info('PDF status is ' . $details['status'], ['lpaId' => $this->getLpa()->id]);
         
-        if ($details['status'] == 'in-queue') {
+        if ( $details['status'] !== 'ready' ){
             return false;
         }
         else {
-            
-            $this->log()->info('Delivering PDF', ['lpaId' => $this->getLpa()->id]);
-            
-            header('Content-disposition: inline; filename="Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf"');
-            header('Content-Type: application/pdf');
-            
-            // These two headers are critically important for working around an IE7/8 bug regarding downloading files over SSL
-            header('Cache-control: private');
-            header('Pragma: public');
-            
-            echo $this->getLpaApplicationService()->getPdf($this->getLpa()->id, $pdfType);
+
+            // Redirect to download action.
+            return $this->redirect()->toRoute('lpa/download/file', [
+                'lpa-id'=>$this->getLpa()->id,
+                'pdf-type'=>$pdfType,
+                'pdf-filename'=>'Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf'
+            ]);
+
         }
         
         return $this->getResponse();
     }
+
+    public function downloadAction(){
+
+        $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
+
+        $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
+
+        if( $details['status'] !== 'ready' ){
+
+            // If the PDF is not ready, direct the user back to index.
+            return $this->redirect()->toRoute('lpa/download', ['lpa-id'=>$this->getLpa()->id, 'pdf-type'=>$pdfType]);
+
+        }
+
+        //---
+
+        $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
+
+        $fileContents = $this->getLpaApplicationService()->getPdf($this->getLpa()->id, $pdfType);
+
+        //---
+
+        $response = $this->getResponse();
+        $response->setContent($fileContents);
+
+        $headers = $response->getHeaders();
+        $headers->clearHeaders()
+            ->addHeaderLine('Content-Type', 'application/pdf')
+            ->addHeaderLine('Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-' . ucfirst($pdfType) . '.pdf"')
+            ->addHeaderLine('Content-Length', strlen($fileContents));
+
+
+        return $this->response;
+
+    }
+
 }

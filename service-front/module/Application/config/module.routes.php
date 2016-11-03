@@ -639,6 +639,21 @@ return [
                                 'action'     => 'index',
                             ],
                         ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'file' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/:pdf-filename',
+                                    'constraints' => [
+                                        'pdf-filename' => '[a-zA-Z0-9-]+\.pdf',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'download',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'fee' => [
                         'type' => 'Literal',
