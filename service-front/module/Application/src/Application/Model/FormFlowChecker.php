@@ -47,6 +47,7 @@ class FormFlowChecker extends StateChecker
             'lpa/instructions'                              => 'isInstructionsAccessible',
             'lpa/created'                                   => 'isCreatedAccessible',
             'lpa/download'                                  => 'isDownloadAccessible',
+            'lpa/download/file'                             => 'isDownloadAccessible',
             'lpa/applicant'                                 => 'isApplicantAccessible',
             'lpa/correspondent'                             => 'isCorrespondentAccessible',
             'lpa/correspondent/edit'                        => 'isCorrespondentEditAccessible',
@@ -149,6 +150,7 @@ class FormFlowChecker extends StateChecker
         if(!empty($this->lpa) && ($this->lpa->completedAt instanceof \DateTime)
                && ($currentRouteName != 'lpa/complete') 
                && ($currentRouteName != 'lpa/date-check') 
+               && ($currentRouteName != 'lpa/download/file')
                && ($currentRouteName != 'lpa/download')) {
                   return 'lpa/view-docs';
         }
