@@ -158,7 +158,8 @@ class FormFlowChecker extends StateChecker
         if(!empty($this->lpa) && ( $this->lpa->locked === true )
             && ($currentRouteName != 'lpa/complete')
             && ($currentRouteName != 'lpa/date-check')
-            && ($currentRouteName != 'lpa/download') ) {
+            && ($currentRouteName != 'lpa/download')
+            && ($currentRouteName != 'lpa/download/file') ) {
                 return 'lpa/view-docs';
         }
         
