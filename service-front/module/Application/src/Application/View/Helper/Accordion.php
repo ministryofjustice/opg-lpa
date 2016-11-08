@@ -31,7 +31,9 @@ class Accordion extends AbstractHelper {
 
     private $excludedRoutes = [
         'lpa/summary',
-        'lpa/checkout',
+        'lpa/complete',
+        'lpa/date-check',
+        'lpa/view-docs',
         'lpa/checkout',
         'lpa/checkout/worldpay',
         'lpa/checkout/worldpay/return/cancel',
