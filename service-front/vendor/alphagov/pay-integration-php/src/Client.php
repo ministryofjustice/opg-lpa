@@ -23,12 +23,12 @@ class Client {
      * @const string Current version of this client.
      * This follows Semantic Versioning (http://semver.org/)
      */
-    const VERSION = '0.4.0';
+    const VERSION = '0.5.0';
 
     /**
      * @const string The API endpoint for Pay production.
      */
-    const BASE_URL_PRODUCTION = 'https://publicapi.pymnt.uk';
+    const BASE_URL_PRODUCTION = 'https://publicapi.payments.service.gov.uk';
 
     /**
      * Paths for API endpoints.
@@ -350,7 +350,7 @@ class Client {
             'POST',
             $url,
             $this->buildHeaders(),
-            ( !empty($payload) ) ? json_encode($payload) : null
+            ( !empty($payload) ) ? json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null
         );
 
         try {
