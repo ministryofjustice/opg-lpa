@@ -35,7 +35,7 @@
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-api-client": "v4.x-dev",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
-        "ministryofjustice/opg-lpa-datamodels": "1.1.8",
+        "ministryofjustice/opg-lpa-datamodels": "2.0.0",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
         "Netsensia/omnipay-worldpay-xml": "^1.0.1",
         "michelf/php-markdown": "1.5.0",

@@ -26,9 +26,9 @@ class Payment extends AbstractData {
     protected $method;
 
     /**
-     * @var string The phone number that should be used regarding payment.
+     * @var string The email address that should be used regarding payment.
      */
-    protected $phone;
+    protected $email;
 
     /**
      * null = The amount it undecided.
@@ -39,9 +39,14 @@ class Payment extends AbstractData {
     protected $amount;
 
     /**
-     * @var string A payment reference number.
+     * @var string The OPG payment reference number.
      */
     protected $reference;
+
+    /**
+     * @var string The payment gateway reference.
+     */
+    protected $gatewayReference;
 
     /**
      * @var DateTime Date the payment was made.
@@ -77,8 +82,8 @@ class Payment extends AbstractData {
             new Assert\Choice([ 'choices' => [ self::PAYMENT_TYPE_CARD, self::PAYMENT_TYPE_CHEQUE ] ]),
         ]);
 
-        $metadata->addPropertyConstraints('phone', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ]),
+        $metadata->addPropertyConstraints('email', [
+            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
             new Assert\Valid,
         ]);
 
@@ -90,6 +95,11 @@ class Payment extends AbstractData {
         $metadata->addPropertyConstraints('reference', [
             new Assert\Type([ 'type' => 'string' ]),
             new Assert\Length([ 'max' => 32 ]),
+        ]);
+
+        $metadata->addPropertyConstraints('gatewayReference', [
+            new Assert\Type([ 'type' => 'string' ]),
+            new Assert\Length([ 'max' => 64 ]),
         ]);
 
         $metadata->addPropertyConstraints('date', [
