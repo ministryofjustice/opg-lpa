@@ -11,7 +11,7 @@ class Calculator
      * Calculate LPA payment amount
      * 
      * @param Lpa $lpa
-     * @return NULL|\Opg\Lpa\DataModel\Lpa\Payment
+     * @return NULL|Payment
      */
     static public function calculate(Lpa $lpa)
     {
