@@ -753,6 +753,18 @@ return [
                                         'action'     => 'pay',
                                     ],
                                 ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'response' => array(
+                                        'type'    => 'Literal',
+                                        'options' => array(
+                                            'route'    => '/response',
+                                            'defaults' => array(
+                                                'action' => 'payResponse',
+                                            ),
+                                        ),
+                                    ),
+                                ],
                             ],
                             'worldpay' => [
                                 'type' => 'Literal',
@@ -810,74 +822,6 @@ return [
                             ],
                         ],
                     ],
-                    'payment' => array(
-                        'type' => 'Literal',
-                        'options' => array(
-                            'route'    => '/payment',
-                            'defaults' => array(
-                                'controller' => 'PaymentControllerFactory',
-                                'action'     => 'index',
-                            ),
-                        ),
-                        'may_terminate' => true,
-                        'child_routes' => array(
-                            'response' => array(
-                                'type'    => 'Literal',
-                                'options' => array(
-                                    'route'    => '/response',
-                                    'defaults' => array(
-                                        'action' => 'response',
-                                    ),
-                                ),
-                                'may_terminate' => true,
-                            ),
-                            'return' => array(
-                                'type'    => 'Literal',
-                                'options' => array(
-                                    'route'    => '/return',
-                                ),
-                                'may_terminate' => false,
-                                'child_routes' => array(
-                                    'success' => array(
-                                        'type'    => 'Literal',
-                                        'options' => array(
-                                            'route'    => '/success',
-                                            'defaults' => array(
-                                                'action' => 'success',
-                                            ),
-                                        ),
-                                    ),
-                                    'pending' => array(
-                                        'type'    => 'Literal',
-                                        'options' => array(
-                                            'route'    => '/pending',
-                                            'defaults' => array(
-                                                'action' => 'pending',
-                                            ),
-                                        ),
-                                    ),
-                                    'cancel' => array(
-                                        'type'    => 'Literal',
-                                        'options' => array(
-                                            'route'    => '/cancel',
-                                            'defaults' => array(
-                                                'action' => 'cancel',
-                                            ),
-                                        ),
-                                    ),
-                                    'failure' => array(
-                                        'type'    => 'Literal',
-                                        'options' => array(
-                                            'route'    => '/failure',
-                                            'defaults' => array(
-                                                'action' => 'failure',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
                     'people-to-notify' => [
                         'type' => 'Literal',
                         'options' => [
