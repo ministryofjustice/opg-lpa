@@ -21,63 +21,44 @@ class Communication implements ServiceLocatorAwareInterface {
     use ServiceLocatorAwareTrait;
 
     //---
-    
-    public function sendRegistrationCompleteEmail( Lpa $lpa, $signinUrl )
-    {
-        // This is only uncommented when we want Survey emails send
-        // $this->sendDelayedSurveyEmail( $lpa, $signinUrl );
-        
-        return $this->sendEmail('lpa-registration.twig', $lpa, $signinUrl, 'Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register', 'opg-lpa-complete-registration');
-        
-    }
-    
-    private function sendDelayedSurveyEmail( Lpa $lpa, $signinUrl ) {
-        
-        $startDate = '2015-10-12';
-        $durationSeconds = 7 * 24 * 3600; // 1 week
-        $emailDelaySeconds = 71 * 3600; // 71 hours
-        
-        $startTimestamp = strtotime($startDate);
-        $endTimestamp = $startTimestamp + $durationSeconds;
-        
-        $now = time();
-        
-        // Uncomment the second part of the condition to re-enabled time limit
-        if ($now > $startTimestamp /* && $now <= $endTimestamp */) {
-        
-            $sendAt = time() + $emailDelaySeconds;
-            $this->sendEmail('feedback-survey.twig', $lpa, $signinUrl, 'Online Lasting Power of Attorney', 'opg-lpa-feedback-survey', $sendAt);
-        }
-    }
-    
-    private function sendEmail($emailTemplate, Lpa $lpa, $signinUrl, $subject, $category, $sendAt = null)
-    {
-    
+
+    public function sendRegistrationCompleteEmail( Lpa $lpa, $returnUrl ){
+
+
         //-------------------------------
         // Send the email
 
         $message = new MailMessage();
-        
+
         $config = $this->getServiceLocator()->get('config');
-        
+
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-        
+
         $userSession = $this->getServiceLocator()->get('UserDetailsSession');
-        
+
+        //---
+
+        // Add the signed in user's email address.
         $message->addTo( $userSession->user->email->address );
-        
+
+        // If we have a separate payment address, send the email to that also.
+        if( !empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userSession->user->email->address)) ){
+
+            $message->addTo( (string)$lpa->payment->email );
+
+        }
+
         //---
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
-        $message->addCategory($category);
-        $message->setSendAt($sendAt);
+        $message->addCategory('opg-lpa-complete-registration');
 
         //---
 
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate($emailTemplate)->render([
+        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('lpa-registration.twig')->render([
             'lpa' => $lpa,
-            'signinUrl' => $signinUrl,
+            'signinUrl' => $returnUrl,
             'isHealthAndWelfare' => ( $lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW ),
         ]);
 
@@ -85,9 +66,9 @@ class Communication implements ServiceLocatorAwareInterface {
             $subject = sprintf($matches[1], $lpa->document->donor->name);
             $message->setSubject($subject);
         } else {
-            $message->setSubject($subject);
+            $message->setSubject('Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register');
         }
-        
+
         //---
 
         $html = new MimePart( $content );
@@ -105,15 +86,15 @@ class Communication implements ServiceLocatorAwareInterface {
             $this->getServiceLocator()->get('MailTransport')->send($message);
 
         } catch ( \Exception $e ){
-            
+
             $this->getServiceLocator()->get('Logger')->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
-            
+
             return "failed-sending-email";
 
         }
 
         return true;
 
-    } // function
+    }
 
 } // class

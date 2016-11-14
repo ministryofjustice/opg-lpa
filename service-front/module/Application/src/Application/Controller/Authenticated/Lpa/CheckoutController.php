@@ -126,7 +126,7 @@ class CheckoutController extends AbstractLpaController {
 
             if( $payment->isSuccess() ) {
                 // Payment has already been made.
-                return $this->getNextSectionRedirect();
+                return $this->payResponseAction();
             }
 
             // If this payment id is still in play, direct the user back...
@@ -228,7 +228,7 @@ class CheckoutController extends AbstractLpaController {
         $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $lpa->payment->reference = $paymentResponse->reference;
         $lpa->payment->date = new \DateTime('today');
-        $lpa->payment->email = new EmailAddress( ['address'=>$paymentResponse->email] );
+        $lpa->payment->email = new EmailAddress( ['address'=>strtolower($paymentResponse->email)] );
 
         $this->getLpaApplicationService()->updatePayment( $lpa );
 
