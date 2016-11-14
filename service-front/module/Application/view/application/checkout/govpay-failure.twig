@@ -1,0 +1,21 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Online payment failed
+{% endblock %}
+
+{% block content %}
+
+    <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
+
+    <div class="text">
+        <p>Sorry, but there appears to be a problem with this payment. Please click the button below to try again.</p>
+
+        <p>If you would like you can choose to <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+    </div>
+
+    <div class="text">
+        <p class="divorced"><a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Retry online payment</a></p>
+    </div>
+
+{% endblock %}

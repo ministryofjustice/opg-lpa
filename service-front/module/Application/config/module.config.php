@@ -18,9 +18,6 @@ return [
             'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
             'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
         ],
-        'factories' => [
-            'PaymentControllerFactory' => 'Application\ControllerFactory\PaymentControllerFactory',
-        ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],
@@ -79,9 +76,9 @@ return [
     'view_helpers' => [
         'invokables' => [
             'accordion'             => 'Application\View\Helper\Accordion',
-            'accordionTop'          => 'Application\View\Helper\AccordionTop',
-            'accordionBottom'       => 'Application\View\Helper\AccordionBottom',
-            'accordionIdx'          => 'Application\View\Helper\AccordionIdx',
+            //'accordionTop'          => 'Application\View\Helper\AccordionTop',
+            //'accordionBottom'       => 'Application\View\Helper\AccordionBottom',
+            //'accordionIdx'          => 'Application\View\Helper\AccordionIdx',
             'accountInfo'           => 'Application\View\Helper\AccountInfo',
             'actorsList'            => 'Application\View\Helper\ActorsList',
             'pageHeaders'           => 'Application\View\Helper\PageHeaders',

@@ -16,6 +16,8 @@ class PaymentControllerFactory implements FactoryInterface {
 
     public function createService( ServiceLocatorInterface $locator ){
 
+        die('Not used.');
+
         $segmentsSentToGovPay = 0;
 
         //---

@@ -56,6 +56,7 @@ class FormFlowChecker extends StateChecker
             'lpa/checkout'                                  => 'isPaymentAccessible',
             'lpa/checkout/cheque'                           => 'isPaymentAccessible',
             'lpa/checkout/pay'                              => 'isPaymentAccessible',
+            'lpa/checkout/pay/response'                     => 'isPaymentAccessible',
             'lpa/checkout/confirm'                          => 'isPaymentAccessible',
             'lpa/checkout/worldpay'                         => 'isPaymentAccessible',
             'lpa/checkout/worldpay/return/success'          => 'isOnlinePaymentSuccessAccessible',
@@ -135,6 +136,7 @@ class FormFlowChecker extends StateChecker
             'lpa/payment/summary'                           => 'lpa/complete',
             'lpa/checkout/cheque'                           => 'lpa/complete',
             'lpa/checkout/confirm'                          => 'lpa/complete',
+            'lpa/checkout/pay/response'                     => 'lpa/complete',
             'lpa/checkout/worldpay/return/success'          => 'lpa/complete',
 
     );
