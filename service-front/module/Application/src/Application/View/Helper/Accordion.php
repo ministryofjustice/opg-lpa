@@ -35,6 +35,7 @@ class Accordion extends AbstractHelper {
         'lpa/date-check',
         'lpa/view-docs',
         'lpa/checkout',
+        'lpa/checkout/pay/response',
         'lpa/checkout/worldpay',
         'lpa/checkout/worldpay/return/cancel',
         'lpa/checkout/worldpay/return/success',

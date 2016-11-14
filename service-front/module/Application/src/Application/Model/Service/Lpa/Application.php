@@ -5,6 +5,9 @@ use InvalidArgumentException;
 
 use Opg\Lpa\Api\Client\Client;
 
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+
 class Application {
 
     private $client;
@@ -13,6 +16,11 @@ class Application {
         $this->client = $client;
     }
 
+    public function updatePayment( Lpa $lpa ){
+
+        return $this->updateApplication($lpa->id, [ 'payment' => $lpa->payment->toArray() ]);
+
+    }
 
     /**
      * By default we just pass requests onto the API Client.

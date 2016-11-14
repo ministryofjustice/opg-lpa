@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 
 use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
@@ -10,16 +11,35 @@ use Zend\View\Helper\ServerUrl;
 
 use Zend\Http\Response as HttpResponse;
 
+use Application\Model\Service\Payment\Helper\LpaIdHelper;
+
 class CheckoutController extends AbstractLpaController {
 
     public function indexAction(){
 
-        $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+        $segmentsSentToGovPay = 100;
 
-        $response = $this->processWorldPayForm( $worldPayForm );
+        // Take the user's id and puts them into a segment between 1 and 100.
+        $segment = (abs(crc32( $this->getUser()->id() )) % 100) + 1;
 
-        if( $response instanceof HttpResponse ){
-            return $response;
+        $userGdsPay = ($segment <= $segmentsSentToGovPay);
+
+        //---
+
+        $paymentViewVars = array();
+
+        if( !$userGdsPay ){
+
+            $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+
+            $response = $this->processWorldPayForm( $worldPayForm );
+
+            if( $response instanceof HttpResponse ){
+                return $response;
+            }
+
+            $paymentViewVars['worldpayForm'] = $worldPayForm;
+
         }
 
         //---
@@ -29,8 +49,7 @@ class CheckoutController extends AbstractLpaController {
         return new ViewModel([
             // If it's not a while number, use money_format
             'paymentAmount' => ( floor( $lpa->payment->amount ) == $lpa->payment->amount ) ? $lpa->payment->amount : money_format('%i', $lpa->payment->amount),
-            'worldpayForm' => $worldPayForm,
-        ]);
+        ] + $paymentViewVars);
 
     }
 
@@ -47,12 +66,6 @@ class CheckoutController extends AbstractLpaController {
         //---
 
         return $this->finishCheckout();
-
-    }
-
-    public function payAction(){
-
-        die('GDS pay');
 
     }
 
@@ -96,6 +109,134 @@ class CheckoutController extends AbstractLpaController {
     // GDS Pay
 
 
+    public function payAction(){
+
+        $lpa = $this->getLpa();
+
+        $paymentClient = $this->getServiceLocator()->get('GovPayClient');
+
+        //----------------------------
+        // Check for any existing payments in play
+
+
+        if( !is_null($lpa->payment->gatewayReference) ){
+
+            // Look the payment up on Pay
+            $payment = $paymentClient->getPayment( $lpa->payment->gatewayReference );
+
+            if( $payment->isSuccess() ) {
+                // Payment has already been made.
+                return $this->getNextSectionRedirect();
+            }
+
+            // If this payment id is still in play, direct the user back...
+            if( !$payment->isFinished() ){
+
+                $this->redirect()->toUrl( $payment->getPaymentPageUrl() );
+                return $this->getResponse();
+
+            }
+
+            // else carry on to start a new payment.
+
+        }
+
+        //----------------------------
+        // Create a new payment
+
+        $ref = LpaIdHelper::constructPaymentTransactionId( $lpa->id );
+
+        $description =  ( $lpa->document->type == 'property-and-financial' ) ? 'Property and financial affairs' : 'Health and welfare';
+        $description .= " LPA for ".(string)$lpa->document->donor->name;
+
+        // General URL to return the user to.
+        $callback = (new ServerUrl())->__invoke(false) . $this->url()->fromRoute(
+                'lpa/checkout/pay/response',
+                ['lpa-id' => $lpa->id]
+            );
+
+        //---
+
+        $payment = $paymentClient->createPayment(
+            (int)($lpa->payment->amount * 100), // amount in pence,
+            $ref,
+            $description,
+            new \GuzzleHttp\Psr7\Uri($callback)
+        );
+
+        //---
+
+        // Store the gateway reference
+
+        $lpa->payment->gatewayReference = $payment->payment_id;
+
+        $this->getLpaApplicationService()->updatePayment( $lpa );
+
+        //---
+
+        $this->redirect()->toUrl( $payment->getPaymentPageUrl() );
+        return $this->getResponse();
+
+
+    }
+
+
+    public function payResponseAction(){
+
+        $lpa = $this->getLpa();
+
+        // Lookup the payment ID in play...
+
+        if( is_null($lpa->payment->gatewayReference) ){
+            die('Payment id needed');
+        }
+
+        //---
+
+        $paymentClient = $this->getServiceLocator()->get('GovPayClient');
+
+        $paymentResponse = $paymentClient->getPayment( $lpa->payment->gatewayReference );
+
+        //---
+
+        // If the payment was not successful...
+        if( !$paymentResponse->isSuccess() ){
+
+            $viewModel = new ViewModel();
+
+            // If the user actively canceled it...
+            if( $paymentResponse->state->code == 'P0030' ){
+
+                $viewModel->setTemplate('application/checkout/govpay-cancel.twig');
+
+            } else {
+
+                // Else it failed for some other reason.
+                $viewModel->setTemplate('application/checkout/govpay-failure.twig');
+
+            }
+
+            return $viewModel;
+
+        }
+
+        //---
+
+        // Else the payment is all good.
+
+        // Add the details
+        $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+        $lpa->payment->reference = $paymentResponse->reference;
+        $lpa->payment->date = new \DateTime('today');
+        $lpa->payment->email = new EmailAddress( ['address'=>$paymentResponse->email] );
+
+        $this->getLpaApplicationService()->updatePayment( $lpa );
+
+        //---
+
+        return $this->finishCheckout();
+
+    }
 
     //------------------------------------------------------------------------------
     // WorldPay
