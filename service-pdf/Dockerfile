@@ -1,4 +1,4 @@
-FROM registry.service.dsd.io/opguk/base:0.1.170
+FROM registry.service.opg.digital/opguk/base:0.1.199
 
 RUN groupadd supervisor
 
