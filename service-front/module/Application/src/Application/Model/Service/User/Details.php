@@ -284,8 +284,6 @@ class Details implements ServiceLocatorAwareInterface {
         
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $email = $client->getEmail();
-
         $result = $client->updateAuthPassword(
             $details->getDataForModel()['password_current'],
             $details->getDataForModel()['password'] 
@@ -301,6 +299,8 @@ class Details implements ServiceLocatorAwareInterface {
 
         //---
 
+        $userSession = $this->getServiceLocator()->get('UserDetailsSession');
+        $email = $userSession->user->email->address;
         $this->sendPasswordUpdatedEmail( $email );
 
         //---
