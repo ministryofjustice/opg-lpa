@@ -1,0 +1,60 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Pay vs GDS Pay Percentage
+{% endblock %}
+
+{% set form = formErrorTextExchange(form, []) %}
+{% set percentage = form.get('percentage') %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+    
+{{ percentage.setAttributes({
+    id: 'percentage',
+    min: 0,
+    max: 100,
+    class: 'form-control',
+    required: 'required'
+}) ? ''}}
+
+
+{{ percentage.setOptions( { label: 'Percentage (excluding %)' }) ? '' }}
+
+{{ form.prepare() ? '' }}
+    
+{{ form().openTag( form )|raw }}
+
+    {{ formElement(form.get( form.csrfName )) }}
+
+    {% if save == true %}
+        <div class="alert panel text alert-success" role="alert">
+            <i class="icon icon-tick" role="presentation"></i>
+            <div class="alert-message"><p>Percentage has been updated.</p></div>
+        </div>
+    {% endif %}
+
+    <div class="text">
+        <p>Enter the percentage of users who will be directed to GOV Pay as opposed to WorldPay.</p>
+        <p>For example, enter:</p>
+        <ul class="list list-bullet">
+            <li>0 for all users to be directed to WorldPay</li>
+            <li>100 for all users to be directed to GOV Pay</li>
+            <li>20 for 20% of users to be directed to GOV Pay (and thus 80% will be sent to WorldPay)</li>
+        </ul>
+    </div>
+
+    <fieldset>
+        <legend class="visuallyhidden">Enter the percentage to be sent to GOV Pay</legend>
+
+        {{ macros.formGroup(percentage) }}
+        
+    </fieldset>
+
+
+	<input type="submit" class="button" value="Save percentage">
+                
+{{ form().closeTag|raw }}
+
+{% endblock %}
