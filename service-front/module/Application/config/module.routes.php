@@ -285,13 +285,13 @@ return [
                 ],
             ],
 
-            'postcode-lookup-method' => [
+            'admin-payment-switch' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/admin/postcode-lookup-method',
+                    'route'    => '/admin/payment-payment',
                     'defaults' => [
                         'controller' => 'Authenticated\AdminController',
-                        'action'     => 'postcode-lookup-method',
+                        'action'     => 'payment-switch',
                     ],
                 ],
             ],
