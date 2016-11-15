@@ -6,6 +6,7 @@ use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Zend\Mvc\MvcEvent;
 use Application\Form\Admin\SystemMessageForm;
+use Application\Form\Admin\PaymentSwitch;
 
 class AdminController extends AbstractAuthenticatedController
 {
@@ -76,6 +77,44 @@ class AdminController extends AbstractAuthenticatedController
         }
         
         return new ViewModel(['form'=>$form]);
+
+    }
+
+    public function paymentSwitchAction(){
+
+        $form = new PaymentSwitch();
+
+        $saved = false;
+
+        if ($this->request->isPost()) {
+            $post = $this->request->getPost();
+
+            $form->setData($post);
+
+            if ($form->isValid()) {
+
+                $percentage = $form->getData()['percentage'];
+
+                $this->cache()->setItem('gov-pay-percentage', $percentage);
+
+                $saved = true;
+
+            }
+        } else {
+
+            $element = $form->get('percentage');
+            $percentage = $this->cache()->getItem('gov-pay-percentage');
+
+            if( !is_numeric($percentage) ){
+                // Default to 0
+                $percentage = 0;
+            }
+
+            $element->setValue($percentage);
+            
+        }
+
+        return new ViewModel(['form'=>$form, 'save'=>$saved]);
 
     }
 
