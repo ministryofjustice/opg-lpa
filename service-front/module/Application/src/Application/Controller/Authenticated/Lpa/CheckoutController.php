@@ -17,18 +17,34 @@ class CheckoutController extends AbstractLpaController {
 
     public function indexAction(){
 
-        $segmentsSentToGovPay = 100;
+        /*
+         * At present we are sending a percentage of users to GOV Pay, and the remaining users to WorldPay.
+         * The percentage to send to GOV Pay is stored in the cache.
+         *
+         * We use crc32() % 100, with the user's id, to put them into a segment, 1 - 100.
+         *
+         */
+
+        $segmentsSentToGovPay = $this->cache()->getItem('gov-pay-percentage');
+
+        // Sanity checks...
+        if( !is_numeric($segmentsSentToGovPay) || $segmentsSentToGovPay < 0 || $segmentsSentToGovPay > 100 ){
+            $segmentsSentToGovPay = 0;
+        }
 
         // Take the user's id and puts them into a segment between 1 and 100.
         $segment = (abs(crc32( $this->getUser()->id() )) % 100) + 1;
 
-        $userGdsPay = ($segment <= $segmentsSentToGovPay);
+        // If the user's segment falls at or below the set percentage.
+        $useGdsPay = ($segment <= (int)$segmentsSentToGovPay);
 
-        //---
+        //-------
 
         $paymentViewVars = array();
 
-        if( !$userGdsPay ){
+        // Note: all POSTs are for WorldPay to this method.
+        // This protects against the case where an admin changes the 'percentage' whilst a user is mid payment.
+        if( !$useGdsPay || $this->request->isPost() ){
 
             $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
 
