@@ -288,7 +288,7 @@ return [
             'admin-payment-switch' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/admin/payment-payment',
+                    'route'    => '/admin/payment',
                     'defaults' => [
                         'controller' => 'Authenticated\AdminController',
                         'action'     => 'payment-switch',
