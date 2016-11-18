@@ -9,9 +9,9 @@
     <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
 
     <div class="text">
-        <p>Sorry, but there appears to be a problem with this payment. Please click the button below to try again.</p>
 
-        <p>If you would like you can choose to <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+        <p>There appears to be a problem with this payment. You could try paying online again or <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+
     </div>
 
     <div class="text">
