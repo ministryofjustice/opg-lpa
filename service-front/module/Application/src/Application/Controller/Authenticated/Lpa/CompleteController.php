@@ -40,12 +40,6 @@ class CompleteController extends AbstractLpaController
 
         //---
 
-        $viewModel = new ViewModel(
-            $this->getViewParams()
-        );
-        
-        $viewModel->setTemplate('application/complete/complete.twig');
-        
         $lpa = $this->getLpa();
         
         if (property_exists($lpa, 'metadata')) {
@@ -56,12 +50,17 @@ class CompleteController extends AbstractLpaController
                 ];
             }
             
-            if (isset($lpa->metadata['updateSessionCount'])) {
-                $analyticsDimensions['dimension3'] = $lpa->metadata['updateSessionCount'];
+            if (isset($lpa->metadata['analyticsReturnCount'])) {
+                $analyticsDimensions['dimension3'] = $lpa->metadata['analyticsReturnCount'];
             }
-            
-            $this->layout()->setVariable('analyticsDimensions', json_encode($analyticsDimensions));
+
         }
+
+        $viewModel = new ViewModel(
+            $this->getViewParams() + [ 'analyticsDimensions' => json_encode($analyticsDimensions) ]
+        );
+
+        $viewModel->setTemplate('application/complete/complete.twig');
         
         return $viewModel;
     }
