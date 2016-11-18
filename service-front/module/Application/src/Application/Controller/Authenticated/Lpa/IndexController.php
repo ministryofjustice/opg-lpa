@@ -8,12 +8,36 @@ class IndexController extends AbstractLpaController
     
     public function indexAction()
     {
-        $seedId = $this->getLpa()->seed;
+
+        $lpa = $this->getLpa();
+
+        //---
+
+        $seedId = $lpa->seed;
         if($seedId) {
             $this->resetSessionCloneData($seedId);
         }
+
+        //---
+        // We want to track the number of times an LPA has been 'worked on'.
+        // Which is defined by the number of times this method is called, per LPA.
+
+        // Assume it's the first return...
+        $analyticsReturnCount = 1;
+
+        // but update the values if it's not the first time...
+        if( isset($lpa->metadata['analyticsReturnCount']) ){
+            $analyticsReturnCount = $lpa->metadata['analyticsReturnCount'] + 1;
+        }
+
+        $this->getLpaApplicationService()->setMetaData( $lpa->id, [
+            'analyticsReturnCount'=>$analyticsReturnCount
+        ]);
+
+        //---
         
         $destinationRoute = $this->getFlowChecker()->backToForm('lpa/view-docs');
-        return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$this->getLpa()->id]);
+        return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id]);
+
     }
 }
