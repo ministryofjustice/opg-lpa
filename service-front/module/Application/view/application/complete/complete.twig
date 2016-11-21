@@ -21,7 +21,7 @@
 
     <h2 class="heading-large">Print and sign your LPA</h2>
 
-    <p>You’re now ready to print and sign the complete LPA document, then send it to the Office of the Public Guardian.</p>
+    <p>You’re now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then send it to the Office of the Public Guardian.</p>
 
     <p>It’s essential that you sign the parts of the LPA in the right order. If you sign in the wrong order, it will delay your registration.</p>
 
