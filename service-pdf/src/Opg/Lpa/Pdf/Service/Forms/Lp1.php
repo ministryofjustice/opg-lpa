@@ -529,6 +529,11 @@ abstract class Lp1 extends AbstractForm
          */
         if($this->lpa->document->whoIsRegistering == 'donor') {
             $this->pdfFormData['who-is-applicant'] = 'donor';
+            $this->drawingTargets[19] = array(
+                'applicant-signature-1',
+                'applicant-signature-2',
+                'applicant-signature-3',
+            );
         }
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
             $this->pdfFormData['who-is-applicant'] = 'attorney';
@@ -549,7 +554,19 @@ abstract class Lp1 extends AbstractForm
                 
                 if(++$i == self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) break;
             }
-        }
+
+            // Cross-out any unused boxes if we need less than 4.
+            if( count($this->lpa->document->whoIsRegistering) < 4 ){
+
+                $this->drawingTargets[19] = array();
+
+                for($x = 3; $x >= count($this->lpa->document->whoIsRegistering); $x--){
+                    $this->drawingTargets[19][] = "applicant-signature-{$x}";
+                }
+
+            } // if
+
+        } // if
         
         /**
          * Correspondent (Section 13)
