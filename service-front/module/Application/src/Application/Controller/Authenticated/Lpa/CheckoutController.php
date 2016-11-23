@@ -243,7 +243,7 @@ class CheckoutController extends AbstractLpaController {
         // Add the details
         $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $lpa->payment->reference = $paymentResponse->reference;
-        $lpa->payment->date = new \DateTime('today');
+        $lpa->payment->date = new \DateTime();
         $lpa->payment->email = new EmailAddress( ['address'=>strtolower($paymentResponse->email)] );
 
         $this->getLpaApplicationService()->updatePayment( $lpa );

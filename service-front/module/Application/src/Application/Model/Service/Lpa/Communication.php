@@ -58,6 +58,7 @@ class Communication implements ServiceLocatorAwareInterface {
 
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('lpa-registration.twig')->render([
             'lpa' => $lpa,
+            'paymentAmount' => ( $lpa->payment->amount > 0 ) ? money_format('%i', $lpa->payment->amount) : null,
             'signinUrl' => $returnUrl,
             'isHealthAndWelfare' => ( $lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW ),
         ]);
