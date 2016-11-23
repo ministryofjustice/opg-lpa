@@ -7,19 +7,22 @@
 {% block content %}
 
 <div class="text">
-        
+
     {% if not isPaymentSkipped %}
 
         <h2 class="heading-large">Payment received</h2>
-   
+
         <p>Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount|number_format(2, '.', ',') }}</strong></p>
-   
+
         <p>Your payment reference number is <strong class="bold-small">{{ paymentReferenceNo }}</strong></p>
-        
+
     {% endif %}
-    
+
 
     <h2 class="heading-large">Print and sign your LPA</h2>
+
+    {# @Neil - Please make LPA ref number dynamic #}
+    <p>Your LPA reference number is <strong class="bold-small">A843 0591 2561</strong></p>
 
     <p>You’re now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then send it to the Office of the Public Guardian.</p>
 
@@ -36,25 +39,25 @@
             <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
                 <i class="icon icon-file-download"></i>
                 <span class="iconlinks-text">Download your print-ready LPA form</span>
-            </a> 
+            </a>
         </li>
-        
+
         {% if lpa120Url %}
             <li class="iconlinks-item">
                 <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
                     <i class="icon icon-file-download"></i>
                     <span class="iconlinks-text">Download your fee remissions and exemption form</span>
-                    
+
                 </a>
             </li>
         {% endif %}
-        
+
         {% if lp3Url %}
             <li class="iconlinks-item">
                 <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
                     <i class="icon icon-file-download"></i>
                     <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
-                    
+
                 </a>
             </li>
         {% endif %}
@@ -93,9 +96,9 @@
         </strong>
     </p>
 
-    {% if peeopleToNotify %}                     
+    {% if peeopleToNotify %}
         <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
-    {% endif %} 
+    {% endif %}
 
 
     <h2 class="heading-large">What happens next?</h2>
@@ -109,7 +112,7 @@
 
     <ul class="list">
         <li>
-            <a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click). 
+            <a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click).
         </li>
         <li>
             <a href="/user/dashboard/create">Make an LPA from scratch</a>
@@ -127,7 +130,7 @@
             <a href="/logout">Sign out of this service</a>
         </li>
     </ul>
-    
+
 </div>
 
 {% endblock %}
