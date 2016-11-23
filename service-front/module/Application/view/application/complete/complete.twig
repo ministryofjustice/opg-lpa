@@ -22,7 +22,7 @@
     <h2 class="heading-large">Print and sign your LPA</h2>
 
     {# @Neil - Please make LPA ref number dynamic #}
-    <p>Your LPA reference number is <strong class="bold-small">A843 0591 2561</strong></p>
+    <p>Your LPA reference number is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
 
     <p>You’re now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then send it to the Office of the Public Guardian.</p>
 
