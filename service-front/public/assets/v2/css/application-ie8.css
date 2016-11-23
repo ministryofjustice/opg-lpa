@@ -2247,6 +2247,10 @@ input[type=number] {
   padding: 0.52632em 0.78947em 0.26316em;
   vertical-align: top; }
 
+.button-link {
+  margin-left: 30px;
+  line-height: 2.5em; }
+
 .help-header {
   display: none;
   position: relative;
@@ -2670,6 +2674,10 @@ input[type=number] {
   box-sizing: border-box;
   padding: 0.52632em 0.78947em 0.26316em;
   vertical-align: top; }
+
+.button-link {
+  margin-left: 30px;
+  line-height: 2.5em; }
 
 .postcode-input {
   width: 27%;

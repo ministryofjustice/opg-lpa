@@ -2623,6 +2623,13 @@ input[type=number] {
   .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary + .ui-priority-secondary {
     margin-top: 15px; } }
 
+.button-link {
+  margin-left: 30px;
+  line-height: 2.5em; }
+  @media (max-width: 640px) {
+    .button-link {
+      margin-left: 0; } }
+
 .help-header {
   display: none;
   position: relative;
@@ -3366,6 +3373,13 @@ input[type=number] {
   .ui-datepicker .ui-datepicker-buttonpane .ui-datepicker-header .ui-datepicker-next + .ui-priority-secondary,
   .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary + .ui-priority-secondary {
     margin-top: 15px; } }
+
+.button-link {
+  margin-left: 30px;
+  line-height: 2.5em; }
+  @media (max-width: 640px) {
+    .button-link {
+      margin-left: 0; } }
 
 @media (min-width: 641px) {
   .postcode-input {
