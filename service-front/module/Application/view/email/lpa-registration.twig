@@ -21,9 +21,9 @@
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	<strong>Your payment summary:</strong><br/>
 	Payment reference number: {{ lpa.payment.reference }}<br/>
-	Date of payment: 10 November 2016 - 10:19:02<br/>
-	Description: Property and financial affair LPA for Miss Maria Ruiz<br/>
-	Amount paid: £110.00
+	Date of payment: {{ lpa.payment.date|date('j F Y - g:ia') }}<br/>
+	Description: {{ (( lpa.document.type == 'property-and-financial' ) ? 'Property and financial affairs' : 'Health and welfare' ) }} LPA for {{ lpa.document.donor.name }}<br/>
+	Amount paid: £{{ paymentAmount }}
 </p>
 {% endif %}
 
