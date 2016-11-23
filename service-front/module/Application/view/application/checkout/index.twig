@@ -78,22 +78,26 @@
 
             </fieldset>
 
-            <div class="form-group">
-                <input type="submit" name="save" value="Make online payment now" class="button">
-            </div>
+            <input type="submit" name="save" value="Make online payment now" class="button">
+            <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">I want to pay by cheque</a>
 
             {{ form().closeTag|raw }}
 
         {% else %}
 
             {# -- GDS Pay -- #}
-            <p class="divorced"><a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Make online payment now</a></p>
+            <p class="divorced">
+                <a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Make online payment now</a>
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">I want to pay by cheque</a>
+            </p>
 
         {% endif %}
 
 
         {# -- Cheque -- #}
-        <p><a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">I want to pay by cheque</a></p>
+        <p class="divorced">
+            <a href="/user/dashboard">Save for later</a>
+        </p>
 
     {% endif %}
 

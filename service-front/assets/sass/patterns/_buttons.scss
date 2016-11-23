@@ -27,11 +27,19 @@
     @include media(mobile) {
         text-align: center;
     }
-    
+
     + .button,
     + .button-secondary {
         @include media(mobile) {
             margin-top: 15px;
         }
+    }
+}
+
+.button-link {
+    margin-left: $gutter;
+    line-height: 2.5em;
+    @include media(mobile) {
+        margin-left: 0;
     }
 }
