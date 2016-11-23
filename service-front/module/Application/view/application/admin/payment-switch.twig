@@ -1,7 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Pay vs GDS Pay Percentage
+    Pay vs GOV Pay Percentage
 {% endblock %}
 
 {% set form = formErrorTextExchange(form, []) %}
@@ -10,7 +10,7 @@
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
-    
+
 {{ percentage.setAttributes({
     id: 'percentage',
     min: 0,
@@ -20,10 +20,10 @@
 }) ? ''}}
 
 
-{{ percentage.setOptions( { label: 'Percentage (excluding %)' }) ? '' }}
+{{ percentage.setOptions( { label: 'Percentage of users going to GOV Pay (excluding %)' }) ? '' }}
 
 {{ form.prepare() ? '' }}
-    
+
 {{ form().openTag( form )|raw }}
 
     {{ formElement(form.get( form.csrfName )) }}
@@ -49,12 +49,12 @@
         <legend class="visuallyhidden">Enter the percentage to be sent to GOV Pay</legend>
 
         {{ macros.formGroup(percentage) }}
-        
+
     </fieldset>
 
 
 	<input type="submit" class="button" value="Save percentage">
-                
+
 {{ form().closeTag|raw }}
 
 {% endblock %}
