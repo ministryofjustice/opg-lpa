@@ -168,11 +168,19 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         if( $isCompleted ){
 
             $this->info('LPA is complete', ['lpaid' => $lpa->id]);
-            
+
+            // If we don't already have a complete date...
             if( !($lpa->completedAt instanceof \DateTime) ){
                 $this->info('Setting completed time for existing LPA', ['lpaid' => $lpa->id]);
-                
-                $lpa->completedAt = new DateTime();
+
+                // And the LPA is locked...
+                if( $lpa->locked === true ){
+
+                    // Set teh date.
+                    $lpa->completedAt = new DateTime();
+
+                }
+
             }
 
         } else {
