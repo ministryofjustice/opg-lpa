@@ -10,17 +10,7 @@ use Zend\Authentication\AuthenticationService as ZFAuthenticationService;
  * @package Application\Model\Service\Authentication
  */
 class AuthenticationService extends ZFAuthenticationService {
-
-    /**
-     * Sets the authentication adapter
-     *
-     * @param  Adapter\AdapterInterface $adapter
-     * @return AuthenticationService Provides a fluent interface
-     */
-    public function setAdapter(Adapter\AdapterInterface $adapter){
-        return parent::setAdapter( $adapter );
-    }
-
+    
     /**
      * Verify against the supplied adapter. On success this updates the persisted identity.
      * On failure it does not effect the existing identity.
