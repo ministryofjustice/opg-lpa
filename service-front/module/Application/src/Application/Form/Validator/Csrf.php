@@ -31,6 +31,7 @@ class Csrf extends ZFCsrfValidator {
         self::NOT_SAME => "Oops! Something went wrong with the information you entered. Please try again.",
     );
 
+
     /**
      * Does the provided token match the one generated?
      *
@@ -40,7 +41,7 @@ class Csrf extends ZFCsrfValidator {
      */
     public function isValid($value, $context = null){
 
-        if( $value != $this->getHash() ){
+        if( $value !== $this->getHash( true ) ){
 
             $this->error(self::NOT_SAME);
             return false;
@@ -51,18 +52,19 @@ class Csrf extends ZFCsrfValidator {
 
     }
 
+
     /**
-     * Generates a hash for the form.
+     * Generate CSRF token
      *
      * The hash is made up of:
      *  - The form's name
      *  - The CSRF token from the session.
      *  - The validator's salt.
      *
-     * @return string
-     * @throws RuntimeException if salt is null
+     * @return void
      */
-    public function getHash(){
+    protected function generateHash()
+    {
 
         $salt = $this->getSalt();
 
@@ -80,7 +82,7 @@ class Csrf extends ZFCsrfValidator {
 
         //---
 
-        return hash( 'sha512', $this->getName() . $session->token . $salt );
+        $this->hash =  hash( 'sha512', $this->getName() . $session->token . $salt );
 
     }
 
