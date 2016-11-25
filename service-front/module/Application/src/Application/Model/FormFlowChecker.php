@@ -87,9 +87,7 @@ class FormFlowChecker extends StateChecker
             'lpa/who-are-you'                               => 'returnToWhoAreYou',
             'lpa/repeat-application'                        => 'returnToRepeatApplication',
             'lpa/fee-reduction'                             => 'returnToFeeReduction',
-            'lpa/checkout'                                  => 'returnToPayment',
-            'lpa/payment'                                   => 'returnToPayment',
-            'lpa/payment/summary'                           => 'returnToPaymentSummary',
+            'lpa/checkout'                                  => 'returnToCheckout',
             'lpa/view-docs'                                 => 'returnToViewDocs',
     );
     
@@ -967,24 +965,14 @@ class FormFlowChecker extends StateChecker
             return 'lpa/repeat-application';
         }
     }
-    
-    private function returnToPayment()
+
+    private function returnToCheckout()
     {
-        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
+        if(($this->lpa->payment instanceof Payment) && ( $this->isEligibleForFeeReduction() || $this->lpa->payment->amount > 0 )) {
             return 'lpa/checkout';
         }
         else {
             return 'lpa/fee-reduction';
-        }
-    }
-
-    private function returnToPaymentSummary()
-    {
-        if(($this->lpa->payment instanceof Payment) && ($this->lpa->payment->method !== null)) {
-            return 'lpa/checkout';
-        }
-        else {
-            return 'lpa/checkout';
         }
     }
     
