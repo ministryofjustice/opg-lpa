@@ -24,7 +24,7 @@ class AccountInfo extends AbstractHelper
 
         // Only include name (and singed in user links) if the user has set their name.
         // i.e. they've completed the first About You step.
-        if($details->user->name !== null) {
+        if( isset($details->user) && $details->user->name !== null) {
 
             if( $details->user->name->first != null && $details->user->name->last != null ){
                 $params['name'] = "{$details->user->name->first} {$details->user->name->last}";
