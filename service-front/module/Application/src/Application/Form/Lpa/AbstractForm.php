@@ -15,7 +15,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
 
-    protected $inputFilter, $serviceLocator, $logger;
+    protected $inputFilter, $logger;
 
     /**
      * @var string The Csrf name user for this form.
