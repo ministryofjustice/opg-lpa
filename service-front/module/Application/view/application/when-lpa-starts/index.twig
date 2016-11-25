@@ -39,10 +39,33 @@
 
 			<h2 class="heading-medium flush--top">My LPA can be used</h2>
 
-		    <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
+			<div class="form-group">
+				<label for="now" class="block-label" data-target="now-help">
+					<input type="radio" name="when" id="now" value="now">
+					as soon as it's registered (with my consent)
+				</label>
+
+                <div id="now-help" class="panel panel-border-narrow js-hidden">
+                	<div class="text">
+	                    <p>Most people choose this option because it is the most practical. While you still have mental capacity, your attorneys can only act with your consent. You will still be in control of all decisions affecting you. If you later lose capacity, your attorneys can continue to act on your behalf for all decisions this LPA covers.</p>
+
+	                    <p>This option is useful if you are able to make your own decisions but there’s another reason you want your attorneys to help you – for example, if you’re away on holiday, or if you have a physical condition that makes it difficult to visit the bank, talk on the phone or sign documents.</p>
+                	</div>
+                </div>
+
+                <label for="no-capacity" class="block-label" data-target="no-capacity-help">
+                	<input type="radio" name="when" id="no-capacity" value="no-capacity">only if I don't have mental capacity
+                </label>
+
+                <div id="no-capacity-help" class="panel panel-border-narrow js-hidden">
+                    <p class="text">This means your attorneys can make decisions for you only if you don't have mental capacity to make certain decisions yourself. But be careful – this option can make your LPA a lot less useful. Your attorneys might be asked to prove you do not have mental capacity each time they try to use this LPA.</p>
+                </div>
+			</div>
+
+		    {# <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
 		        {{ formElementErrorsV2(when) }}
 		        {{ formRadio(when) }}
-		    </div>
+		    </div> #}
 		</fieldset>
 
 		<div class="form-group">
