@@ -49,7 +49,7 @@ class SendGrid implements TransportInterface {
         if( count($from) > 1 ){ throw new InvalidArgumentException('SendGrid only supports a single FROM address'); }
 
         // Extract the Address object...
-        $from = array_pop( current($from) );
+        $from = current( current($from) );
 
         // However (due to crazy RFC822-ness) if a 'sender' has been set, this should be used instead.
         if( $message->getSender() != null ){
