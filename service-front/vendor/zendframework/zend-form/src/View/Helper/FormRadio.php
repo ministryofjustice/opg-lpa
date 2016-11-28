@@ -33,4 +33,55 @@ class FormRadio extends FormMultiCheckbox
     {
         return $element->getName();
     }
+
+    /**
+     * This allows us to output a single Radio option from an Radio Element's available options.
+     *
+     * @param ElementInterface $element
+     * @param $option
+     * @param array $labelAttributes
+     * @return string
+     */
+    public function outputOption( ElementInterface $element, $option, $labelAttributes = array() ){
+
+        $element = clone $element;
+
+        $name = static::getName($element);
+
+        $options = $element->getValueOptions();
+
+        if( !isset($options[$option]) ){
+            return '';
+        }
+
+        //---
+
+        $element->setLabelAttributes( $element->getLabelAttributes() + $labelAttributes );
+
+        //---
+
+        $attributes         = $element->getAttributes();
+        $attributes['name'] = $name;
+        $attributes['type'] = $this->getInputType();
+        $selectedOptions    = (array) $element->getValue();
+
+        $options = array(
+            "$option" => $options[$option],
+        );
+
+        $rendered = $this->renderOptions($element, $options, $selectedOptions, $attributes);
+
+        // Render hidden element
+        $useHiddenElement = method_exists($element, 'useHiddenElement') && $element->useHiddenElement()
+            ? $element->useHiddenElement()
+            : $this->useHiddenElement;
+
+        if ($useHiddenElement) {
+            $rendered = $this->renderHiddenElement($element, $attributes) . $rendered;
+        }
+
+        return $rendered;
+
+    }
+
 }
