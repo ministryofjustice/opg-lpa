@@ -39,11 +39,9 @@
 
 			<h2 class="heading-medium flush--top">My LPA can be used</h2>
 
-			<div class="form-group">
-				<label for="now" class="block-label" data-target="now-help">
-					<input type="radio" name="when" id="now" value="now">
-					as soon as it's registered (with my consent)
-				</label>
+			<div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
+
+				{{ formRadio().outputOption(when, 'now', {"data-target":"now-help"} )|raw }}
 
                 <div id="now-help" class="panel panel-border-narrow js-hidden">
                 	<div class="text">
@@ -53,19 +51,16 @@
                 	</div>
                 </div>
 
-                <label for="no-capacity" class="block-label" data-target="no-capacity-help">
-                	<input type="radio" name="when" id="no-capacity" value="no-capacity">only if I don't have mental capacity
-                </label>
+
+
+				{{ formRadio().outputOption(when, 'no-capacity', {"data-target":"no-capacity-help"})|raw }}
 
                 <div id="no-capacity-help" class="panel panel-border-narrow js-hidden">
                     <p class="text">This means your attorneys can make decisions for you only if you don't have mental capacity to make certain decisions yourself. But be careful – this option can make your LPA a lot less useful. Your attorneys might be asked to prove you do not have mental capacity each time they try to use this LPA.</p>
                 </div>
+
 			</div>
 
-		    {# <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
-		        {{ formElementErrorsV2(when) }}
-		        {{ formRadio(when) }}
-		    </div> #}
 		</fieldset>
 
 		<div class="form-group">
