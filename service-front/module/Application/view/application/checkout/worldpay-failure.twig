@@ -32,7 +32,7 @@
 
     {# /worldpay #}
 
-    <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
+    <h2 class="heading-medium flush--top">Amount due: &pound;{{ moneyFormat(lpa.payment.amount) }}</h2>
 
     <div class="text">
         <p>Sorry, but there appears to be a problem with this payment. Please click the button below to try again. If the problem continues, visit <a href="http://www.worldpay.com/shopper/" target="_blank">Worldpay's support pages</a> for help.</p>
