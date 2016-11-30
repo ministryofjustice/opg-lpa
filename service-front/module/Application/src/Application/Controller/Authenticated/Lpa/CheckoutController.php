@@ -60,12 +60,7 @@ class CheckoutController extends AbstractLpaController {
 
         //---
 
-        $lpa = $this->getLpa();
-
-        return new ViewModel([
-            // If it's not a while number, use money_format
-            'paymentAmount' => ( floor( $lpa->payment->amount ) == $lpa->payment->amount ) ? $lpa->payment->amount : money_format('%i', $lpa->payment->amount),
-        ] + $paymentViewVars);
+        return new ViewModel($paymentViewVars);
 
     }
 

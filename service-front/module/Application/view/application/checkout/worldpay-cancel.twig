@@ -32,7 +32,7 @@
 
     {# /worldpay #}
 
-    <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount }}</h2>
+    <h2 class="heading-medium flush--top">Amount due: &pound;{{ moneyFormat(lpa.payment.amount) }}</h2>
 
     <div class="text">
         <p>It appears you have chosen to cancel online payment. If you would like you can choose to <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>

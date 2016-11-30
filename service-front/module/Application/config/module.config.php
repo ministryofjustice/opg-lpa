@@ -96,6 +96,7 @@ return [
             'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
             'ordinalSuffix'         => 'Application\View\Helper\OrdinalSuffix',
             'applicantNames'        => 'Application\View\Helper\ApplicantNames',
+            'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
         ],
     ],
 
