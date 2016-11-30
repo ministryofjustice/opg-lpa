@@ -50,13 +50,19 @@ class FeeReductionController extends AbstractLpaController
         }
 
         //---
-        
+
+        $isRepeatApplication = ($lpa->repeatCaseNumber != null);
+
+        //---
+
         $reduction = $form->get('reductionOptions');
         
         $reductionOptions = [];
-        
+
+        $amount = Calculator::getBenefitsFee( $isRepeatApplication );
+        $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
         $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
-            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these means-tested benefits</a>, and has not been awarded personal injury damages of more than £16,000"
+            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-and-reductions\" data-journey-click=\"stageprompt.lpa:help:fees-and-reductions\">these means-tested benefits</a> and hasn't been awarded personal injury damages of more than £16,000<br><strong class='bold-small'>Fee: £".$amount."</strong>"
         ]);
         $reductionOptions['reducedFeeReceivesBenefits']->setAttributes([
             'type' => 'radio',
@@ -66,7 +72,7 @@ class FeeReductionController extends AbstractLpaController
         ]);
         
         $reductionOptions['reducedFeeUniversalCredit'] = new Element('reductionOptions', [
-            'label' => "The donor receives Universal Credit"
+            'label' => "The donor receives Universal Credit<br><strong class='bold-small'>We'll contact you about the fee</strong>"
         ]);
         $reductionOptions['reducedFeeUniversalCredit']->setAttributes([
             'type' => 'radio',
@@ -74,9 +80,11 @@ class FeeReductionController extends AbstractLpaController
             'value' => $reduction->getOptions()['value_options']['reducedFeeUniversalCredit']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeUniversalCredit')? 'checked':null),
         ]);
-        
+
+        $amount = Calculator::getLowIncomeFee( $isRepeatApplication );
+        $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
         $reductionOptions['reducedFeeLowIncome'] = new Element('reductionOptions', [
-            'label' => "The donor currently has an income of less than £12,000 a year before tax",
+            'label' => "The donor currently has an income of less than £12,000 a year before tax<br><strong class='bold-small'>Fee: £".$amount."</strong>",
         ]);
         $reductionOptions['reducedFeeLowIncome']->setAttributes([
             'type' => 'radio',
@@ -84,9 +92,11 @@ class FeeReductionController extends AbstractLpaController
             'value' => $reduction->getOptions()['value_options']['reducedFeeLowIncome']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeLowIncome')? 'checked':null),
         ]);
-        
+
+        $amount = Calculator::getFullFee( $isRepeatApplication );
+        $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
         $reductionOptions['notApply'] = new Element('reductionOptions', [
-            'label' => "I'm not applying for a reduced fee",
+            'label' => "I'm not applying for a reduced fee<br><strong class='bold-small'>Fee: £".$amount."</strong>",
         ]);
         $reductionOptions['notApply']->setAttributes([
             'type' => 'radio',
