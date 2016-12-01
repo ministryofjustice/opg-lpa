@@ -3,7 +3,6 @@
 namespace Application\Controller\General;
 
 use Zend\View\Model\ViewModel;
-use Zend\Mvc\Controller\AbstractActionController;
 
 use Application\Controller\AbstractBaseController;
 
@@ -92,6 +91,23 @@ class ForgotPasswordController extends AbstractBaseController
         }
 
         //-------------------------------------
+
+        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+
+        // If there's currently a signed in user...
+        if( !is_null($identity) ){
+
+            /// Log them out...
+            $session = $this->getServiceLocator()->get('SessionManager');
+            $session->getStorage()->clear();
+            $session->initialise();
+
+            // Then redirect the user to the same page, now signed out, and with a new CSRF token.
+            return $this->redirect()->toRoute( 'forgot-password/callback', [ 'token'=>$token ] );
+
+        }
+
+        //-------------------------------------
         // We have a valid reset token...
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\SetPassword');
@@ -131,13 +147,6 @@ class ForgotPasswordController extends AbstractBaseController
             } // if
 
         } // if
-
-        //---------------------------
-
-        // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
-        $session = $this->getServiceLocator()->get('SessionManager');
-        $session->getStorage()->clear();
-        $session->initialise();
 
         //---------------------------
 
