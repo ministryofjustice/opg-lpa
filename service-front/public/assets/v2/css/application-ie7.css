@@ -2155,6 +2155,29 @@ input[type=number] {
   padding-right: 0 !important;
   padding-left: 0 !important; }
 
+.push {
+  margin: 30px !important; }
+
+.push--top {
+  margin-top: 30px !important; }
+
+.push--right {
+  margin-right: 30px !important; }
+
+.push--bottom {
+  margin-bottom: 30px !important; }
+
+.push--left {
+  margin-left: 30px !important; }
+
+.push--ends {
+  margin-top: 30px !important;
+  margin-bottom: 30px !important; }
+
+.push--sides {
+  margin-right: 30px !important;
+  margin-left: 30px !important; }
+
 .divorced {
   margin-top: 30px; }
 
