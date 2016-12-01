@@ -36,6 +36,14 @@
 
     {% include 'application/summary/partials/summary-table.twig' %}
 
+    <div class="alert panel text push--top" role="alert">
+        <i class="icon icon-important-small" role="presentation"></i>
+        <div class="alert-message">
+            <p>At the next stage your forms will be ready to download and sign with the information shown above. </p>
+            <p><strong class="bold-small">You won't be able to change anything in the LPA once you have confirmed and paid.</strong></p>
+        </div>
+    </div>
+
     <div class="appstatus" role="alert">
         <h2 class="heading-xlarge">Confirm and pay</h2>
         {% if lpa.payment.amount is null %}
@@ -95,7 +103,7 @@
 
 
     {% endif %}
-    
+
     <p class="divorced">
         <a href="/user/dashboard">Save for later</a>
     </p>
