@@ -40,7 +40,7 @@
         <i class="icon icon-important-small" role="presentation"></i>
         <div class="alert-message">
             <p>At the next stage your forms will be ready to download and sign with the information shown above. </p>
-            <p><strong class="bold-small">You won't be able to change anything in the LPA once you have confirmed and paid.</strong></p>
+            <p><strong class="bold-small">You won't be able to change anything in the LPA once you have confirmed{% if lpa.payment.amount != 0 %} and paid{% endif %}.</strong></p>
         </div>
     </div>
 
