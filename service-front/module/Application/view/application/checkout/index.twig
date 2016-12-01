@@ -62,7 +62,7 @@
 
         <div class="text">
             <p>This is a non-refundable application fee that's paid by the donor. If you are an attorney, you should pay the fee now and reclaim it from the donor's funds.</p>
-            <p>On the next screen you'll be taken to our payment partner, Worldpay, where you can pay by debit or credit card. This is a secure transaction.</p>
+            <p>On the next screen you'll be taken to our payment partner, {% if worldpayForm is defined %}Worldpay{% else %}GOV.UK Pay{% endif %}, where you can pay by debit or credit card. This is a secure transaction.</p>
         </div>
 
 
