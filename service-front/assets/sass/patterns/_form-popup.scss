@@ -141,9 +141,9 @@
     .error-message {
         @include media(tablet) {
             position: relative;
-            width: 280%;
             top: 13px;
             left: 150px;
+            width: 280%;
         }
     }
 
@@ -156,6 +156,7 @@
                 }
             }
         }
+
         .error-message {
             @include media(tablet) {
                 top: 80px;
@@ -168,6 +169,15 @@
     .dob-label {
         @include media(mobile) {
             display: none;
+        }
+    }
+}
+
+// No-js hidden button spacing fix for reuse details
+.no-js {
+    .form-group {
+        + .form-group.js-hidden {
+            margin-top: 30px;
         }
     }
 }

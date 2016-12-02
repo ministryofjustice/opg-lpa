@@ -9,7 +9,7 @@
         {% if form.getMessages|length > 0 %}
             <p>You need to do the following:</p>
         {% endif %}
-        
+
         <ul class="error-summary-list text">
             {# Form errors #}
             {{ formLinkedErrorListV2(form) ? '' }}
@@ -33,7 +33,7 @@
         </ul>
     </div>
     {% endif %}
-	
+
 {% endmacro %}
 
 {# Text input #}
@@ -123,9 +123,9 @@
                 </fieldset>
 
             </div>
-    
+
         {{ form().closeTag|raw }}
-        
+
     {% endif %}
 {% endmacro %}
 
