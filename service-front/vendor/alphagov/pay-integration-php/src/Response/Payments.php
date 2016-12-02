@@ -13,11 +13,11 @@ class Payments extends AbstractData {
         }
 
         // Map event details to objects.
-        $events = array_map( function($event){
-            return new Payment( $event );
+        $payments = array_map( function($payment){
+            return new Payment( (array)$payment );
         }, $details['results'] );
 
-        parent::__construct( $events );
+        parent::__construct( $payments );
 
     }
 

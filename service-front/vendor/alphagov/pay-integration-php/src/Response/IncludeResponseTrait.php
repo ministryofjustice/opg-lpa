@@ -12,7 +12,7 @@ trait IncludeResponseTrait {
 
     public static function buildFromResponse( ResponseInterface $response ){
 
-        $body = json_decode($response->getBody(), true);
+        $body = (array)json_decode($response->getBody());
 
         // The expected response should always be JSON, thus now an array.
         if( !is_array($body) ){

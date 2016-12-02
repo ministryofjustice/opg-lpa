@@ -3,8 +3,6 @@ namespace Alphagov\Pay\Response;
 
 use GuzzleHttp\Psr7\Uri;
 
-use Alphagov\Pay\Exception;
-
 class Payment extends AbstractData {
     use IncludeResponseTrait;
 
@@ -16,17 +14,6 @@ class Payment extends AbstractData {
     const STATUS_FAILED     = 'failed';
     const STATUS_CANCELLED  = 'cancelled';
     const STATUS_ERROR      = 'error';
-
-
-    public function __construct( Array $details ){
-
-        if( isset($details['state']) ){
-            $details['state'] = new \ArrayObject( $details['state'], \ArrayObject::ARRAY_AS_PROPS );
-        }
-
-        parent::__construct( $details );
-
-    }
 
     /**
      * Check is the payment has process has finished.
@@ -59,11 +46,11 @@ class Payment extends AbstractData {
      */
     public function getPaymentPageUrl(){
 
-        if( $this->isFinished() || !isset($this['_links']['next_url']['href']) ){
+        if( $this->isFinished() || !isset($this->_links->next_url->href) ){
             return null;
         }
 
-        return new Uri( $this['_links']['next_url']['href'] );
+        return new Uri( $this->_links->next_url->href );
 
     }
 
