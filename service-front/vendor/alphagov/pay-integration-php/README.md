@@ -67,7 +67,7 @@ try {
 
 **$response** will be an instance of `Alphagov\Pay\Response\Payment`, which is [documented here](#payment).
 
-An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be throw if a Pay error occurs.
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
 
 
 #### Lookup a Payment
@@ -91,15 +91,176 @@ try {
 
 **$response** will be an instance of `Alphagov\Pay\Response\Payment`, which is [documented here](#payment); **or** `null` if the payment was not found.
 
-An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be throw if a Pay error occurs.
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
+
+#### Cancel a Payment
+
+The method signature is:
+```php
+cancelPayment( $payment )
+```
+* **$payment** is a required _string_ holding the (Pay generated) payment id.
+
+An example request would look like:
+```php
+try {
+
+    $response = $client->cancelPayment( 'hu20sqlact5260q2nanm0q8u93' );
+
+} catch (PayException $e){}
+```
+
+**$response** will be bool `true` if the payment was cancelled. Otherwise an instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
+
+
+#### Refund a Payment
+
+The method signature is:
+```php
+refundPayment( $payment, $amount, $refundAmountAvailable = null )
+```
+
+* **$payment** is a required _string_ holding the (Pay generated) payment id.
+* **$amount** A required _int_ holding the amount to be refunded, in pence, in British Pounds (GBP).
+* **$refundAmountAvailable** An optional _int_ holding the expected amount available for refund, in pence, in British Pounds (GBP).
+
+An example request would look like:
+```php
+try {
+
+    $response = $client->refundPayment( 
+    	'hu20sqlact5260q2nanm0q8u93', 
+        10 * 100, // £10
+        50 * 100  // £50
+    );
+
+} catch (PayException $e){}
+```
+
+**$response** will be an instance of `Alphagov\Pay\Response\Refund`, which is [documented here](#refund).
+
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
+
+
+#### Lookup all Refunds for a Payment
+
+The method signature is:
+```php
+getPaymentRefunds( $payment )
+```
+Where
+
+* **$payment** is a required _string_ holding the (Pay generated) payment id.
+
+An example request would look like:
+```php
+try {
+
+    $response = $client->getPaymentRefunds( 'hu20sqlact5260q2nanm0q8u93' );
+
+} catch (PayException $e){}
+```
+
+**$response** will be an instance of `Alphagov\Pay\Response\Refunds`, which will contain an instance of `Alphagov\Pay\Response\Refund` ([docs](#refund)) for each refund processed.
+
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
+
+
+#### Lookup a single Refund for a Payment
+
+The method signature is:
+```php
+getPaymentRefund( $payment, $refund )
+```
+Where
+
+* **$payment** is a required _string_ holding the (Pay generated) payment id.
+* **$refund** is a required _string_ holding the (Pay generated) refund id.
+
+An example request would look like:
+```php
+try {
+
+    $response = $client->getPaymentRefunds( 
+      'hu20sqlact5260q2nanm0q8u93', 
+      'j2cg5v7et0424d7shtrt7r0mj'
+    );
+
+} catch (PayException $e){}
+```
+
+**$response** will be an instance of `Alphagov\Pay\Response\Refund` ([docs](#refund)), or NULL if the refund is not found.
+
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
+
+#### Lookup all Events for a Payment
+
+The method signature is:
+```php
+getPaymentEvents( $payment )
+```
+Where
+
+* **$payment** is a required _string_ holding the (Pay generated) payment id.
+
+An example request would look like:
+```php
+try {
+
+    $response = $client->getPaymentEvents( 'hu20sqlact5260q2nanm0q8u93' );
+
+} catch (PayException $e){}
+```
+
+**$response** will be an instance of `Alphagov\Pay\Response\Events`, which will contain an instance of `Alphagov\Pay\Response\Event` ([docs](#event)) for each event.
+
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
+
+#### Search Payments
+
+The method signature is:
+```php
+searchPayments( array $filters = array() )
+```
+Where
+
+* **$filters** An optional _array_ which applies filters to the request. Zero or more filters can be used. Supported filtered:
+    * ``reference``
+    * ``state``
+    * ``from_date``
+    * ``to_date``
+    * ``page``
+    * ``display_size``
+
+Full filter details can be found here: https://gds-payments.gelato.io/docs/versions/1.0.0/resources/general/endpoints/search-payments
+
+An example request would look like:
+
+```php
+try {
+
+    $response = $client->searchPayments([
+    	'from_date' => '2015-08-14T12:35:00Z',
+        'page' => '2',
+        'display_size' => '50'
+    ]);
+
+} catch (NotifyException $e){}
+```
+
+**$response** will be an instance of `Alphagov\Pay\Response\Payments`, which will contain an instance of `Alphagov\Pay\Response\Payment` ([docs](#payment)) for each payment found.
+
+An instance (or sub-class) of ``Alphagov\Pay\Exception\PayException`` will be thrown if a Pay error occurs.
 
 
 ## Responses
 
+All Response objects except Event have a `getResponse()` which returns a class implementing `Psr\Http\Message\ResponseInterface`, containing the original API response.
+
 ### Payment
 An instance of `Alphagov\Pay\Response\Payment`, which contains the decoded JSON response from the Pay API, representing a single payment.
 
-A full list of returned properties can be found here: https://gds-payments.gelato.io/reference/api/v1
+A full list of returned properties can be found here: https://gds-payments.gelato.io/docs/versions/1.0.0/resources/payment-id/endpoints/find-payment-by-id
 
 Properties can be accessed directly using the `->` operator. For example:
 ```php
@@ -138,6 +299,37 @@ $response->isFailed()
 $response->isCancelled()
 $response->isError()
 ```
+
+### Refund
+An instance of `Alphagov\Pay\Response\Refund`, which contains the decoded JSON response from the Pay API, representing a single refund.
+
+A full list of returned properties can be found here: https://gds-payments.gelato.io/docs/versions/1.0.0/resources/payment-id/endpoints/find-payment-refund-by-id
+
+Properties can be accessed directly using the `->` operator. For example:
+```php
+$response->refund_id
+$response->status
+$response->amount
+// etc...
+```
+
+### Event
+An instance of `Alphagov\Pay\Response\Event`, which contains the decoded JSON response from the Pay API, representing a single event.
+
+A full list of returned properties can be found here: https://gds-payments.gelato.io/docs/versions/1.0.0/resources/payment-id/endpoints/return-payment-events-by-id
+
+Properties can be accessed directly using the `->` operator. For example:
+```php
+$response->state
+$response->updated
+// etc...
+```
+
+### Payments, Refunds & Events
+All three of these responses represent collections of their respective response type. They all extend PHP’s `ArrayObject`, thus can be treated as an array.
+
+Both Refunds & Events also support the addition `$response->payment_id` property, containing the payment ID to which they relate.
+
 
 ## License
 

@@ -23,7 +23,7 @@ class Events extends AbstractData {
 
         // Map event details to objects.
         $events = array_map( function($event){
-            return new Event( $event );
+            return new Event( (array)$event );
         }, $details['events'] );
 
 
