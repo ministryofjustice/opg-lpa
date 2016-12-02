@@ -19,15 +19,15 @@
     }
 }
 
-.dialog__container {
-    padding: 0 $gutter $gutter $gutter;
+.dialog-container {
+    padding: 0 $gutter $gutter;
 }
 
-.dialog__title-block {
+.dialog-title-block {
     @extend %heading-large;
 }
 
-.dialog__message-block {
+.dialog-message-block {
     margin-bottom: $gutter;
 }
 

@@ -68,6 +68,12 @@
                 line-height: 1;
             }
         }
+
+        .title-box {
+            @include media($min-width: 750px) {
+                padding-right: 215px;
+            }
+        }
     }
 
     .link {
@@ -94,18 +100,11 @@
         margin-right: 92px;
         padding-right: 130px;
         border-right: 6px solid $white;
+
         &--full {
             margin-right: 0;
             padding-right: 0;
-            border-right: none;
-        }
-    }
-
-    &.wide-label {
-        .title-box {
-            @include media($min-width: 750px) {
-                padding-right: 215px;
-            }
+            border-right: 0;
         }
     }
 

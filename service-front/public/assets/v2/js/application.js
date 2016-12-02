@@ -5526,10 +5526,10 @@ $('body').removeClass('no-js');
 // SHAME.JS
 // This is a temporary dumping ground which should NEVER go into production
 
-$(document).ready(function () {
-  'use strict';
+// $(document).ready(function () {
+//   'use strict';
 
-});
+// });
 
 
 //# sourceMappingURL=application.js.map

@@ -2157,8 +2157,8 @@ input[type=number] {
   color: #0b0c0c; }
 
 .form-group-checkbox {
-  float: left;
-  width: 100%; }
+  width: 100%;
+  float: left; }
   .form-group-checkbox.error {
     margin-bottom: 10px; }
 
@@ -2463,7 +2463,8 @@ input[type=number] {
   .tablet-and-up {
     display: none !important; } }
 
-.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary {
+.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary {
   background-color: #dee0e2;
   position: relative;
   display: -moz-inline-stack;
@@ -2483,30 +2484,48 @@ input[type=number] {
   -webkit-font-smoothing: antialiased;
   cursor: pointer;
   color: #0b0c0c; }
-  .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
+  .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
     background-color: #dee0e2; }
-  .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus {
+  .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus {
     background-color: #d0d3d6; }
-  .button-secondary:active, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active {
+  .button-secondary:active, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active {
     top: 2px;
     -webkit-box-shadow: 0 0 0 #dee0e2;
     -moz-box-shadow: 0 0 0 #dee0e2;
     box-shadow: 0 0 0 #dee0e2; }
-  .button-secondary.disabled, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary, .button-secondary[disabled="disabled"], .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary, .button-secondary[disabled], .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary {
+  .button-secondary.disabled, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary, .button-secondary[disabled="disabled"], .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary, .button-secondary[disabled], .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary {
     zoom: 1;
     filter: alpha(opacity=50);
     opacity: 0.5; }
-    .button-secondary.disabled:hover, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:hover, .button-secondary[disabled="disabled"]:hover, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:hover, .button-secondary[disabled]:hover, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:hover {
+    .button-secondary.disabled:hover, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:hover,
+    .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:hover, .button-secondary[disabled="disabled"]:hover, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:hover,
+    .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:hover, .button-secondary[disabled]:hover, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:hover,
+    .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:hover {
       cursor: default;
       background-color: #dee0e2; }
-    .button-secondary.disabled:active, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:active, .button-secondary[disabled="disabled"]:active, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:active, .button-secondary[disabled]:active, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:active {
+    .button-secondary.disabled:active, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:active,
+    .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:active, .button-secondary[disabled="disabled"]:active, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:active,
+    .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:active, .button-secondary[disabled]:active, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:active,
+    .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:active {
       top: 0;
       -webkit-box-shadow: 0 2px 0 #b5babe;
       -moz-box-shadow: 0 2px 0 #b5babe;
       box-shadow: 0 2px 0 #b5babe; }
-  .button-secondary:link, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:link, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:link, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:link, .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus, .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
+  .button-secondary:link, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:link,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:link, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:link, .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus, .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
     color: #0b0c0c; }
-  .button-secondary:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:before {
+  .button-secondary:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:before {
     content: "";
     height: 110%;
     width: 100%;
@@ -2515,10 +2534,12 @@ input[type=number] {
     position: absolute;
     top: 0;
     left: 0; }
-  .button-secondary:active:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active:before {
+  .button-secondary:active:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active:before,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active:before {
     top: -10%;
     height: 120%; }
-  .button-secondary[rel="external"]:after, .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-prev:after, .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-next:after, .ui-datepicker .ui-datepicker-buttonpane [rel="external"].ui-priority-secondary:after {
+  .button-secondary[rel="external"]:after, .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-prev:after,
+  .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-next:after, .ui-datepicker .ui-datepicker-buttonpane [rel="external"].ui-priority-secondary:after {
     display: none;
     content: none;
     margin-left: 0;
@@ -2585,14 +2606,16 @@ input[type=number] {
     margin-left: 0;
     margin-right: 0; }
 
-.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
+.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0.52632em 0.78947em 0.26316em;
   vertical-align: top; }
   @media (max-width: 640px) {
-    .button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
+    .button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+    .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
       width: 100%; } }
 
 @media (max-width: 640px) {
@@ -2754,7 +2777,9 @@ input[type=number] {
   padding: 30px 0 0; }
   .help-footer hr {
     display: none; }
-  .help-footer .button-secondary, .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .help-footer .ui-datepicker-prev, .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-header .help-footer .ui-datepicker-next, .help-footer .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .ui-datepicker .ui-datepicker-buttonpane .help-footer .ui-priority-secondary {
+  .help-footer .button-secondary, .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .help-footer .ui-datepicker-prev,
+  .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-next,
+  .ui-datepicker .ui-datepicker-header .help-footer .ui-datepicker-next, .help-footer .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .ui-datepicker .ui-datepicker-buttonpane .help-footer .ui-priority-secondary {
     display: none; }
   .popup .help-footer {
     padding: 15px;
@@ -2762,7 +2787,9 @@ input[type=number] {
     .popup .help-footer hr {
       display: block;
       margin: 15px 0; }
-    .popup .help-footer .button-secondary, .popup .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .popup .help-footer .ui-datepicker-prev, .popup .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-header .popup .help-footer .ui-datepicker-next, .popup .help-footer .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .ui-datepicker .ui-datepicker-buttonpane .popup .help-footer .ui-priority-secondary {
+    .popup .help-footer .button-secondary, .popup .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .popup .help-footer .ui-datepicker-prev,
+    .popup .help-footer .ui-datepicker .ui-datepicker-header .ui-datepicker-next,
+    .ui-datepicker .ui-datepicker-header .popup .help-footer .ui-datepicker-next, .popup .help-footer .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .ui-datepicker .ui-datepicker-buttonpane .popup .help-footer .ui-priority-secondary {
       display: inline-block; }
 
 @media (min-width: 641px) {
@@ -3214,7 +3241,8 @@ input[type=number] {
     .lpa-cards .lpa-manage .last {
       margin-bottom: 0; } }
 
-.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary {
+.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary {
   background-color: #dee0e2;
   position: relative;
   display: -moz-inline-stack;
@@ -3234,30 +3262,48 @@ input[type=number] {
   -webkit-font-smoothing: antialiased;
   cursor: pointer;
   color: #0b0c0c; }
-  .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
+  .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
     background-color: #dee0e2; }
-  .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus {
+  .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus {
     background-color: #d0d3d6; }
-  .button-secondary:active, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active {
+  .button-secondary:active, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active {
     top: 2px;
     -webkit-box-shadow: 0 0 0 #dee0e2;
     -moz-box-shadow: 0 0 0 #dee0e2;
     box-shadow: 0 0 0 #dee0e2; }
-  .button-secondary.disabled, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary, .button-secondary[disabled="disabled"], .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary, .button-secondary[disabled], .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary {
+  .button-secondary.disabled, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary, .button-secondary[disabled="disabled"], .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary, .button-secondary[disabled], .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary {
     zoom: 1;
     filter: alpha(opacity=50);
     opacity: 0.5; }
-    .button-secondary.disabled:hover, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:hover, .button-secondary[disabled="disabled"]:hover, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:hover, .button-secondary[disabled]:hover, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:hover {
+    .button-secondary.disabled:hover, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:hover,
+    .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:hover, .button-secondary[disabled="disabled"]:hover, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:hover,
+    .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:hover, .button-secondary[disabled]:hover, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:hover,
+    .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:hover {
       cursor: default;
       background-color: #dee0e2; }
-    .button-secondary.disabled:active, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:active, .button-secondary[disabled="disabled"]:active, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:active, .button-secondary[disabled]:active, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:active, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:active {
+    .button-secondary.disabled:active, .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-prev:active,
+    .ui-datepicker .ui-datepicker-header .disabled.ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-secondary:active, .button-secondary[disabled="disabled"]:active, .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-prev:active,
+    .ui-datepicker .ui-datepicker-header [disabled="disabled"].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-secondary:active, .button-secondary[disabled]:active, .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-prev:active,
+    .ui-datepicker .ui-datepicker-header [disabled].ui-datepicker-next:active, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-secondary:active {
       top: 0;
       -webkit-box-shadow: 0 2px 0 #b5babe;
       -moz-box-shadow: 0 2px 0 #b5babe;
       box-shadow: 0 2px 0 #b5babe; }
-  .button-secondary:link, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:link, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:link, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:link, .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus, .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
+  .button-secondary:link, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:link,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:link, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:link, .button-secondary:hover, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:hover, .button-secondary:focus, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:focus,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:focus, .button-secondary:visited, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:visited,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:visited {
     color: #0b0c0c; }
-  .button-secondary:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:before {
+  .button-secondary:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:before {
     content: "";
     height: 110%;
     width: 100%;
@@ -3266,10 +3312,12 @@ input[type=number] {
     position: absolute;
     top: 0;
     left: 0; }
-  .button-secondary:active:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active:before {
+  .button-secondary:active:before, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:active:before,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next:active:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary:active:before {
     top: -10%;
     height: 120%; }
-  .button-secondary[rel="external"]:after, .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-prev:after, .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-next:after, .ui-datepicker .ui-datepicker-buttonpane [rel="external"].ui-priority-secondary:after {
+  .button-secondary[rel="external"]:after, .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-prev:after,
+  .ui-datepicker .ui-datepicker-header [rel="external"].ui-datepicker-next:after, .ui-datepicker .ui-datepicker-buttonpane [rel="external"].ui-priority-secondary:after {
     display: none;
     content: none;
     margin-left: 0;
@@ -3336,14 +3384,16 @@ input[type=number] {
     margin-left: 0;
     margin-right: 0; }
 
-.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
+.button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0.52632em 0.78947em 0.26316em;
   vertical-align: top; }
   @media (max-width: 640px) {
-    .button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
+    .button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+    .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary, .button-warning {
       width: 100%; } }
 
 @media (max-width: 640px) {
@@ -3554,6 +3604,9 @@ input[type=number] {
     .accordion-summary.wide-label .label {
       width: 103px;
       line-height: 1; } }
+  @media (min-width: 750px) {
+    .accordion-summary.wide-label .title-box {
+      padding-right: 215px; } }
   .accordion-summary .link {
     display: inline-block;
     float: right; }
@@ -3575,10 +3628,7 @@ input[type=number] {
     .accordion-summary .title-box--full {
       margin-right: 0;
       padding-right: 0;
-      border-right: none; }
-  @media (min-width: 750px) {
-    .accordion-summary.wide-label .title-box {
-      padding-right: 215px; } }
+      border-right: 0; }
   .accordion-summary .label-and-edit-box {
     position: absolute;
     top: 0;
@@ -3804,6 +3854,9 @@ input[type=number] {
     .form-popup .dob-label {
       display: none; } }
 
+.no-js .form-group + .form-group.js-hidden {
+  margin-top: 30px; }
+
 .dialog {
   font-family: "nta", Arial, sans-serif;
   font-size: 16px;
@@ -3898,7 +3951,7 @@ input[type=number] {
     background-color: #ffbf47;
     color: #0b0c0c; }
   .appstatus .heading-xlarge {
-    margin: 0 0 10px 0; }
+    margin: 0 0 10px; }
   .appstatus .heading-medium {
     margin: 0; }
 
@@ -3933,35 +3986,49 @@ input[type=number] {
     display: inline-block;
     padding-left: 40px; }
 
+.date-field.error {
+  margin-right: 0; }
+.date-field input {
+  width: 140px;
+  margin-top: -16px;
+  float: right; }
+  @media (max-width: 640px) {
+    .date-field input {
+      display: block;
+      width: 100%;
+      margin-top: 6px;
+      float: none; } }
+
 .ui-datepicker {
-  z-index: 2000 !important;
   display: none;
   width: 350px;
   padding: 1em;
-  background: #fff;
   border: 3px solid #ffbf47;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); }
-  .ui-datepicker .ui-datepicker-header .ui-datepicker-prev, .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
+  background: #fff;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  z-index: 2000 !important; }
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
+  .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
     position: absolute;
     top: 0;
-    cursor: pointer;
     padding-top: .2em;
-    padding-bottom: .2em; }
+    padding-bottom: .2em;
+    cursor: pointer; }
   .ui-datepicker .ui-datepicker-header {
     position: relative;
     height: 2.5em;
-    margin: 0 0 0.35em 0;
-    padding: 0 0 0.25em 0;
-    text-align: center;
+    margin: 0 0 .35em;
+    padding: 0 0 .25em;
     border-bottom: 1px solid #bfc1c3;
-    font-size: 19px; }
+    font-size: 19px;
+    text-align: center; }
     .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
       display: inline-block;
       width: 50%;
       margin: 0 auto;
       padding: 0; }
     .ui-datepicker .ui-datepicker-header .ui-datepicker-month {
-      margin: 0 1em 0 0; }
+      margin: 0 1em 0; }
     .ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
       left: 0;
       text-align: left; }
@@ -3970,9 +4037,12 @@ input[type=number] {
       text-align: right; }
   .ui-datepicker table.ui-datepicker-calendar {
     width: 100%; }
-  .ui-datepicker thead td, .ui-datepicker thead th, .ui-datepicker tbody td, .ui-datepicker tbody th {
+  .ui-datepicker thead td,
+  .ui-datepicker thead th,
+  .ui-datepicker tbody td,
+  .ui-datepicker tbody th {
     width: 40px;
-    padding: 0.45em 0.15em; }
+    padding: .45em .15em; }
   .ui-datepicker thead th {
     border-bottom: none;
     font-weight: bold;
@@ -4023,6 +4093,14 @@ input[type=number] {
 
 .ui-datepicker-header select {
   width: 44%; }
+
+@media (min-width: 641px) {
+  .content-body {
+    min-height: 400px; } }
+
+.current + .complete {
+  margin-top: 30px;
+  clear: left; }
 
 .noscroll {
   position: relative;
@@ -4152,29 +4230,5 @@ input[type=number] {
 @media (min-width: 641px) {
   .navigation-item {
     display: inline; } }
-
-.no-js .form-group + .form-group.js-hidden {
-  margin-top: 30px; }
-
-.date-field.error {
-  margin-right: 0; }
-.date-field input {
-  float: right;
-  width: 140px;
-  margin-top: -16px; }
-  @media (max-width: 640px) {
-    .date-field input {
-      float: none;
-      display: block;
-      width: 100%;
-      margin-top: 6px; } }
-
-@media (min-width: 641px) {
-  .content-body {
-    min-height: 400px; } }
-
-.current + .complete {
-  margin-top: 30px;
-  clear: left; }
 
 /*# sourceMappingURL=application.css.map */
