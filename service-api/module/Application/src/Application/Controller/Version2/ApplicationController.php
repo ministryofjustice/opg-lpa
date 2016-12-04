@@ -5,9 +5,8 @@ use Zend\Mvc\MvcEvent;
 
 use Zend\Mvc\Controller\AbstractRestfulController;
 
-use Application\Model\Rest\ResourceInterface;
 use Application\Model\Rest\EntityInterface;
-use Application\Model\Rest\RouteProviderInterface;
+use Application\Model\Rest\CollectionInterface;
 
 use Application\Model\Rest\Lock\LockedException;
 
@@ -20,8 +19,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
-use Application\Library\Hal\Entity as HalEntity;
-use Application\Library\Hal\Collection as HalCollection;
+
 
 use ZfcRbac\Exception\UnauthorizedException;
 
@@ -66,16 +64,6 @@ class ApplicationController extends AbstractRestfulController {
     public function getList()
     {
 
-        // @todo
-
-        $this->response->setStatusCode(405);
-
-        return [
-            'content' => 'Method Not Allowed'
-        ];
-
-        //---
-
         $query = $this->params()->fromQuery();
 
         if( isset($query['page']) && is_numeric($query['page']) ){
@@ -106,11 +94,7 @@ class ApplicationController extends AbstractRestfulController {
 
         //---
 
-        var_dump($collections->toArray()); die;
-
-        $hal = new HalCollection( $collections, $this->getResource()->getName() );
-
-        //$hal->setLinks( [ $this, 'generateRoute' ] );
+        $hal = $this->generateHalCollection( $collections );
 
         return new HalResponse( $hal, 'json' );
 
@@ -178,7 +162,7 @@ class ApplicationController extends AbstractRestfulController {
 
     public function delete($id) {
 
-        $result = @$this->getResource()->delete( $id );
+        $result = $this->getResource()->delete( $id );
 
         //---
 
@@ -226,6 +210,12 @@ class ApplicationController extends AbstractRestfulController {
 
     //--------------------
 
+    /**
+     * Generates a Hal object for a single LPA Application
+     *
+     * @param EntityInterface $entity
+     * @return Hal
+     */
     private function generateHal( EntityInterface $entity ){
 
         $hal = new Hal(
@@ -242,6 +232,151 @@ class ApplicationController extends AbstractRestfulController {
         $hal->addLink( 'user', $this->url()->fromRoute('api-v2/user', [
             'userId'=>$this->getResource()->getRouteUser()->userId(),
         ]) );
+
+        return $hal;
+
+    }
+
+    /**
+     * Generates a Hal object for a collection of LPAs.
+     *
+     * @param CollectionInterface $collection
+     * @return Hal
+     */
+    private function generateHalCollection( CollectionInterface $collection ){
+
+        $currentPage = $collection->getCurrentPageNumber();
+
+        $query = $this->params()->fromQuery();
+        unset($query['page']);
+
+        //---
+
+        $data = $collection->toArray();
+
+        $items = $data['items'];
+
+        unset( $data['items'] );
+
+        $hal = new Hal(
+            // Set 'self'
+            $this->url()->fromRoute('api-v2/user/applications',
+                [
+                    'userId'=>$this->getResource()->getRouteUser()->userId(),
+                ],
+                [
+                    'query' => $query
+                ]
+            ),
+            // Set the data
+            $data
+        );
+
+        //------------------
+
+        // Add the resources...
+        foreach( $items as $item ){
+            $hal->addResource(
+                $this->getResource()->getName(),
+                $this->generateHal( $item )
+            );
+        }
+
+        //----------------------------------------------------------
+        // Add the link to 'user'
+
+        // Added 'user' link
+        $hal->addLink( 'user', $this->url()->fromRoute('api-v2/user', [
+            'userId'=>$this->getResource()->getRouteUser()->userId(),
+        ]));
+
+
+        //----------------------------------------------------------
+        // Add pagination links
+
+
+        //-----------
+        // First
+
+        $hal->addLink( 'first', $this->url()->fromRoute('api-v2/user/applications',
+            [
+                'userId'=>$this->getResource()->getRouteUser()->userId(),
+            ],
+            [
+                'query' => $query
+            ]
+        ));
+
+
+        //-----------
+        // Self
+
+        if( $currentPage != 1 ){
+
+            // Override 'self' to include the page number if we're not on the first page
+            $hal->addLink( 'self', $this->url()->fromRoute('api-v2/user/applications',
+                [
+                    'userId'=>$this->getResource()->getRouteUser()->userId(),
+                ],
+                [
+                    'query' => array_merge($query, [ 'page'=> $currentPage ])
+                ]
+            ));
+
+        } // if
+
+
+        //-----------
+        // Previous
+
+        if ($currentPage - 1 > 0) {
+
+            $page = ($currentPage - 1 != 1) ? [ 'page'=> $currentPage - 1 ] : array();
+
+            $hal->addLink( 'prev', $this->url()->fromRoute('api-v2/user/applications',
+                [
+                    'userId'=>$this->getResource()->getRouteUser()->userId(),
+                ],
+                [
+                    'query' => array_merge($query, $page)
+                ]
+            ));
+
+        } // if
+
+
+        //-----------
+        // Next
+
+        if ($currentPage + 1 <= $collection->count()) {
+
+            $hal->addLink( 'next', $this->url()->fromRoute('api-v2/user/applications',
+                [
+                    'userId'=>$this->getResource()->getRouteUser()->userId(),
+                ],
+                [
+                    'query' => array_merge($query, [ 'page'=> $currentPage + 1 ])
+                ]
+            ));
+
+        } // if
+
+
+        //-----------
+        // Last
+
+        $page = ($collection->count() > 1) ? [ 'page'=> $collection->count() ] : array();
+
+        $hal->addLink( 'last', $this->url()->fromRoute('api-v2/user/applications',
+            [
+                'userId'=>$this->getResource()->getRouteUser()->userId(),
+            ],
+            [
+                'query' => array_merge($query, $page)
+            ]
+        ));
+
+        //---
 
         return $hal;
 
