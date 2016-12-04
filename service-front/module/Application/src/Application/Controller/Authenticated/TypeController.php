@@ -13,6 +13,8 @@ use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\FormFlowChecker;
 
+use Opg\Lpa\DataModel\Lpa\Lpa;
+
 class TypeController extends AbstractAuthenticatedController
 {
     public function indexAction()
@@ -54,9 +56,9 @@ class TypeController extends AbstractAuthenticatedController
                 
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 
-                $lpaId = $this->getLpaApplicationService()->createApplication();
-                
-                if( $lpaId === false ){
+                $lpa = $this->getLpaApplicationService()->createApplication();
+
+                if( !( $lpa instanceof Lpa ) ){
                 
                     $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
                     return $this->redirect()->toRoute( 'user/dashboard' );
@@ -66,12 +68,12 @@ class TypeController extends AbstractAuthenticatedController
                 $lpaType = $form->getData()['type'];
                 
                 // persist data
-                if(!$this->getLpaApplicationService()->setType($lpaId, $lpaType)) {
-                    throw new \RuntimeException('API client failed to set LPA type for id: '.$lpaId);
+                if(!$this->getLpaApplicationService()->setType($lpa->id, $lpaType)) {
+                    throw new \RuntimeException('API client failed to set LPA type for id: '.$lpa->id);
                 }
                 
                 $formFlowChecker = new FormFlowChecker();
-                return $this->redirect()->toRoute($formFlowChecker->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->redirect()->toRoute($formFlowChecker->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
             }
         }
         
