@@ -65,15 +65,10 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         //------------------------
 
-        /*
-        $document = new Document\Document( $data );
-
-        $validation = $document->validate();
-
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        // If no data was passed, represent with an empty array.
+        if( is_null($data) ){
+            $data = array();
         }
-        */
 
         //----------------------------
         // Generate an id for the LPA
