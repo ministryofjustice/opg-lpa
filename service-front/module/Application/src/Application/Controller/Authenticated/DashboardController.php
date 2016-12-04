@@ -101,7 +101,7 @@ class DashboardController extends AbstractAuthenticatedController
     public function deleteLpaAction()
     {
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
-        if(!$this->getLpaApplicationService()->deleteApplication($lpaId)) {
+        if( $this->getLpaApplicationService()->deleteApplication($lpaId) !== true ) {
             throw new \RuntimeException('API client failed to delete LPA for id: '.$lpaId);
         }
         
