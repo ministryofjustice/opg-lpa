@@ -33,7 +33,7 @@
         "zendframework/zendframework": "^2.5",
         "sendgrid/sendgrid": "2.2.*",
         "aws/aws-sdk-php": "^3.0",
-        "ministryofjustice/opg-lpa-api-client": "v4.x-dev",
+        "ministryofjustice/opg-lpa-api-client": "^4.0",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "2.0.1",
         "ministryofjustice/opg-lpa-logger": "^1.0.3",
@@ -43,7 +43,7 @@
         "nsmithuk/zf-config-dump": "^1.0",
         "php-http/message": "^1.2",
         "php-http/guzzle5-adapter": "^0.5",
-        "alphagov/pay-integration-php": "v1.x-dev"
+        "alphagov/pay-integration-php": "^1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*"

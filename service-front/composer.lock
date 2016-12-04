@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "950aef789da412abc484e4c93642a415",
-    "content-hash": "87bfe642f417f4f43a39245c5661337b",
+    "hash": "c918ac79e61341c6229b9645dac035e1",
+    "content-hash": "0c54d28d1a679d9df990f0b71b95fe59",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
-            "version": "v1.x-dev",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alphagov/pay-integration-php.git",
-                "reference": "53b40208fe0c9f6fda8a069f1d09af9aae2567e0"
+                "reference": "a54d7c3d0acd57fb49c7fdbd1f71e64a752bb49c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alphagov/pay-integration-php/zipball/53b40208fe0c9f6fda8a069f1d09af9aae2567e0",
-                "reference": "53b40208fe0c9f6fda8a069f1d09af9aae2567e0",
+                "url": "https://api.github.com/repos/alphagov/pay-integration-php/zipball/a54d7c3d0acd57fb49c7fdbd1f71e64a752bb49c",
+                "reference": "a54d7c3d0acd57fb49c7fdbd1f71e64a752bb49c",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 }
             ],
             "description": "PHP client for GOV.UK Pay",
-            "time": "2016-12-02 15:20:25"
+            "time": "2016-12-04 20:39:07"
         },
         {
             "name": "aws/aws-sdk-php",
@@ -785,16 +785,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "v4.x-dev",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "eb6c3131f18fd4692b97e788c6b585bbcac09b9c"
+                "reference": "13904a8f835fad944adadebb187cc6229c8c7df1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/eb6c3131f18fd4692b97e788c6b585bbcac09b9c",
-                "reference": "eb6c3131f18fd4692b97e788c6b585bbcac09b9c",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/13904a8f835fad944adadebb187cc6229c8c7df1",
+                "reference": "13904a8f835fad944adadebb187cc6229c8c7df1",
                 "shasum": ""
             },
             "require": {
@@ -824,10 +824,10 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v4",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/v4.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-10-11 11:06:56"
+            "time": "2016-12-04 20:29:06"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
@@ -951,16 +951,16 @@
         },
         {
             "name": "mtdowling/jmespath.php",
-            "version": "2.3.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmespath/jmespath.php.git",
-                "reference": "192f93e43c2c97acde7694993ab171b3de284093"
+                "reference": "adcc9531682cf87dfda21e1fd5d0e7a41d292fac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/192f93e43c2c97acde7694993ab171b3de284093",
-                "reference": "192f93e43c2c97acde7694993ab171b3de284093",
+                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/adcc9531682cf87dfda21e1fd5d0e7a41d292fac",
+                "reference": "adcc9531682cf87dfda21e1fd5d0e7a41d292fac",
                 "shasum": ""
             },
             "require": {
@@ -1002,7 +1002,7 @@
                 "json",
                 "jsonpath"
             ],
-            "time": "2016-01-05 18:25:05"
+            "time": "2016-12-03 22:08:25"
         },
         {
             "name": "netsensia/omnipay-worldpay-xml",
@@ -6291,10 +6291,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "ministryofjustice/opg-lpa-api-client": 20,
-        "alphagov/pay-integration-php": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

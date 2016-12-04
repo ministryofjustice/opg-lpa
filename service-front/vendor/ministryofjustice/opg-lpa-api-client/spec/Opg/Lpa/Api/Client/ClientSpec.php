@@ -82,7 +82,7 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
          
         for ($i=0; $i<$numApplications; $i++) {
-            $this->createApplication();
+            $this->createApplication()->get('id');
         }
          
         $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
@@ -196,16 +196,20 @@ class ClientSpec extends ObjectBehavior
     function it_can_create_a_new_application()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $this->createApplication()->shouldBeAPositiveInteger();
+        $result = $this->createApplication();
+
+        $result->shouldBeAnInstanceOf('Opg\Lpa\Api\Client\Response\Lpa');
+        $result->get('id')->shouldBeAPositiveInteger();
+
     }
     
     function it_can_set_and_get_the_lpa_seed()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
     
-        $lpaId = $this->createApplication();
-        $seed1 = $this->createApplication();
-        $seed2 = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
+        $seed1 = $this->createApplication()->get('id');
+        $seed2 = $this->createApplication()->get('id');
     
         $this->setSeed($lpaId, $seed1)->shouldBe(true);
         $this->getSeedDetails($lpaId)['seed']->shouldBe($seed1);
@@ -217,7 +221,7 @@ class ClientSpec extends ObjectBehavior
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
     
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
     
         $this->setMetaData($lpaId, ['test-meta' => 'data'])->shouldBe(true);
         $this->getMetaData($lpaId)['test-meta']->shouldBe('data');
@@ -235,7 +239,7 @@ class ClientSpec extends ObjectBehavior
     
         $lpaIds = [];
         for ($i=0; $i<$numApplications; $i++) {
-            $lpaId[] = $this->createApplication();
+            $lpaId[] = $this->createApplication()->get('id');
         }
          
         $this->getPdfList($lpaId[0])->shouldHaveCount(3);
@@ -246,20 +250,23 @@ class ClientSpec extends ObjectBehavior
     function it_can_be_constructed_from_an_auth_token_then_create_an_application()
     {
         $this->beConstructedWith(getTestUserToken());
-        $this->createApplication()->shouldBeAPositiveInteger();
+
+        $result = $this->createApplication();
+        $result->shouldBeAnInstanceOf('Opg\Lpa\Api\Client\Response\Lpa');
+        $result->get('id')->shouldBeAPositiveInteger();
     }
     
     function it_will_return_null_if_repeatCaseNumber_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->repeatCaseNumber->shouldBe(null);
     }
     
     function it_can_set_and_get_the_lpa_repeatCaseNumber()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setRepeatCaseNumber($lpaId, 1)->shouldBe(true);
         $this->getApplication($lpaId)->repeatCaseNumber->shouldBe(1);
         $this->setRepeatCaseNumber($lpaId, 23123)->shouldBe(true);
@@ -269,14 +276,14 @@ class ClientSpec extends ObjectBehavior
     function it_will_fail_if_attempting_to_set_an_invalid_repeatCaseNumber()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setRepeatCaseNumber($lpaId, 'this-is-not-valid')->shouldBe(false);
     }
     
     function it_can_delete_the_repeatCaseNumber()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setRepeatCaseNumber($lpaId, 3243254);
         $this->deleteRepeatCaseNumber($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->repeatCaseNumber->shouldBe(null);
@@ -297,7 +304,7 @@ class ClientSpec extends ObjectBehavior
         $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
          
         $this->deleteAllLpas()->shouldBe(true);
-         
+
         $this->getApplicationList()->shouldBe([]);
          
         destroyAndRecreateTestUser();
@@ -312,14 +319,16 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
          
         for ($i=0; $i<$numApplications; $i++) {
-            $this->createApplication();
+            $this->createApplication()->get('id');
         }
          
         $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
          
         $this->deleteUserAndAllTheirLpas()->shouldBe(true);
-         
-        $this->getApplicationList()->shouldBe(false);
+
+        // Won't be able to authenticate, thus we get an exception.
+        $this->shouldThrow('\Opg\Lpa\Api\Client\Exception\ResponseException')->duringGetApplicationList();
+
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD)->isAuthenticated()->shouldBe(false);
          
         destroyAndRecreateTestUser();
@@ -334,7 +343,7 @@ class ClientSpec extends ObjectBehavior
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
          
         for ($i=0; $i<$numApplications; $i++) {
-            $this->createApplication();
+            $this->createApplication()->get('id');
         }
          
         $this->getApplicationList()->shouldBeAnArrayOfLpaObjects($numApplications);
@@ -363,7 +372,7 @@ class ClientSpec extends ObjectBehavior
         $replacementAttorney3->name->first = 'John';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
         $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
         $this->addReplacementAttorney($lpaId, $replacementAttorney3)->shouldBe(true);
@@ -381,7 +390,7 @@ class ClientSpec extends ObjectBehavior
         $replacementAttorney2->name->first = 'Jane';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
         $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
 
@@ -393,7 +402,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_an_empty_array_if_no_replacement_attorneys_have_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->replacementAttorneys->shouldBe([]);
     }
      
@@ -402,7 +411,7 @@ class ClientSpec extends ObjectBehavior
         $replacementAttorney = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addReplacementAttorney($lpaId, $replacementAttorney)->shouldBe(true);
         $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
 
@@ -418,7 +427,7 @@ class ClientSpec extends ObjectBehavior
         $replacementAttorney2->name->first = 'Sally';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addReplacementAttorney($lpaId, $replacementAttorney1)->shouldBe(true);
         $this->addReplacementAttorney($lpaId, $replacementAttorney2)->shouldBe(true);
         $this->getApplication($lpaId)->document->replacementAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
@@ -461,7 +470,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_who_is_registering_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->whoIsRegistering->shouldBe(null);
     }
     
@@ -470,7 +479,7 @@ class ClientSpec extends ObjectBehavior
         $who = 'donor';
     
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
     
         $this->setWhoIsRegistering($lpaId, $who)->shouldBe(true);
         $this->getApplication($lpaId)->document->whoIsRegistering->shouldBe($who);
@@ -485,7 +494,7 @@ class ClientSpec extends ObjectBehavior
         $primaryAttorney3 = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation');
 
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney3)->shouldBe(true);
@@ -504,7 +513,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_who_is_registering()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
     
     
         $this->setWhoIsRegistering($lpaId, 'donor')->shouldBe(true);
@@ -523,7 +532,7 @@ class ClientSpec extends ObjectBehavior
         $primaryAttorney3->name->first = 'John';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney3)->shouldBe(true);
@@ -541,7 +550,7 @@ class ClientSpec extends ObjectBehavior
         $primaryAttorney2->name = 'Solicitors Limited';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
 
@@ -553,7 +562,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_an_empty_array_if_no_primary_attorneys_have_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->primaryAttorneys->shouldBe([]);
     }
 
@@ -563,7 +572,7 @@ class ClientSpec extends ObjectBehavior
         $primaryAttorney = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addPrimaryAttorney($lpaId, $primaryAttorney)->shouldBe(true);
         $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
         
@@ -579,7 +588,7 @@ class ClientSpec extends ObjectBehavior
         $primaryAttorney2->name->first = 'Sally';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addPrimaryAttorney($lpaId, $primaryAttorney1)->shouldBe(true);
         $this->addPrimaryAttorney($lpaId, $primaryAttorney2)->shouldBe(true);
         $this->getApplication($lpaId)->document->primaryAttorneys->shouldHaveValueInArrayItem( 0, 'name-first', 'John' );
@@ -596,7 +605,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_seed_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getSeedDetails($lpaId)->shouldBe(null);
     }
 
@@ -606,7 +615,7 @@ class ClientSpec extends ObjectBehavior
         $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->whoAreYouAnswered->shouldBe(false);
     }
      
@@ -615,7 +624,7 @@ class ClientSpec extends ObjectBehavior
         $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
         $this->getApplication($lpaId)->whoAreYouAnswered->shouldBe(true);
     }
@@ -625,7 +634,7 @@ class ClientSpec extends ObjectBehavior
         $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
     }
      
@@ -634,7 +643,7 @@ class ClientSpec extends ObjectBehavior
         $whoAreYou = getPopulatedEntity('\Opg\Lpa\DataModel\WhoAreYou\WhoAreYou');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(true);
         $this->setWhoAreYou($lpaId, $whoAreYou)->shouldBe(false);
     }
@@ -643,7 +652,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_the_lock_status_when_locked()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->lockLpa($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->locked->shouldBe(true);
     }
@@ -651,21 +660,21 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_the_lock_status_when_not_locked()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->locked->shouldBe(false);
     }
      
     function it_can_lock_an_application()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->lockLpa($lpaId)->shouldBe(true);
     }
      
     function it_will_report_an_already_locked_lpa()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->lockLpa($lpaId)->shouldBe(true);
         $this->lockLpa($lpaId)->shouldBe(false);
         $this->getLastStatusCode()->shouldBe(403);
@@ -674,7 +683,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_fail_if_attempting_to_set_an_invalid_seed()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setSeed($lpaId, 'this-is-not-valid')->shouldBe(false);
     }
      
@@ -683,7 +692,7 @@ class ClientSpec extends ObjectBehavior
         $seed1 = uniqid();
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setSeed($lpaId, $seed1);
         $this->deleteSeed($lpaId)->shouldBe(true);
         $this->getSeedDetails($lpaId)->shouldBe(null);
@@ -699,7 +708,7 @@ class ClientSpec extends ObjectBehavior
         $notifiedPerson3->name->first = 'John';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addNotifiedPerson($lpaId, $notifiedPerson1)->shouldBe(true);
         $this->addNotifiedPerson($lpaId, $notifiedPerson2)->shouldBe(true);
         $this->addNotifiedPerson($lpaId, $notifiedPerson3)->shouldBe(true);
@@ -718,7 +727,7 @@ class ClientSpec extends ObjectBehavior
         $notifiedPerson2->name->first = 'Sally';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addNotifiedPerson($lpaId, $notifiedPerson1)->shouldBe(true);
         $this->addNotifiedPerson($lpaId, $notifiedPerson2)->shouldBe(true);
 
@@ -730,7 +739,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_an_empty_array_if_no_notified_people_have_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->peopleToNotify->shouldBe([]);
     }
 
@@ -740,7 +749,7 @@ class ClientSpec extends ObjectBehavior
         $notifiedPerson = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson');
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addNotifiedPerson($lpaId, $notifiedPerson)->shouldBe(true);
         $this->getApplication($lpaId)->document->peopleToNotify->shouldHaveValueInArrayItem( 0, 'name-first', 'Bob' );
 
@@ -757,7 +766,7 @@ class ClientSpec extends ObjectBehavior
         $notifiedPerson2->name->first = 'Sally';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->addNotifiedPerson($lpaId, $notifiedPerson1)->shouldBe(true);
         $this->addNotifiedPerson($lpaId, $notifiedPerson2)->shouldBe(true);
 
@@ -776,7 +785,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_the_certificate_provider_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->donor->shouldBe(null);
     }
      
@@ -787,7 +796,7 @@ class ClientSpec extends ObjectBehavior
         $certificateProvider2->name->first = 'Jane';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setCertificateProvider($lpaId, $certificateProvider)->shouldBe(true);
         $this->getApplication($lpaId)->document->certificateProvider->toJson()->shouldBe($certificateProvider->toJson());
         $this->getApplication($lpaId)->document->certificateProvider->address->address1->shouldBe('Line 1');
@@ -800,7 +809,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_certificate_provider()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setCertificateProvider($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider'));
         $this->deleteCertificateProvider($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->certificateProvider->shouldBe(null);
@@ -809,7 +818,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_replacement_attorney_decisions_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->replacementAttorneyDecisions->shouldBe(null);
     }
      
@@ -821,7 +830,7 @@ class ClientSpec extends ObjectBehavior
         $decisions2->howDetails = 'Second Object';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setReplacementAttorneyDecisions($lpaId, $decisions)->shouldBe(true);
         $this->getApplication($lpaId)->document->replacementAttorneyDecisions->toJson()->shouldBe($decisions->toJson());
 
@@ -839,7 +848,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_replacement_attorney_decisions()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setReplacementAttorneyDecisions($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions'));
         $this->deleteReplacementAttorneyDecisions($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->replacementAttorneyDecisions->shouldBe(null);
@@ -848,7 +857,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_primary_attorney_decisions_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->primaryAttorneyDecisions->shouldBe(null);
     }
     
@@ -860,7 +869,7 @@ class ClientSpec extends ObjectBehavior
         $decisions2->howDetails = 'Second Object';
     
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
     
         $this->setPrimaryAttorneyDecisions($lpaId, $decisions)->shouldBe(true);
         $this->getApplication($lpaId)->document->primaryAttorneyDecisions->toJson()->shouldBe($decisions->toJson());
@@ -877,7 +886,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_primary_attorney_decisions()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setPrimaryAttorneyDecisions($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions'));
         $this->deletePrimaryAttorneyDecisions($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->primaryAttorneyDecisions->shouldBe(null);
@@ -886,7 +895,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_donor_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->donor->shouldBe(null);
     }
      
@@ -897,7 +906,7 @@ class ClientSpec extends ObjectBehavior
         $donor2->canSign = !$donor->canSign;
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setDonor($lpaId, $donor)->shouldBe(true);
         $this->getApplication($lpaId)->document->donor->toJson()->shouldBe($donor->toJson());
         $this->getApplication($lpaId)->document->donor->otherNames->shouldBe('Fred');
@@ -910,7 +919,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_donor()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setDonor($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Donor'));
         $this->deleteDonor($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->donor->shouldBe(null);
@@ -919,7 +928,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_correspondent_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->correspondent->shouldBe(null);
     }
     
@@ -930,7 +939,7 @@ class ClientSpec extends ObjectBehavior
         $correspondent2->contactByPost = !$correspondent->contactByPost;
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setCorrespondent($lpaId, $correspondent)->shouldBe(true);
         $this->getApplication($lpaId)->document->correspondent->toJson()->shouldBe($correspondent->toJson());
         $this->getApplication($lpaId)->document->correspondent->who->shouldBe('other');
@@ -943,7 +952,7 @@ class ClientSpec extends ObjectBehavior
     {
         $correspondent = getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Document\Correspondence');
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setCorrespondent($lpaId, $correspondent);
         $this->deleteCorrespondent($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->correspondent->shouldBe(null);
@@ -952,7 +961,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_payment_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->payment->shouldBe(null);
     }
      
@@ -963,7 +972,7 @@ class ClientSpec extends ObjectBehavior
         $payment2->amount = 101;
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setPayment($lpaId, $payment)->shouldBe(true);
         $this->getApplication($lpaId)->payment->toJson()->shouldBe($payment->toJson());
         $this->setPayment($lpaId, $payment2)->shouldBe(true);
@@ -973,7 +982,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_payment()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setPayment($lpaId, getPopulatedEntity('\Opg\Lpa\DataModel\Lpa\Payment\Payment'));
         $this->deletePayment($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->payment->shouldBe(null);
@@ -982,7 +991,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_instructions_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->instruction->shouldBe(null);
     }
      
@@ -992,7 +1001,7 @@ class ClientSpec extends ObjectBehavior
         $prefString2 = 'These are my instructions too';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setInstructions($lpaId, $prefString1)->shouldBe(true);
         $this->getApplication($lpaId)->document->instruction->shouldBe($prefString1);
         $this->setInstructions($lpaId, $prefString2)->shouldBe(true);
@@ -1002,7 +1011,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_instructions()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setInstructions($lpaId, 'some-dummy-string');
         $this->deleteInstructions($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->instruction->shouldBe(null);
@@ -1011,7 +1020,7 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_preferences_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->preference->shouldBe(null);
     }
      
@@ -1021,7 +1030,7 @@ class ClientSpec extends ObjectBehavior
         $prefString2 = 'These are my preferences too';
          
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setPreferences($lpaId, $prefString1)->shouldBe(true);
         $this->getApplication($lpaId)->document->preference->shouldBe($prefString1);
         $this->setPreferences($lpaId, $prefString2)->shouldBe(true);
@@ -1031,7 +1040,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_the_preferences()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setPreferences($lpaId, 'some-dummy-string');
         $this->deletePreferences($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->preference->shouldBe(null);
@@ -1040,14 +1049,14 @@ class ClientSpec extends ObjectBehavior
     function it_will_return_null_if_type_has_not_been_set()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->document->type->shouldBe(null);
     }
      
     function it_can_set_and_get_the_lpa_type()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setType($lpaId, Document::LPA_TYPE_HW)->shouldBe(true);
         $this->getApplication($lpaId)->document->type->shouldBe(Document::LPA_TYPE_HW);
         $this->setType($lpaId, Document::LPA_TYPE_PF)->shouldBe(true);
@@ -1057,14 +1066,14 @@ class ClientSpec extends ObjectBehavior
     function it_will_fail_if_attempting_to_set_an_invalid_type()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setType($lpaId, 'this-is-not-valid')->shouldBe(false);
     }
      
     function it_can_delete_the_type()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->setType($lpaId, Document::LPA_TYPE_PF);
         $this->deleteType($lpaId)->shouldBe(true);
         $this->getApplication($lpaId)->document->type->shouldBe(null);
@@ -1073,7 +1082,7 @@ class ClientSpec extends ObjectBehavior
     function it_can_get_an_existing_application()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
         $this->getApplication($lpaId)->get('id')->shouldBe($lpaId);
     }
      
@@ -1086,27 +1095,23 @@ class ClientSpec extends ObjectBehavior
     function it_can_delete_an_existing_application()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $lpaId = $this->createApplication();
+        $lpaId = $this->createApplication()->get('id');
+
         $this->getApplication($lpaId)->get('id')->shouldBe($lpaId);
         $this->deleteApplication($lpaId)->shouldBe(true);
-        $this->deleteApplication($lpaId)->shouldBe(false);
+
+        // Having deleted the LPA, calling it again will throw and exception.
+        $this->shouldThrow('\Opg\Lpa\Api\Client\Exception\ResponseException')->duringDeleteApplication($lpaId);
+
         $this->getApplication($lpaId)->shouldBe(false);
     }
      
     function it_will_fail_if_attempting_to_delete_a_non_existent_application()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $this->deleteApplication(uniqid())->shouldBe(false);
-        $this->getLastStatusCode()->shouldBe(404);
+        $this->shouldThrow('\Opg\Lpa\Api\Client\Exception\ResponseException')->duringDeleteApplication(uniqid());
     }
-     
-    function it_will_succeed_if_attempting_to_delete_a_non_existent_application_when_passed_the_flag_to_do_so()
-    {
-        $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);
-        $this->deleteApplication(uniqid(), true)->shouldBe(true);
-        $this->getLastStatusCode()->shouldBe(404);
-    }
-         
+
     function it_can_retrieve_about_me_details()
     {
         $this->authenticate(TEST_AUTH_EMAIL, TEST_AUTH_PASSWORD);

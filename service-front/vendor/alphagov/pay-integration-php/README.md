@@ -1,4 +1,4 @@
-# GOV.UK Pay - pay-integration-php [pre-release]
+# GOV.UK Pay - pay-integration-php
 PHP client for the GOV.UK Pay API
 
 #### PSR-7 HTTP
@@ -225,12 +225,12 @@ searchPayments( array $filters = array() )
 Where
 
 * **$filters** An optional _array_ which applies filters to the request. Zero or more filters can be used. Supported filtered:
-    * ``reference``
-    * ``state``
-    * ``from_date``
-    * ``to_date``
-    * ``page``
-    * ``display_size``
+    * ``reference`` _string_
+    * ``state`` _string_
+    * ``page`` _string_
+    * ``display_size`` _string_
+    * ``from_date`` _DateTime_
+    * ``to_date`` _DateTime_
 
 Full filter details can be found here: https://gds-payments.gelato.io/docs/versions/1.0.0/resources/general/endpoints/search-payments
 
@@ -240,7 +240,7 @@ An example request would look like:
 try {
 
     $response = $client->searchPayments([
-    	'from_date' => '2015-08-14T12:35:00Z',
+    	'from_date' => new \DateTime('2015-08-14T12:35:00Z'),
         'page' => '2',
         'display_size' => '50'
     ]);
