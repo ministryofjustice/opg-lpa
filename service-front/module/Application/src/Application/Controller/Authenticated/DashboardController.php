@@ -2,6 +2,8 @@
 
 namespace Application\Controller\Authenticated;
 
+use Opg\Lpa\DataModel\Lpa\Lpa;
+
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
@@ -66,17 +68,17 @@ class DashboardController extends AbstractAuthenticatedController
 
             //-------------------------------------
             // Create a new LPA...
-            
-            $newLpaId = $this->getLpaApplicationService()->createApplication();
-            
-            if( $newLpaId === false ){
+
+            $lpa = $this->getLpaApplicationService()->createApplication();
+
+            if( !( $lpa instanceof Lpa ) ){
             
                 $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
                 return $this->redirect()->toRoute( 'user/dashboard' );
             
             }
             
-            $result = $this->getLpaApplicationService()->setSeed( $newLpaId, (int)$seedId );
+            $result = $this->getLpaApplicationService()->setSeed( $lpa->id, (int)$seedId );
             
             $this->resetSessionCloneData($seedId);
 
@@ -85,7 +87,7 @@ class DashboardController extends AbstractAuthenticatedController
             }
             
             // Redirect them to the first page...
-            return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$newLpaId ] );
+            return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$lpa->id ] );
 
         }
 
