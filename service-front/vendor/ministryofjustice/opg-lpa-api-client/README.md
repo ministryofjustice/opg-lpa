@@ -15,7 +15,7 @@ Add to project using Composer
         }
     ],
     "require": {
-    	"ministryofjustice/opg-lpa-api-client": "^3.0.0"
+    	"ministryofjustice/opg-lpa-api-client": "^4.0.0"
     }
 }
 ```
