@@ -29,7 +29,7 @@ class ApplicationList implements ServiceLocatorAwareInterface {
 
     public function searchAllALpaSummaries( $query ){
 
-        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList( $query );
+        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList( [ 'search' => $query ] );
 
         return $this->convertToStandardResponse( $v2Apis );
 
