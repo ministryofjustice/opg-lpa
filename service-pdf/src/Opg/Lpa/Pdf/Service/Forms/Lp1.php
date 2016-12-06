@@ -14,6 +14,9 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
+
+use Zend\Barcode\Barcode;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -85,7 +88,7 @@ abstract class Lp1 extends AbstractForm
             ]
         );
         
-        // register a randem generated temp file path, and store it $interFileStack.
+        // register a random generated temp file path, and store it $interFileStack.
         $filePath = $this->registerTempFile('LP1');
         
         // data mapping
@@ -95,6 +98,15 @@ abstract class Lp1 extends AbstractForm
         $this->pdf->fillForm($mappings)
             ->flatten()
             ->saveAs($filePath);
+
+        //---
+
+        // If registration is complete add the tracking barcode.
+        if( $this->registrationIsComplete ){
+            $this->addLpaIdBarcode( $filePath );
+        }
+
+        //---
         
         // draw cross lines if there's any blank slot
         if(!empty($this->drawingTargets)) {
@@ -102,6 +114,76 @@ abstract class Lp1 extends AbstractForm
         }
         
     } // function generateDefaultPdf()
+
+    protected function addLpaIdBarcode( $filePath ){
+
+        //------------------------------------------
+        // Generate the barcode
+
+        // Zero pad the ID, and prepend the 'A'.
+        $formattedLpaId = 'A'.sprintf("%011d", $this->lpa->id);
+
+        $renderer = Barcode::factory(
+            'code39',
+            'pdf',
+            [
+                'text' => $formattedLpaId,
+                'drawText' => false,
+                'factor' => 2,
+                'barHeight' => 25,
+            ],
+            [
+                'topOffset' => 789,
+                'leftOffset' => 40,
+            ]
+        );
+
+        $imageResource = $renderer->draw();
+
+        $barcodeTmpFile = $this->getTmpFilePath('barcode');
+
+        // Save to temporary file...
+        $imageResource->save( $barcodeTmpFile );
+
+
+        //------------------------------------------
+        // Merge the barcode into the page
+
+
+        // Take a copy of the PDF to work with.
+        $pdfWithBarcode = PdftkInstance::getInstance( $filePath );
+
+        // Pull out the page the barcode is appended to.
+        $pdfWithBarcode->cat(19);
+
+
+        // Add the barcode to the page.
+        $pdfWithBarcode = new Pdf($pdfWithBarcode);
+        $pdfWithBarcode->stamp( $barcodeTmpFile );
+
+
+        //------------------------------------------
+        // Re-integrate the page into the full PDF.
+
+        $pdf = new Pdf;
+
+        $pdf->addFile( $filePath , 'A');
+        $pdf->addFile( $pdfWithBarcode, 'B');
+
+        // Swap out page 19 for the one with the barcode.
+        $pdf->cat(1, 18, 'A');
+        $pdf->cat(1, null, 'B');
+        $pdf->cat(20, 'end', 'A');
+
+        $pdf->flatten()->saveAs( $filePath );
+
+
+        //------------------------------------------
+        // Cleanup
+
+        // Remove tmp barcode file.
+        unlink( $barcodeTmpFile );
+    }
     
     /**
      * Generate additional pages depending on the LPA's composition.
@@ -447,6 +529,11 @@ abstract class Lp1 extends AbstractForm
          */
         if($this->lpa->document->whoIsRegistering == 'donor') {
             $this->pdfFormData['who-is-applicant'] = 'donor';
+            $this->drawingTargets[19] = array(
+                'applicant-signature-1',
+                'applicant-signature-2',
+                'applicant-signature-3',
+            );
         }
         elseif(is_array($this->lpa->document->whoIsRegistering)) {
             $this->pdfFormData['who-is-applicant'] = 'attorney';
@@ -467,7 +554,19 @@ abstract class Lp1 extends AbstractForm
                 
                 if(++$i == self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) break;
             }
-        }
+
+            // Cross-out any unused boxes if we need less than 4.
+            if( count($this->lpa->document->whoIsRegistering) < 4 ){
+
+                $this->drawingTargets[19] = array();
+
+                for($x = 3; $x >= count($this->lpa->document->whoIsRegistering); $x--){
+                    $this->drawingTargets[19][] = "applicant-signature-{$x}";
+                }
+
+            } // if
+
+        } // if
         
         /**
          * Correspondent (Section 13)
