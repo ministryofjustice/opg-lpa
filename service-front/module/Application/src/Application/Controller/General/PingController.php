@@ -51,6 +51,8 @@ class PingController extends AbstractBaseController {
 
         $result = $this->getServiceLocator()->get('SiteStatus')->check();
 
+        $result['commit'] = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : 'unknown';
+
         return new JsonModel( $result );
 
     }
