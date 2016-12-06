@@ -314,10 +314,20 @@ class AboutYou extends AbstractForm {
     public function isValid()
     {
         if(!empty($this->data['dob-date-day'])||!empty($this->data['dob-date-month'])||!empty($this->data['dob-date-year'])) {
+
             if(!checkdate($this->data['dob-date-month'], $this->data['dob-date-day'], $this->data['dob-date-year'])) {
                 $this->setMessages(['dob-date-day' => ['invalid-date']]);
                 return parent::isValid() & false;
             }
+            
+            // Ensure the date is in the past...
+            $date = new \DateTime("{$this->data['dob-date-year']}-{$this->data['dob-date-month']}-{$this->data['dob-date-day']}");
+
+            if( $date >= new \DateTime('today') ) {
+                $this->setMessages(['dob-date-day' => ['invalid-date']]);
+                return parent::isValid() & false;
+            }
+
         }
         return parent::isValid();
     }
