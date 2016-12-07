@@ -21,7 +21,7 @@
         "php": ">=5.4.0",
         "ext-mongo": ">=1.4.5",
         "zendframework/zendframework": "^2.5",
-        "aws/aws-sdk-php": "^3.18",
+        "aws/aws-sdk-php": "3.19.24",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
         "phly/phly-mongo": "1.0.0",
