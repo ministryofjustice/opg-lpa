@@ -1,4 +1,4 @@
-FROM registry.service.opg.digital/opguk/php-fpm:0.1.200
+FROM registry.service.opg.digital/opguk/php-fpm:0.1.205
 
 RUN groupadd webservice && \
     groupadd supervisor
