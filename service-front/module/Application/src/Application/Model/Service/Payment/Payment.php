@@ -26,7 +26,7 @@ class Payment implements ServiceLocatorAwareInterface {
         
         $payment = $lpa->payment;
         $payment->reference = str_replace($prefix, '', $params['orderKey']);
-        $payment->date = new \DateTime('today');
+        $payment->date = new \DateTime();
 
         /*
         $this->getServiceLocator()->get('Logger')->info(
