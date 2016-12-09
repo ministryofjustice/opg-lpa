@@ -13,27 +13,17 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  * Class ApplicationList
  * @package Application\Model\Service\Lpa
  */
-class ApplicationList implements ServiceLocatorAwareInterface {
+class ApplicationList implements ServiceLocatorAwareInterface
+{
 
     use ServiceLocatorAwareTrait;
 
-    //---
+    public function getLpaSummaries($query = null)
+    {
+        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList(['search' => $query]);
 
-    public function getAllALpaSummaries(){
-
-        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList();
-
-        return $this->convertToStandardResponse( $v2Apis );
-
-    } // function
-
-    public function searchAllALpaSummaries( $query ){
-
-        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList( [ 'search' => $query ] );
-
-        return $this->convertToStandardResponse( $v2Apis );
-
-    } // function
+        return $this->convertToStandardResponse($v2Apis);
+    }
 
     /**
      * Converts the LPAs to a standard structure between v1 & v2.
@@ -41,31 +31,28 @@ class ApplicationList implements ServiceLocatorAwareInterface {
      * @param $v2Apis
      * @return array
      */
-    private function convertToStandardResponse( $v2Apis ){
-
+    private function convertToStandardResponse($v2Apis)
+    {
         $lpas = array();
 
-        foreach($v2Apis as $lpa){
-
+        foreach ($v2Apis as $lpa) {
             $obj = new \stdClass();
 
             $obj->id = $lpa->id;
 
             $obj->version = 2;
 
-            $obj->donor = ((($lpa->document->donor instanceof Donor) && ($lpa->document->donor->name instanceof Name))?(string)$lpa->document->donor->name:'');
+            $obj->donor = (($lpa->document->donor instanceof Donor && $lpa->document->donor->name instanceof Name) ? (string) $lpa->document->donor->name : '');
 
             $obj->type = $lpa->document->type;
 
             $obj->updatedAt = $lpa->updatedAt;
 
-            $obj->progress = ($lpa->completedAt instanceof \DateTime)?'Completed':(($lpa->createdAt instanceof \DateTime)?'Created':'Started');
+            $obj->progress = ($lpa->completedAt instanceof \DateTime ? 'Completed' : ($lpa->createdAt instanceof \DateTime ? 'Created' : 'Started'));
 
             $lpas[] = $obj;
         }
 
         return $lpas;
-
-    } // function
-
-} // class
+    }
+}
