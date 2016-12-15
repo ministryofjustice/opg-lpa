@@ -11,15 +11,15 @@ class SystemMessage extends AbstractHelper
                       ->getHelperPluginManager()
                       ->getServiceLocator()
                       ->get('Cache');
-        
+
         $message = trim($cache->getItem('system-message'));
-        
+
         if ($message != '') {
             echo <<<SYSMESS
             <div class="notice">
               <i class="icon icon-important"></i>
               <p>
-                <strong class="bold-small">$message</strong>
+                <strong class="bold-small text">$message</strong>
               </p>
             </div>
 SYSMESS;

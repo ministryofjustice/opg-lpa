@@ -292,7 +292,7 @@
 		{% endif %}
 
 		{# Reapeat Applicaiton. Correspondent is checked as we only show this post-then #}
-		{% if lpa.document.correspondent is defined %}
+		{% if lpa.metadata['repeat-application-confirmed'] is defined %}
 			<tr class="group-single">
 				<th class="table-summary-title" scope="row">Repeat application</th>
 				<td class="table-summary-content" itemprop="name">
