@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Controller\Version2;
 
 use Zend\Mvc\MvcEvent;
@@ -23,29 +24,24 @@ use Application\Library\Hal\HalResponse;
 
 use ZfcRbac\Exception\UnauthorizedException;
 
-class ApplicationController extends AbstractRestfulController {
-
+class ApplicationController extends AbstractRestfulController
+{
     protected $identifierName = 'lpaId';
 
-    private function getResource(){
+    private function getResource()
+    {
         return $this->getServiceLocator()->get('resource-applications');
     }
 
-    //---
-
-    public function onDispatch(MvcEvent $event) {
-
+    public function onDispatch(MvcEvent $event)
+    {
         try {
-
             $return = parent::onDispatch($event);
-
-        } catch( UnauthorizedException $e ){
+        } catch (UnauthorizedException $e) {
             $return = new ApiProblem(401, 'Access Denied');
-        } catch ( LockedException $e ){
-            $return = new ApiProblem( 403, 'LPA has been locked' );
+        } catch (LockedException $e) {
+            $return = new ApiProblem(403, 'LPA has been locked');
         }
-
-        //---
 
         if ($return instanceof Hal) {
             return new HalResponse($return, 'json');
@@ -56,159 +52,109 @@ class ApplicationController extends AbstractRestfulController {
         }
 
         return $return;
-
-    } // function
-
-    //--------------------------------------
+    }
 
     public function getList()
     {
-
         $query = $this->params()->fromQuery();
 
-        if( isset($query['page']) && is_numeric($query['page']) ){
-            $page = (int)$query['page'];
-        } else {
-            $page = 1;
+        $page = 1;
+
+        if (isset($query['page']) && is_numeric($query['page'])) {
+            $page = (int) $query['page'];
         }
 
         unset($query['page']);
 
-        //---
+        $collections = $this->getResource()->fetchAll($query);
 
-        $collections = $this->getResource()->fetchAll( $query );
-
-        //---
-
-        if( $collections instanceof ApiProblem ){
-
+        if ($collections instanceof ApiProblem) {
             return $collections;
-
-        } elseif( $collections === null ) {
-
+        } elseif ($collections === null) {
             return new NoContentResponse();
-
         }
 
         $collections->setCurrentPageNumber($page);
 
-        //---
+        $hal = $this->generateHalCollection($collections);
 
-        $hal = $this->generateHalCollection( $collections );
-
-        return new HalResponse( $hal, 'json' );
-
+        return new HalResponse($hal, 'json');
     }
 
-    //--------------------------------------
+    public function get($id)
+    {
+        $result = $this->getResource()->fetch($id);
 
-    public function get($id){
-
-        $result = $this->getResource()->fetch( $id );
-
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
-
-        } elseif( $result instanceof EntityInterface ) {
-
-            if( count($result->toArray()) == 0 ){
+        } elseif ($result instanceof EntityInterface) {
+            if (count($result->toArray()) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = $this->generateHal( $result );
+            $hal = $this->generateHal($result);
 
-            return new HalResponse( $hal, 'json' );
-
-        } elseif( $result instanceof HttpResponse ){
-
+            return new HalResponse($hal, 'json');
+        } elseif ($result instanceof HttpResponse) {
             return $result;
-
         }
 
         // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
-    public function create($data){
+    public function create($data)
+    {
+        $result = $this->getResource()->create($data);
 
-        $result = $this->getResource()->create( $data );
-
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
+        } elseif ($result instanceof EntityInterface) {
+            $hal = $this->generateHal($result);
 
-        } elseif( $result instanceof EntityInterface ) {
-
-            $hal = $this->generateHal( $result );
-
-            $response = new HalResponse( $hal, 'json' );
+            $response = new HalResponse($hal, 'json');
             $response->setStatusCode(201);
-            $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
+            $response->getHeaders()->addHeaderLine('Location', $hal->getUri());
 
             return $response;
-
         }
 
         // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
+        $result = $this->getResource()->delete($id);
 
-        $result = $this->getResource()->delete( $id );
-
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
-
-        } elseif( $result === true ) {
-
+        } elseif ($result === true) {
             return new NoContentResponse();
-
         }
 
         // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
     public function patch($id, $data)
     {
+        $result = $this->getResource()->patch($data, $id);
 
-        $result = $this->getResource()->patch( $data, $id );
-
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
+        } elseif ($result instanceof EntityInterface) {
+            $hal = $this->generateHal($result);
 
-        } elseif( $result instanceof EntityInterface ) {
-
-            $hal = $this->generateHal( $result );
-
-            $response = new HalResponse( $hal, 'json' );
+            $response = new HalResponse($hal, 'json');
             $response->setStatusCode(200);
 
             return $response;
-
         }
 
         // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
-
-    //--------------------
 
     /**
      * Generates a Hal object for a single LPA Application
@@ -216,7 +162,8 @@ class ApplicationController extends AbstractRestfulController {
      * @param EntityInterface $entity
      * @return Hal
      */
-    private function generateHal( EntityInterface $entity ){
+    private function generateHal(EntityInterface $entity)
+    {
 
         $hal = new Hal(
             // Set 'self'
@@ -229,12 +176,11 @@ class ApplicationController extends AbstractRestfulController {
         );
 
         // Added 'user' link
-        $hal->addLink( 'user', $this->url()->fromRoute('api-v2/user', [
+        $hal->addLink('user', $this->url()->fromRoute('api-v2/user', [
             'userId'=>$this->getResource()->getRouteUser()->userId(),
-        ]) );
+        ]));
 
         return $hal;
-
     }
 
     /**
@@ -243,24 +189,23 @@ class ApplicationController extends AbstractRestfulController {
      * @param CollectionInterface $collection
      * @return Hal
      */
-    private function generateHalCollection( CollectionInterface $collection ){
-
+    private function generateHalCollection(CollectionInterface $collection)
+    {
         $currentPage = $collection->getCurrentPageNumber();
 
         $query = $this->params()->fromQuery();
         unset($query['page']);
 
-        //---
-
         $data = $collection->toArray();
 
         $items = $data['items'];
 
-        unset( $data['items'] );
+        unset($data['items']);
 
         $hal = new Hal(
             // Set 'self'
-            $this->url()->fromRoute('api-v2/user/applications',
+            $this->url()->fromRoute(
+                'api-v2/user/applications',
                 [
                     'userId'=>$this->getResource()->getRouteUser()->userId(),
                 ],
@@ -268,53 +213,40 @@ class ApplicationController extends AbstractRestfulController {
                     'query' => $query
                 ]
             ),
-            // Set the data
             $data
         );
 
-        //------------------
-
         // Add the resources...
-        foreach( $items as $item ){
-            $hal->addResource(
-                $this->getResource()->getName(),
-                $this->generateHal( $item )
-            );
+        foreach ($items as $item) {
+            $hal->addResource($this->getResource()->getName(), $this->generateHal($item));
         }
 
-        //----------------------------------------------------------
         // Add the link to 'user'
-
-        // Added 'user' link
-        $hal->addLink( 'user', $this->url()->fromRoute('api-v2/user', [
+        $hal->addLink('user', $this->url()->fromRoute('api-v2/user', [
             'userId'=>$this->getResource()->getRouteUser()->userId(),
         ]));
 
-
-        //----------------------------------------------------------
         // Add pagination links
-
-
-        //-----------
         // First
+        $hal->addLink(
+            'first',
+            $this->url()->fromRoute(
+                'api-v2/user/applications',
+                [
+                    'userId'=>$this->getResource()->getRouteUser()->userId(),
+                ],
+                [
+                    'query' => $query
+                ]
+            )
+        );
 
-        $hal->addLink( 'first', $this->url()->fromRoute('api-v2/user/applications',
-            [
-                'userId'=>$this->getResource()->getRouteUser()->userId(),
-            ],
-            [
-                'query' => $query
-            ]
-        ));
-
-
-        //-----------
         // Self
 
-        if( $currentPage != 1 ){
-
+        if ($currentPage != 1) {
             // Override 'self' to include the page number if we're not on the first page
-            $hal->addLink( 'self', $this->url()->fromRoute('api-v2/user/applications',
+            $hal->addLink('self', $this->url()->fromRoute(
+                'api-v2/user/applications',
                 [
                     'userId'=>$this->getResource()->getRouteUser()->userId(),
                 ],
@@ -322,18 +254,15 @@ class ApplicationController extends AbstractRestfulController {
                     'query' => array_merge($query, [ 'page'=> $currentPage ])
                 ]
             ));
+        }
 
-        } // if
-
-
-        //-----------
         // Previous
 
         if ($currentPage - 1 > 0) {
+            $page = ($currentPage - 1 != 1) ? [ 'page' => $currentPage - 1 ] : array();
 
-            $page = ($currentPage - 1 != 1) ? [ 'page'=> $currentPage - 1 ] : array();
-
-            $hal->addLink( 'prev', $this->url()->fromRoute('api-v2/user/applications',
+            $hal->addLink('prev', $this->url()->fromRoute(
+                'api-v2/user/applications',
                 [
                     'userId'=>$this->getResource()->getRouteUser()->userId(),
                 ],
@@ -341,16 +270,12 @@ class ApplicationController extends AbstractRestfulController {
                     'query' => array_merge($query, $page)
                 ]
             ));
+        }
 
-        } // if
-
-
-        //-----------
         // Next
-
         if ($currentPage + 1 <= $collection->count()) {
-
-            $hal->addLink( 'next', $this->url()->fromRoute('api-v2/user/applications',
+            $hal->addLink('next', $this->url()->fromRoute(
+                'api-v2/user/applications',
                 [
                     'userId'=>$this->getResource()->getRouteUser()->userId(),
                 ],
@@ -358,28 +283,24 @@ class ApplicationController extends AbstractRestfulController {
                     'query' => array_merge($query, [ 'page'=> $currentPage + 1 ])
                 ]
             ));
+        }
 
-        } // if
-
-
-        //-----------
         // Last
-
         $page = ($collection->count() > 1) ? [ 'page'=> $collection->count() ] : array();
 
-        $hal->addLink( 'last', $this->url()->fromRoute('api-v2/user/applications',
-            [
-                'userId'=>$this->getResource()->getRouteUser()->userId(),
-            ],
-            [
-                'query' => array_merge($query, $page)
-            ]
-        ));
-
-        //---
+        $hal->addLink(
+            'last',
+            $this->url()->fromRoute(
+                'api-v2/user/applications',
+                [
+                    'userId'=>$this->getResource()->getRouteUser()->userId(),
+                ],
+                [
+                    'query' => array_merge($query, $page)
+                ]
+            )
+        );
 
         return $hal;
-
     }
-
 }
