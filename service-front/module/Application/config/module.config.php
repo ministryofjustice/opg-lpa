@@ -76,9 +76,6 @@ return [
     'view_helpers' => [
         'invokables' => [
             'accordion'             => 'Application\View\Helper\Accordion',
-            //'accordionTop'          => 'Application\View\Helper\AccordionTop',
-            //'accordionBottom'       => 'Application\View\Helper\AccordionBottom',
-            //'accordionIdx'          => 'Application\View\Helper\AccordionIdx',
             'accountInfo'           => 'Application\View\Helper\AccountInfo',
             'actorsList'            => 'Application\View\Helper\ActorsList',
             'pageHeaders'           => 'Application\View\Helper\PageHeaders',
