@@ -168,8 +168,8 @@
               if (dob !== null) {
 
                 // Display alerts if under 18 or over 100 years old
-                // Under 18
-                if (dob > minAge) {
+                // Under 18 and earlier than today. A server side validation check is in place for dob greater than today.
+                if (dob > minAge && dob < new Date()) {
                   $('.dob-element', $form)
                     .after($(tplAlert({
                       'elementJSref': 'js-age-check',
