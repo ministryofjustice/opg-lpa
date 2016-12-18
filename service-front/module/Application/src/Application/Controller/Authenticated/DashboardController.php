@@ -23,15 +23,6 @@ class DashboardController extends AbstractAuthenticatedController
             return $this->createAction();
         }
 
-        // Sort by updatedAt into descending order
-        // Once we remove #v1Code, perhaps we can assume they're pre-sorted from the API/DB?
-        usort($lpas, function ($a, $b) {
-            if ($a->updatedAt == $b->updatedAt) {
-                return 0;
-            }
-            return ($a->updatedAt > $b->updatedAt) ? -1 : 1;
-        });
-
         //  Set up the paginator and add the LPA data
         $paginator = new Paginator(new PaginatorArrayAdapter($lpas));
 
