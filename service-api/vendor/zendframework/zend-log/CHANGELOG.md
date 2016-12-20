@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.8.4 - TBD
+## 2.9.1 - 2016-08-11
 
 ### Added
 
-- Nothing.
+- [#53](https://github.com/zendframework/zend-log/pull/53) adds a suggestion to
+  the package definition of ext/mongodb, for those who want to use the MongoDB
+  writer.
 
 ### Deprecated
 
@@ -18,7 +20,43 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- [#56](https://github.com/zendframework/zend-log/pull/56) fixes an edge case
+  with the `AbstractWriter` whereby instantiating a
+  `Zend\Log\Writer\FormatterPluginManager` or `FilterPluginManager` prior to
+  creating a writer instance would lead to a naming conflict. New aliases were
+  added to prevent the conflict going forwards.
+
+## 2.9.0 - 2016-06-22
+
+### Added
+
+- [#46](https://github.com/zendframework/zend-log/pull/46) adds the ability to
+  specify log writer, formatter, filter, and processor plugin configuration via
+  the new top-level keys:
+  - `log_filters`
+  - `log_formatters`
+  - `log_processors`
+  - `log_writers`
+  These follow the same configuration patterns as any other service
+  manager/plugin manager as implemented by zend-servicemanager.
+
+  Additionally, you can now specify filer, formatter, and processor *services*
+  when specifying writer configuration for a logger, as these are now backed
+  by the above plugin managers.
+
+### Deprecated
+
 - Nothing.
+
+### Removed
+
+- Removes support for PHP 5.5.
+
+### Fixed
+
+- [#38](https://github.com/zendframework/zend-log/pull/38) adds the `MongoDb`
+  writer to the list of available writer plugins; the writer was added in a
+  previous release, but never enabled within the default set of writers.
 
 ## 2.8.3 - 2016-05-25
 

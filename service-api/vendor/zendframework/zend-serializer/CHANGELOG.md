@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.0 - 2016-06-21
+
+### Added
+
+- [#20](https://github.com/zendframework/zend-serializer/pull/20) adds support
+  for zend-json v3.0.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#20](https://github.com/zendframework/zend-serializer/pull/20) removes support
+  for PHP 5.5.
+
+### Fixed
+
+- Nothing.
+
 ## 2.7.2 - 2016-05-11
 
 ### Added
