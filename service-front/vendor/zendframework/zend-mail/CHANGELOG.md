@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.2 - 2016-12-19
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Fixes [ZF2016-04](https://framework.zend.com/security/advisory/ZF2016-04).
+
 ## 2.7.1 - 2016-05-09
 
 ### Added

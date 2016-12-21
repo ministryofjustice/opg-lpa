@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.2 - 2016-12-16
+
+### Added
+
+- [#124](https://github.com/zendframework/zend-cache/pull/124)
+  New coding standard
+
+### Deprecated
+
+- [#123](https://github.com/zendframework/zend-cache/pull/123)
+  Deprecate capability "expiredRead".
+  It's basically providing the same information as staticTtl but from a wrong PoV
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#122](https://github.com/zendframework/zend-cache/pull/122)
+  Fixed redis doc for lib_options (not lib_option)
+- [#118](https://github.com/zendframework/zend-cache/pull/118)
+  fixed redis tests in case running with different server
+- [#119](https://github.com/zendframework/zend-cache/pull/119)
+  Redis: Don't call method Redis::info() every time
+- [#113](https://github.com/zendframework/zend-cache/pull/113)
+  Travis: Moved coverage reporting to latest env
+- [#114](https://github.com/zendframework/zend-cache/pull/114)
+  Travis: removed fast_finish flag
+- [#107](https://github.com/zendframework/zend-cache/issues/107)
+  fixed redis server version test in Redis::internalGetMetadata()
+- [#111](https://github.com/zendframework/zend-cache/pull/111)
+  Fixed typo in storage adapter doc
+- [#102](https://github.com/zendframework/zend-cache/pull/102)
+  filesystem: fixes a lot of possible race conditions
+
 ## 2.7.1 - 2016-05-12
 
 ### Added
