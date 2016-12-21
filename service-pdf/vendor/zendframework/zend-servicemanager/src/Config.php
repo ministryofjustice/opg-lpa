@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @link      http://github.com/zendframework/zend-servicemanager for the canonical source repository
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -111,7 +109,7 @@ class Config implements ConfigInterface
                     $a[$key] = $value;
                 }
             } else {
-                if (!$value instanceof MergeRemoveKey) {
+                if (! $value instanceof MergeRemoveKey) {
                     $a[$key] = $value;
                 }
             }
