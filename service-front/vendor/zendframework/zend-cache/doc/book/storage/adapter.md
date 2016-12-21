@@ -550,7 +550,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | value of `apc.use_request_time` from `php.ini`
-`expiredRead` | `false`
 `maxKeyLength` | 5182
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | Option value of `namespace_separator`
@@ -631,7 +630,6 @@ Capability | Value
 `staticTtl` | `false`
 `ttlPrecision` | 1
 `useRequestTime` | `false`
-`expiredRead` | `true`
 `maxKeyLength` | 251
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | Option value of `namespace_separator`
@@ -676,7 +674,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | `false`
-`expiredRead` | `false`
 `maxKeyLength` | 255
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | none
@@ -709,7 +706,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | `false`
-`expiredRead` | `false`
 `maxKeyLength` | 255
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | none
@@ -719,7 +715,7 @@ Capability | Value
 Name | Data Type | Default Value | Description
 ---- | --------- | ------------- | -----------
 `database` | `integer` | 0 | Set database identifier.
-`lib_option` | `array` | `[]` | Associative array of redis options where the array key is the option name.
+`lib_options` | `array` | `[]` | Associative array of redis options where the array key is the option name.
 `namespace_separator` | `string` | ":" | A separator for the namespace and prefix.
 `password` | `string` | "" | Set password.
 `persistent_id` | `string` | | Set persistent id (name of the connection, leave blank to not use a persistent connection).
@@ -759,7 +755,6 @@ Capability | Value
 `staticTtl` | `false`
 `ttlPrecision` | 0.05
 `useRequestTime` | `false`
-`expiredRead` | `true`
 `maxKeyLength` | 0
 `namespaceIsPrefix` | `false`
 
@@ -796,18 +791,17 @@ This adapter implements the following interfaces:
 
 ### Capabilities
 
-Capability  Value
-supportedDatatypes  null, boolean, integer, double, string, array
-supportedMetadata   _id
-minTtl  0
-maxTtl  0
-staticTtl   true
-ttlPrecision    1
-useRequestTime  false
-expiredRead false
-maxKeyLength    255
-namespaceIsPrefix   true
-namespaceSeparator  <Option value of namespace_separator>
+Capability | Value
+---------- | -----
+`supportedDatatypes` | `string`, `null`, `boolean`, `integer`, `double`, `array`
+`supportedMetadata` | _id
+`minTtl` | 0
+`maxTtl` | 0
+`staticTtl` | `true`
+`ttlPrecision` | 1
+`useRequestTime` | `false`
+`maxKeyLength` | 255
+`namespaceIsPrefix` | <Option value of namespace_separator>
 
 ### Adapter specific options
 
@@ -849,7 +843,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | `apc.use_request_time` `php.ini` value.
-`expiredRead` | `false`
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | Option value of `namespace_separator`
 
@@ -885,7 +878,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | `true`
-`expiredRead` | `false`
 `maxKeyLength` | 5182
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | Option value of `namespace_separator`
@@ -924,7 +916,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | `false`
-`expiredRead` | `false`
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | `::`
 
@@ -952,7 +943,6 @@ Capability | Value
 `staticTtl` | `true`
 `ttlPrecision` | 1
 `useRequestTime` | `false`
-`expiredRead` | `false`
 `namespaceIsPrefix` | `true`
 `namespaceSeparator` | `::`
 
@@ -989,9 +979,9 @@ if (! $success) {
 use Zend\Cache\StorageFactory;
 
 // Instantiate the cache instance using a namespace for the same type of items
-$cache = StorageFactory::factory(array(
+$cache = StorageFactory::factory([
     'adapter' => [
-        'name'    => 'filesystem'
+        'name' => 'filesystem',
         // With a namespace, we can indicate the same type of items,
         // so we can simply use the database id as the cache key
         'options' => [
@@ -1001,8 +991,8 @@ $cache = StorageFactory::factory(array(
     'plugins' => [
         // Don't throw exceptions on cache errors
         'exception_handler' => [
-            'throw_exceptions' => false
-        ),
+            'throw_exceptions' => false,
+        ],
         // We store database rows on filesystem so we need to serialize them
         'Serializer',
     ],
