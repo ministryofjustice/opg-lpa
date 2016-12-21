@@ -1101,10 +1101,10 @@ hr {
   -moz-border-radius: 0;
   border-radius: 0;
   -webkit-appearance: none;
-  -webkit-box-shadow: 0 2px 0 #003518;
-  -moz-box-shadow: 0 2px 0 #003518;
-  box-shadow: 0 2px 0 #003518;
-  border-bottom: 2px solid #003518;
+  -webkit-box-shadow: 0 2px 0 #003618;
+  -moz-box-shadow: 0 2px 0 #003618;
+  box-shadow: 0 2px 0 #003618;
+  border-bottom: 2px solid #003618;
   font-size: 1em;
   line-height: 1.25;
   text-decoration: none;
@@ -1134,10 +1134,10 @@ hr {
       background-color: #00823b; }
     .button.disabled:active, .ui-datepicker .ui-datepicker-buttonpane .disabled.ui-priority-primary:active, .button[disabled="disabled"]:active, .ui-datepicker .ui-datepicker-buttonpane [disabled="disabled"].ui-priority-primary:active, .button[disabled]:active, .ui-datepicker .ui-datepicker-buttonpane [disabled].ui-priority-primary:active {
       top: 0;
-      -webkit-box-shadow: 0 2px 0 #003518;
-      -moz-box-shadow: 0 2px 0 #003518;
-      box-shadow: 0 2px 0 #003518;
-      border-bottom: 2px solid #003518; }
+      -webkit-box-shadow: 0 2px 0 #003618;
+      -moz-box-shadow: 0 2px 0 #003618;
+      box-shadow: 0 2px 0 #003618;
+      border-bottom: 2px solid #003618; }
   .button:link, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary:link, .button:hover, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary:hover, .button:focus, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary:focus, .button:visited, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary:visited {
     color: #fff; }
   .button:before, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-primary:before {
@@ -1915,7 +1915,7 @@ input[type=number] {
     display: block;
     color: #6f777b; }
 
-.help-sections h1, .dialog__title-block, .no-js .popup-header-title.heading-small {
+.help-sections h1, .dialog-title-block, .no-js .popup-header-title.heading-small {
   font-family: "nta", Arial, sans-serif;
   font-size: 24px;
   line-height: 1.04167;
@@ -1927,7 +1927,7 @@ input[type=number] {
   margin-bottom: 0.41667em;
   margin-top: 1.25em;
   margin-bottom: 0.55556em; }
-  .help-sections h1 .heading-secondary, .dialog__title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
+  .help-sections h1 .heading-secondary, .dialog-title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
@@ -2874,8 +2874,8 @@ input[type=number] {
     font-weight: 700;
     text-align: center; }
   .panel-cta .panel-button {
-    text-align: center;
-    padding-bottom: 15px; }
+    padding-bottom: 15px;
+    text-align: center; }
 
 .js-enabled .panel-actions {
   padding: 15px;
@@ -3129,9 +3129,9 @@ input[type=number] {
     border-left: 0; }
   .form-popup .error-message {
     position: relative;
-    width: 280%;
     top: 13px;
-    left: 150px; }
+    left: 150px;
+    width: 280%; }
   .form-popup .form-date.error .form-group {
     top: -37px; }
   .form-popup .form-date .error-message {
@@ -3154,10 +3154,10 @@ input[type=number] {
     max-width: 600px;
     margin: 2em auto; }
 
-.dialog__container {
-  padding: 0 30px 30px 30px; }
+.dialog-container {
+  padding: 0 30px 30px; }
 
-.dialog__message-block {
+.dialog-message-block {
   margin-bottom: 30px; }
 
 .table-summary tr {
@@ -3282,7 +3282,7 @@ input[type=number] {
       margin: 0 auto;
       padding: 0; }
     .ui-datepicker .ui-datepicker-header .ui-datepicker-month {
-      margin: 0 1em 0; }
+      margin: 0 1em; }
     .ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
       left: 0;
       text-align: left; }
@@ -3298,34 +3298,35 @@ input[type=number] {
     width: 40px;
     padding: .45em .15em; }
   .ui-datepicker thead th {
-    border-bottom: none;
+    border-bottom: 0;
     font-weight: bold;
     text-align: center; }
   .ui-datepicker tbody td {
-    text-align: center;
-    border-bottom: none; }
+    border-bottom: 0;
+    text-align: center; }
     .ui-datepicker tbody td:hover {
-      cursor: pointer;
       background: #ffe2ad;
-      color: #fff; }
+      color: #fff;
+      cursor: pointer; }
     .ui-datepicker tbody td.ui-state-disabled:hover {
-      cursor: default;
-      background: none; }
+      background: none;
+      cursor: default; }
     .ui-datepicker tbody td.ui-datepicker-current-day {
       background: #ffbf47; }
-      .ui-datepicker tbody td.ui-datepicker-current-day a, .ui-datepicker tbody td.ui-datepicker-current-day span {
+      .ui-datepicker tbody td.ui-datepicker-current-day a,
+      .ui-datepicker tbody td.ui-datepicker-current-day span {
         color: #0b0c0c; }
     .ui-datepicker tbody td.ui-datepicker-today {
       background: #dee0e2; }
     .ui-datepicker tbody td a {
       text-decoration: none; }
   .ui-datepicker a.ui-state-disabled {
-    opacity: 0.5;
-    box-shadow: none !important; }
+    box-shadow: none !important;
+    opacity: .5; }
     .ui-datepicker a.ui-state-disabled:hover, .ui-datepicker a.ui-state-disabled {
-      opacity: 0.5;
+      background-color: #f8f8f8 !important;
       cursor: default;
-      background-color: #f8f8f8 !important; }
+      opacity: .5; }
   .ui-datepicker td.ui-state-disabled span {
     text-decoration: line-through; }
   .ui-datepicker td.ui-state-disabled:hover, .ui-datepicker td.ui-state-disabled {
@@ -3333,8 +3334,8 @@ input[type=number] {
   .ui-datepicker .ui-datepicker-current-day {
     background: white; }
   .ui-datepicker .ui-datepicker-buttonpane {
-    background: #F9F9F9;
-    padding: .25em 0 0 0; }
+    padding: .25em 0 0;
+    background: #f8f8f8; }
     .ui-datepicker .ui-datepicker-buttonpane button {
       margin: 0 .5em 0 0; }
 
@@ -3342,7 +3343,7 @@ input[type=number] {
   outline: none; }
 
 .ui-datepicker-append {
-  padding-top: 0.5em;
+  padding-top: .5em;
   color: #6f777b; }
 
 .ui-datepicker-header select {
