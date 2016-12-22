@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7fc01a6b1668d925d174cf18639de81c",
-    "content-hash": "63b93cbca1919bdc4f01bcd08e0a4f23",
+    "hash": "4413a8223f12cbd9c1398803206ee644",
+    "content-hash": "26486755ca6912916b1ea6723e8862c1",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -538,16 +538,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v2.0.1",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "881f79cb5c0cb2056f3ea0cdf85980c71382fab3"
+                "reference": "f72df2e43f6a136dba5c74a5b8451b1e75141666"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/881f79cb5c0cb2056f3ea0cdf85980c71382fab3",
-                "reference": "881f79cb5c0cb2056f3ea0cdf85980c71382fab3",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/f72df2e43f6a136dba5c74a5b8451b1e75141666",
+                "reference": "f72df2e43f6a136dba5c74a5b8451b1e75141666",
                 "shasum": ""
             },
             "require": {
@@ -571,10 +571,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.0.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.0.3",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2016-11-11 10:34:07"
+            "time": "2016-12-20 15:05:39"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
