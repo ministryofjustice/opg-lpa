@@ -38,16 +38,6 @@ class Capabilities
     protected $baseCapabilities;
 
     /**
-     * Expire read
-     *
-     * If it's NULL the capability isn't set and the getter
-     * returns the base capability or the default value.
-     *
-     * @var null|bool
-     */
-    protected $expiredRead;
-
-    /**
      * Max. key length
      *
      * If it's NULL the capability isn't set and the getter
@@ -222,13 +212,13 @@ class Capabilities
 
         // check/normalize datatype values
         foreach ($datatypes as $type => &$toType) {
-            if (!in_array($type, $allTypes)) {
+            if (! in_array($type, $allTypes)) {
                 throw new Exception\InvalidArgumentException("Unknown datatype '{$type}'");
             }
 
             if (is_string($toType)) {
                 $toType = strtolower($toType);
-                if (!in_array($toType, $allTypes)) {
+                if (! in_array($toType, $allTypes)) {
                     throw new Exception\InvalidArgumentException("Unknown datatype '{$toType}'");
                 }
             } else {
@@ -266,7 +256,7 @@ class Capabilities
     public function setSupportedMetadata(stdClass $marker, array $metadata)
     {
         foreach ($metadata as $name) {
-            if (!is_string($name)) {
+            if (! is_string($name)) {
                 throw new Exception\InvalidArgumentException('$metadata must be an array of strings');
             }
         }
@@ -403,10 +393,16 @@ class Capabilities
      * Get if expired items are readable
      *
      * @return bool
+     * @deprecated This capability has been deprecated and will be removed in the future.
+     *             Please use getStaticTtl() instead
      */
     public function getExpiredRead()
     {
-        return $this->getCapability('expiredRead', false);
+        trigger_error(
+            'This capability has been deprecated and will be removed in the future. Please use static_ttl instead',
+            E_USER_DEPRECATED
+        );
+        return ! $this->getCapability('staticTtl', true);
     }
 
     /**
@@ -415,10 +411,16 @@ class Capabilities
      * @param  stdClass $marker
      * @param  bool $flag
      * @return Capabilities Fluent interface
+     * @deprecated This capability has been deprecated and will be removed in the future.
+     *             Please use setStaticTtl() instead
      */
     public function setExpiredRead(stdClass $marker, $flag)
     {
-        return $this->setCapability($marker, 'expiredRead', (bool) $flag);
+        trigger_error(
+            'This capability has been deprecated and will be removed in the future. Please use static_ttl instead',
+            E_USER_DEPRECATED
+        );
+        return $this->setCapability($marker, 'staticTtl', (bool) $flag);
     }
 
     /**
