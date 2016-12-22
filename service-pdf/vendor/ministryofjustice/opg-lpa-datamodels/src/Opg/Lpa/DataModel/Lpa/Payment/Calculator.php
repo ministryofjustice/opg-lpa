@@ -6,38 +6,60 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class Calculator
 {
     const STANDARD_FEE = 110;
-    
+
     /**
      * Calculate LPA payment amount
-     * 
+     *
      * @param Lpa $lpa
      * @return NULL|Payment
      */
     static public function calculate(Lpa $lpa)
     {
         if(!($lpa->payment instanceof Payment)) return null;
-        
+
+        $isRepeatApplication = ($lpa->repeatCaseNumber != null);
+
         if(($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) {
-            $amount = (float) 0;
-        }
-        else {
+
+            $amount = self::getBenefitsFee();
+
+        } else {
+
             if($lpa->payment->reducedFeeUniversalCredit) {
                 $amount = null;
             }
             elseif($lpa->payment->reducedFeeLowIncome) {
-                $amount = (float) self::STANDARD_FEE/2;
+                $amount = self::getLowIncomeFee( $isRepeatApplication );
             }
             else {
-                $amount = (float) self::STANDARD_FEE;
+                $amount = self::getFullFee( $isRepeatApplication );
             }
-            
-            if($lpa->repeatCaseNumber != null) {
-                $amount = $amount/2;
-            }
+
         }
-        
+
         $lpa->payment->amount = $amount;
-        
+
         return $lpa->payment;
     }
+
+    public static function getFullFee( $isRepeatApplication = false ){
+
+        $denominator = ($isRepeatApplication) ? 2 : 1;
+
+        return (float) self::STANDARD_FEE / $denominator;
+
+    }
+
+    public static function getLowIncomeFee( $isRepeatApplication = false ){
+
+        return (float) self::getFullFee( $isRepeatApplication ) / 2;
+
+    }
+
+    public static function getBenefitsFee(){
+
+        return (float)0;
+
+    }
+
 }
