@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @link      http://github.com/zendframework/zend-servicemanager for the canonical source repository
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -16,7 +14,7 @@ namespace Zend\ServiceManager;
  *
  * If upgrading from v2, take the following steps:
  *
- * - rename the method `canCreateServiceWithName()` to `has()`, and:
+ * - rename the method `canCreateServiceWithName()` to `canCreate()`, and:
  *   - rename the `$serviceLocator` argument to `$container`, and change the
  *     typehint to `Interop\Container\ContainerInterface`
  *   - merge the `$name` and `$requestedName` arguments
@@ -26,7 +24,7 @@ namespace Zend\ServiceManager;
  *   - merge the `$name` and `$requestedName` arguments
  *   - add the optional `array $options = null` argument.
  * - create a `canCreateServiceWithName()` method as defined in this interface, and have it
- *   proxy to `has()`, passing `$requestedName` as the second argument.
+ *   proxy to `canCreate()`, passing `$requestedName` as the second argument.
  * - create a `createServiceWithName()` method as defined in this interface, and have it
  *   proxy to `__invoke()`, passing `$requestedName` as the second argument.
  *
