@@ -41,16 +41,31 @@ class RedisResourceManager
     /**
      * Get redis server version
      *
-     * @param string $id
+     * @param string $resourceId
+     * @return string
+     * @throws Exception\RuntimeException
+     */
+    public function getVersion($resourceId)
+    {
+        // check resource id and initialize the resource
+        $this->getResource($resourceId);
+
+        return $this->resources[$resourceId]['version'];
+    }
+
+    /**
+     * Get redis major server version
+     *
+     * @param string $resourceId
      * @return int
      * @throws Exception\RuntimeException
      */
-    public function getMajorVersion($id)
+    public function getMajorVersion($resourceId)
     {
         // check resource id and initialize the resource
-        $this->getResource($id);
+        $this->getResource($resourceId);
 
-        return (int) $this->resources[$id]['version'];
+        return (int) $this->resources[$resourceId]['version'];
     }
 
     /**
@@ -75,7 +90,7 @@ class RedisResourceManager
      */
     public function getDatabase($id)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
@@ -91,7 +106,7 @@ class RedisResourceManager
      */
     public function getPassword($id)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
@@ -103,23 +118,27 @@ class RedisResourceManager
      * Gets a redis resource
      *
      * @param string $id
-     * @return RedisResourceManager
+     * @return RedisResource
      * @throws Exception\RuntimeException
      */
     public function getResource($id)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
         $resource = & $this->resources[$id];
         if ($resource['resource'] instanceof RedisResource) {
             //in case new server was set then connect
-            if (!$resource['initialized']) {
+            if (! $resource['initialized']) {
                 $this->connect($resource);
             }
-            $info = $resource['resource']->info();
-            $resource['version'] = $info['redis_version'];
+
+            if (! $resource['version']) {
+                $info = $resource['resource']->info();
+                $resource['version'] = $info['redis_version'];
+            }
+
             return $resource['resource'];
         }
 
@@ -146,7 +165,7 @@ class RedisResourceManager
      */
     public function getServer($id)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
@@ -182,9 +201,9 @@ class RedisResourceManager
             }
 
             // array('host' => <host>[, 'port' => <port>, ['timeout' => <timeout>]])
-            if (!isset($server[0]) && isset($server['host'])) {
+            if (! isset($server[0]) && isset($server['host'])) {
                 $host    = (string) $server['host'];
-                $port    = isset($server['port'])    ? (int) $server['port']    : $port;
+                $port    = isset($server['port']) ? (int) $server['port'] : $port;
                 $timeout = isset($server['timeout']) ? (int) $server['timeout'] : $timeout;
             }
         } else {
@@ -196,16 +215,16 @@ class RedisResourceManager
             } else {
                 $server = ['host' => $server];
             }
-            if (!$server) {
+            if (! $server) {
                 throw new Exception\InvalidArgumentException("Invalid server given");
             }
 
             $host    = $server['host'];
-            $port    = isset($server['port'])    ? (int) $server['port']    : $port;
+            $port    = isset($server['port']) ? (int) $server['port'] : $port;
             $timeout = isset($server['timeout']) ? (int) $server['timeout'] : $timeout;
         }
 
-        if (!$host) {
+        if (! $host) {
             throw new Exception\InvalidArgumentException('Missing required server host');
         }
 
@@ -262,7 +281,12 @@ class RedisResourceManager
         $redis  = $resource['resource'];
         if ($resource['persistent_id'] !== '') {
             //connect or reuse persistent connection
-            $success = $redis->pconnect($server['host'], $server['port'], $server['timeout'], $resource['persistent_id']);
+            $success = $redis->pconnect(
+                $server['host'],
+                $server['port'],
+                $server['timeout'],
+                $resource['persistent_id']
+            );
         } elseif ($server['port']) {
             $success = $redis->connect($server['host'], $server['port'], $server['timeout']);
         } elseif ($server['timeout']) {
@@ -272,7 +296,7 @@ class RedisResourceManager
             $success = $redis->connect($server['host']);
         }
 
-        if (!$success) {
+        if (! $success) {
             throw new Exception\RuntimeException('Could not estabilish connection with Redis instance');
         }
 
@@ -304,10 +328,10 @@ class RedisResourceManager
             'initialized'   => false,
             'version'       => 0,
         ];
-        if (!$resource instanceof RedisResource) {
+        if (! $resource instanceof RedisResource) {
             if ($resource instanceof Traversable) {
                 $resource = ArrayUtils::iteratorToArray($resource);
-            } elseif (!is_array($resource)) {
+            } elseif (! is_array($resource)) {
                 throw new Exception\InvalidArgumentException(
                     'Resource must be an instance of an array or Traversable'
                 );
@@ -363,7 +387,7 @@ class RedisResourceManager
      */
     public function setPersistentId($id, $persistentId)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             return $this->setResource($id, [
                 'persistent_id' => $persistentId
             ]);
@@ -391,7 +415,7 @@ class RedisResourceManager
      */
     public function getPersistentId($id)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
@@ -425,7 +449,7 @@ class RedisResourceManager
      */
     public function setLibOptions($id, array $libOptions)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             return $this->setResource($id, [
                 'lib_options' => $libOptions
             ]);
@@ -459,7 +483,7 @@ class RedisResourceManager
      */
     public function getLibOptions($id)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
@@ -502,7 +526,7 @@ class RedisResourceManager
      */
     public function getLibOption($id, $key)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
@@ -524,7 +548,7 @@ class RedisResourceManager
      */
     protected function normalizeLibOptions(& $libOptions)
     {
-        if (!is_array($libOptions) && !($libOptions instanceof Traversable)) {
+        if (! is_array($libOptions) && ! ($libOptions instanceof Traversable)) {
             throw new Exception\InvalidArgumentException(
                 "Lib-Options must be an array or an instance of Traversable"
             );
@@ -550,7 +574,7 @@ class RedisResourceManager
         // convert option name into it's constant value
         if (is_string($key)) {
             $const = 'Redis::OPT_' . str_replace([' ', '-'], '_', strtoupper($key));
-            if (!defined($const)) {
+            if (! defined($const)) {
                 throw new Exception\InvalidArgumentException("Unknown redis option '{$key}' ({$const})");
             }
             $key = constant($const);
@@ -573,7 +597,7 @@ class RedisResourceManager
      */
     public function setServer($id, $server)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             return $this->setResource($id, [
                 'server' => $server
             ]);
@@ -608,7 +632,7 @@ class RedisResourceManager
      */
     public function setPassword($id, $password)
     {
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             return $this->setResource($id, [
                 'password' => $password,
             ]);
@@ -631,7 +655,7 @@ class RedisResourceManager
     {
         $database = (int) $database;
 
-        if (!$this->hasResource($id)) {
+        if (! $this->hasResource($id)) {
             return $this->setResource($id, [
                 'database' => $database,
             ]);
