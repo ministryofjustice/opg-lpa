@@ -57,13 +57,13 @@
 
           if ($dayObj.val() !== '') {
             day = parseInt($dayObj.val(), 10);
-            if (isNaN(day) || (day < 1)) {
+            if (isNaN(day) || day < 1 || day > 31) {
               day = undefined;
             }
           }
           if ($monthObj.val() !== '') {
             month = parseInt($monthObj.val(), 10);
-            if (isNaN(month) || (month <= 0)) {
+            if (isNaN(month) || month <= 0 || month > 12) {
               month = undefined;
             }
             else {
