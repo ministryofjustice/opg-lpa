@@ -6,10 +6,10 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class Calculator
 {
     const STANDARD_FEE = 110;
-    
+
     /**
      * Calculate LPA payment amount
-     * 
+     *
      * @param Lpa $lpa
      * @return NULL|Payment
      */
@@ -18,7 +18,7 @@ class Calculator
         if(!($lpa->payment instanceof Payment)) return null;
 
         $isRepeatApplication = ($lpa->repeatCaseNumber != null);
-        
+
         if(($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) {
 
             $amount = self::getBenefitsFee();
@@ -36,9 +36,9 @@ class Calculator
             }
 
         }
-        
+
         $lpa->payment->amount = $amount;
-        
+
         return $lpa->payment;
     }
 

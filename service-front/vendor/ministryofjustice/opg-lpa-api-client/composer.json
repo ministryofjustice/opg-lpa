@@ -11,7 +11,7 @@
     "require": {
         "php": ">=5.4.0",
         "guzzlehttp/guzzle": "^5.1.0",
-        "ministryofjustice/opg-lpa-datamodels": "*",
+        "ministryofjustice/opg-lpa-datamodels": "^2.0",
         "psr/http-message": "^1.0",
         "php-http/httplug": "^1.0",
         "guzzlehttp/psr7" : "^1.2",
