@@ -78,9 +78,8 @@
 
     <fieldset>
         <legend class="visuallyhidden">Password</legend>
-        <div class="text">
-            <p>Your password has to be at least 8 characters long and must contain at least 1 lower-case letter, 1 capital letter and 1 number. Never share your password with anyone.</p>
-        </div>
+
+        {% include 'application/password/rules.twig' %}
 
         {{ macros.formGroup(password) }}
         {{ macros.formGroup(password_confirm) }}
