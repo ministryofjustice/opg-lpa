@@ -26,10 +26,6 @@
 
     }
 
-    location /static/ {
-       proxy_pass https://localhost/static/;
-    }
-
     location ~ \.php$ {
 
         satisfy any;
