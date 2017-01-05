@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Form\User;
 
 use Zend\Validator;
@@ -9,11 +10,12 @@ use Zend\Validator;
  * Class ResetPasswordEmail
  * @package Application\Form\User
  */
-class SetPassword extends AbstractForm {
+class SetPassword extends AbstractForm
+{
 
-    public function __construct( $formName = 'set-password' ){
-
-        parent::__construct( $formName );
+    public function __construct($formName = 'set-password')
+    {
+        parent::__construct($formName);
 
         //---
 
@@ -29,7 +31,7 @@ class SetPassword extends AbstractForm {
 
         //--------------------------------
         $this->setUseInputFilterDefaults(false);
-        
+
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add(array(
@@ -56,31 +58,7 @@ class SetPassword extends AbstractForm {
                     ),
                 ),
                 array(
-                    'name'    => 'Regex',
-                    'options' => array(
-                        'pattern' => '/.*[0-9].*/',
-                        'messages' => [
-                            Validator\Regex::NOT_MATCH => 'must-include-digit',
-                        ],
-                    ),
-                ),
-                array(
-                    'name'    => 'Regex',
-                    'options' => array(
-                        'pattern' => '/.*[a-z].*/',
-                        'messages' => [
-                            Validator\Regex::NOT_MATCH => 'must-include-lower-case',
-                        ],
-                    ),
-                ),
-                array(
-                    'name'    => 'Regex',
-                    'options' => array(
-                        'pattern' => '/.*[A-Z].*/',
-                        'messages' => [
-                            Validator\Regex::NOT_MATCH => 'must-include-upper-case',
-                        ],
-                    ),
+                    'name' => 'Application\Form\Validator\Password',
                 ),
             ),
         )); // add
@@ -113,8 +91,6 @@ class SetPassword extends AbstractForm {
 
         //---
 
-        $this->setInputFilter( $inputFilter );
-
+        $this->setInputFilter($inputFilter);
     } // function
-
 } // class
