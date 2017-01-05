@@ -32,7 +32,7 @@
         "guzzlehttp/guzzle": "^5.1.0",
         "zendframework/zendframework": "^2.5",
         "sendgrid/sendgrid": "2.2.*",
-        "aws/aws-sdk-php": "3.19.24",
+        "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-api-client": "^4.0",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "^2.0",
