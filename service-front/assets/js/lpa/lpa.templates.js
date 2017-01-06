@@ -29,11 +29,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div class=\"dialog__container\">\n\n    <div class=\"dialog__title-block\">";
+  buffer += "<div class=\"dialog-container\">\n\n    <div class=\"dialog-title-block\">";
   if (helper = helpers.dialogTitle) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.dialogTitle); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</div>\n\n    <div class=\"dialog__message-block\"><p>";
+    + "</div>\n\n    <div class=\"dialog-message-block\"><p>";
   if (helper = helpers.dialogMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.dialogMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -146,31 +146,22 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div id=\"mask\" class=\"popover-mask\"></div>";
   });
 
+this["lpa"]["templates"]["postcodeLookup.address-change"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__change\">Search for address</a></li>\n	</ul>\n</div>\n";
+  });
+
 this["lpa"]["templates"]["postcodeLookup.address-toggle"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this;
+  
 
-function program1(depth0,data) {
-  
-  
-  return "\n		<li><a href=\"#\" data-address-type=\"postal\" class=\"js-PostcodeLookup__toggle-address\">Enter address manually</a></li>\n		";
-  }
 
-function program3(depth0,data) {
-  
-  
-  return "\n		<li><a href=\"#\" data-address-type=\"dx\" class=\"js-PostcodeLookup__toggle-address\">Enter DX address</a></li>\n		";
-  }
-
-  buffer += "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.postal), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dx), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n</div>";
-  return buffer;
+  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__toggle-address\">Enter address manually</a></li>\n	</ul>\n</div>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.search-field"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
