@@ -119,10 +119,13 @@
           $(this).val('');
         });
 
-      // Show any fields which were hidden
-      $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
-      // loop over data and change values
-      _(data).each(function (value, key) {
+        // Show any fields which were hidden
+        
+        $('.js-PostcodeLookup').data('moj.PostcodeLookup').hideSearchForm();
+        $('.js-PostcodeLookup').data('moj.PostcodeLookup').toggleAddress();
+
+        // loop over data and change values
+        _(data).each(function (value, key) {
 
         // set el
         $el = $('[name="' + key + '"]');
