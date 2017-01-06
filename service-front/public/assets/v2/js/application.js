@@ -4409,10 +4409,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $(this).val('');
         });
 
-      // Show any fields which were hidden
-      $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
-      // loop over data and change values
-      _(data).each(function (value, key) {
+        // Show any fields which were hidden
+        
+        $('.js-PostcodeLookup').data('moj.PostcodeLookup').hideSearchForm();
+        $('.js-PostcodeLookup').data('moj.PostcodeLookup').toggleAddress();
+
+        // loop over data and change values
+        _(data).each(function (value, key) {
 
         // set el
         $el = $('[name="' + key + '"]');
@@ -4467,6 +4470,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   };
 
 })();
+
 // Postcode lookup module for LPA
 // Dependencies: moj, _, jQuery
 
@@ -4526,10 +4530,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         if (moj.Helpers.hasCleanFields(this.$postalFields)) {
             this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         } else {
+            this.hideSearchForm();
             this.toggleAddress();
-            this.$wrap.find('.js-PostcodeLookup__search').addClass('hidden');
-            this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').addClass('hidden');
         }
+    },
+
+    hideSearchForm: function() {
+        this.$wrap.find('.js-PostcodeLookup__search').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__change').closest('div').removeClass('hidden');
     },
 
     changeClicked: function(e) {
@@ -4538,6 +4547,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         if (moj.Helpers.hasCleanFields(this.$postalFields)) {
             this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').removeClass('hidden');
         }
+        this.$wrap.find('.js-PostcodeLookup__query').focus();
         return false;
     },
 

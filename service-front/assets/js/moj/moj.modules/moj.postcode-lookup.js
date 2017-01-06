@@ -57,10 +57,15 @@
         if (moj.Helpers.hasCleanFields(this.$postalFields)) {
             this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         } else {
+            this.hideSearchForm();
             this.toggleAddress();
-            this.$wrap.find('.js-PostcodeLookup__search').addClass('hidden');
-            this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').addClass('hidden');
         }
+    },
+
+    hideSearchForm: function() {
+        this.$wrap.find('.js-PostcodeLookup__search').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__change').closest('div').removeClass('hidden');
     },
 
     changeClicked: function(e) {
@@ -69,6 +74,7 @@
         if (moj.Helpers.hasCleanFields(this.$postalFields)) {
             this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').removeClass('hidden');
         }
+        this.$wrap.find('.js-PostcodeLookup__query').focus();
         return false;
     },
 
