@@ -1,25 +1,39 @@
 <?php
 namespace Application\Model\Service\Lpa;
 
+use Opg\Lpa\Api\Client\Client;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use InvalidArgumentException;
 
-use Opg\Lpa\Api\Client\Client;
-
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-
-class Application {
-
+class Application
+{
+    /**
+     * Client service from the api-client module
+     *
+     * @var Client
+     */
     private $client;
 
-    public function __construct( Client $client ){
+    /**
+     * Application constructor
+     *
+     * @param Client $client
+     */
+    public function __construct(Client $client)
+    {
         $this->client = $client;
     }
 
-    public function updatePayment( Lpa $lpa ){
-
-        return $this->updateApplication($lpa->id, [ 'payment' => $lpa->payment->toArray() ]);
-
+    /**
+     * Update the payment on the LPA
+     *
+     * @param Lpa $lpa
+     * @return mixed
+     */
+    public function updatePayment(Lpa $lpa)
+    {
+        //  Call the update application function on the client via the __call function
+        return $this->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
     }
 
     /**
@@ -29,14 +43,12 @@ class Application {
      * @param $arguments
      * @return mixed
      */
-    public function __call($name, $arguments){
-
-        if( is_callable( [ $this->client, $name ] ) ){
-            return call_user_func_array( [ $this->client, $name ], $arguments );
+    public function __call($name, $arguments)
+    {
+        if (is_callable([$this->client, $name ])) {
+            return call_user_func_array([$this->client, $name], $arguments);
         }
 
         throw new InvalidArgumentException("Unknown method $name called");
-
-    } // function
-
-} // class
+    }
+}
