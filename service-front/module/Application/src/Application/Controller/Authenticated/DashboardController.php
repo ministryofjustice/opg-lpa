@@ -12,32 +12,101 @@ class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        $query = $this->params()->fromQuery('search', null);
+        $search = $this->params()->fromQuery('search', null);
         $page = $this->params()->fromRoute('page', 1);
 
-        //  Get the LPA list using a query if provided
-        $lpas = $this->getServiceLocator()->get('ApplicationList')->getLpaSummaries($query);
+        //  Set the items per page for front application lists
+        $lpasPerPage = 50;
+
+        //  Get the LPA list summary using a query if provided
+        $lpasSummary = $this->getServiceLocator()->get('ApplicationList')->getLpaSummaries($search, $page, $lpasPerPage);
+        $lpas = $lpasSummary['applications'];
+        $lpasTotalCount = $lpasSummary['total'];
 
         //  If there are no LPAs and this is NOT a query, redirect them to create one...
-        if (is_null($query) && count($lpas) == 0) {
+        if (is_null($search) && count($lpas) == 0) {
             return $this->createAction();
         }
 
-        //  Set up the paginator and add the LPA data
-        $paginator = new Paginator(new PaginatorArrayAdapter($lpas));
-
-        $paginator->setPageRange(5)
-                  ->setItemCountPerPage(50)
-                  ->setCurrentPageNumber($page);
+        //  Get the pagination control data for these results
+        $pagesInRange = 5;
+        $paginationControlData = $this->getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $pagesInRange);
 
         return new ViewModel([
-            'lpas' => $paginator,
-            'freeText' => $query,
-            'isSearch' => (is_string($query) && !empty($query)),
-            'user' => [
+            'lpas'                  => $lpas,
+            'lpaTotalCount'         => $lpasTotalCount,
+            'paginationControlData' => $paginationControlData,
+            'freeText'              => $search,
+            'isSearch'              => (is_string($search) && !empty($search)),
+            'user'                  => [
                 'lastLogin' => $this->getUser()->lastLogin(),
             ],
         ]);
+    }
+
+    /**
+     * Get the pagination control data from the page settings provided
+     *
+     * @param $page
+     * @param $lpasPerPage
+     * @param $lpasTotalCount
+     * @param $numberOfPagesInRange
+     * @return array
+     */
+    private function getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $numberOfPagesInRange)
+    {
+        //  Determine the total number of pages
+        $pageCount = ceil($lpasTotalCount / $lpasPerPage);
+
+        //  If the requested page is higher than allowed then set it to the highest possible value
+        if ($page > $pageCount) {
+            $page = $pageCount;
+        }
+
+        //  Figure out which pages to provide specific links to - pages in range
+        //  Start the pages in range array with the current page
+        $pagesInRange = [$page];
+
+        for ($i = 0; $i < ($numberOfPagesInRange - 1); $i++) {
+            //  Get the current lowest and highest page numbers
+            $lowestPage = min($pagesInRange);
+            $highestPage = max($pagesInRange);
+
+            //  If this is an even numbered iteration add a higher page number
+            if ($i % 2 == 0) {
+                //  Try to add a higher page number if possible
+                //  If not possible then try to add a lower page number if possible
+                if ($highestPage < $pageCount) {
+                    $pagesInRange[] = ++$highestPage;
+                } elseif ($lowestPage > 1) {
+                    $pagesInRange[] = --$lowestPage;
+                }
+            } else {
+                //  Try to add a lower page number if possible
+                //  If not possible then try to add a higher page number if possible
+                if ($lowestPage > 1) {
+                    $pagesInRange[] = --$lowestPage;
+                } elseif ($highestPage < $pageCount) {
+                    $pagesInRange[] = ++$highestPage;
+                }
+            }
+        }
+
+        //  Sort the page numbers into order
+        asort($pagesInRange);
+
+        //  Figure out the first and last item number that are being displayed
+        $firstItemNumber = (($page - 1) * $lpasPerPage) + 1;
+        $lastItemNumber = min($page * $lpasPerPage, $lpasTotalCount);
+
+        return [
+            'page'            => $page,
+            'pageCount'       => $pageCount,
+            'pagesInRange'    => $pagesInRange,
+            'firstItemNumber' => $firstItemNumber,
+            'lastItemNumber'  => $lastItemNumber,
+            'totalItemCount'  => $lpasTotalCount,
+        ];
     }
 
     /**

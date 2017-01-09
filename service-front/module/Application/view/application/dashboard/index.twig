@@ -21,7 +21,7 @@
                 <li><strong class="bold-small">Reuse details</strong> from an existing LPA to create a new one and save you
                     entering some information twice
                 </li>
-            </ul>    
+            </ul>
         </div>
     </div>
     <div class="column-one-third">
@@ -29,16 +29,16 @@
             <p class="heading-medium panel-body flush--top">Create another LPA</p>
             <p class="panel-button flush--bottom">
                 <a id="create-new-lpa" class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
-            </p> 
+            </p>
         </div>
     </div>
 </div>
 
-{% set shortList = lpas.getTotalItemCount() <= 20 and isSearch == false %}
+{% set shortList = lpaTotalCount <= 20 and isSearch == false %}
 
 {% if shortList %}
 {# With less than 20 LPAs, no search is displayed #}
-    {% if lpas.getTotalItemCount() == 0 %}
+    {% if lpaTotalCount == 0 %}
         <h2 class="heading-large flush--ends">You have no LPAs</h2>
     {% endif %}
 {% else %}
@@ -49,18 +49,18 @@
         {% if isSearch %}
             <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
             <p class="flush--bottom">
-                {% if lpas.getTotalItemCount() == 0 %}
+                {% if lpaTotalCount == 0 %}
                     Your search has found no results.<br>
                 {% else %}
-                    Your search has found {{ lpas.getTotalItemCount() }} results.<br>
+                    Your search has found {{ lpaTotalCount }} results.<br>
                 {% endif %}
                 <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
             </p>
         {% else %}
-            {% if lpas.getTotalItemCount() == 0 %}
+            {% if lpaTotalCount == 0 %}
                 <h2 class="heading-large flush--ends">No LPAs found</h2>
             {% else %}
-                <h2 class="heading-large flush--ends">All {{ lpas.getTotalItemCount() }} LPAs</h2>
+                <h2 class="heading-large flush--ends">All {{ lpaTotalCount }} LPAs</h2>
             {% endif %}
         {% endif %}
         </div>
@@ -79,18 +79,18 @@
             {% if isSearch %}
                 <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
                 <p class="flush--bottom">
-                    {% if lpas.getTotalItemCount() == 0 %}
+                    {% if lpaTotalCount == 0 %}
                         Your search has found no results.<br>
                     {% else %}
-                        Your search has found {{ lpas.getTotalItemCount() }} results.<br>
+                        Your search has found {{ lpaTotalCount }} results.<br>
                     {% endif %}
                     <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
                 </p>
             {% else %}
-                {% if lpas.getTotalItemCount() == 0 %}
+                {% if lpaTotalCount == 0 %}
                     <h2 class="heading-large flush--ends">No LPAs found</h2>
                 {% else %}
-                    <h2 class="heading-large flush--ends">All {{ lpas.getTotalItemCount() }} LPAs</h2>
+                    <h2 class="heading-large flush--ends">All {{ lpaTotalCount }} LPAs</h2>
                 {% endif %}
             {% endif %}
         </div>
@@ -98,7 +98,7 @@
 </div>
 {% endif %}
 
-{% if lpas.getTotalItemCount() > 0 %}
+{% if lpaTotalCount > 0 %}
 
     {% if shortList %}
         {{ macros.listLpas(lpas, true, '', 'No type selected') }}
@@ -108,8 +108,7 @@
         {{ macros.listLpas(lpas, false, 'all', '') }}
     {% endif %}
 
-    {# Pagination HTML is in pagination.phtml #}
-    {{ paginationControl(lpas, 'Sliding', 'application/dashboard/pagination', {'route': 'user/dashboard/pagination'}) }}
+    {% include 'application/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}
 
     <p>
 {% endif %}
@@ -118,7 +117,7 @@
     <p class="heading-medium panel-body flush--top">Create another LPA</p>
     <p class="panel-button flush--bottom">
         <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
-    </p> 
+    </p>
 </div>
-  
+
 {% endblock %}

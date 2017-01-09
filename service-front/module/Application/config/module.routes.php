@@ -77,7 +77,7 @@ return [
                     ],
                 ],
             ], // send-feedback
-            
+
             'sendgrid-bounce' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
@@ -113,7 +113,7 @@ return [
                     ],
                 ],
             ], // notifications
-            
+
             'guidance' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
@@ -125,7 +125,7 @@ return [
                     ],
                 ],
             ], // guidance
-            
+
             'guidance-non-twig' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
             ],
-            
+
             'admin-system-message' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -295,7 +295,7 @@ return [
                     ],
                 ],
             ],
-            
+
             'postcode' => [
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -394,10 +394,10 @@ return [
                                 'options' => [
                                     'route'    => '/page/:page',
                                     'constraints' => [
-                                        'page' => '[0-9]+',
+                                        'page' => '[1-9]+',
                                     ],
                                     'defaults' => [
-                                            'page' => 1
+                                        'page' => 1
                                     ],
                                 ],
                             ],
@@ -449,10 +449,10 @@ return [
                     ], // delete
                 ],
             ], // user
-            
+
             //--------------------------------------------------
             // Untyped LPA Route (Type form, no LPA ID)
-            
+
             'lpa-type-no-id' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
@@ -463,7 +463,7 @@ return [
                     ],
                 ],
             ],
-                
+
             //--------------------------------------------------
             // LPA Routes
 

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bd8a9bd23787aaa4d85f81a97c9c22cf",
-    "content-hash": "6a2615722229324d8693baf32c307f61",
+    "hash": "95d081445b52b9601625f2c96122f446",
+    "content-hash": "5db77b2491e68e1727f6ccc394fcf3d0",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -785,16 +785,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "4.0.1",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "898f4eb4cb01108e9038e0706afa78e4b0b75c66"
+                "reference": "346dc1a55a52506059e2a77a61b78f49bd0fe8ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/898f4eb4cb01108e9038e0706afa78e4b0b75c66",
-                "reference": "898f4eb4cb01108e9038e0706afa78e4b0b75c66",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/346dc1a55a52506059e2a77a61b78f49bd0fe8ba",
+                "reference": "346dc1a55a52506059e2a77a61b78f49bd0fe8ba",
                 "shasum": ""
             },
             "require": {
@@ -824,10 +824,10 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/4.0.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/master",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-12-22 18:48:17"
+            "time": "2016-12-23 09:38:29"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",

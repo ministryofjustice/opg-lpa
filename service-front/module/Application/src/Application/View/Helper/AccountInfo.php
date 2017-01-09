@@ -59,9 +59,8 @@ class AccountInfo extends AbstractHelper
 
         // Once a user has more than one, we cache the result in the session to save a lookup for every page load.
         if (!isset($details->hasOneOrMoreLPAs) || $details->hasOneOrMoreLPAs == false) {
-            $lpas = $serviceLocator->get('ApplicationList')->getLpaSummaries();
-
-            $details->hasOneOrMoreLPAs = !empty($lpas);
+            $lpasSummaries = $serviceLocator->get('ApplicationList')->getLpaSummaries();
+            $details->hasOneOrMoreLPAs = ($lpasSummaries['total'] > 0);
         }
 
         $params['hasOneOrMoreLPAs'] = $details->hasOneOrMoreLPAs;
