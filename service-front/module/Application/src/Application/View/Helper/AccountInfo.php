@@ -8,50 +8,48 @@ class AccountInfo extends AbstractHelper
     public function __invoke()
     {
         $serviceLocator = $this->view->getHelperPluginManager()->getServiceLocator();
-        
+
         $auth = $serviceLocator->get('AuthenticationService');
 
         // Only continue if the user is singed in.
-        if ( !$auth->hasIdentity() ){ return; }
-        
+        if (!$auth->hasIdentity()) {
+            return;
+        }
+
         $params = [
             'view' => $this->view,
         ];
 
         //---
 
-        $details = $this->view->getHelperPluginManager()->getServiceLocator()->get('UserDetailsSession');
+        $details = $serviceLocator->get('UserDetailsSession');
 
         // Only include name (and singed in user links) if the user has set their name.
         // i.e. they've completed the first About You step.
-        if( isset($details->user) && $details->user->name !== null) {
-
-            if( $details->user->name->first != null && $details->user->name->last != null ){
+        if (isset($details->user) && $details->user->name !== null) {
+            if ($details->user->name->first != null && $details->user->name->last != null) {
                 $params['name'] = "{$details->user->name->first} {$details->user->name->last}";
             }
-
         }
 
         //-----------------------------------------------------
         // Include last logged in date if set a view parameter
 
-        $layoutChildren = $this->view->getHelperPluginManager()->getServiceLocator()
-            ->get('ViewManager')->getViewModel()->getIterator();
+        $layoutChildren = $serviceLocator->get('ViewManager')->getViewModel()->getIterator();
 
-        if( $layoutChildren->count() > 0 ){
+        if ($layoutChildren->count() > 0) {
             $view = $layoutChildren->current();
 
-            if( isset($view->user) && isset($view->user['lastLogin']) ){
+            if (isset($view->user) && isset($view->user['lastLogin'])) {
                 $params['lastLogin'] = $view->user['lastLogin'];
             }
-
-        } // if
+        }
 
         //---
 
         // Include the name of the current route.
         $routeMatch = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch();
-        
+
         if ($routeMatch) {
             $params['route'] = $routeMatch->getMatchedRouteName();
         }
@@ -60,22 +58,17 @@ class AccountInfo extends AbstractHelper
         // Check if the user has one or more LPAs
 
         // Once a user has more than one, we cache the result in the session to save a lookup for every page load.
-        if( !isset($details->hasOneOrMoreLPAs) || $details->hasOneOrMoreLPAs == false ){
-
-            $lpas = $serviceLocator->get('ApplicationList')->getAllALpaSummaries();
-
-            $details->hasOneOrMoreLPAs = !empty($lpas);
-
+        if (!isset($details->hasOneOrMoreLPAs) || $details->hasOneOrMoreLPAs == false) {
+            $lpasSummaries = $serviceLocator->get('ApplicationList')->getLpaSummaries();
+            $details->hasOneOrMoreLPAs = ($lpasSummaries['total'] > 0);
         }
 
         $params['hasOneOrMoreLPAs'] = $details->hasOneOrMoreLPAs;
 
         //---
 
-        $template = $this->view->getHelperPluginManager()->getServiceLocator()->get('TwigViewRenderer')->loadTemplate('account-info/account-info.twig');
+        $template = $serviceLocator->get('TwigViewRenderer')->loadTemplate('account-info/account-info.twig');
 
         echo $template->render($params);
-
-    } // function
-
-} // class
+    }
+}
