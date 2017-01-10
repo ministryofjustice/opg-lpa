@@ -2,109 +2,161 @@
 
 namespace Application\Controller\Authenticated;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
-
-use Zend\Paginator\Paginator;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
+use Zend\Paginator\Paginator;
+use Zend\View\Model\ViewModel;
 
 class DashboardController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        $query = $this->params()->fromQuery('search');
+        $search = $this->params()->fromQuery('search', null);
+        $page = $this->params()->fromRoute('page', 1);
 
-        if( is_string($query) && !empty($query) ){
-            
-            $paginator = $this->searchLpaList( $query );
+        //  Set the items per page for front application lists
+        $lpasPerPage = 50;
 
-        } else {
+        //  Get the LPA list summary using a query if provided
+        $lpasSummary = $this->getServiceLocator()->get('ApplicationList')->getLpaSummaries($search, $page, $lpasPerPage);
+        $lpas = $lpasSummary['applications'];
+        $lpasTotalCount = $lpasSummary['total'];
 
-            // No search query - return all LPAs.
-
-            $paginator = $this->getLpaList();
-
-            // If the user currently has no LPAs, redirect them to create one...
-            if( $paginator->getTotalItemCount() == 0 ){
-                return $this->createAction();
-            }
-
+        //  If there are no LPAs and this is NOT a query, redirect them to create one...
+        if (is_null($search) && count($lpas) == 0) {
+            return $this->createAction();
         }
 
-        //---
-
-        $paginator->setPageRange(5);
-        $paginator->setItemCountPerPage(50);
-
-        $paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
-
-        //---
+        //  Get the pagination control data for these results
+        $pagesInRange = 5;
+        $paginationControlData = $this->getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $pagesInRange);
 
         return new ViewModel([
-            'lpas' => $paginator,
-            'freeText' => $query,
-            'isSearch' => (is_string($query) && !empty($query)),
-            'user' => [
+            'lpas'                  => $lpas,
+            'lpaTotalCount'         => $lpasTotalCount,
+            'paginationControlData' => $paginationControlData,
+            'freeText'              => $search,
+            'isSearch'              => (is_string($search) && !empty($search)),
+            'user'                  => [
                 'lastLogin' => $this->getUser()->lastLogin(),
             ],
         ]);
     }
-    
+
+    /**
+     * Get the pagination control data from the page settings provided
+     *
+     * @param $page
+     * @param $lpasPerPage
+     * @param $lpasTotalCount
+     * @param $numberOfPagesInRange
+     * @return array
+     */
+    private function getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $numberOfPagesInRange)
+    {
+        //  Determine the total number of pages
+        $pageCount = ceil($lpasTotalCount / $lpasPerPage);
+
+        //  If the requested page is higher than allowed then set it to the highest possible value
+        if ($page > $pageCount) {
+            $page = $pageCount;
+        }
+
+        //  Figure out which pages to provide specific links to - pages in range
+        //  Start the pages in range array with the current page
+        $pagesInRange = [$page];
+
+        for ($i = 0; $i < ($numberOfPagesInRange - 1); $i++) {
+            //  Get the current lowest and highest page numbers
+            $lowestPage = min($pagesInRange);
+            $highestPage = max($pagesInRange);
+
+            //  If this is an even numbered iteration add a higher page number
+            if ($i % 2 == 0) {
+                //  Try to add a higher page number if possible
+                //  If not possible then try to add a lower page number if possible
+                if ($highestPage < $pageCount) {
+                    $pagesInRange[] = ++$highestPage;
+                } elseif ($lowestPage > 1) {
+                    $pagesInRange[] = --$lowestPage;
+                }
+            } else {
+                //  Try to add a lower page number if possible
+                //  If not possible then try to add a higher page number if possible
+                if ($lowestPage > 1) {
+                    $pagesInRange[] = --$lowestPage;
+                } elseif ($highestPage < $pageCount) {
+                    $pagesInRange[] = ++$highestPage;
+                }
+            }
+        }
+
+        //  Sort the page numbers into order
+        asort($pagesInRange);
+
+        //  Figure out the first and last item number that are being displayed
+        $firstItemNumber = (($page - 1) * $lpasPerPage) + 1;
+        $lastItemNumber = min($page * $lpasPerPage, $lpasTotalCount);
+
+        return [
+            'page'            => $page,
+            'pageCount'       => $pageCount,
+            'pagesInRange'    => $pagesInRange,
+            'firstItemNumber' => $firstItemNumber,
+            'lastItemNumber'  => $lastItemNumber,
+            'totalItemCount'  => $lpasTotalCount,
+        ];
+    }
+
     /**
      * Creates a new LPA
      *
      * If 'lpa-id' is set, use the passed ID to seed the new LPA.
      */
-    public function createAction(){
-
+    public function createAction()
+    {
         $seedId = $this->params()->fromRoute('lpa-id');
-        
+
         //-------------------------------------
         // If we're seeding the new LPA...
 
-        if( $seedId != null ){
-
+        if ($seedId != null) {
             //-------------------------------------
             // Create a new LPA...
 
             $lpa = $this->getLpaApplicationService()->createApplication();
 
-            if( !( $lpa instanceof Lpa ) ){
-            
+            if (!$lpa instanceof Lpa) {
                 $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
-                return $this->redirect()->toRoute( 'user/dashboard' );
-            
+                return $this->redirect()->toRoute('user/dashboard');
             }
-            
-            $result = $this->getLpaApplicationService()->setSeed( $lpa->id, (int)$seedId );
-            
+
+            $result = $this->getLpaApplicationService()->setSeed($lpa->id, (int) $seedId);
+
             $this->resetSessionCloneData($seedId);
 
-            if( $result !== true ){
+            if ($result !== true) {
                 $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');
             }
-            
-            // Redirect them to the first page...
-            return $this->redirect()->toRoute( 'lpa/form-type', [ 'lpa-id'=>$lpa->id ] );
 
+            // Redirect them to the first page...
+            return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id'=>$lpa->id ]);
         }
 
         //---
 
         // Redirect them to the first page, no LPA created
-        return $this->redirect()->toRoute( 'lpa-type-no-id' );
+        return $this->redirect()->toRoute('lpa-type-no-id');
+    }
 
-    } // function
-    
     public function deleteLpaAction()
     {
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
-        if( $this->getLpaApplicationService()->deleteApplication($lpaId) !== true ) {
+        if ($this->getLpaApplicationService()->deleteApplication($lpaId) !== true) {
             throw new \RuntimeException('API client failed to delete LPA for id: '.$lpaId);
         }
-        
+
         return $this->redirect()->toRoute('user/dashboard');
     }
 
@@ -113,60 +165,9 @@ class DashboardController extends AbstractAuthenticatedController
     /**
      * Displayed when the Terms and Conditions have changed since the user last logged in.
      */
-    public function termsAction(){
+    public function termsAction()
+    {
         return new ViewModel();
-    }
-
-    //------------------------------------------------------------------
-
-    /**
-     * Returns a Paginator for all the user's LPAs.
-     *
-     * @return Paginator
-     */
-    private function getLpaList(){
-
-        // Return all of the (v2) LPAs.
-        $lpas = $this->getServiceLocator()->get('ApplicationList')->getAllALpaSummaries();
-
-        //---
-
-        // Sort by updatedAt into descending order
-        // Once we remove #v1Code, perhaps we can assume they're pre-sorted from the API/DB?
-        usort($lpas, function($a, $b){
-            if ($a->updatedAt == $b->updatedAt) { return 0; }
-            return ($a->updatedAt > $b->updatedAt) ? -1 : 1;
-        });
-
-        //---
-
-        return new Paginator(new PaginatorArrayAdapter($lpas));
-
-    } // function
-
-    /**
-     * Returns a Paginator for all the user's LPAs the match the given query.
-     *
-     * @return Paginator
-     */
-    private function searchLpaList( $query ){
-
-        // Return all of the (v2) LPAs that match the query.
-        $lpas = $this->getServiceLocator()->get('ApplicationList')->searchAllALpaSummaries( $query );
-        
-        //---
-
-        // Sort by updatedAt into descending order
-        // Once we remove #v1Code, perhaps we can assume they're pre-sorted from the API/DB?
-        usort($lpas, function($a, $b){
-            if ($a->updatedAt == $b->updatedAt) { return 0; }
-            return ($a->updatedAt > $b->updatedAt) ? -1 : 1;
-        });
-
-        //---
-
-        return new Paginator(new PaginatorArrayAdapter($lpas));
-
     }
 
     //------------------------------------------------------------------
@@ -176,10 +177,8 @@ class DashboardController extends AbstractAuthenticatedController
      *
      * @return bool|\Zend\Http\Response
      */
-    protected function checkAuthenticated( $allowRedirect = true ){
-
-        return parent::checkAuthenticated( false );
-
-    } // function
-
-} // class
+    protected function checkAuthenticated($allowRedirect = true)
+    {
+        return parent::checkAuthenticated(false);
+    }
+}

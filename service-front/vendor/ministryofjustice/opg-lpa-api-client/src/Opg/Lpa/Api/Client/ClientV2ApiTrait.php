@@ -1,63 +1,51 @@
 <?php
+
 namespace Opg\Lpa\Api\Client;
 
+use GuzzleHttp\Psr7\Uri;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-use GuzzleHttp\Psr7\Uri;
-
-trait ClientV2ApiTrait {
-
-    //------------------------------------------------------------------------------------
-    // Public API access methods
-
+trait ClientV2ApiTrait
+{
     /**
      * Returns all LPAs for the current user.
      *
      * @param array $query
      * @return array|Exception\ResponseException
      */
-    public function getApplicationList( array $query = array() ){
+    public function getApplicationList(array $query = [])
+    {
+        $applicationList = [];
 
-        $applicationList = array();
+        //  Construct the path to the API and create a URL
+        $path = sprintf('/v2/users/%s/applications', $this->getUserId());
+        $url = new Uri($this->getApiBaseUri() . $path);
 
-        $path = sprintf( '/v2/users/%s/applications', $this->getUserId() );
+        $response = $this->httpGet($url, $query);
 
-        do {
+        if ($response->getStatusCode() != 200) {
+            return new Exception\ResponseException('unknown-error', $response->getStatusCode(), $response);
+        }
 
-            $url = new Uri( $this->getApiBaseUri() . $path );
+        $body = json_decode($response->getBody(), true);
 
-            $response = $this->httpGet( $url, $query );
-
-            if( $response->getStatusCode() != 200 ){
-                return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
-            }
-
-            $body = json_decode($response->getBody(), true);
-
-            if( $body['count'] == 0 ){
-                return array();
-            }
-
+        //  Only check the contents if results where returned
+        if ($body['count'] > 0) {
             if (!isset($body['_links']) || !isset($body['_embedded']['applications'])) {
-                return new Exception\ResponseException( 'missing-fields', $response->getStatusCode(), $response );
+                return new Exception\ResponseException('missing-fields', $response->getStatusCode(), $response);
             }
 
+            //  If there are applications present then process them
             foreach ($body['_embedded']['applications'] as $application) {
                 $applicationList[] = new Lpa($application);
             }
+        }
 
-            if (isset($body['_links']['next']['href'])) {
-                $path = $body['_links']['next']['href'];
-            } else {
-                $path = null;
-            }
-
-        } while (!is_null($path));
-
-        //---
-
-        return $applicationList;
-
+        //  Return a summary of the application list
+        return [
+            'applications' => $applicationList,
+            'total'        => $body['total'],
+        ];
     }
 
     /**
@@ -65,52 +53,58 @@ trait ClientV2ApiTrait {
      *
      * @return Response\Lpa|Exception\ResponseException
      */
-    public function createApplication(){
+    public function createApplication()
+    {
+        $path = sprintf('/v2/users/%s/applications', $this->getUserId());
 
-        $path = sprintf( '/v2/users/%s/applications', $this->getUserId() );
-
-        $url = new Uri( $this->getApiBaseUri() . $path );
+        $url = new Uri($this->getApiBaseUri() . $path);
 
         try {
+            $response = $this->httpPost($url);
 
-            $response = $this->httpPost( $url );
-
-            if( $response->getStatusCode() == 201 ){
-
+            if ($response->getStatusCode() == 201) {
                 return Response\Lpa::buildFromResponse($response);
-
             }
-
-        } catch ( Exception\ResponseException $e ){
+        } catch (Exception\ResponseException $e) {
             return $e;
         }
 
-        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
-
+        return new Exception\ResponseException('unknown-error', $response->getStatusCode(), $response);
     }
 
-    public function getApplication( $lpaId ){
+    /**
+     * Get an application by lpaId
+     *
+     * @param $lpaId
+     * @return bool|static
+     */
+    public function getApplication($lpaId)
+    {
+        $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $path = sprintf( '/v2/users/%s/applications/%d', $this->getUserId(), $lpaId );
+        $url = new Uri($this->getApiBaseUri() . $path);
 
-        $url = new Uri( $this->getApiBaseUri() . $path );
+        $response = $this->httpGet($url);
 
-        $response = $this->httpGet( $url );
-
-        return ( $response->getStatusCode() == 200 ) ? Response\Lpa::buildFromResponse($response) : false;
-
+        return ($response->getStatusCode() == 200 ? Response\Lpa::buildFromResponse($response) : false);
     }
 
-    public function updateApplication( $lpaId, Array $data ){
+    /**
+     * Update application with the provided data
+     *
+     * @param $lpaId
+     * @param array $data
+     * @return static
+     */
+    public function updateApplication($lpaId, array $data)
+    {
+        $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $path = sprintf( '/v2/users/%s/applications/%d', $this->getUserId(), $lpaId );
-
-        $url = new Uri( $this->getApiBaseUri() . $path );
+        $url = new Uri($this->getApiBaseUri() . $path);
 
         $response = $this->httpPatch($url, $data);
 
-        return Response\Lpa::buildFromResponse( $response );
-
+        return Response\Lpa::buildFromResponse($response);
     }
 
     /**
@@ -119,20 +113,19 @@ trait ClientV2ApiTrait {
      * @param $lpaId
      * @return true|Exception\ResponseException
      */
-    public function deleteApplication( $lpaId ){
+    public function deleteApplication($lpaId)
+    {
+        $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $path = sprintf( '/v2/users/%s/applications/%d', $this->getUserId(), $lpaId );
+        $url = new Uri($this->getApiBaseUri() . $path);
 
-        $url = new Uri( $this->getApiBaseUri() . $path );
+        $response = $this->httpDelete($url);
 
-        $response = $this->httpDelete( $url );
-
-        if( $response->getStatusCode() == 204 ){
+        if ($response->getStatusCode() == 204) {
             return true;
         }
 
-        return new Exception\ResponseException( 'unknown-error', $response->getStatusCode(), $response );
-
+        return new Exception\ResponseException('unknown-error', $response->getStatusCode(), $response);
     }
 
     /**
@@ -146,26 +139,20 @@ trait ClientV2ApiTrait {
      * @param array $metadata
      * @return boolean
      */
-    public function setMetaData($lpaId, Array $metadata) {
-
+    public function setMetaData($lpaId, array $metadata)
+    {
         $currentMetadata = $this->getMetaData($lpaId);
 
-        if( is_array($currentMetadata) ){
-
+        if (is_array($currentMetadata)) {
             // Strip out the _links key
-            unset( $currentMetadata['_links'] );
+            unset($currentMetadata['_links']);
 
             // Merge new data into old
-            $metadata = array_merge( $currentMetadata, $metadata );
-
+            $metadata = array_merge($currentMetadata, $metadata);
         }
 
-        //---
-
-        $this->updateApplication($lpaId, [ 'metadata'=>$metadata ]);
+        $this->updateApplication($lpaId, ['metadata'=>$metadata]);
 
         return true;
-
     }
-
 }
