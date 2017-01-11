@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\Authenticated\Lpa;
 
@@ -22,7 +15,7 @@ use Application\Form\Lpa\AbstractActorForm;
 
 class CorrespondentController extends AbstractLpaController
 {
-    
+
     protected $contentHeader = 'registration-partial.phtml';
 
     /*
@@ -39,9 +32,9 @@ class CorrespondentController extends AbstractLpaController
     {
         $viewModel = new ViewModel();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        
+
         $lpaId = $this->getLpa()->id;
-        
+
         /**
          * @var $correspondent
          * if $lpa->document->correspondent is a Correspondent object, $correspondent = $lpa->document->correspondent
@@ -65,23 +58,23 @@ class CorrespondentController extends AbstractLpaController
         else {
             $correspondent = $this->getLpa()->document->correspondent;
         }
-        
+
         // set hidden form for saving applicant as the default correspondent
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondenceForm', ['lpa'=>$this->getLpa()]);
-        
+
         if($this->request->isPost()) {
-            
+
             $form->setData($this->request->getPost());
-            
+
             if($form->isValid()) {
-                
+
                 $validatedFormData = $form->getData();
-                
+
                 // save default correspondent if it has not been set
                 if($this->getLpa()->document->correspondent === null) {
-                
+
                     $applicants = $this->getLpa()->document->whoIsRegistering;
-                
+
                     // work out the default correspondent - donor or an attorney.
                     if($applicants == 'donor') {
                         $correspondent = $this->getLpa()->document->donor;
@@ -97,7 +90,7 @@ class CorrespondentController extends AbstractLpaController
                             }
                         }
                     }
-                    
+
                     // save correspondent via api
                     $params = [
                             'who'       => $who,
@@ -111,9 +104,9 @@ class CorrespondentController extends AbstractLpaController
                     ];
                 }
                 else {
-                    
+
                     $correspondent = $this->getLpa()->document->correspondent;
-                    
+
                     $params = [
                             'who'       => $correspondent->who,
                             'name'      => $correspondent->name,
@@ -141,11 +134,11 @@ class CorrespondentController extends AbstractLpaController
 
 
                 //var_dump($validatedFormData, $params); die;
-                
+
                 if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, new Correspondence($params))) {
                     throw new \RuntimeException('API client failed to set correspondent for id: '.$lpaId);
                 }
-                
+
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
             }
 
@@ -183,7 +176,7 @@ class CorrespondentController extends AbstractLpaController
             }
 
         }
-        
+
         return new ViewModel([
                 'form'              => $form,
                 'correspondent'     => [
@@ -195,58 +188,58 @@ class CorrespondentController extends AbstractLpaController
                 'editRoute'     => $this->url()->fromRoute( $currentRouteName.'/edit', ['lpa-id'=>$lpaId] )
         ]);
     }
-    
+
     public function editAction()
     {
         $isPopup = $this->getRequest()->isXmlHttpRequest();
-        
+
         $viewModel = new ViewModel(['isPopup' => $isPopup]);
-        
+
         if ( $isPopup ) {
             $viewModel->setTerminal(true);
         }
-        
+
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        
+
         $correspondentForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
         $correspondentForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-        
+
         $correspondentSelection = $this->correspondentSelector($viewModel, $correspondentForm);
         if($correspondentSelection instanceof JsonModel) {
             return $correspondentSelection;
         }
-        
+
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
-            
+
             if(!$postData->offsetExists('switch-to-type')) {
-                
+
                 // handle correspondent form submission
                 $correspondentForm->setData($postData);
                 if($correspondentForm->isValid()) {
                     $correspondentFormData = $correspondentForm->getData();
-                    
+
                     if($this->getLpa()->document->correspondent == null) {
                         $correspondent = new Correspondence($correspondentForm->getModelDataFromValidatedForm());
                     }
                     else {
                         // If correspondent has been previously saved,
                         // merge form data with non-form data from current record
-                        
+
                         $correspondent = new Correspondence(array_merge($correspondentForm->getModelDataFromValidatedForm(), [
                                 'contactByPost'  => $this->getLpa()->document->correspondent->contactByPost,
                                 'contactInWelsh' => $this->getLpa()->document->correspondent->contactInWelsh,
                         ]));
                     }
-                    
+
                     // Let the PDF module know that we can't rely on the default donor or attorney values any more
                     $correspondent->set('contactDetailsEnteredManually', true);
-                    
+
                     if(!$this->getLpaApplicationService()->setCorrespondent($lpaId, $correspondent)) {
                         throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
                     }
-                    
+
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }
@@ -255,10 +248,10 @@ class CorrespondentController extends AbstractLpaController
                     }
                 }
             } // if($postData->offsetExists('switch-to-type'))
-            
+
         } //if($this->request->isPost())
         else {
-            
+
             // if correspondent wasn't set, load applicant details into the form
             if($this->getLpa()->document->correspondent === null) {
                 if($this->getLpa()->document->whoIsRegistering == 'donor') {
@@ -278,10 +271,10 @@ class CorrespondentController extends AbstractLpaController
                 // otherwise, load correspondent details into the form
                 $correspondent = $this->getLpa()->document->correspondent;
             }
-            
+
             // convert object into array.
             $correspondentDetails = $correspondent->flatten();
-            
+
             if($correspondent instanceof TrustCorporation) {
                 $correspondentDetails['company'] = $correspondent->name;
                 $correspondentDetails['name-title'] = ' ';
@@ -297,36 +290,36 @@ class CorrespondentController extends AbstractLpaController
             else {
                 $correspondentDetails['who'] = 'attorney';
             }
-            
+
             // bind data into the form
             $correspondentForm->bind($correspondentDetails);
-            
+
         } //if($this->request->isPost())
-        
+
         $viewModel->correspondentForm = $correspondentForm;
-        
+
         return $viewModel;
     }
-    
+
     protected function correspondentSelector(ViewModel $viewModel, AbstractActorForm $mainForm)
     {
         $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa'=>$this->getLpa(), 'user'=>$this->getServiceLocator()->get('UserDetailsSession')->user]);
         $switcherForm->setAttribute( 'action', $this->url()->fromRoute( $this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id] ) );
         $viewModel->switcherForm = $switcherForm;
-        
+
         if($this->request->isPost()) {
-            
+
             $postData = $this->request->getPost();
-            
+
             if(!$postData->offsetExists('switch-to-type')) return;
-            
+
             $switcherForm->setData($postData);
-            
+
             if($switcherForm->isValid()) {
                 switch($postData['switch-to-type']) {
                     case 'me':
                         $userSession = $this->getServiceLocator()->get('UserDetailsSession');
-    
+
                         $formData = [
                                 'who'=>'other',
                                 'name-title' => $userSession->user->name->title,
@@ -381,18 +374,18 @@ class CorrespondentController extends AbstractLpaController
                             ];
                         }
                         break;
-    
+
                 } // switch($postData['switch-to-type'])
-    
+
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
                     return new JsonModel($formData);
                 }
                 else {
                     $mainForm->bind($formData);
                 }
-    
+
             } //if($switcherForm->isValid())
         }
-        
+
     }
 }

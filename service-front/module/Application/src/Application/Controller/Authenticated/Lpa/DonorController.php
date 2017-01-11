@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\Authenticated\Lpa;
 
@@ -17,19 +10,19 @@ use Application\Model\Service\Lpa\Communication;
 
 class DonorController extends AbstractLpaActorController
 {
-    
+
     protected $contentHeader = 'creation-partial.phtml';
-    
+
     public function indexAction()
     {
         $viewModel = new ViewModel();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        
+
         $lpaId = $this->getLpa()->id;
-        
+
         $donor = $this->getLpa()->document->donor;
         if( $donor instanceof Donor ) {
-            
+
             return new ViewModel([
                     'donor'         => [
                             'name'  => $donor->name,
@@ -42,52 +35,52 @@ class DonorController extends AbstractLpaActorController
         else {
             return new ViewModel([ 'addRoute' => $this->url()->fromRoute( $currentRouteName.'/add', ['lpa-id'=>$lpaId] ) ]);
         }
-        
+
     }
-    
+
     public function addAction()
     {
         $lpaId = $this->getLpa()->id;
         $routeMatch = $this->getEvent()->getRouteMatch();
-        
+
         if( $this->getLpa()->document->donor instanceof Donor ) {
             return $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
         }
-        
+
         $isPopup = $this->getRequest()->isXmlHttpRequest();
-        
+
         $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         $viewModel->setTemplate('application/donor/form.twig');
         if ($isPopup) {
             $viewModel->setTerminal(true);
         }
-        
+
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        
+
         $seedSelection = $this->seedDataSelector($viewModel, $form);
         if($seedSelection instanceof JsonModel) {
             return $seedSelection;
         }
-        
+
         $viewModel->isUseMyDetails = false;
-        
+
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
-            
+
             // received POST from donor form submission
             if(!$postData->offsetExists('pick-details')) {
-                
+
                 // handle donor form submission
                 $form->setData($postData);
                 if($form->isValid()) {
-                    
+
                     // persist data
                     $donor = new Donor($form->getModelDataFromValidatedForm());
                     if(!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
                         throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
                     }
-                    
+
                     if ( $this->getRequest()->isXmlHttpRequest() ) {
                         return new JsonModel(['success' => true]);
                     }
@@ -104,26 +97,26 @@ class DonorController extends AbstractLpaActorController
                 $viewModel->isUseMyDetails = true;
             }
         }
-        
+
         $viewModel->form = $form;
         $viewModel->cancelRoute = $this->url()->fromRoute('lpa/donor', ['lpa-id' => $lpaId]);
-        
+
         // show user my details link (if the link has not been clicked and seed dropdown is not set in the view)
         if(($viewModel->seedDetailsPickerForm==null) && !$this->params()->fromQuery('use-my-details')) {
             $viewModel->useMyDetailsRoute = $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]) . '?use-my-details=1';
         }
-        
+
         return $viewModel;
     }
-    
+
     public function editAction()
     {
         $lpaId = $this->getLpa()->id;
         $routeMatch = $this->getEvent()->getRouteMatch();
         $currentRouteName = $routeMatch->getMatchedRouteName();
-        
+
         $isPopup = $this->getRequest()->isXmlHttpRequest();
-        
+
         $viewModel = new ViewModel(['routeMatch' => $routeMatch, 'isPopup' => $isPopup]);
         $viewModel->setTemplate('application/donor/form.twig');
         if ($isPopup) {
@@ -132,22 +125,22 @@ class DonorController extends AbstractLpaActorController
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-        
+
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
             $postData['canSign'] = (bool) $postData['canSign'];
-            
+
             $form->setData($postData);
-            
+
             if($form->isValid()) {
-                
+
                 // persist data
                 $donor = new Donor($form->getModelDataFromValidatedForm());
-                
+
                 if(!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
                     throw new \RuntimeException('API client failed to update LPA donor for id: '.$lpaId);
                 }
-                
+
                 if ( $this->getRequest()->isXmlHttpRequest() ) {
                     return new JsonModel(['success' => true]);
                 }
@@ -166,9 +159,9 @@ class DonorController extends AbstractLpaActorController
             ];
             $form->bind($donor);
         }
-        
+
         $viewModel->form = $form;
-        
+
         return $viewModel;
     }
 }

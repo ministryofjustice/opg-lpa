@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\Authenticated\Lpa;
 
@@ -17,9 +10,9 @@ use Zend\Form\Element;
 
 class FeeReductionController extends AbstractLpaController
 {
-    
+
     protected $contentHeader = 'registration-partial.phtml';
-    
+
     public function indexAction()
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeReductionForm');
@@ -56,7 +49,7 @@ class FeeReductionController extends AbstractLpaController
         //---
 
         $reduction = $form->get('reductionOptions');
-        
+
         $reductionOptions = [];
 
         $amount = Calculator::getBenefitsFee( $isRepeatApplication );
@@ -70,7 +63,7 @@ class FeeReductionController extends AbstractLpaController
             'value' => $reduction->getOptions()['value_options']['reducedFeeReceivesBenefits']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeReceivesBenefits')? 'checked':null),
         ]);
-        
+
         $reductionOptions['reducedFeeUniversalCredit'] = new Element('reductionOptions', [
             'label' => "The donor receives Universal Credit<br><strong class='bold-small'>We'll contact you about the fee</strong>"
         ]);
@@ -104,17 +97,17 @@ class FeeReductionController extends AbstractLpaController
             'value' => $reduction->getOptions()['value_options']['notApply']['value'],
             'checked' => (($reduction->getValue() == 'notApply')? 'checked':null),
         ]);
-        
+
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
-            
+
             // set data for validation
             $form->setData($postData);
-            
+
             if($form->isValid()) {
-                
+
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-                
+
                 // if no applying reduced fee, set payment in LPA including amount.
                 switch($form->getData()['reductionOptions']) {
                     case 'reducedFeeReceivesBenefits':
@@ -152,18 +145,18 @@ class FeeReductionController extends AbstractLpaController
                         ]);
                         break;
                 }
-                
+
                 // calculate payment amount and set payment in LPA
                 Calculator::calculate($lpa);
 
                 if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
                     throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
                 }
-                
+
                 return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
             }
         }
-        
+
         return new ViewModel([
                 'form'=>$form,
                 'reductionOptions' => $reductionOptions,
