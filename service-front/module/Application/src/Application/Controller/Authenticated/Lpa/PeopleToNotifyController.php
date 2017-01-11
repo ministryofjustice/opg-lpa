@@ -120,6 +120,9 @@ class PeopleToNotifyController extends AbstractLpaActorController
             $viewModel->useMyDetailsRoute = $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]) . '?use-my-details=1';
         }
 
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/people-to-notify');
+
         return $viewModel;
     }
 
@@ -175,6 +178,9 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/people-to-notify');
 
         return $viewModel;
     }

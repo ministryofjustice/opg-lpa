@@ -65,7 +65,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $lpaId = $this->getLpa()->id;
-        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/primary-attorney', ['lpa-id' => $lpaId]);
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
@@ -121,6 +120,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->addTrustCorporationRoute = $this->url()->fromRoute('lpa/primary-attorney/add-trust', ['lpa-id' => $lpaId]);
         }
 
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/primary-attorney');
+
         return $viewModel;
     }
 
@@ -136,7 +138,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $lpaId = $this->getLpa()->id;
-        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/primary-attorney', ['lpa-id' => $lpaId]);
 
         $currentRouteName = $routeMatch->getMatchedRouteName();
 
@@ -200,6 +201,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/primary-attorney');
 
         return $viewModel;
     }
@@ -282,7 +286,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $lpaId = $this->getLpa()->id;
-        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/primary-attorney', ['lpa-id' => $lpaId]);
 
         // redirect to add human attorney if lpa is of hw type or a trust was added already.
         if (($this->getLpa()->document->type == Document::LPA_TYPE_HW) || $this->hasTrust()) {
@@ -326,6 +329,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         $viewModel->form = $form;
         $viewModel->addAttorneyRoute = $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]);
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/primary-attorney');
 
         return $viewModel;
     }
