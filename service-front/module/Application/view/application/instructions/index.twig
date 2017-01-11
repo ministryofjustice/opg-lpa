@@ -1,4 +1,4 @@
-{% extends 'layout/twig/accordion-header.twig' %}
+{% extends 'layout/twig/accordion-layout.twig' %}
 
 {% block content %}
 
@@ -32,7 +32,7 @@
 {{ preferences.setOptions({label: 'Preferences'}) ? '' }}
 
 <li id="instructions-and-preferences-section" class="section current js-current">
-    
+
     <h2 class="heading-medium accordion-header flush--top">Instructions and preferences</h2>
 
     <div class="accordion-info">
@@ -47,16 +47,16 @@
 
     {# begin form #}
     {{ form.prepare() ? '' }}
-    {{ form().openTag( form )|raw }} 
+    {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
-        
+
             <summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions for the attorneys? (optional)</summary>
 
             <div>
 
-                <div class="form-group text">   
+                <div class="form-group text">
                     <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-instructions-and-preferences" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on instructions and preferences</a>. It contains useful examples and can help you avoid mistakes.</p>
                 </div>
 
@@ -85,9 +85,9 @@
         </details>
 
         <input type="submit" name="save" value="Save and continue" class="button">
-                         
+
     {{ form().closeTag|raw }}
-    
+
 </li>
 
 {% endblock %}
