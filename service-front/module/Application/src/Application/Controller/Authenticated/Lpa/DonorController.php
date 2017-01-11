@@ -95,12 +95,14 @@ class DonorController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
-        $viewModel->cancelRoute = $this->url()->fromRoute('lpa/donor', ['lpa-id' => $lpaId]);
 
         // show user my details link (if the link has not been clicked and seed dropdown is not set in the view)
         if (($viewModel->seedDetailsPickerForm==null) && !$this->params()->fromQuery('use-my-details')) {
             $viewModel->useMyDetailsRoute = $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]) . '?use-my-details=1';
         }
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/donor');
 
         return $viewModel;
     }
@@ -158,6 +160,11 @@ class DonorController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
+
+
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/donor');
 
         return $viewModel;
     }

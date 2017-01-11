@@ -132,6 +132,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             $viewModel->addTrustCorporationRoute = $this->url()->fromRoute('lpa/replacement-attorney/add-trust', ['lpa-id' => $lpaId]);
         }
 
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/replacement-attorney');
+
         return $viewModel;
     }
 
@@ -208,6 +211,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/replacement-attorney');
 
         return $viewModel;
     }
@@ -305,6 +311,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         $viewModel->form = $form;
         $viewModel->addAttorneyRoute = $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]);
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/replacement-attorney');
 
         return $viewModel;
     }

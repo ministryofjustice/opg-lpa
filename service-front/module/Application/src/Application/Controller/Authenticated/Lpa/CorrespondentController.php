@@ -265,6 +265,9 @@ class CorrespondentController extends AbstractLpaController
 
         $viewModel->correspondentForm = $correspondentForm;
 
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/correspondent');
+
         return $viewModel;
     }
 

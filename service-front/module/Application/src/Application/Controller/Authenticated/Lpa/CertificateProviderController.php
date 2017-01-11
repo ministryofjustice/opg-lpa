@@ -92,6 +92,9 @@ class CertificateProviderController extends AbstractLpaActorController
             $viewModel->useMyDetailsRoute = $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]) . '?use-my-details=1';
         }
 
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/certificate-provider');
+
         return $viewModel;
     }
 
@@ -139,6 +142,9 @@ class CertificateProviderController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
+
+        //  Add a cancel route for this action
+        $this->addCancelRouteToView($viewModel, 'lpa/certificate-provider');
 
         return $viewModel;
     }
