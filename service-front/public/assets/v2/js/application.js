@@ -5321,45 +5321,51 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 // Dependencies: moj, jQuery
 
 (function () {
-  'use strict';
+    'use strict';
 
-  moj.Modules.Applicant = {
+    moj.Modules.Applicant = {
 
-    init: function () {
-      this.selectionBehaviour();
-    },
+        init: function () {
+            this.selectionBehaviour();
+        },
 
-    selectionBehaviour: function(){
-      // Only do the following if .js-attorney-list exists
-      if ($('.js-attorney-list')[0]) {
+        selectionBehaviour: function() {
+            // Only do the following if .js-attorney-list exists
+            if ($('.js-attorney-list')[0]) {
 
-        // Toggle all checkboxes under Attorneys
-        $('[name="whoIsRegistering"]').change(function(){
-          if($(this).val() === 'donor' ){
-            $('.js-attorney-list input:checkbox').prop('checked', false);
-            $('.js-attorney-list label').removeClass('selected');
-            $('')
-          } else {
-            $('.js-attorney-list input:checkbox').prop('checked', true);
-            $('.js-attorney-list label').addClass('selected');
-          }
-        });
+                // Toggle all checkboxes under Attorneys
+                $('[name="whoIsRegistering"]').change(function() {
+                    if ($(this).val() === 'donor') {
+                        //  Uncheck the attorney checkboxes and re-render the input styles
+                        $('.js-attorney-list input:checkbox').prop('checked', false);
 
-        // Revert to Donor if no Attorneys are checked
-        $('.js-attorney-list input').change(function(){
-          if($('.js-attorney-list input').is(':checked')){
-            $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true).parent().addClass('selected');
-            $('input[name="whoIsRegistering"][value="donor"]').parent().removeClass('selected');
+                        moj.Modules.Applicant.renderRegisteredByInputs();
+                    }
+                });
 
-          } else {
-            $('input[name="whoIsRegistering"][value="donor"]').prop('checked', true).parent().addClass('selected');
-            $('input[name="whoIsRegistering"][value!="donor"]').parent().removeClass('selected');
-          }
-        });
+                //  If an attorney checkbox is checked then ensure that the correct radio button is selected
+                $('.js-attorney-list input').change(function() {
+                    //  If an attorney is selected directly then trigger the radio button select
+                    if ($('.js-attorney-list input').is(':checked')) {
+                        $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
+                    }
 
-      }
-    }
-  };
+                    moj.Modules.Applicant.renderRegisteredByInputs();
+                });
+
+            }
+        },
+
+        renderRegisteredByInputs: function () {
+            //  Render the radio buttons and checkboxes as required
+            $('[name="whoIsRegistering"]').parent().removeClass('selected');
+            $('[name="whoIsRegistering"]:checked').parent().addClass('selected');
+
+            $('.js-attorney-list input').parent().removeClass('selected');
+            $('.js-attorney-list input:checked').parent().addClass('selected');
+        }
+
+    };
 })();
 // Fees module for LPA
 // Dependencies: moj, jQuery
