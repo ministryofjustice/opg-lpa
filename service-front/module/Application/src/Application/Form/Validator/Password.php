@@ -38,7 +38,7 @@ class Password extends AbstractValidator
         }
 
         //  Check that an upper case letter has been provided
-        $regExValidator = new Regex('/.*[0-9].*/');
+        $regExValidator = new Regex('/.*[A-Z].*/');
 
         if (!$regExValidator->isValid($value)) {
             $this->error(self::MUST_INCLUDE_UPPER_CASE);
