@@ -3443,11 +3443,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div class=\"dialog__container\">\n\n    <div class=\"dialog__title-block\">";
+  buffer += "<div class=\"dialog-container\">\n\n    <div class=\"dialog-title-block\">";
   if (helper = helpers.dialogTitle) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.dialogTitle); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</div>\n\n    <div class=\"dialog__message-block\"><p>";
+    + "</div>\n\n    <div class=\"dialog-message-block\"><p>";
   if (helper = helpers.dialogMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.dialogMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -3560,31 +3560,22 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div id=\"mask\" class=\"popover-mask\"></div>";
   });
 
+this["lpa"]["templates"]["postcodeLookup.address-change"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__change\" title=\"Search for UK Postcode\">Change address</a></li>\n	</ul>\n</div>\n";
+  });
+
 this["lpa"]["templates"]["postcodeLookup.address-toggle"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this;
+  
 
-function program1(depth0,data) {
-  
-  
-  return "\n		<li><a href=\"#\" data-address-type=\"postal\" class=\"js-PostcodeLookup__toggle-address\">Enter address manually</a></li>\n		";
-  }
 
-function program3(depth0,data) {
-  
-  
-  return "\n		<li><a href=\"#\" data-address-type=\"dx\" class=\"js-PostcodeLookup__toggle-address\">Enter DX address</a></li>\n		";
-  }
-
-  buffer += "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.postal), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dx), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n</div>";
-  return buffer;
+  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__toggle-address\">Enter address manually</a></li>\n	</ul>\n</div>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.search-field"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -4418,10 +4409,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $(this).val('');
         });
 
-      // Show any fields which were hidden
-      $('.js-PostcodeLookup__toggle-address[data-address-type="postal"]').click();
-      // loop over data and change values
-      _(data).each(function (value, key) {
+        // Show any fields which were hidden
+        
+        $('.js-PostcodeLookup').data('moj.PostcodeLookup').hideSearchForm();
+        $('.js-PostcodeLookup').data('moj.PostcodeLookup').toggleAddress();
+
+        // loop over data and change values
+        _(data).each(function (value, key) {
 
         // set el
         $el = $('[name="' + key + '"]');
@@ -4476,6 +4470,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   };
 
 })();
+
 // Postcode lookup module for LPA
 // Dependencies: moj, _, jQuery
 
@@ -4488,10 +4483,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
   // Define the class
   var PostcodeLookup = function (el) {
-    _.bindAll(this, 'searchClicked', 'toggleClicked', 'resultsChanged', 'queryEnter', 'postcodeSuccess', 'postcodeError', 'addressSuccess', 'populateFields');
-    this.cacheEls(el);
-    this.bindEvents();
-    this.init();
+      _.bindAll(this, 'searchClicked', 'toggleClicked', 'changeClicked', 'resultsChanged', 'queryEnter', 'postcodeSuccess', 'postcodeError', 'addressSuccess', 'populateFields');
+      this.cacheEls(el);
+      this.bindEvents();
+      this.init();
   };
 
   PostcodeLookup.prototype = {
@@ -4512,36 +4507,48 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       this.$wrap = wrap;
       this.$form = this.$wrap.closest('form');
       this.$postalFields = this.$wrap.find('.js-PostcodeLookup__postal-add');
-      this.$dxFields = this.$wrap.find('.js-PostcodeLookup__dx-add');
 
       this.searchTpl = lpa.templates['postcodeLookup.search-field'];
       this.toggleTpl = lpa.templates['postcodeLookup.address-toggle'];
       this.resultTpl = lpa.templates['postcodeLookup.search-result'];
+      this.changeTpl = lpa.templates['postcodeLookup.address-change'];
     },
 
     bindEvents: function () {
       this.$wrap.on('click.moj.Modules.PostcodeLookup', '.js-PostcodeLookup__search-btn', this.searchClicked);
       this.$wrap.on('click.moj.Modules.PostcodeLookup', '.js-PostcodeLookup__toggle-address', this.toggleClicked);
+      this.$wrap.on('click.moj.Modules.PostcodeLookup', '.js-PostcodeLookup__change', this.changeClicked);
       this.$wrap.on('change.moj.Modules.PostcodeLookup', '.js-PostcodeLookup__search-results', this.resultsChanged);
       this.$wrap.on('keydown.moj.Modules.PostcodeLookup', '.js-PostcodeLookup__query', this.queryEnter);
     },
 
     init: function () {
-      // make sure the fields exist before adding them to the toggle
-      var hasPostal = this.$postalFields.length > 0 ? true : false,
-        hasDx = this.$dxFields.length > 0 ? true : false;
+        // prepend template to postal fields
+        this.$postalFields.before(this.searchTpl() + this.toggleTpl() + this.changeTpl()).addClass('hidden');
 
-      // prepend template to postal fields
-      this.$postalFields.before(this.searchTpl() + this.toggleTpl({postal: hasPostal, dx: hasDx})).addClass('hidden');
-      this.$dxFields.addClass('hidden');
+        // if all fields are empty, hide them
+        if (moj.Helpers.hasCleanFields(this.$postalFields)) {
+            this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
+        } else {
+            this.hideSearchForm();
+            this.toggleAddress();
+        }
+    },
 
-      // if all fields are empty, hide them
-      if (!moj.Helpers.hasCleanFields(this.$postalFields)) {
-        this.toggleAddressType('postal');
-      }
-      if (!moj.Helpers.hasCleanFields(this.$dxFields)) {
-        this.toggleAddressType('dx');
-      }
+    hideSearchForm: function() {
+        this.$wrap.find('.js-PostcodeLookup__search').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__change').closest('div').removeClass('hidden');
+    },
+
+    changeClicked: function(e) {
+        this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
+        this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden');
+        if (moj.Helpers.hasCleanFields(this.$postalFields)) {
+            this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').removeClass('hidden');
+        }
+        this.$wrap.find('.js-PostcodeLookup__query').focus();
+        return false;
     },
 
     searchClicked: function (e) {
@@ -4563,8 +4570,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     toggleClicked: function (e) {
       var $el = $(e.target);
-
-      this.toggleAddressType($el.data('addressType'));
+      this.toggleAddress();
       return false;
     },
 
@@ -4584,7 +4590,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           this.findAddress(val);
       }
 	      
-      this.toggleAddressType('postal');
+      this.toggleAddress();
     },
 
     queryEnter: function (e) {
@@ -4668,18 +4674,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           this.$postalFields.find('[name*="' + value + '"]').val(data[key]).change();
         }
       }, this);
-      this.toggleAddressType('postal');
+      this.toggleAddress();
       // remove result list
       this.$wrap.find('.js-PostcodeLookup__search-results').spinner('off');
     },
 
-    toggleAddressType: function (show) {
-      if (show === 'dx') {
-        this.$dxFields.removeClass('hidden');
-        this.$postalFields.addClass('hidden');
-        // focus on first address field
-        this.$dxFields.find('[name*="dxNumber"]').focus();
-      } else {
+    toggleAddress: function () {
         var $search = this.$wrap.find('.js-PostcodeLookup__query'),
           $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
         // popuplate postcode field
@@ -4687,14 +4687,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $pcode.val($search.val()).change();
         }
         this.$postalFields.removeClass('hidden');
-        this.$dxFields.addClass('hidden');
         // focus on first address field
         if ($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length === 1) {
           this.$postalFields.find('[name*="addr1"]').focus();
         }
-      }
-      // toggle class
-      this.$wrap.find('.js-PostcodeLookup__toggle-address').removeClass('text-style').filter('[data-address-type="' + show + '"]').addClass('text-style');
     }
   };
 
@@ -4719,6 +4715,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     }
   };
 }());
+
 // Person Form module for LPA
 // Dependencies: moj, _, jQuery
 
@@ -4786,7 +4783,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             month = parseInt($monthObj.val(), 10);
             if (isNaN(month) || month <= 0 || month > 12) {
               month = undefined;
-
             }
             else {
               month = month - 1;
