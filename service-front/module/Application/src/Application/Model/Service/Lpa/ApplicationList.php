@@ -1,11 +1,12 @@
 <?php
+
 namespace Application\Model\Service\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-
+use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use DateTime;
 
 /**
  * Used for accessing a list of LPAs owned by the current user.
@@ -13,59 +14,77 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  * Class ApplicationList
  * @package Application\Model\Service\Lpa
  */
-class ApplicationList implements ServiceLocatorAwareInterface {
-
+class ApplicationList implements ServiceLocatorAwareInterface
+{
+    /**
+     * Trait included to utilise the set and get functions required
+     */
     use ServiceLocatorAwareTrait;
 
-    //---
-
-    public function getAllALpaSummaries(){
-
-        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList();
-
-        return $this->convertToStandardResponse( $v2Apis );
-
-    } // function
-
-    public function searchAllALpaSummaries( $query ){
-
-        $v2Apis = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList( [ 'search' => $query ] );
-
-        return $this->convertToStandardResponse( $v2Apis );
-
-    } // function
-
     /**
-     * Converts the LPAs to a standard structure between v1 & v2.
+     * Get a summary of LPAs from the API utilising the search string if one was provided
+     * If no page number if provided then get all summaries
      *
-     * @param $v2Apis
+     * @param string $search
+     * @param int $page
+     * @param int $itemsPerPage
      * @return array
      */
-    private function convertToStandardResponse( $v2Apis ){
+    public function getLpaSummaries($search = null, $page = null, $itemsPerPage = null)
+    {
+        //  Construct the query params
+        $queryParams = [
+            'search' => $search,
+        ];
 
-        $lpas = array();
-
-        foreach($v2Apis as $lpa){
-
-            $obj = new \stdClass();
-
-            $obj->id = $lpa->id;
-
-            $obj->version = 2;
-
-            $obj->donor = ((($lpa->document->donor instanceof Donor) && ($lpa->document->donor->name instanceof Name))?(string)$lpa->document->donor->name:'');
-
-            $obj->type = $lpa->document->type;
-
-            $obj->updatedAt = $lpa->updatedAt;
-
-            $obj->progress = ($lpa->completedAt instanceof \DateTime)?'Completed':(($lpa->createdAt instanceof \DateTime)?'Created':'Started');
-
-            $lpas[] = $obj;
+        //  If valid page parameters are provided then add them to the API query
+        if (is_numeric($page) && $page > 0 && is_numeric($itemsPerPage) && $itemsPerPage > 0) {
+            $queryParams = array_merge($queryParams, [
+                'page'    => $page,
+                'perPage' => $itemsPerPage,
+            ]);
         }
 
-        return $lpas;
+        $applicationsSummary = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList($queryParams);
 
-    } // function
+        //  If there are LPAs returned, change them into standard class objects for use
+        $lpas = [];
 
-} // class
+        if (isset($applicationsSummary['applications']) && is_array($applicationsSummary['applications'])) {
+            foreach ($applicationsSummary['applications'] as $application) {
+                //  Get the Donor name
+                $donorName = '';
+
+                if ($application->document->donor instanceof Donor && $application->document->donor->name instanceof Name) {
+                    $donorName = (string) $application->document->donor->name;
+                }
+
+                //  Get the progress string
+                $progress = 'Started';
+
+                if ($application->completedAt instanceof DateTime) {
+                    $progress = 'Completed';
+                } elseif ($application->createdAt instanceof DateTime) {
+                    $progress = 'Created';
+                }
+
+                //  Create a record for the returned LPA
+                $lpa = new \stdClass();
+
+                $lpa->id = $application->id;
+                $lpa->version = 2;
+                $lpa->donor = $donorName;
+                $lpa->type = $application->document->type;
+                $lpa->updatedAt = $application->updatedAt;
+                $lpa->progress = $progress;
+
+                $lpas[] = $lpa;
+            }
+
+            //  Swap the stdClass LPAs in
+            $applicationsSummary['applications'] = $lpas;
+        }
+
+        return $applicationsSummary;
+    }
+}
