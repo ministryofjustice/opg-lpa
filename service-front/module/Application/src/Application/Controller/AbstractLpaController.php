@@ -16,12 +16,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
      * @var LPA The LPA currently referenced in to the URL
      */
     private $lpa;
-    
+
     /**
      * @var Application\Model\FormFlowChecker
      */
     private $flowChecker;
-    
+
     public function onDispatch(MvcEvent $e)
     {
 
@@ -38,15 +38,15 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         if(isset($this->contentHeader)) {
             $this->layout()->contentHeader = $this->contentHeader;
         }
-        
+
         # inject lpa into layout.
         $this->layout()->lpa = $this->getLpa();
-        
+
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
-         */   
+         */
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
-        
+
         // get extra input query param from the request url.
         if($currentRoute == 'lpa/download') {
             $param = $e->getRouteMatch()->getParam('pdf-type');
@@ -54,27 +54,27 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         else {
             $param = $e->getRouteMatch()->getParam('idx');
         }
-        
+
         // call flow checker to get the nearest accessible route.
         $calculatedRoute = $this->getFlowChecker()->getNearestAccessibleRoute($currentRoute, $param);
-        
+
         // if false, do not run action method.
         if($calculatedRoute === false) {
             return $this->response;
         }
-        
+
         // redirect to the calculated route if it is not equal to the current route
         if($calculatedRoute != $currentRoute) {
             return $this->redirect()->toRoute($calculatedRoute, ['lpa-id'=>$this->getLpa()->id]);
         }
-        
+
         // inject lpa into view
         $view = parent::onDispatch($e);
-        
+
         if(($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             $view->setVariable('lpa', $this->getLpa());
         }
-        
+
         return $view;
     }
 
@@ -105,7 +105,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         }
         return $this->lpa;
     }
-    
+
     /**
      * Sets the LPA currently referenced in to the URL
      *
@@ -115,7 +115,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     {
         $this->lpa = $lpa;
     }
-    
+
     /**
      * @return \Application\Controller\Application\Model\FormFlowChecker
      */
@@ -125,19 +125,19 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
             $formFlowChecker = new FormFlowChecker($this->getLpa());
             $this->flowChecker = $formFlowChecker;
         }
-        
+
         return $this->flowChecker;
     }
 
     /**
      * Check if LPA has a trust corporation attorney in either primary or replacement attorneys
-     * 
+     *
      * @return boolean
      */
     protected function hasTrust()
     {
         $hasTrust = false;
-        
+
         foreach(array_merge($this->getLpa()->document->primaryAttorneys, $this->getLpa()->document->replacementAttorneys) as $attorney) {
             if($attorney instanceof TrustCorporation) {
                 return true;
@@ -145,10 +145,10 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         }
         return false;
     }
-        
+
     /**
      * Convert model/seed data for populating into form
-     * 
+     *
      * @param array $modelData - eg. [name=>[title=>'Mr', first=>'John', last=>'Smith']]
      * @return array - eg [name-title=>'Mr', name-first=>'John', name-last=>'Smith']
      */
@@ -175,7 +175,15 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
                 $formData[$l1] = $l2;
             }
         }
-        
+
         return $formData;
+    }
+
+    protected function addCancelRouteToView(ViewModel $viewModel, $route)
+    {
+        //  If a route string is provided then add it now
+        if (is_string($route)) {
+            $viewModel->cancelRoute = $this->url()->fromRoute($route, ['lpa-id' => $this->getLpa()->id]);
+        }
     }
 }

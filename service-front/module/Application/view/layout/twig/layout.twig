@@ -112,24 +112,11 @@
             {{ flash.render('success', 'alert-success', 'icon-tick') }}
             {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
 
-            {% block openAccordion %}
-            {% endblock %}
-
-            {% set accordionTop = accordion( lpa ).top() %}
-            {% set accordionBottom = accordion( lpa ).bottom() %}
-
-            {% if (accordionTop) %}
-            	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
-            {% endif %}
+            {% block accordionTop %}{% endblock %}
 
             {% block content %}{% endblock %}
 
-            {% if (accordionBottom) %}
-            	{% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionBottom, 'lpa':lpa } %}
-            {% endif %}
-
-            {% block closeAccordion %}
-            {% endblock %}
+            {% block accordionBottom %}{% endblock %}
 
         </div>
 

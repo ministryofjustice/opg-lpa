@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\Authenticated\Lpa;
 
@@ -20,11 +13,11 @@ class WhoAreYouController extends AbstractLpaController
     {
         $lpaId = $this->getLpa()->id;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        
+
         if($this->getLpa()->whoAreYouAnswered == true) {
             return new ViewModel( ['nextRoute'=>$this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )] );
         }
-        
+
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhoAreYouForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
 
@@ -54,11 +47,11 @@ class WhoAreYouController extends AbstractLpaController
         //---
 
         $who            = $form->get('who');
-        
+
         $professional   = $form->get('professional');
-        
+
         $whoOptions = [];
-        
+
         $whoOptions['donor'] = new Element('who', [
                 'label' => "The donor used this online service with little or no help",
         ]);
@@ -68,7 +61,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $who->getOptions()['value_options']['donor']['value'],
                 'checked' => (($who->getValue() == 'donor')? 'checked':null),
         ]);
-        
+
         $whoOptions['friend-or-family'] = new Element('who', [
                 'label' => "A friend or family member (who may also be the attorney) helped the donor use this online service",
         ]);
@@ -78,7 +71,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $who->getOptions()['value_options']['friendOrFamily']['value'],
                 'checked' => (($who->getValue() == 'friendOrFamily')? 'checked':null),
         ]);
-        
+
         $whoOptions['professional'] = new Element('who', [
                 'label' => "A paid professional made the LPA on the donor's behalf",
         ]);
@@ -88,7 +81,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $who->getOptions()['value_options']['professional']['value'],
                 'checked' => (($who->getValue() == 'professional')? 'checked':null),
         ]);
-        
+
         $whoOptions['digital-partner'] = new Element('who', [
                 'label' => "OPG's Assisted Digital Service helped the donor",
         ]);
@@ -98,7 +91,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $who->getOptions()['value_options']['digitalPartner']['value'],
                 'checked' => (($who->getValue() == 'digitalPartner')? 'checked':null),
         ]);
-        
+
         $whoOptions['organisation'] = new Element('who', [
                 'label' => "Another organisation, such as a charity, council or community group, helped the donor",
         ]);
@@ -108,7 +101,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $who->getOptions()['value_options']['organisation']['value'],
                 'checked' => (($who->getValue() == 'organisation')? 'checked':null),
         ]);
-        
+
         $whoOptions['notSaid'] = new Element('who', [
                 'label' => "I'd prefer not to say",
         ]);
@@ -118,7 +111,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $who->getOptions()['value_options']['notSaid']['value'],
                 'checked' => (($who->getValue() == 'notSaid')? 'checked':null),
         ]);
-        
+
         $professionalOptions = [];
         $professionalOptions['solicitor'] = new Element('professional', [
                 'label' => "Solicitor",
@@ -129,7 +122,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $professional->getOptions()['value_options']['solicitor']['value'],
                 'checked' => (($professional->getValue() == 'solicitor')? 'checked':null),
         ]);
-        
+
         $professionalOptions['will-writer'] = new Element('professional', [
                 'label' => "Will-writer",
         ]);
@@ -139,7 +132,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $professional->getOptions()['value_options']['will-writer']['value'],
                 'checked' => (($professional->getValue() == 'will-writer')? 'checked':null),
         ]);
-        
+
         $professionalOptions['other'] = new Element('professional', [
                 'label' => "Other",
         ]);
@@ -149,7 +142,7 @@ class WhoAreYouController extends AbstractLpaController
                 'value' => $professional->getOptions()['value_options']['other']['value'],
                 'checked' => (($professional->getValue() == 'other')? 'checked':null),
         ]);
-        
+
         //---
 
         return new ViewModel([
