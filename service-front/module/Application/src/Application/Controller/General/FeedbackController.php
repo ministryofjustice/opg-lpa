@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\General;
 
@@ -19,37 +12,37 @@ class FeedbackController extends AbstractBaseController
     public function indexAction()
     {
         $container = new Container('feedback');
-        
+
         $form = new FeedbackForm();
-        
+
         $type = $form->get('rating');
         $typeValueOptions = $type->getOptions()['value_options'];
-        
+
         $typeValueOptions['very-satisfied']['label'] = 'Very satisfied';
         $typeValueOptions['satisfied']['label'] = 'Satisfied';
         $typeValueOptions['neither-satisfied-or-dissatisfied']['label'] = 'Neither satisfied nor dissatisfied';
         $typeValueOptions['dissatisfied']['label'] = 'Dissatisfied';
         $typeValueOptions['very-dissatisfied']['label'] = 'Very dissatisfied';
-        
+
         $type->setOptions([
             'value_options' => $typeValueOptions
         ]);
-        
+
         $model = new ViewModel([
             'form'=>$form
         ]);
-        
+
         $request = $this->getRequest();
-        
+
         if ($request->isPost()) {
-        
+
             $form->setData($request->getPost());
-        
+
             if ($form->isValid()) {
-                
+
                 $feedbackService = $this->getServiceLocator()->get('Feedback');
                 $data = $form->getData();
-                
+
                 $result = $feedbackService->sendMail([
                     'rating' => $data['rating'],
                     'details' => $data['details'],
@@ -58,7 +51,7 @@ class FeedbackController extends AbstractBaseController
                     'agent' => $_SERVER['HTTP_USER_AGENT'],
                     'fromPage' => $container->feedbackLinkClickedFromPage,
                 ]);
-                
+
                 if ($result === true) {
                     return (new ViewModel)->setTemplate('application/feedback/thankyou');
                 } else {
@@ -73,7 +66,7 @@ class FeedbackController extends AbstractBaseController
                 $container->feedbackLinkClickedFromPage = 'Unknown';
             }
         }
-        
+
         return $model;
     }
 }

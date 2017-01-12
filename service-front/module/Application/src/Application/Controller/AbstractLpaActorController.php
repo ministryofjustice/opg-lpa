@@ -14,49 +14,49 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * @var Application\Model\FormFlowChecker
      */
     private $flowChecker;
-        
+
     /**
-     * Return clone source LPA details from session container, or from the api 
-     * if not found in the session container. 
-     * 
+     * Return clone source LPA details from session container, or from the api
+     * if not found in the session container.
+     *
      * @param bool $trustOnly - when true, only return trust corporation details
-     * 
+     *
      * @return Array|Null;
      */
     protected function getSeedDetails($trustOnly=false)
     {
         if($this->getLpa()->seed === null) return null;
-        
+
         $seedId = $this->getLpa()->seed;
         $cloneContainer = new Container('clone');
-        
+
         if(!$cloneContainer->offsetExists($seedId)) {
-            
+
             // get seed data from the API
             $seedData = $this->getLpaApplicationService()->getSeedDetails($this->getLpa()->id);
-            
+
             if(!$seedData) {
                 return null;
             }
-            
+
             // save seed data into session container
             $cloneContainer->$seedId = $seedData;
-            
+
         }
-        
+
         // get seed data from session container
         $seedData = $cloneContainer->$seedId;
-        
-        // ordering and filtering the data 
+
+        // ordering and filtering the data
         $seedDetails = [];
-        
+
         if(!$trustOnly) {
             $seedDetails[] = [
                 'label' => (string)$this->getServiceLocator()->get('UserDetailsSession')->user->name . ' (myself)',
                 'data'  => $this->getUserDetailsAsArray(),
             ];
         }
-        
+
         foreach($seedData as $type => $actorData) {
             if($trustOnly) {
                 switch($type) {
@@ -67,7 +67,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                                         'label' => $singleActorData['name'] . ' (was a Primary Attorney)',
                                         'data' => $this->flattenData($this->seedDataFilter($singleActorData)),
                                 ];
-                                
+
                                 // only one trust can be in an LPA
                                 return $seedDetails;
                             }
@@ -80,7 +80,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                                         'label' => $singleActorData['name'] . ' (was a Replacement Attorney)',
                                         'data' => $this->flattenData($this->seedDataFilter($singleActorData)),
                                 ];
-                                
+
                                 // only one trust can be in an LPA
                                 return $seedDetails;
                             }
@@ -89,7 +89,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 }
             }
             else {
-                
+
                 switch($type) {
                     case 'donor':
                         $seedDetails[] = [
@@ -141,13 +141,13 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 }
             }
         }
-        
+
         return $seedDetails;
     }
-    
+
     /**
      * Filtering seed details - only keep name, address, dob, email, etc.
-     * 
+     *
      * @param array $seedData
      * @return array
      */
@@ -169,19 +169,19 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                     break;
             }
         }
-        
+
         return $filteredData;
     }
-    
+
     protected function seedDataSelector(ViewModel $viewModel, AbstractActorForm $mainForm, $trustOnly=false)
     {
         $seedDetails = $this->getSeedDetails($trustOnly);
-        
+
         if($seedDetails == null) return;
-        
+
         $seedDetailsPickerForm = $this->getServiceLocator()->get('FormElementManager')->get( 'Application\Form\Lpa\SeedDetailsPickerForm', ['seedDetails'=>$seedDetails] );
         $seedDetailsPickerForm->setAttribute( 'action', $this->url()->fromRoute( $this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id] ) );
-        
+
         if($trustOnly) {
             if(!$this->params()->fromQuery('use-trust-details')) {
                 $viewModel->useTrustRoute = $this->url()->fromRoute( $this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id] ).'?use-trust-details=1';
@@ -191,24 +191,24 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         else {
             $viewModel->seedDetailsPickerForm = $seedDetailsPickerForm;
         }
-        
+
         if($this->request->isPost()) {
-            
+
             $postData = $this->request->getPost();
-            
+
             if(!$postData->offsetExists('pick-details')) return;
-                    
+
             // load seed data into the form or return form data in json format if request is an ajax
             $seedDetailsPickerForm->setData($this->request->getPost());
-            
+
             if(!$seedDetailsPickerForm->isValid()) return;
-                
+
             $pickIdx = $this->request->getPost('pick-details');
-            
+
             if(!(is_array($seedDetails) && array_key_exists($pickIdx, $seedDetails))) return;
-            
+
             $actorData = $seedDetails[$pickIdx]['data'];
-            
+
             if ( $this->getRequest()->isXmlHttpRequest() ) {
                 return new JsonModel($actorData);
             }
@@ -223,7 +223,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             }
         }
     }
-    
+
     protected function getUserDetailsAsArray()
     {
         $userDetails = $this->getUserDetails()->flatten();
@@ -234,7 +234,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 'year'  => $this->getUserDetails()->dob->date->format('Y'),
             ];
         }
-        
+
         return $userDetails;
     }
 }

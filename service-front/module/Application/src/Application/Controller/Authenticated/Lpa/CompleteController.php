@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\Authenticated\Lpa;
 
@@ -16,7 +9,7 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 
 class CompleteController extends AbstractLpaController
 {
-    
+
     protected $contentHeader = 'complete-partial.phtml';
 
     /**
@@ -33,7 +26,7 @@ class CompleteController extends AbstractLpaController
     }
 
     //---
-    
+
     public function indexAction()
     {
         $this->ensureLpaIsLocked();
@@ -41,15 +34,15 @@ class CompleteController extends AbstractLpaController
         //---
 
         $lpa = $this->getLpa();
-        
+
         if (property_exists($lpa, 'metadata')) {
-            
+
             if ($lpa->startedAt && $lpa->startedAt instanceof \DateTime) {
                 $analyticsDimensions = [
                     'dimension2' => $lpa->startedAt->format('Y-m-d'),
                 ];
             }
-            
+
             if (isset($lpa->metadata['analyticsReturnCount'])) {
                 $analyticsDimensions['dimension3'] = $lpa->metadata['analyticsReturnCount'];
             }
@@ -61,10 +54,10 @@ class CompleteController extends AbstractLpaController
         );
 
         $viewModel->setTemplate('application/complete/complete.twig');
-        
+
         return $viewModel;
     }
-    
+
     public function viewDocsAction()
     {
         $this->ensureLpaIsLocked();
@@ -74,18 +67,18 @@ class CompleteController extends AbstractLpaController
         $this->layout()->contentHeader = 'blank-header-partial.phtml';
         return new ViewModel($this->getViewParams());
     }
-    
+
     private function getViewParams()
     {
         $lpa = $this->getLpa();
 
         $payment = $this->getLpa()->payment;
-        
-        $isPaymentSkipped = 
+
+        $isPaymentSkipped =
             (($payment->reducedFeeUniversalCredit === true) ||
             (($payment->reducedFeeReceivesBenefits === true) && ($payment->reducedFeeAwardedDamages === true)) ||
             ($payment->method == Payment::PAYMENT_TYPE_CHEQUE));
-        
+
         $viewParams = [
                 'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp1']),
                 'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id'=>$lpa->id]),
@@ -96,17 +89,17 @@ class CompleteController extends AbstractLpaController
                 'hasRemission'       => ($this->getFlowChecker()->isEligibleForFeeReduction()),
                 'isPaymentSkipped'   => $isPaymentSkipped,
         ];
-        
+
         if(count($lpa->document->peopleToNotify) > 0) {
             $viewParams['lp3Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lp3']);
             $viewParams['peopleToNotify'] = $lpa->document->peopleToNotify;
         }
-        
+
         if($this->getFlowChecker()->isEligibleForFeeReduction()) {
             $viewParams['lpa120Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id'=>$lpa->id, 'pdf-type'=>'lpa120']);
         }
-        
-        
+
+
         return $viewParams;
     }
 }

@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application\Controller\Authenticated\Lpa;
 
@@ -17,25 +10,25 @@ class DownloadController extends AbstractLpaController
     public function indexAction()
     {
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
-        
+
         $this->log()->info('PDF type is ' . $pdfType, ['lpaId' => $this->getLpa()->id]);
-        
+
         // check PDF availability. return a nice error if unavailable.
         if((($pdfType == 'lpa120') && !$this->getFlowChecker()->canGenerateLPA120())
                 || (($pdfType == 'lp3') && !$this->getFlowChecker()->canGenerateLP3())
                 || (($pdfType == 'lpa1') && !$this->getFlowChecker()->canGenerateLP1())) {
-            
+
             $this->log()->info('PDF not available', ['lpaId' => $this->getLpa()->id]);
-                    
+
             return new ViewModel();
         }
-        
+
         $this->layout('layout/download.twig');
 
         $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
-        
+
         $this->log()->info('PDF status is ' . $details['status'], ['lpaId' => $this->getLpa()->id]);
-        
+
         if ( $details['status'] !== 'ready' ){
             return false;
         }
@@ -49,7 +42,7 @@ class DownloadController extends AbstractLpaController
             ]);
 
         }
-        
+
         return $this->getResponse();
     }
 
