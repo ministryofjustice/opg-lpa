@@ -45,7 +45,7 @@ class GuardPluginManager extends AbstractPluginManager
     /**
      * {@inheritDoc}
      */
-    public function validate($plugin)
+    public function validatePlugin($plugin)
     {
         if ($plugin instanceof GuardInterface) {
             return; // we're okay
@@ -55,14 +55,6 @@ class GuardPluginManager extends AbstractPluginManager
             'Guards must implement "ZfcRbac\Guard\GuardInterface", but "%s" was given',
             is_object($plugin) ? get_class($plugin) : gettype($plugin)
         ));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function validatePlugin($plugin)
-    {
-        $this->validate($plugin);
     }
 
     /**

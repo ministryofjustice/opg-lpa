@@ -31,12 +31,6 @@ class ControllerPermissionsGuardFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testFactory()
     {
-        $serviceManager = new ServiceManager();
-
-        if (method_exists($serviceManager, 'build')) {
-            $this->markTestSkipped('this test is only vor zend-servicemanager v2');
-        }
-
         $creationOptions = [
             'route' => 'permission'
         ];
@@ -49,49 +43,18 @@ class ControllerPermissionsGuardFactoryTest extends \PHPUnit_Framework_TestCase
             'protection_policy' => GuardInterface::POLICY_ALLOW,
         ]);
 
+        $serviceManager = new ServiceManager();
         $serviceManager->setService('ZfcRbac\Options\ModuleOptions', $options);
         $serviceManager->setService(
             'ZfcRbac\Service\AuthorizationService',
             $this->getMock('ZfcRbac\Service\AuthorizationService', [], [], '', false)
         );
 
-        $pluginManager = new GuardPluginManager($serviceManager);
+        $pluginManager = new GuardPluginManager();
+        $pluginManager->setServiceLocator($serviceManager);
 
         $factory    = new ControllerPermissionsGuardFactory();
         $guard = $factory->createService($pluginManager);
-
-        $this->assertInstanceOf('ZfcRbac\Guard\ControllerPermissionsGuard', $guard);
-        $this->assertEquals(GuardInterface::POLICY_ALLOW, $guard->getProtectionPolicy());
-    }
-
-    public function testFactoryV3()
-    {
-        $serviceManager = new ServiceManager();
-
-        if (!method_exists($serviceManager, 'build')) {
-            $this->markTestSkipped('this test is only vor zend-servicemanager v3');
-        }
-
-        $creationOptions = [
-            'route' => 'permission'
-        ];
-
-        $options = new ModuleOptions([
-            'identity_provider' => 'ZfcRbac\Identity\AuthenticationProvider',
-            'guards'            => [
-                'ZfcRbac\Guard\ControllerPermissionsGuard' => $creationOptions
-            ],
-            'protection_policy' => GuardInterface::POLICY_ALLOW,
-        ]);
-
-        $serviceManager->setService('ZfcRbac\Options\ModuleOptions', $options);
-        $serviceManager->setService(
-            'ZfcRbac\Service\AuthorizationService',
-            $this->getMock('ZfcRbac\Service\AuthorizationService', [], [], '', false)
-        );
-
-        $factory    = new ControllerPermissionsGuardFactory();
-        $guard = $factory($serviceManager, GuardPluginManager::class);
 
         $this->assertInstanceOf('ZfcRbac\Guard\ControllerPermissionsGuard', $guard);
         $this->assertEquals(GuardInterface::POLICY_ALLOW, $guard->getProtectionPolicy());

@@ -48,7 +48,7 @@ class RoleProviderPluginManager extends AbstractPluginManager
     /**
      * {@inheritDoc}
      */
-    public function validate($plugin)
+    public function validatePlugin($plugin)
     {
         if ($plugin instanceof RoleProviderInterface) {
             return; // we're okay
@@ -58,14 +58,6 @@ class RoleProviderPluginManager extends AbstractPluginManager
             'Role provider must implement "ZfcRbac\Role\RoleProviderInterface", but "%s" was given',
             is_object($plugin) ? get_class($plugin) : gettype($plugin)
         ));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function validatePlugin($plugin)
-    {
-        $this->validate($plugin);
     }
 
     /**
