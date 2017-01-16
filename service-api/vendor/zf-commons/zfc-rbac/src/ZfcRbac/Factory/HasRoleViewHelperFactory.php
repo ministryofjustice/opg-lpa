@@ -18,7 +18,6 @@
 
 namespace ZfcRbac\Factory;
 
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\RoleService;
@@ -33,25 +32,14 @@ use ZfcRbac\View\Helper\HasRole;
 class HasRoleViewHelperFactory implements FactoryInterface
 {
     /**
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
-     * @return HasRole
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        /* @var RoleService $roleService */
-        $roleService = $container->get('ZfcRbac\Service\RoleService');
-
-        return new HasRole($roleService);
-    }
-
-    /**
      * {@inheritDoc}
      * @return HasRole
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return $this($serviceLocator->getServiceLocator(), HasRole::class);
+        /* @var RoleService $roleService */
+        $roleService = $serviceLocator->getServiceLocator()->get('ZfcRbac\Service\RoleService');
+
+        return new HasRole($roleService);
     }
 }
