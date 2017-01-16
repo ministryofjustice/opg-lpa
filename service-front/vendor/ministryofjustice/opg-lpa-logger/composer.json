@@ -21,6 +21,3 @@
         "psr-4": {"Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"}
     }
 }
-
-
-    

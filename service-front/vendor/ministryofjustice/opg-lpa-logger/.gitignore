@@ -1,4 +1,4 @@
-
+vendor
 tests/sentry.key
 tests/sns.credentials
 .idea
