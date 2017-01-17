@@ -72,7 +72,7 @@ return [
             'emails' => __DIR__ . '/../view/email',
         ),
     ),
-    
+
     'view_helpers' => [
         'invokables' => [
             'accordion'             => 'Application\View\Helper\Accordion',
@@ -94,6 +94,7 @@ return [
             'ordinalSuffix'         => 'Application\View\Helper\OrdinalSuffix',
             'applicantNames'        => 'Application\View\Helper\ApplicantNames',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
+            'formRadio'             => 'Application\Form\View\Helper\FormRadio',
         ],
     ],
 
