@@ -5,7 +5,7 @@ use Application\Controller\AbstractLpaController;
 
 class IndexController extends AbstractLpaController
 {
-    
+
     public function indexAction()
     {
 
@@ -35,8 +35,8 @@ class IndexController extends AbstractLpaController
         ]);
 
         //---
-        
-        $destinationRoute = $this->getFlowChecker()->backToForm('lpa/view-docs');
+
+        $destinationRoute = $this->getFlowChecker()->backToForm();
         return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id]);
 
     }
