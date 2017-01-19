@@ -201,6 +201,8 @@ class FormFlowChecker extends StateChecker
 
     public function backToForm()
     {
+        $lastValidRoute = "";
+
         foreach (static::$returnFunctionMap as $route => $fn) {
             $canAccess = call_user_func(array($this, $fn));
             if ($canAccess === false) {
