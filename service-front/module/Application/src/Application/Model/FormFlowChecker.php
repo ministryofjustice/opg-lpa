@@ -201,20 +201,13 @@ class FormFlowChecker extends StateChecker
 
     public function backToForm()
     {
-
-        $logger = new Logger();
-        $logger->setFileLogPath('/var/log/app/mylog.txt');
-        $lastValidRoute = "";
-
         foreach (static::$returnFunctionMap as $route => $fn) {
             $canAccess = call_user_func(array($this, $fn));
             if ($canAccess === false) {
-                $logger->alert("this route did not pass: ".$route);
                 break;
             }
             if ($canAccess === true) {
                 $lastValidRoute = $route;
-                $logger->alert("last valid route is: ".$route);
             }
         }
 
