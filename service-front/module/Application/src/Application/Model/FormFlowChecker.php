@@ -780,12 +780,7 @@ class FormFlowChecker extends StateChecker
 
     private function returnToDonor()
     {
-        if($this->lpaHasDonor()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return $this->lpaHasDonor();
     }
 
     private function returnToLifeSustaining()
@@ -793,10 +788,7 @@ class FormFlowChecker extends StateChecker
         if ($this->lpa->document->type != Document::LPA_TYPE_HW) {
             return 'NA';
         }
-        if ($this->lpaHasLifeSustaining()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHasLifeSustaining();
     }
 
     private function returnToWhenLpaStarts()
@@ -804,18 +796,12 @@ class FormFlowChecker extends StateChecker
         if ($this->lpa->document->type != Document::LPA_TYPE_PF) {
             return 'NA';
         }
-        if($this->lpaHasWhenLpaStarts()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHasWhenLpaStarts();
     }
 
     private function returnToPrimaryAttorney()
     {
-        if($this->lpaHasPrimaryAttorney()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHasPrimaryAttorney();
     }
 
     private function returnToHowPrimaryAttorneysMakeDecision()
@@ -824,18 +810,12 @@ class FormFlowChecker extends StateChecker
         if(!$this->lpaHasMultiplePrimaryAttorneys()) {
             return "NA";
         }
-        if($this->lpaHowPrimaryAttorneysMakeDecisionHasValue()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHowPrimaryAttorneysMakeDecisionHasValue();
     }
 
     private function returnToReplacementAttorney()
     {
-        if($this->replacementAttorneyHasBeenConfirmed()) {
-            return true;
-        }
-        false;
+        return $this->replacementAttorneyHasBeenConfirmed();
     }
 
     private function returnToWhenReplacementAttorneyStepIn()
@@ -843,10 +823,7 @@ class FormFlowChecker extends StateChecker
         if(!$this->lpaHasReplacementAttorney() || !$this->lpaHasMultiplePrimaryAttorneys() || !$this->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
             return "NA";
         }
-        if($this->lpaWhenReplacementAttorneyStepInHasValue()) {
-            return true;
-        }
-        return false;
+        return $this->lpaWhenReplacementAttorneyStepInHasValue();
     }
 
     private function returnToHowReplacementAttorneysMakeDecision()
@@ -859,26 +836,17 @@ class FormFlowChecker extends StateChecker
             !($this->lpaPrimaryAttorneysMakeDecisionJointly())) {
             return "NA";
         }
-        if($this->lpaHowReplacementAttorneysMakeDecisionHasValue()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHowReplacementAttorneysMakeDecisionHasValue();
     }
 
     private function returnToCertificateProvider()
     {
-        if($this->lpaHasCertificateProvider()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHasCertificateProvider();
     }
 
     private function returnToPeopleToNotify()
     {
-        if($this->peopleToNotifyHasBeenConfirmed()) {
-            return true;
-        }
-        return false;
+        return $this->peopleToNotifyHasBeenConfirmed();
     }
 
     private function returnToInstructions()
@@ -891,58 +859,38 @@ class FormFlowChecker extends StateChecker
 
     private function returnToApplicant()
     {
-        if($this->lpaHasApplicant()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHasApplicant();
     }
 
     private function returnToCorrespondent()
     {
-        if($this->lpaHasCorrespondent()) {
-            return true;
-        }
-        return false;
+        return $this->lpaHasCorrespondent();
     }
 
     private function returnToWhoAreYou()
     {
-        if($this->isWhoAreYouAnswered()) {
-            return true;
-        }
-        return false;
+        return $this->isWhoAreYouAnswered();
     }
 
     private function returnToRepeatApplication()
     {
-        if(array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata)) {
-            return true;
-        }
-        return false;
+        return array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata);
     }
 
     private function returnToFeeReduction()
     {
-        if($this->lpa->payment instanceof Payment) {
-            return true;
-        }
-        return false;
+        return $this->lpa->payment instanceof Payment;
     }
 
     private function returnToCheckout()
     {
-        if(($this->lpa->payment instanceof Payment) && ($this->isEligibleForFeeReduction() || $this->lpa->payment->amount > 0 )) {
-            return true;
-        }
-        return false;
+        return $this->lpa->payment instanceof Payment &&
+            ($this->isEligibleForFeeReduction() || $this->lpa->payment->amount > 0 );
     }
 
     private function returnToViewDocs()
     {
-        if($this->paymentResolved() && ($this->lpa->completedAt !== null)) {
-            return true;
-        }
-        return false;
+        return $this->paymentResolved() && $this->lpa->completedAt !== null;
     }
 
 } // class
