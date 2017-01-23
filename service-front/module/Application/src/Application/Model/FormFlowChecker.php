@@ -72,7 +72,6 @@ class FormFlowChecker extends StateChecker
 
     static $returnFunctionMap = array(
         'lpa/form-type'                                 => 'returnToFormType',
-        'lpa-type-no-id'                                => 'returnToNewLpa',
         'lpa/donor'                                     => 'returnToDonor',
         'lpa/when-lpa-starts'                           => 'returnToWhenLpaStarts',
         'lpa/life-sustaining'                           => 'returnToLifeSustaining',
