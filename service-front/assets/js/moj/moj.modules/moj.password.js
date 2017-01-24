@@ -17,10 +17,10 @@
             current_link.click(function(){
                 if (current_password.attr('type') === "password"){
                     current_password.attr('type', 'text');
-                    current_link.html("Hide Password");
+                    current_link.html("Hide password");
                 } else {
                     current_password.attr('type', 'password');
-                    current_link.html("Show Password");
+                    current_link.html("Show password");
                 }
                 return false;
             });
@@ -35,12 +35,12 @@
             link.click(function(){
                 if (pwd.attr('type') === "password"){
                     pwd.attr('type', 'text');
-                    link.html("Hide Password");
+                    link.html("Hide password");
                     pwdConfirmParent.addClass('hidden');
                     skipConfirm.prop('checked', 'checked');
                 } else {
                     pwd.attr('type', 'password');
-                    link.html("Show Password");
+                    link.html("Show password");
                     pwdConfirmParent.removeClass('hidden');
                     skipConfirm.removeProp('checked');
                 }
