@@ -46,8 +46,28 @@
     <fieldset>
         <legend class="visuallyhidden">Change password</legend>
 
-        {{ macros.formGroup(password) }}
-        {{ macros.formGroup(new_password) }}
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden" id="js-showCurrentPassword">Show Password</a>
+            </div>
+        </div>
+
+        <div class="form-group {{ new_password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ new_password.getAttribute('id') }}">
+                {{ new_password.getOption('label') }}
+                {{ formElementErrorsV2(new_password) }}
+            </label>
+            {{ formElement(new_password) }}
+            <div>
+                <a href="#" class="hidden" id="js-showHidePassword">Show Password</a>
+            </div>
+            <input type="checkbox" name="skip_confirm_password" class="hidden" id="js-skipConfirmPassword"></input>
+        </div>
         {{ macros.formGroup(new_password_confirm) }}
 
         <div class="form-group">

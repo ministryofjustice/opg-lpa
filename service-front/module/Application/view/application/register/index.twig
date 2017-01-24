@@ -81,7 +81,18 @@
 
         {% include 'application/partials/password-rules.twig' %}
 
-        {{ macros.formGroup(password) }}
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden" id="js-showHidePassword">Show Password</a>
+            </div>
+            <input type="checkbox" name="skip_confirm_password" class="hidden" id="js-skipConfirmPassword"></input>
+        </div>
+
         {{ macros.formGroup(password_confirm) }}
 
     </fieldset>

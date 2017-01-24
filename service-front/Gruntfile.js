@@ -114,6 +114,7 @@ module.exports = function (grunt) {
           'assets/js/lpa/lpa.templates.js',
 
           // MoJ Scripts - Modules
+          'assets/js/moj/moj.modules/moj.password.js',
           'assets/js/moj/moj.modules/moj.popup.js',
           'assets/js/moj/moj.modules/moj.help-system.js',
           'assets/js/moj/moj.modules/moj.form-popup.js',

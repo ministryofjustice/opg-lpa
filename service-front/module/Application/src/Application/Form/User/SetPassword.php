@@ -29,6 +29,11 @@ class SetPassword extends AbstractForm
             'type' => 'Password',
         ));
 
+        $this->add(array(
+            'name' => 'skip_confirm_password',
+            'type' => 'Checkbox',
+        ));
+
         //--------------------------------
         $this->setUseInputFilterDefaults(false);
 
@@ -63,34 +68,51 @@ class SetPassword extends AbstractForm
             ),
         )); // add
 
-        $inputFilter->add(array(
-            'name'     => 'password_confirm',
-            'required' => true,
-            'validators' => array(
-                array(
-                    'name'    => 'NotEmpty',
-                    'break_chain_on_failure' => true,
-                    'options' => array(
-                        'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                    ),
-                ),
-                array(
-                    'name'    => 'Identical',
-                    'break_chain_on_failure' => true,
-                    'options' => array(
-                        'token' => 'password',
-                        'messages' => [
-                            Validator\Identical::NOT_SAME => 'did-not-match',
-                        ],
-                    ),
-                ),
-            ),
-        )); // add
-
-        //---
-
         $this->setInputFilter($inputFilter);
     } // function
+
+    /**
+     * @param array $data The data from the request to validate
+     */
+    public function isValid()
+    {
+        $this->checkPasswordConfirm($this->data);
+        return parent::isValid();
+    }
+
+    protected function checkPasswordConfirm($data)
+    {
+
+        if (!$data['skip_confirm_password']) {
+            $inputFilter = $this->getInputFilter();
+
+            $inputFilter->add(array(
+                'name'     => 'password_confirm',
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'name'    => 'NotEmpty',
+                        'break_chain_on_failure' => true,
+                        'options' => array(
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            ],
+                        ),
+                    ),
+                    array(
+                        'name'    => 'Identical',
+                        'break_chain_on_failure' => true,
+                        'options' => array(
+                            'token' => 'password',
+                            'messages' => [
+                                Validator\Identical::NOT_SAME => 'did-not-match',
+                            ],
+                        ),
+                    ),
+                ),
+            )); // add
+
+            $this->setInputFilter($inputFilter);
+        }
+    }
 } // class
