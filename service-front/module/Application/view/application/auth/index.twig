@@ -23,7 +23,7 @@
 }) ? ''}}
 
 {{ password.setAttributes({
-    id: 'password_current',
+    id: 'password',
     class: 'form-control'
 }) ? '' }}
 
@@ -52,7 +52,7 @@
             </label>
             {{ formElement(password) }}
             <div>
-                <a href="#" id="js_show_hide_password">Show Password</a>
+                <a href="#" class="hidden" id="js-showHidePassword">Show Password</a>
             </div>
         </div>
 
