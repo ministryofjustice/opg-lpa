@@ -31,7 +31,7 @@ class SetPassword extends AbstractForm
 
         $this->add(array(
             'name' => 'skip_confirm_password',
-            'type' => 'Checkbox',
+            'type' => 'Hidden',
         ));
 
         //--------------------------------

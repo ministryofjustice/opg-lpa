@@ -3695,6 +3695,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     current_password.attr('type', 'password');
                     current_link.html("Show password");
                 }
+                current_password.focus();
                 return false;
             });
 
@@ -3710,13 +3711,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     pwd.attr('type', 'text');
                     link.html("Hide password");
                     pwdConfirmParent.addClass('hidden');
-                    skipConfirm.prop('checked', 'checked');
+                    skipConfirm.val(1);
                 } else {
                     pwd.attr('type', 'password');
                     link.html("Show password");
                     pwdConfirmParent.removeClass('hidden');
-                    skipConfirm.removeProp('checked');
+                    skipConfirm.val(0);
                 }
+                pwd.focus();
                 return false;
             });
         }
