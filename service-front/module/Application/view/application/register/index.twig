@@ -18,6 +18,7 @@
 {% set password = form.get('password') %}
 {% set password_confirm = form.get('password_confirm') %}
 {% set terms = form.get('terms') %}
+{% set skip_confirm_password = form.get('skip_confirm_password') %}
 
 {# form fields config #}
 {{ email.setAttributes({
@@ -46,6 +47,11 @@
 {{ terms.setAttributes({
     id: 'terms'
 }) ? ''}}
+
+{{ skip_confirm_password.setAttributes({
+    id: 'js-skipConfirmPassword'
+}) ? ''}}
+
 
 {# form fields labels #}
 {{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
@@ -90,7 +96,7 @@
             <div>
                 <a href="#" class="hidden" id="js-showHidePassword">Show password</a>
             </div>
-            <input type="checkbox" name="skip_confirm_password" class="hidden" id="js-skipConfirmPassword"></input>
+            {{ formElement(skip_confirm_password) }}
         </div>
 
         {{ macros.formGroup(password_confirm) }}
