@@ -82,7 +82,8 @@ module.exports = function (grunt) {
     // join the JS files
     concat: {
       options: {
-        sourceMap: true
+          separator: ';\n',
+          sourceMap: true
       },
       dist: {
         src: [
@@ -104,7 +105,7 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-spinner.js',
 
           // Polyfills
-          'assets/bower/govuk_elements/public/javascripts/vendor/details.polyfill.js',
+          'assets/bower/govuk_elements/public/javascripts/govuk/details.polyfill.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
