@@ -31,5 +31,6 @@ if (!moj.Helpers.isMobileWidth()) {
 }
 
 
+
 // Remove the no-js class
 $('body').removeClass('no-js');
