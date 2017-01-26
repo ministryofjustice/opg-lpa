@@ -96,6 +96,12 @@
       // hide use button and switch button
       $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
 
+      //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
+      // Use GOV.UK selection-buttons.js to set selected
+      // and focused states for block labels
+      var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']")
+      new GOVUK.SelectionButtons($blockLabels) // eslint-disable-line
+
     },
 
     submitForm: function (e) {
