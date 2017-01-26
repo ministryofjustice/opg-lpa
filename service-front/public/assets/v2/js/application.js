@@ -2718,119 +2718,118 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
   }
 };
 
-(function (global) {
-  "use strict";
+;(function (global) {
+  'use strict'
 
-  var $ = global.jQuery;
-  var GOVUK = global.GOVUK || {};
+  var $ = global.jQuery
+  var GOVUK = global.GOVUK || {}
 
   var SelectionButtons = function (elmsOrSelector, opts) {
-
-    this.selectedClass = 'selected';
-    this.focusedClass = 'focused';
-    this.radioClass = 'selection-button-radio';
-    this.checkboxClass = 'selection-button-checkbox';
+    this.selectedClass = 'selected'
+    this.focusedClass = 'focused'
+    this.radioClass = 'selection-button-radio'
+    this.checkboxClass = 'selection-button-checkbox'
     if (opts !== undefined) {
       $.each(opts, function (optionName, optionObj) {
-        this[optionName] = optionObj;
-      }.bind(this));
+        this[optionName] = optionObj
+      }.bind(this))
     }
     if (typeof elmsOrSelector === 'string') {
-      this.selector = elmsOrSelector;
-      this.setInitialState($(this.selector));
+      this.selector = elmsOrSelector
+      this.setInitialState($(this.selector))
     } else if (elmsOrSelector !== undefined) {
-      this.$elms = elmsOrSelector;
-      this.setInitialState(this.$elms);
+      this.$elms = elmsOrSelector
+      this.setInitialState(this.$elms)
     }
-    this.addEvents();
-  };
+    this.addEvents()
+  }
   SelectionButtons.prototype.addEvents = function () {
     if (typeof this.$elms !== 'undefined') {
-      this.addElementLevelEvents();
+      this.addElementLevelEvents()
     } else {
-      this.addDocumentLevelEvents();
+      this.addDocumentLevelEvents()
     }
-  };
+  }
   SelectionButtons.prototype.setInitialState = function ($elms) {
     $elms.each(function (idx, elm) {
-      var $elm = $(elm);
+      var $elm = $(elm)
 
-      var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass;
-      $elm.parent('label').addClass(labelClass);
+      var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass
+      $elm.parent('label').addClass(labelClass)
       if ($elm.is(':checked')) {
-        this.markSelected($elm);
+        this.markSelected($elm)
       }
-    }.bind(this));
-  };
+    }.bind(this))
+  }
   SelectionButtons.prototype.markFocused = function ($elm, state) {
     if (state === 'focused') {
-      $elm.parent('label').addClass(this.focusedClass);
+      $elm.parent('label').addClass(this.focusedClass)
     } else {
-      $elm.parent('label').removeClass(this.focusedClass);
+      $elm.parent('label').removeClass(this.focusedClass)
     }
-  };
+  }
   SelectionButtons.prototype.markSelected = function ($elm) {
-    var radioName;
+    var radioName
 
     if ($elm.attr('type') === 'radio') {
-      radioName = $elm.attr('name');
+      radioName = $elm.attr('name')
       $($elm[0].form).find('input[name="' + radioName + '"]')
         .parent('label')
-        .removeClass(this.selectedClass);
-      $elm.parent('label').addClass(this.selectedClass);
+        .removeClass(this.selectedClass)
+      $elm.parent('label').addClass(this.selectedClass)
     } else { // checkbox
       if ($elm.is(':checked')) {
-        $elm.parent('label').addClass(this.selectedClass);
+        $elm.parent('label').addClass(this.selectedClass)
       } else {
-        $elm.parent('label').removeClass(this.selectedClass);
+        $elm.parent('label').removeClass(this.selectedClass)
       }
     }
-  };
+  }
   SelectionButtons.prototype.addElementLevelEvents = function () {
-    this.clickHandler = this.getClickHandler();
-    this.focusHandler = this.getFocusHandler({ 'level' : 'element' });
+    this.clickHandler = this.getClickHandler()
+    this.focusHandler = this.getFocusHandler({ 'level': 'element' })
 
     this.$elms
       .on('click', this.clickHandler)
-      .on('focus blur', this.focusHandler);
-  };
+      .on('focus blur', this.focusHandler)
+  }
   SelectionButtons.prototype.addDocumentLevelEvents = function () {
-    this.clickHandler = this.getClickHandler();
-    this.focusHandler = this.getFocusHandler({ 'level' : 'document' });
+    this.clickHandler = this.getClickHandler()
+    this.focusHandler = this.getFocusHandler({ 'level': 'document' })
 
     $(document)
       .on('click', this.selector, this.clickHandler)
-      .on('focus blur', this.selector, this.focusHandler);
-  };
+      .on('focus blur', this.selector, this.focusHandler)
+  }
   SelectionButtons.prototype.getClickHandler = function () {
     return function (e) {
-      this.markSelected($(e.target));
-    }.bind(this);
-  };
+      this.markSelected($(e.target))
+    }.bind(this)
+  }
   SelectionButtons.prototype.getFocusHandler = function (opts) {
-    var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus';
+    var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus'
 
     return function (e) {
-      var state = (e.type === focusEvent) ? 'focused' : 'blurred';
+      var state = (e.type === focusEvent) ? 'focused' : 'blurred'
 
-      this.markFocused($(e.target), state);
-    }.bind(this);
-  };
+      this.markFocused($(e.target), state)
+    }.bind(this)
+  }
   SelectionButtons.prototype.destroy = function () {
     if (typeof this.selector !== 'undefined') {
       $(document)
         .off('click', this.selector, this.clickHandler)
-        .off('focus blur', this.selector, this.focusHandler);
+        .off('focus blur', this.selector, this.focusHandler)
     } else {
       this.$elms
         .off('click', this.clickHandler)
-        .off('focus blur', this.focusHandler);
+        .off('focus blur', this.focusHandler)
     }
-  };
+  }
 
-  GOVUK.SelectionButtons = SelectionButtons;
-  global.GOVUK = GOVUK;
-})(window);
+  GOVUK.SelectionButtons = SelectionButtons
+  global.GOVUK = GOVUK
+})(window)
 
 // As found in the application.js on govuk elements
 
@@ -3107,193 +3106,190 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
 
 // http://www.sitepoint.com/fixing-the-details-element/
 
-(function () {
-  'use strict';
+;(function () {
+  'use strict'
 
-  var NATIVE_DETAILS = typeof document.createElement('details').open === 'boolean';
+  var NATIVE_DETAILS = typeof document.createElement('details').open === 'boolean'
 
   // Add event construct for modern browsers or IE
   // which fires the callback with a pre-converted target reference
-  function addEvent(node, type, callback) {
+  function addEvent (node, type, callback) {
     if (node.addEventListener) {
       node.addEventListener(type, function (e) {
-        callback(e, e.target);
-      }, false);
+        callback(e, e.target)
+      }, false)
     } else if (node.attachEvent) {
       node.attachEvent('on' + type, function (e) {
-        callback(e, e.srcElement);
-      });
+        callback(e, e.srcElement)
+      })
     }
   }
 
   // Handle cross-modal click events
-  function addClickEvent(node, callback) {
+  function addClickEvent (node, callback) {
     // Prevent space(32) from scrolling the page
     addEvent(node, 'keypress', function (e, target) {
       if (target.nodeName === 'SUMMARY') {
         if (e.keyCode === 32) {
           if (e.preventDefault) {
-            e.preventDefault();
+            e.preventDefault()
           } else {
-            e.returnValue = false;
+            e.returnValue = false
           }
         }
       }
-    });
+    })
     // When the key comes up - check if it is enter(13) or space(32)
     addEvent(node, 'keyup', function (e, target) {
-      if (e.keyCode === 13 || e.keyCode === 32) { callback(e, target); }
-    });
+      if (e.keyCode === 13 || e.keyCode === 32) { callback(e, target) }
+    })
     addEvent(node, 'mouseup', function (e, target) {
-      callback(e, target);
-    });
+      callback(e, target)
+    })
   }
 
   // Get the nearest ancestor element of a node that matches a given tag name
-  function getAncestor(node, match) {
+  function getAncestor (node, match) {
     do {
       if (!node || node.nodeName.toLowerCase() === match) {
-        break;
+        break
       }
-    } while (node = node.parentNode);
+      node = node.parentNode
+    } while (node)
 
-    return node;
+    return node
   }
 
   // Create a started flag so we can prevent the initialisation
   // function firing from both DOMContentLoaded and window.onload
-  var started = false;
+  var started = false
 
   // Initialisation function
-  function addDetailsPolyfill(list) {
-
+  function addDetailsPolyfill (list) {
     // If this has already happened, just return
     // else set the flag so it doesn't happen again
     if (started) {
-      return;
+      return
     }
-    started = true;
+    started = true
 
     // Get the collection of details elements, but if that's empty
     // then we don't need to bother with the rest of the scripting
     if ((list = document.getElementsByTagName('details')).length === 0) {
-      return;
+      return
     }
 
     // else iterate through them to apply their initial state
-    var n = list.length, i = 0;
+    var n = list.length
+    var i = 0
     for (i; i < n; i++) {
-      var details = list[i];
+      var details = list[i]
 
       // Save shortcuts to the inner summary and content elements
-      details.__summary = details.getElementsByTagName('summary').item(0);
-      details.__content = details.getElementsByTagName('div').item(0);
+      details.__summary = details.getElementsByTagName('summary').item(0)
+      details.__content = details.getElementsByTagName('div').item(0)
 
       // If the content doesn't have an ID, assign it one now
       // which we'll need for the summary's aria-controls assignment
       if (!details.__content.id) {
-        details.__content.id = 'details-content-' + i;
+        details.__content.id = 'details-content-' + i
       }
 
       // Add ARIA role="group" to details
-      details.setAttribute('role', 'group');
+      details.setAttribute('role', 'group')
 
       // Add role=button to summary
-      details.__summary.setAttribute('role', 'button');
+      details.__summary.setAttribute('role', 'button')
 
       // Add aria-controls
-      details.__summary.setAttribute('aria-controls', details.__content.id);
+      details.__summary.setAttribute('aria-controls', details.__content.id)
 
       // Set tabIndex so the summary is keyboard accessible for non-native elements
       // http://www.saliences.com/browserBugs/tabIndex.html
       if (!NATIVE_DETAILS) {
-        details.__summary.tabIndex = 0;
+        details.__summary.tabIndex = 0
       }
 
       // Detect initial open state
-      var openAttr = details.getAttribute('open') !== null;
+      var openAttr = details.getAttribute('open') !== null
       if (openAttr === true) {
-        details.__summary.setAttribute('aria-expanded', 'true');
-        details.__content.setAttribute('aria-hidden', 'false');
+        details.__summary.setAttribute('aria-expanded', 'true')
+        details.__content.setAttribute('aria-hidden', 'false')
       } else {
-        details.__summary.setAttribute('aria-expanded', 'false');
-        details.__content.setAttribute('aria-hidden', 'true');
+        details.__summary.setAttribute('aria-expanded', 'false')
+        details.__content.setAttribute('aria-hidden', 'true')
         if (!NATIVE_DETAILS) {
-          details.__content.style.display = 'none';
+          details.__content.style.display = 'none'
         }
       }
 
       // Create a circular reference from the summary back to its
       // parent details element, for convenience in the click handler
-      details.__summary.__details = details;
+      details.__summary.__details = details
 
       // If this is not a native implementation, create an arrow
       // inside the summary
       if (!NATIVE_DETAILS) {
-
-        var twisty = document.createElement('i');
+        var twisty = document.createElement('i')
 
         if (openAttr === true) {
-          twisty.className = 'arrow arrow-open';
-          twisty.appendChild(document.createTextNode('\u25bc'));
+          twisty.className = 'arrow arrow-open'
+          twisty.appendChild(document.createTextNode('\u25bc'))
         } else {
-          twisty.className = 'arrow arrow-closed';
-          twisty.appendChild(document.createTextNode('\u25ba'));
+          twisty.className = 'arrow arrow-closed'
+          twisty.appendChild(document.createTextNode('\u25ba'))
         }
 
-        details.__summary.__twisty = details.__summary.insertBefore(twisty, details.__summary.firstChild);
-        details.__summary.__twisty.setAttribute('aria-hidden', 'true');
-
+        details.__summary.__twisty = details.__summary.insertBefore(twisty, details.__summary.firstChild)
+        details.__summary.__twisty.setAttribute('aria-hidden', 'true')
       }
     }
 
     // Define a statechange function that updates aria-expanded and style.display
     // Also update the arrow position
-    function statechange(summary) {
+    function statechange (summary) {
+      var expanded = summary.__details.__summary.getAttribute('aria-expanded') === 'true'
+      var hidden = summary.__details.__content.getAttribute('aria-hidden') === 'true'
 
-      var expanded = summary.__details.__summary.getAttribute('aria-expanded') === 'true';
-      var hidden = summary.__details.__content.getAttribute('aria-hidden') === 'true';
-
-      summary.__details.__summary.setAttribute('aria-expanded', (expanded ? 'false' : 'true'));
-      summary.__details.__content.setAttribute('aria-hidden', (hidden ? 'false' : 'true'));
+      summary.__details.__summary.setAttribute('aria-expanded', (expanded ? 'false' : 'true'))
+      summary.__details.__content.setAttribute('aria-hidden', (hidden ? 'false' : 'true'))
 
       if (!NATIVE_DETAILS) {
-        summary.__details.__content.style.display = (expanded ? 'none' : '');
+        summary.__details.__content.style.display = (expanded ? 'none' : '')
 
-        var hasOpenAttr = summary.__details.getAttribute('open') !== null;
+        var hasOpenAttr = summary.__details.getAttribute('open') !== null
         if (!hasOpenAttr) {
-          summary.__details.setAttribute('open', 'open');
+          summary.__details.setAttribute('open', 'open')
         } else {
-          summary.__details.removeAttribute('open');
+          summary.__details.removeAttribute('open')
         }
       }
 
       if (summary.__twisty) {
-        summary.__twisty.firstChild.nodeValue = (expanded ? '\u25ba' : '\u25bc');
-        summary.__twisty.setAttribute('class', (expanded ? 'arrow arrow-closed' : 'arrow arrow-open'));
+        summary.__twisty.firstChild.nodeValue = (expanded ? '\u25ba' : '\u25bc')
+        summary.__twisty.setAttribute('class', (expanded ? 'arrow arrow-closed' : 'arrow arrow-open'))
       }
 
-      return true;
+      return true
     }
 
     // Bind a click event to handle summary elements
-    addClickEvent(document, function(e, summary) {
+    addClickEvent(document, function (e, summary) {
       if (!(summary = getAncestor(summary, 'summary'))) {
-        return true;
+        return true
       }
-      return statechange(summary);
-    });
+      return statechange(summary)
+    })
   }
 
   // Bind two load events for modern and older browsers
   // If the first one fires it will set a flag to block the second one
   // but if it's not supported then the second one will fire
-  addEvent(document, 'DOMContentLoaded', addDetailsPolyfill);
-  addEvent(window, 'load', addDetailsPolyfill);
+  addEvent(document, 'DOMContentLoaded', addDetailsPolyfill)
+  addEvent(window, 'load', addDetailsPolyfill)
+})()
 
-})();
-
-(function () {
+;(function () {
   'use strict';
 
   var moj = {
@@ -3347,6 +3343,7 @@ return isNaN(e)?d:e},f=p(u[0]),m=Math.max(f,p(u[1]||"")),f=s?Math.max(f,s.getFul
     }
   };
 }());
+
 (function () {
   'use strict';
 
@@ -5524,9 +5521,9 @@ if (!moj.Helpers.isMobileWidth()) {
 }
 
 
-
 // Remove the no-js class
 $('body').removeClass('no-js');
+
 // SHAME.JS
 // This is a temporary dumping ground which should NEVER go into production
 
