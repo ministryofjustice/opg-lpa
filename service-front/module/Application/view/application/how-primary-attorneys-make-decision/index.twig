@@ -107,16 +107,16 @@
             <div class="form-group {{ how.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(how) }}
                 {{ formElement(how) }}
+                <div id="decisions-details" class="panel panel-border-narrow js-hidden">
+			              <p class="text">
+                        Please tell us which decisions have to be made jointly, and which can be made jointly and severally. 
+                        <a class="js-guidance" href="/guide#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">
+                            Take a look at the guidance
+                        </a> for examples of how to make your wishes clear.
+                    </p>
+			              {{ macros.formGroup(howDetails) }}
+                </div>
             </div>
-        </fieldset>
-
-		<fieldset id="decisions-details" style="display: none;">
-            <legend class="visuallyhidden">How should the attorneys make decisions?</legend>
-
-			<p class="text">Please tell us which decisions have to be made jointly, and which can be made jointly and severally. <a class="js-guidance" href="/guide#topic-how-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.</p>
-
-			{{ macros.formGroup(howDetails) }}
-
         </fieldset>
 
         <div class="form-group">

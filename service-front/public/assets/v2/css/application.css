@@ -2351,6 +2351,15 @@ input[type=number] {
   display: none !important;
   visibility: hidden !important; }
 
+.icon-file-download {
+  width: 30px;
+  height: 39px;
+  background-image: url("/assets/v2/images/icons/icon-file-download.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-file-download {
+      background-image: url("/assets/v2/images/icons/icon-file-download-2x.png");
+      background-size: 100%; } }
+
 .icon-property {
   width: 55px;
   height: 50px;

@@ -5,6 +5,10 @@
     @include icon($icon-name, $icon-width, $icon-height, icons);
 }
 
+.icon-file-download {
+    @include lpa-icon(icon-file-download, 30, 39);
+}
+
 .icon-property {
     @include lpa-icon(icon-property, 55, 50);
     @include media(mobile) {
