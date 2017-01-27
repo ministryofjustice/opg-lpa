@@ -102,17 +102,20 @@
             <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(when) }}
                 {{ formElement(when) }}
+
+                <div id="step-in-details" class="panel panel-border-narrow js-hidden">
+			              <p class="text">
+                        Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice.
+                        <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">
+                            Not sure what to put?
+                        </a>
+                    </p>
+			              {{ macros.formGroup(whenDetails) }}
+                </div>
+
             </div>
         </fieldset>
 
-        <fieldset id="step-in-details" style="display: none;">
-            <legend class="visuallyhidden">How should the attorneys step in?</legend>
-
-			<p class="text">Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice. <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Not sure what to put?</a>
-
-			{{ macros.formGroup(whenDetails) }}
-
-        </fieldset>
 
 		<div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">

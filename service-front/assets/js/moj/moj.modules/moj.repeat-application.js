@@ -23,16 +23,10 @@
     },
     displayCaseNumber: function (duration) {
       if ($('#is-repeat-application:checked').length) {
-        $('.js-case-number').animate({
-          'height': 'show',
-          'opacity': 1
-        }, duration); // show
+          $('.js-case-number').removeClass('js-hidden');
       }
       else {
-        $('.js-case-number').animate({
-          'height': 'hide',
-          'opacity': 0
-        }, duration); // hide
+          $('.js-case-number').addClass('js-hidden');
       }
 
     },
