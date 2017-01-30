@@ -5,6 +5,10 @@
     @include icon($icon-name, $icon-width, $icon-height, icons);
 }
 
+.icon-information {
+    @include lpa-icon(icon-information, 27, 27);
+}
+
 .icon-file-download {
     @include lpa-icon(icon-file-download, 30, 39);
 }
