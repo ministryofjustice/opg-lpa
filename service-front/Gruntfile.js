@@ -82,7 +82,8 @@ module.exports = function (grunt) {
     // join the JS files
     concat: {
       options: {
-        sourceMap: true
+          sourceMap: true,
+          separator: ';\n'
       },
       dist: {
         src: [
