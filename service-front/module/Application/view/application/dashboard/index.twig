@@ -8,6 +8,8 @@
 
 {% block content %}
 
+{% set shortList = lpaTotalCount <= 20 and isSearch == false %}
+
 <div class="grid-row">
     <div class="column-two-thirds">
         <div class="text">
@@ -26,15 +28,14 @@
     </div>
     <div class="column-one-third">
         <div class="panel-cta tablet-and-up">
-            <p class="heading-medium panel-body flush--top">Create another LPA</p>
-            <p class="panel-button flush--bottom">
-                <a id="create-new-lpa" class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
-            </p>
+            <div class="panel-heading heading-medium">Create another LPA</div>
+            <div class="panel-body">
+                <p><a id="create-new-lpa" class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
+                <p class="text font-xsmall">{{ shortList ? 'Or select an LPA below whose details you want to reuse' : 'Or select \'Manage\' below to reuse details of an existing LPA' }}</p>
+            </div>
         </div>
     </div>
 </div>
-
-{% set shortList = lpaTotalCount <= 20 and isSearch == false %}
 
 {% if shortList %}
 {# With less than 20 LPAs, no search is displayed #}
@@ -114,10 +115,20 @@
 {% endif %}
 
 <div class="panel-cta mobile">
-    <p class="heading-medium panel-body flush--top">Create another LPA</p>
-    <p class="panel-button flush--bottom">
-        <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
-    </p>
+    {#<p class="heading-medium panel-body flush--top">Create another LPA</p>#}
+    {#<p class="panel-button flush--bottom">#}
+        {#<a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>#}
+    {#</p>#}
+    {#<p class="panel-body font-xsmall flush--bottom">{{ shortList ? 'Or select an LPA above whose details you want to reuse' : 'Or select \'Manage this LPA\' above to reuse details of an existing LPA' }}</p>#}
+
+    <div class="panel-heading heading-medium">Create another LPA</div>
+    <div class="panel-body">
+        <p>
+            <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
+        </p>
+        {#<p class="text font-xsmall">{{ shortList ? 'Or select an LPA below whose details you want to reuse' : 'Or select \'Manage\' below to reuse details of an existing LPA' }}</p>#}
+        <p class="text font-xsmall">{{ shortList ? 'Or select an LPA above whose details you want to reuse' : 'Or select \'Manage this LPA\' above to reuse details of an existing LPA' }}</p>
+    </div>
 </div>
 
 {% endblock %}
