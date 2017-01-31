@@ -82,7 +82,8 @@ module.exports = function (grunt) {
     // join the JS files
     concat: {
       options: {
-        sourceMap: true
+          sourceMap: true,
+          separator: ';\n'
       },
       dist: {
         src: [
@@ -93,8 +94,7 @@ module.exports = function (grunt) {
           // GOVUK Scripts
           'assets/bower/stageprompt/script/stageprompt.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
-          // ShowHideContent function
-          'assets/js/govuk/show-hide-content.js',
+          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
 
           // UI Framework
           'assets/js/ui_framework/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
@@ -104,7 +104,7 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-spinner.js',
 
           // Polyfills
-          'assets/bower/govuk_elements/public/javascripts/vendor/details.polyfill.js',
+          'assets/bower/govuk_elements/public/javascripts/govuk/details.polyfill.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',

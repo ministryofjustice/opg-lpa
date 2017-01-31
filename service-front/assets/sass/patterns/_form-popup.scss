@@ -84,19 +84,6 @@
         }
     }
 
-    .block-label {
-        @include media(tablet) {
-            padding: 15px 15px 15px 40px;
-        }
-
-        [type='checkbox'] {
-            @include media(tablet) {
-                top: 12px;
-                left: 12px;
-            }
-        }
-    }
-
     .postcodelookup {
         position: relative;
 
