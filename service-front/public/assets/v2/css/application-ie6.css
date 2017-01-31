@@ -3056,14 +3056,15 @@ input[type=number] {
   float: right; }
 
 .panel-cta {
-  padding: 15px;
-  background-color: #dee0e2; }
-  .panel-cta .panel-body {
+  padding: 30px 15px;
+  background-color: #dee0e2;
+  text-align: center; }
+  .panel-cta .panel-heading {
     font-weight: 700;
-    text-align: center; }
-  .panel-cta .panel-button {
-    padding-bottom: 15px;
-    text-align: center; }
+    margin-top: 0;
+    margin-bottom: 0.5em; }
+  .panel-cta .panel-body p:last-child {
+    margin-bottom: 0; }
 
 .js-enabled .panel-actions {
   padding: 15px;

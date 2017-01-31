@@ -2,21 +2,24 @@
 // PANELS
 
 .panel-cta {
-    padding: $gutter-half;
+    padding: $gutter $gutter-half;
     background-color: $panel-colour;
+    text-align: center;
 
     @include media(mobile) {
         padding-bottom: $gutter-half;
     }
 
-    .panel-body {
+    .panel-heading {
         font-weight: 700;
-        text-align: center;
+        margin-top: 0;
+        margin-bottom: 0.5em;
     }
 
-    .panel-button {
-        padding-bottom: $gutter-half;
-        text-align: center;
+    .panel-body {
+        p:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 
