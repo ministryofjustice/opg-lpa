@@ -40,7 +40,7 @@
         }
 
         @include media($min-width: 950px) {
-            width: 25%;
+            width: 24%;
         }
     }
 
@@ -52,12 +52,12 @@
             width: 150px;
         }
 
-        @include media($min-width: 950px) {
-            width: 120px;
-        }
-        
         @include media($max-width: 860px) {
             display: none;
+        }
+
+        @include media($min-width: 950px) {
+            width: 135px;
         }
     }
 
@@ -96,7 +96,7 @@
         }
 
         @include media($min-width: 950px) {
-            width: 80px;
+            width: 70px;
         }
     }
 
@@ -181,7 +181,7 @@
         border: 1px solid $border-colour;
 
         @include media(mobile) {
-            width: 100%; 
+            width: 100%;
         }
 
         &:nth-child(2n-1) {

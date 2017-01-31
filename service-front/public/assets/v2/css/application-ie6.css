@@ -2702,13 +2702,13 @@ input[type=number] {
 .lpa-table .lpa-donor {
   width: 30%;
   width: 23%;
-  width: 25%; }
+  width: 24%; }
 .lpa-table .lpa-number {
   display: table-cell;
   color: #6f777b;
   width: 150px;
-  width: 120px;
-  display: none; }
+  display: none;
+  width: 135px; }
 .lpa-table .lpa-number-alt {
   display: none;
   color: #6f777b;
@@ -2722,7 +2722,7 @@ input[type=number] {
 .lpa-table .lpa-type {
   color: #6f777b;
   width: 70px;
-  width: 80px; }
+  width: 70px; }
 .lpa-table .lpa-progress {
   width: 60px;
   width: 70px;
