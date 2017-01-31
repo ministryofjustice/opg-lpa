@@ -3069,19 +3069,19 @@ input[type=number] {
     width: 23%; } }
 @media (min-width: 950px) {
   .lpa-table .lpa-donor {
-    width: 25%; } }
+    width: 24%; } }
 .lpa-table .lpa-number {
   display: table-cell;
   color: #6f777b; }
   @media (min-width: 861px) {
     .lpa-table .lpa-number {
       width: 150px; } }
-  @media (min-width: 950px) {
-    .lpa-table .lpa-number {
-      width: 120px; } }
   @media (max-width: 860px) {
     .lpa-table .lpa-number {
       display: none; } }
+  @media (min-width: 950px) {
+    .lpa-table .lpa-number {
+      width: 135px; } }
 .lpa-table .lpa-number-alt {
   display: none;
   color: #6f777b; }
@@ -3105,7 +3105,7 @@ input[type=number] {
       width: 70px; } }
   @media (min-width: 950px) {
     .lpa-table .lpa-type {
-      width: 80px; } }
+      width: 70px; } }
 @media (min-width: 770px) {
   .lpa-table .lpa-progress {
     width: 60px; } }
