@@ -1,11 +1,11 @@
-// Settings
-@import 'settings/variables';
-
 // GOVUK Template
 @import 'govuk-template';
 
 // GOVUK Elements
 @import 'main';
+
+// Settings
+@import 'settings/variables';
 
 // Extensions
 @import 'extensions/elements/elements-typography';

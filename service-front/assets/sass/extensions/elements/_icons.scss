@@ -1,10 +1,22 @@
 // Icons
 // ==========================================================================
 
+@mixin lpa-icon($icon-name, $icon-width, $icon-height) {
+    @include icon($icon-name, $icon-width, $icon-height, icons);
+}
+
+.icon-information {
+    @include lpa-icon(icon-information, 27, 27);
+}
+
+.icon-file-download {
+    @include lpa-icon(icon-file-download, 30, 39);
+}
+
 .icon-property {
-    @include icon(icon-property, 55, 50);
+    @include lpa-icon(icon-property, 55, 50);
     @include media(mobile) {
-        @include icon(icon-property, 33, 30);
+        @include lpa-icon(icon-property, 33, 30);
         background-size: contain;
     }
 
@@ -14,11 +26,11 @@
 }
 
 .icon-finance {
-    @include icon(icon-finance, 52, 50);
+    @include lpa-icon(icon-finance, 52, 50);
     margin-right: 10px;
 
     @include media(mobile) {
-        @include icon(icon-finance, 31, 30);
+        @include lpa-icon(icon-finance, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
@@ -29,9 +41,9 @@
 }
 
 .icon-health {
-    @include icon(icon-health, 60, 50);
+    @include lpa-icon(icon-health, 60, 50);
     @include media(mobile) {
-        @include icon(icon-health, 36, 30);
+        @include lpa-icon(icon-health, 36, 30);
         background-size: contain;
     }
 
@@ -41,11 +53,11 @@
 }
 
 .icon-welfare {
-    @include icon(icon-welfare, 52, 50);
+    @include lpa-icon(icon-welfare, 52, 50);
     margin-right: 10px;
 
     @include media(mobile) {
-        @include icon(icon-welfare, 31, 30);
+        @include lpa-icon(icon-welfare, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
@@ -56,47 +68,47 @@
 }
 
 .icon-question {
-    @include icon(icon-question, 52, 50);
+    @include lpa-icon(icon-question, 52, 50);
     margin-right: 10px;
 
     @include media(mobile) {
-        @include icon(icon-question, 31, 30);
+        @include lpa-icon(icon-question, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
-    
+
     @include media($max-width: 360px) {
         display: none;
     }
 }
 
 .icon-tick {
-    @include icon(icon-tick, 22, 22);
+    @include lpa-icon(icon-tick, 22, 22);
     @include media(mobile) {
-        @include icon(icon-tick, 16, 16);
+        @include lpa-icon(icon-tick, 16, 16);
         margin-right: 6px;
         background-size: contain;
     }
 }
 
 .icon-cross {
-    @include icon(icon-cross, 22, 22);
+    @include lpa-icon(icon-cross, 22, 22);
     @include media(mobile) {
-        @include icon(icon-cross, 16, 16);
+        @include lpa-icon(icon-cross, 16, 16);
         margin-right: 6px;
         background-size: contain;
     }
 }
 
 .icon-important-small {
-    @include icon(icon-important, 27, 27);
+    @include lpa-icon(icon-important, 27, 27);
     background-size: contain;
 }
 
 .icon-person {
-    @include icon(icon-person, 27, 27);
+    @include lpa-icon(icon-person, 27, 27);
     @include media(mobile) {
-        @include icon(icon-person, 27, 27);
+        @include lpa-icon(icon-person, 27, 27);
         margin-right: 6px;
         background-size: contain;
     }
