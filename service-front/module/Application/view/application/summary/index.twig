@@ -3,41 +3,33 @@
 {% import "application/dashboard/macros.twig" as macros %}
 
 {% block pageTitle %}
-		Check your details
+    Review your details
 {% endblock %}
 
 {% block content %}
 
-	{% include 'application/summary/partials/summary-table.twig' %}
+    <div class="grid-row">
+        <div class="column-full text">
+            <p class="lede">Use this section to check that the details of the people involved in the LPA are correct and to edit the LPA if you need to.</p>
 
-	<div class="appstatus warning" role="alert">
-		<h2 class="heading-xlarge">Your LPA is incomplete</h2> 
-	</div>
+            <p>You can also <a class="iconlinks-link" href="{{ url( 'lpa/download', {'lpa-id': lpa.id, 'pdf-type':'lp1'} ) }}" target="_blank">download a preview of your LPA form</a> at this point, but don't send this version to the Office of the Public Guardian (OPG) for registration – it's incomplete.</p>
 
-	<p class="text">The details you’ve entered above will be included on your LPA when it’s registered by the Office of the Public Guardian (OPG). When OPG registers an LPA, it checks all the details to make sure the LPA will work. Your attorneys can’t use your LPA until it’s been registered. We need to ask you a few more questions before you send your LPA to be registered.</p>
+            <p>Once you've confirmed that all the LPA details are correct, fill in the registration section on this service to complete the LPA. You'll then be able to print the LPA, sign it and post it to OPG.</p>
+        </div>
+    </div>
 
-	<div class="grid-row">
+    <div class="grid-row">
+        <div class="column-full">
+            {% include 'application/summary/partials/summary-table.twig' %}
+        </div>
+    </div>
 
-		<div class="column-one-half">
-			<p class="divorced">
-				<a href="{{ url(returnRoute, {'lpa-id': lpa.id}) }}" class="button">Return to your LPA</a>
-			</p>
-		</div>
-
-		<div class="column-one-half">
-			<div class="iconlinks iconlinks--right">
-		        <div class="iconlinks-item">
-		            <a class="iconlinks-link" href="{{ url( 'lpa/download', {'lpa-id': lpa.id, 'pdf-type':'lp1'} ) }}" target="_blank">
-		                <i class="icon icon-file-download"></i>
-		                <span class="iconlinks-text">Download PDF preview</span>
-		            </a> 
-		        </div>
-		    </div>
-		</div>
-
-	</div>
-
-
-
+    <div class="grid-row">
+        <div class="column-full">
+            <p class="text">
+                <a href="{{ url(returnRoute, {'lpa-id': lpa.id}) }}" class="button">Complete LPA</a>
+            </p>
+        </div>
+    </div>
 
 {% endblock %}

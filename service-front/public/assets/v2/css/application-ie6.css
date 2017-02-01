@@ -3348,25 +3348,27 @@ input[type=number] {
 .dialog-message-block {
   margin-bottom: 30px; }
 
-.table-summary tr {
-  display: block;
-  position: relative;
-  z-index: 3; }
-.table-summary th,
-.table-summary td {
-  vertical-align: top;
-  display: block;
-  width: 100%;
-  padding-right: 0;
-  border: 0;
-  width: auto; }
-.table-summary th {
-  padding-right: 40px;
-  padding-bottom: 0;
-  z-index: 3;
-  box-sizing: border-box; }
-.table-summary td {
-  padding-top: 6px; }
+.table-summary {
+  margin-bottom: 20px; }
+  .table-summary tr {
+    display: block;
+    position: relative;
+    z-index: 3; }
+  .table-summary th,
+  .table-summary td {
+    vertical-align: top;
+    display: block;
+    width: 100%;
+    padding-right: 0;
+    border: 0;
+    width: auto; }
+  .table-summary th {
+    padding-right: 40px;
+    padding-bottom: 0;
+    z-index: 3;
+    box-sizing: border-box; }
+  .table-summary td {
+    padding-top: 6px; }
 
 .table-summary-heading {
   padding-bottom: 0; }

@@ -4054,30 +4054,32 @@ input[type=number] {
 .dialog-message-block {
   margin-bottom: 30px; }
 
-@media (max-width: 400px) {
-  .table-summary tr {
-    display: block;
-    position: relative;
-    z-index: 3; } }
-.table-summary th,
-.table-summary td {
-  vertical-align: top; }
+.table-summary {
+  margin-bottom: 20px; }
   @media (max-width: 400px) {
-    .table-summary th,
-    .table-summary td {
+    .table-summary tr {
       display: block;
-      width: 100%;
-      padding-right: 0;
-      border: 0; } }
-@media (max-width: 400px) {
-  .table-summary th {
-    padding-right: 40px;
-    padding-bottom: 0;
-    z-index: 3;
-    box-sizing: border-box; } }
-@media (max-width: 400px) {
+      position: relative;
+      z-index: 3; } }
+  .table-summary th,
   .table-summary td {
-    padding-top: 6px; } }
+    vertical-align: top; }
+    @media (max-width: 400px) {
+      .table-summary th,
+      .table-summary td {
+        display: block;
+        width: 100%;
+        padding-right: 0;
+        border: 0; } }
+  @media (max-width: 400px) {
+    .table-summary th {
+      padding-right: 40px;
+      padding-bottom: 0;
+      z-index: 3;
+      box-sizing: border-box; } }
+  @media (max-width: 400px) {
+    .table-summary td {
+      padding-top: 6px; } }
 
 .table-summary-heading {
   padding-bottom: 0; }
