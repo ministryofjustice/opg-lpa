@@ -3044,13 +3044,18 @@ input[type=number] {
 .panel-cta {
   padding: 30px 15px;
   background-color: #dee0e2;
-  text-align: center; }
+  text-align: center;
+  margin-bottom: 20px; }
   .panel-cta .panel-heading {
     font-weight: 700;
     margin-top: 0;
     margin-bottom: 0.5em; }
   .panel-cta .panel-body p:last-child {
     margin-bottom: 0; }
+  .panel-cta .panel-body .list {
+    padding: 0;
+    text-align: left;
+    margin: 0; }
 
 .js-enabled .panel-actions {
   padding: 15px;

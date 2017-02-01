@@ -5,10 +5,7 @@
     padding: $gutter $gutter-half;
     background-color: $panel-colour;
     text-align: center;
-
-    @include media(mobile) {
-        padding-bottom: $gutter-half;
-    }
+    margin-bottom: 20px;
 
     .panel-heading {
         font-weight: 700;
@@ -19,6 +16,12 @@
     .panel-body {
         p:last-child {
             margin-bottom: 0;
+        }
+
+        .list {
+            padding: 0;
+            text-align: left;
+            margin: 0;
         }
     }
 }

@@ -7,10 +7,6 @@
 
     @include media(mobile) {
         padding: $gutter-half 0;
-
-        &.panel-cta {
-            padding: $gutter $gutter-half;
-        }
     }
 
     .iconlinks-item {
