@@ -88,8 +88,8 @@
 
             </fieldset>
 
-            <input type="submit" name="save" value="Make online payment now" class="button">
-            <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">I want to pay by cheque</a>
+            <input type="submit" name="save" value="Confirm and pay online" class="button">
+            <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
 
             {{ form().closeTag|raw }}
 
@@ -97,8 +97,8 @@
 
             {# -- GDS Pay -- #}
             <p class="divorced">
-                <a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Make online payment now</a>
-                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">I want to pay by cheque</a>
+                <a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Confirm and pay online</a>
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
             </p>
 
         {% endif %}
