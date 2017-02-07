@@ -24,7 +24,7 @@ You don't have to register your LPA right after you create it but it's a good id
 
 ## Fees
 
-It currently costs £110 to register an LPA. Some people qualify for a reduced fee or can pay no fee.
+It currently costs £82 to register an LPA. Some people qualify for a reduced fee or can pay no fee.
 
 See [Fees and reductions](/help/#topic-fees-and-discounts)
 

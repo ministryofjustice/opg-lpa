@@ -2,16 +2,19 @@
 
 namespace Application\Controller\General;
 
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use Zend\View\Model\ViewModel;
 
 class HomeController extends AbstractBaseController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel([
+            'lpaFee' => Calculator::getFullFee()
+        ]);
     }
-    
+
     public function redirectAction()
     {
         return $this->redirect()->toUrl( $this->config()['redirects']['index'] );
