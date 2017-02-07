@@ -8,38 +8,40 @@
 
 <div class="text">
 
-	<p>You're now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian – if you haven't already done so.</p>
+    <p>You're now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian – if you haven't already done so.</p>
 
-	<h2 class="heading-large">Documents</h2>
+    <h2 class="heading-large">Documents</h2>
 
-	<ul class="panel-cta list iconlinks">
-        <li class="iconlinks-item">
-            <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
-                <i class="icon icon-file-download"></i>
-                <span class="iconlinks-text">Download your print-ready LPA form</span>
-            </a> 
-        </li>
-        
-        {% if lpa120Url %}
-            <li class="iconlinks-item">
-                <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
-                    <i class="icon icon-file-download"></i>
-                    <span class="iconlinks-text">Download your fee remissions and exemption form</span>
-                    
-                </a>
-            </li>
-        {% endif %}
-        
-        {% if lp3Url %}
-            <li class="iconlinks-item">
-                <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
-                    <i class="icon icon-file-download"></i>
-                    <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
-                    
-                </a>
-            </li>
-        {% endif %}
-    </ul>
+    <div class="panel-cta">
+        <div class="panel-body">
+            <ul class="list iconlinks flush hard text-left">
+                <li class="iconlinks-item">
+                    <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
+                        <i class="icon icon-file-download"></i>
+                        <span class="iconlinks-text">Download your print-ready LPA form</span>
+                    </a>
+                </li>
+
+                {% if lpa120Url %}
+                    <li class="iconlinks-item">
+                        <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
+                            <i class="icon icon-file-download"></i>
+                            <span class="iconlinks-text">Download your fee remissions and exemption form</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if lp3Url %}
+                    <li class="iconlinks-item">
+                        <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
+                            <i class="icon icon-file-download"></i>
+                            <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 
     <p>If you can't view the LPA, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/">Acrobat Reader</a>.</p>
 
@@ -76,7 +78,7 @@
         </strong>
     </p>
 
-    {% if peeopleToNotify %}                     
+    {% if peeopleToNotify %}
         <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
     {% endif %}
 
@@ -92,7 +94,7 @@
 
     <ul class="list">
         <li>
-            <a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click). 
+            <a href="{{ cloneUrl }}" class="js-clonewarning">Make an LPA based on this one</a> (you'll be able to add people in a single click).
         </li>
         <li>
             <a href="/user/dashboard/create">Make an LPA from scratch</a>
