@@ -20,6 +20,7 @@
             link.click(function(){
                 var pwd = $('#' + $(this).attr('data-for'));
                 var alsoHideConfirm = $(this).attr('data-alsoHideConfirm');
+
                 if (pwd.attr('type') === "password"){
                     pwd.attr('type', 'text');
                     $(this).html("Hide password");
@@ -35,7 +36,7 @@
                         skipConfirm.val(0);
                     }
                 }
-                pwd.focus();
+
                 return false;
             });
         }
