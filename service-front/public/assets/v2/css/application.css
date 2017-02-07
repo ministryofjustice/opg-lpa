@@ -2663,6 +2663,15 @@ input[type=number] {
   .tablet-and-up {
     display: none !important; } }
 
+.text-left {
+  text-align: left !important; }
+
+.text-right {
+  text-align: right !important; }
+
+.text-center {
+  text-align: center !important; }
+
 .button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary {
   background-color: #dee0e2;
@@ -3698,17 +3707,16 @@ input[type=number] {
     float: right; } }
 
 .panel-cta {
-  padding: 15px;
-  background-color: #dee0e2; }
-  @media (max-width: 640px) {
-    .panel-cta {
-      padding-bottom: 15px; } }
-  .panel-cta .panel-body {
+  padding: 30px 15px;
+  background-color: #dee0e2;
+  text-align: center;
+  margin-bottom: 20px; }
+  .panel-cta .panel-heading {
     font-weight: 700;
-    text-align: center; }
-  .panel-cta .panel-button {
-    padding-bottom: 15px;
-    text-align: center; }
+    margin-top: 0;
+    margin-bottom: 0.5em; }
+  .panel-cta .panel-body p:last-child {
+    margin-bottom: 0; }
 
 .js-enabled .panel-actions {
   padding: 15px;
@@ -4122,9 +4130,7 @@ input[type=number] {
   padding: 30px 15px; }
   @media (max-width: 640px) {
     .iconlinks {
-      padding: 15px 0; }
-      .iconlinks.panel-cta {
-        padding: 30px 15px; } }
+      padding: 15px 0; } }
   .iconlinks .iconlinks-item {
     margin-bottom: 30px; }
     .iconlinks .iconlinks-item:last-child {

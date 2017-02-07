@@ -34,34 +34,36 @@
 
     <p><strong class="bold-small">If you have paid online, the fee will be returned to you if OPG have not received your signed LPA within 40 days. If paying by cheque, post this to us with your signed LPA.</strong></p>
 
-    <ul class="panel-cta list iconlinks">
-        <li class="iconlinks-item">
-            <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
-                <i class="icon icon-file-download"></i>
-                <span class="iconlinks-text">Download your print-ready LPA form</span>
-            </a>
-        </li>
+    <div class="panel-cta">
+        <div class="panel-body">
+            <ul class="list iconlinks flush hard text-left">
+                <li class="iconlinks-item">
+                    <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank">
+                        <i class="icon icon-file-download"></i>
+                        <span class="iconlinks-text">Download your print-ready LPA form</span>
+                    </a>
+                </li>
 
-        {% if lpa120Url %}
-            <li class="iconlinks-item">
-                <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
-                    <i class="icon icon-file-download"></i>
-                    <span class="iconlinks-text">Download your fee remissions and exemption form</span>
+                {% if lpa120Url %}
+                    <li class="iconlinks-item">
+                        <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank">
+                            <i class="icon icon-file-download"></i>
+                            <span class="iconlinks-text">Download your fee remissions and exemption form</span>
+                        </a>
+                    </li>
+                {% endif %}
 
-                </a>
-            </li>
-        {% endif %}
-
-        {% if lp3Url %}
-            <li class="iconlinks-item">
-                <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
-                    <i class="icon icon-file-download"></i>
-                    <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
-
-                </a>
-            </li>
-        {% endif %}
-    </ul>
+                {% if lp3Url %}
+                    <li class="iconlinks-item">
+                        <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank">
+                            <i class="icon icon-file-download"></i>
+                            <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 
     <p>If you can't view the LPA, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/">Acrobat Reader</a>.</p>
 
