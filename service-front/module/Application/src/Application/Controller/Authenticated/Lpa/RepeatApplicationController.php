@@ -3,10 +3,10 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Metadata;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Zend\View\Model\ViewModel;
 
 class RepeatApplicationController extends AbstractLpaController
 {
@@ -84,7 +84,8 @@ class RepeatApplicationController extends AbstractLpaController
         }
 
         return new ViewModel([
-                'form'=>$form,
+            'form'         => $form,
+            'lpaRepeatFee' => Calculator::getFullFee(true)
         ]);
     }
 }
