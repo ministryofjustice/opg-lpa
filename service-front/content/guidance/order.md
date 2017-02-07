@@ -14,8 +14,8 @@
 	* About LPAs_Life-sustaining treatment.md
 * Attorneys
 	* People_Attorneys.md
-* How attorneys make decisions
-	* Decisions_How attorneys make decisions.md
+* How multiple attorneys make decisions
+	* Decisions_How multiple attorneys make decisions.md
 * Replacement attorneys
 	* People_Replacement attorneys.md
 * Certificate providers

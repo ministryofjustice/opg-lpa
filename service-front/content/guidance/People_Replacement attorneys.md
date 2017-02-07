@@ -76,4 +76,4 @@ You need to choose your replacements as carefully as your original attorneys.
 
 ### Related help topics
 * [Attorneys](/help/#topic-attorneys)
-* [How attorneys make decisions](/help/#topic-how-attorneys-make-decisions)
+* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)
