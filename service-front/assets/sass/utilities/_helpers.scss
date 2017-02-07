@@ -67,4 +67,17 @@
     }
 }
 
+// Text align helper styles
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
 // scss-lint:enable ImportantRule

@@ -2663,6 +2663,15 @@ input[type=number] {
   .tablet-and-up {
     display: none !important; } }
 
+.text-left {
+  text-align: left !important; }
+
+.text-right {
+  text-align: right !important; }
+
+.text-center {
+  text-align: center !important; }
+
 .button-secondary, .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next, .ui-datepicker .ui-datepicker-buttonpane .ui-priority-secondary {
   background-color: #dee0e2;
@@ -3708,12 +3717,6 @@ input[type=number] {
     margin-bottom: 0.5em; }
   .panel-cta .panel-body p:last-child {
     margin-bottom: 0; }
-  .panel-cta .panel-body .list {
-    padding: 0;
-    text-align: left;
-    margin: 0; }
-  .panel-cta .panel-body .strong {
-    font-weight: 700; }
 
 .js-enabled .panel-actions {
   padding: 15px;
