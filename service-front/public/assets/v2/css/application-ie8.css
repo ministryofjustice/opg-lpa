@@ -2989,6 +2989,8 @@ input[type=number] {
     padding: 0;
     text-align: left;
     margin: 0; }
+  .panel-cta .panel-body .strong {
+    font-weight: 700; }
 
 .js-enabled .panel-actions {
   padding: 15px;
