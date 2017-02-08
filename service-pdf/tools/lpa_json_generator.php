@@ -9,7 +9,7 @@ class JsonGenerator extends Randomizer
 {
     protected $lpa, $lpaType, $donor, $primaryAttorneys=[], $replacementAttorneys=[], $primaryAttorneyDecisions, $replacementAttorneyDecisions,
             $certificateProvider, $peopleToNotify=[], $correspondent, $applicant, $hasTrust=null;
-    
+
     const HW = 'health-and-welfare';
     const PF = 'property-and-financial';
     static $coverage = [
@@ -139,9 +139,9 @@ class JsonGenerator extends Randomizer
             'paymentAmount' => [
                     null => [],
                     0 => [],
-                    110 => [],
-                    55 => [],
-                    27.5 => []
+                    82 => [],
+                    41 => [],
+                    20.5 => []
             ],
             'isRepeatCase' => [
                     'yes' => [],
@@ -169,12 +169,12 @@ class JsonGenerator extends Randomizer
                     'replacement' => []
             ]
     ];
-    
-    
+
+
     public function generate()
     {
         $this->lpaType = $this->random(array(self::HW, self::PF));
-        
+
         $this->lpa = array();
         $this->lpa['id'] = rand(1, 99999999999);
         $updated = time()-rand(0, 864000);
@@ -188,14 +188,14 @@ class JsonGenerator extends Randomizer
                 "reducedFeeUniversalCredit" => $this->random(array(true, false)),
                 "date" => date('c', $updated),
         );
-        
+
         if($this->lpa['payment']['reducedFeeReceivesBenefits']) {
             $this->lpa['payment']['reducedFeeAwardedDamages'] = $this->random(array(true, false));
         }
         else {
             $this->lpa['payment']['reducedFeeAwardedDamages'] = null;
         }
-        
+
         if($this->lpa['payment']['reducedFeeUniversalCredit']) {
             $this->lpa['payment']['amount'] = null;
         }
@@ -209,12 +209,12 @@ class JsonGenerator extends Randomizer
             else {
                 $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE;
             }
-            
+
             if($this->lpa['repeatCaseNumber'] != null) {
                 $this->lpa['payment']['amount'] = $this->lpa['payment']['amount']/2;
             }
         }
-        
+
         if($this->lpa['payment']['amount'] > 0) {
             $this->lpa['payment']['method'] = $this->random(array('card', 'cheque'));
             if($this->lpa['payment']['method'] == 'card') {
@@ -226,7 +226,7 @@ class JsonGenerator extends Randomizer
         else {
             $this->lpa['payment']['method'] = null;
         }
-        
+
         $this->lpa['whoAreYouAnswered'] = true;
         $this->lpa['locked'] = true;
         $this->lpa['seed'] = null;
@@ -244,13 +244,13 @@ class JsonGenerator extends Randomizer
                 "whoIsRegistering" => $this->applicant(),
                 "correspondent" => $this->correspondent(),
         );
-        
+
         // update test coverage
         $this->updateCoverage();
-        
+
         return $this->lpa;
     }
-    
+
     protected function donor()
     {
         $this->donor = array(
@@ -265,10 +265,10 @@ class JsonGenerator extends Randomizer
                 "email"         => $this->random(array(null, array('address' => $this->rEmail()))),
                 "canSign"       => $this->random(array(true, true, false)),
         );
-        
+
         return $this->donor;
     }
-    
+
     protected function correspondent()
     {
         $who = $this->random(array('donor', 'attorney', 'other'));
@@ -315,10 +315,10 @@ class JsonGenerator extends Randomizer
                 );
                 break;
         }
-        
+
         return $this->correspondent;
     }
-    
+
     protected function applicant()
     {
         // all attorney ids
@@ -326,18 +326,18 @@ class JsonGenerator extends Randomizer
         foreach($this->primaryAttorneys as $attorney) {
             $attorneyIds[] = $attorney['id'];
         }
-        
+
         // one attorney
         $option1 = [$this->random($attorneyIds)];
-        
+
         if(count($this->primaryAttorneys) > 1) {
-            
-            // random pick attorneys 
+
+            // random pick attorneys
             $option2 = $this->random($attorneyIds, true);
-            
+
             // all attorneys
             $option3 = $attorneyIds;
-            
+
             if($this->primaryAttorneyDecisions['how'] == 'jointly') {
                 $this->applicant = $this->random(array(
                         'donor', $option3
@@ -355,10 +355,10 @@ class JsonGenerator extends Randomizer
                     'donor', $option1
             ));
         }
-        
+
         return $this->applicant;
     }
-    
+
     protected function primaryAttorneyDecisions()
     {
         $decisions = array();
@@ -368,14 +368,14 @@ class JsonGenerator extends Randomizer
         else {
             $decisions["how"] = "single-attorney";
         }
-        
+
         if($this->lpaType == self::PF) {
             $decisions["when"] = $this->random(array('no-capacity', 'now'));
         }
         else {
             $decisions["canSustainLife"] = $this->random(array(true, false));
         }
-        
+
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
                     $this->rText(300, 1176),
@@ -383,19 +383,19 @@ class JsonGenerator extends Randomizer
                     $this->rText(2383, 3528),
             ));
         }
-        
+
         $this->primaryAttorneyDecisions = $decisions;
-        
+
         return $decisions;
     }
-    
+
     protected function replacementAttorneyDecisions()
     {
         if(empty($this->replacementAttorneys)) return null;
-        
+
         $hasMultiPrimaryAttorneys = (count($this->primaryAttorneys) > 1);
         $hasMultiReplacementAttorneys = (count($this->replacementAttorneys) > 1);
-        
+
         $decisions = array();
         if($hasMultiReplacementAttorneys) {
             $decisions["how"] = $this->random(array("jointly", "jointly-attorney-severally", "depends"));
@@ -403,7 +403,7 @@ class JsonGenerator extends Randomizer
         else {
             $decisions["how"] = "single-attorney";
         }
-        
+
         $decisions["when"] = null;
         if($hasMultiPrimaryAttorneys) {
             $primaryDecision = $this->primaryAttorneyDecisions['how'];
@@ -416,10 +416,10 @@ class JsonGenerator extends Randomizer
                 }
             }
         }
-        
+
         $decisions["howDetails"] = null;
         $decisions["whenDetails"] = null;
-        
+
         if($decisions['how'] == 'depends') {
             $decisions['howDetails'] = $this->random(array(
                     $this->rText(300, 1176),
@@ -427,7 +427,7 @@ class JsonGenerator extends Randomizer
                     $this->rText(2383, 3528),
             ));
         }
-        
+
         if($decisions['when'] == 'depends') {
             $decisions['whenDetails'] = $this->random(array(
                     $this->rText(300, 1176),
@@ -435,12 +435,12 @@ class JsonGenerator extends Randomizer
                     $this->rText(2353, 3528),
             ));
         }
-        
+
         $this->replacementAttorneyDecisions = $decisions;
-        
+
         return $decisions;
     }
-    
+
     protected function instruction()
     {
         return $this->random(array(
@@ -449,7 +449,7 @@ class JsonGenerator extends Randomizer
                 $this->rText(1711, 2856),
         ));
     }
-    
+
     protected function preference()
     {
         return $this->random(array(
@@ -458,7 +458,7 @@ class JsonGenerator extends Randomizer
                 $this->rText(1681, 2856),
         ));
     }
-    
+
     protected function certificateProvider()
     {
         $this->certificateProvider = array(
@@ -469,17 +469,17 @@ class JsonGenerator extends Randomizer
                 ),
                 "address"       => $this->rAddr()
         );
-        
+
         return $this->certificateProvider;
-        
+
     }
-    
+
     protected function primaryAttorneys($numAttorneys = null)
     {
         if($numAttorneys == null) {
             $numAttorneys = rand(1, 10);
         }
-        
+
         for($i=0; $i<$numAttorneys; $i++) {
             if(($this->lpaType == self::HW) || $this->hasTrust) {
                 $type = 'human';
@@ -490,38 +490,38 @@ class JsonGenerator extends Randomizer
                     $this->hasTrust = 'primary';
                 }
             }
-            
+
             $attorney = array(
                     "id"        => $this->rInt('seq', array('name'=>'attorney_id', 'start'=>0)),
                     "address"   => $this->rAddr(),
                     "email"     => $this->random(array(null, array('address' => $this->rEmail()))),
                     'type'      => $type
             );
-            
+
             if($type == 'human') {
                 $attorney["name"] = array(
                         "title" => $this->rTitle(),
                         "first" => $this->rForename(),
                         "last"  => $this->rSurname()
                 );
-                
+
                 $attorney["dob"] = array('date' => $this->rDob());
             }
             else {
                 $attorney["name"] = $this->rCompany();
                 $attorney["number"] = strtoupper($this->rString(8, self::ALPHA_NUMBER));
             }
-            
+
             $this->primaryAttorneys[] = $attorney;
         }
-        
+
         return $this->primaryAttorneys;
     }
-    
+
     protected function replacementAttorneys()
     {
         $numAttorneys = rand(0, 3);
-        
+
         for($i=0; $i<$numAttorneys; $i++) {
             if(($this->lpaType == self::HW) || $this->hasTrust) {
                 $type = 'human';
@@ -532,37 +532,37 @@ class JsonGenerator extends Randomizer
                     $this->hasTrust = 'replacement';
                 }
             }
-            
+
             $attorney = array(
                     "id"        => $this->rInt('seq', array('name'=>'replacement_attorney_id', 'start'=>0)),
                     "address"   => $this->rAddr(),
                     'type'      => $type
             );
-            
+
             if($type == 'human') {
                 $attorney["name"] = array(
                         "title" => $this->rTitle(),
                         "first" => $this->rForename(),
                         "last"  => $this->rSurname(),
                 );
-                
+
                 $attorney["dob"] = array('date' => $this->rDob());
             }
             else {
                 $attorney["name"]   = $this->rCompany();
                 $attorney["number"] = strtoupper($this->rString(8, self::ALPHA_NUMBER));
             }
-            
+
             $this->replacementAttorneys[] = $attorney;
         }
-        
+
         return $this->replacementAttorneys;
     }
-    
+
     protected function peopleToNotify()
     {
         $numNotified = rand(0, 5);
-        
+
         for($i=0; $i<$numNotified; $i++) {
             $this->peopleToNotify[] = array(
                     "id"        => $this->rInt('seq', array('name'=>'notified_id', 'start'=>0)),
@@ -574,22 +574,22 @@ class JsonGenerator extends Randomizer
                     "address"   => $this->rAddr()
             );
         }
-        
+
         return $this->peopleToNotify;
     }
-    
+
     public function getFileName()
     {
         $name = "";
         if($this->lpaType == self::HW) $name .= 'hw-';
         if($this->lpaType == self::PF) $name .= 'pf-';
-        
+
         $name .= count($this->primaryAttorneys) . 'at-';
-        
+
         if($this->hasTrust == 'primary') {
             $name .= 'tp-';
         }
-        
+
         switch($this->lpa['document']['primaryAttorneyDecisions']['how']) {
             case 'jointly':
                 $name .= 'jt-';
@@ -601,13 +601,13 @@ class JsonGenerator extends Randomizer
                 $name .= 'dp-';
                 break;
         }
-        
+
         $name .= count($this->replacementAttorneys) . 'ra-';
-        
+
         if($this->hasTrust == 'replacement') {
             $name .= 'tr-';
         }
-        
+
         switch($this->lpa['document']['replacementAttorneyDecisions']['how']) {
             case 'jointly':
                 $name .= 'jt-';
@@ -619,28 +619,28 @@ class JsonGenerator extends Randomizer
                 $name .= 'dp-';
                 break;
         }
-        
+
         $name .= count($this->peopleToNotify) . 'np-';
-        
+
         if(is_array($this->applicant)) {
             $name .= count($this->applicant) . 'ap-';
         }
         else {
             $name .= 'dap-';
         }
-        
+
         if($this->lpa['payment']['method'] == 'card') {
             $name .= 'cd';
         }
         elseif($this->lpa['payment']['method'] == 'cheque') {
             $name .= 'ch';
         }
-        
+
         $name .= '.json';
-        
+
         return $name;
     }
-    
+
     /**
      * Check test coverage
      */
@@ -650,9 +650,9 @@ class JsonGenerator extends Randomizer
         static::$coverage['canSign'][$this->lpa['document']['donor']['canSign']][] = $this->getFileName();
         static::$coverage['primaryAttorney'][count($this->lpa['document']['primaryAttorneys'])][] = $this->getFileName();
         static::$coverage['replacementAttorney'][count($this->lpa['document']['replacementAttorneys'])][] = $this->getFileName();
-        
+
         static::$coverage['hasTrust'][$this->hasTrust][] = $this->getFileName();
-        
+
         static::$coverage['peopleToNotify'][count($this->lpa['document']['peopleToNotify'])][] = $this->getFileName();
         if(is_array($this->lpa['document']['whoIsRegistering'])) {
             static::$coverage['applicant'][count($this->lpa['document']['whoIsRegistering'])][] = $this->getFileName();
@@ -661,15 +661,15 @@ class JsonGenerator extends Randomizer
             static::$coverage['applicant']['donor'][] = $this->getFileName();
         }
         static::$coverage['correspondentIs'][$this->lpa['document']['correspondent']['who']][] = $this->getFileName();
-        
+
         static::$coverage['contactByPost'][$this->lpa['document']['correspondent']['contactByPost']?'yes':'no'][] = $this->getFileName();
-        
+
         static::$coverage['contactByPhone'][$this->lpa['document']['correspondent']['phone']?'yes':'no'][] = $this->getFileName();
-        
+
         static::$coverage['contactByEmail'][$this->lpa['document']['correspondent']['email']?'yes':'no'][] = $this->getFileName();
-        
+
         static::$coverage['contactInWelsh'][$this->lpa['document']['correspondent']['contactInWelsh']?'yes':'no'][] = $this->getFileName();
-        
+
         if(strlen($this->lpa['document']['instruction']) <= 11*84) {
             static::$coverage['numOfInstructionPages'][1][] = $this->getFileName();
         }
@@ -679,7 +679,7 @@ class JsonGenerator extends Randomizer
         else {
             static::$coverage['numOfInstructionPages'][3][] = $this->getFileName();
         }
-        
+
         if(strlen($this->lpa['document']['preference']) <= 11*84) {
             static::$coverage['numOfPreferencePages'][1][] = $this->getFileName();
         }
@@ -689,9 +689,9 @@ class JsonGenerator extends Randomizer
         else {
             static::$coverage['numOfPreferencePages'][3][] = $this->getFileName();
         }
-        
+
         static::$coverage['howPrimaryAttorneyAct'][$this->lpa['document']['primaryAttorneyDecisions']['how']][] = $this->getFileName();
-        
+
         if($this->lpa['document']['primaryAttorneyDecisions']['how'] == 'depends') {
             if(strlen($this->lpa['document']['primaryAttorneyDecisions']['howDetails']) <= 21*84) {
                 static::$coverage['numOfAttorneyDecisionPages'][1][] = $this->getFileName();
@@ -703,16 +703,16 @@ class JsonGenerator extends Randomizer
                 static::$coverage['numOfAttorneyDecisionPages'][3][] = $this->getFileName();
             }
         }
-        
+
         if($this->lpa['document']['type'] == self::PF) {
             static::$coverage['whenAttorneyMakeDecision'][$this->lpa['document']['primaryAttorneyDecisions']['when']][] = $this->getFileName();
         }
         else {
             static::$coverage['life-sustaining'][$this->lpa['document']['primaryAttorneyDecisions']['canSustainLife']?'yes':'no'][] = $this->getFileName();
         }
-        
+
         static::$coverage['howReplacementAttorneyAct'][$this->lpa['document']['replacementAttorneyDecisions']['how']][] = $this->getFileName();
-        
+
         if($this->lpa['document']['replacementAttorneyDecisions']['how'] == 'depends') {
             if(strlen($this->lpa['document']['replacementAttorneyDecisions']['howDetails']) <= 21*84) {
                 static::$coverage['numOfReplacementAttorneyDecisionPages'][1][] = $this->getFileName();
@@ -724,9 +724,9 @@ class JsonGenerator extends Randomizer
                 static::$coverage['numOfReplacementAttorneyDecisionPages'][3][] = $this->getFileName();
             }
         }
-        
+
         static::$coverage['whenReplacementStepIn'][$this->lpa['document']['replacementAttorneyDecisions']['when']][] = $this->getFileName();
-        
+
         if($this->lpa['document']['replacementAttorneyDecisions']['when'] == 'depends') {
             if(strlen($this->lpa['document']['replacementAttorneyDecisions']['whenDetails']) <= 21*84) {
                 static::$coverage['numOfReplacementStepInDecisionPages'][1][] = $this->getFileName();
@@ -738,19 +738,19 @@ class JsonGenerator extends Randomizer
                 static::$coverage['numOfReplacementStepInDecisionPages'][3][] = $this->getFileName();
             }
         }
-        
+
         static::$coverage['paymentMethod'][$this->lpa['payment']['method']][] = $this->getFileName();
         static::$coverage['paymentAmount'][$this->lpa['payment']['amount']][] = $this->getFileName();
-        
+
         static::$coverage['isRepeatCase'][$this->lpa['repeatCaseNumber']?'yes':'no'][] = $this->getFileName();
-        
+
         static::$coverage['receiveBenefits'][($this->lpa['payment']['reducedFeeReceivesBenefits'])?'yes':'no'][] = $this->getFileName();
         static::$coverage['damageAwardOver16K'][$this->lpa['payment']['reducedFeeAwardedDamages']?'yes':'no'][] = $this->getFileName();
         static::$coverage['lowIncome'][$this->lpa['payment']['reducedFeeLowIncome']?'yes':'no'][] = $this->getFileName();
         static::$coverage['receiveUniversalCredit'][$this->lpa['payment']['reducedFeeUniversalCredit']?'yes':'no'][] = $this->getFileName();
-        
+
     }
-    
+
     public function coverageSummary()
     {
         $summary = [];
@@ -760,10 +760,10 @@ class JsonGenerator extends Randomizer
                 $summary[$subjectName][$key] = count($values);
             }
         }
-        
+
         return print_r($summary, true);
     }
-    
+
     public function isAllCoverred()
     {
         foreach(self::$coverage as $subjectName=>$subject) {
@@ -773,40 +773,40 @@ class JsonGenerator extends Randomizer
                 }
             }
         }
-        
+
         return true;
     }
 }
 
 
 for($i=0; $i<200; $i++) {
-    
+
     $generator = new JsonGenerator();
     $data = $generator->generate();
-    
+
     $lpaJson = json_encode($data, JSON_PRETTY_PRINT);
-     
+
     $lpa = new Lpa($lpaJson);
-    
+
     if($lpa->validate()->hasErrors()) {
         echo $lpaJson. PHP_EOL;
         print_r($lpa->validate());
         echo "Validation error!".PHP_EOL;
         exit;
     }
-    
+
     if(!$lpa->isComplete()) {
-        echo 'incomplete LPA'. PHP_EOL; 
+        echo 'incomplete LPA'. PHP_EOL;
     }
-    
+
     $filepath = $generator->getFileName();
 
     if( !is_dir(__DIR__.'/../test-data/json') ){
         mkdir( __DIR__.'/../test-data/json', 0777, true );
     }
-    
+
     file_put_contents(__DIR__.'/../test-data/json/'.$filepath, $lpaJson);
-    
+
     if($generator->isAllCoverred()) {
         echo "Fully coverred after ".($i+1)." files have been generated".PHP_EOL;
         break;

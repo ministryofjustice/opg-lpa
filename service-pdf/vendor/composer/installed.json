@@ -14,7 +14,7 @@
             "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687",
             "shasum": ""
         },
-        "time": "2014-07-09 11:08:51",
+        "time": "2014-07-09T11:08:51+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -52,7 +52,7 @@
             "reference": "888c5c9b2646650c63111dc526c8159e85bddea7",
             "shasum": ""
         },
-        "time": "2015-06-30 13:50:15",
+        "time": "2015-06-30T13:50:15+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -98,7 +98,7 @@
         "suggest": {
             "mikehaertl/pdftk2-precise-amd64": "pdftk 2 binary for Ubuntu 12.04 LTS (amd64)"
         },
-        "time": "2014-10-15 09:00:31",
+        "time": "2014-10-15T09:00:31+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -145,7 +145,7 @@
             "phpunit/phpunit": "~4.0",
             "squizlabs/php_codesniffer": "^2.6.2"
         },
-        "time": "2016-09-13 14:38:50",
+        "time": "2016-09-13T14:38:50+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -195,7 +195,7 @@
         "suggest": {
             "zendframework/zend-cache": "To support swapping memory objects into and out of non-memory cache storage"
         },
-        "time": "2016-05-11 14:49:42",
+        "time": "2016-05-11T14:49:42+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -239,7 +239,7 @@
             "zendframework/zend-memory": ">=2.0.0",
             "zendframework/zend-stdlib": ">=2.0.0"
         },
-        "time": "2012-11-16 11:16:01",
+        "time": "2012-11-16T11:16:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -281,7 +281,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-10-10 12:19:37",
+        "time": "2016-10-10T12:19:37+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -358,7 +358,7 @@
             "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
             "videlalvaro/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib"
         },
-        "time": "2015-07-12 13:54:09",
+        "time": "2015-07-12T13:54:09+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -408,7 +408,7 @@
         "require": {
             "php": ">= 5.3.0"
         },
-        "time": "2015-08-10 12:46:19",
+        "time": "2015-08-10T12:46:19+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -463,7 +463,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2016-12-03 22:08:25",
+        "time": "2016-12-03T22:08:25+00:00",
         "bin": [
             "bin/jp.php"
         ],
@@ -517,7 +517,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-08-06 14:39:51",
+        "time": "2016-08-06T14:39:51+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -576,7 +576,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2016-06-24 23:00:38",
+        "time": "2016-06-24T23:00:38+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -632,7 +632,7 @@
         "require-dev": {
             "phpunit/phpunit": "^4.0"
         },
-        "time": "2016-12-20 10:07:11",
+        "time": "2016-12-20T10:07:11+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -689,7 +689,7 @@
             "phpunit/phpunit": "^4.0",
             "psr/log": "^1.0"
         },
-        "time": "2016-10-08 15:01:37",
+        "time": "2016-10-08T15:01:37+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -751,7 +751,7 @@
             "psr/log": "~1.0",
             "wp-cli/php-cli-tools": "0.10.*"
         },
-        "time": "2016-02-15 15:41:07",
+        "time": "2016-02-15T15:41:07+00:00",
         "bin": [
             "bin/dynamo-queue"
         ],
@@ -783,7 +783,7 @@
             "reference": "fc08354828f8fd3245f77a66b9e23a6bca48297e",
             "shasum": ""
         },
-        "time": "2014-12-30 15:22:37",
+        "time": "2014-12-30T15:22:37+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -841,7 +841,7 @@
             "zendframework/zend-session": "Zend\\Session component",
             "zendframework/zend-uri": "Zend\\Uri component, required by the Uri and Sitemap\\Loc validators"
         },
-        "time": "2016-06-23 13:44:31",
+        "time": "2016-06-23T13:44:31+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -904,7 +904,7 @@
             "ocramius/proxy-manager": "ProxyManager 1.* to handle lazy initialization of services",
             "zendframework/zend-stdlib": "zend-stdlib ^2.5 if you wish to use the MergeReplaceKey or MergeRemoveKey features in Config instances"
         },
-        "time": "2016-12-19 20:04:51",
+        "time": "2016-12-19T20:04:51+00:00",
         "bin": [
             "bin/generate-deps-for-config-factory",
             "bin/generate-factory-for-class"
@@ -963,7 +963,7 @@
         "suggest": {
             "zendframework/zendpdf": "ZendPdf component"
         },
-        "time": "2016-02-17 21:15:38",
+        "time": "2016-02-17T21:15:38+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1016,7 +1016,7 @@
             "ext-gmp": "If using the gmp functionality",
             "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if Mcrypt extensions is unavailable"
         },
-        "time": "2016-04-07 16:29:53",
+        "time": "2016-04-07T16:29:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1068,7 +1068,7 @@
         "suggest": {
             "ext-mcrypt": "Required for most features of Zend\\Crypt"
         },
-        "time": "2016-02-03 23:46:30",
+        "time": "2016-02-03T23:46:30+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1125,7 +1125,7 @@
             "zendframework/zend-servicemanager": "Zend\\ServiceManager component, for using the filter chain functionality",
             "zendframework/zend-uri": "Zend\\Uri component, for the UriNormalize filter"
         },
-        "time": "2016-04-18 18:32:43",
+        "time": "2016-04-18T18:32:43+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1172,7 +1172,7 @@
         "require": {
             "php": ">=5.3.2"
         },
-        "time": "2014-09-09 13:34:57",
+        "time": "2014-09-09T13:34:57+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1232,7 +1232,7 @@
         "require-dev": {
             "phpunit/phpunit": "^4.8.24"
         },
-        "time": "2016-07-03 21:52:18",
+        "time": "2016-07-03T21:52:18+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1290,7 +1290,7 @@
         "suggest": {
             "ext-intl": "to use the component with locales other than \"en\""
         },
-        "time": "2015-07-23 02:17:26",
+        "time": "2015-07-23T02:17:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1363,7 +1363,7 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2016-11-14 01:06:16",
+        "time": "2016-11-14T01:06:16+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1447,7 +1447,7 @@
             "symfony/property-access": "For using the 2.4 Validator API",
             "symfony/yaml": ""
         },
-        "time": "2015-07-01 19:58:06",
+        "time": "2015-07-01T19:58:06+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1498,7 +1498,7 @@
         "require-dev": {
             "phpunit/phpunit": "3.7.*"
         },
-        "time": "2015-03-24 23:17:13",
+        "time": "2015-03-24T23:17:13+00:00",
         "bin": [
             "bin/raven"
         ],
@@ -1575,7 +1575,7 @@
             "zendframework/zend-mail": "Zend\\Mail component to use the email log writer",
             "zendframework/zend-validator": "Zend\\Validator component to block invalid log messages"
         },
-        "time": "2016-08-11 13:44:10",
+        "time": "2016-08-11T13:44:10+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1620,7 +1620,7 @@
             "reference": "58b3a85e7999757d6ad81c787a1fbf5ff6c628c6",
             "shasum": ""
         },
-        "time": "2015-06-21 13:59:46",
+        "time": "2015-06-21T13:59:46+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1663,7 +1663,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.4"
         },
-        "time": "2015-11-11 19:50:13",
+        "time": "2015-11-11T19:50:13+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1720,7 +1720,7 @@
             "ext-mbstring": "*",
             "phpunit/phpunit": "~4.4"
         },
-        "time": "2016-06-17 09:04:28",
+        "time": "2016-06-17T09:04:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1787,7 +1787,7 @@
         "require-dev": {
             "phpunit/phpunit": "^4.8 || ^5.0"
         },
-        "time": "2016-08-18 05:49:44",
+        "time": "2016-08-18T05:49:44+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1839,7 +1839,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.8"
         },
-        "time": "2015-12-08 07:14:41",
+        "time": "2015-12-08T07:14:41+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1895,7 +1895,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.4"
         },
-        "time": "2016-11-19 09:18:40",
+        "time": "2016-11-19T09:18:40+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1963,7 +1963,7 @@
             "phpunit/phpunit": "~4.0",
             "squizlabs/php_codesniffer": "~2.0"
         },
-        "time": "2015-06-14 21:17:01",
+        "time": "2015-06-14T21:17:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2012,7 +2012,7 @@
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2015-06-21 13:50:34",
+        "time": "2015-06-21T13:50:34+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2064,7 +2064,7 @@
         "suggest": {
             "ext-soap": "*"
         },
-        "time": "2015-10-02 06:51:40",
+        "time": "2015-10-02T06:51:40+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2116,7 +2116,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4|~5"
         },
-        "time": "2016-05-12 18:03:57",
+        "time": "2016-05-12T18:03:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2159,7 +2159,7 @@
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2013-10-10 15:34:57",
+        "time": "2013-10-10T15:34:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2210,7 +2210,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.2"
         },
-        "time": "2016-11-15 14:06:22",
+        "time": "2016-11-15T14:06:22+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2271,7 +2271,7 @@
             "ext-xdebug": ">=2.2.1",
             "ext-xmlwriter": "*"
         },
-        "time": "2015-10-06 15:47:00",
+        "time": "2015-10-06T15:47:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2340,7 +2340,7 @@
         "suggest": {
             "phpunit/php-invoker": "~1.1"
         },
-        "time": "2014-11-11 10:11:09",
+        "time": "2014-11-11T10:11:09+00:00",
         "bin": [
             "phpunit"
         ],
@@ -2378,48 +2378,6 @@
             "testing",
             "xunit"
         ]
-    },
-    {
-        "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "v2.0.3",
-        "version_normalized": "2.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "f72df2e43f6a136dba5c74a5b8451b1e75141666"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/f72df2e43f6a136dba5c74a5b8451b1e75141666",
-            "reference": "f72df2e43f6a136dba5c74a5b8451b1e75141666",
-            "shasum": ""
-        },
-        "require": {
-            "egulias/email-validator": "1.2.*",
-            "php": ">=5.5.9",
-            "symfony/intl": "2.6.*",
-            "symfony/validator": "2.6.*"
-        },
-        "require-dev": {
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2016-12-20 15:05:39",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "PHP data models that represent a Lasting Power of Attorney",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.0.3",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
-        }
     },
     {
         "name": "aws/aws-sdk-php",
@@ -2464,7 +2422,7 @@
             "ext-curl": "To send requests using cURL",
             "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
         },
-        "time": "2017-01-04 18:20:17",
+        "time": "2017-01-04T18:20:17+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2528,7 +2486,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2017-01-16 14:35:01",
+        "time": "2017-01-16T14:35:01+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2563,7 +2521,7 @@
         "require": {
             "php": ">=5.3.9"
         },
-        "time": "2017-01-03 13:49:52",
+        "time": "2017-01-03T13:49:52+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2629,7 +2587,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2017-01-02 20:30:24",
+        "time": "2017-01-02T20:30:24+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2661,5 +2619,47 @@
         ],
         "description": "Symfony Translation Component",
         "homepage": "https://symfony.com"
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-datamodels",
+        "version": "v2.1.1",
+        "version_normalized": "2.1.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
+            "reference": "ea12348e164a777b94ec5987eeb6fbd79b4ac82e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/ea12348e164a777b94ec5987eeb6fbd79b4ac82e",
+            "reference": "ea12348e164a777b94ec5987eeb6fbd79b4ac82e",
+            "shasum": ""
+        },
+        "require": {
+            "egulias/email-validator": "1.2.*",
+            "php": ">=5.5.9",
+            "symfony/intl": "2.6.*",
+            "symfony/validator": "2.6.*"
+        },
+        "require-dev": {
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2017-02-08T12:03:06+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\DataModel\\": "src/Opg/Lpa/DataModel/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "PHP data models that represent a Lasting Power of Attorney",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.1.1",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
+        }
     }
 ]
