@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ddacdc19dc90baa8a66235d8ee7f9ac",
+    "hash": "d604fdb09ca57a41d6360d8eacacf25b",
+    "content-hash": "5bebb7c14c269e0b0eaeaa16d287498e",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -84,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-01-04T18:20:17+00:00"
+            "time": "2017-01-04 18:20:17"
         },
         {
             "name": "container-interop/container-interop",
@@ -111,7 +112,7 @@
                 "MIT"
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
-            "time": "2014-12-30T15:22:37+00:00"
+            "time": "2014-12-30 15:22:37"
         },
         {
             "name": "doctrine/lexer",
@@ -165,7 +166,7 @@
                 "lexer",
                 "parser"
             ],
-            "time": "2014-09-09T13:34:57+00:00"
+            "time": "2014-09-09 13:34:57"
         },
         {
             "name": "egulias/email-validator",
@@ -217,7 +218,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2016-07-03T21:52:18+00:00"
+            "time": "2016-07-03 21:52:18"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -279,7 +280,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2016-10-08T15:01:37+00:00"
+            "time": "2016-10-08 15:01:37"
         },
         {
             "name": "guzzlehttp/promises",
@@ -330,7 +331,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20T10:07:11+00:00"
+            "time": "2016-12-20 10:07:11"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -388,7 +389,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2016-06-24T23:00:38+00:00"
+            "time": "2016-06-24 23:00:38"
         },
         {
             "name": "mikehaertl/php-pdftk",
@@ -433,7 +434,7 @@
                 "pdf",
                 "pdftk"
             ],
-            "time": "2014-10-15T09:00:31+00:00"
+            "time": "2014-10-15 09:00:31"
         },
         {
             "name": "mikehaertl/php-shellcommand",
@@ -469,7 +470,7 @@
             "keywords": [
                 "shell"
             ],
-            "time": "2015-06-30T13:50:15+00:00"
+            "time": "2015-06-30 13:50:15"
         },
         {
             "name": "mikehaertl/php-tmpfile",
@@ -505,20 +506,20 @@
             "keywords": [
                 "files"
             ],
-            "time": "2014-07-09T11:08:51+00:00"
+            "time": "2014-07-09 11:08:51"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v2.1.1",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "ea12348e164a777b94ec5987eeb6fbd79b4ac82e"
+                "reference": "f72df2e43f6a136dba5c74a5b8451b1e75141666"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/ea12348e164a777b94ec5987eeb6fbd79b4ac82e",
-                "reference": "ea12348e164a777b94ec5987eeb6fbd79b4ac82e",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/f72df2e43f6a136dba5c74a5b8451b1e75141666",
+                "reference": "f72df2e43f6a136dba5c74a5b8451b1e75141666",
                 "shasum": ""
             },
             "require": {
@@ -542,10 +543,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.1.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.0.3",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-02-08T12:03:06+00:00"
+            "time": "2016-12-20 15:05:39"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -585,7 +586,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.0.6",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-01-16T14:35:01+00:00"
+            "time": "2017-01-16 14:35:01"
         },
         {
             "name": "monolog/monolog",
@@ -661,7 +662,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-07-12T13:54:09+00:00"
+            "time": "2015-07-12 13:54:09"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -716,7 +717,7 @@
                 "json",
                 "jsonpath"
             ],
-            "time": "2016-12-03T22:08:25+00:00"
+            "time": "2016-12-03 22:08:25"
         },
         {
             "name": "nsmithuk/dynamo-queue-php",
@@ -754,7 +755,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2016-02-15T15:41:07+00:00"
+            "time": "2016-02-15 15:41:07"
         },
         {
             "name": "psr/http-message",
@@ -804,7 +805,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2016-08-06 14:39:51"
         },
         {
             "name": "psr/log",
@@ -851,7 +852,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10T12:19:37+00:00"
+            "time": "2016-10-10 12:19:37"
         },
         {
             "name": "raven/raven",
@@ -904,7 +905,7 @@
                 "logging"
             ],
             "abandoned": "sentry/sentry",
-            "time": "2015-03-24T23:17:13+00:00"
+            "time": "2015-03-24 23:17:13"
         },
         {
             "name": "symfony/intl",
@@ -980,7 +981,7 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2015-07-23T02:17:26+00:00"
+            "time": "2015-07-23 02:17:26"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1039,7 +1040,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14T01:06:16+00:00"
+            "time": "2016-11-14 01:06:16"
         },
         {
             "name": "symfony/translation",
@@ -1103,7 +1104,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-01-02T20:30:24+00:00"
+            "time": "2017-01-02 20:30:24"
         },
         {
             "name": "symfony/validator",
@@ -1175,7 +1176,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-01T19:58:06+00:00"
+            "time": "2015-07-01 19:58:06"
         },
         {
             "name": "wp-cli/php-cli-tools",
@@ -1225,7 +1226,7 @@
                 "cli",
                 "console"
             ],
-            "time": "2015-08-10T12:46:19+00:00"
+            "time": "2015-08-10 12:46:19"
         },
         {
             "name": "zendframework/zend-barcode",
@@ -1278,7 +1279,7 @@
                 "barcode",
                 "zf2"
             ],
-            "time": "2016-02-17T21:15:38+00:00"
+            "time": "2016-02-17 21:15:38"
         },
         {
             "name": "zendframework/zend-crypt",
@@ -1328,7 +1329,7 @@
                 "crypt",
                 "zf2"
             ],
-            "time": "2016-02-03T23:46:30+00:00"
+            "time": "2016-02-03 23:46:30"
         },
         {
             "name": "zendframework/zend-filter",
@@ -1388,7 +1389,7 @@
                 "filter",
                 "zf2"
             ],
-            "time": "2016-04-18T18:32:43+00:00"
+            "time": "2016-04-18 18:32:43"
         },
         {
             "name": "zendframework/zend-log",
@@ -1459,7 +1460,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2016-08-11T13:44:10+00:00"
+            "time": "2016-08-11 13:44:10"
         },
         {
             "name": "zendframework/zend-math",
@@ -1509,7 +1510,7 @@
                 "math",
                 "zf2"
             ],
-            "time": "2016-04-07T16:29:53+00:00"
+            "time": "2016-04-07 16:29:53"
         },
         {
             "name": "zendframework/zend-memory",
@@ -1557,7 +1558,7 @@
                 "memory",
                 "zf2"
             ],
-            "time": "2016-05-11T14:49:42+00:00"
+            "time": "2016-05-11 14:49:42"
         },
         {
             "name": "zendframework/zend-servicemanager",
@@ -1618,7 +1619,7 @@
                 "servicemanager",
                 "zf"
             ],
-            "time": "2016-12-19T20:04:51+00:00"
+            "time": "2016-12-19 20:04:51"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -1663,7 +1664,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2016-09-13T14:38:50+00:00"
+            "time": "2016-09-13 14:38:50"
         },
         {
             "name": "zendframework/zend-validator",
@@ -1734,7 +1735,7 @@
                 "validator",
                 "zf2"
             ],
-            "time": "2016-06-23T13:44:31+00:00"
+            "time": "2016-06-23 13:44:31"
         },
         {
             "name": "zendframework/zendpdf",
@@ -1776,7 +1777,7 @@
                 "pdf",
                 "zf2"
             ],
-            "time": "2012-11-16T11:16:01+00:00"
+            "time": "2012-11-16 11:16:01"
         }
     ],
     "packages-dev": [
@@ -1832,7 +1833,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14T21:17:01+00:00"
+            "time": "2015-06-14 21:17:01"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1894,7 +1895,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-06T15:47:00+00:00"
+            "time": "2015-10-06 15:47:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1939,7 +1940,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2013-10-10T15:34:57+00:00"
+            "time": "2013-10-10 15:34:57"
         },
         {
             "name": "phpunit/php-text-template",
@@ -1980,7 +1981,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21T13:50:34+00:00"
+            "time": "2015-06-21 13:50:34"
         },
         {
             "name": "phpunit/php-timer",
@@ -2024,7 +2025,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2016-05-12T18:03:57+00:00"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -2073,7 +2074,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2016-11-15T14:06:22+00:00"
+            "time": "2016-11-15 14:06:22"
         },
         {
             "name": "phpunit/phpunit",
@@ -2147,7 +2148,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-11-11T10:11:09+00:00"
+            "time": "2014-11-11 10:11:09"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2203,7 +2204,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-10-02T06:51:40+00:00"
+            "time": "2015-10-02 06:51:40"
         },
         {
             "name": "sebastian/comparator",
@@ -2267,7 +2268,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2016-11-19T09:18:40+00:00"
+            "time": "2016-11-19 09:18:40"
         },
         {
             "name": "sebastian/diff",
@@ -2319,7 +2320,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2015-12-08T07:14:41+00:00"
+            "time": "2015-12-08 07:14:41"
         },
         {
             "name": "sebastian/environment",
@@ -2369,7 +2370,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-08-18T05:49:44+00:00"
+            "time": "2016-08-18 05:49:44"
         },
         {
             "name": "sebastian/exporter",
@@ -2436,7 +2437,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2016-06-17T09:04:28+00:00"
+            "time": "2016-06-17 09:04:28"
         },
         {
             "name": "sebastian/recursion-context",
@@ -2489,7 +2490,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2015-11-11T19:50:13+00:00"
+            "time": "2015-11-11 19:50:13"
         },
         {
             "name": "sebastian/version",
@@ -2524,7 +2525,7 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2015-06-21T13:59:46+00:00"
+            "time": "2015-06-21 13:59:46"
         },
         {
             "name": "symfony/yaml",
@@ -2573,7 +2574,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-01-03T13:49:52+00:00"
+            "time": "2017-01-03 13:49:52"
         }
     ],
     "aliases": [],
