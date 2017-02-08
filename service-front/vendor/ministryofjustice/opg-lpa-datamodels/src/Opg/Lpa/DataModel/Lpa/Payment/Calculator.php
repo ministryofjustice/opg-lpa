@@ -52,6 +52,6 @@ class Calculator
 
     public static function getBenefitsFee()
     {
-        return (float) 0;
+        return 0.0;
     }
 }
