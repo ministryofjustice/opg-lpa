@@ -53,5 +53,5 @@ If the donor uses more than one name or used to be known by a different name, th
 ### Related help topics
 * [LPA basics](/help/#topic-lpa-basics)
 * [Attorneys](/help/#topic-attorneys)
-* [How attorneys make decisions](/help/#topic-how-attorneys-make-decisions)
+* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)
 
