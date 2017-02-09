@@ -129,5 +129,5 @@ You should avoid these common mistakes:
 * You can't give an attorney power to appoint a replacement attorney.
 
 ### Related help topics
-* [How attorneys make decisions](/help/#topic-how-attorneys-make-decisions)
+* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)
 * [Life-sustaining treatment](/help/#topic-life-sustaining-treatment)

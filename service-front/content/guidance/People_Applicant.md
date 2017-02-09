@@ -28,4 +28,4 @@ If more than one attorney applies to register your LPA, OPG will send the regist
 
 ### Related help topics
 * [Correspondence address](/help/#topic-correspondence-address)
-* [How attorneys make decisions](/help/#topic-how-attorneys-make-decisions)
+* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)
