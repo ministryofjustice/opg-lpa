@@ -25,15 +25,15 @@ class RegisterController extends AbstractBaseController {
         //---
 
         $check = $this->preventAuthenticatedUser();
-        
+
         if( $check !== true ) {
-            
+
             $this->log()->info(
                 'Authenticated user attempted to access registration page',
                 $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
             );
-            
-            return $check; 
+
+            return $check;
         }
 
         //---

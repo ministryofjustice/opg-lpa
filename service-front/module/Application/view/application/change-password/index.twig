@@ -16,6 +16,7 @@
 {% set password = form.get('password_current') %}
 {% set new_password = form.get('password') %}
 {% set new_password_confirm = form.get('password_confirm') %}
+{% set skip_confirm_password = form.get('skip_confirm_password') %}
 
 {# form fields config #}
 {{ password.setAttributes({
@@ -33,6 +34,11 @@
     class: 'form-control'
 }) ? ''}}
 
+{{ skip_confirm_password.setAttributes({
+    id: 'js-skipConfirmPassword'
+}) ? ''}}
+
+
 {# form fields labels #}
 {{ password.setOptions({ label: 'Your current password' }) ? '' }}
 {{ new_password.setOptions({ label: 'New password' }) ? '' }}
@@ -46,8 +52,28 @@
     <fieldset>
         <legend class="visuallyhidden">Change password</legend>
 
-        {{ macros.formGroup(password) }}
-        {{ macros.formGroup(new_password) }}
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password_current">Show password</a>
+            </div>
+        </div>
+
+        <div class="form-group {{ new_password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ new_password.getAttribute('id') }}">
+                {{ new_password.getOption('label') }}
+                {{ formElementErrorsV2(new_password) }}
+            </label>
+            {{ formElement(new_password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
+            </div>
+            {{ formElement(skip_confirm_password) }}
+        </div>
         {{ macros.formGroup(new_password_confirm) }}
 
         <div class="form-group">
