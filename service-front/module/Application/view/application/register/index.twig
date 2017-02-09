@@ -18,6 +18,7 @@
 {% set password = form.get('password') %}
 {% set password_confirm = form.get('password_confirm') %}
 {% set terms = form.get('terms') %}
+{% set skip_confirm_password = form.get('skip_confirm_password') %}
 
 {# form fields config #}
 {{ email.setAttributes({
@@ -46,6 +47,11 @@
 {{ terms.setAttributes({
     id: 'terms'
 }) ? ''}}
+
+{{ skip_confirm_password.setAttributes({
+    id: 'js-skipConfirmPassword'
+}) ? ''}}
+
 
 {# form fields labels #}
 {{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
@@ -81,7 +87,18 @@
 
         {% include 'application/partials/password-rules.twig' %}
 
-        {{ macros.formGroup(password) }}
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
+            </div>
+            {{ formElement(skip_confirm_password) }}
+        </div>
+
         {{ macros.formGroup(password_confirm) }}
 
     </fieldset>

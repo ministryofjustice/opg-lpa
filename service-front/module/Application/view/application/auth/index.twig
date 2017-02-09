@@ -23,7 +23,7 @@
 }) ? ''}}
 
 {{ password.setAttributes({
-    id: 'password_current',
+    id: 'password',
     class: 'form-control'
 }) ? '' }}
 
@@ -44,7 +44,17 @@
         <legend class="visuallyhidden">Sign in</legend>
 
         {{ macros.formGroup(email) }}
-        {{ macros.formGroup(password) }}
+
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password">Show password</a>
+            </div>
+        </div>
 
         <div class="form-group">
             <input type="submit" name="submit" id="signin-form-submit" value="Sign in" class="button">
