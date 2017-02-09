@@ -3,6 +3,8 @@
 // Summary table during LPA creation
 
 .table-summary {
+    margin-bottom: 20px;
+
     tr {
         @include media($max-width: 400px) {
             display: block;
