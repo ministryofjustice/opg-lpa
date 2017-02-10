@@ -62,7 +62,7 @@ class RepeatApplicationController extends AbstractLpaController
                     Calculator::calculate($lpa);
 
                     if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                        throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
+                        throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in RepeatApplicationController');
                     }
                 }
 
