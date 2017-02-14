@@ -12,7 +12,7 @@ use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 
-abstract class AbstractAuthenticatedController extends AbstractBaseController implements UserAwareInterface
+abstract class AbstractAuthenticatedController extends AbstractBaseController
 {
     /**
      * @var Identity The Identity of the current authenticated user.
@@ -47,7 +47,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
 
         $this->log()->info('Request to ' . get_class($this), $identity->toArray());
-        
+
         //----------------------------------------------------------------------
         // Check if they've singed in since the T&C's changed...
 
@@ -191,11 +191,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController im
         return true;
 
     } // function
-    
+
     /**
-     * delete cloned data for this seed id from session container if it exists. 
+     * delete cloned data for this seed id from session container if it exists.
      * to make sure clone data will be loaded freshly when actor form is rendered.
-     * 
+     *
      * @param int $seedId
      */
     protected function resetSessionCloneData($seedId)
