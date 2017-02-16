@@ -38,23 +38,12 @@ class AuthController extends AbstractBaseController {
 
         $request = $this->getRequest();
 
-
-        $this->log()->info('just got request');
-
         if ($request->isPost()) {
 
             $form->setData($request->getPost());
 
-            $this->log()->info('checking if form is valid?');
-
-            $form->isValid();
-            $this->log()->info('howable '.json_encode($form->getMessages()));
-            $this->log()->info('howable '.json_encode($form->isValid()));
-
             // If the form is valid...
             if ($form->isValid()) {
-
-                $this->log()->info('form is valid');
 
                 // Check if we're going to redirect to a deep(er) link (before we kill the session)
                 $preAuthRequest = new Container('PreAuthRequest');
