@@ -7,6 +7,7 @@ use Application\Form\User\Login as LoginForm;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 use Zend\Session\Container;
+use Application\Model\FormFlowChecker;
 
 class AuthController extends AbstractBaseController {
 
@@ -37,12 +38,23 @@ class AuthController extends AbstractBaseController {
 
         $request = $this->getRequest();
 
+
+        $this->log()->info('just got request');
+
         if ($request->isPost()) {
 
             $form->setData($request->getPost());
 
+            $this->log()->info('checking if form is valid?');
+
+            $form->isValid();
+            $this->log()->info('howable '.json_encode($form->getMessages()));
+            $this->log()->info('howable '.json_encode($form->isValid()));
+
             // If the form is valid...
             if ($form->isValid()) {
+
+                $this->log()->info('form is valid');
 
                 // Check if we're going to redirect to a deep(er) link (before we kill the session)
                 $preAuthRequest = new Container('PreAuthRequest');
@@ -80,9 +92,19 @@ class AuthController extends AbstractBaseController {
                     // Regenerate the session ID post authentication
                     $session->regenerateId(true);
 
-                    //---
-
+                    // is there a return url stored in the session?
                     if( isset($nextUrl) ){
+                        $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH));
+
+                        // does that url refer to an LPA? If so redirect to next page which needs filling out.
+                        if ($pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
+                            $lpaId = $pathArray[2];
+                            $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
+                            $destinationRoute = (new FormFlowChecker($lpa))->backToForm();
+                            return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id]);
+                        }
+
+                        //not an LPA url so redirect directly to it
                         return $this->redirect()->toUrl( $nextUrl );
                     }
 
@@ -91,10 +113,7 @@ class AuthController extends AbstractBaseController {
 
                 } // if
 
-                //---
-
                 // else authentication failed...
-
 
                 // Create a new instance of the login form as we'll need a new Csrf token.
                 $form = $this->getLoginForm();
