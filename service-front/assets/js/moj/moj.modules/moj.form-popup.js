@@ -35,6 +35,15 @@
         .on('click.moj.Modules.FormPopup', this.settings.selector, this.btnClick)
         // submit form
         .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
+        moj.Events.on('FormPopup.renderSelectionButtons', this.renderSelectionButtons);
+    },
+
+    renderSelectionButtons: function() {
+        //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
+        // Use GOV.UK selection-buttons.js to set selected
+        // and focused states for block labels
+        var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']")
+        new GOVUK.SelectionButtons($blockLabels) // eslint-disable-line
     },
 
     btnClick: function (e) {
@@ -96,12 +105,7 @@
       // hide use button and switch button
       $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
 
-      //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
-      // Use GOV.UK selection-buttons.js to set selected
-      // and focused states for block labels
-      var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']")
-      new GOVUK.SelectionButtons($blockLabels) // eslint-disable-line
-
+      this.renderSelectionButtons();
     },
 
     submitForm: function (e) {
@@ -155,6 +159,7 @@
           moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
+          moj.Events.trigger('FormPopup.renderSelectionButtons');
         } else {
           window.location.reload();
         }

@@ -2719,289 +2719,288 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
 };
 ;
 ;(function (global) {
-  'use strict'
+    'use strict';
 
-  var $ = global.jQuery
-  var GOVUK = global.GOVUK || {}
+    var $ = global.jQuery;
+    var GOVUK = global.GOVUK || {};
 
   var SelectionButtons = function (elmsOrSelector, opts) {
-    this.selectedClass = 'selected'
-    this.focusedClass = 'focused'
-    this.radioClass = 'selection-button-radio'
-    this.checkboxClass = 'selection-button-checkbox'
+      this.selectedClass = 'selected';
+      this.focusedClass = 'focused';
+      this.radioClass = 'selection-button-radio';
+      this.checkboxClass = 'selection-button-checkbox';
     if (opts !== undefined) {
       $.each(opts, function (optionName, optionObj) {
-        this[optionName] = optionObj
-      }.bind(this))
+          this[optionName] = optionObj;
+      }.bind(this));
     }
     if (typeof elmsOrSelector === 'string') {
-      this.selector = elmsOrSelector
-      this.setInitialState($(this.selector))
+        this.selector = elmsOrSelector;
+        this.setInitialState($(this.selector));
     } else if (elmsOrSelector !== undefined) {
-      this.$elms = elmsOrSelector
-      this.setInitialState(this.$elms)
+        this.$elms = elmsOrSelector;
+        this.setInitialState(this.$elms);
     }
-    this.addEvents()
-  }
+      this.addEvents();
+  };
   SelectionButtons.prototype.addEvents = function () {
     if (typeof this.$elms !== 'undefined') {
-      this.addElementLevelEvents()
+        this.addElementLevelEvents();
     } else {
-      this.addDocumentLevelEvents()
+        this.addDocumentLevelEvents();
     }
-  }
+  };
   SelectionButtons.prototype.setInitialState = function ($elms) {
     $elms.each(function (idx, elm) {
-      var $elm = $(elm)
+        var $elm = $(elm);
 
-      var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass
-      $elm.parent('label').addClass(labelClass)
-      if ($elm.is(':checked')) {
-        this.markSelected($elm)
-      }
-    }.bind(this))
-  }
+        var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass;
+        $elm.parent('label').addClass(labelClass);
+      //if ($elm.is(':checked')) {
+      //    this.markSelected($elm);
+      //}
+    }.bind(this));
+  };
   SelectionButtons.prototype.markFocused = function ($elm, state) {
     if (state === 'focused') {
-      $elm.parent('label').addClass(this.focusedClass)
+        $elm.parent('label').addClass(this.focusedClass);
     } else {
-      $elm.parent('label').removeClass(this.focusedClass)
+        $elm.parent('label').removeClass(this.focusedClass);
     }
-  }
+  };
   SelectionButtons.prototype.markSelected = function ($elm) {
-    var radioName
+      var radioName;
 
     if ($elm.attr('type') === 'radio') {
-      radioName = $elm.attr('name')
+        radioName = $elm.attr('name');
       $($elm[0].form).find('input[name="' + radioName + '"]')
         .parent('label')
-        .removeClass(this.selectedClass)
-      $elm.parent('label').addClass(this.selectedClass)
+            .removeClass(this.selectedClass);
+        $elm.parent('label').addClass(this.selectedClass);
     } else { // checkbox
       if ($elm.is(':checked')) {
-        $elm.parent('label').addClass(this.selectedClass)
+          $elm.parent('label').addClass(this.selectedClass);
       } else {
-        $elm.parent('label').removeClass(this.selectedClass)
+          $elm.parent('label').removeClass(this.selectedClass);
       }
     }
-  }
+  };
   SelectionButtons.prototype.addElementLevelEvents = function () {
-    this.clickHandler = this.getClickHandler()
-    this.focusHandler = this.getFocusHandler({ 'level': 'element' })
+      this.clickHandler = this.getClickHandler();
+      this.focusHandler = this.getFocusHandler({ 'level': 'element' });
 
     this.$elms
       .on('click', this.clickHandler)
-      .on('focus blur', this.focusHandler)
-  }
+          .on('focus blur', this.focusHandler);
+  };
   SelectionButtons.prototype.addDocumentLevelEvents = function () {
-    this.clickHandler = this.getClickHandler()
-    this.focusHandler = this.getFocusHandler({ 'level': 'document' })
+      this.clickHandler = this.getClickHandler();
+      this.focusHandler = this.getFocusHandler({ 'level': 'document' });
 
     $(document)
       .on('click', this.selector, this.clickHandler)
-      .on('focus blur', this.selector, this.focusHandler)
-  }
+          .on('focus blur', this.selector, this.focusHandler);
+  };
   SelectionButtons.prototype.getClickHandler = function () {
     return function (e) {
-      this.markSelected($(e.target))
-    }.bind(this)
-  }
+        this.markSelected($(e.target));
+    }.bind(this);
+  };
   SelectionButtons.prototype.getFocusHandler = function (opts) {
-    var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus'
+      var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus';
 
     return function (e) {
-      var state = (e.type === focusEvent) ? 'focused' : 'blurred'
+        var state = (e.type === focusEvent) ? 'focused' : 'blurred';
 
-      this.markFocused($(e.target), state)
-    }.bind(this)
-  }
+        this.markFocused($(e.target), state);
+    }.bind(this);
+  };
   SelectionButtons.prototype.destroy = function () {
     if (typeof this.selector !== 'undefined') {
       $(document)
         .off('click', this.selector, this.clickHandler)
-        .off('focus blur', this.selector, this.focusHandler)
+            .off('focus blur', this.selector, this.focusHandler);
     } else {
       this.$elms
         .off('click', this.clickHandler)
-        .off('focus blur', this.focusHandler)
+            .off('focus blur', this.focusHandler);
     }
-  }
+  };
 
-  GOVUK.SelectionButtons = SelectionButtons
-  global.GOVUK = GOVUK
-})(window)
+    GOVUK.SelectionButtons = SelectionButtons;
+    global.GOVUK = GOVUK;
+})(window);
 ;
 ;(function (global) {
-  'use strict'
+    'use strict';
 
-  var $ = global.jQuery
-  var GOVUK = global.GOVUK || {}
+    var $ = global.jQuery;
+    var GOVUK = global.GOVUK || {};
 
   function ShowHideContent () {
-    var self = this
+      var self = this;
 
-    // Radio and Checkbox selectors
-    var selectors = {
-      namespace: 'ShowHideContent',
-      radio: '.block-label[data-target] input[type="radio"]',
-      checkbox: '.block-label[data-target] input[type="checkbox"]'
-    }
+      // Radio and Checkbox selectors
+      var selectors = {
+          namespace: 'ShowHideContent',
+          radio: '.block-label[data-target] input[type="radio"]',
+          checkbox: '.block-label[data-target] input[type="checkbox"]'
+      };
 
-    // Escape name attribute for use in DOM selector
-    function escapeElementName (str) {
-      var result = str.replace('[', '\\[').replace(']', '\\]')
-      return result
-    }
-
-    // Adds ARIA attributes to control + associated content
-    function initToggledContent () {
-      var $control = $(this)
-      var $content = getToggledContent($control)
-
-      // Set aria-controls and defaults
-      if ($content.length) {
-        $control.attr('aria-controls', $content.attr('id'))
-        $control.attr('aria-expanded', 'false')
-        $content.attr('aria-hidden', 'true')
-      }
-    }
-
-    // Return toggled content for control
-    function getToggledContent ($control) {
-      var id = $control.attr('aria-controls')
-
-      // ARIA attributes aren't set before init
-      if (!id) {
-        id = $control.closest('label').data('target')
+      // Escape name attribute for use in DOM selector
+      function escapeElementName (str) {
+          var result = str.replace('[', '\\[').replace(']', '\\]');
+          return result;
       }
 
-      // Find show/hide content by id
-      return $('#' + id)
-    }
+      // Adds ARIA attributes to control + associated content
+      function initToggledContent () {
+          var $control = $(this);
+          var $content = getToggledContent($control);
 
-    // Show toggled content for control
-    function showToggledContent ($control, $content) {
-      // Show content
-      if ($content.hasClass('js-hidden')) {
-        $content.removeClass('js-hidden')
-        $content.attr('aria-hidden', 'false')
-
-        // If the controlling input, update aria-expanded
-        if ($control.attr('aria-controls')) {
-          $control.attr('aria-expanded', 'true')
-        }
-      }
-    }
-
-    // Hide toggled content for control
-    function hideToggledContent ($control, $content) {
-      $content = $content || getToggledContent($control)
-
-      // Hide content
-      if (!$content.hasClass('js-hidden')) {
-        $content.addClass('js-hidden')
-        $content.attr('aria-hidden', 'true')
-
-        // If the controlling input, update aria-expanded
-        if ($control.attr('aria-controls')) {
-          $control.attr('aria-expanded', 'false')
-        }
-      }
-    }
-
-    // Handle radio show/hide
-    function handleRadioContent ($control, $content) {
-      // All radios in this group which control content
-      var selector = selectors.radio + '[name=' + escapeElementName($control.attr('name')) + '][aria-controls]'
-      var $radios = $control.closest('form').find(selector)
-
-      // Hide content for radios in group
-      $radios.each(function () {
-        hideToggledContent($(this))
-      })
-
-      // Select content for this control
-      if ($control.is('[aria-controls]')) {
-        showToggledContent($control, $content)
-      }
-    }
-
-    // Handle checkbox show/hide
-    function handleCheckboxContent ($control, $content) {
-      // Show checkbox content
-      if ($control.is(':checked')) {
-        showToggledContent($control, $content)
-      } else { // Hide checkbox content
-        hideToggledContent($control, $content)
-      }
-    }
-
-    // Set up event handlers etc
-    function init ($container, elementSelector, eventSelectors, handler) {
-      $container = $container || $(document.body)
-
-      // Handle control clicks
-      function deferred () {
-        var $control = $(this)
-        handler($control, getToggledContent($control))
+          // Set aria-controls and defaults
+          if ($content.length) {
+              $control.attr('aria-controls', $content.attr('id'));
+              $control.attr('aria-expanded', 'false');
+              $content.attr('aria-hidden', 'true');
+          }
       }
 
-      // Prepare ARIA attributes
-      var $controls = $(elementSelector)
-      $controls.each(initToggledContent)
+      // Return toggled content for control
+      function getToggledContent ($control) {
+          var id = $control.attr('aria-controls');
 
-      // Handle events
-      $.each(eventSelectors, function (idx, eventSelector) {
-        $container.on('click.' + selectors.namespace, eventSelector, deferred)
-      })
-
-      // Any already :checked on init?
-      if ($controls.is(':checked')) {
-        $controls.filter(':checked').each(deferred)
+          // ARIA attributes aren't set before init
+          if (!id) {
+              id = $control.closest('label').data('target');
+          }
+          // Find show/hide content by id
+          return $('#' + id);
       }
-    }
 
-    // Get event selectors for all radio groups
-    function getEventSelectorsForRadioGroups () {
-      var radioGroups = []
+      // Show toggled content for control
+      function showToggledContent ($control, $content) {
+          // Show content
+          if ($content.hasClass('js-hidden')) {
+              $content.removeClass('js-hidden');
+              $content.attr('aria-hidden', 'false');
 
-      // Build an array of radio group selectors
-      return $(selectors.radio).map(function () {
-        var groupName = $(this).attr('name')
+              // If the controlling input, update aria-expanded
+              if ($control.attr('aria-controls')) {
+                  $control.attr('aria-expanded', 'true');
+              }
+          }
+      }
 
-        if ($.inArray(groupName, radioGroups) === -1) {
-          radioGroups.push(groupName)
-          return 'input[type="radio"][name="' + $(this).attr('name') + '"]'
-        }
-        return null
-      })
-    }
+      // Hide toggled content for control
+      function hideToggledContent ($control, $content) {
+          $content = $content || getToggledContent($control);
 
-    // Set up radio show/hide content for container
-    self.showHideRadioToggledContent = function ($container) {
-      init($container, selectors.radio, getEventSelectorsForRadioGroups(), handleRadioContent)
-    }
+          // Hide content
+          if (!$content.hasClass('js-hidden')) {
+              $content.addClass('js-hidden');
+              $content.attr('aria-hidden', 'true');
 
-    // Set up checkbox show/hide content for container
-    self.showHideCheckboxToggledContent = function ($container) {
-      init($container, selectors.checkbox, [selectors.checkbox], handleCheckboxContent)
-    }
+              // If the controlling input, update aria-expanded
+              if ($control.attr('aria-controls')) {
+                  $control.attr('aria-expanded', 'false');
+              }
+          }
+      }
 
-    // Remove event handlers
-    self.destroy = function ($container) {
-      $container = $container || $(document.body)
-      $container.off('.' + selectors.namespace)
-    }
+      // Handle radio show/hide
+      function handleRadioContent ($control, $content) {
+          // All radios in this group which control content
+          var selector = selectors.radio + '[name=' + escapeElementName($control.attr('name')) + '][aria-controls]';
+          var $radios = $control.closest('form').find(selector);
+
+          // Hide content for radios in group
+          $radios.each(function () {
+              hideToggledContent($(this));
+          });
+
+          // Select content for this control
+          if ($control.is('[aria-controls]')) {
+              showToggledContent($control, $content);
+          }
+      }
+
+      // Handle checkbox show/hide
+      function handleCheckboxContent ($control, $content) {
+          // Show checkbox content
+          if ($control.is(':checked')) {
+              showToggledContent($control, $content);
+          } else { // Hide checkbox content
+              hideToggledContent($control, $content);
+          }
+      }
+
+      // Set up event handlers etc
+      function init ($container, elementSelector, eventSelectors, handler) {
+          $container = $container || $(document.body);
+
+          // Handle control clicks
+          function deferred () {
+              var $control = $(this);
+              handler($control, getToggledContent($control));
+          }
+
+          // Prepare ARIA attributes
+          var $controls = $(elementSelector);
+          $controls.each(initToggledContent);
+
+          // Handle events
+          $.each(eventSelectors, function (idx, eventSelector) {
+              $container.on('click.' + selectors.namespace, eventSelector, deferred);
+          });
+
+          // Any already :checked on init?
+          if ($controls.is(':checked')) {
+              $controls.filter(':checked').each(deferred);
+          }
+      }
+
+      // Get event selectors for all radio groups
+      function getEventSelectorsForRadioGroups () {
+          var radioGroups = [];
+
+          // Build an array of radio group selectors
+          return $(selectors.radio).map(function () {
+              var groupName = $(this).attr('name');
+
+              if ($.inArray(groupName, radioGroups) === -1) {
+                  radioGroups.push(groupName);
+                  return 'input[type="radio"][name="' + $(this).attr('name') + '"]';
+              }
+              return null;
+          });
+      }
+
+      // Set up radio show/hide content for container
+      self.showHideRadioToggledContent = function ($container) {
+          init($container, selectors.radio, getEventSelectorsForRadioGroups(), handleRadioContent);
+      };
+
+      // Set up checkbox show/hide content for container
+      self.showHideCheckboxToggledContent = function ($container) {
+          init($container, selectors.checkbox, [selectors.checkbox], handleCheckboxContent);
+      };
+
+      // Remove event handlers
+      self.destroy = function ($container) {
+          $container = $container || $(document.body);
+          $container.off('.' + selectors.namespace);
+      };
   }
 
-  ShowHideContent.prototype.init = function ($container) {
-    this.showHideRadioToggledContent($container)
-    this.showHideCheckboxToggledContent($container)
-  }
+    ShowHideContent.prototype.init = function ($container) {
+        this.showHideRadioToggledContent($container);
+        this.showHideCheckboxToggledContent($container);
+    };
 
-  GOVUK.ShowHideContent = ShowHideContent
-  global.GOVUK = GOVUK
-})(window)
+    GOVUK.ShowHideContent = ShowHideContent;
+    global.GOVUK = GOVUK;
+})(window);
 ;
 /*! jQuery UI - v1.10.3 - 2013-06-25
 * http://jqueryui.com
@@ -4125,6 +4124,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         .on('click.moj.Modules.FormPopup', this.settings.selector, this.btnClick)
         // submit form
         .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
+        moj.Events.on('FormPopup.renderSelectionButtons', this.renderSelectionButtons);
+    },
+
+    renderSelectionButtons: function() {
+        //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
+        // Use GOV.UK selection-buttons.js to set selected
+        // and focused states for block labels
+        var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']")
+        new GOVUK.SelectionButtons($blockLabels) // eslint-disable-line
     },
 
     btnClick: function (e) {
@@ -4186,12 +4194,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // hide use button and switch button
       $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
 
-      //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
-      // Use GOV.UK selection-buttons.js to set selected
-      // and focused states for block labels
-      var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']")
-      new GOVUK.SelectionButtons($blockLabels) // eslint-disable-line
-
+      this.renderSelectionButtons();
     },
 
     submitForm: function (e) {
@@ -4245,6 +4248,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
+          moj.Events.trigger('FormPopup.renderSelectionButtons');
         } else {
           window.location.reload();
         }
