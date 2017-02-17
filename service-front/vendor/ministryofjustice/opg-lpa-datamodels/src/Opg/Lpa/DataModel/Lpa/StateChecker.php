@@ -107,11 +107,11 @@ class StateChecker {
         $lpa = $this->getLpa();
 
         //---
-        
+
         if( !($lpa->payment instanceof Payment) ){
             return false;
         }
-        
+
         return $this->isEligibleForFeeReduction();
 
     } // function
@@ -149,7 +149,7 @@ class StateChecker {
 
     //------------------------------------------------------------------------
     // Below are the functions copied from the front2 model.
-    
+
     /**
      * Payment either paid online or offline, or no payment to be taken.
      * @return boolean
@@ -159,7 +159,7 @@ class StateChecker {
         if(!($this->lpa->payment instanceof Payment)) {
             return false;
         }
-        
+
         if($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) {
             // has exemption
             return true;
@@ -190,10 +190,10 @@ class StateChecker {
             }
         }
     }
-    
+
     /**
      * is the donor eligible for fee reduction due to having benefit, damage, income or universal credit.
-     * 
+     *
      * @return boolean
      */
     public function isEligibleForFeeReduction()
@@ -202,8 +202,8 @@ class StateChecker {
         if(!($lpa->payment instanceof Payment)) {
             return false;
         }
-        
-        return ((($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) 
+
+        return ((($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages))
                 || ($lpa->payment->reducedFeeUniversalCredit)
                 || ($lpa->payment->reducedFeeLowIncome));
     }
@@ -220,20 +220,24 @@ class StateChecker {
 
     protected function lpaHasApplicant()
     {
-        return ($this->lpaHasFinishedCreation() &&
-            ( ($this->lpa->document->whoIsRegistering == 'donor')
-                ||
-                ( is_array($this->lpa->document->whoIsRegistering)
-                    &&
-                    (count($this->lpa->document->whoIsRegistering)>0)
-                )
-            )
-        );
+        if (!$this->lpaHasFinishedCreation()) {
+            return false;
+        }
+        if ($this->lpa->document->whoIsRegistering == 'donor') {
+            return true;
+        }
+        elseif (is_array($this->lpa->document->whoIsRegistering)) {
+            if ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly()) {
+                return count($this->lpa->document->whoIsRegistering) == count($this->lpa->document->primaryAttorneys);
+            }
+            return count($this->lpa->document->whoIsRegistering) > 0;
+        }
+        return false;
     }
 
     /**
-     * Lpa all required properties has value to qualify as an Instrument 
-     * 
+     * Lpa all required properties has value to qualify as an Instrument
+     *
      * @return boolean
      */
     protected function lpaHasFinishedCreation()
@@ -308,17 +312,17 @@ class StateChecker {
         return $complete;
 
     }
-    
+
     /**
      * LPA Instrument is created and created date is set
-     * 
+     *
      * @return boolean
      */
     protected function lpaHasCreated()
     {
         return ($this->lpaHasFinishedCreation() && ($this->lpa->createdAt!==null));
     }
-    
+
     protected function lpaHasPeopleToNotify($index = null)
     {
         if($index === null) {
@@ -477,7 +481,7 @@ class StateChecker {
                 && ($this->lpa->document->primaryAttorneys[$index] instanceof AbstractAttorney));
         }
     }
-    
+
     protected function lpaHasTrustCorporation($whichGroup=null)
     {
         if($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining()) {
@@ -502,7 +506,7 @@ class StateChecker {
                         return true;
                     }
                 }
-                
+
                 foreach($this->lpa->document->replacementAttorneys as $attorney) {
                     if($attorney instanceof TrustCorporation) {
                         return true;
