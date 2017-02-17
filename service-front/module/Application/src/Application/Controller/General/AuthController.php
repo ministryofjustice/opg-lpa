@@ -86,7 +86,7 @@ class AuthController extends AbstractBaseController {
                         $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH));
 
                         // does that url refer to an LPA? If so redirect to next page which needs filling out.
-                        if ($pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
+                        if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
                             $lpaId = $pathArray[2];
                             $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
                             $destinationRoute = (new FormFlowChecker($lpa))->backToForm();
