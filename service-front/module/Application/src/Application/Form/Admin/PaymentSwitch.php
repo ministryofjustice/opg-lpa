@@ -1,8 +1,8 @@
 <?php
 namespace Application\Form\Admin;
 
-use Zend\Validator;
 use Application\Form\General\AbstractForm;
+use Zend\Validator;
 
 /**
  * For an admin to set the system message
@@ -10,32 +10,28 @@ use Application\Form\General\AbstractForm;
  * Class SystemMessageForm
  * @package Application\Form\Admin
  */
-class PaymentSwitch extends AbstractForm {
+class PaymentSwitch extends AbstractForm
+{
+    public function __construct($formName = null)
+    {
+        parent::__construct('admin-payment-switch');
 
-    public function __construct( $formName = 'admin-payment-sqitch' ) {
-
-        parent::__construct( $formName );
-
-        //--- Form elements
-
-        $this->add(array(
+        $this->add([
             'name' => 'percentage',
             'type' => 'Number',
-        ));
+        ]);
 
-        //--------------------------------
-        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add([
             'name'     => 'percentage',
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-                array('name' => 'Int'),
-            ),
+            'filters'  => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+                ['name' => 'Int'],
+            ],
             'required' => true,
-            'validators' => array(
+            'validators' => [
                 [
                     'name'    => 'Between',
                     'options' => [
@@ -45,11 +41,9 @@ class PaymentSwitch extends AbstractForm {
                         ],
                     ],
                 ],
-            ),
+            ],
         ]);
-        
-        $this->setInputFilter( $inputFilter );
 
-    } // function
-
-} // class
+        $this->setInputFilter($inputFilter);
+    }
+}

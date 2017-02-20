@@ -1,9 +1,8 @@
 <?php
 namespace Application\Form\Admin;
 
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
 use Application\Form\General\AbstractForm;
+use Zend\Validator\StringLength;
 
 /**
  * For an admin to set the system message
@@ -11,47 +10,41 @@ use Application\Form\General\AbstractForm;
  * Class SystemMessageForm
  * @package Application\Form\Admin
  */
-class SystemMessageForm extends AbstractForm {
+class SystemMessageForm extends AbstractForm
+{
+    private $maxMessageLength = 8000;
 
-    const MAX_MESSAGE_LENGTH = 8000;
-    
-    public function __construct( $formName = 'admin-system-message' ) {
+    public function __construct($formName = null)
+    {
+        parent::__construct('admin-system-message');
 
-        parent::__construct( $formName );
-
-        //--- Form elements
-
-        $this->add(array(
+        $this->add([
             'name' => 'message',
             'type' => 'Textarea',
-        ));
+        ]);
 
-        //--------------------------------
-        
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add([
             'name'     => 'message',
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
+            'filters'  => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
             'required' => false,
-            'validators' => array(
+            'validators' => [
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => self::MAX_MESSAGE_LENGTH,
+                        'max' => $this->maxMessageLength,
                         'messages' => [
-                             StringLength::TOO_LONG => 'Please limit the message to ' . self::MAX_MESSAGE_LENGTH . ' chars.',
+                             StringLength::TOO_LONG => 'Please limit the message to ' . $this->maxMessageLength . ' chars.',
                          ],
                     ],
                 ],
-            ),
+            ],
         ]);
-        
-        $this->setInputFilter( $inputFilter );
 
-    } // function
-
-} // class
+        $this->setInputFilter($inputFilter);
+    }
+}
