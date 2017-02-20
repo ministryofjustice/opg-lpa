@@ -23,6 +23,7 @@ abstract class AbstractForm extends Form implements ServiceDataInputInterface, S
 
         parent::__construct( $formName );
 
+        $this->setAttribute('novalidate', 'novalidate');
     } // function
 
     public function init()
