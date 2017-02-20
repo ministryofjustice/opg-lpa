@@ -1,16 +1,16 @@
 <?php
+
 namespace Application\Controller;
 
+use Application\Model\FormFlowChecker;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Mvc\MvcEvent;
+use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 use RuntimeException;
 
-use Zend\Mvc\MvcEvent;
-use Zend\View\Model\ViewModel;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Application\Model\FormFlowChecker;
-use Zend\View\Model\JsonModel;
-
-abstract class AbstractLpaController extends AbstractAuthenticatedController implements LpaAwareInterface
+abstract class AbstractLpaController extends AbstractAuthenticatedController
 {
     /**
      * @var LPA The LPA currently referenced in to the URL
@@ -18,29 +18,34 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     private $lpa;
 
     /**
-     * @var Application\Model\FormFlowChecker
+     * @var \Application\Model\FormFlowChecker
      */
     private $flowChecker;
 
     public function onDispatch(MvcEvent $e)
     {
-
-        //----------------------------------------------------------------------
         // Check we have a user set, thus ensuring an authenticated user
-
-        if( ($authenticated = $this->checkAuthenticated()) !== true ){
+        if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
         }
 
-        //---
-
         # load content header in the layout if controller has a $contentHeader
-        if(isset($this->contentHeader)) {
+        if (isset($this->contentHeader)) {
             $this->layout()->contentHeader = $this->contentHeader;
         }
 
+        //  Try to get the lpa for this controller - if we can't find one then redirect to the user dashboard
+        $lpa = null;
+
+        try {
+            $lpa = $this->getLpa();
+        } catch (RuntimeException $rte) {
+            //  There was a problem retrieving the LPA so redirect to the user dashboar
+            return $this->redirect()->toRoute('user/dashboard');
+        }
+
         # inject lpa into layout.
-        $this->layout()->lpa = $this->getLpa();
+        $this->layout()->lpa = $lpa;
 
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
@@ -48,10 +53,9 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
 
         // get extra input query param from the request url.
-        if($currentRoute == 'lpa/download') {
+        if ($currentRoute == 'lpa/download') {
             $param = $e->getRouteMatch()->getParam('pdf-type');
-        }
-        else {
+        } else {
             $param = $e->getRouteMatch()->getParam('idx');
         }
 
@@ -59,50 +63,48 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
         $calculatedRoute = $this->getFlowChecker()->getNearestAccessibleRoute($currentRoute, $param);
 
         // if false, do not run action method.
-        if($calculatedRoute === false) {
+        if ($calculatedRoute === false) {
             return $this->response;
         }
 
         // redirect to the calculated route if it is not equal to the current route
-        if($calculatedRoute != $currentRoute) {
-            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id'=>$this->getLpa()->id]);
+        if ($calculatedRoute != $currentRoute) {
+            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $lpa->id]);
         }
 
         // inject lpa into view
         $view = parent::onDispatch($e);
 
-        if(($view instanceof ViewModel) && !($view instanceof JsonModel)) {
-            $view->setVariable('lpa', $this->getLpa());
+        if (($view instanceof ViewModel) && !($view instanceof JsonModel)) {
+            $view->setVariable('lpa', $lpa);
         }
 
         return $view;
     }
-
 
     /**
      * Returns a redirect to the next section in the LPA flow.
      *
      * @return \Zend\Http\Response
      */
-    protected function getNextSectionRedirect(){
-
+    protected function getNextSectionRedirect()
+    {
         return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute(
             $this->getEvent()->getRouteMatch()->getMatchedRouteName()
         ), ['lpa-id' => $this->getLpa()->id]);
-
     }
-
 
     /**
      * Returns the LPA currently referenced in to the URL
      *
      * @return Lpa
      */
-    public function getLpa ()
+    public function getLpa()
     {
-        if( !( $this->lpa instanceof Lpa ) ){
+        if (!( $this->lpa instanceof Lpa )) {
             throw new RuntimeException('A LPA has not been set');
         }
+
         return $this->lpa;
     }
 
@@ -111,17 +113,17 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
      *
      * @param Lpa $lpa
      */
-    public function setLpa ( Lpa $lpa )
+    public function setLpa(Lpa $lpa)
     {
         $this->lpa = $lpa;
     }
 
     /**
-     * @return \Application\Controller\Application\Model\FormFlowChecker
+     * @return \Application\Model\FormFlowChecker
      */
     public function getFlowChecker()
     {
-        if($this->flowChecker == null) {
+        if ($this->flowChecker == null) {
             $formFlowChecker = new FormFlowChecker($this->getLpa());
             $this->flowChecker = $formFlowChecker;
         }
@@ -138,11 +140,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     {
         $hasTrust = false;
 
-        foreach(array_merge($this->getLpa()->document->primaryAttorneys, $this->getLpa()->document->replacementAttorneys) as $attorney) {
-            if($attorney instanceof TrustCorporation) {
+        foreach (array_merge($this->getLpa()->document->primaryAttorneys, $this->getLpa()->document->replacementAttorneys) as $attorney) {
+            if ($attorney instanceof TrustCorporation) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -155,23 +158,22 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController imp
     protected function flattenData($modelData)
     {
         $formData = [];
-        foreach($modelData as $l1 => $l2) {
-            if(is_array($l2)) {
-                foreach($l2 as $name=>$l3) {
-                    if($l1=='dob') {
+
+        foreach ($modelData as $l1 => $l2) {
+            if (is_array($l2)) {
+                foreach ($l2 as $name => $l3) {
+                    if ($l1=='dob') {
                         $dob = new \DateTime($l3);
                         $formData['dob-date'] = [
                                 'day'   => $dob->format('d'),
                                 'month' => $dob->format('m'),
                                 'year'  => $dob->format('Y'),
                         ];
-                    }
-                    else {
+                    } else {
                         $formData[$l1.'-'.$name] = $l3;
                     }
                 }
-            }
-            else {
+            } else {
                 $formData[$l1] = $l2;
             }
         }
