@@ -2,6 +2,7 @@
 namespace Application\Form\Validator;
 
 use Zend\Validator\Date as DateValidator;
+use DateTime;
 
 class Date extends DateValidator
 {
@@ -29,6 +30,17 @@ class Date extends DateValidator
 
             if (empty($day) || empty($month) || empty($year)) {
                 $this->error(self::EMPTY_DATE);
+                return false;
+            }
+
+            //  If possible check the date value by using the same conversion that will take place in the Dob date model
+            //  This is required to make sure that PHP doesn't 'shift' the time in an attempt to be helpful
+            //  e.g. 1980-06-015 becomes 1st June 1980 at 5am
+            $dateStr = implode('-', array_reverse($value));
+            $date = date_parse_from_format(DateTime::ISO8601, $dateStr);
+
+            if ($date['day'] != $value['day'] || $date['month'] != $value['month'] || $date['year'] != $value['year']) {
+                $this->error(parent::INVALID_DATE);
                 return false;
             }
 
