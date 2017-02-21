@@ -10,59 +10,56 @@ use Zend\Validator\StringLength;
  * Class Feedback
  * @package Application\Form\General
  */
-class FeedbackForm extends AbstractForm {
+class FeedbackForm extends AbstractForm
+{
+    private $maxFeedbackLength = 2000;
 
-    const MAX_FEEDBACK_LENGTH = 2000;
-    
-    public function __construct( $formName = 'send-feedback' ){
+    public function __construct($formName = null)
+    {
 
-        parent::__construct( $formName );
+        parent::__construct('send-feedback');
 
-        //--- Form elements
-        
         $valueOptions = [
-                    'very-satisfied' => [
-                        'value' => 'very-satisfied',
-                    ],
-                    'satisfied' => [
-                        'value' => 'satisfied',
-                    ],
-                    'neither-satisfied-or-dissatisfied' => [
-                        'value' => 'neither-satisfied-or-dissatisfied',
-                    ],
-                    'dissatisfied' => [
-                        'value' => 'dissatisfied',
-                    ],
-                    'very-dissatisfied' => [
-                        'value' => 'very-dissatisfied',
-                    ],
-                ];
+            'very-satisfied' => [
+                'value' => 'very-satisfied',
+            ],
+            'satisfied' => [
+                'value' => 'satisfied',
+            ],
+            'neither-satisfied-or-dissatisfied' => [
+                'value' => 'neither-satisfied-or-dissatisfied',
+            ],
+            'dissatisfied' => [
+                'value' => 'dissatisfied',
+            ],
+            'very-dissatisfied' => [
+                'value' => 'very-dissatisfied',
+            ],
+        ];
 
-        $this->add(array(
+        $this->add([
             'name' => 'rating',
             'type' => 'Radio',
             'options'   => [
                 'value_options' => $valueOptions,
                 'disable_inarray_validator' => true,
             ],
-        ));
-        
-        $this->add(array(
+        ]);
+
+        $this->add([
             'name' => 'details',
             'type' => 'Textarea',
-        ));
-        
-        $this->add(array(
+        ]);
+
+        $this->add([
             'name' => 'email',
             'type' => 'Email',
-        ));
-        
-        $this->add(array(
+        ]);
+
+        $this->add([
             'name' => 'phone',
             'type' => 'Text',
-        ));
-        
-        //--------------------------------
+        ]);
 
         $inputFilter = $this->getInputFilter();
 
@@ -70,13 +67,13 @@ class FeedbackForm extends AbstractForm {
             'name'     => 'rating',
             'error_message' => 'cannot-be-empty',
         ]);
-        
+
         $inputFilter->add([
             'name'     => 'details',
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
+            'filters'  => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
             'validators' => [
                 [
                     'name'    => 'NotEmpty',
@@ -90,39 +87,36 @@ class FeedbackForm extends AbstractForm {
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => self::MAX_FEEDBACK_LENGTH,
+                        'max' => $this->maxFeedbackLength,
                         'messages' => [
-                             StringLength::TOO_LONG => 'max-' . self::MAX_FEEDBACK_LENGTH . '-chars',
+                             StringLength::TOO_LONG => 'max-' . $this->maxFeedbackLength . '-chars',
                          ],
                     ],
                 ],
             ],
         ]);
-        
-        $inputFilter->add(array(
+
+        $inputFilter->add([
             'name'     => 'email',
             'required' => false,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => [
-                [
-                    'name'    => 'EmailAddress',
-                ],
+            'filters'  => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
             ],
-        ));
-        
-        $inputFilter->add(array(
+            'validators' => [
+                ['name' => 'EmailAddress'],
+            ],
+        ]);
+
+        $inputFilter->add([
             'name'     => 'phone',
             'required' => false,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-        ));
-        $this->setInputFilter( $inputFilter );
+            'filters'  => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
+        ]);
 
-    } // function
-
-} // class
+        $this->setInputFilter($inputFilter);
+    }
+}
