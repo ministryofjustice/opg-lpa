@@ -2756,9 +2756,9 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
 
         var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass;
         $elm.parent('label').addClass(labelClass);
-      //if ($elm.is(':checked')) {
-      //    this.markSelected($elm);
-      //}
+      if ($elm.is(':checked')) {
+          this.markSelected($elm);
+      }
     }.bind(this));
   };
   SelectionButtons.prototype.markFocused = function ($elm, state) {
@@ -2769,8 +2769,7 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
     }
   };
   SelectionButtons.prototype.markSelected = function ($elm) {
-      var radioName;
-
+    var radioName;
     if ($elm.attr('type') === 'radio') {
         radioName = $elm.attr('name');
       $($elm[0].form).find('input[name="' + radioName + '"]')
