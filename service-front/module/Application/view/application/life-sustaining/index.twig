@@ -11,8 +11,41 @@
 	}
 }) %}
 
+
+
+{#
+    $canSustainLifeValueOptions = $canSustainLife->getOptions()['value_options'];
+    $canSustainLifeValueOptions[true]['label'] = 'I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf';
+    $canSustainLifeValueOptions[false]['label'] = 'I do not want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf';
+
+    $canSustainLifeValueOptions[true] += [
+    'label_attributes' => [
+    'for' => 'can-sustain-life-true'
+    ],
+    'attributes' => [
+    'id' => 'can-sustain-life-true'
+    ],
+    ];
+    $canSustainLifeValueOptions[false] += [
+    'label_attributes' => [
+    'for' => 'can-sustain-life-false'
+    ],
+    'attributes' => [
+    'id' => 'can-sustain-life-false'
+    ],
+    ];
+
+    $canSustainLife->setOptions(['value_options'=>$canSustainLifeValueOptions]);
+#}
+
+
 {# Set form fields variables #}
 {% set canSustainLife = form.get('canSustainLife') %}
+
+{#
+{% set canSustainLifeTrue = canSustainLife.getOptions().get('value_options).get(true) %}
+{% set canSustainLifeFalse = canSustainLife.getOptions().get('value_options).get(false) %}
+#}
 
 {# form fields config #}
 {{ canSustainLife.setOptions({
@@ -32,9 +65,9 @@
         <div class="text">
             <p>This is a very important decision. Read the guidance carefully before you answer.</p>
             <ul class="list list-bullet">
+                <li>Your attorneys can only make decisions about life-sustaining treatment if you don’t have mental capacity</li>
                 <li>Life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
                 <li>If you don’t allow your attorneys to give or refuse consent on your behalf, your doctors will make decisions about life-sustaining treatment</li>
-                <li>Your attorneys can only make decisions about life-sustaining treatment if you don't have mental capacity</li>
             </ul>
             <p><a href="/guide#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="stageprompt.lpa:help:life-sustaining-treatment">Read guidance on making this decision </a></p>
         </div>
@@ -50,15 +83,48 @@
         <fieldset id="how">
             <legend class="visuallyhidden">Life-sustaining treatment decision</legend>
 
-            <h2 class="heading-medium flush--top text">Do you want to give your attorneys authority to make decisions about life-sustaining treatment on your behalf?</h2>
+            <h2 class="heading-medium flush--top text">Who do you want to make decisions about life-sustaining treatment?</h2>
 
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
-                {{ formRadio(canSustainLife) }}
+               <!-- {{ formRadio(canSustainLife) }} -->
+
+				        {{ formRadio().outputOption(canSustainLife, true, {"data-target":"js-can-sustain-life-true"} )|raw }}
+                <label class="text block-label selection-button-radio" data-target="js-can-sustain-life-true" for="can-sustain-life-true">
+
+                    trying to output
+                    <input type="radio" name="canSustainLife" id="can-sustain-life-true" value="0" >
+                    Option A – Choose this option if you <strong>want to give your attorneys authority</strong>
+                    to give or refuse consent to life-sustaining treatment on your behalf
+                </label>
+
+                <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-true">
+                    <p>
+                        You can give your attorneys instructions and preferences later in your LPA.
+                        This will tell them what you would like them to consider if they have to make
+                        decisions about life-sustaining treatment.
+                    </p>
+                </div>
+
+                <label class="text block-label selection-button-radio" data-target="js-can-sustain-life-false" for="can-sustain-life-false">
+                    <input type="radio" name="canSustainLife" id="can-sustain-life-false" value="1">
+                    Option B – Choose this option if you <strong>do not want to give your attorneys authority</strong>
+                    to give or refuse consent to life-sustaining treatment
+                </label>
+
+
+                <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-false">
+                    <p>
+                        This means that doctors will make life-sustaining treatment decisions for you, taking into account
+                        your best interests, and where possible the views of others involved in your welfare, such as
+                        your attorneys and family members.
+                    </p>
+                </div>
+
             </div>
         </fieldset>
 
-        <p class="text">Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
+        <p class="text">When you print your LPA document, you'll have to sign and date the option you've chosen. This must be witnessed. If any signatures, dates or witness details are missing from this page it will default to option B.</p>
 
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">
