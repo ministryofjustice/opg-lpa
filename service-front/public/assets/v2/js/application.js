@@ -2756,9 +2756,9 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
 
         var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass;
         $elm.parent('label').addClass(labelClass);
-      //if ($elm.is(':checked')) {
-      //    this.markSelected($elm);
-      //}
+      if ($elm.is(':checked')) {
+          this.markSelected($elm);
+      }
     }.bind(this));
   };
   SelectionButtons.prototype.markFocused = function ($elm, state) {
@@ -2769,8 +2769,7 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
     }
   };
   SelectionButtons.prototype.markSelected = function ($elm) {
-      var radioName;
-
+    var radioName;
     if ($elm.attr('type') === 'radio') {
         radioName = $elm.attr('name');
       $($elm[0].form).find('input[name="' + radioName + '"]')
@@ -5584,8 +5583,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 // INITITALISE ALL GOVUK MODULES
 
 // Initiating the SelectionButtons GOVUK module
-var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
-new GOVUK.SelectionButtons($blockLabels);
+//var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
+//new GOVUK.SelectionButtons($blockLabels);
 
 
 // Where .block-label uses the data-target attribute
