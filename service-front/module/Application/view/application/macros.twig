@@ -18,7 +18,7 @@
             {% if error is not empty %}
                 <li><p>
                     {% if error == 'user-not-found' %}
-                        We could not find an account for this email address.
+                        We could not find an LPA account for this email address.<br><a href="signup">Create an LPA account now.</a>
                     {% elseif error == 'address-already-registered' %}
                         This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.
                     {% elseif error == 'user-already-has-email' %}
