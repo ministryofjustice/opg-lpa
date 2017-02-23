@@ -1,3 +1,4 @@
 *.min.*
 .phar
 *.js.map
+*.md
