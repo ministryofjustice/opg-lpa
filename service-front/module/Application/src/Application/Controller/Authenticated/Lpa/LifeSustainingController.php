@@ -15,7 +15,6 @@ class LifeSustainingController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\LifeSustainingForm');
 
-
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
 

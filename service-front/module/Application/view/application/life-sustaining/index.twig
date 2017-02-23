@@ -11,43 +11,16 @@
 	}
 }) %}
 
-
-
-{#
-    $canSustainLifeValueOptions = $canSustainLife->getOptions()['value_options'];
-    $canSustainLifeValueOptions[true]['label'] = 'I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf';
-    $canSustainLifeValueOptions[false]['label'] = 'I do not want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf';
-
-    $canSustainLifeValueOptions[true] += [
-    'label_attributes' => [
-    'for' => 'can-sustain-life-true'
-    ],
-    'attributes' => [
-    'id' => 'can-sustain-life-true'
-    ],
-    ];
-    $canSustainLifeValueOptions[false] += [
-    'label_attributes' => [
-    'for' => 'can-sustain-life-false'
-    ],
-    'attributes' => [
-    'id' => 'can-sustain-life-false'
-    ],
-    ];
-
-    $canSustainLife->setOptions(['value_options'=>$canSustainLifeValueOptions]);
-#}
-
-
 {# Set form fields variables #}
 {% set canSustainLife = form.get('canSustainLife') %}
 
-{#
-{% set canSustainLifeTrue = canSustainLife.getOptions().get('value_options).get(true) %}
-{% set canSustainLifeFalse = canSustainLife.getOptions().get('value_options).get(false) %}
-#}
+{{ canSustainLife.setValueOptions(
+    {"1": "Option A – Choose this option if you <strong class='bold-small'>want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment on your behalf",
+        "0": "Option B – Choose this option if you <strong class='bold-small'>do not want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment"}
+) ? ''}}
 
 {# form fields config #}
+
 {{ canSustainLife.setOptions({
     label_attributes: {'class': 'text block-label'}
 }) ? '' }}
@@ -89,14 +62,7 @@
                 {{ formElementErrorsV2(canSustainLife) }}
                <!-- {{ formRadio(canSustainLife) }} -->
 
-				        {{ formRadio().outputOption(canSustainLife, true, {"data-target":"js-can-sustain-life-true"} )|raw }}
-                <label class="text block-label selection-button-radio" data-target="js-can-sustain-life-true" for="can-sustain-life-true">
-
-                    trying to output
-                    <input type="radio" name="canSustainLife" id="can-sustain-life-true" value="0" >
-                    Option A – Choose this option if you <strong>want to give your attorneys authority</strong>
-                    to give or refuse consent to life-sustaining treatment on your behalf
-                </label>
+				        {{ formRadio().outputOption(canSustainLife, "1", {"data-target":"js-can-sustain-life-true"} )|raw }}
 
                 <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-true">
                     <p>
@@ -106,12 +72,7 @@
                     </p>
                 </div>
 
-                <label class="text block-label selection-button-radio" data-target="js-can-sustain-life-false" for="can-sustain-life-false">
-                    <input type="radio" name="canSustainLife" id="can-sustain-life-false" value="1">
-                    Option B – Choose this option if you <strong>do not want to give your attorneys authority</strong>
-                    to give or refuse consent to life-sustaining treatment
-                </label>
-
+				        {{ formRadio().outputOption(canSustainLife, "0", {"data-target":"js-can-sustain-life-false"} )|raw }}
 
                 <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-false">
                     <p>
