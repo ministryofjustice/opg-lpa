@@ -14,7 +14,13 @@
 {# Set form fields variables #}
 {% set canSustainLife = form.get('canSustainLife') %}
 
+{{ canSustainLife.setValueOptions(
+    {"1": "Option A – Choose this option if you <strong class='bold-small'>want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment on your behalf",
+        "0": "Option B – Choose this option if you <strong class='bold-small'>do not want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment"}
+) ? ''}}
+
 {# form fields config #}
+
 {{ canSustainLife.setOptions({
     label_attributes: {'class': 'text block-label'}
 }) ? '' }}
@@ -26,15 +32,15 @@
 
 <li id="life-sustaining-section" class="section current js-current">
 
-    <h2 class="heading-medium accordion-header flush--top">Can your attorneys give or refuse consent to life-sustaining treatment?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who do you want to make decisions about life-sustaining treatment?</h2>
 
     <div class="accordion-info">
         <div class="text">
             <p>This is a very important decision. Read the guidance carefully before you answer.</p>
             <ul class="list list-bullet">
+                <li>Your attorneys can only make decisions about life-sustaining treatment if you don’t have mental capacity</li>
                 <li>Life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
                 <li>If you don’t allow your attorneys to give or refuse consent on your behalf, your doctors will make decisions about life-sustaining treatment</li>
-                <li>Your attorneys can only make decisions about life-sustaining treatment if you don't have mental capacity</li>
             </ul>
             <p><a href="/guide#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="stageprompt.lpa:help:life-sustaining-treatment">Read guidance on making this decision </a></p>
         </div>
@@ -50,15 +56,36 @@
         <fieldset id="how">
             <legend class="visuallyhidden">Life-sustaining treatment decision</legend>
 
-            <h2 class="heading-medium flush--top text">Do you want to give your attorneys authority to make decisions about life-sustaining treatment on your behalf?</h2>
+            <h2 class="heading-medium flush--top text">Who do you want to make decisions about life-sustaining treatment?</h2>
 
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
-                {{ formRadio(canSustainLife) }}
+               <!-- {{ formRadio(canSustainLife) }} -->
+
+				        {{ formRadio().outputOption(canSustainLife, "1", {"data-target":"js-can-sustain-life-true"} )|raw }}
+
+                <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-true">
+                    <p>
+                        You can give your attorneys instructions and preferences later in your LPA.
+                        This will tell them what you would like them to consider if they have to make
+                        decisions about life-sustaining treatment.
+                    </p>
+                </div>
+
+				        {{ formRadio().outputOption(canSustainLife, "0", {"data-target":"js-can-sustain-life-false"} )|raw }}
+
+                <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-false">
+                    <p>
+                        This means that doctors will make life-sustaining treatment decisions for you, taking into account
+                        your best interests, and where possible the views of others involved in your welfare, such as
+                        your attorneys and family members.
+                    </p>
+                </div>
+
             </div>
         </fieldset>
 
-        <p class="text">Later on, you’ll need to sign and date the option you’ve chosen on your printed LPA document. Your signature must be witnessed.</p>
+        <p class="text">When you print your LPA document, you'll have to sign and date the option you've chosen. This must be witnessed. If any signatures, dates or witness details are missing from this page it will default to option B.</p>
 
         <div class="form-group">
             <input type="submit" name="save" value="Save and continue" class="button">

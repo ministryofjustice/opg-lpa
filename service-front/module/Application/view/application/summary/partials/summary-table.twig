@@ -43,7 +43,7 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Life-sustaining treatment</th>
                 <td class="table-summary-content">
-                    {{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'The attorneys can make decisions' : 'The attorneys cannot make decisions' }}
+                    {{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'Option A - The attorneys can make decisions' : 'Option B - The attorneys cannot make decisions' }}
                 </td>
                 <td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}">Edit</a></td>
             </tr>

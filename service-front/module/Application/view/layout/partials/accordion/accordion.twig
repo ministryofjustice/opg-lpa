@@ -29,11 +29,11 @@
 	{% if (item.routeName == 'lpa/life-sustaining') %}
         {{ macros.accordionBar({
             	'desktop' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
-					'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' :
-					'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
+					'Option A - The attorneys can make decisions about life-sustaining treatment' :
+					'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
             	'mobile' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
-					'The attorneys can make decisions about life-sustaining treatment on the donor\'s behalf' :
-					'The attorneys can\'t make decisions about life-sustaining treatment on the donor\'s behalf',
+					'Option A - The attorneys can make decisions about life-sustaining treatment' :
+					'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
         	})
