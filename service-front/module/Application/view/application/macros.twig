@@ -61,79 +61,31 @@
 
 {% endmacro %}
 
-{# JS check dob #}
-{% macro addDobCheckOnUseMyDetails(isUseMyDetails) %}
-	{% if (isUseMyDetails) %}
-		if ($('#dob-date-day').val()) {
-			dobChecks($('.dob-element'));
-		}
-	{% endif %}
-{% endmacro %}
-
-{# Reuse contacts picker #}
-{% macro renderPickerForm(form, pickerForm) %}
-    {% if (pickerForm) %}
-
-        {# Set form fields variables #}
-        {% set pickerSubmit = pickerForm.get('submit') %}
-        {% set picker = pickerForm.get('pick-details') %}
-        {% set pickerCsrf = pickerForm.get(pickerForm.csrfName()) %}
-
-        {# form fields config #}
-        {{ pickerSubmit.setAttributes({
-            'value': "Use this person's details",
-            'class' : 'button js-details-picker'
-        }) ? '' }}
-
-        {{ picker.setAttributes({
-            'id':'pick-details',
-            'class':'form-control js-reusable'
-        }) ? '' }}
-
-        {{ pickerCsrf.setAttributes({
-            'id' : 'secret'
-        }) ? '' }}
-
-        {# form fields labels #}
-        {{ picker.setOptions({
-            'label': 'Use these details',
-            'empty_option' : 'Select a person'
-        }) ? '' }}
-
-        {# begin form #}
-        {{ pickerForm.prepare() ? '' }}
-        {{ form().openTag( pickerForm )|raw }}
-            {{ formElement(pickerCsrf) }}
-
-            <div class="panel-actions">
-                <fieldset>
-                    <legend class="visuallyhidden">Select person from previous LPA</legend>
-
-                    <div class="form-group flush--bottom">
-                        <label class="form-label" for="{{ picker.getAttribute('id') }}">{{ picker.getOption('label') }}</label>
-
-                        {{ formSelect(picker) }}
-                        {{ formElementErrors(picker) }}
-                    </div>
-
-                    <div class="form-group js-hidden">
-                        {{ formSubmit(pickerSubmit) }}
-                    </div>
-
-                </fieldset>
-
-            </div>
-
-        {{ form().closeTag|raw }}
-
+{% macro addSwitchAttorneyTypeLink(switchAttorneyTypeRoute, lpa, trustLink) %}
+    {% if (switchAttorneyTypeRoute) %}
+        <div class="use-details-link-panel hard--bottom">
+            <a class="js-form-popup" href="{{ url(switchAttorneyTypeRoute, {'lpa-id': lpa.id}) }}">Using {{ trustLink ? 'a trust corporation' : 'an individual' }}?</a>
+        </div>
     {% endif %}
 {% endmacro %}
 
+{% macro renderFormButtons(cancelUrl, allowReuseDetailsBackButton) %}
+    {# Submit button #}
+    <input type="submit" name="submit" id="form-save" value="Save details" class="button">
 
-{% macro useMyDetails(useMyDetailsRoute) %}
-    {% if (useMyDetailsRoute) %}
-    <div class="panel-actions js-UseMyDetails">
-        <a class="js-form-popup" href="{{ useMyDetailsRoute }}">Use my details</a>
-    </div>
+    {# Back button - if necessary #}
+    {% if (allowReuseDetailsBackButton) %}
+        {# Use the current URL without query params for the back link #}
+        {# If this is the add trust view then make the back button go back to the normal add view #}
+        {% set backUrl = serverUrl(true)|split('?')|first %}
+        {% set backUrl = backUrl|replace({'add-trust': 'add'}) %}
+
+        <a href="{{ backUrl }}" class="button button-secondary js-form-popup">Back</a>
+    {% endif %}
+
+    {# Cancel button #}
+    {% if cancelUrl %}
+        <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
     {% endif %}
 {% endmacro %}
+
