@@ -2,22 +2,16 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
-use Application\Form\Lpa\AbstractActorForm;
+use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
-use Opg\Lpa\DataModel\User\Address;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class CorrespondentController extends AbstractLpaController
+class CorrespondentController extends AbstractLpaActorController
 {
-
-    protected $contentHeader = 'registration-partial.phtml';
-
     /*
      * Page loads:
      *  If correspondent details are set, they are used;
@@ -30,7 +24,6 @@ class CorrespondentController extends AbstractLpaController
      */
     public function indexAction()
     {
-        $viewModel = new ViewModel();
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         $lpaId = $this->getLpa()->id;
@@ -153,7 +146,6 @@ class CorrespondentController extends AbstractLpaController
                     'contactByEmail' => ($correspondent->email instanceof EmailAddress) ? true : false,
                 ]]);
             }
-
         }
 
         return new ViewModel([
@@ -178,179 +170,92 @@ class CorrespondentController extends AbstractLpaController
             $viewModel->setTerminal(true);
         }
 
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
+        $lpaId = $lpa->id;
+        $lpaDocument = $lpa->document;
+        $lpaCorrespondent = $lpaDocument->correspondent;
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
-        $correspondentForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
-        $correspondentForm->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-
-        $correspondentSelection = $this->correspondentSelector($viewModel, $correspondentForm);
-        if ($correspondentSelection instanceof JsonModel) {
-            return $correspondentSelection;
-        }
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
 
         if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+            $form->setData($this->request->getPost());
 
-            if (!$postData->offsetExists('switch-to-type')) {
-                // handle correspondent form submission
-                $correspondentForm->setData($postData);
-                if ($correspondentForm->isValid()) {
-                    $correspondentFormData = $correspondentForm->getData();
+            if ($form->isValid()) {
+                //  Set aside any data to retain that is not present in the form
+                $existingDataToRetain = [];
 
-                    if ($this->getLpa()->document->correspondent == null) {
-                        $correspondent = new Correspondence($correspondentForm->getModelDataFromValidatedForm());
-                    } else {
-                        // If correspondent has been previously saved,
-                        // merge form data with non-form data from current record
+                if ($lpaCorrespondent instanceof Correspondence) {
+                    $existingDataToRetain = [
+                        'contactByPost'  => $lpaCorrespondent->contactByPost,
+                        'contactInWelsh' => $lpaCorrespondent->contactInWelsh,
+                    ];
+                }
 
-                        $correspondent = new Correspondence(array_merge($correspondentForm->getModelDataFromValidatedForm(), [
-                            'contactByPost'  => $this->getLpa()->document->correspondent->contactByPost,
-                            'contactInWelsh' => $this->getLpa()->document->correspondent->contactInWelsh,
-                        ]));
-                    }
+                //  Create a new correspondence data model using the form data and any data to retain from a previous save
+                $lpaCorrespondent = new Correspondence(array_merge($form->getModelDataFromValidatedForm(), $existingDataToRetain));
 
-                    // Let the PDF module know that we can't rely on the default donor or attorney values any more
-                    $correspondent->set('contactDetailsEnteredManually', true);
 
-                    if (!$this->getLpaApplicationService()->setCorrespondent($lpaId, $correspondent)) {
-                        throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
-                    }
+                // Let the PDF module know that we can't rely on the default donor or attorney values any more
+                $lpaCorrespondent->set('contactDetailsEnteredManually', true);
 
-                    if ($this->getRequest()->isXmlHttpRequest()) {
-                        return new JsonModel(['success' => true]);
-                    } else {
-                        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                    }
+                if (!$this->getLpaApplicationService()->setCorrespondent($lpaId, $lpaCorrespondent)) {
+                    throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
+                }
+
+                if ($this->getRequest()->isXmlHttpRequest()) {
+                    return new JsonModel(['success' => true]);
+                } else {
+                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
                 }
             }
         } else {
-            // if correspondent wasn't set, load applicant details into the form
-            if ($this->getLpa()->document->correspondent === null) {
-                if ($this->getLpa()->document->whoIsRegistering == 'donor') {
-                    $correspondent = $this->getLpa()->document->donor;
-                } else {
-                    $firstAttorneyId = array_values($this->getLpa()->document->whoIsRegistering)[0];
-                    foreach ($this->getLpa()->document->primaryAttorneys as $attorney) {
-                        if ($attorney->id == $firstAttorneyId) {
-                            $correspondent = $attorney;
-                            break;
-                        }
-                    }
-                }
-            } else {
-                // otherwise, load correspondent details into the form
-                $correspondent = $this->getLpa()->document->correspondent;
+            $this->addReuseDetailsForm($viewModel, $form);
+
+            //  If this isn't a request to reuse some details right now then bind the initial default values
+            $reuseDetailsIndex = $this->params()->fromQuery('reuse-details');
+
+            if (!is_numeric($reuseDetailsIndex) || $reuseDetailsIndex < 0) {
+                //  Bind the initial default values to the empty form
+                $form->bind([
+                    'who' => 'other',
+                    'name-title' => ' ',
+                ]);
             }
-
-            // convert object into array.
-            $correspondentDetails = $correspondent->flatten();
-
-            if ($correspondent instanceof TrustCorporation) {
-                $correspondentDetails['company'] = $correspondent->name;
-                $correspondentDetails['name-title'] = ' ';
-            } elseif ($correspondent instanceof Correspondence) {
-                if ($correspondent->name == null) {
-                    $correspondentDetails['name-title'] = ' ';
-                }
-            } elseif ($correspondent instanceof Donor) {
-                $correspondentDetails['who'] = 'donor';
-            } else {
-                $correspondentDetails['who'] = 'attorney';
-            }
-
-            // bind data into the form
-            $correspondentForm->bind($correspondentDetails);
         }
 
-        $viewModel->correspondentForm = $correspondentForm;
+        $viewModel->form = $form;
 
-        //  Add a cancel route for this action
-        $this->addCancelRouteToView($viewModel, 'lpa/correspondent');
+        //  Add a cancel URL for this action
+        $this->addCancelUrlToView($viewModel, 'lpa/correspondent');
 
         return $viewModel;
     }
 
-    protected function correspondentSelector(ViewModel $viewModel, AbstractActorForm $mainForm)
+    /**
+     * Return an array of actor details that can be utilised in a "reuse" scenario
+     * This function is overridden here so the the reuse details form contains the correct data from the current LPA
+     *
+     * @return  array
+     */
+    protected function getActorReuseDetails()
     {
-        $switcherForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentSwitcherForm', ['lpa' => $this->getLpa(), 'user' => $this->getServiceLocator()->get('UserDetailsSession')->user]);
-        $switcherForm->setAttribute('action', $this->url()->fromRoute($this->getEvent()->getRouteMatch()->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id]));
-        $viewModel->switcherForm = $switcherForm;
+        //  Initialise the reuse details details array
+        $actorReuseDetails = [];
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        //  Add the details for the current user
+        $this->addCurrentUserDetailsForReuse($actorReuseDetails, false);
 
-            if (!$postData->offsetExists('switch-to-type')) {
-                return;
-            }
+        //  Using the data from the LPA document add options for the donor and primary attorneys
+        $lpaDocument = $this->getLpa()->document;
 
-            $switcherForm->setData($postData);
+        $actorReuseDetails[] = $this->getReuseDetailsForActor($lpaDocument->donor->toArray(), 'donor', '(donor)');
 
-            if ($switcherForm->isValid()) {
-                switch ($postData['switch-to-type']) {
-                    case 'me':
-                        $userSession = $this->getServiceLocator()->get('UserDetailsSession');
-
-                        $formData = [
-                            'who' => 'other',
-                            'name-title' => $userSession->user->name->title,
-                            'name-first' => $userSession->user->name->first,
-                            'name-last'  => $userSession->user->name->last,
-                            'company'    => '',
-                        ];
-                        if ($userSession->user->address instanceof Address) {
-                            $formData += [
-                                'address-address1' => $userSession->user->address->address1,
-                                'address-address2' => $userSession->user->address->address2,
-                                'address-address3' => $userSession->user->address->address3,
-                                'address-postcode' => $userSession->user->address->postcode,
-                            ];
-                        }
-                        break;
-                    case 'donor':
-                        $formData = $this->getLpa()->document->donor->flatten();
-                        $formData['who'] = 'donor';
-                        $formData['company'] = '';
-                        break;
-                    default:
-                        if (is_numeric($postData['switch-to-type'])) {
-                            foreach ($this->getLpa()->document->primaryAttorneys as $attorney) {
-                                if ($attorney->id == $postData['switch-to-type']) {
-                                    $formData = $attorney->flatten();
-                                    if ($attorney instanceof TrustCorporation) {
-                                        $formData['name-title'] = '';
-                                        $formData['name-first'] = '';
-                                        $formData['name-last'] = '';
-                                        $formData['company'] = $attorney->name;
-                                    } else {
-                                        $formData['company'] = '';
-                                    }
-                                    $formData['who'] = 'attorney';
-                                    break;
-                                }
-                            }
-                        } else {
-                            $formData = [
-                                'who' => 'other',
-                                'name-title' => '',
-                                'name-first' => '',
-                                'name-last'  => '',
-                                'company'    => '',
-                                'address-address1' => '',
-                                'address-address2' => '',
-                                'address-address3' => '',
-                                'address-postcode' => '',
-                            ];
-                        }
-                        break;
-                }
-
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel($formData);
-                } else {
-                    $mainForm->bind($formData);
-                }
-            }
+        foreach ($lpaDocument->primaryAttorneys as $attorney) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), 'attorney', '(attorney)');
         }
+
+        return $actorReuseDetails;
     }
 }

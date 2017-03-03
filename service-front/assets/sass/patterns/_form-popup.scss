@@ -26,8 +26,25 @@
         }
 
         .heading-medium {
+            &.reuse-details-heading {
+                display: block;
+
+                @include media(tablet) {
+                    margin-top: 0;
+                }
+            }
             @include media(tablet) {
                 display: none;
+            }
+        }
+
+        &.reuse-details-form {
+            .heading-medium {
+                display: block;
+
+                @include media(tablet) {
+                    margin-top: 0;
+                }
             }
         }
     }
@@ -156,6 +173,14 @@
     .dob-label {
         @include media(mobile) {
             display: none;
+        }
+    }
+
+    .use-details-link-panel {
+        padding: 15px;
+
+        @include media($min-width: 641px) {
+            padding-left: 165px;
         }
     }
 }

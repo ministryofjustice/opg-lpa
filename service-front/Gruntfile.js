@@ -119,7 +119,6 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.help-system.js',
           'assets/js/moj/moj.modules/moj.form-popup.js',
           'assets/js/moj/moj.modules/moj.title-switch.js',
-          'assets/js/moj/moj.modules/moj.reusables.js',
           'assets/js/moj/moj.modules/moj.postcode-lookup.js',
           'assets/js/moj/moj.modules/moj.person-form.js',
           'assets/js/moj/moj.modules/moj.validation.js',
@@ -132,7 +131,6 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.fees.js',
           'assets/js/moj/moj.modules/moj.confirm.js',
           'assets/js/moj/moj.modules/moj.who-are-you.js',
-          'assets/js/moj/moj.modules/moj.use-my-details.js',
 
           // Init Script
           'assets/js/main.js',
