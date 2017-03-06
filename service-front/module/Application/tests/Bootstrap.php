@@ -26,7 +26,7 @@ class Bootstrap
         if (($path = static::findParentPath('module')) !== $zf2ModulePaths[0]) {
             $zf2ModulePaths[] = $path;
         }
-        
+
         static::initAutoloader();
 
         // use ModuleManager to load this module and it's dependencies
@@ -38,7 +38,7 @@ class Bootstrap
                 'Application'
             )
         );
-        
+
         $serviceManager = new ServiceManager(new ServiceManagerConfig());
         $serviceManager->setService('ApplicationConfig', $config);
         $serviceManager->get('ModuleManager')->loadModules();
@@ -66,8 +66,8 @@ class Bootstrap
                 $zf2Path = ZF2_PATH;
             } elseif (is_dir($vendorPath . '/ZF2/library')) {
                 $zf2Path = $vendorPath . '/ZF2/library';
-            } elseif (is_dir($vendorPath . '/zendframework/zendframework/library')) {
-                $zf2Path = $vendorPath . '/zendframework/zendframework/library';
+            } elseif (is_dir($vendorPath . '/zendframework/zendframework/bin')) {
+                $zf2Path = $vendorPath . '/zendframework/zendframework/bin';
             }
         }
 
@@ -82,7 +82,9 @@ class Bootstrap
             include $vendorPath . '/autoload.php';
         }
 
-        include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
+        //include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
+        include $vendorPath . '/zendframework/zend-loader/src/AutoloaderFactory.php';
+
         AutoloaderFactory::factory(array(
             'Zend\Loader\StandardAutoloader' => array(
                 'autoregister_zf' => true,
