@@ -8,8 +8,8 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
     public function testDonorFormReceiveValidData ()
     {
         $donorForm = new DonorForm();
-        
-        
+
+
         $donorForm->setData(
                 [
                         'secret'    => $donorForm->get('secret')->getValue(),
@@ -21,16 +21,16 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                         'dob-date' => '1984-05-20',
                         'canSign' => 0
                 ]);
-        
+
         $this->assertEquals(true, $donorForm->isValid());
         $this->assertEquals([], $donorForm->getMessages());
-        
+
     }
-    
+
     public function testDonorFormReceiveInvalidData ()
     {
         $donorForm = new DonorForm();
-        
+
         $donorForm->setData(
                 [
                         'name-first' => '',
@@ -40,7 +40,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                         'dob-date' => '',
                         'canSign' => 0
                 ]);
-        
+
         $this->assertEquals(false, $donorForm->isValid());
         $this->assertEquals(
                 array(
@@ -66,14 +66,14 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                                 0 => 'linked-1-cannot-be-null'
                         )
                 ), $donorForm->getMessages());
-        
+
     }
 
-    
+
     public function testDonorFormReceiveCrossSiteForgeryAttack ()
     {
         $donorForm = new DonorForm();
-        
+
         $donorForm->setData(
                 [
                         'secret'    => 'CSRF',
@@ -84,7 +84,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
                         'dob-date' => '',
                         'canSign' => 0
                 ]);
-        
+
         $this->assertEquals(false, $donorForm->isValid());
         $this->assertEquals(
                 array(
