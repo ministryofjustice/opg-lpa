@@ -39,8 +39,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                 //  Check that the actor details selected are appropriate for the current route
                 //  i.e. trusts can only be viewed in the trust templates
-                $routeMatch = $this->getEvent()->getRouteMatch();
-                $currentRouteName = $routeMatch->getMatchedRouteName();
+                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
                 //  Determine if the selected actor is a trust and is we are using a trust only route
                 //  Human and trust attorneys can both be used for the correspondent
@@ -74,10 +73,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             } elseif ($reuseDetailsIndex != -1) {
                 //  If no option has been selected (including the "none of the above option" which is -1) then set the reuse details form in the view
                 $reuseDetailsForm = $this->getServiceLocator()
-                    ->get('FormElementManager')
-                    ->get('Application\Form\Lpa\ReuseDetailsForm', [
-                        'actorReuseDetails' => $actorReuseDetails,
-                    ]);
+                                         ->get('FormElementManager')
+                                         ->get('Application\Form\Lpa\ReuseDetailsForm', [
+                                             'actorReuseDetails' => $actorReuseDetails,
+                                         ]);
 
                 $viewModel->reuseDetailsForm = $reuseDetailsForm;
             }

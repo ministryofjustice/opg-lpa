@@ -34,7 +34,6 @@
     }
 }) %}
 
-{% set who = form.get('who') %}
 {% set title = form.get('name-title') %}
 {% set firstname = form.get('name-first') %}
 {% set lastname = form.get('name-last') %}
@@ -49,11 +48,6 @@
 {# form fields config #}
 {{ form.setAttributes({
     'class':'form js-PersonForm js-PostcodeLookup'
-}) ? '' }}
-
-{{ who.setAttributes({
-    id: 'who-role',
-    class: 'form-control'
 }) ? '' }}
 
 {{ title.setAttributes({
@@ -107,7 +101,6 @@
 }) ? ''}}
 
 {# form fields labels #}
-{{ who.setOptions({label:'Role'}) ? '' }}
 {{ title.setOptions({label:'Title'}) ? '' }}
 {{ firstname.setOptions({label:'First names'}) ? '' }}
 {{ lastname.setOptions({label:'Last name'}) ? '' }}
@@ -138,36 +131,69 @@
     {# begin form #}
     {{ form().openTag( form )|raw }}
         {{ formElement(form.get( form.csrfName )) }}
+        {{ formElement(form.get('who')) }}
 
         <h2 class="heading-medium">Correspondent's details?</h2>
 
         <fieldset>
             <legend class="visuallyhidden">Add correspondent's details</legend>
 
-            {{ macros.formGroup(who) }}
             {{ macros.formGroup(title) }}
             {{ macros.formGroup(firstname) }}
             {{ macros.formGroup(lastname) }}
 
         </fieldset>
 
-        <h2 class="heading-medium">Correspondent's company name?</h2>
+        <h2 class="heading-medium">Correspondent's company name{{ form.isTrust() ? '' : '?' }}</h2>
 
         <fieldset>
             <legend class="visually hidden">Add company name</legend>
-            {{ macros.formGroup(company) }}
+            {% if form.isTrust() %}
+                {{ formHidden(company) }}
+                <div class="form-group read-only">
+                    <label class="form-label">{{ company.getOption('label') }}</label>
+                    <div class="read-only-value">{{ company.getValue() }}</div>
+                </div>
+            {% else %}
+                {{ macros.formGroup(company) }}
+            {% endif %}
         </fieldset>
 
-        <h2 class="heading-medium">What is the correspondent's address?</h2>
+        <h2 class="heading-medium">{{ form.isTrust() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
 
         <fieldset class="postcodelookup">
             <legend class="visuallyhidden">Add address details</legend>
-            <div class="js-PostcodeLookup__postal-add">
-                {{ macros.formGroup(address1) }}
-                {{ macros.formGroup(address2) }}
-                {{ macros.formGroup(address3) }}
-                {{ macros.formGroup(postcode) }}
-            </div>
+
+            {% if form.isTrust() %}
+                {{ formHidden(address1) }}
+                {{ formHidden(address2) }}
+                {{ formHidden(address3) }}
+                {{ formHidden(postcode) }}
+
+                {% set addressString = address1.getValue() %}
+                {% if address2.getValue() %}
+                    {% set addressString = addressString ~ ', ' ~ address2.getValue() %}
+                {% endif %}
+                {% if address3.getValue() %}
+                    {% set addressString = addressString ~ ', ' ~ address3.getValue() %}
+                {% endif %}
+                {% if postcode.getValue() %}
+                    {% set addressString = addressString ~ ', ' ~ postcode.getValue() %}
+                {% endif %}
+
+                <div class="form-group read-only">
+                    <label class="form-label">Address</label>
+                    <div class="read-only-value">{{ addressString }}</div>
+                </div>
+            {% else %}
+                <div class="js-PostcodeLookup__postal-add">
+                    {{ macros.formGroup(address1) }}
+                    {{ macros.formGroup(address2) }}
+                    {{ macros.formGroup(address3) }}
+                    {{ macros.formGroup(postcode) }}
+                </div>
+            {% endif %}
+
         </fieldset>
 
         <h2 class="heading-medium">Correspondent's contact details?</h2>
@@ -180,7 +206,7 @@
 
         </fieldset>
 
-        {{ macros.renderFormButtons(cancelUrl, true) }}
+        {{ macros.renderFormButtons(cancelUrl, allowReuseDetailsBackButton) }}
 
     {{ form().closeTag|raw }}
 {% endif %}
