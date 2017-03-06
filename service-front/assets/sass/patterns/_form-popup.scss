@@ -52,6 +52,20 @@
     .form-group {
         margin-top: 0;
         margin-bottom: $gutter-half;
+
+        &.read-only {
+            label {
+                @include media(mobile) {
+                    display: none;
+                }
+            }
+
+            .read-only-value {
+                @include media(tablet) {
+                    margin-top: 7px;
+                }
+            }
+        }
     }
 
     .form-label {
@@ -190,6 +204,12 @@
     .form-group {
         + .form-group.js-hidden {
             margin-top: 30px;
+        }
+
+        &.read-only {
+            label {
+                display: none;
+            }
         }
     }
 }

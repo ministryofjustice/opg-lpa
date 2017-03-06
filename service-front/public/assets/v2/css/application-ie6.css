@@ -3172,7 +3172,7 @@ input[type=number] {
 
 .person-name,
 .person-address {
-  padding-right: 275px; }
+  padding-right: 300px; }
   .person--wider .person-name, .person--wider
   .person-address {
     padding-right: 175px; }
@@ -3280,6 +3280,8 @@ input[type=number] {
   .form-popup .form-group {
     margin-top: 0;
     margin-bottom: 15px; }
+    .form-popup .form-group.read-only .read-only-value {
+      margin-top: 7px; }
   .form-popup .form-label {
     width: 150px;
     margin-top: 6px;
@@ -3343,6 +3345,8 @@ input[type=number] {
 
 .no-js .form-group + .form-group.js-hidden {
   margin-top: 30px; }
+.no-js .form-group.read-only label {
+  display: none; }
 
 .dialog {
   font-family: "nta", Arial, sans-serif;
