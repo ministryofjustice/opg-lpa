@@ -32,7 +32,8 @@ class ReuseDetailsForm extends AbstractHelper
         //  Render the content for the form options
         $content = '';
 
-        $currentUrl = $this->view->serverUrl(true);
+        //  Get the current relative URL
+        $currentUrl = str_replace($this->view->serverUrl(), '', $this->view->serverUrl(true));
 
         $isTrustView = (strpos($currentUrl, 'add-trust') !== false);
 
