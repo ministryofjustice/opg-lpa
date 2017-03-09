@@ -17,6 +17,10 @@ class CheckoutController extends AbstractLpaController {
 
     public function indexAction(){
 
+        if ($this->request->isPost && !$this->isLPAComplete()) {
+            return $this->redirectToMoreInfoRequired();
+        }
+
         /*
          * At present we are sending a percentage of users to GOV Pay, and the remaining users to WorldPay.
          * The percentage to send to GOV Pay is stored in the cache.
@@ -64,7 +68,17 @@ class CheckoutController extends AbstractLpaController {
 
     }
 
+    private function redirectToMoreInfoRequired()
+    {
+        $this->redirect()->toRoute('lpa/more-info-required', ['lpa-id' => $this->getLpa()->id]);
+        return $this->getResponse();
+    }
+
     public function chequeAction(){
+
+        if (!$this->isLPAComplete()) {
+            return $this->redirectToMoreInfoRequired();
+        }
 
         $lpa = $this->getLpa();
 
@@ -81,6 +95,10 @@ class CheckoutController extends AbstractLpaController {
     }
 
     public function confirmAction(){
+
+        if (!$this->isLPAComplete()) {
+            return $this->redirectToMoreInfoRequired();
+        }
 
         $lpa = $this->getLpa();
 
@@ -120,7 +138,15 @@ class CheckoutController extends AbstractLpaController {
     // GDS Pay
 
 
+    private function isLPAComplete(){
+        return $this->getFlowChecker()->backToForm() == "lpa/checkout";
+    }
+
     public function payAction(){
+
+        if (!$this->isLPAComplete()) {
+            return $this->redirectToMoreInfoRequired();
+        }
 
         $lpa = $this->getLpa();
 
