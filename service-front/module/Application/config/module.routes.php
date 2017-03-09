@@ -542,6 +542,16 @@ return [
                             ],
                         ],
                     ],
+                    'more-info-required' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route'    => '/more-info-required',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\MoreInfoRequiredController',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                     'correspondent' => [
                         'type' => 'Literal',
                         'options' => [
@@ -1093,5 +1103,3 @@ return [
 
     ], // router
 ];
-
-

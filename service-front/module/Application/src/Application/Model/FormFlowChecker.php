@@ -65,6 +65,7 @@ class FormFlowChecker extends StateChecker
         'lpa/checkout/worldpay/return/failure'          => 'isOnlinePaymentFailureAccessible',
         'lpa/checkout/worldpay/return/cancel'           => 'isOnlinePaymentCancelAccessible',
         'lpa/complete'                                  => 'isCompleteAccessible',
+        'lpa/more-info-required'                        => 'isMoreInfoRequiredAccessible',
         'lpa/date-check'                                => 'isApplicantAccessible',
         'lpa/summary'                                   => 'isInstructionsAccessible',
         'lpa/view-docs'                                 => 'isViewDocsAccessible',
@@ -723,6 +724,10 @@ class FormFlowChecker extends StateChecker
         }
     }
 
+    private function isMoreInfoRequiredAccessible()
+    {
+        return true;
+    }
     private function isViewDocsAccessible()
     {
         if($this->paymentResolved() && ($this->lpa->completedAt !== null)) {
