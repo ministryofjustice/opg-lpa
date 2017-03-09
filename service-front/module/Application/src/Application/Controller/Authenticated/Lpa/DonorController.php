@@ -126,6 +126,9 @@ class DonorController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to update LPA donor for id: '.$lpaId);
                 }
 
+                //  Attempt to update the LPA correspondent too
+                $this->updateCorrespondentData($donor);
+
                 if ($this->getRequest()->isXmlHttpRequest()) {
                     return new JsonModel(['success' => true]);
                 } else {
