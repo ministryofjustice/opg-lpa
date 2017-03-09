@@ -5,9 +5,9 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -123,15 +123,15 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->setTerminal(true);
         }
 
-        $lpa = $this->getLpa();
-        $lpaId = $lpa->id;
+        $lpaId = $this->getLpa()->id;
+        $lpaDocument = $this->getLpa()->document;
 
         $currentRouteName = $routeMatch->getMatchedRouteName();
 
         $attorneyIdx = $routeMatch->getParam('idx');
 
-        if (array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
-            $attorney = $lpa->document->primaryAttorneys[$attorneyIdx];
+        if (array_key_exists($attorneyIdx, $lpaDocument->primaryAttorneys)) {
+            $attorney = $lpaDocument->primaryAttorneys[$attorneyIdx];
         }
 
         // if attorney idx does not exist in lpa, return 404.
@@ -155,16 +155,27 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $form->setData($postData);
 
             if ($form->isValid()) {
-                // update attorney with new details
-                if ($attorney instanceof Human) {
-                    $attorney->populate($form->getModelDataFromValidatedForm());
-                } else {
-                    $attorney->populate($form->getModelDataFromValidatedForm());
+                //  Before going any further determine if the data for the attorney we are editing has also been saved in the correspondence data
+                $updateCorrespondent = false;
+                $correspondent = $lpaDocument->correspondent;
+
+                if ($correspondent instanceof Correspondence && $correspondent->who == Correspondence::WHO_ATTORNEY) {
+                    //  Compare the appropriate name and address
+                    $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : $correspondent->name);
+                    $updateCorrespondent = ($attorney->name == $nameToCompare && $correspondent->address == $attorney->address);
                 }
+
+                // update attorney with new details
+                $attorney->populate($form->getModelDataFromValidatedForm());
 
                 // persist to the api
                 if (!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorney->id)) {
                     throw new \RuntimeException('API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+                }
+
+                //  Attempt to update the LPA correspondent too if appropriate
+                if ($updateCorrespondent) {
+                    $this->updateCorrespondentData($attorney);
                 }
 
                 if ($this->getRequest()->isXmlHttpRequest()) {

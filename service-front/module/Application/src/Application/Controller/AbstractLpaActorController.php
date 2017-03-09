@@ -4,13 +4,12 @@ namespace Application\Controller;
 
 use Application\Form\Lpa\AbstractActorForm;
 use Opg\Lpa\DataModel\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\Dob;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\Session\Container;
@@ -228,7 +227,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 continue;
             }
 
-            if ($attorney instanceof Human) {
+            if ($attorney instanceof Attorneys\Human) {
                 $actorsList[] = $this->getActorDetails($attorney, 'attorney');
             }
         }
@@ -238,7 +237,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 continue;
             }
 
-            if ($attorney instanceof Human) {
+            if ($attorney instanceof Attorneys\Human) {
                 $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
             }
         }
@@ -355,7 +354,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             $attorneys = array_merge($this->getLpa()->document->primaryAttorneys, $this->getLpa()->document->replacementAttorneys);
 
             foreach ($attorneys as $attorney) {
-                if ($attorney instanceof TrustCorporation) {
+                if ($attorney instanceof Attorneys\TrustCorporation) {
                     return false;
                 }
             }
@@ -396,6 +395,49 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         //  If a route string is provided then add it now
         if (is_string($route)) {
             $viewModel->cancelUrl = $this->url()->fromRoute($route, ['lpa-id' => $this->getLpa()->id]);
+        }
+    }
+
+    /**
+     * If a correspondent is already set in the LPA and the core data of the actor selected (donor and attorney only) then update the data in the correspondent data also
+     *
+     * @param AbstractData $actor
+     */
+    protected function updateCorrespondentData(AbstractData $actor)
+    {
+        $correspondent = $this->getLpa()->document->correspondent;
+
+        if ($correspondent instanceof Correspondence) {
+            //  Only allow the data to be updated if the actor type is correct
+            if (($actor instanceof Donor && $correspondent->who == Correspondence::WHO_DONOR)
+                || ($actor instanceof Attorneys\AbstractAttorney && $correspondent->who == Correspondence::WHO_ATTORNEY)) {
+
+                //  Get the correct name to compare (for a trust that will be the company name)
+                $isTrust = ($actor instanceof Attorneys\TrustCorporation);
+                $nameToCompare = ($isTrust ? $correspondent->name : $correspondent->company);
+
+                //  Determine if the correspondent data needs to be updated or not
+                if ($actor->name != $nameToCompare || $actor->address != $correspondent->address) {
+                    //  Create an updated correspondent datamodel with the data from the existing correspondent EXCEPT the name
+                    //  This is necessary because we may need to null the name field if this actor is a trust
+                    $correspondentData = $correspondent->toArray();
+                    unset($correspondentData['name']);
+                    $correspondent = new Correspondence($correspondentData);
+
+                    //  Update the required values
+                    if ($isTrust) {
+                        $correspondent->company = $actor->name;
+                    } else {
+                        $correspondent->name = $actor->name;
+                    }
+
+                    $correspondent->address = $actor->address;
+
+                    if (!$this->getLpaApplicationService()->setCorrespondent($this->getLpa()->id, $correspondent)) {
+                        throw new \RuntimeException('API client failed to update correspondent for id: ' . $this->getLpa()->id);
+                    }
+                }
+            }
         }
     }
 }

@@ -93,7 +93,7 @@ class CorrespondentController extends AbstractLpaActorController
         //  Construct the correspondent's name to display - if there is a company then append those details also
         $correspondentName = (string) $correspondent->name;
 
-        if (isset($correspondent->company) && !is_null($correspondent->company)) {
+        if (isset($correspondent->company) && !empty($correspondent->company)) {
             $correspondentName .= (empty($correspondentName) ? '' : ', ');
             $correspondentName .= $correspondent->company;
         }
@@ -149,32 +149,22 @@ class CorrespondentController extends AbstractLpaActorController
      */
     private function allowCorrespondentToBeEdited()
     {
-        $editAllowed = false;
-
         $correspondent = $this->getLpaCorrespondent();
 
         if ($correspondent instanceof Correspondence) {
-            //  If the correspondent is a trust then edit is allowed so that a name can be added
-            if ($correspondent->who == Correspondence::WHO_ATTORNEY) {
-                $editAllowed = !is_null($correspondent->company);
-            } elseif ($correspondent->who == Correspondence::WHO_OTHER) {
-                //  Compare the available fields from the correspondent data and the session user data to determine if they are the same
-                $correspondentData = $correspondent->flatten();
-                $userData = $this->getUserDetails()->flatten();
+            //  If the correspondent is of type "other" or is a trust then edit is allowed
+            if ($correspondent->who == Correspondence::WHO_OTHER
+                || ($correspondent->who == Correspondence::WHO_ATTORNEY && !is_null($correspondent->company))) {
 
-                foreach ($correspondentData as $correspondentDataField => $correspondentDataValue) {
-                    if (isset($userData[$correspondentDataField]) && $userData[$correspondentDataField] != $correspondentDataValue) {
-                        //  There is a difference in the data so this is not the session user and therefore it can be edited
-                        $editAllowed = true;
-                        break;
-                    }
-                }
+                return true;
             }
         } elseif ($correspondent instanceof TrustCorporation) {
-            $editAllowed = true;
+            //  This scenario occurs when a trust is by default the correspondent even though it has not been actively selected
+            //  This happens when the trust was selected to be the applicant and is first in the list
+            return true;
         }
 
-        return $editAllowed;
+        return false;
     }
 
     public function editAction()
