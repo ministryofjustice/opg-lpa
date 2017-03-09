@@ -198,35 +198,25 @@ class CorrespondentController extends AbstractLpaActorController
         } else {
             $this->addReuseDetailsForm($viewModel, $form);
 
-            //  If this isn't a request to reuse some details right now then bind the initial default values
-            $reuseDetailsIndex = $this->params()->fromQuery('reuse-details');
+            if ($this->params()->fromQuery('reuse-details') == 'existing-correspondent') {
+                //  If the specific text flag was used then get the existing correspondent data and bind it to the form
+                //  This will have been accessed directly from the index screen so don't allow the back button
+                $allowBackButton = false;
 
-            //  If a reuse details index has been provided and it is NOT -1 (i.e. None of the above/other) then try to process the form automatically
-            if (is_numeric($reuseDetailsIndex) && $reuseDetailsIndex >= 0) {
-                //  If this is NOT a trust then validate the form to set up the data, extract it and process the correspondent
-                //  If the form contains trust data then it should be displayed in the view so that a name can be added if necessary
-                if (!$form->isTrust()) {
+                //  Find the existing correspondent data and bind it to the form
+                $existingCorrespondent = $this->getLpaCorrespondent();
+
+                if ($existingCorrespondent instanceof Correspondence || $existingCorrespondent instanceof TrustCorporation) {
+                    $form->bind($existingCorrespondent->flatten());
+                }
+            } elseif (!isset($viewModel->reuseDetailsForm)) {
+                //  Some selected data was bound to the actor form - check to see if it is editable
+                if (!$form->isEditable()) {
+                    //  If it isn't then validate the form to set up the data, extract it and process the correspondent
                     $form->isValid();
 
                     return $this->processCorrespondentData($form->getModelDataFromValidatedForm());
                 }
-            } else {
-                //  Set the default data to bind to the correspondent form
-                $correspondentData = [
-                    'who'        => Correspondence::WHO_OTHER,
-                    'name-title' => '',
-                ];
-
-                $existingCustomCorrespondent = $this->getLpaCorrespondent();
-                $editExistingCorrespondent = $this->params()->fromQuery('edit-existing');
-
-                if (($existingCustomCorrespondent instanceof Correspondence || $existingCustomCorrespondent instanceof TrustCorporation) && $editExistingCorrespondent == 'true') {
-                    //  Flatten the data and bind to the form and disable the back button
-                    $correspondentData = $existingCustomCorrespondent->flatten();
-                    $allowBackButton = false;
-                }
-
-                $form->bind($correspondentData);
             }
         }
 
