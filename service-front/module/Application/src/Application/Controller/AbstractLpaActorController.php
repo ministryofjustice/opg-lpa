@@ -69,7 +69,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                 //  Bind the actor data to the main form
                 $actorForm->bind($actorDetailsToReuse);
-            } elseif ($reuseDetailsIndex != -1) {
+            } elseif ($reuseDetailsIndex != -1 && !is_string($reuseDetailsIndex)) {
                 //  If no option has been selected (including the "none of the above option" which is -1) then set the reuse details form in the view
                 $reuseDetailsForm = $this->getServiceLocator()
                                          ->get('FormElementManager')

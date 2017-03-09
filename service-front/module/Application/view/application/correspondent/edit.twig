@@ -144,11 +144,11 @@
 
         </fieldset>
 
-        <h2 class="heading-medium">Correspondent's company name{{ form.isTrust() ? '' : '?' }}</h2>
+        <h2 class="heading-medium">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
 
         <fieldset>
             <legend class="visually hidden">Add company name</legend>
-            {% if form.isTrust() %}
+            {% if form.trustSelected() %}
                 {{ formHidden(company) }}
                 <div class="form-group read-only">
                     <label class="form-label">{{ company.getOption('label') }}</label>
@@ -159,12 +159,12 @@
             {% endif %}
         </fieldset>
 
-        <h2 class="heading-medium">{{ form.isTrust() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
+        <h2 class="heading-medium">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
 
         <fieldset class="postcodelookup">
             <legend class="visuallyhidden">Add address details</legend>
 
-            {% if form.isTrust() %}
+            {% if form.trustSelected() %}
                 {{ formHidden(address1) }}
                 {{ formHidden(address2) }}
                 {{ formHidden(address3) }}
