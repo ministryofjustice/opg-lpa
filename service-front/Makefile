@@ -4,4 +4,4 @@ watch:
 
 .PHONY: test
 test:
-	docker run -it --rm -v $$(pwd):/app phpunit/phpunit:5.5.0 module/Application/tests --bootstrap module/Application/tests/Bootstrap.php
+	docker run -it --rm -v $$(pwd):/app phpunit/phpunit:5.5.0 module/Application/tests/ApplicationTest/View/Helper/AccordionBottomTest.php --bootstrap module/Application/tests/Bootstrap.php
