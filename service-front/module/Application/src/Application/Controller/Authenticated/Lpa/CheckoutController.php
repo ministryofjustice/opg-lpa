@@ -17,7 +17,7 @@ class CheckoutController extends AbstractLpaController {
 
     public function indexAction(){
 
-        if ($this->request->isPost && !$this->isLPAComplete()) {
+        if ($this->request->isPost() && !$this->isLPAComplete()) {
             return $this->redirectToMoreInfoRequired();
         }
 
