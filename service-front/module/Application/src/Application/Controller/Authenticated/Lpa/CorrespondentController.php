@@ -182,9 +182,6 @@ class CorrespondentController extends AbstractLpaActorController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $this->getLpa()->id]));
 
-        //  By default the back button in the template is allowed
-        $allowBackButton = true;
-
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());
 
@@ -199,29 +196,29 @@ class CorrespondentController extends AbstractLpaActorController
             $this->addReuseDetailsForm($viewModel, $form);
 
             if ($this->params()->fromQuery('reuse-details') == 'existing-correspondent') {
-                //  If the specific text flag was used then get the existing correspondent data and bind it to the form
-                //  This will have been accessed directly from the index screen so don't allow the back button
-                $allowBackButton = false;
-
                 //  Find the existing correspondent data and bind it to the form
                 $existingCorrespondent = $this->getLpaCorrespondent();
 
                 if ($existingCorrespondent instanceof Correspondence || $existingCorrespondent instanceof TrustCorporation) {
                     $form->bind($existingCorrespondent->flatten());
                 }
-            } elseif (!isset($viewModel->reuseDetailsForm)) {
-                //  Some selected data was bound to the actor form - check to see if it is editable
-                if (!$form->isEditable()) {
-                    //  If it isn't then validate the form to set up the data, extract it and process the correspondent
-                    $form->isValid();
+            } else {
+                //  Execute the parent function to determine if the back button URL should be set in the view model
+                $this->addReuseDetailsBackButton($viewModel);
 
-                    return $this->processCorrespondentData($form->getModelDataFromValidatedForm());
+                if (!isset($viewModel->reuseDetailsForm)) {
+                    //  Some selected data was bound to the actor form - check to see if it is editable
+                    if (!$form->isEditable()) {
+                        //  If it isn't then validate the form to set up the data, extract it and process the correspondent
+                        $form->isValid();
+
+                        return $this->processCorrespondentData($form->getModelDataFromValidatedForm());
+                    }
                 }
             }
         }
 
         $viewModel->form = $form;
-        $viewModel->allowReuseDetailsBackButton = $allowBackButton;
 
         //  Add a cancel URL for this action
         $this->addCancelUrlToView($viewModel, 'lpa/correspondent');

@@ -381,7 +381,13 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             $allowBackButton = true;
         }
 
-        $viewModel->allowReuseDetailsBackButton = $allowBackButton;
+        //  If required add the back button URL
+        if ($allowBackButton) {
+            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+
+            //  Add the back button URL but make sure that the add trust views go back to the normal add views
+            $viewModel->backButtonUrl = str_replace('add-trust', 'add', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $this->getLpa()->id]));
+        }
     }
 
     /**
