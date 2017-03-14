@@ -69,18 +69,13 @@
     {% endif %}
 {% endmacro %}
 
-{% macro renderFormButtons(cancelUrl, allowReuseDetailsBackButton) %}
+{% macro renderFormButtons(cancelUrl, backButtonUrl) %}
     {# Submit button #}
     <input type="submit" name="submit" id="form-save" value="Save details" class="button">
 
     {# Back button - if necessary #}
-    {% if (allowReuseDetailsBackButton) %}
-        {# Use the current URL without query params for the back link #}
-        {# If this is the add trust view then make the back button go back to the normal add view #}
-        {% set backUrl = serverUrl(true)|split('?')|first %}
-        {% set backUrl = backUrl|replace({'add-trust': 'add'}) %}
-
-        <a href="{{ backUrl }}" class="button button-secondary js-form-popup">Back</a>
+    {% if (backButtonUrl) %}
+        <a href="{{ backButtonUrl }}" class="button button-secondary js-form-popup">Back</a>
     {% endif %}
 
     {# Cancel button #}
