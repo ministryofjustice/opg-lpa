@@ -2,128 +2,110 @@
 
 {% block content %}
 <div class="text">
-    <p class="lede">This online service will help you to create a <a class="js-guidance" href="/guide#topic-lpa-basics" data-journey-click="stageprompt.lpa:help:lpa-basics" target="_blank">lasting power of attorney</a> (LPA) for England and Wales.</p>
-    <p>It will also guide you through signing your LPA and registering it with the Office of the Public Guardian. Remember, you have to register an LPA before you can use it.</p>
+    <p class="lede">This online service will help you to create a
+        <a class="js-guidance" href="/guide#topic-lpa-basics" data-journey-click="stageprompt.lpa:help:lpa-basics" target="_blank">lasting power of attorney</a>
+        (LPA) for England and Wales.</p>
+
+    <p>This service guides you though answering the questions and explains the process along the way.
+        We’ll use your answers to create an LPA that you can save and print, sign and send to the Office of the Public Guardian (OPG) for registration.</p>
+
+    <p>We’ll save your LPA as you progress so you don’t need to complete it in one go.</p>
+
     {{ systemMessage() }}
 </div>
 
-<div id="homepageflag" style="display: none">&nbsp;</div>
-
-<hr>
-
-<ul>
-    <li>
-        <div class="grid-row">
-
-            <div class="column-half">
-                <h2 class="heading-medium flush--top">I want to create an LPA</h2>
-                <p>New to the LPA process? Begin the guided steps for creating one</p>
-            </div>
-
-            <div class="column-half">
-                {% if (identity() is empty) %}
-                    <p>
-                        <a class="button" href="{{ url('register') }}" role="button">Create an account now</a>
-                    </p>
-                {% else %}
-                    <p><a class="create-lpa button" href="{{ url('user/dashboard/create-lpa') }}" role="button">Create an LPA now</a></p>
-                {% endif %}
-                <details role="group">
-                    <summary data-journey-click="stageprompt.lpa:help.inline:/:what-you-will-need-to-complete-the-form" role="button">
-                        <span class="summary">What you'll need to complete the form</span>
-                    </summary>
-                    <div>
-                        <ul class="list-bullet">
-                            <li>name, address and date of birth of the
-                                <a class="js-guidance" href="/guide#topic-donor" data-journey="stageprompt.lpa:help:donor" target="_blank">donor</a>
-                                (the person the LPA is for)
-                            </li>
-                            <li>names, addresses and dates of birth of all
-                                <a class="js-guidance" href="/guide#topic-attorneys" data-journey="stageprompt.lpa:help:attorneys" target="_blank">attorneys</a>
-                            </li>
-                            <li>names and addresses of
-                                <a class="js-guidance" href="/guide#topic-certificate-providers" data-journey="stageprompt.lpa:help:certificate-providers" target="_blank">certificate provider</a>
-                            </li>
-                            <li>names and addresses of
-                                <a class="js-guidance" href="/guide#topic-people-to-notify" data-journey="stageprompt.lpa:help:people-to-notify" target="_blank">'people to notify'</a>
-                            </li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-
-        </div>
-    </li>
-
+<div id="home-boxes">
     {% if (identity() is empty) %}
-
-    <li>
-        <hr>
-        <div class="grid-row">
-
-            <div class="column-half">
-                <h2 class="heading-medium flush--top">I already have an LPA account</h2>
-                <p>Sign in to access your existing account</p>
+        <div id="home-boxes-left">
+            <div>
+                <h2 class="heading-medium">I don’t have an LPA account</h2>
+                <p>
+                    To start your LPA you first need to set up an online account. You can use your account
+                    to make multiple LPAs for yourself and others.
+                </p>
+                <a class="button button-start" href="{{ url('register') }}" role="button">Create my account</a>
             </div>
-
-            <div class="column-half">
-                <p><a class="create-lpa button" href="{{ url('login') }}" role="button">Sign in</a></p>
-            </div>
-
         </div>
-
-    </li>
+        <div id="home-boxes-right">
+            <div>
+                <h2 class="heading-medium">I already have an LPA account</h2>
+                <p>
+                    Continue making your LPA online by signing into your existing account.
+                </p>
+                <a class="button button-start" href="{{ url('login') }}" role="button">Sign in</a>
+            </div>
+            </div>
+    {% else %}
+        <div id="home-boxes-left">
+            <div>
+                <h2 class="heading-medium">Create an LPA</h2>
+                <p>
+                    Begin the guided steps to create your LPA to print and sign.
+                </p>
+                <a class="button button-start" href="{{ url('user/dashboard/create-lpa') }}" role="button">Start now</a>
+            </div>
+        </div>
     {% endif %}
-</ul>
-
-<hr>
-
-<h3 class="heading-medium">Before you begin</h3>
-<div class="text">
-    <p>If you’re making your first LPA, there a few things you need to think about. These help topics and quick questions are a good place to start.</p>
-    <p>You don't have to complete the LPA form in one go; you can save your details and complete it later. You'll find lots more guidance as you progress through the LPA form.</p>
-    <p><a class="js-guidance" href="/guide#topic-lpa-basics" data-journey-click="stageprompt.lpa:help:lpa-basics" target="_blank">LPA basics</a></p>
-    <p><a class="js-guidance" href="/guide#topic-about-this-service" data-journey-click="stageprompt.lpa:help:about-this-tool" target="_blank">About this online service</a></p>
 </div>
 
 
-<details>
-    <summary data-journey-click="stageprompt.lpa:help.inline:/:how-much-does-it-cost-to-apply-to-register-an-lpa">
-        <span class="summary">How much does it cost to apply to register an LPA?</span>
-    </summary>
+<br><br>
 
-    <div class="text">
-        <p>There's a &pound;110 application fee to register an LPA, paid by or on behalf of the donor – that’s the person who’s making the LPA. If the donor has an income below £12,000, or gets certain benefits, they might qualify for a lower fee, or the fee might be waived altogether.</p>
-        <p><a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions" target="_blank">Fees and reductions</a></p>
-        <p>Remember, an LPA must be registered before it can be used.</p>
+<h2 class="heading-medium">
+    Before you create your LPA
+</h2>
+
+<details role="group">
+    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+        <span class="summary">How much does it cost?</span>
+    </summary>
+    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+        <p>
+            It costs £110 per LPA, but fee reductions are available for people on benefits or with low
+            incomes. If you’re eligible for a reduction you need to complete a form that will be given to you
+            at the end of this service. You can pay by card online or send a cheque with your LPA to OPG.
+        </p>
+        <p>
+            <a href="{{ url('home') }}#/guide/topic-fees-and-reductions">Read more about fees and reductions</a>
+        </p>
+
     </div>
 </details>
 
-<details>
-    <summary data-journey-click="stageprompt.lpa:help.inline:/:how-long-does-it-take-to-register-an-lpa">
-        <span class="summary">How long does it take to register an LPA?</span>
+<details role="group">
+    <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+        <span class="summary">What do I need to complete the form?</span>
     </summary>
-
-    <div class="text">
-        <p>After you send in your application, it can be 8 to 10 weeks before you receive the registered LPA.</p>
-        <p>Some of this is processing time, when we check that there are no mistakes in the LPA, including anything that would make it invalid or unworkable. We'll get in touch if there are problems.</p>
-        <p>The time also includes a four-week waiting period. This is a safeguard required by law and allows people involved in the LPA to raise any concerns they might have.</p>
-        <p>It’s a good idea to apply to register an LPA sooner rather than later.</p>
+    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+        <ul class="list list-bullet">
+            <li>name, address and date of birth of the <a href="{{ url('home') }}#/guide/topic-donor">donor</a> (the person the LPA is for)</li>
+            <li>names, addresses and dates of birth of all <a href="{{ url('home') }}#/guide/topic-attorneys">attorneys</a></li>
+            <li>names and addresses of <a href="{{ url('home') }}#/guide/topic-certificate-providers">certificate provider</a></li>
+            <li>names and addresses of <a href="{{ url('home') }}#/guide/topic-people-to-notify">'people to notify'</a></li>
+        </ul>
         <p>
-            <a class="js-guidance" href="/guide#topic-registering-the-lpa" data-journey-click="stageprompt.lpa:help:registering-the-lpa" target="_blank">Registering an LPA</a>
+            You won’t be asked for the name of witnesses, you can fill those in on the printed form when they sign.
+        </p>
+        <p>
+            <a href="{{ url('home') }}#/guide/topic-about-this-service">Read more about how to prepare</a>
         </p>
     </div>
 </details>
 
-<details>
-    <summary data-journey-click="stageprompt.lpa:help.inline:/:can-i-do-it-all-using-this-tool">
-        <span class="summary">Can I do it all using this service?</span>
+<details role="group">
+    <summary role="button" aria-controls="details-content-2" aria-expanded="false">
+        <span class="summary">Why can’t I do all of this online?</span>
     </summary>
-
-    <div class="text">
-        <p>Not quite. This service will help you make an LPA and support you in applying to register it. You’ll need to print a copy though, and get this signed, as well as completing some of the registration tasks offline. Then you’ll need to post the LPA to OPG for registration.</p>
-        <p>We’ll explain what you need to do as you complete each step.</p>
-        <p>You need a PDF reader like Adobe Reader (<a href='http://www.adobe.com/uk/products/reader.html' target='_blank'>http://www.adobe.com/uk/products/reader.html</a>) to view and print the LPA forms.</p>
+    <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
+        <p>
+            For an LPA to be valid it needs to be signed and witnessed by all people mentioned on the
+            LPA. The online tool makes it simpler to do the first part, the filling in of the form.
+            You can take your time and can read extra help if you need it. A printed, signed LPA has to
+            be registered with the Office of the Public Guardian before it can be used.
+        </p>
+        <p>
+            <a href="{{ url('home') }}#/guide/topic-about-this-service">Read more about this service</a>
+        </p>
     </div>
 </details>
 

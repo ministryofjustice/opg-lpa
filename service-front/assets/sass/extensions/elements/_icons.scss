@@ -1,22 +1,18 @@
 // Icons
 // ==========================================================================
 
-@mixin lpa-icon($icon-name, $icon-width, $icon-height) {
-    @include icon($icon-name, $icon-width, $icon-height, icons);
-}
-
 .icon-information {
-    @include lpa-icon(icon-information, 27, 27);
+    @include icon(icon-information, 27, 27);
 }
 
 .icon-file-download {
-    @include lpa-icon(icon-file-download, 30, 39);
+    @include icon(icon-file-download, 30, 39);
 }
 
 .icon-property {
-    @include lpa-icon(icon-property, 55, 50);
+    @include icon(icon-property, 55, 50);
     @include media(mobile) {
-        @include lpa-icon(icon-property, 33, 30);
+        @include icon(icon-property, 33, 30);
         background-size: contain;
     }
 
@@ -26,11 +22,11 @@
 }
 
 .icon-finance {
-    @include lpa-icon(icon-finance, 52, 50);
+    @include icon(icon-finance, 52, 50);
     margin-right: 10px;
 
     @include media(mobile) {
-        @include lpa-icon(icon-finance, 31, 30);
+        @include icon(icon-finance, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
@@ -41,9 +37,9 @@
 }
 
 .icon-health {
-    @include lpa-icon(icon-health, 60, 50);
+    @include icon(icon-health, 60, 50);
     @include media(mobile) {
-        @include lpa-icon(icon-health, 36, 30);
+        @include icon(icon-health, 36, 30);
         background-size: contain;
     }
 
@@ -53,11 +49,11 @@
 }
 
 .icon-welfare {
-    @include lpa-icon(icon-welfare, 52, 50);
+    @include icon(icon-welfare, 52, 50);
     margin-right: 10px;
 
     @include media(mobile) {
-        @include lpa-icon(icon-welfare, 31, 30);
+        @include icon(icon-welfare, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
@@ -68,11 +64,11 @@
 }
 
 .icon-question {
-    @include lpa-icon(icon-question, 52, 50);
+    @include icon(icon-question, 52, 50);
     margin-right: 10px;
 
     @include media(mobile) {
-        @include lpa-icon(icon-question, 31, 30);
+        @include icon(icon-question, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
@@ -83,32 +79,32 @@
 }
 
 .icon-tick {
-    @include lpa-icon(icon-tick, 22, 22);
+    @include icon(icon-tick, 22, 22);
     @include media(mobile) {
-        @include lpa-icon(icon-tick, 16, 16);
+        @include icon(icon-tick, 16, 16);
         margin-right: 6px;
         background-size: contain;
     }
 }
 
 .icon-cross {
-    @include lpa-icon(icon-cross, 22, 22);
+    @include icon(icon-cross, 22, 22);
     @include media(mobile) {
-        @include lpa-icon(icon-cross, 16, 16);
+        @include icon(icon-cross, 16, 16);
         margin-right: 6px;
         background-size: contain;
     }
 }
 
 .icon-important-small {
-    @include lpa-icon(icon-important, 27, 27);
+    @include icon(icon-important, 27, 27);
     background-size: contain;
 }
 
 .icon-person {
-    @include lpa-icon(icon-person, 27, 27);
+    @include icon(icon-person, 27, 27);
     @include media(mobile) {
-        @include lpa-icon(icon-person, 27, 27);
+        @include icon(icon-person, 27, 27);
         margin-right: 6px;
         background-size: contain;
     }

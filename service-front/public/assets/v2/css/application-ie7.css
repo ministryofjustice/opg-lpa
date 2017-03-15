@@ -2187,109 +2187,109 @@ input[type=number] {
 .icon-information {
   width: 27px;
   height: 27px;
-  background-image: url("/public/images/icons/icon-information.png"); }
+  background-image: url("/public/images/icon-information.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-information {
-      background-image: url("/public/images/icons/icon-information-2x.png");
+      background-image: url("/public/images/icon-information-2x.png");
       background-size: 100%; } }
 
 .icon-file-download {
   width: 30px;
   height: 39px;
-  background-image: url("/public/images/icons/icon-file-download.png"); }
+  background-image: url("/public/images/icon-file-download.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-file-download {
-      background-image: url("/public/images/icons/icon-file-download-2x.png");
+      background-image: url("/public/images/icon-file-download-2x.png");
       background-size: 100%; } }
 
 .icon-property {
   width: 55px;
   height: 50px;
-  background-image: url("/public/images/icons/icon-property.png");
+  background-image: url("/public/images/icon-property.png");
   display: none; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-property {
-      background-image: url("/public/images/icons/icon-property-2x.png");
+      background-image: url("/public/images/icon-property-2x.png");
       background-size: 100%; } }
 
 .icon-finance {
   width: 52px;
   height: 50px;
-  background-image: url("/public/images/icons/icon-finance.png");
+  background-image: url("/public/images/icon-finance.png");
   margin-right: 10px;
   display: none; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-finance {
-      background-image: url("/public/images/icons/icon-finance-2x.png");
+      background-image: url("/public/images/icon-finance-2x.png");
       background-size: 100%; } }
 
 .icon-health {
   width: 60px;
   height: 50px;
-  background-image: url("/public/images/icons/icon-health.png");
+  background-image: url("/public/images/icon-health.png");
   display: none; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-health {
-      background-image: url("/public/images/icons/icon-health-2x.png");
+      background-image: url("/public/images/icon-health-2x.png");
       background-size: 100%; } }
 
 .icon-welfare {
   width: 52px;
   height: 50px;
-  background-image: url("/public/images/icons/icon-welfare.png");
+  background-image: url("/public/images/icon-welfare.png");
   margin-right: 10px;
   display: none; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-welfare {
-      background-image: url("/public/images/icons/icon-welfare-2x.png");
+      background-image: url("/public/images/icon-welfare-2x.png");
       background-size: 100%; } }
 
 .icon-question {
   width: 52px;
   height: 50px;
-  background-image: url("/public/images/icons/icon-question.png");
+  background-image: url("/public/images/icon-question.png");
   margin-right: 10px;
   display: none; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-question {
-      background-image: url("/public/images/icons/icon-question-2x.png");
+      background-image: url("/public/images/icon-question-2x.png");
       background-size: 100%; } }
 
 .icon-tick {
   width: 22px;
   height: 22px;
-  background-image: url("/public/images/icons/icon-tick.png"); }
+  background-image: url("/public/images/icon-tick.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-tick {
-      background-image: url("/public/images/icons/icon-tick-2x.png");
+      background-image: url("/public/images/icon-tick-2x.png");
       background-size: 100%; } }
 
 .icon-cross {
   width: 22px;
   height: 22px;
-  background-image: url("/public/images/icons/icon-cross.png"); }
+  background-image: url("/public/images/icon-cross.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-cross {
-      background-image: url("/public/images/icons/icon-cross-2x.png");
+      background-image: url("/public/images/icon-cross-2x.png");
       background-size: 100%; } }
 
 .icon-important-small {
   width: 27px;
   height: 27px;
-  background-image: url("/public/images/icons/icon-important.png");
+  background-image: url("/public/images/icon-important.png");
   background-size: contain; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-important-small {
-      background-image: url("/public/images/icons/icon-important-2x.png");
+      background-image: url("/public/images/icon-important-2x.png");
       background-size: 100%; } }
 
 .icon-person {
   width: 27px;
   height: 27px;
-  background-image: url("/public/images/icons/icon-person.png"); }
+  background-image: url("/public/images/icon-person.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-person {
-      background-image: url("/public/images/icons/icon-person-2x.png");
+      background-image: url("/public/images/icon-person-2x.png");
       background-size: 100%; } }
 
 .help-sections ul,
