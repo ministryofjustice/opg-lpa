@@ -2719,287 +2719,289 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
 };
 ;
 ;(function (global) {
-    'use strict';
+  'use strict'
 
-    var $ = global.jQuery;
-    var GOVUK = global.GOVUK || {};
+  var $ = global.jQuery
+  var GOVUK = global.GOVUK || {}
 
   var SelectionButtons = function (elmsOrSelector, opts) {
-      this.selectedClass = 'selected';
-      this.focusedClass = 'focused';
-      this.radioClass = 'selection-button-radio';
-      this.checkboxClass = 'selection-button-checkbox';
+    this.selectedClass = 'selected'
+    this.focusedClass = 'focused'
+    this.radioClass = 'selection-button-radio'
+    this.checkboxClass = 'selection-button-checkbox'
     if (opts !== undefined) {
       $.each(opts, function (optionName, optionObj) {
-          this[optionName] = optionObj;
-      }.bind(this));
+        this[optionName] = optionObj
+      }.bind(this))
     }
     if (typeof elmsOrSelector === 'string') {
-        this.selector = elmsOrSelector;
-        this.setInitialState($(this.selector));
+      this.selector = elmsOrSelector
+      this.setInitialState($(this.selector))
     } else if (elmsOrSelector !== undefined) {
-        this.$elms = elmsOrSelector;
-        this.setInitialState(this.$elms);
+      this.$elms = elmsOrSelector
+      this.setInitialState(this.$elms)
     }
-      this.addEvents();
-  };
+    this.addEvents()
+  }
   SelectionButtons.prototype.addEvents = function () {
     if (typeof this.$elms !== 'undefined') {
-        this.addElementLevelEvents();
+      this.addElementLevelEvents()
     } else {
-        this.addDocumentLevelEvents();
+      this.addDocumentLevelEvents()
     }
-  };
+  }
   SelectionButtons.prototype.setInitialState = function ($elms) {
     $elms.each(function (idx, elm) {
-        var $elm = $(elm);
+      var $elm = $(elm)
 
-        var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass;
-        $elm.parent('label').addClass(labelClass);
+      var labelClass = $elm.attr('type') === 'radio' ? this.radioClass : this.checkboxClass
+      $elm.parent('label').addClass(labelClass)
       if ($elm.is(':checked')) {
-          this.markSelected($elm);
+        this.markSelected($elm)
       }
-    }.bind(this));
-  };
+    }.bind(this))
+  }
   SelectionButtons.prototype.markFocused = function ($elm, state) {
     if (state === 'focused') {
-        $elm.parent('label').addClass(this.focusedClass);
+      $elm.parent('label').addClass(this.focusedClass)
     } else {
-        $elm.parent('label').removeClass(this.focusedClass);
+      $elm.parent('label').removeClass(this.focusedClass)
     }
-  };
+  }
   SelectionButtons.prototype.markSelected = function ($elm) {
-    var radioName;
+    var radioName
+
     if ($elm.attr('type') === 'radio') {
-        radioName = $elm.attr('name');
+      radioName = $elm.attr('name')
       $($elm[0].form).find('input[name="' + radioName + '"]')
         .parent('label')
-            .removeClass(this.selectedClass);
-        $elm.parent('label').addClass(this.selectedClass);
+        .removeClass(this.selectedClass)
+      $elm.parent('label').addClass(this.selectedClass)
     } else { // checkbox
       if ($elm.is(':checked')) {
-          $elm.parent('label').addClass(this.selectedClass);
+        $elm.parent('label').addClass(this.selectedClass)
       } else {
-          $elm.parent('label').removeClass(this.selectedClass);
+        $elm.parent('label').removeClass(this.selectedClass)
       }
     }
-  };
+  }
   SelectionButtons.prototype.addElementLevelEvents = function () {
-      this.clickHandler = this.getClickHandler();
-      this.focusHandler = this.getFocusHandler({ 'level': 'element' });
+    this.clickHandler = this.getClickHandler()
+    this.focusHandler = this.getFocusHandler({ 'level': 'element' })
 
     this.$elms
       .on('click', this.clickHandler)
-          .on('focus blur', this.focusHandler);
-  };
+      .on('focus blur', this.focusHandler)
+  }
   SelectionButtons.prototype.addDocumentLevelEvents = function () {
-      this.clickHandler = this.getClickHandler();
-      this.focusHandler = this.getFocusHandler({ 'level': 'document' });
+    this.clickHandler = this.getClickHandler()
+    this.focusHandler = this.getFocusHandler({ 'level': 'document' })
 
     $(document)
       .on('click', this.selector, this.clickHandler)
-          .on('focus blur', this.selector, this.focusHandler);
-  };
+      .on('focus blur', this.selector, this.focusHandler)
+  }
   SelectionButtons.prototype.getClickHandler = function () {
     return function (e) {
-        this.markSelected($(e.target));
-    }.bind(this);
-  };
+      this.markSelected($(e.target))
+    }.bind(this)
+  }
   SelectionButtons.prototype.getFocusHandler = function (opts) {
-      var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus';
+    var focusEvent = (opts.level === 'document') ? 'focusin' : 'focus'
 
     return function (e) {
-        var state = (e.type === focusEvent) ? 'focused' : 'blurred';
+      var state = (e.type === focusEvent) ? 'focused' : 'blurred'
 
-        this.markFocused($(e.target), state);
-    }.bind(this);
-  };
+      this.markFocused($(e.target), state)
+    }.bind(this)
+  }
   SelectionButtons.prototype.destroy = function () {
     if (typeof this.selector !== 'undefined') {
       $(document)
         .off('click', this.selector, this.clickHandler)
-            .off('focus blur', this.selector, this.focusHandler);
+        .off('focus blur', this.selector, this.focusHandler)
     } else {
       this.$elms
         .off('click', this.clickHandler)
-            .off('focus blur', this.focusHandler);
+        .off('focus blur', this.focusHandler)
     }
-  };
-
-    GOVUK.SelectionButtons = SelectionButtons;
-    global.GOVUK = GOVUK;
-})(window);
-;
-;(function (global) {
-    'use strict';
-
-    var $ = global.jQuery;
-    var GOVUK = global.GOVUK || {};
-
-  function ShowHideContent () {
-      var self = this;
-
-      // Radio and Checkbox selectors
-      var selectors = {
-          namespace: 'ShowHideContent',
-          radio: '.block-label[data-target] input[type="radio"]',
-          checkbox: '.block-label[data-target] input[type="checkbox"]'
-      };
-
-      // Escape name attribute for use in DOM selector
-      function escapeElementName (str) {
-          var result = str.replace('[', '\\[').replace(']', '\\]');
-          return result;
-      }
-
-      // Adds ARIA attributes to control + associated content
-      function initToggledContent () {
-          var $control = $(this);
-          var $content = getToggledContent($control);
-
-          // Set aria-controls and defaults
-          if ($content.length) {
-              $control.attr('aria-controls', $content.attr('id'));
-              $control.attr('aria-expanded', 'false');
-              $content.attr('aria-hidden', 'true');
-          }
-      }
-
-      // Return toggled content for control
-      function getToggledContent ($control) {
-          var id = $control.attr('aria-controls');
-
-          // ARIA attributes aren't set before init
-          if (!id) {
-              id = $control.closest('label').data('target');
-          }
-          // Find show/hide content by id
-          return $('#' + id);
-      }
-
-      // Show toggled content for control
-      function showToggledContent ($control, $content) {
-          // Show content
-          if ($content.hasClass('js-hidden')) {
-              $content.removeClass('js-hidden');
-              $content.attr('aria-hidden', 'false');
-
-              // If the controlling input, update aria-expanded
-              if ($control.attr('aria-controls')) {
-                  $control.attr('aria-expanded', 'true');
-              }
-          }
-      }
-
-      // Hide toggled content for control
-      function hideToggledContent ($control, $content) {
-          $content = $content || getToggledContent($control);
-
-          // Hide content
-          if (!$content.hasClass('js-hidden')) {
-              $content.addClass('js-hidden');
-              $content.attr('aria-hidden', 'true');
-
-              // If the controlling input, update aria-expanded
-              if ($control.attr('aria-controls')) {
-                  $control.attr('aria-expanded', 'false');
-              }
-          }
-      }
-
-      // Handle radio show/hide
-      function handleRadioContent ($control, $content) {
-          // All radios in this group which control content
-          var selector = selectors.radio + '[name=' + escapeElementName($control.attr('name')) + '][aria-controls]';
-          var $radios = $control.closest('form').find(selector);
-
-          // Hide content for radios in group
-          $radios.each(function () {
-              hideToggledContent($(this));
-          });
-
-          // Select content for this control
-          if ($control.is('[aria-controls]')) {
-              showToggledContent($control, $content);
-          }
-      }
-
-      // Handle checkbox show/hide
-      function handleCheckboxContent ($control, $content) {
-          // Show checkbox content
-          if ($control.is(':checked')) {
-              showToggledContent($control, $content);
-          } else { // Hide checkbox content
-              hideToggledContent($control, $content);
-          }
-      }
-
-      // Set up event handlers etc
-      function init ($container, elementSelector, eventSelectors, handler) {
-          $container = $container || $(document.body);
-
-          // Handle control clicks
-          function deferred () {
-              var $control = $(this);
-              handler($control, getToggledContent($control));
-          }
-
-          // Prepare ARIA attributes
-          var $controls = $(elementSelector);
-          $controls.each(initToggledContent);
-
-          // Handle events
-          $.each(eventSelectors, function (idx, eventSelector) {
-              $container.on('click.' + selectors.namespace, eventSelector, deferred);
-          });
-
-          // Any already :checked on init?
-          if ($controls.is(':checked')) {
-              $controls.filter(':checked').each(deferred);
-          }
-      }
-
-      // Get event selectors for all radio groups
-      function getEventSelectorsForRadioGroups () {
-          var radioGroups = [];
-
-          // Build an array of radio group selectors
-          return $(selectors.radio).map(function () {
-              var groupName = $(this).attr('name');
-
-              if ($.inArray(groupName, radioGroups) === -1) {
-                  radioGroups.push(groupName);
-                  return 'input[type="radio"][name="' + $(this).attr('name') + '"]';
-              }
-              return null;
-          });
-      }
-
-      // Set up radio show/hide content for container
-      self.showHideRadioToggledContent = function ($container) {
-          init($container, selectors.radio, getEventSelectorsForRadioGroups(), handleRadioContent);
-      };
-
-      // Set up checkbox show/hide content for container
-      self.showHideCheckboxToggledContent = function ($container) {
-          init($container, selectors.checkbox, [selectors.checkbox], handleCheckboxContent);
-      };
-
-      // Remove event handlers
-      self.destroy = function ($container) {
-          $container = $container || $(document.body);
-          $container.off('.' + selectors.namespace);
-      };
   }
 
-    ShowHideContent.prototype.init = function ($container) {
-        this.showHideRadioToggledContent($container);
-        this.showHideCheckboxToggledContent($container);
-    };
+  GOVUK.SelectionButtons = SelectionButtons
+  global.GOVUK = GOVUK
+})(window)
+;
+;(function (global) {
+  'use strict'
 
-    GOVUK.ShowHideContent = ShowHideContent;
-    global.GOVUK = GOVUK;
-})(window);
+  var $ = global.jQuery
+  var GOVUK = global.GOVUK || {}
+
+  function ShowHideContent () {
+    var self = this
+
+    // Radio and Checkbox selectors
+    var selectors = {
+      namespace: 'ShowHideContent',
+      radio: '.block-label[data-target] input[type="radio"]',
+      checkbox: '.block-label[data-target] input[type="checkbox"]'
+    }
+
+    // Escape name attribute for use in DOM selector
+    function escapeElementName (str) {
+      var result = str.replace('[', '\\[').replace(']', '\\]')
+      return result
+    }
+
+    // Adds ARIA attributes to control + associated content
+    function initToggledContent () {
+      var $control = $(this)
+      var $content = getToggledContent($control)
+
+      // Set aria-controls and defaults
+      if ($content.length) {
+        $control.attr('aria-controls', $content.attr('id'))
+        $control.attr('aria-expanded', 'false')
+        $content.attr('aria-hidden', 'true')
+      }
+    }
+
+    // Return toggled content for control
+    function getToggledContent ($control) {
+      var id = $control.attr('aria-controls')
+
+      // ARIA attributes aren't set before init
+      if (!id) {
+        id = $control.closest('label').data('target')
+      }
+
+      // Find show/hide content by id
+      return $('#' + id)
+    }
+
+    // Show toggled content for control
+    function showToggledContent ($control, $content) {
+      // Show content
+      if ($content.hasClass('js-hidden')) {
+        $content.removeClass('js-hidden')
+        $content.attr('aria-hidden', 'false')
+
+        // If the controlling input, update aria-expanded
+        if ($control.attr('aria-controls')) {
+          $control.attr('aria-expanded', 'true')
+        }
+      }
+    }
+
+    // Hide toggled content for control
+    function hideToggledContent ($control, $content) {
+      $content = $content || getToggledContent($control)
+
+      // Hide content
+      if (!$content.hasClass('js-hidden')) {
+        $content.addClass('js-hidden')
+        $content.attr('aria-hidden', 'true')
+
+        // If the controlling input, update aria-expanded
+        if ($control.attr('aria-controls')) {
+          $control.attr('aria-expanded', 'false')
+        }
+      }
+    }
+
+    // Handle radio show/hide
+    function handleRadioContent ($control, $content) {
+      // All radios in this group which control content
+      var selector = selectors.radio + '[name=' + escapeElementName($control.attr('name')) + '][aria-controls]'
+      var $radios = $control.closest('form').find(selector)
+
+      // Hide content for radios in group
+      $radios.each(function () {
+        hideToggledContent($(this))
+      })
+
+      // Select content for this control
+      if ($control.is('[aria-controls]')) {
+        showToggledContent($control, $content)
+      }
+    }
+
+    // Handle checkbox show/hide
+    function handleCheckboxContent ($control, $content) {
+      // Show checkbox content
+      if ($control.is(':checked')) {
+        showToggledContent($control, $content)
+      } else { // Hide checkbox content
+        hideToggledContent($control, $content)
+      }
+    }
+
+    // Set up event handlers etc
+    function init ($container, elementSelector, eventSelectors, handler) {
+      $container = $container || $(document.body)
+
+      // Handle control clicks
+      function deferred () {
+        var $control = $(this)
+        handler($control, getToggledContent($control))
+      }
+
+      // Prepare ARIA attributes
+      var $controls = $(elementSelector)
+      $controls.each(initToggledContent)
+
+      // Handle events
+      $.each(eventSelectors, function (idx, eventSelector) {
+        $container.on('click.' + selectors.namespace, eventSelector, deferred)
+      })
+
+      // Any already :checked on init?
+      if ($controls.is(':checked')) {
+        $controls.filter(':checked').each(deferred)
+      }
+    }
+
+    // Get event selectors for all radio groups
+    function getEventSelectorsForRadioGroups () {
+      var radioGroups = []
+
+      // Build an array of radio group selectors
+      return $(selectors.radio).map(function () {
+        var groupName = $(this).attr('name')
+
+        if ($.inArray(groupName, radioGroups) === -1) {
+          radioGroups.push(groupName)
+          return 'input[type="radio"][name="' + $(this).attr('name') + '"]'
+        }
+        return null
+      })
+    }
+
+    // Set up radio show/hide content for container
+    self.showHideRadioToggledContent = function ($container) {
+      init($container, selectors.radio, getEventSelectorsForRadioGroups(), handleRadioContent)
+    }
+
+    // Set up checkbox show/hide content for container
+    self.showHideCheckboxToggledContent = function ($container) {
+      init($container, selectors.checkbox, [selectors.checkbox], handleCheckboxContent)
+    }
+
+    // Remove event handlers
+    self.destroy = function ($container) {
+      $container = $container || $(document.body)
+      $container.off('.' + selectors.namespace)
+    }
+  }
+
+  ShowHideContent.prototype.init = function ($container) {
+    this.showHideRadioToggledContent($container)
+    this.showHideCheckboxToggledContent($container)
+  }
+
+  GOVUK.ShowHideContent = ShowHideContent
+  global.GOVUK = GOVUK
+})(window)
 ;
 /*! jQuery UI - v1.10.3 - 2013-06-25
 * http://jqueryui.com
@@ -4124,6 +4126,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         // submit form
         .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
         moj.Events.on('FormPopup.renderSelectionButtons', this.renderSelectionButtons);
+        moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails);
     },
 
     renderSelectionButtons: function() {
@@ -4159,19 +4162,26 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     loadContent: function (url) {
       var self = this;
+
       $.get(url, function (html) {
         if (html.toLowerCase().indexOf('sign in') !== -1) {
           // if no longer signed in, redirect
           window.location.reload();
         } else {
-          // render form
+          // render form and check the reused details content
           self.renderForm(html);
-          // checking date when 'my details' are populated
-          if (url.indexOf('use-my-details') !== -1) {
-            $('#dob-date-day').trigger('change');
+
+          if (url.indexOf('reuse-details') !== -1) {
+            self.checkReusedDetails();
           }
         }
       });
+    },
+
+    checkReusedDetails: function () {
+      // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
+      $('#dob-date-day').trigger('change');
+      $('input[name="name-first').trigger('change');
     },
 
     renderForm: function (html) {
@@ -4190,26 +4200,30 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       });
 
-      // hide use button and switch button
-      $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
-
       this.renderSelectionButtons();
     },
 
     submitForm: function (e) {
       var $form = $(e.target),
-        url = $form.attr('action');
+        url = $form.attr('action'),
+        method = 'post';
 
       $form.find('input[type="submit"]').spinner();
 
+      //  If a method is set on the form use that value instead of the default post
+      if ($form.attr('method') !== undefined) {
+          method = $form.attr('method');
+      }
+
       $.ajax({
         url: url,
-        type: 'post',
+        type: method,
         data: $form.serialize(),
         context: $form,
         success: this.ajaxSuccess,
         error: this.ajaxError
       });
+
       return false;
     },
 
@@ -4243,11 +4257,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
-          // trigger use these details event
-          moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
           moj.Events.trigger('FormPopup.renderSelectionButtons');
+
+          //  If the form submitted a reuse details parameter then execute the check details
+          if ($form.serialize().indexOf('reuse-details') !== -1) {
+            moj.Events.trigger('FormPopup.checkReusedDetails');
+          }
         } else {
           window.location.reload();
         }
@@ -4377,189 +4394,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   };
 
 })();;
-/*jshint unused: false */
-// Reusables module for LPA
-// Dependencies: moj, _, jQuery
-
-(function () {
-  'use strict';
-  var selected;
-  moj.Modules.Reusables = {
-    selector: '.js-reusable',
-    message: 'This will replace the information which you have already entered, are you sure?',
-
-    init: function () {
-      _.bindAll(this, 'render', 'linkClicked', 'selectChanged', 'useDetailsReset');
-      this.bindEvents();
-    },
-
-    bindEvents: function () {
-      $('body')
-        .on('click.moj.Modules.Reusables', 'a' + this.selector, this.linkClicked)
-        .on('change.moj.Modules.Reusables', 'select' + this.selector, this.selectChanged);
-      // custom render event
-      moj.Events.on('Reusables.render', this.render);
-    },
-
-    // <a> click
-    linkClicked: function (e, params) {
-      var $el = $(e.target),
-        $form = $el.closest('form'),
-        url = $el.data('service'),
-        proceed = this.isFormClean($form) ? true : confirm(this.message),
-        _this = this;
-
-      $el.spinner();
-      $.get(url, function (data) {
-        $el.spinner('off');
-        if (proceed) {
-          _this.populateForm(data);
-        }
-      });
-      return false;
-    },
-
-    // <select> change
-    selectChanged: function (e, params) {
-      var $el = $(e.target),
-        $form = $el.closest('form'),
-        url = $form.attr('action'),
-        postData,
-        _this = this,
-        proceed;
-
-      if (($el.val() === '') || ($el.val() === selected)) {
-        return;
-      }
-
-      proceed = this.isFormClean($form.next('form')) ? true : confirm(this.message);
-
-      if (proceed) {
-        $el.spinner();
-
-        selected = $el.val();
-
-        if ($form.find('[name=switch-to-type]').length === 0) {
-            postData = { 'pick-details': $form.find('[name=pick-details]').val() };
-            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
-          }
-          else {
-            postData = { 'switch-to-type': $form.find('[name=switch-to-type]').val(), 'switcher-submit': $form.find('[name=switcher-submit]').val() };
-            postData[$form.find('#secret').attr('name')] = $form.find('#secret').val();
-        }
-
-        $.post(url, postData, function (data) {
-          $el.spinner('off');
-          if (proceed) {
-            _this.populateForm(data);
-          }
-        });
-      } else {
-        // In case the user chose not to overwrite the details, we must select something
-        // neutral to allow re-selecting that option (on change)
-        $el.val($el.find('option:first').val());
-      }
-    },
-
-    populateForm: function (data) {
-      var $el,
-        $focus,
-        i = 0,
-        props,
-        property,
-        value,
-        value2;
-
-      // prepare the data
-      for (props in data) {
-
-        if (data.hasOwnProperty(props) && _.isObject(data[props])) {
-
-          value = data[props];
-
-          // if value is an object then flatten it with PHP array notation...
-          for (property in value) {
-
-            if (value.hasOwnProperty(property)) {
-              value2 = value[property];
-              data[props + '[' + property + ']'] = value2;
-            }
-
-          }
-
-        }
-
-      }
-      
-      // empty existing form element values before populating data into the form.
-      $('form.js-PersonForm')
-        .find('input[type=text],input[type=email],select')
-        .each(function() {
-          $(this).val('');
-        });
-
-        // Show any fields which were hidden
-        
-        $('.js-PostcodeLookup').data('moj.PostcodeLookup').hideSearchForm();
-        $('.js-PostcodeLookup').data('moj.PostcodeLookup').toggleAddress();
-
-        // loop over data and change values
-        _(data).each(function (value, key) {
-
-        // set el
-        $el = $('[name="' + key + '"]');
-        // if value is null, set to empty string
-        value = (value === null) ? '' : value;
-        // make sure the element exists && that new value doesn't match current value
-        if ($el.length > 0 && $el.val() !== value) {
-          // increment counter
-          i += 1;
-          // change the value of the element
-          if (key === 'canSign') {
-            //for donor canSign checkbox
-            if ((value === false)) {
-              $el.filter('[type=checkbox]').attr('checked', 'checked');
-            }
-          }
-          else {
-            $el.val(value).change();
-          }
-          // if first element changed, save the el
-          if (i === 1) {
-            $focus = $('[name="' + key + '"]');
-          }
-        }
-      });
-      // focus on first changed, or first form element (accessibility)
-      if ($focus !== undefined) {
-        $focus.focus();
-      } else {
-        $('input[type=text], select, textarea').filter(':visible').first().focus();
-      }
-    },
-
-    isFormClean: function (form) {
-      var clean = true;
-      $('input[type="text"], select:not(.js-reusable), textarea', form).each(function () {
-        if ($(this).val() !== '' && $(this).filter('[name*="name-title"]').val() !== 'Mr') {
-          clean = false;
-        }
-      });
-      return clean;
-    },
-
-    render: function(e, params) {
-      $(this.selector, params.wrap).each(this.useDetailsReset);
-    },
-
-    useDetailsReset: function(i, el){
-      // Hide the non-js button
-      $('.js-details-picker').hide();
-    }
-  };
-
-})();
-;
 // Postcode lookup module for LPA
 // Dependencies: moj, _, jQuery
 
@@ -4923,9 +4757,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
 
               // Check for duplicate names
-              if ((typeof actors !== 'undefined') && actors.names && actors.names.length) {
-                for (loop = 0; loop < actors.names.length; loop++) {
-                  item = actors.names[loop];
+              var actorNames = $form.data('actor-names');
+
+              if ((typeof actorNames !== 'undefined') && actorNames.length) {
+                for (loop = 0; loop < actorNames.length; loop++) {
+                  item = actorNames[loop];
                   if ($firstName.val().toLocaleLowerCase().trim() === item.firstname.toLocaleLowerCase()) {
                     if ($lastName.val().toLocaleLowerCase().trim() === item.lastname.toLocaleLowerCase()) {
 
@@ -5526,54 +5362,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     }
   };
 })();;
-// Use My Details module for LPA
-// Dependencies: moj, jQuery
-// 
-// The 'Use My Details' action link can only be used once.
-// This module removes the panel and the link if any current actors
-// match the signed in user's first and last name.
-//
-// actors and user objects are dynamically created in the twig template.
-
-(function () {
-  'use strict';
-
-  moj.Modules.UseMyDetails = {
-
-    init: function () {
-      this.removeIfUsed();
-    },
-
-    removeIfUsed: function(){
-
-      // Set variables
-      var loop,
-        item,
-        detailsUsed = false
-
-      // Check for names match (user and actors)
-      if ((typeof actors !== 'undefined') && actors.names && actors.names.length) {
-        for (loop = 0; loop < actors.names.length; loop++) {
-          item = actors.names[loop];
-          if (user.firstName.toLocaleLowerCase() === item.firstname.toLocaleLowerCase()) {
-            if (user.lastName.toLocaleLowerCase() === item.lastname.toLocaleLowerCase()) {
-              detailsUsed = true;
-              break;
-            }
-          }
-        }
-      }
-
-      // If it's a match then remove the panel with the link
-      if (detailsUsed) {
-        $('.js-UseMyDetails').remove();
-      }
-
-    }
-  }
-
-})();
-;
 // ====================================================================================
 // INITITALISE ALL MOJ MODULES
 ;$(moj.init);

@@ -2555,6 +2555,9 @@ input[type=number] {
   margin-left: 30px;
   line-height: 2.5em; }
 
+.reuse-details-button {
+  margin-right: 4px; }
+
 .help-header {
   display: none;
   position: relative;
@@ -3008,6 +3011,9 @@ input[type=number] {
   margin-left: 30px;
   line-height: 2.5em; }
 
+.reuse-details-button {
+  margin-right: 4px; }
+
 .postcode-input {
   width: 27%;
   width: 32%; }
@@ -3152,7 +3158,7 @@ input[type=number] {
 
 .person-name,
 .person-address {
-  padding-right: 275px; }
+  padding-right: 300px; }
   .person--wider .person-name, .person--wider
   .person-address {
     padding-right: 175px; }
@@ -3249,9 +3255,17 @@ input[type=number] {
     padding: 30px 15px; }
     .form-popup .form .heading-medium {
       display: none; }
+      .form-popup .form .heading-medium.reuse-details-heading {
+        display: block;
+        margin-top: 0; }
+    .form-popup .form.reuse-details-form .heading-medium {
+      display: block;
+      margin-top: 0; }
   .form-popup .form-group {
     margin-top: 0;
     margin-bottom: 15px; }
+    .form-popup .form-group.read-only .read-only-value {
+      margin-top: 7px; }
   .form-popup .form-label {
     width: 150px;
     margin-top: 6px;
@@ -3309,9 +3323,14 @@ input[type=number] {
   .form-popup .form-date .error-message {
     top: 80px;
     left: 0; }
+  .form-popup .use-details-link-panel {
+    padding: 15px;
+    padding-left: 165px; }
 
 .no-js .form-group + .form-group.js-hidden {
   margin-top: 30px; }
+.no-js .form-group.read-only label {
+  display: none; }
 
 .dialog {
   font-family: "nta", Arial, sans-serif;

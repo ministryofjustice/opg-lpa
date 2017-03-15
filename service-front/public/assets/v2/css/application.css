@@ -2874,6 +2874,10 @@ input[type=number] {
     .button-link {
       margin-left: 0; } }
 
+@media (min-width: 641px) {
+  .reuse-details-button {
+    margin-right: 4px; } }
+
 .help-header {
   display: none;
   position: relative;
@@ -3642,6 +3646,10 @@ input[type=number] {
       margin-left: 0; } }
 
 @media (min-width: 641px) {
+  .reuse-details-button {
+    margin-right: 4px; } }
+
+@media (min-width: 641px) {
   .postcode-input {
     width: 27%; } }
 @media (min-width: 800px) {
@@ -3840,7 +3848,7 @@ input[type=number] {
 @media (min-width: 641px) {
   .person-name,
   .person-address {
-    padding-right: 275px; } }
+    padding-right: 300px; } }
 @media (min-width: 641px) {
   .person--wider .person-name, .person--wider
   .person-address {
@@ -3942,12 +3950,28 @@ input[type=number] {
     @media (max-width: 640px) {
       .form-popup .form {
         padding-top: 0; } }
+    .form-popup .form .heading-medium.reuse-details-heading {
+      display: block; }
+      @media (min-width: 641px) {
+        .form-popup .form .heading-medium.reuse-details-heading {
+          margin-top: 0; } }
     @media (min-width: 641px) {
       .form-popup .form .heading-medium {
         display: none; } }
+    .form-popup .form.reuse-details-form .heading-medium {
+      display: block; }
+      @media (min-width: 641px) {
+        .form-popup .form.reuse-details-form .heading-medium {
+          margin-top: 0; } }
   .form-popup .form-group {
     margin-top: 0;
     margin-bottom: 15px; }
+    @media (max-width: 640px) {
+      .form-popup .form-group.read-only label {
+        display: none; } }
+    @media (min-width: 641px) {
+      .form-popup .form-group.read-only .read-only-value {
+        margin-top: 7px; } }
   @media (min-width: 641px) {
     .form-popup .form-label {
       width: 150px;
@@ -4024,9 +4048,16 @@ input[type=number] {
   @media (max-width: 640px) {
     .form-popup .dob-label {
       display: none; } }
+  .form-popup .use-details-link-panel {
+    padding: 15px; }
+    @media (min-width: 641px) {
+      .form-popup .use-details-link-panel {
+        padding-left: 165px; } }
 
 .no-js .form-group + .form-group.js-hidden {
   margin-top: 30px; }
+.no-js .form-group.read-only label {
+  display: none; }
 
 .dialog {
   font-family: "nta", Arial, sans-serif;

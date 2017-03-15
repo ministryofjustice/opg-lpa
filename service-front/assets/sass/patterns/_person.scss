@@ -25,7 +25,7 @@
 .person-name,
 .person-address {
     @include media(tablet) {
-        padding-right: 275px;
+        padding-right: 300px;
     }
 
     .person--wider & {
@@ -57,7 +57,7 @@
             @include button($grey-3);
         }
     }
-    
+
     .action-delete {
         @include media(tablet) {
             display: block;

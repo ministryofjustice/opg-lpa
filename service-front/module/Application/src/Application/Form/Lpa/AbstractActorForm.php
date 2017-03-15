@@ -10,11 +10,11 @@ abstract class AbstractActorForm extends AbstractForm
      */
     protected $actorModel;
 
-   /**
-    * Validate form input data through model validators.
-    *
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
+    /**
+     * Validate form input data through model validators.
+     *
+     * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+     */
     public function validateByModel()
     {
         $dataForModel = $this->convertFormDataForModel($this->data);
@@ -91,5 +91,15 @@ abstract class AbstractActorForm extends AbstractForm
         }
 
         return $dataForModel;
+    }
+
+    /**
+     * Function to set the actor names for all actors associated with the current LPA as a data attribute
+     *
+     * @param array $actorNames
+     */
+    public function setExistingActorNamesData(array $actorNames)
+    {
+        $this->setAttribute('data-actor-names', json_encode($actorNames));
     }
 }

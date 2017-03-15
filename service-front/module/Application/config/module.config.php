@@ -77,7 +77,6 @@ return [
         'invokables' => [
             'accordion'             => 'Application\View\Helper\Accordion',
             'accountInfo'           => 'Application\View\Helper\AccountInfo',
-            'actorsList'            => 'Application\View\Helper\ActorsList',
             'pageHeaders'           => 'Application\View\Helper\PageHeaders',
             'elementGroupClass'     => 'Application\View\Helper\ElementGroupClass',
             'routeName'             => 'Application\View\Helper\RouteName',
@@ -95,6 +94,7 @@ return [
             'applicantNames'        => 'Application\View\Helper\ApplicantNames',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
+            'reuseDetailsForm'      => 'Application\Form\View\Helper\ReuseDetailsForm',
         ],
     ],
 
