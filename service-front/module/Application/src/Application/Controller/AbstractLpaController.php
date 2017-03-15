@@ -132,24 +132,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     }
 
     /**
-     * Check if LPA has a trust corporation attorney in either primary or replacement attorneys
-     *
-     * @return boolean
-     */
-    protected function hasTrust()
-    {
-        $hasTrust = false;
-
-        foreach (array_merge($this->getLpa()->document->primaryAttorneys, $this->getLpa()->document->replacementAttorneys) as $attorney) {
-            if ($attorney instanceof TrustCorporation) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Convert model/seed data for populating into form
      *
      * @param array $modelData - eg. [name=>[title=>'Mr', first=>'John', last=>'Smith']]
@@ -179,13 +161,5 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         }
 
         return $formData;
-    }
-
-    protected function addCancelRouteToView(ViewModel $viewModel, $route)
-    {
-        //  If a route string is provided then add it now
-        if (is_string($route)) {
-            $viewModel->cancelRoute = $this->url()->fromRoute($route, ['lpa-id' => $this->getLpa()->id]);
-        }
     }
 }

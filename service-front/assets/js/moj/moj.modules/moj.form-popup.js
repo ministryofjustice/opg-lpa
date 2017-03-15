@@ -36,6 +36,7 @@
         // submit form
         .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
         moj.Events.on('FormPopup.renderSelectionButtons', this.renderSelectionButtons);
+        moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails);
     },
 
     renderSelectionButtons: function() {
@@ -71,19 +72,26 @@
 
     loadContent: function (url) {
       var self = this;
+
       $.get(url, function (html) {
         if (html.toLowerCase().indexOf('sign in') !== -1) {
           // if no longer signed in, redirect
           window.location.reload();
         } else {
-          // render form
+          // render form and check the reused details content
           self.renderForm(html);
-          // checking date when 'my details' are populated
-          if (url.indexOf('use-my-details') !== -1) {
-            $('#dob-date-day').trigger('change');
+
+          if (url.indexOf('reuse-details') !== -1) {
+            self.checkReusedDetails();
           }
         }
       });
+    },
+
+    checkReusedDetails: function () {
+      // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
+      $('#dob-date-day').trigger('change');
+      $('input[name="name-first').trigger('change');
     },
 
     renderForm: function (html) {
@@ -102,26 +110,30 @@
         }
       });
 
-      // hide use button and switch button
-      $('#form-seed-details-picker, #form-correspondent-selector').find('input[type=submit]').hide();
-
       this.renderSelectionButtons();
     },
 
     submitForm: function (e) {
       var $form = $(e.target),
-        url = $form.attr('action');
+        url = $form.attr('action'),
+        method = 'post';
 
       $form.find('input[type="submit"]').spinner();
 
+      //  If a method is set on the form use that value instead of the default post
+      if ($form.attr('method') !== undefined) {
+          method = $form.attr('method');
+      }
+
       $.ajax({
         url: url,
-        type: 'post',
+        type: method,
         data: $form.serialize(),
         context: $form,
         success: this.ajaxSuccess,
         error: this.ajaxError
       });
+
       return false;
     },
 
@@ -155,11 +167,14 @@
           moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
-          // trigger use these details event
-          moj.Events.trigger('Reusables.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
           moj.Events.trigger('FormPopup.renderSelectionButtons');
+
+          //  If the form submitted a reuse details parameter then execute the check details
+          if ($form.serialize().indexOf('reuse-details') !== -1) {
+            moj.Events.trigger('FormPopup.checkReusedDetails');
+          }
         } else {
           window.location.reload();
         }

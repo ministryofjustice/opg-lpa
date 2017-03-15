@@ -8,18 +8,6 @@
 
 {% import "application/macros.twig" as macros %}
 
-<script type="text/javascript">
-    var actorNames = {{ actorsList(lpa, routeMatch)|json_encode()|raw }};
-    var actors = {names: actorNames};
-
-    var user = {
-        firstName: '{{ signedInUser.name.first }}',
-        lastName: '{{ signedInUser.name.last }}'
-    };
-
-    moj.Modules.UseMyDetails.init();
-</script>
-
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
@@ -54,7 +42,7 @@
 
 {# form fields config #}
 {{ form.setAttributes({
-    'class':'form form-condensed js-PersonForm js-PostcodeLookup'
+    'class':'form js-PersonForm js-PostcodeLookup'
 }) ? '' }}
 
 {{ title.setAttributes({
@@ -108,46 +96,50 @@
 
 {{ form.prepare() ? '' }}
 
-{{ macros.renderPickerForm(form, seedDetailsPickerForm) }}
-
 {################# person to notify form #####################}
-
-{{ macros.useMyDetails(useMyDetailsRoute) }}
 
 {# Error summary #}
 {{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
-{# begin form #}
-{{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
-    {{ formElementErrorsV2(form.get( form.csrfName )) }}
+{# Add reuse details options #}
+{% if (reuseDetailsForm and reuseDetailsForm.reusingPreviousLpaOptions()) %}
+    {{ reuseDetailsForm(reuseDetailsForm, cancelUrl) }}
+{% else %}
+    {% if (reuseDetailsForm and not reuseDetailsForm.reusingPreviousLpaOptions()) %}
+        {{ reuseDetailsForm(reuseDetailsForm) }}
+    {% endif %}
 
-    <h2 class="heading-medium">What is the person's name?</h2>
+    {# begin form #}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.get( form.csrfName )) }}
+        {{ formElementErrorsV2(form.get( form.csrfName )) }}
 
-    <fieldset>
-        <legend class="visuallyhidden">Add person's name</legend>
+        <h2 class="heading-medium">What is the person's name?</h2>
 
-        {{ macros.formGroup(title) }}
-        {{ macros.formGroup(firstname) }}
-        {{ macros.formGroup(lastname) }}
+        <fieldset>
+            <legend class="visuallyhidden">Add person's name</legend>
 
-    </fieldset>
+            {{ macros.formGroup(title) }}
+            {{ macros.formGroup(firstname) }}
+            {{ macros.formGroup(lastname) }}
 
-    <h2 class="heading-medium">What is the person's address?</h2>
+        </fieldset>
 
-    <fieldset class="postcodelookup">
-        <legend class="visuallyhidden">Address</legend>
-        <div class="js-PostcodeLookup__postal-add">
-            {{ macros.formGroup(address1) }}
-            {{ macros.formGroup(address2) }}
-            {{ macros.formGroup(address3) }}
-            {{ macros.formGroup(postcode) }}
-        </div>
-    </fieldset>
+        <h2 class="heading-medium">What is the person's address?</h2>
 
-    <input type="submit" name="submit" id="form-save" value="Save details" class="button">
-    <a href="{{ cancelRoute }}" class="button button-secondary js-cancel">Cancel</a>
+        <fieldset class="postcodelookup">
+            <legend class="visuallyhidden">Address</legend>
+            <div class="js-PostcodeLookup__postal-add">
+                {{ macros.formGroup(address1) }}
+                {{ macros.formGroup(address2) }}
+                {{ macros.formGroup(address3) }}
+                {{ macros.formGroup(postcode) }}
+            </div>
+        </fieldset>
 
-{{ form().closeTag|raw }}
+        {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+
+    {{ form().closeTag|raw }}
+{% endif %}
 
 {% endblock %}
