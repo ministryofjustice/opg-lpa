@@ -8,7 +8,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class CorrespondentController extends AbstractLpaActorController
@@ -169,17 +168,15 @@ class CorrespondentController extends AbstractLpaActorController
 
     public function editAction()
     {
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        $viewModel = new ViewModel();
 
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
-        if ($isPopup) {
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $this->getLpa()->id]));
 
         if ($this->request->isPost()) {
@@ -256,13 +253,7 @@ class CorrespondentController extends AbstractLpaActorController
             throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
         }
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            return new JsonModel(['success' => true]);
-        } else {
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-        }
+        return $this->moveToNextRoute();
     }
 
     /**
