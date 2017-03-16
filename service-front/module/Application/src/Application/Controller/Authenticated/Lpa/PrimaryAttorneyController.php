@@ -8,7 +8,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
@@ -53,21 +52,18 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
     public function addAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/primary-attorney/person-form.twig');
-        if ($isPopup) {
+
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
-        $lpa = $this->getLpa();
-        $lpaId = $lpa->id;
+        $lpaId = $this->getLpa()->id;
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
+        $routeMatch = $this->getEvent()->getRouteMatch();
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList($routeMatch));
 
@@ -87,11 +83,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 // and applicant are primary attorneys
                 $this->resetApplicants();
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $this->addReuseDetailsForm($viewModel, $form);
@@ -114,20 +106,17 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
     public function editAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
+        $viewModel = new ViewModel();
 
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
-        if ($isPopup) {
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
 
-        $currentRouteName = $routeMatch->getMatchedRouteName();
-
+        $routeMatch = $this->getEvent()->getRouteMatch();
         $attorneyIdx = $routeMatch->getParam('idx');
 
         if (array_key_exists($attorneyIdx, $lpaDocument->primaryAttorneys)) {
@@ -148,7 +137,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->setTemplate('application/primary-attorney/trust-form.twig');
         }
 
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
+        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -178,11 +167,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                     $this->updateCorrespondentData($attorney);
                 }
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $flattenAttorneyData = $attorney->flatten();
@@ -264,24 +249,17 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            return new JsonModel(['success' => true]);
-        } else {
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
-        }
+        return $this->moveToNextRoute();
     }
 
     public function addTrustAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/primary-attorney/trust-form.twig');
 
-        if ($isPopup) {
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
         $lpaId = $this->getLpa()->id;
@@ -292,6 +270,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
+        $routeMatch = $this->getEvent()->getRouteMatch();
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
 
         if ($this->request->isPost()) {
@@ -309,11 +288,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 // and applicant are primary attorneys
                 $this->resetApplicants();
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $this->addReuseDetailsForm($viewModel, $form);

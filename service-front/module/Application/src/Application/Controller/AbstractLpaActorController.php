@@ -13,10 +13,41 @@ use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\User\Dob;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\Session\Container;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
+    /**
+     * Return an appropriate view model to move to the next route from the current route
+     *
+     * @return ViewModel|\Zend\Http\Response
+     */
+    protected function moveToNextRoute()
+    {
+        if ($this->isPopup()) {
+            return new JsonModel(['success' => true]);
+        }
+
+        //  Get the current route and the LPA ID to move to the next route
+        $currentRoute = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $lpaId = $this->getLpa()->id;
+
+        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRoute), [
+            'lpa-id' => $lpaId
+        ]);
+    }
+
+    /**
+     * Return a flag indicating if this is a request from a popup (XmlHttpRequest)
+     *
+     * @return bool
+     */
+    protected function isPopup()
+    {
+        return $this->getRequest()->isXmlHttpRequest();
+    }
+
     /**
      * Get the reuse details form
      *

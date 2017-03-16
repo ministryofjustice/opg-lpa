@@ -5,7 +5,6 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaActorController;
 use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class PeopleToNotifyController extends AbstractLpaActorController
@@ -54,14 +53,12 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
     public function addAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/people-to-notify/form.twig');
-        if ($isPopup) {
+
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
         $lpa = $this->getLpa();
@@ -72,6 +69,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $routeMatch = $this->getEvent()->getRouteMatch();
         $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList($routeMatch));
 
@@ -91,12 +89,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                         $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($lpa);
                 }
 
-                // redirect to next page for non-js, or return a json to ajax call.
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $this->addReuseDetailsForm($viewModel, $form);
@@ -114,17 +107,18 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
     public function editAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/people-to-notify/form.twig');
-        if ($isPopup) {
+
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
+
+        $routeMatch = $this->getEvent()->getRouteMatch();
         $currentRouteName = $routeMatch->getMatchedRouteName();
 
         $personIdx = $routeMatch->getParam('idx');
@@ -154,12 +148,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
                 }
 
-                // redirect to next page for non-js, or return a json to ajax call.
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $form->bind($notifiedPerson->flatten());
@@ -188,11 +177,6 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            return new JsonModel(['success' => true]);
-        } else {
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-        }
+        return $this->moveToNextRoute();
     }
 }
