@@ -39,6 +39,13 @@ class CertificateProviderController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
@@ -48,11 +55,10 @@ class CertificateProviderController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -66,8 +72,6 @@ class CertificateProviderController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -93,12 +97,9 @@ class CertificateProviderController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $currentRouteName = $routeMatch->getMatchedRouteName();
-
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

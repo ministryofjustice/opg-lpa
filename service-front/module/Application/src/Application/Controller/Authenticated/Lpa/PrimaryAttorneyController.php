@@ -60,14 +60,20 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
         $lpaId = $this->getLpa()->id;
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -85,8 +91,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -116,8 +120,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $attorneyIdx = $routeMatch->getParam('idx');
+        $attorneyIdx = $this->params()->fromRoute('idx');
 
         if (array_key_exists($attorneyIdx, $lpaDocument->primaryAttorneys)) {
             $attorney = $lpaDocument->primaryAttorneys[$attorneyIdx];
@@ -130,14 +133,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         if ($attorney instanceof Human) {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-            $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+            $form->setExistingActorNamesData($this->getActorsList($attorneyIdx));
             $viewModel->setTemplate('application/primary-attorney/person-form.twig');
         } else {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
             $viewModel->setTemplate('application/primary-attorney/trust-form.twig');
         }
 
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/edit', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -270,10 +273,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/add-trust', ['lpa-id' => $lpaId]));
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -290,8 +292,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);

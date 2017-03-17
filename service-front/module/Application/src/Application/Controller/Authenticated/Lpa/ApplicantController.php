@@ -43,8 +43,7 @@ class ApplicantController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set applicant for id: '.$lpaId);
                 }
 
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         } else {
             if (is_array($lpaDocument->whoIsRegistering)) {

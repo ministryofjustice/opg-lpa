@@ -105,9 +105,6 @@ class FeeReductionController extends AbstractLpaController
             $form->setData($postData);
 
             if($form->isValid()) {
-
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
                 // if no applying reduced fee, set payment in LPA including amount.
                 switch($form->getData()['reductionOptions']) {
                     case 'reducedFeeReceivesBenefits':
@@ -153,13 +150,13 @@ class FeeReductionController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                return $this->moveToNextRoute();
             }
         }
 
         return new ViewModel([
-                'form'=>$form,
-                'reductionOptions' => $reductionOptions,
+            'form' => $form,
+            'reductionOptions' => $reductionOptions,
         ]);
 
     }

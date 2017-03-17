@@ -31,7 +31,6 @@ class BenefitsController extends AbstractLpaController
             if($form->isValid()) {
 
                 $lpa = $this->getLpa();
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
                 if($form->getData()['reducedFeeReceivesBenefits']) {
                     if($form->getData()['reducedFeeAwardedDamages']) {
@@ -63,7 +62,7 @@ class BenefitsController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set benefits in payment for id: '.$lpa->id);
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                return $this->moveToNextRoute();
             }
         }
         else {

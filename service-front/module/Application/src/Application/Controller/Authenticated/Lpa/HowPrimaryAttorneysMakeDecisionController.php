@@ -17,7 +17,6 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
 
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -83,7 +82,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                     }
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
         else {

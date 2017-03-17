@@ -17,13 +17,12 @@ class ReuseDetails extends ZFRadio
             $reuseDetailsValueOptions = [];
 
             foreach ($options['actorReuseDetails'] as $idx => $actor) {
-                $isTrust = (isset($actor['data']['type']) && $actor['data']['type'] == 'trust');
-                $reuseDetailsValueOptions[] = $this->createValueOption($actor['label'], $idx, $isTrust);
+                $reuseDetailsValueOptions[] = $this->createValueOption($actor['label'], $idx);
             }
 
             //  If there is more than one value option then add a none of the above option also
             if (count($reuseDetailsValueOptions) > 1) {
-                $reuseDetailsValueOptions[] = $this->createValueOption('None of the above', -1, false);
+                $reuseDetailsValueOptions[] = $this->createValueOption('None of the above', -1);
             }
 
             $options = $reuseDetailsValueOptions;
@@ -41,10 +40,9 @@ class ReuseDetails extends ZFRadio
      *
      * @param   string  $label
      * @param   integer $index
-     * @param   boolean $isTrust
      * @return  array
      */
-    private function createValueOption($label, $index, $isTrust)
+    private function createValueOption($label, $index)
     {
         return [
             'label'            => $label,
@@ -52,30 +50,6 @@ class ReuseDetails extends ZFRadio
             'label_attributes' => [
                 'class' => 'text block-label flush--left',
             ],
-            'is-trust'         => $isTrust,
         ];
-    }
-
-    /**
-     * Get the reuse details value options
-     *
-     * @param   bool    $trustOnly
-     * @return  array
-     */
-    public function getReuseDetailsValueOptions($trustOnly = false)
-    {
-        $valueOptions = [];
-
-        foreach ($this->getValueOptions() as $valueOption) {
-            $isTrust = (isset($valueOption['is-trust']) && $valueOption['is-trust'] === true);
-
-            if ($trustOnly && !$isTrust) {
-                continue;
-            }
-
-            $valueOptions[$valueOption['value']] = $valueOption;
-        }
-
-        return $valueOptions;
     }
 }

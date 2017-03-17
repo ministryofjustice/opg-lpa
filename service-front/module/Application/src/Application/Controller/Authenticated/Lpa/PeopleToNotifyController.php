@@ -11,7 +11,6 @@ class PeopleToNotifyController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
 
         // set hidden form for saving empty array to peopleToNotify.
@@ -24,12 +23,13 @@ class PeopleToNotifyController extends AbstractLpaActorController
                 // set user has confirmed if there are people to notify
                 $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
 
         // list notified persons on the landing page if they've been added.
         $peopleToNotifyParams = [];
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         foreach ($this->getLpa()->document->peopleToNotify as $idx => $peopleToNotify) {
             $peopleToNotifyParams[] = [
@@ -61,19 +61,25 @@ class PeopleToNotifyController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
         if (count($lpa->document->peopleToNotify) >= 5) {
-            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
+            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id' => $lpaId]);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -91,8 +97,6 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -118,10 +122,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $currentRouteName = $routeMatch->getMatchedRouteName();
+        $personIdx = $this->params()->fromRoute('idx');
 
-        $personIdx = $routeMatch->getParam('idx');
         if (array_key_exists($personIdx, $lpa->document->peopleToNotify)) {
             $notifiedPerson = $lpa->document->peopleToNotify[$personIdx];
         }
@@ -132,8 +134,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx' => $personIdx]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx]));
+        $form->setExistingActorNamesData($this->getActorsList($personIdx));
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

@@ -93,16 +93,16 @@ fieldset {
   border: none;
   padding: 0; }
 
-a:link {
+a:link, .button-input-to-link:link {
   color: #005ea5; }
 
-a:visited {
+a:visited, .button-input-to-link:visited {
   color: #4c2c92; }
 
-a:hover {
+a:hover, .button-input-to-link:hover {
   color: #2b8cc4; }
 
-a:active {
+a:active, .button-input-to-link:active {
   color: #2b8cc4; }
 
 /*
@@ -212,10 +212,10 @@ input[type="search"]::-webkit-search-decoration {
   visibility: hidden; }
 
 /* Give a strong clear visual idea as to what is currently in focus */
-a {
+a, .button-input-to-link {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3); }
 
-a:focus {
+a:focus, .button-input-to-link:focus {
   background-color: #ffbf47;
   outline: 3px solid #ffbf47; }
 
@@ -256,10 +256,10 @@ button:focus {
   outline: 3px solid #ffbf47;
   /* Focus appears inside the input */
   outline-offset: -2px; }
-#global-header h1 a:focus {
+#global-header h1 a:focus, #global-header h1 .button-input-to-link:focus {
   background-color: transparent;
   outline: none; }
-#global-header a:focus {
+#global-header a:focus, #global-header .button-input-to-link:focus {
   color: #0b0c0c; }
 
 .grid-row, #global-header .header-wrapper, #global-header .header-wrapper .header-global, #global-header .header-wrapper .header-global .header-logo, #global-header .header-proposition #proposition-link,
@@ -340,9 +340,9 @@ button:focus {
       font-weight: bold;
       color: #fff;
       text-decoration: none; }
-    #global-header .header-proposition a#proposition-name:hover {
+    #global-header .header-proposition a#proposition-name:hover, #global-header .header-proposition #proposition-name.button-input-to-link:hover {
       text-decoration: underline; }
-    #global-header .header-proposition a.menu {
+    #global-header .header-proposition a.menu, #global-header .header-proposition .menu.button-input-to-link {
       font-family: "nta", Arial, sans-serif;
       font-weight: 400;
       text-transform: none;
@@ -356,16 +356,16 @@ button:focus {
       text-decoration: none;
       padding-top: 6px;
       display: none; }
-      #global-header .header-proposition a.menu:hover {
+      #global-header .header-proposition a.menu:hover, #global-header .header-proposition .menu.button-input-to-link:hover {
         text-decoration: underline; }
-      #global-header .header-proposition a.menu:after {
+      #global-header .header-proposition a.menu:after, #global-header .header-proposition .menu.button-input-to-link:after {
         display: inline-block;
         font-size: 8px;
         height: 8px;
         padding-left: 5px;
         vertical-align: middle;
         content: " \25BC"; }
-      #global-header .header-proposition a.menu.js-hidden:after {
+      #global-header .header-proposition a.menu.js-hidden:after, #global-header .header-proposition .menu.js-hidden.button-input-to-link:after {
         content: " \25B2"; }
     #global-header .header-proposition #proposition-menu {
       margin-top: 5px; }
@@ -396,8 +396,9 @@ button:focus {
         #global-header .header-proposition #proposition-link li.clear-child,
         #global-header .header-proposition #proposition-links li.clear-child {
           clear: left; }
-      #global-header .header-proposition #proposition-link a,
-      #global-header .header-proposition #proposition-links a {
+      #global-header .header-proposition #proposition-link a, #global-header .header-proposition #proposition-link .button-input-to-link,
+      #global-header .header-proposition #proposition-links a,
+      #global-header .header-proposition #proposition-links .button-input-to-link {
         color: #fff;
         text-decoration: none;
         font-family: "nta", Arial, sans-serif;
@@ -415,14 +416,17 @@ button:focus {
         font-size: 16px;
         line-height: 1.25;
         line-height: 23px; }
-        #global-header .header-proposition #proposition-link a:hover,
-        #global-header .header-proposition #proposition-links a:hover {
+        #global-header .header-proposition #proposition-link a:hover, #global-header .header-proposition #proposition-link .button-input-to-link:hover,
+        #global-header .header-proposition #proposition-links a:hover,
+        #global-header .header-proposition #proposition-links .button-input-to-link:hover {
           text-decoration: underline; }
-        #global-header .header-proposition #proposition-link a.active,
-        #global-header .header-proposition #proposition-links a.active {
+        #global-header .header-proposition #proposition-link a.active, #global-header .header-proposition #proposition-link .active.button-input-to-link,
+        #global-header .header-proposition #proposition-links a.active,
+        #global-header .header-proposition #proposition-links .active.button-input-to-link {
           color: #1d8feb; }
-        #global-header .header-proposition #proposition-link a:focus,
-        #global-header .header-proposition #proposition-links a:focus {
+        #global-header .header-proposition #proposition-link a:focus, #global-header .header-proposition #proposition-link .button-input-to-link:focus,
+        #global-header .header-proposition #proposition-links a:focus,
+        #global-header .header-proposition #proposition-links .button-input-to-link:focus {
           color: #0b0c0c; }
     #global-header .header-proposition #proposition-link {
       float: right;
@@ -466,9 +470,9 @@ button:focus {
     background-color: #dee0e2;
     padding-top: 20px;
     padding-top: 60px; }
-  #footer a {
+  #footer a, #footer .button-input-to-link {
     color: #454a4c; }
-    #footer a:hover {
+    #footer a:hover, #footer .button-input-to-link:hover {
       color: #171819; }
   #footer h2 {
     font-family: "nta", Arial, sans-serif;
@@ -481,7 +485,7 @@ button:focus {
     font-weight: bold;
     color: #0b0c0c;
     margin: 0; }
-    #footer h2 a {
+    #footer h2 a, #footer h2 .button-input-to-link {
       color: inherit; }
   #footer .footer-meta {
     padding-bottom: 60px;
@@ -527,7 +531,7 @@ button:focus {
           top: 0;
           width: 41px;
           height: 100%; }
-          #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
+          #footer .footer-meta .footer-meta-inner .open-government-licence .logo a, #footer .footer-meta .footer-meta-inner .open-government-licence .logo .button-input-to-link {
             display: block;
             width: 41px;
             height: 17px;
@@ -535,7 +539,7 @@ button:focus {
             text-indent: -999em;
             background: url("images/open-government-licence.png") 0 0 no-repeat; }
             @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
-              #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
+              #footer .footer-meta .footer-meta-inner .open-government-licence .logo a, #footer .footer-meta .footer-meta-inner .open-government-licence .logo .button-input-to-link {
                 background-image: url("images/open-government-licence_2x.png");
                 background-size: 41px 17px; } }
         #footer .footer-meta .footer-meta-inner .open-government-licence p {
@@ -567,7 +571,7 @@ button:focus {
       float: right;
       height: 150px;
       width: 24%; }
-      #footer .footer-meta .copyright a {
+      #footer .footer-meta .copyright a, #footer .footer-meta .copyright .button-input-to-link {
         display: block;
         background-image: url("images/govuk-crest.png");
         background-repeat: no-repeat;
@@ -579,7 +583,7 @@ button:focus {
         text-align: right;
         padding: 115px 0 0 0; }
         @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
-          #footer .footer-meta .copyright a {
+          #footer .footer-meta .copyright a, #footer .footer-meta .copyright .button-input-to-link {
             background-image: url("images/govuk-crest-2x.png");
             background-size: 125px 102px; } }
 
@@ -686,6 +690,7 @@ p,
 blockquote,
 pre,
 a,
+.button-input-to-link,
 abbr,
 acronym,
 address,
@@ -1941,7 +1946,7 @@ input[type=number] {
     padding-left: 0; }
     .error-summary .error-summary-list li {
       margin-bottom: 5px; }
-    .error-summary .error-summary-list a {
+    .error-summary .error-summary-list a, .error-summary .error-summary-list .button-input-to-link {
       color: #b10e1e;
       font-weight: bold;
       text-decoration: underline; }
@@ -1973,7 +1978,7 @@ input[type=number] {
       background-image: none;
       margin-left: 0;
       padding-left: 0; }
-  .breadcrumbs a {
+  .breadcrumbs a, .breadcrumbs .button-input-to-link {
     color: #0b0c0c; }
 
 .phase-banner {
@@ -2568,6 +2573,15 @@ input[type=number] {
 .reuse-details-button {
   margin-right: 4px; }
 
+.button-input-to-link {
+  color: #005ea5;
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: underline; }
+  .button-input-to-link::-moz-focus-inner {
+    padding: 0;
+    border: 0; }
+
 .help-header {
   display: none;
   position: relative;
@@ -2622,7 +2636,7 @@ input[type=number] {
     padding-left: 28px;
     border-left: 2px solid #005ea5;
     background-color: #dee0e2; }
-  .help-topics a {
+  .help-topics a, .help-topics .button-input-to-link {
     display: block;
     font-size: 16px;
     font-size: 14px; }
@@ -3027,6 +3041,15 @@ input[type=number] {
 
 .reuse-details-button {
   margin-right: 4px; }
+
+.button-input-to-link {
+  color: #005ea5;
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: underline; }
+  .button-input-to-link::-moz-focus-inner {
+    padding: 0;
+    border: 0; }
 
 .postcode-input {
   width: 27%;
@@ -3522,17 +3545,17 @@ input[type=number] {
       cursor: default; }
     .ui-datepicker tbody td.ui-datepicker-current-day {
       background: #ffbf47; }
-      .ui-datepicker tbody td.ui-datepicker-current-day a,
+      .ui-datepicker tbody td.ui-datepicker-current-day a, .ui-datepicker tbody td.ui-datepicker-current-day .button-input-to-link,
       .ui-datepicker tbody td.ui-datepicker-current-day span {
         color: #0b0c0c; }
     .ui-datepicker tbody td.ui-datepicker-today {
       background: #dee0e2; }
-    .ui-datepicker tbody td a {
+    .ui-datepicker tbody td a, .ui-datepicker tbody td .button-input-to-link {
       text-decoration: none; }
-  .ui-datepicker a.ui-state-disabled {
+  .ui-datepicker a.ui-state-disabled, .ui-datepicker .ui-state-disabled.button-input-to-link {
     box-shadow: none !important;
     opacity: .5; }
-    .ui-datepicker a.ui-state-disabled:hover, .ui-datepicker a.ui-state-disabled {
+    .ui-datepicker a.ui-state-disabled:hover, .ui-datepicker .ui-state-disabled.button-input-to-link:hover, .ui-datepicker a.ui-state-disabled, .ui-datepicker .ui-state-disabled.button-input-to-link {
       background-color: #f8f8f8 !important;
       cursor: default;
       opacity: .5; }
@@ -3652,10 +3675,10 @@ input[type=number] {
 
 .navigation {
   float: right; }
-  .navigation a,
+  .navigation a, .navigation .button-input-to-link,
   .navigation .user {
     padding: 10px 8px; }
-  .navigation a {
+  .navigation a, .navigation .button-input-to-link {
     display: inline-block;
     padding: 10px 5px; }
 

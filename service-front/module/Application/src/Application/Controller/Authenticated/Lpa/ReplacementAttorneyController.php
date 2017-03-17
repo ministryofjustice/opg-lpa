@@ -14,7 +14,6 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
 
         // set hidden form for saving empty array to replacement attorneys.
@@ -27,12 +26,13 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 // set user has confirmed if there are replacement attorneys
                 $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
 
         // list replacement attorneys on the landing page if they've been added.
         $attorneysParams = [];
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         foreach ($this->getLpa()->document->replacementAttorneys as $idx => $attorney) {
             $params = [
@@ -72,15 +72,21 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -98,8 +104,6 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -129,8 +133,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $attorneyIdx = $routeMatch->getParam('idx');
+        $attorneyIdx = $this->params()->fromRoute('idx');
 
         if (array_key_exists($attorneyIdx, $lpa->document->replacementAttorneys)) {
             $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
@@ -143,14 +146,14 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         if ($attorney instanceof Human) {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
-            $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+            $form->setExistingActorNamesData($this->getActorsList($attorneyIdx));
             $viewModel->setTemplate('application/replacement-attorney/person-form.twig');
         } else {
             $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
             $viewModel->setTemplate('application/replacement-attorney/trust-form.twig');
         }
 
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/edit', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -240,10 +243,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add-trust', ['lpa-id' => $lpaId]));
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -261,8 +263,6 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);

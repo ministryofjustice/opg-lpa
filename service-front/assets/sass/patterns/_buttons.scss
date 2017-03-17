@@ -50,3 +50,17 @@
         margin-right: 4px;
     }
 }
+
+.button-input-to-link {
+    @extend a;
+
+    color: $link-colour;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &::-moz-focus-inner {
+        padding: 0;
+        border: 0
+    }
+}
