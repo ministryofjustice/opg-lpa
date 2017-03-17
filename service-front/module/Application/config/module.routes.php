@@ -1094,6 +1094,16 @@ return [
                             ],
                         ],
                     ],
+                    'reuse-details' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/reuse-details',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\ReuseDetailsController',
+                                'action' => 'index',
+                            ],
+                        ],
+                    ],
 
                 ], // child_routes
 

@@ -13,7 +13,6 @@ class InstructionsController extends AbstractLpaController
     public function indexAction()
     {
         $lpaId = $this->getLpa()->id;
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\InstructionsAndPreferencesForm');
 
@@ -36,7 +35,7 @@ class InstructionsController extends AbstractLpaController
 
                 $this->getLpaApplicationService()->setMetaData( $lpaId, [ 'instruction-confirmed'=>true ] );
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
         else {

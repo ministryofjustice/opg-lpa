@@ -1,0 +1,65 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Create a lasting power of attorney
+{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{{ form.setAttributes({
+    class: 'form reuse-details-form',
+}) ? '' }}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'reuse-details': {
+        'cannot-be-empty': 'Please choose the details you would like to reuse',
+    },
+}) %}
+
+{# Set form fields variables #}
+{% set reuseDetails = form.get('reuse-details') %}
+{% set submit = form.get('submit') %}
+
+{# form fields config #}
+{{ reuseDetails.setAttributes({
+    id: 'reuse-details',
+}) ? '' }}
+
+{{ submit.setAttributes({
+    value: 'Continue',
+    class: 'button flush--left reuse-details-button',
+}) ? '' }}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">{{ actorName }} details</h2>
+</header>
+
+{{ form.prepare() ? '' }}
+
+{#Error summary#}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
+    {{ form().openTag(form)|raw }}
+        {{ formElement(form.get( form.csrfName )) }}
+
+        <fieldset class="reuse-details-container">
+
+            <h2 class="heading-medium">Which details would you like to reuse?</h2>
+
+            <div class="form-group">
+                {{ formElement(reuseDetails) }}
+            </div>
+
+        </fieldset>
+
+        {{ formElement(submit) }}
+
+        <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+
+    {{ form().closeTag|raw }}
+
+{% endblock %}

@@ -44,20 +44,26 @@ class DonorController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
         //  If a donor has already been provided then redirect to the main donor screen
         if ($lpa->document->donor instanceof Donor) {
-            return $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
+            return $this->redirect()->toRoute('lpa/donor', ['lpa-id' => $lpaId]);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -71,8 +77,6 @@ class DonorController extends AbstractLpaActorController
 
                 return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -99,9 +103,8 @@ class DonorController extends AbstractLpaActorController
         $lpaId = $lpa->id;
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

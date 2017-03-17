@@ -101,45 +101,41 @@
 {# Error summary #}
 {{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
-{# Add reuse details options #}
-{% if (reuseDetailsForm and reuseDetailsForm.reusingPreviousLpaOptions()) %}
-    {{ reuseDetailsForm(reuseDetailsForm, cancelUrl) }}
-{% else %}
-    {% if (reuseDetailsForm and not reuseDetailsForm.reusingPreviousLpaOptions()) %}
-        {{ reuseDetailsForm(reuseDetailsForm) }}
-    {% endif %}
-
-    {# begin form #}
-    {{ form().openTag( form )|raw }}
-        {{ formElement(form.get( form.csrfName )) }}
-        {{ formElementErrorsV2(form.get( form.csrfName )) }}
-
-        <h2 class="heading-medium">What is the person's name?</h2>
-
-        <fieldset>
-            <legend class="visuallyhidden">Add person's name</legend>
-
-            {{ macros.formGroup(title) }}
-            {{ macros.formGroup(firstname) }}
-            {{ macros.formGroup(lastname) }}
-
-        </fieldset>
-
-        <h2 class="heading-medium">What is the person's address?</h2>
-
-        <fieldset class="postcodelookup">
-            <legend class="visuallyhidden">Address</legend>
-            <div class="js-PostcodeLookup__postal-add">
-                {{ macros.formGroup(address1) }}
-                {{ macros.formGroup(address2) }}
-                {{ macros.formGroup(address3) }}
-                {{ macros.formGroup(postcode) }}
-            </div>
-        </fieldset>
-
-        {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
-
-    {{ form().closeTag|raw }}
+{# If applicable display the Use my details link #}
+{% if displayReuseSessionUserLink %}
+    {{ macros.displayUseMyDetailsLink() }}
 {% endif %}
+
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElementErrorsV2(form.get( form.csrfName )) }}
+
+    <h2 class="heading-medium">What is the person's name?</h2>
+
+    <fieldset>
+        <legend class="visuallyhidden">Add person's name</legend>
+
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium">What is the person's address?</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visuallyhidden">Address</legend>
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+    </fieldset>
+
+    {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+
+{{ form().closeTag|raw }}
 
 {% endblock %}

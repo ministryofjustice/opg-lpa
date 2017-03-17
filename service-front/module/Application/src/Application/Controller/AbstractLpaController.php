@@ -3,9 +3,9 @@
 namespace Application\Controller;
 
 use Application\Model\FormFlowChecker;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use RuntimeException;
@@ -83,15 +83,37 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     }
 
     /**
-     * Returns a redirect to the next section in the LPA flow.
+     * Return an appropriate view model to move to the next route from the current route
      *
-     * @return \Zend\Http\Response
+     * @return ViewModel|\Zend\Http\Response
      */
-    protected function getNextSectionRedirect()
+    protected function moveToNextRoute()
     {
-        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute(
-            $this->getEvent()->getRouteMatch()->getMatchedRouteName()
-        ), ['lpa-id' => $this->getLpa()->id]);
+        if ($this->isPopup()) {
+            return new JsonModel(['success' => true]);
+        }
+
+        //  Check that the route match is the correct type
+        $routeMatch = $this->getEvent()->getRouteMatch();
+
+        if (!$routeMatch instanceof RouteMatch) {
+            throw new \RuntimeException('RouteMatch must be an instance of Zend\Mvc\Router\Http\RouteMatch when using the moveToNextRoute function');
+        }
+
+        //  Get the current route and the LPA ID to move to the next route
+        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), [
+            'lpa-id' => $this->getLpa()->id
+        ]);
+    }
+
+    /**
+     * Return a flag indicating if this is a request from a popup (XmlHttpRequest)
+     *
+     * @return bool
+     */
+    protected function isPopup()
+    {
+        return $this->getRequest()->isXmlHttpRequest();
     }
 
     /**

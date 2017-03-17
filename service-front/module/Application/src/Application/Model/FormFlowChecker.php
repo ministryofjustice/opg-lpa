@@ -69,6 +69,7 @@ class FormFlowChecker extends StateChecker
         'lpa/date-check'                                => 'isApplicantAccessible',
         'lpa/summary'                                   => 'isInstructionsAccessible',
         'lpa/view-docs'                                 => 'isViewDocsAccessible',
+        'lpa/reuse-details'                             => 'isReuseDetailsAccessible',
     );
 
     static $returnFunctionMap = array(
@@ -736,6 +737,11 @@ class FormFlowChecker extends StateChecker
         else {
             return 'lpa/checkout';
         }
+    }
+
+    private function isReuseDetailsAccessible()
+    {
+        return true;
     }
 
     private function peopleToNotifyHasBeenConfirmed()

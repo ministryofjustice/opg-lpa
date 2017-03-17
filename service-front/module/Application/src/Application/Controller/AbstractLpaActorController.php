@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Controller\Authenticated\Lpa;
 use Application\Form\Lpa\AbstractActorForm;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
@@ -11,165 +12,224 @@ use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Elements\Name;
 use Opg\Lpa\DataModel\User\Dob;
-use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
+use Zend\Mvc\Router;
 use Zend\View\Model\ViewModel;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
     /**
-     * Return an appropriate view model to move to the next route from the current route
+     * Function to check if the reuse details options are available and if it is appropriate to redirect to them
      *
-     * @return ViewModel|\Zend\Http\Response
+     * @return \Zend\Http\Response
      */
-    protected function moveToNextRoute()
+    protected function checkReuseDetailsOptions(ViewModel $viewModel)
     {
-        if ($this->isPopup()) {
-            return new JsonModel(['success' => true]);
-        }
+        //  If we are posting then do not execute a redirect just go back to the calling function
+        if (!$this->request->isPost()) {
+            $actorReuseDetailsCount = count($this->getActorReuseDetails());
 
-        //  Get the current route and the LPA ID to move to the next route
-        $currentRoute = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        $lpaId = $this->getLpa()->id;
+            //  If there is only one actor details to reuse then it will be the session user
+            if ($actorReuseDetailsCount == 1) {
+                $viewModel->displayReuseSessionUserLink = true;
+            } elseif ($actorReuseDetailsCount > 1) {
+                //  Determine the actor name to pass to the reuse details screen
+                $includeTrusts = false;
+                $actorName = null;
 
-        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRoute), [
-            'lpa-id' => $lpaId
-        ]);
-    }
-
-    /**
-     * Return a flag indicating if this is a request from a popup (XmlHttpRequest)
-     *
-     * @return bool
-     */
-    protected function isPopup()
-    {
-        return $this->getRequest()->isXmlHttpRequest();
-    }
-
-    /**
-     * Get the reuse details form
-     *
-     * @param   ViewModel           $viewModel
-     * @param   AbstractActorForm   $actorForm
-     */
-    protected function addReuseDetailsForm(ViewModel $viewModel, AbstractActorForm $actorForm)
-    {
-        //  Attempt to get the seed details for reuse
-        $actorReuseDetails = $this->getActorReuseDetails();
-
-        if (is_array($actorReuseDetails) && !empty($actorReuseDetails)) {
-            //  If a reuse details value has been provided then try to obtain the actor details
-            //  Get the reuse details index from the query parameters if it is present
-            $reuseDetailsIndex = $this->params()->fromQuery('reuse-details');
-
-            if (array_key_exists($reuseDetailsIndex, $actorReuseDetails)) {
-                $actorDetailsToReuse = $actorReuseDetails[$reuseDetailsIndex]['data'];
-
-                //  Check that the actor details selected are appropriate for the current route
-                //  i.e. trusts can only be viewed in the trust templates
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
-                //  Determine if the selected actor is a trust and is we are using a trust only route
-                //  Human and trust attorneys can both be used for the correspondent
-                if ($currentRouteName != 'lpa/correspondent/edit') {
-                    $isTrust = (isset($actorDetailsToReuse['type']) && $actorDetailsToReuse['type'] == 'trust');
-                    $isTrustRoute = (strpos($currentRouteName, 'add-trust') !== false);
-                    $redirectionRoute = null;
-
-                    if ($isTrust && !$isTrustRoute) {
-                        $redirectionRoute = $currentRouteName . '-trust';
-                    } elseif (!$isTrust && $isTrustRoute) {
-                        $redirectionRoute = str_replace('add-trust', 'add', $currentRouteName);
-                    }
-
-                    //  If required redirect the request
-                    if (!is_null($redirectionRoute)) {
-                        $params = [
-                            'lpa-id' => $this->getLpa()->id,
-                        ];
-
-                        $options = [
-                            'query' => $this->params()->fromQuery()
-                        ];
-
-                        $this->redirect()->toRoute($redirectionRoute, $params, $options);
-                    }
+                if ($this instanceof Lpa\CertificateProviderController) {
+                    $actorName = 'Certificate provider';
+                } elseif ($this instanceof Lpa\CorrespondentController) {
+                    $actorName = 'Correspondent';
+                } elseif ($this instanceof Lpa\DonorController) {
+                    $actorName = 'Donor';
+                } elseif ($this instanceof Lpa\PeopleToNotifyController) {
+                    $actorName = 'Person to notify';
+                } elseif ($this instanceof Lpa\PrimaryAttorneyController) {
+                    $includeTrusts = true;
+                    $actorName = 'Attorney';
+                } elseif ($this instanceof Lpa\ReplacementAttorneyController) {
+                    $includeTrusts = true;
+                    $actorName = 'Replacement attorney';
                 }
 
-                //  Bind the actor data to the main form
-                $actorForm->bind($actorDetailsToReuse);
-            } elseif ($reuseDetailsIndex != -1 && !is_string($reuseDetailsIndex)) {
-                //  If no option has been selected (including the "none of the above option" which is -1) then set the reuse details form in the view
-                $reuseDetailsForm = $this->getServiceLocator()
-                                         ->get('FormElementManager')
-                                         ->get('Application\Form\Lpa\ReuseDetailsForm', [
-                                             'actorReuseDetails' => $actorReuseDetails,
-                                         ]);
+                //  Generate the URL to redirect to reuse details
+                $reuseDetailsUrl = $this->getReuseDetailsUrl([
+                    'calling-url'    => $this->getRequest()->getUri()->getPath(),
+                    'include-trusts' => $includeTrusts,
+                    'actor-name'     => $actorName,
+                ]);
 
-                $viewModel->reuseDetailsForm = $reuseDetailsForm;
+                return $this->redirect()->toUrl($reuseDetailsUrl);
             }
         }
     }
 
     /**
-     * Return an array of actor details that can be utilised in a "reuse" scenario
+     * Construct the reuse details URL with the provided query parameters
      *
+     * @param array $queryParams
+     * @return string
+     */
+    protected function getReuseDetailsUrl(array $queryParams)
+    {
+        return $this->url()->fromRoute('lpa/reuse-details', [
+            'lpa-id' => $this->getLpa()->id,
+        ], [
+            'query' => $queryParams
+        ]);
+    }
+
+    /**
+     * Function to inspect the current MVC route and determine if some reuse details are trying to be used
+     * If they are then obtain them and bind them to the form and return an appropriate boolean value
+     *
+     * @param   AbstractActorForm $actorForm
+     * @return  bool
+     */
+    protected function reuseActorDetails(AbstractActorForm $actorForm)
+    {
+        $routeMatch = $this->getEvent()->getRouteMatch();
+
+        if ($routeMatch instanceof Router\RouteMatch) {
+            $actorReuseDetails = $this->getActorReuseDetails();
+
+            if ($routeMatch instanceof Router\Http\RouteMatch) {
+                //  We can reuse the details from this point if a post value has been provided and there is exactly one reuse option available (i.e. the session user)
+                $reuseDetailsIndex = $this->request->getPost('reuse-details');
+
+                if ($reuseDetailsIndex == '0' && count($actorReuseDetails) == 1) {
+                    $actorDetailsToReuse = array_pop($actorReuseDetails);
+                    $actorForm->bind($actorDetailsToReuse['data']);
+
+                    return true;
+                }
+            } else {
+                //  Get the reuse details index from the route
+                $reuseDetailsIndex = $routeMatch->getParam('reuseDetailsIndex');
+
+                if ($reuseDetailsIndex >= -1 || $reuseDetailsIndex == 't') {
+                    //  If we are using a proper actor index (i.e. zero, positive or 't' for trust) then attempt to get the actor reuse details and bind them to the abstract form
+                    if (array_key_exists($reuseDetailsIndex, $actorReuseDetails)) {
+                        //  Bind the actor data to the main form
+                        $actorDetailsToReuse = $actorReuseDetails[$reuseDetailsIndex]['data'];
+                        $actorForm->bind($actorDetailsToReuse);
+                    }
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add a flag to allow the reuse details back button if the situation dictates it can be used
+     *
+     * @param ViewModel $viewModel
+     */
+    protected function addReuseDetailsBackButton(ViewModel $viewModel)
+    {
+        //  If required add the back button URL
+        if (count($this->getActorReuseDetails()) > 1) {
+            //  Get the back button URL from the current matched route name
+            $routeMatch = $this->getEvent()->getRouteMatch();
+            $backButtonUrl = $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $this->getLpa()->id]);
+
+            //  If this request is from a forwarded request then try to extract the back button URL from the route params instead
+            if ($routeMatch instanceof Router\RouteMatch && !$routeMatch instanceof Router\Http\RouteMatch) {
+                $backButtonUrl = $routeMatch->getParam('callingUrl');
+            }
+
+            //  Add the back button URL but make sure that the add trust views go back to the normal add views
+            $viewModel->backButtonUrl = str_replace('add-trust', 'add', $backButtonUrl);
+        }
+    }
+
+    /**
+     * Return an array of actor details that can be utilised in a "reuse" scenario
+     * The boolean flag will determine if trusts should be included
+     *
+     * @param   boolean $includeTrusts
+     * @param   boolean $forCorrespondent
      * @return  array
      */
-    protected function getActorReuseDetails()
+    protected function getActorReuseDetails($includeTrusts = true, $forCorrespondent = false)
     {
+        //  If this is the correspondent controller then the forCorrespondent flag MUST be true
+        if ($this instanceof Lpa\CorrespondentController) {
+            $forCorrespondent = true;
+        }
+
         //  Initialise the reuse details details array
         $actorReuseDetails = [];
 
         //  If this is not a request to get trust data, and the session user data hasn't already been used, add it now
-        $this->addCurrentUserDetailsForReuse($actorReuseDetails);
+        $this->addCurrentUserDetailsForReuse($actorReuseDetails, !$forCorrespondent);
 
-        //  Get any seed details for this LPA
-        $seedDetails = $this->getSeedDetails();
+        //  If this is a request for the correspondent data then use the details from the current LPA
+        if ($forCorrespondent) {
+            //  Using the data from the LPA document add options for the donor and primary attorneys
+            $lpaDocument = $this->getLpa()->document;
 
-        foreach ($seedDetails as $type => $actorData) {
-            //  Initialise the actor type
-            $actorType = (isset($actorData['who']) ? $actorData['who'] : 'other');
+            $actorReuseDetails[] = $this->getReuseDetailsForActor($lpaDocument->donor->toArray(), Correspondence::WHO_DONOR, '(donor)');
 
-            switch ($type) {
-                case 'donor':
-                    $actorType = 'donor';
-                    $actorReuseDetails[] = $this->getReuseDetailsForActor($actorData, $actorType, '(was the donor)');
-                    break;
-                case 'correspondent':
-                    //  Only add the correspondent details if it is not the donor or an attorney
-                    if ($actorType == 'other') {
-                        $actorReuseDetails[] = $this->getReuseDetailsForActor($actorData, $actorType, '(was the correspondent)');
-                    }
-                    break;
-                case 'certificateProvider':
-                    $actorReuseDetails[] = $this->getReuseDetailsForActor($actorData, $actorType, '(was the certificate provider)');
-                    break;
-                case 'primaryAttorneys':
-                case 'replacementAttorneys':
-                    $actorType = 'attorney';
-                    $suffixText = '(was a primary attorney)';
+            foreach ($lpaDocument->primaryAttorneys as $attorney) {
+                $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), Correspondence::WHO_ATTORNEY, '(attorney)');
+            }
+        } else {
+            //  Loop through the seed details for this LPA
+            foreach ($this->getSeedLpaActorDetails() as $type => $actorData) {
+                //  Initialise the actor type
+                $actorType = (isset($actorData['who']) ? $actorData['who'] : 'other');
 
-                    if ($type == 'replacementAttorneys') {
-                        $suffixText = '(was a replacement attorney)';
-                    }
+                switch ($type) {
+                    case 'donor':
+                        $actorType = 'donor';
+                        $actorReuseDetails[] = $this->getReuseDetailsForActor($actorData, $actorType, '(was the donor)');
+                        break;
+                    case 'correspondent':
+                        //  Only add the correspondent details if it is not the donor or an attorney
+                        if ($actorType == 'other') {
+                            $actorReuseDetails[] = $this->getReuseDetailsForActor($actorData, $actorType, '(was the correspondent)');
+                        }
+                        break;
+                    case 'certificateProvider':
+                        $actorReuseDetails[] = $this->getReuseDetailsForActor($actorData, $actorType, '(was the certificate provider)');
+                        break;
+                    case 'primaryAttorneys':
+                    case 'replacementAttorneys':
+                        $actorType = 'attorney';
+                        $suffixText = '(was a primary attorney)';
 
-                    foreach ($actorData as $singleActorData) {
-                        //  If a trust has already been used then don't present the trust option
-                        if ($singleActorData['type'] == 'trust' && !$this->allowTrust()) {
-                            continue;
+                        if ($type == 'replacementAttorneys') {
+                            $suffixText = '(was a replacement attorney)';
                         }
 
-                        $actorReuseDetails[] = $this->getReuseDetailsForActor($singleActorData, $actorType, $suffixText);
-                    }
-                    break;
-                case 'peopleToNotify':
-                    foreach ($actorData as $singleActorData) {
-                        $actorReuseDetails[] = $this->getReuseDetailsForActor($singleActorData, $actorType, '(was a person to be notified)');
-                    }
-                    break;
+                        foreach ($actorData as $singleActorData) {
+                            //  If a trust has already been used then don't present the trust option
+                            $isTrust = ($singleActorData['type'] == 'trust');
+
+                            if ($isTrust && (!$includeTrusts || !$this->allowTrust())) {
+                                continue;
+                            }
+
+                            $attorneyReuseActorDetails = $this->getReuseDetailsForActor($singleActorData, $actorType, $suffixText);
+
+                            if ($isTrust) {
+                                $actorReuseDetails['t'] = $attorneyReuseActorDetails;
+                            } else {
+                                $actorReuseDetails[] = $attorneyReuseActorDetails;
+                            }
+                        }
+                        break;
+                    case 'peopleToNotify':
+                        foreach ($actorData as $singleActorData) {
+                            $actorReuseDetails[] = $this->getReuseDetailsForActor($singleActorData, $actorType, '(was a person to be notified)');
+                        }
+                        break;
+                }
             }
         }
 
@@ -182,7 +242,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * @param array $actorReuseDetails
      * @param bool $checkIfAlreadyUsed
      */
-    protected function addCurrentUserDetailsForReuse(array &$actorReuseDetails, $checkIfAlreadyUsed = true)
+    private function addCurrentUserDetailsForReuse(array &$actorReuseDetails, $checkIfAlreadyUsed = true)
     {
         //  Check that the current session user details have not already been used
         $currentUserDetailsUsedToBeAdded = true;
@@ -190,7 +250,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
         //  Check to see if the user details have already been used if necessary
         if ($checkIfAlreadyUsed) {
-            foreach ($this->getActorsList() as $actorsListItem) {
+            foreach ($this->getActorsList(null, false) as $actorsListItem) {
                 if (strtolower($userDetailsObj->name->first) == strtolower($actorsListItem['firstname'])
                     && strtolower($userDetailsObj->name->last) == strtolower($actorsListItem['lastname'])
                 ) {
@@ -225,36 +285,43 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
     /**
      * Generate a list of actors already associated with the current LPA
+     * If required filter by the calling action for the specific actor
      *
-     * @param RouteMatch $routeMatch
-     * @return array
+     * @param   integer $actorIndexToExclude
+     * @param   boolean $filterByActorAction
+     * @return  array
      */
-    protected function getActorsList(RouteMatch $routeMatch = null)
+    protected function getActorsList($actorIndexToExclude = null, $filterByActorAction = true)
     {
         $actorsList = [];
 
-        //  Get the route details
-        $matchedRoute = null;
-        $routeIndex = null;
+        //  Ensure the index to exclude is an integer or null
+        $actorIndexToExclude = (is_null($actorIndexToExclude) ? null : intval($actorIndexToExclude));
 
-        if ($routeMatch instanceof RouteMatch) {
-            $matchedRoute = $routeMatch->getMatchedRouteName();
-            $routeIndex = $routeMatch->getParam('idx');
+        //  Determine which route we have come from so the results below can be filtered
+        //  If the filter flag was passed into this function as false then set all flags below to false so no filtering takes place
+        $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
+        $isDonorRoute = ($filterByActorAction && $this instanceof Lpa\DonorController);
+        $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
+        $isPrimaryAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\PrimaryAttorneyController);
+        $isReplacementAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\ReplacementAttorneyController);
+
+        $lpaDocument = $this->getLpa()->document;
+
+        //  If there is a donor present in the LPA and we are editing it then do NOT include in the actor list
+        if (!$isDonorRoute && $lpaDocument->donor instanceof Donor) {
+            $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
         }
 
-        $lpa = $this->getLpa();
-
-        if (($matchedRoute != 'lpa/donor/edit') && ($lpa->document->donor instanceof Donor)) {
-            $actorsList[] = $this->getActorDetails($lpa->document->donor, 'donor');
+        //  If there is a certificate provider present in the LPA and we are editing it, or adding/editing people to notify then do NOT include in the actor list
+        if (!$isCertificateProviderRoute && !$isPeopleToModifyRoute && $lpaDocument->certificateProvider instanceof CertificateProvider) {
+            $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
         }
 
-        // when edit a cp or on np add/edit page, do not include this cp
-        if (($lpa->document->certificateProvider instanceof CertificateProvider) && !in_array($matchedRoute, ['lpa/certificate-provider/edit','lpa/people-to-notify/add','lpa/people-to-notify/edit'])) {
-            $actorsList[] = $this->getActorDetails($lpa->document->certificateProvider, 'certificate provider');
-        }
-
-        foreach ($lpa->document->primaryAttorneys as $idx => $attorney) {
-            if ($matchedRoute == 'lpa/primary-attorney/edit' && $routeIndex == $idx) {
+        //  Include all of the primary attorney details unless we are editing that particular attorney
+        foreach ($lpaDocument->primaryAttorneys as $idx => $attorney) {
+            //  We are editing this attorney so do not add it to the actor list
+            if ($isPrimaryAttorneyRoute && $actorIndexToExclude === $idx) {
                 continue;
             }
 
@@ -263,8 +330,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             }
         }
 
-        foreach ($lpa->document->replacementAttorneys as $idx => $attorney) {
-            if ($matchedRoute == 'lpa/replacement-attorney/edit' && $routeIndex == $idx) {
+        //  Include all of the replacement attorney details unless we are editing that particular attorney
+        foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
+            //  We are editing this attorney so do not add it to the actor list
+            if ($isReplacementAttorneyRoute && $actorIndexToExclude === $idx) {
                 continue;
             }
 
@@ -273,11 +342,11 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             }
         }
 
-        // on cp page, do not include np names for duplication check
-        if ($matchedRoute != 'lpa/certificate-provider/add' && $matchedRoute != 'lpa/certificate-provider/edit') {
-            foreach ($lpa->document->peopleToNotify as $idx => $notifiedPerson) {
-                // when edit an np, do not include this np
-                if ($matchedRoute == 'lpa/people-to-notify/edit' && $routeIndex == $idx) {
+        //  Include all of the people to notify unless we adding/editing a certificate provider
+        if (!$isCertificateProviderRoute) {
+            foreach ($lpaDocument->peopleToNotify as $idx => $notifiedPerson) {
+                //  We are editing this person to notify so do not add it to the actor list
+                if ($isPeopleToModifyRoute && $actorIndexToExclude === $idx) {
                     continue;
                 }
 
@@ -311,11 +380,11 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     }
 
     /**
-     * Simple function to get the seed details from the backend or from the user session if already retrieved
+     * Simple function to get the actor details from a seed LPA if there is one
      *
      * @return array
      */
-    private function getSeedDetails()
+    private function getSeedLpaActorDetails()
     {
         $seedDetails = [];
         $lpa = $this->getLpa();
@@ -345,7 +414,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * @param string $suffixText
      * @return array
      */
-    protected function getReuseDetailsForActor(array $actorData, $actorType, $suffixText = '')
+    private function getReuseDetailsForActor(array $actorData, $actorType, $suffixText = '')
     {
         //  Set the sctor type in the data
         $actorData['who'] = $actorType;
@@ -376,6 +445,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
     /**
      * Simple function to indicated whether a trust should be allowed for the current LPA
+     * DON'T allow if this is a Health and Well-being LPA or if a trust has already been used
      *
      * @return bool
      */
@@ -394,31 +464,6 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         }
 
         return false;
-    }
-
-    /**
-     * Add a flag to allow the reuse details back button if the situation dictates it can be used
-     *
-     * @param ViewModel $viewModel
-     */
-    protected function addReuseDetailsBackButton(ViewModel $viewModel)
-    {
-        $allowBackButton = false;
-
-        //  If the reuse details form has already been set then we can check the options available instead of getting all the actor details again
-        if (isset($viewModel->reuseDetailsForm)) {
-            $allowBackButton = $viewModel->reuseDetailsForm->reusingPreviousLpaOptions();
-        } elseif (count($this->getActorReuseDetails()) > 1) {
-            $allowBackButton = true;
-        }
-
-        //  If required add the back button URL
-        if ($allowBackButton) {
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
-            //  Add the back button URL but make sure that the add trust views go back to the normal add views
-            $viewModel->backButtonUrl = str_replace('add-trust', 'add', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $this->getLpa()->id]));
-        }
     }
 
     /**

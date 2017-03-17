@@ -129,9 +129,7 @@ class CheckoutController extends AbstractLpaController {
             ->sendRegistrationCompleteEmail($lpa, $this->url()
                 ->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
 
-
-        return $this->getNextSectionRedirect();
-
+        return $this->moveToNextRoute();
     }
 
     //------------------------------------------------------------------------------
