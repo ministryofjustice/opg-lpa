@@ -152,7 +152,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__change\" title=\"Search for UK Postcode\">Change address</a></li>\n	</ul>\n</div>\n";
+  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__change\" title=\"Search for UK Postcode\">Search for UK postcode</a></li>\n	</ul>\n</div>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.address-toggle"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -170,7 +170,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<p class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>";
+  return "<p class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode lookup</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.search-result"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

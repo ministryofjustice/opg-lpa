@@ -3599,7 +3599,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__change\" title=\"Search for UK Postcode\">Change address</a></li>\n	</ul>\n</div>\n";
+  return "<div class=\"form-group\">\n	<ul class=\"address-type-toggle\">\n		<li><a href=\"#\" class=\"js-PostcodeLookup__change\" title=\"Search for UK Postcode\">Search for UK postcode</a></li>\n	</ul>\n</div>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.address-toggle"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3617,7 +3617,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<p class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>";
+  return "<p class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode lookup</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.search-result"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -4133,8 +4133,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
         // Use GOV.UK selection-buttons.js to set selected
         // and focused states for block labels
-        var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']")
-        new GOVUK.SelectionButtons($blockLabels) // eslint-disable-line
+        var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
+        new GOVUK.SelectionButtons($blockLabels); // eslint-disable-line
     },
 
     btnClick: function (e) {
@@ -4449,8 +4449,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         // prepend template to postal fields
         this.$postalFields.before(this.searchTpl() + this.toggleTpl() + this.changeTpl()).addClass('hidden');
 
-        // if all fields are empty, hide them
-        if (moj.Helpers.hasCleanFields(this.$postalFields)) {
+        // if all fields are empty and there are no validation messages, hide them
+        if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
             this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         } else {
             this.hideSearchForm();
@@ -4467,7 +4467,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     changeClicked: function(e) {
         this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden');
-        if (moj.Helpers.hasCleanFields(this.$postalFields)) {
+        if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
             this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').removeClass('hidden');
         }
         this.$wrap.find('.js-PostcodeLookup__query').focus();
