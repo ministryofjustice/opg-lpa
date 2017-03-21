@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class CertificateProviderController extends AbstractLpaActorController
@@ -32,28 +31,34 @@ class CertificateProviderController extends AbstractLpaActorController
 
     public function addAction()
     {
-        $lpa = $this->getLpa();
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/certificate-provider/form.twig');
 
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
+        $lpa = $this->getLpa();
+        $lpaId = $lpa->id;
+
+        //  If a certificate provider has already been provided then redirect to the main certificate provider screen
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
             return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id' => $lpaId]);
         }
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-        $viewModel->setTemplate('application/certificate-provider/form.twig');
-        if ($isPopup) {
-            $viewModel->setTerminal(true);
-        }
-
-        $lpaId = $lpa->id;
-
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -65,14 +70,8 @@ class CertificateProviderController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
                 }
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -87,24 +86,20 @@ class CertificateProviderController extends AbstractLpaActorController
 
     public function editAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/certificate-provider/form.twig');
 
-        if ($isPopup) {
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $currentRouteName = $routeMatch->getMatchedRouteName();
-
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -119,11 +114,7 @@ class CertificateProviderController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);
                 }
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $cp = $lpa->document->certificateProvider->flatten();

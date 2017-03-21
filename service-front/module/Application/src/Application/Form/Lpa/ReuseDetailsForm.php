@@ -2,11 +2,21 @@
 
 namespace Application\Form\Lpa;
 
-use Zend\Form\Element\MultiCheckbox;
-use Zend\Form\Form;
-
-class ReuseDetailsForm extends Form
+class ReuseDetailsForm extends AbstractForm
 {
+    protected $formElements = [
+        'reuse-details' => [
+            'type'      => 'Application\Form\Element\ReuseDetails',
+            'required'  => true,
+            'options'   => [
+                'value_options' => [],
+            ],
+        ],
+        'submit' => [
+            'type' => 'Zend\Form\Element\Submit',
+        ],
+    ];
+
     /**
      * ReuseDetailsForm constructor
      *
@@ -15,41 +25,41 @@ class ReuseDetailsForm extends Form
      */
     public function __construct($name, $options)
     {
-        //  Trigger the parent constructor now
-        parent::__construct($name, $options);
+        //  Extract the value options data now
+        if (array_key_exists('actorReuseDetails', $options)) {
+            $this->formElements['reuse-details']['options']['value_options'] = [
+                'actorReuseDetails' => $options['actorReuseDetails'],
+            ];
+        }
 
-        //  Add the required inputs
-        //  Use the custom reuse details input
-        $this->add([
-            'name' => 'reuse-details',
-            'type' => 'Application\Form\Element\ReuseDetails',
-            'required' => true,
-            'options' => [
-                'value_options' => [
-                    'actorReuseDetails' => (array_key_exists('actorReuseDetails', $options) ? $options['actorReuseDetails'] : []),
-                ],
-            ],
-        ]);
+        parent::__construct('form-reuse-details', $options);
+    }
 
-        $this->add([
-            'name' => 'submit',
-            'type' => 'Submit',
-        ]);
+    public function init()
+    {
+        parent::init();
+
+        $this->setUseInputFilterDefaults(false);
+
+        $inputFilter = $this->getInputFilter();
+
+        $inputFilter->add(array(
+            'name'          => 'reuse-details',
+            'required'      => true,
+            'error_message' => 'cannot-be-empty',
+        ));
     }
 
     /**
-     * Simple function to indicate if we have a full selection of details to reuse
+     * Validate form input data through model validators.
      *
-     * @return bool
+     * @return [isValid => bool, messages => [<formElementName> => string, ..]]
      */
-    public function reusingPreviousLpaOptions()
+    public function validateByModel()
     {
-        $reuseDetails = $this->get('reuse-details');
-
-        if ($reuseDetails instanceof MultiCheckbox) {
-            return (count($reuseDetails->getValueOptions()) > 1);
-        }
-
-        return false;
+        return [
+            'isValid'  => true,
+            'messages' => [],
+        ];
     }
 }

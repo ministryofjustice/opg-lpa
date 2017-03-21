@@ -124,91 +124,86 @@
 {# Error summary #}
 {{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
 
-{# Add reuse details options #}
-{% if (reuseDetailsForm and reuseDetailsForm.reusingPreviousLpaOptions()) %}
-    {{ reuseDetailsForm(reuseDetailsForm, cancelUrl) }}
-{% else %}
-    {# begin form #}
-    {{ form().openTag( form )|raw }}
-        {{ formElement(form.get( form.csrfName )) }}
-        {{ formElement(form.get('who')) }}
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.get('who')) }}
 
-        <h2 class="heading-medium">Correspondent's details?</h2>
+    <h2 class="heading-medium">Correspondent's details?</h2>
 
-        <fieldset>
-            <legend class="visuallyhidden">Add correspondent's details</legend>
+    <fieldset>
+        <legend class="visuallyhidden">Add correspondent's details</legend>
 
-            {{ macros.formGroup(title) }}
-            {{ macros.formGroup(firstname) }}
-            {{ macros.formGroup(lastname) }}
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
 
-        </fieldset>
+    </fieldset>
 
-        <h2 class="heading-medium">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
+    <h2 class="heading-medium">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
 
-        <fieldset>
-            <legend class="visually hidden">Add company name</legend>
-            {% if form.trustSelected() %}
-                {{ formHidden(company) }}
-                <div class="form-group read-only">
-                    <label class="form-label">{{ company.getOption('label') }}</label>
-                    <div class="read-only-value">{{ company.getValue() }}</div>
-                </div>
-            {% else %}
-                {{ macros.formGroup(company) }}
+    <fieldset>
+        <legend class="visually hidden">Add company name</legend>
+        {% if form.trustSelected() %}
+            {{ formHidden(company) }}
+            <div class="form-group read-only">
+                <label class="form-label">{{ company.getOption('label') }}</label>
+                <div class="read-only-value">{{ company.getValue() }}</div>
+            </div>
+        {% else %}
+            {{ macros.formGroup(company) }}
+        {% endif %}
+    </fieldset>
+
+    <h2 class="heading-medium">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visuallyhidden">Add address details</legend>
+
+        {% if form.trustSelected() %}
+            {{ formHidden(address1) }}
+            {{ formHidden(address2) }}
+            {{ formHidden(address3) }}
+            {{ formHidden(postcode) }}
+
+            {% set addressString = address1.getValue() %}
+            {% if address2.getValue() %}
+                {% set addressString = addressString ~ ', ' ~ address2.getValue() %}
             {% endif %}
-        </fieldset>
-
-        <h2 class="heading-medium">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
-
-        <fieldset class="postcodelookup">
-            <legend class="visuallyhidden">Add address details</legend>
-
-            {% if form.trustSelected() %}
-                {{ formHidden(address1) }}
-                {{ formHidden(address2) }}
-                {{ formHidden(address3) }}
-                {{ formHidden(postcode) }}
-
-                {% set addressString = address1.getValue() %}
-                {% if address2.getValue() %}
-                    {% set addressString = addressString ~ ', ' ~ address2.getValue() %}
-                {% endif %}
-                {% if address3.getValue() %}
-                    {% set addressString = addressString ~ ', ' ~ address3.getValue() %}
-                {% endif %}
-                {% if postcode.getValue() %}
-                    {% set addressString = addressString ~ ', ' ~ postcode.getValue() %}
-                {% endif %}
-
-                <div class="form-group read-only">
-                    <label class="form-label">Address</label>
-                    <div class="read-only-value">{{ addressString }}</div>
-                </div>
-            {% else %}
-                <div class="js-PostcodeLookup__postal-add">
-                    {{ macros.formGroup(address1) }}
-                    {{ macros.formGroup(address2) }}
-                    {{ macros.formGroup(address3) }}
-                    {{ macros.formGroup(postcode) }}
-                </div>
+            {% if address3.getValue() %}
+                {% set addressString = addressString ~ ', ' ~ address3.getValue() %}
+            {% endif %}
+            {% if postcode.getValue() %}
+                {% set addressString = addressString ~ ', ' ~ postcode.getValue() %}
             {% endif %}
 
-        </fieldset>
+            <div class="form-group read-only">
+                <label class="form-label">Address</label>
+                <div class="read-only-value">{{ addressString }}</div>
+            </div>
+        {% else %}
+            <div class="js-PostcodeLookup__postal-add">
+                {{ macros.formGroup(address1) }}
+                {{ macros.formGroup(address2) }}
+                {{ macros.formGroup(address3) }}
+                {{ macros.formGroup(postcode) }}
+            </div>
+        {% endif %}
 
-        <h2 class="heading-medium">Correspondent's contact details?</h2>
+    </fieldset>
 
-        <fieldset>
-            <legend class="visuallyhidden">Add correspondent's contact details</legend>
+    <h2 class="heading-medium">Correspondent's contact details?</h2>
 
-            {{ macros.formGroup(email) }}
-            {{ macros.formGroup(phone) }}
+    <fieldset>
+        <legend class="visuallyhidden">Add correspondent's contact details</legend>
 
-        </fieldset>
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(phone) }}
 
-        {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+    </fieldset>
 
-    {{ form().closeTag|raw }}
-{% endif %}
+    {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+
+{{ form().closeTag|raw }}
 
 {% endblock %}

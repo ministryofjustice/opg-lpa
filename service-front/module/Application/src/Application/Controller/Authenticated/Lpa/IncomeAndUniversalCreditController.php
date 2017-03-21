@@ -32,7 +32,6 @@ class IncomeAndUniversalCreditController extends AbstractLpaController
             if($form->isValid()) {
 
                 $lpa = $this->getLpa();
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
                 if($form->getData()['reducedFeeUniversalCredit'] == 0) {
                     // not receving universal credit
@@ -60,7 +59,7 @@ class IncomeAndUniversalCreditController extends AbstractLpaController
                     throw new \RuntimeException('API client failed to set income & universal credit in payment for id: '.$lpa->id);
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                return $this->moveToNextRoute();
             }
         }
         else {

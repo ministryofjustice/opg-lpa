@@ -5,14 +5,12 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaActorController;
 use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class PeopleToNotifyController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
 
         // set hidden form for saving empty array to peopleToNotify.
@@ -25,12 +23,13 @@ class PeopleToNotifyController extends AbstractLpaActorController
                 // set user has confirmed if there are people to notify
                 $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
 
         // list notified persons on the landing page if they've been added.
         $peopleToNotifyParams = [];
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         foreach ($this->getLpa()->document->peopleToNotify as $idx => $peopleToNotify) {
             $peopleToNotifyParams[] = [
@@ -54,28 +53,33 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
     public function addAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/people-to-notify/form.twig');
-        if ($isPopup) {
+
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
         }
 
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
         if (count($lpa->document->peopleToNotify) >= 5) {
-            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id'=>$lpaId]);
+            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id' => $lpaId]);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -91,15 +95,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
                         $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($lpa);
                 }
 
-                // redirect to next page for non-js, or return a json to ajax call.
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -114,20 +111,19 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
     public function editAction()
     {
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
+        $viewModel = new ViewModel();
         $viewModel->setTemplate('application/people-to-notify/form.twig');
-        if ($isPopup) {
+
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
-        $currentRouteName = $routeMatch->getMatchedRouteName();
 
-        $personIdx = $routeMatch->getParam('idx');
+        $personIdx = $this->params()->fromRoute('idx');
+
         if (array_key_exists($personIdx, $lpa->document->peopleToNotify)) {
             $notifiedPerson = $lpa->document->peopleToNotify[$personIdx];
         }
@@ -138,8 +134,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId, 'idx' => $personIdx]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx]));
+        $form->setExistingActorNamesData($this->getActorsList($personIdx));
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -154,12 +150,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
                 }
 
-                // redirect to next page for non-js, or return a json to ajax call.
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $form->bind($notifiedPerson->flatten());
@@ -188,11 +179,6 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            return new JsonModel(['success' => true]);
-        } else {
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-        }
+        return $this->moveToNextRoute();
     }
 }

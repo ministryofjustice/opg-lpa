@@ -47,11 +47,7 @@ class TypeController extends AbstractLpaController
             $form->setData($postData);
 
             if($form->isValid()) {
-
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
                 $lpaId = $this->getLpa()->id;
-
                 $lpaType = $form->getData()['type'];
 
                 if($lpaType != $this->getLpa()->document->type) {
@@ -61,7 +57,7 @@ class TypeController extends AbstractLpaController
                     }
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
         else {
