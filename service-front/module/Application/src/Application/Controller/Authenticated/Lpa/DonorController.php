@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class DonorController extends AbstractLpaActorController
@@ -37,29 +36,34 @@ class DonorController extends AbstractLpaActorController
 
     public function addAction()
     {
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/donor/form.twig');
+
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+        if (!is_null($reuseRedirect)) {
+            return $reuseRedirect;
+        }
+
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-
+        //  If a donor has already been provided then redirect to the main donor screen
         if ($lpa->document->donor instanceof Donor) {
-            return $this->redirect()->toRoute('lpa/donor', ['lpa-id'=>$lpaId]);
-        }
-
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-        $viewModel->setTemplate('application/donor/form.twig');
-
-        if ($isPopup) {
-            $viewModel->setTerminal(true);
+            return $this->redirect()->toRoute('lpa/donor', ['lpa-id' => $lpaId]);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
-        $form->setAttribute('action', $this->url()->fromRoute($routeMatch->getMatchedRouteName(), ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($this->request->getPost());
 
@@ -71,14 +75,8 @@ class DonorController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
                 }
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
         }
 
         $this->addReuseDetailsBackButton($viewModel);
@@ -93,24 +91,20 @@ class DonorController extends AbstractLpaActorController
 
     public function editAction()
     {
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('application/donor/form.twig');
+
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $routeMatch = $this->getEvent()->getRouteMatch();
-        $currentRouteName = $routeMatch->getMatchedRouteName();
-
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
-
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-        $viewModel->setTemplate('application/donor/form.twig');
-
-        if ($isPopup) {
-            $viewModel->setTerminal(true);
-        }
-
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList($routeMatch));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]));
+        $form->setExistingActorNamesData($this->getActorsList());
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -129,11 +123,7 @@ class DonorController extends AbstractLpaActorController
                 //  Attempt to update the LPA correspondent too
                 $this->updateCorrespondentData($donor);
 
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    return new JsonModel(['success' => true]);
-                } else {
-                    return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-                }
+                return $this->moveToNextRoute();
             }
         } else {
             $donor = $lpa->document->donor->flatten();

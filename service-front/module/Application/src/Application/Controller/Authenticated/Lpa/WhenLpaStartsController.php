@@ -50,7 +50,6 @@ class WhenLpaStartsController extends AbstractLpaController
             if($form->isValid()) {
 
                 $lpaId = $this->getLpa()->id;
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
                 if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
                     $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
@@ -71,7 +70,7 @@ class WhenLpaStartsController extends AbstractLpaController
                     }
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+                return $this->moveToNextRoute();
             }
         }
         else {

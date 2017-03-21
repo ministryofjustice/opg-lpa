@@ -37,8 +37,6 @@ class CorrespondentController extends AbstractLpaActorController
         $correspondentEmailAddress = ($correspondent->email instanceof EmailAddress ? $correspondent->email : null);
         $correspondentPhoneNumber = (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber ? $correspondent->phone->number : null);
 
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());
 
@@ -76,7 +74,7 @@ class CorrespondentController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to set correspondent for id: '.$this->getLpa()->id);
                 }
 
-                return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $this->getLpa()->id]);
+                return $this->moveToNextRoute();
             }
         } else {
             //  Bind any required data to the correspondence form
@@ -97,6 +95,8 @@ class CorrespondentController extends AbstractLpaActorController
             $correspondentName .= (empty($correspondentName) ? '' : ', ');
             $correspondentName .= $correspondent->company;
         }
+
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         return new ViewModel([
             'form'                 => $form,
@@ -169,53 +169,65 @@ class CorrespondentController extends AbstractLpaActorController
 
     public function editAction()
     {
-        $isPopup = $this->getRequest()->isXmlHttpRequest();
+        $viewModel = new ViewModel();
 
-        $viewModel = new ViewModel(['isPopup' => $isPopup]);
-
-        if ($isPopup) {
+        if ($this->isPopup()) {
             $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
         }
 
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        //  Determine if we are directly editing the existing correspondent
+        $editingExistingCorrespondent = ($this->params()->fromQuery('reuse-details') == 'existing-correspondent');
+
+        //  If we are not directly editing the existing correspondent then execute the parent function to determine if we should redirect to the reuse details view
+        if (!$editingExistingCorrespondent) {
+            $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
+
+            if (!is_null($reuseRedirect)) {
+                return $reuseRedirect;
+            }
+        }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $this->getLpa()->id]));
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/correspondent/edit', ['lpa-id' => $this->getLpa()->id]));
 
         if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+            //  If this is reusing actor details then check to see if we can just process the data without displaying it to the user
+            if ($this->reuseActorDetails($form)) {
+                //  If the form is not editable then just validate and process it now
+                if (!$form->isEditable()) {
+                    //  If it isn't then validate the form to set up the data, extract it and process the correspondent
+                    $form->isValid();
 
-            if ($form->isValid()) {
-                //  Extract the model data from the form and process it
-                $correspondentData = $form->getModelDataFromValidatedForm();
-                $correspondentData['contactDetailsEnteredManually'] = true;
+                    //  Extract the model data from the form and process it
+                    $correspondentData = $form->getModelDataFromValidatedForm();
 
-                return $this->processCorrespondentData($correspondentData);
-            }
-        } else {
-            $this->addReuseDetailsForm($viewModel, $form);
-
-            if ($this->params()->fromQuery('reuse-details') == 'existing-correspondent') {
-                //  Find the existing correspondent data and bind it to the form
-                $existingCorrespondent = $this->getLpaCorrespondent();
-
-                if ($existingCorrespondent instanceof Correspondence || $existingCorrespondent instanceof TrustCorporation) {
-                    $form->bind($existingCorrespondent->flatten());
+                    return $this->processCorrespondentData($correspondentData);
                 }
             } else {
-                //  Execute the parent function to determine if the back button URL should be set in the view model
-                $this->addReuseDetailsBackButton($viewModel);
+                //  This is a regular post from the form so just validate and save the data
+                $form->setData($this->request->getPost());
 
-                if (!isset($viewModel->reuseDetailsForm)) {
-                    //  Some selected data was bound to the actor form - check to see if it is editable
-                    if (!$form->isEditable()) {
-                        //  If it isn't then validate the form to set up the data, extract it and process the correspondent
-                        $form->isValid();
+                if ($form->isValid()) {
+                    //  Extract the model data from the form and process it
+                    $correspondentData = $form->getModelDataFromValidatedForm();
+                    $correspondentData['contactDetailsEnteredManually'] = true;
 
-                        return $this->processCorrespondentData($form->getModelDataFromValidatedForm());
-                    }
+                    return $this->processCorrespondentData($correspondentData);
                 }
             }
+        } elseif ($editingExistingCorrespondent) {
+            //  Find the existing correspondent data and bind it to the form
+            $existingCorrespondent = $this->getLpaCorrespondent();
+
+            if ($existingCorrespondent instanceof Correspondence || $existingCorrespondent instanceof TrustCorporation) {
+                $form->bind($existingCorrespondent->flatten());
+            }
+        }
+
+        //  If we're not editing the existing correspondent then execute the parent function to determine if the back button URL should be set in the view model
+        if (!$editingExistingCorrespondent) {
+            $this->addReuseDetailsBackButton($viewModel);
         }
 
         $viewModel->form = $form;
@@ -256,38 +268,12 @@ class CorrespondentController extends AbstractLpaActorController
             throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
         }
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->isPopup()) {
             return new JsonModel(['success' => true]);
-        } else {
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
-            return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
-        }
-    }
-
-    /**
-     * Return an array of actor details that can be utilised in a "reuse" scenario
-     * This function is overridden here so the the reuse details form contains the correct data from the current LPA
-     *
-     * @return  array
-     */
-    protected function getActorReuseDetails()
-    {
-        //  Initialise the reuse details details array
-        $actorReuseDetails = [];
-
-        //  Add the details for the current user
-        $this->addCurrentUserDetailsForReuse($actorReuseDetails, false);
-
-        //  Using the data from the LPA document add options for the donor and primary attorneys
-        $lpaDocument = $this->getLpa()->document;
-
-        $actorReuseDetails[] = $this->getReuseDetailsForActor($lpaDocument->donor->toArray(), Correspondence::WHO_DONOR, '(donor)');
-
-        foreach ($lpaDocument->primaryAttorneys as $attorney) {
-            $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), Correspondence::WHO_ATTORNEY, '(attorney)');
         }
 
-        return $actorReuseDetails;
+        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute('lpa/correspondent/edit'), [
+            'lpa-id' => $lpaId,
+        ]);
     }
 }
