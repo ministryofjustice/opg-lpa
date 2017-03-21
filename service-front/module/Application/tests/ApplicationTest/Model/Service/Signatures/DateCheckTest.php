@@ -17,7 +17,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     {
         parent::setUp();
     }
-    
+
     public function testAllSignedInCorrectOrder()
     {
         $dates = [
@@ -29,10 +29,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
                 '17/01/2015',
             ],
         ];
-        
+
         $this->assertTrue(DateCheck::checkDates($dates));
     }
-    
+
     public function testDonorSignsAfterCertificateProvider()
     {
         $dates = [
@@ -43,10 +43,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
                 '17/01/2015',
             ],
         ];
-    
+
         $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
     }
-    
+
     public function testCertificateProviderSignsAfterOneOfTheAttorneys()
     {
         $dates = [
@@ -57,10 +57,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
                 '18/01/2015',
             ],
         ];
-    
+
         $this->assertEquals(DateCheck::checkDates($dates), 'The Certificate Provider must sign the LPA before the attorneys.');
     }
-    
+
     public function testDonorSignsAfterEveryoneElse()
     {
         $dates = [
@@ -71,10 +71,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
                 '18/01/2015',
             ],
         ];
-    
+
         $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
     }
-    
+
     public function testOneAttorneySignsBeforeEveryoneElse()
     {
         $dates = [
@@ -85,50 +85,14 @@ class DateCheckTest extends AbstractHttpControllerTestCase
                 '18/01/2015',
             ],
         ];
-    
+
         $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
     }
-    
-    public function testExceptionNotThrownWhenCorrectFormatPassed()
-    {
-        $exceptionCaught = false;
-        try {
-            DateCheck::convertUkDateToTimestamp('14/02/2015');
-        } catch (\Exception $e) {
-            $exceptionCaught = true;
-        }
-    
-        $this->assertFalse($exceptionCaught);
-    }
-    
-    public function testExceptionThrownWhenWrongFormatPassed()
-    {
-        $exceptionCaught = false;
-        try {
-            DateCheck::convertUkDateToTimestamp('14-02-2015');
-        } catch (\Exception $e) {
-            $exceptionCaught = true;
-        }
-        
-        $this->assertTrue($exceptionCaught);
-    }
-    
-    public function testExceptionThrownWhenGarbagePassed()
-    {
-        $exceptionCaught = false;
-        try {
-            DateCheck::convertUkDateToTimestamp('asd0asd');
-        } catch (\Exception $e) {
-            $exceptionCaught = true;
-        }
-    
-        $this->assertTrue($exceptionCaught);
-    }
-    
+
     /**
      * Cleans up the environment after running a test.
      */
-    protected function tearDown ()
+    protected function tearDown()
     {
     }
 }

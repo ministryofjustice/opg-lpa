@@ -585,13 +585,30 @@ return [
                         ],
                     ],
                     'date-check' => [
-                        'type' => 'Segment',
+                        'type' => 'Literal',
                         'options' => [
-                            'route'    => '/date-check[/:from-page]',
+                            'route'    => '/date-check',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\DateCheckController',
                                 'action'     => 'index',
-                                'from-page'  => 'dashboard',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'complete' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route' => '/complete',
+                                ],
+                            ],
+                            'valid' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'  => '/valid',
+                                    'defaults' => [
+                                        'action' => 'valid',
+                                    ],
+                                ],
                             ],
                         ],
                     ],

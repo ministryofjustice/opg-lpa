@@ -1,0 +1,14 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block content %}
+
+    <div class="alert panel" role="alert">
+        <i class="icon icon-tick" role="presentation"></i>
+        <div class="alert-message">
+            <p>The LPA was signed in the correct order</p>
+        </div>
+    </div>
+
+    <a href="{{ returnTarget }}" class="button">Continue</a>
+
+{% endblock %}
