@@ -67,6 +67,8 @@ class FormFlowChecker extends StateChecker
         'lpa/complete'                                  => 'isCompleteAccessible',
         'lpa/more-info-required'                        => 'isMoreInfoRequiredAccessible',
         'lpa/date-check'                                => 'isApplicantAccessible',
+        'lpa/date-check/complete'                       => 'isCompleteAccessible',
+        'lpa/date-check/valid'                          => 'isApplicantAccessible',
         'lpa/summary'                                   => 'isInstructionsAccessible',
         'lpa/view-docs'                                 => 'isViewDocsAccessible',
         'lpa/reuse-details'                             => 'isReuseDetailsAccessible',
@@ -159,7 +161,7 @@ class FormFlowChecker extends StateChecker
         // Once an LPA has been locked, only allow the following pages.
         if(!empty($this->lpa) && ( $this->lpa->locked === true )
             && ($currentRouteName != 'lpa/complete')
-            && ($currentRouteName != 'lpa/date-check')
+            && (strpos($currentRouteName, 'lpa/date-check') === false)
             && ($currentRouteName != 'lpa/download')
             && ($currentRouteName != 'lpa/download/file') ) {
                 return 'lpa/view-docs';
