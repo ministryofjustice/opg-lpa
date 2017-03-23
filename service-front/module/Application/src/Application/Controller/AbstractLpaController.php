@@ -40,7 +40,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         try {
             $lpa = $this->getLpa();
         } catch (RuntimeException $rte) {
-            //  There was a problem retrieving the LPA so redirect to the user dashboar
+            //  There was a problem retrieving the LPA so redirect to the user dashboard
             return $this->redirect()->toRoute('user/dashboard');
         }
 
