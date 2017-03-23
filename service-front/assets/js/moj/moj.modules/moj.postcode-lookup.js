@@ -53,8 +53,8 @@
         // prepend template to postal fields
         this.$postalFields.before(this.searchTpl() + this.toggleTpl() + this.changeTpl()).addClass('hidden');
 
-        // if all fields are empty, hide them
-        if (moj.Helpers.hasCleanFields(this.$postalFields)) {
+        // if all fields are empty and there are no validation messages, hide them
+        if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
             this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         } else {
             this.hideSearchForm();
@@ -71,7 +71,7 @@
     changeClicked: function(e) {
         this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden');
-        if (moj.Helpers.hasCleanFields(this.$postalFields)) {
+        if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
             this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').removeClass('hidden');
         }
         this.$wrap.find('.js-PostcodeLookup__query').focus();
