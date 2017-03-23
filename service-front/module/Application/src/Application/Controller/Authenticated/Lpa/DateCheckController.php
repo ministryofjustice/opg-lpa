@@ -8,64 +8,99 @@ use Zend\View\Model\ViewModel;
 
 class DateCheckController extends AbstractLpaController
 {
-    protected $contentHeader = 'blank-header-partial.phtml';
-
     public function indexAction()
     {
+        $viewModel = new ViewModel();
+
         $lpa = $this->getLpa();
 
+        //  If the return route has been submitted in the post then just use it
+        $returnRoute = $this->params()->fromPost('returnRoute', null);
+
+        if (is_null($returnRoute)) {
+            //  If we came from the "LPA complete" route then set the return target back there
+            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+
+            if ($currentRouteName == 'lpa/date-check/complete') {
+                $returnRoute = 'lpa/complete';
+            }
+        }
+
+        //  Create the date check form and set the action
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', [
             'lpa' => $lpa,
         ]);
 
-        //  Determine the return route
-        $fromPage = $this->params()->fromRoute('from-page');
-
-        $route = 'user/dashboard';
-        $params = [];
-
-        if ($fromPage == 'complete') {
-            $route = 'lpa/complete';
-            $params = ['lpa-id' => $lpa->get('id')];
-        }
-
-        $returnRoute = $this->url()->fromRoute($route, $params);
-
         if ($this->request->isPost()) {
-            $post = $this->request->getPost();
-            $returnRoute = $post['returnRoute'];
-
-            $form->setData($post);
-
-            $postArray = $post->toArray();
+            //  Set the post data in the form and validate it
+            $form->setData($this->request->getPost());
 
             if ($form->isValid()) {
+                $data = $form->getData();
+
+                //  Extract the attorney dates from the post data
                 $attorneySignatureDates = [];
 
-                foreach ($postArray as $name => $date) {
+                foreach ($data as $name => $date) {
                     if (preg_match('/sign-date-(attorney|replacement-attorney)-\d/', $name)) {
                         $attorneySignatureDates[] = $date;
                     }
                 }
 
                 $result = DateCheck::checkDates([
-                    'donor'                 => $postArray['sign-date-donor'],
-                    'donor-life-sustaining' => $postArray['sign-date-donor-life-sustaining'] ?: null,
-                    'certificate-provider'  => $postArray['sign-date-certificate-provider'],
+                    'donor'                 => $data['sign-date-donor'],
+                    'donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $data['sign-date-donor-life-sustaining'] : null,
+                    'certificate-provider'  => $data['sign-date-certificate-provider'],
                     'attorneys'             => $attorneySignatureDates,
                 ]);
 
                 if ($result === true) {
-                    $viewParams['valid'] = true;
+                    $queryParams = [];
+
+                    if (!empty($returnRoute)) {
+                        $queryParams['return-route'] = $returnRoute;
+                    }
+
+                    $validUrl = $this->url()->fromRoute('lpa/date-check/valid', [
+                        'lpa-id' => $lpa->id,
+                    ], [
+                        'query' => $queryParams
+                    ]);
+
+                    return $this->redirect()->toUrl($validUrl);
                 } else {
-                    $viewParams['dateError'] = $result;
+                    $viewModel->dateError = $result;
                 }
             }
         }
 
-        $viewParams['form'] = $form;
-        $viewParams['returnRoute'] = $returnRoute;
+        $viewModel->form = $form;
+        $viewModel->returnRoute = $returnRoute;
 
-        return new ViewModel($viewParams);
+        return $viewModel;
+    }
+
+
+    public function validAction()
+    {
+        //  Generate the return target from the route
+        //  If there is no route then return to the dashboard
+        $returnRoute = $this->params()->fromQuery('return-route', null);
+
+        if (is_null($returnRoute)) {
+            $returnRoute = 'user/dashboard';
+        }
+
+        $params = [];
+
+        if ($returnRoute != 'user/dashboard') {
+            $params['lpa-id'] = $this->getLpa()->id;
+        }
+
+        $returnTarget = $this->url()->fromRoute($returnRoute, $params);
+
+        return new ViewModel([
+            'returnTarget' => $returnTarget,
+        ]);
     }
 }
