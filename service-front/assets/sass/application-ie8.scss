@@ -1,11 +1,13 @@
-// Settings
-@import 'settings/variables';
-
 // GOVUK Template
 @import 'govuk-template-ie8';
 
+// Settings
+@import 'settings/variables';
+
 // GOVUK Elements
-@import 'main-ie8';
+$is-ie: true;
+$ie-version: 8;
+@import "govuk-elements";
 
 // Extensions
 @import 'extensions/elements/elements-typography';
@@ -39,6 +41,7 @@
 @import 'patterns/iconlinks';
 @import 'patterns/date-checker';
 @import 'patterns/layout';
+@import 'patterns/home';
 
 // -- Initialize patterns
 

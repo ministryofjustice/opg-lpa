@@ -1,0 +1,51 @@
+// =======================================================
+// HOME
+// styling for homepage login and signup sections
+
+#home-boxes {
+    @include media(tablet) {
+        display: table;
+    }
+    margin-top: 4em;
+}
+
+#home-boxes-left, #home-boxes-right {
+    @include media(tablet) {
+        display: table-cell;
+        padding-right: 2em;
+    }
+    .heading-medium {
+        margin-top: 0px;
+    }
+    p {
+        margin-bottom: 2em;
+        max-width: 390px;
+    }
+}
+
+#home-boxes-left {
+    @include media(tablet) {
+        width: 48%;
+    }
+}
+
+#home-boxes-right {
+    margin-top: 3em;
+    @include media(tablet) {
+        margin-top: 0px;
+        border-left: 5px solid #bfc1c3;
+        position: relative;
+        padding-left: 38px;
+        padding-right: 30px;
+        width: 55%;
+        .button-start {
+            position: absolute;
+            bottom: 0px;
+            left: 38px;
+            &:active {
+                top: auto;
+                bottom: -2px;
+            }
+        }
+    }
+}
