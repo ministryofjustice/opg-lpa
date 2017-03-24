@@ -145,7 +145,7 @@ class Accordion extends AbstractHelper
         return $barsInPlay;
     }
 
-    private function getRouteName()
+    protected function getRouteName()
     {
         $application = $this->getView()
                             ->getHelperPluginManager()
