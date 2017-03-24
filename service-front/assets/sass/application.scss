@@ -1,11 +1,11 @@
 // GOVUK Template
 @import 'govuk-template';
 
-// GOVUK Elements
-@import 'main';
-
 // Settings
 @import 'settings/variables';
+
+// GOVUK Elements
+@import "govuk-elements";
 
 // Extensions
 @import 'extensions/elements/elements-typography';
@@ -39,6 +39,7 @@
 @import 'patterns/iconlinks';
 @import 'patterns/date-checker';
 @import 'patterns/layout';
+@import 'patterns/home';
 
 // -- Initialize patterns
 
