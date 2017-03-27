@@ -1,5 +1,5 @@
 {
-    "_id" : NumberLong(5531003156),
+    "_id" : 5531003156,
     "startedAt" : ISODate("2017-03-24T15:59:30.087Z"),
     "createdAt" : ISODate("2017-03-24T16:19:50.672Z"),
     "updatedAt" : ISODate("2017-03-24T16:21:52.804Z"),
@@ -20,7 +20,7 @@
     },
     "whoAreYouAnswered" : true,
     "locked" : true,
-    "seed" : NumberLong(91333263035),
+    "seed" : 91333263035,
     "repeatCaseNumber" : null,
     "document" : {
         "type" : "health-and-welfare",
@@ -106,7 +106,7 @@
                 "dob" : {
                     "date" : "1959-10-04T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(1),
+                "id" : 1,
                 "address" : {
                     "address1" : "867 Richmond Road",
                     "address2" : "Saltney",
@@ -125,7 +125,7 @@
                 "dob" : {
                     "date" : "1925-06-30T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(2),
+                "id" : 2,
                 "address" : {
                     "address1" : "70 Manchester Road",
                     "address2" : "Seaton",
@@ -144,7 +144,7 @@
                 "dob" : {
                     "date" : "1935-10-24T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(3),
+                "id" : 3,
                 "address" : {
                     "address1" : "765 St. John's Road",
                     "address2" : "Holbeach",
@@ -165,7 +165,7 @@
                 "dob" : {
                     "date" : "1981-04-07T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(1),
+                "id" : 1,
                 "address" : {
                     "address1" : "170 Queens Road",
                     "address2" : "Kilton",
@@ -184,7 +184,7 @@
                 "dob" : {
                     "date" : "1979-07-01T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(2),
+                "id" : 2,
                 "address" : {
                     "address1" : "279 Stanley Road",
                     "address2" : "Askern",
@@ -203,7 +203,7 @@
                 "dob" : {
                     "date" : "1955-02-28T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(3),
+                "id" : 3,
                 "address" : {
                     "address1" : "810 Grange Road",
                     "address2" : "Tow Law",
@@ -216,7 +216,7 @@
         ],
         "peopleToNotify" : [
             {
-                "id" : NumberLong(1),
+                "id" : 1,
                 "name" : {
                     "title" : "Miss",
                     "first" : "Elizabeth",
