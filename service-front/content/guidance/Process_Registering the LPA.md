@@ -9,7 +9,7 @@ To register your LPA:
 3. Print the completed LPA, including the registration section, and sign it in the right order.
 4. Send your signed LPA form to the Office of the Public Guardian (OPG), along with a fee remission form and evidence if you are applying to pay a reduced fee.
 
-The current fee for applying to register an LPA is £110. If you get means-tested benefits or have a low income, you may be able to pay less or no fee. [Fees and reductions](/help/#topic-fees-and-reductions) has more information. If paying by cheque, enclose your cheque with your LPA and registration forms when you send them to OPG.
+The current fee for applying to register an LPA is £82. If you get means-tested benefits or have a low income, you may be able to pay less or no fee. [Fees and reductions](/help/#topic-fees-and-reductions) has more information. If paying by cheque, enclose your cheque with your LPA and registration forms when you send them to OPG.
 
 Before you send in the LPA for registration, you can use this service to make sure you [sign it in the right order](/help/#topic-signing-the-lpa) and print the completed forms to tell any people who need to be notified that you are registering it.
 

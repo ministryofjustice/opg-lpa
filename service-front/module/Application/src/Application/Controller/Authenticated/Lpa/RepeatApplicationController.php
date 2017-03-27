@@ -3,10 +3,10 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Metadata;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Zend\View\Model\ViewModel;
 
 class RepeatApplicationController extends AbstractLpaController
 {
@@ -62,7 +62,7 @@ class RepeatApplicationController extends AbstractLpaController
                     Calculator::calculate($lpa);
 
                     if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                        throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
+                        throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in RepeatApplicationController');
                     }
                 }
 
@@ -83,7 +83,8 @@ class RepeatApplicationController extends AbstractLpaController
         }
 
         return new ViewModel([
-                'form'=>$form,
+            'form'         => $form,
+            'lpaRepeatFee' => Calculator::getFullFee(true)
         ]);
     }
 }

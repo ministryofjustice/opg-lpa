@@ -5,7 +5,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class Calculator
 {
-    const STANDARD_FEE = 110;
+    const STANDARD_FEE = 82;
 
     /**
      * Calculate LPA payment amount
@@ -13,28 +13,24 @@ class Calculator
      * @param Lpa $lpa
      * @return NULL|Payment
      */
-    static public function calculate(Lpa $lpa)
+    public static function calculate(Lpa $lpa)
     {
-        if(!($lpa->payment instanceof Payment)) return null;
+        if (!$lpa->payment instanceof Payment) {
+            return null;
+        }
 
-        $isRepeatApplication = ($lpa->repeatCaseNumber != null);
-
-        if(($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) {
-
+        if ($lpa->payment->reducedFeeReceivesBenefits && $lpa->payment->reducedFeeAwardedDamages) {
             $amount = self::getBenefitsFee();
-
         } else {
+            $isRepeatApplication = ($lpa->repeatCaseNumber != null);
 
-            if($lpa->payment->reducedFeeUniversalCredit) {
+            if ($lpa->payment->reducedFeeUniversalCredit) {
                 $amount = null;
+            } elseif ($lpa->payment->reducedFeeLowIncome) {
+                $amount = self::getLowIncomeFee($isRepeatApplication);
+            } else {
+                $amount = self::getFullFee($isRepeatApplication);
             }
-            elseif($lpa->payment->reducedFeeLowIncome) {
-                $amount = self::getLowIncomeFee( $isRepeatApplication );
-            }
-            else {
-                $amount = self::getFullFee( $isRepeatApplication );
-            }
-
         }
 
         $lpa->payment->amount = $amount;
@@ -42,24 +38,20 @@ class Calculator
         return $lpa->payment;
     }
 
-    public static function getFullFee( $isRepeatApplication = false ){
+    public static function getFullFee($isRepeatApplication = false)
+    {
+        $fee = self::STANDARD_FEE / ($isRepeatApplication ? 2 : 1);
 
-        $denominator = ($isRepeatApplication) ? 2 : 1;
-
-        return (float) self::STANDARD_FEE / $denominator;
-
+        return (float) $fee;
     }
 
-    public static function getLowIncomeFee( $isRepeatApplication = false ){
-
-        return (float) self::getFullFee( $isRepeatApplication ) / 2;
-
+    public static function getLowIncomeFee($isRepeatApplication = false)
+    {
+        return (float) self::getFullFee($isRepeatApplication) / 2;
     }
 
-    public static function getBenefitsFee(){
-
-        return (float)0;
-
+    public static function getBenefitsFee()
+    {
+        return 0.0;
     }
-
 }
