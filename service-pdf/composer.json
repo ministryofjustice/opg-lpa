@@ -21,7 +21,7 @@
         "zendframework/zendpdf": "^2.0.2",
         "zendframework/zend-crypt": "^2.3.4",
         "zendframework/zend-filter": "^2.4.9",
-        "ministryofjustice/opg-lpa-datamodels": "^2.0",
+        "ministryofjustice/opg-lpa-datamodels": "^2.1",
         "ministryofjustice/opg-lpa-logger": "^1.0.4",
         "NSmithUK/dynamo-queue-php": "^1.0",
         "zendframework/zend-barcode": "^2.6"
