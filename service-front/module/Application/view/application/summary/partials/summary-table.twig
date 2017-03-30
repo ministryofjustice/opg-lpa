@@ -148,7 +148,7 @@
         {% endif %}
 
         {# WHEN REPLACEMENT ATTORNEYS STEP IN #}
-        {% if lpa.document.replacementAttorneyDecisions is defined and lpa.document.replacementAttorneyDecisions.when is not empty %}
+        {% if lpa.document.replacementAttorneyDecisions is defined %}
 
             <tr class="group-start">
                 <td class="table-summary-heading" colspan="3">
@@ -156,24 +156,37 @@
                 </td>
             </tr>
 
-            <tr class="{{ (lpa.document.replacementAttorneyDecisions.how is not empty
-            or lpa.document.replacementAttorneyDecisions.howDetails is not empty
-            or lpa.document.replacementAttorneyDecisions.whenDetails is not empty) ? 'group-element' : 'group-end' }}">
-                <th class="table-summary-title" scope="row">When they step in</th>
-                <td class="table-summary-content" itemprop="name">
-                    {{ 'The replacement attorneys will step in ' ~
-                    ( lpa.document.replacementAttorneyDecisions.when == 'first' ?
-                    'as soon as one of the original attorneys can no longer act' :
-                    ((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-                    'as soon as none of the original attorneys can act' :
-                    'as per instructions')) }}
-                </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}">Edit</a></td>
-            </tr>
+            {% if lpa.document.replacementAttorneyDecisions.when is not empty %}
+                <tr class="{{ (lpa.document.replacementAttorneyDecisions.how is not empty
+                           or lpa.document.replacementAttorneyDecisions.howDetails is not empty
+                           or lpa.document.replacementAttorneyDecisions.whenDetails is not empty) ? 'group-element' : 'group-end' }}">
+                    <th class="table-summary-title" scope="row">When they step in</th>
+                    <td class="table-summary-content" itemprop="name">
+                        {{ 'The replacement attorneys will step in ' ~
+                        ( lpa.document.replacementAttorneyDecisions.when == 'first' ?
+                            'as soon as one of the original attorneys can no longer act' :
+                            ((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
+                                'as soon as none of the original attorneys can act' :
+                                'as per instructions')) }}
+                    </td>
+                    <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                </tr>
+            {% endif %}
+
+            {# WHEN REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
+            {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
+                <tr class="{{ (lpa.document.replacementAttorneyDecisions.how is not empty
+                           or lpa.document.replacementAttorneyDecisions.howDetails is not empty) ? 'group-element' : 'group-end' }}">
+                    <th class="table-summary-title" scope="row">Details of when</th>
+                    <td class="table-summary-content" itemprop="name">
+                        {{ lpa.document.replacementAttorneyDecisions.whenDetails }}
+                    </td>
+                    <td class="table-summary-action"></td>
+                </tr>
+            {% endif %}
 
             {% if lpa.document.replacementAttorneyDecisions.how is not empty %}
-                <tr class="{{ (lpa.document.replacementAttorneyDecisions.howDetails is not empty
-                or lpa.document.replacementAttorneyDecisions.whenDetails is not empty) ? 'group-element' : 'group-end' }}">
+                <tr class="{{ lpa.document.replacementAttorneyDecisions.howDetails is not empty ? 'group-element' : 'group-end' }}">
                     <th class="table-summary-title" scope="row">How decisions are made</th>
                     <td class="table-summary-content" itemprop="name">
                         {{ 'The replacement attorneys will act ' ~
@@ -193,17 +206,6 @@
                     <th class="table-summary-title" scope="row">Details of how</th>
                     <td class="table-summary-content" itemprop="name">
                         {{ lpa.document.replacementAttorneyDecisions.howDetails }}
-                    </td>
-                    <td class="table-summary-action"></td>
-                </tr>
-            {% endif %}
-
-            {# WHEN REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
-            {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
-                <tr class="group-end">
-                    <th class="table-summary-title" scope="row">Details of when</th>
-                    <td class="table-summary-content" itemprop="name">
-                        {{ lpa.document.replacementAttorneyDecisions.whenDetails }}
                     </td>
                     <td class="table-summary-action"></td>
                 </tr>
