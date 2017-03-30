@@ -12,6 +12,12 @@ If an attorney applies to register the LPA, the attorney's financial circumstanc
 
 It is only the donor whose benefits and income matter.
 
+### LPA fee changes
+
+The LPA application fee was reduced on 01 April 2017. If you have already printed and signed your LPA and are paying by cheque, then please send the relevant reduced fee. See <a href="https://www.gov.uk/opg">GOV.UK/opg</a> for more information.
+
+If you've paid your fee online and OPG receives your LPA after 01 April, we will refund the additional cost of your earlier payment so that you will only pay the new, reduced fee.
+
 ## Means-tested benefits: no fee
 
 If you (the donor) get any of these means-tested benefits, you won't have to pay a fee:
