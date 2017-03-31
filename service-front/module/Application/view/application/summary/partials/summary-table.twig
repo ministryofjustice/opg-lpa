@@ -338,9 +338,9 @@
                     {% if lpa.payment.reducedFeeReceivesBenefits %}
                         Application fee: £0 as you are claiming an eligible benefit
                     {% elseif lpa.payment.reducedFeeUniversalCredit %}
-                        Fee assessed on application as you have Universal Credit
+                        Fee assessed on application as you receive Universal Credit
                     {% elseif lpa.payment.reducedFeeLowIncome %}
-                        Application fee: £{{ lowIncomeFee }} as you have income less than £12,000
+                        Application fee: £{{ lowIncomeFee }} as you have an income of less than £12,000
                     {% else %}
                         Application fee: £{{ fullFee }} as you aren’t claiming a reduction
                     {% endif %}
