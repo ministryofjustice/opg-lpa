@@ -193,7 +193,7 @@ class RestController extends AbstractRestfulController {
      *
      * @return mixed
      */
-    public function deleteList()
+    public function deleteList($data)
     {
         return new ApiProblem(405, 'The DELETE method has not been defined on this collection');
     }

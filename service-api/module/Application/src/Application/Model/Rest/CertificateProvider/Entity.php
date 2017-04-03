@@ -1,16 +1,11 @@
 <?php
+
 namespace Application\Model\Rest\CertificateProvider;
 
-use Application\Model\Rest\EntityInterface;
-
-use Application\Model\Rest\Users\Entity as UsersEntity;
-use Application\Model\Rest\Applications\Entity as ApplicationEntity;
-
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\AccessorInterface as LpaAccessorInterface;
-
-use Application\Library\Hal\Hal;
+use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Application\Model\Rest\EntityInterface;
 
 class Entity implements EntityInterface {
 

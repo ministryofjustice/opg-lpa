@@ -1,11 +1,9 @@
 <?php
+
 namespace Application\Model\Rest\Applications;
 
 use Application\Model\Rest\CollectionInterface;
-
 use Zend\Paginator\Paginator;
-
-use Application\Library\Hal\Hal;
 
 class Collection extends Paginator implements CollectionInterface {
 
