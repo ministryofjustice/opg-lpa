@@ -102,6 +102,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                         $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
                 }
 
+                $this->cleanUpReplacementAttorneyDecisions();
+
                 return $this->moveToNextRoute();
             }
         }
@@ -203,20 +205,12 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
         if (array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
-            if (count($this->getLpa()->document->replacementAttorneys) <= 2) {
-                if ($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                    $this->getLpa()->document->replacementAttorneyDecisions->how = null;
-                    $this->getLpa()->document->replacementAttorneyDecisions->when = null;
-                    $this->getLpa()->document->replacementAttorneyDecisions->howDetails = null;
-                    $this->getLpa()->document->replacementAttorneyDecisions->whenDetails = null;
-                    $this->getLpaApplicationService()->setReplacementAttorneyDecisions($this->getLpa()->id, $this->getLpa()->document->replacementAttorneyDecisions);
-                }
-            }
-
             // persist data to the api
             if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
                 throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
             }
+
+            $this->cleanUpReplacementAttorneyDecisions();
         } else {
             // if attorney idx does not exist in lpa, return 404.
             return $this->notFoundAction();
@@ -261,6 +255,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                     $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                 }
 
+                $this->cleanUpReplacementAttorneyDecisions();
+
                 return $this->moveToNextRoute();
             }
         }
@@ -274,5 +270,11 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $this->addCancelUrlToView($viewModel, 'lpa/replacement-attorney');
 
         return $viewModel;
+    }
+
+    private function cleanUpReplacementAttorneyDecisions(){
+        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
+        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
+        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
     }
 }

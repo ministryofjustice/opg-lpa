@@ -26,21 +26,21 @@ use Application\Model\Service\System\DynamoCronLock;
 use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientResponseException;
 
 class Module{
-    
+
     public function onBootstrap(MvcEvent $e){
-        
+
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        
+
         // Register error handler for dispatch and render errors
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
-        
+
         register_shutdown_function(function () {
             $error = error_get_last();
-            
+
             if ($error['type'] === E_ERROR) {
                 // This is a fatal error, we have no exception and no nice view to render
                 // The fatal error will have been logged already prior to writing this message
@@ -147,20 +147,21 @@ class Module{
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'invokables' => [
-                'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationService',
-                'PasswordReset'         => 'Application\Model\Service\User\PasswordReset',
-                'Register'              => 'Application\Model\Service\User\Register',
-                'AboutYouDetails'       => 'Application\Model\Service\User\Details',
-                'DeleteUser'            => 'Application\Model\Service\User\Delete',
-                'Payment'               => 'Application\Model\Service\Payment\Payment',
-                'Feedback'              => 'Application\Model\Service\Feedback\Feedback',
-                'Signatures'            => 'Application\Model\Service\Feedback\Signatures',
-                'Guidance'              => 'Application\Model\Service\Guidance\Guidance',
-                'ApplicationList'       => 'Application\Model\Service\Lpa\ApplicationList',
-                'Metadata'              => 'Application\Model\Service\Lpa\Metadata',
-                'Communication'         => 'Application\Model\Service\Lpa\Communication',
-                'PostcodeInfo'          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-                'SiteStatus'            => 'Application\Model\Service\System\Status',
+                'AuthenticationService'                 => 'Application\Model\Service\Authentication\AuthenticationService',
+                'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
+                'Register'                              => 'Application\Model\Service\User\Register',
+                'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
+                'DeleteUser'                            => 'Application\Model\Service\User\Delete',
+                'Payment'                               => 'Application\Model\Service\Payment\Payment',
+                'Feedback'                              => 'Application\Model\Service\Feedback\Feedback',
+                'Signatures'                            => 'Application\Model\Service\Feedback\Signatures',
+                'Guidance'                              => 'Application\Model\Service\Guidance\Guidance',
+                'ApplicationList'                       => 'Application\Model\Service\Lpa\ApplicationList',
+                'Metadata'                              => 'Application\Model\Service\Lpa\Metadata',
+                'Communication'                         => 'Application\Model\Service\Lpa\Communication',
+                'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
+                'SiteStatus'                            => 'Application\Model\Service\System\Status',
+                'ReplacementAttorneyCleanup'            => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
@@ -192,27 +193,27 @@ class Module{
                         new \Http\Message\MessageFactory\GuzzleMessageFactory
                     );
                 },
-                
+
                 // Logger
                 'Logger' => function ( ServiceLocatorInterface $sm ) {
                     $logger = new Logger();
                     $logConfig = $sm->get('config')['log'];
-                    
+
                     $logger->setFileLogPath($logConfig['path']);
                     $logger->setSentryUri($logConfig['sentry-uri']);
-                    
+
                     return $logger;
-                    
+
                 },
-                
+
                 'Cache' => function ( ServiceLocatorInterface $sm ) {
-                    
+
                     $config = $sm->get('config')['admin']['dynamodb'];
 
                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
-                    
+
                     $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
-                    
+
                     return $dynamoDbAdapter;
                 },
 
@@ -230,46 +231,46 @@ class Module{
                 'GovPayClient' => function( ServiceLocatorInterface $sm ){
 
                     $config = $sm->get('config')['alphagov']['pay'];
-                    
+
                     return new GovPayClient([
                         'apiKey'        => $config['key'],
                         'httpClient'    => $sm->get('HttpClient'),
                     ]);
 
                 },
-                
+
                 'TwigEmailRenderer' => function ( ServiceLocatorInterface $sm ) {
-                 
+
                     $loader = new \Twig_Loader_Filesystem('module/Application/view/email');
-                    
+
                     $env = new \Twig_Environment($loader);
-                    
+
                     $viewHelperManager = $sm->get('ViewHelperManager');
                     $renderer = new \Zend\View\Renderer\PhpRenderer();
                     $renderer->setHelperPluginManager($viewHelperManager);
-                    
+
                     $env->registerUndefinedFunctionCallback(function ($name) use ($viewHelperManager, $renderer) {
                         if (!$viewHelperManager->has($name)) {
                             return false;
                         }
-                        
+
                         $callable = [$renderer->plugin($name), '__invoke'];
                         $options  = ['is_safe' => ['html']];
                         return new \Twig_SimpleFunction(null, $callable, $options);
                     });
-                    
+
                     return $env;
-                    
+
                 },
-                
+
                 'TwigViewRenderer' => function ( ServiceLocatorInterface $sm ) {
-                 
+
                     $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
-                    
+
                     $env = new \Twig_Environment($loader);
 
                     return $env;
-                
+
                 }
 
             ], // factories
@@ -323,71 +324,71 @@ class Module{
         return $config;
 
     }
-    
+
     /**
      * Look at the child view of the layout. If we detect that there is
      * a ".twig" file that will be picked up by the Twig module for rendering,
      * then change the current layout to be the ".twig" layout.
-     * 
+     *
      * @param MvcEvent $e
      */
     public function preRender(MvcEvent $e)
     {
         $viewModel = $e->getViewModel();
-        
+
         if ($viewModel->hasChildren()) {
             // This view has a layout (i.e. it's not a popup window)
             $children = $viewModel->getChildren();
-            
+
             // $children is an array but we only really expect one child
             $targetTemplateName = $children[0]->getTemplate();
-            
+
             $potentialTwigTemplate = 'module/Application/view/' . $targetTemplateName . '.twig';
-            
+
             // if there is a .phtml extension inside the name (abc.phtml.twig), then remove it
             $potentialTwigTemplate = str_replace('.phtml', '', $potentialTwigTemplate);
-            
+
             // if there is a double .twig extension inside the name (abc.twig.twig), then remove one
             $potentialTwigTemplate = str_replace('.twig.twig', '.twig', $potentialTwigTemplate);
 
             // the template name will be something like 'application/about-you/index' - with
             // no suffix. We look in the directory where we know the .phtml file will be
             // located and see if there is a .twig file (which would take precedence over it)
-            
+
             if (file_exists($potentialTwigTemplate)) {
                 // Use the Twig layout
                 $viewModel->setTemplate('layout/twig/layout');
             }
-            
+
         }
-        
+
     }
-    
+
     /**
      * Use our logger to send this exception to its various destinations
-     * 
+     *
      * @param MvcEvent $e
      */
     public function handleError(MvcEvent $e)
     {
 
         $exception = $e->getResult()->exception;
-        
+
         if ($exception) {
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
             $logger->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
-            
+
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
-            
+
             $e->getViewModel()->addChild($viewModel);
             $e->stopPropagation();
-             
+
             $e->getResponse()->setStatusCode(500);
-            
+
             return $viewModel;
         }
-        
+
     }
-    
+
 } // class

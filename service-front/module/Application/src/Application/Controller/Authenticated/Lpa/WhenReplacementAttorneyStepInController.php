@@ -22,7 +22,6 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
                         'when'
                 );
             }
-
             // set data for validation
             $form->setData($postData);
 
@@ -54,6 +53,8 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
                     }
                 }
 
+                $this->cleanUpReplacementAttorneyDecisions();
+
                 return $this->moveToNextRoute();
             }
         }
@@ -64,5 +65,11 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
         }
 
         return new ViewModel(['form'=>$form]);
+    }
+
+    private function cleanUpReplacementAttorneyDecisions(){
+        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
+        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
+        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
     }
 }

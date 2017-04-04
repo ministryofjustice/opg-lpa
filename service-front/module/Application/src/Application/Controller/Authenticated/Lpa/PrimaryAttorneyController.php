@@ -89,6 +89,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 // and applicant are primary attorneys
                 $this->resetApplicants();
 
+                $this->cleanUpReplacementAttorneyDecisions();
+
                 return $this->moveToNextRoute();
             }
         }
@@ -203,6 +205,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         $deletionFlag = true;
 
+
         if (array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
             // check primaryAttorneyDecisions::how and replacementAttorneyDecisions::when
             if (count($lpa->document->primaryAttorneys) <= 2) {
@@ -212,14 +215,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                         $lpa->document->primaryAttorneyDecisions->howDetails = null;
                         $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $lpa->document->primaryAttorneyDecisions);
                 }
-
-                if (($lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) &&
-                    ($lpa->document->replacementAttorneyDecisions->when != null)) {
-                        $lpa->document->replacementAttorneyDecisions->when = null;
-                        $lpa->document->replacementAttorneyDecisions->whenDetails = null;
-                        $this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
-                }
             }
+
+
 
             $attorneyId = $lpa->document->primaryAttorneys[$attorneyIdx]->id;
 
@@ -244,6 +242,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 
+            $this->cleanUpReplacementAttorneyDecisions();
+
             $deletionFlag = true;
         }
 
@@ -253,6 +253,12 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         return $this->moveToNextRoute();
+    }
+
+    private function cleanUpReplacementAttorneyDecisions(){
+        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
+        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
+        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
     }
 
     public function addTrustAction()
@@ -289,6 +295,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 // set this attorney as applicant if primary attorney acts jointly
                 // and applicant are primary attorneys
                 $this->resetApplicants();
+
+                $this->cleanUpReplacementAttorneyDecisions();
 
                 return $this->moveToNextRoute();
             }

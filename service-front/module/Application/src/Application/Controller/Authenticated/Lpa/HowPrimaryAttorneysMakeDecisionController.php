@@ -53,33 +53,12 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                     $decisions->how = $howAttorneysAct;
                     $decisions->howDetails = $howDetails;
 
-                    $changed  = false;
-                    if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-
-                        // all replacements step in arrangement shall be removed or reentered.
-                        if($this->getLpa()->document->replacementAttorneyDecisions->when != null) {
-                            $this->getLpa()->document->replacementAttorneyDecisions->when = null;
-                            $this->getLpa()->document->replacementAttorneyDecisions->whenDetails = null;
-                            $changed = true;
-                        }
-
-                        // if primary decision changed to depends, all replacement decisions will follow default arrangement.
-                        if(($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) &&
-                            ($this->getLpa()->document->replacementAttorneyDecisions->how != null)) {
-                                $this->getLpa()->document->replacementAttorneyDecisions->how = null;
-                                $this->getLpa()->document->replacementAttorneyDecisions->howDetails = null;
-                                $changed = true;
-                        }
-                    }
-
-                    if($changed) {
-                        $this->getLpaApplicationService()->setReplacementAttorneyDecisions($this->getLpa()->id, $this->getLpa()->document->replacementAttorneyDecisions);
-                    }
-
                     // persist data
                     if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $decisions)) {
                         throw new \RuntimeException('API client failed to set primary attorney decisions for id: '.$lpaId);
                     }
+
+                    $this->cleanUpReplacementAttorneyDecisions();
                 }
 
                 return $this->moveToNextRoute();
@@ -90,5 +69,11 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
         }
 
         return new ViewModel(['form'=>$form]);
+    }
+
+    private function cleanUpReplacementAttorneyDecisions(){
+        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
+        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
+        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
     }
 }
