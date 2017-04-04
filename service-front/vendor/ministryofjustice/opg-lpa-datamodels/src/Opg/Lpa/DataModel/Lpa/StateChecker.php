@@ -395,7 +395,7 @@ class StateChecker {
             && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS));
     }
 
-    protected function lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()
+    public function lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()
     {
         return ($this->lpaHasReplacementAttorney()
             && $this->lpaHasMultiplePrimaryAttorneys()
@@ -413,12 +413,12 @@ class StateChecker {
             && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST));
     }
 
-    protected function lpaHasMultipleReplacementAttorneys()
+    public function lpaHasMultipleReplacementAttorneys()
     {
         return ($this->lpaHasReplacementAttorney() && (count($this->lpa->document->replacementAttorneys) > 1));
     }
 
-    protected function lpaHasReplacementAttorney($index = null)
+    public function lpaHasReplacementAttorney($index = null)
     {
         if($index === null) {
             return ($this->lpaHasPrimaryAttorney()
@@ -443,14 +443,14 @@ class StateChecker {
             ]));
     }
 
-    protected function lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+    public function lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
     {
         return ($this->lpaHasMultiplePrimaryAttorneys()
             && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
             && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY));
     }
 
-    protected function lpaPrimaryAttorneysMakeDecisionJointly()
+    public function lpaPrimaryAttorneysMakeDecisionJointly()
     {
         return ($this->lpaHasMultiplePrimaryAttorneys()
             && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
@@ -464,7 +464,7 @@ class StateChecker {
             && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS));
     }
 
-    protected function lpaHasMultiplePrimaryAttorneys()
+    public function lpaHasMultiplePrimaryAttorneys()
     {
         return ($this->lpaHasPrimaryAttorney() && (count($this->lpa->document->primaryAttorneys) > 1));
     }
