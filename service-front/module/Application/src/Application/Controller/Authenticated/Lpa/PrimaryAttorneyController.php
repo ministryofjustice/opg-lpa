@@ -157,8 +157,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                     $updateCorrespondent = ($attorney->name == $nameToCompare && $correspondent->address == $attorney->address);
                 }
 
-                // update attorney with new details
-                $attorney->populate($form->getModelDataFromValidatedForm());
+                //  Update the attorney with new details and transfer across the ID value
+                $attorneyId = $attorney->id;
+                if ($attorney instanceof Human) {
+                    $attorney = new Human($form->getModelDataFromValidatedForm());
+                } else {
+                    $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
+                }
+                $attorney->id = $attorneyId;
 
                 // persist to the api
                 if (!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorney->id)) {
@@ -282,6 +288,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             if ($form->isValid()) {
                 // persist data
                 $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
+
                 if (!$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney)) {
                     throw new \RuntimeException('API client failed to add a trust corporation attorney for id: ' . $lpaId);
                 }
