@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
@@ -99,12 +100,21 @@ class Lpa120 extends AbstractForm
 
             //  If the applicant title is an other type then swap the values around
             if (!in_array($applicantTitle, ['mr','mrs','miss','ms'])) {
-                $applicantTitleOther = $applicantTitle;
+                $applicantTitleOther = $applicant->name->title; //  Use the original value here and not the lowercase version
                 $applicantTitle = 'other';
             }
 
             $applicantFirstName = $applicant->name->first;
             $applicantLastName = $applicant->name->last;
+        }
+
+        //  If the correspondent has a phone number then grab that value now
+        $applicantPhoneNumber = null;
+
+        if ($lpaDocument->correspondent instanceof Correspondence
+            && $lpaDocument->correspondent->phone instanceof Elements\PhoneNumber) {
+
+            $applicantPhoneNumber = $lpaDocument->correspondent->phone->number;
         }
 
         $mappings = array(
@@ -119,9 +129,10 @@ class Lpa120 extends AbstractForm
             'applicant-name-first'       => $applicantFirstName,
             'applicant-name-last'        => $applicantLastName,
             'applicant-address'          => "\n" . ($applicant->address instanceof Elements\Address ? (string) $applicant->address : ''),
+            'applicant-phone-number'     => $applicantPhoneNumber,
             'applicant-email-address'    => ($applicant->email instanceof Elements\EmailAddress ? (string) $applicant->email : null),
             'receive-benefits'           => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeReceivesBenefits),
-            'damage-awarded'             => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeAwardedDamages),
+            'damage-awarded'             => (is_null($lpaPayment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$lpaPayment->reducedFeeAwardedDamages)),
             'low-income'                 => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeLowIncome),
             'receive-universal-credit'   => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeUniversalCredit),
         );
