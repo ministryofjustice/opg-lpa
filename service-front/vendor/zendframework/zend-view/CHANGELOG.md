@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.2 - 2017-03-20
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#92](https://github.com/zendframework/zend-view/pull/92) fixes the docblocks
+  and exception messages in the breadcrumbs and menu navigation helpers to
+  remove references to 'module' keys for the `$partial` argument, as that key
+  is no longer used.
+- [#98](https://github.com/zendframework/zend-view/pull/98) fixes how the
+  `HeadMeta` helper renders the `<meta charset>` tag, ensuring it is the first
+  rendered. As long as the `HeadMeta` helper is called early in your markup, this
+  should ensure it is within the first 1024 characters, ensuring your document
+  validates.
+- [#104](https://github.com/zendframework/zend-view/pull/104) fixes the
+  `@method` annotation for the `Placeholder` view helper to use the correct case,
+  fixing issues with method completion in IDEs.
+- [#112](https://github.com/zendframework/zend-view/pull/112) fixes an issue in
+  the `PhpRendererStrategy` whereby absence of a response instance in the
+  `ViewEvent` would lead to a fatal error.
+
 ## 2.8.1 - 2016-06-30
 
 ### Added
