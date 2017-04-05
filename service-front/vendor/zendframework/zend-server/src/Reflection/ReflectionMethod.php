@@ -85,11 +85,7 @@ class ReflectionMethod extends AbstractFunction
      */
     public function __wakeup()
     {
-        $this->classReflection = new ReflectionClass(
-            new \ReflectionClass($this->class),
-            $this->getNamespace(),
-            $this->getInvokeArguments()
-        );
+        $this->classReflection = new ReflectionClass(new \ReflectionClass($this->class), $this->getNamespace(), $this->getInvokeArguments());
         $this->reflection = new \ReflectionMethod($this->classReflection->getName(), $this->getName());
     }
 
