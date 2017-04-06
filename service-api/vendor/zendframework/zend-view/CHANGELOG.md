@@ -2,6 +2,98 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - 2017-03-21
+
+### Added
+
+- [#89](https://github.com/zendframework/zend-view/pull/89) updates the
+  `HeadScript` and `InlineScript` view helpers to whitelist the `id` attribute
+  as an optional attribute.
+
+- [#96](https://github.com/zendframework/zend-view/pull/96) updates the
+  `HeadScript`, `HeadLink`, and `InlineScript` view helpers to whitelist the
+  `crossorigin` and `integrity` attributes as optional attributes.
+
+- [#64](https://github.com/zendframework/zend-view/pull/64) adds a new `Asset`
+  view helper. This helper uses the following configuration to map a named asset
+  to the actual file to serve:
+
+  ```php
+  'view_helper_config' => [
+      'asset' => [
+          'resource_map' => [
+              'css/style.css' => 'css/style-3a97ff4ee3.css',
+              'js/vendor.js' => 'js/vendor-a507086eba.js',
+          ],
+      ],
+  ],
+  ```
+
+  This can also be automated via tools such as gulp-rev and grunt-rev by using
+  the `rev-manifest.json` each creates directly within your configuration:
+
+  ```php
+  'view_helper_config' => [
+      'asset' => [
+          'resource_map' => json_decode(file_get_contents('path/to/rev-manifest.json'), true),
+      ],
+  ],
+  ```
+
+  The benefit of this approach is that it allows your view scripts to reference
+  a static asset name, while integrating with your JS and CSS build tools.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#114](https://github.com/zendframework/zend-view/pull/114) removes support
+  for PHP 5.5.
+
+### Fixed
+
+- [#110](https://github.com/zendframework/zend-view/pull/110) provides a fix
+  for the navigation helpers to ensure that usage of either the `default` or
+  `navigation` containers (documentation specified `default`, but usage only
+  allowed `navigation` previously). When `default` is specified, the
+  `Zend\Navigation\Navigation` service will be used for the container; if
+  `navigation` is used, that service will be pulled instead (which is usually an
+  alias for the `Zend\Navigation\Navigation` service anyways).
+
+## 2.8.2 - 2017-03-20
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#92](https://github.com/zendframework/zend-view/pull/92) fixes the docblocks
+  and exception messages in the breadcrumbs and menu navigation helpers to
+  remove references to 'module' keys for the `$partial` argument, as that key
+  is no longer used.
+- [#98](https://github.com/zendframework/zend-view/pull/98) fixes how the
+  `HeadMeta` helper renders the `<meta charset>` tag, ensuring it is the first
+  rendered. As long as the `HeadMeta` helper is called early in your markup, this
+  should ensure it is within the first 1024 characters, ensuring your document
+  validates.
+- [#104](https://github.com/zendframework/zend-view/pull/104) fixes the
+  `@method` annotation for the `Placeholder` view helper to use the correct case,
+  fixing issues with method completion in IDEs.
+- [#112](https://github.com/zendframework/zend-view/pull/112) fixes an issue in
+  the `PhpRendererStrategy` whereby absence of a response instance in the
+  `ViewEvent` would lead to a fatal error.
+
 ## 2.8.1 - 2016-06-30
 
 ### Added

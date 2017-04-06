@@ -22,6 +22,7 @@ use Zend\View\Resolver\ResolverInterface as Resolver;
 use Zend\View\Resolver\TemplatePathStack;
 use Zend\View\Variables;
 
+// @codingStandardsIgnoreStart
 /**
  * Class for Zend\View\Strategy\PhpRendererStrategy to help enforce private constructs.
  *
@@ -31,6 +32,7 @@ use Zend\View\Variables;
  *
  * Convenience methods for build in helpers (@see __call):
  *
+ * @method string asset($asset)
  * @method string|null basePath($file = null)
  * @method \Zend\View\Helper\Cycle cycle(array $data = array(), $name = \Zend\View\Helper\Cycle::DEFAULT_NAME)
  * @method \Zend\View\Helper\DeclareVars declareVars()
@@ -60,7 +62,7 @@ use Zend\View\Variables;
  * @method string paginationControl(\Zend\Paginator\Paginator $paginator = null, $scrollingStyle = null, $partial = null, $params = null)
  * @method string|\Zend\View\Helper\Partial partial($name = null, $values = null)
  * @method string partialLoop($name = null, $values = null)
- * @method \Zend\View\Helper\Placeholder\Container\AbstractContainer placeHolder($name = null)
+ * @method \Zend\View\Helper\Placeholder\Container\AbstractContainer placeholder($name = null)
  * @method string renderChildModel($child)
  * @method void renderToPlaceholder($script, $placeholder)
  * @method string serverUrl($requestUri = null)
@@ -131,6 +133,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
      * @var array Temporary variable stack; used when variables passed to render()
      */
     private $__varsCache = [];
+    // @codingStandardsIgnoreEnd
 
     /**
      * Constructor.
@@ -213,7 +216,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
      */
     public function setVars($variables)
     {
-        if (!is_array($variables) && !$variables instanceof ArrayAccess) {
+        if (! is_array($variables) && ! $variables instanceof ArrayAccess) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Expected array or ArrayAccess object; received "%s"',
                 (is_object($variables) ? get_class($variables) : gettype($variables))
@@ -221,7 +224,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
         }
 
         // Enforce a Variables container
-        if (!$variables instanceof Variables) {
+        if (! $variables instanceof Variables) {
             $variablesAsArray = [];
             foreach ($variables as $key => $value) {
                 $variablesAsArray[$key] = $value;
@@ -312,7 +315,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
     public function __unset($name)
     {
         $vars = $this->vars();
-        if (!isset($vars[$name])) {
+        if (! isset($vars[$name])) {
             return;
         }
         unset($vars[$name]);
@@ -328,7 +331,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
     public function setHelperPluginManager($helpers)
     {
         if (is_string($helpers)) {
-            if (!class_exists($helpers)) {
+            if (! class_exists($helpers)) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Invalid helper helpers class provided (%s)',
                     $helpers
@@ -336,7 +339,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
             }
             $helpers = new $helpers(new ServiceManager());
         }
-        if (!$helpers instanceof HelperPluginManager) {
+        if (! $helpers instanceof HelperPluginManager) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Helper helpers must extend Zend\View\HelperPluginManager; got type "%s" instead',
                 (is_object($helpers) ? get_class($helpers) : gettype($helpers))
@@ -490,7 +493,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
 
         while ($this->__template = array_pop($this->__templates)) {
             $this->__file = $this->resolver($this->__template);
-            if (!$this->__file) {
+            if (! $this->__file) {
                 throw new Exception\RuntimeException(sprintf(
                     '%s: Unable to render template "%s"; resolver could not resolve to a file',
                     __METHOD__,
