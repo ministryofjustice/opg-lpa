@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+
+## 2.8.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+
+## 2.8.2 - 2017-01-29
+
+### Added
+
+- [#110](https://github.com/zendframework/zend-validator/pull/110) adds new
+  Mastercard 2-series BINs
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#81](https://github.com/zendframework/zend-validator/pull/81) registers the
+  Uuid validator into ValidatorPluginManager.
+
 ## 2.8.1 - 2016-06-23
 
 ### Added
