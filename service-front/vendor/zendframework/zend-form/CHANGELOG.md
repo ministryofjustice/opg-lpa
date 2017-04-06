@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.0 - 2017-02-23
+
+### Added
+
+- [#115](https://github.com/zendframework/zend-form/pull/115) adds translatable
+  HTML attributes to the abstract view helper.
+- [#116](https://github.com/zendframework/zend-form/pull/116) adds the InputFilterFactory
+  dependency to the constructor.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#139](https://github.com/zendframework/zend-form/pull/139) adds support for 
+  ReCaptcha version 2 though zend-captcha 2.7.1.
+
 ## 2.9.2 - 2016-09-22
 
 ### Added

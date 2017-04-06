@@ -53,14 +53,11 @@ abstract class AbstractServer implements Server
     /**
      * Build callback for method signature
      *
-     * @deprecated Since 2.7.0; method will have private visibility starting in 3.0.
      * @param  Reflection\AbstractFunction $reflection
      * @return Method\Callback
      */
-    // @codingStandardsIgnoreStart
     protected function _buildCallback(Reflection\AbstractFunction $reflection)
     {
-    // @codingStandardsIgnoreEnd
         $callback = new Method\Callback();
         if ($reflection instanceof Reflection\ReflectionMethod) {
             $callback->setType($reflection->isStatic() ? 'static' : 'instance')
@@ -76,17 +73,13 @@ abstract class AbstractServer implements Server
     /**
      * Build a method signature
      *
-     * @deprecated Since 2.7.0; method will be renamed to remove underscore
-     *     prefix in 3.0.
      * @param  Reflection\AbstractFunction $reflection
      * @param  null|string|object $class
      * @return Method\Definition
      * @throws Exception\RuntimeException on duplicate entry
      */
-    // @codingStandardsIgnoreStart
     protected function _buildSignature(Reflection\AbstractFunction $reflection, $class = null)
     {
-    // @codingStandardsIgnoreEnd
         $ns         = $reflection->getNamespace();
         $name       = $reflection->getName();
         $method     = empty($ns) ? $name : $ns . '.' . $name;
@@ -127,16 +120,12 @@ abstract class AbstractServer implements Server
     /**
      * Dispatch method
      *
-     * @deprecated Since 2.7.0; method will be renamed to remove underscore
-     *     prefix in 3.0.
      * @param  Method\Definition $invokable
      * @param  array $params
      * @return mixed
      */
-    // @codingStandardsIgnoreStart
     protected function _dispatch(Method\Definition $invokable, array $params)
     {
-    // @codingStandardsIgnoreEnd
         $callback = $invokable->getCallback();
         $type     = $callback->getType();
 
@@ -165,15 +154,11 @@ abstract class AbstractServer implements Server
         return call_user_func_array([$object, $method], $params);
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * Map PHP type to protocol type
      *
-     * @deprecated Since 2.7.0; method will be renamed to remove underscore
-     *     prefix in 3.0.
      * @param  string $type
      * @return string
      */
     abstract protected function _fixType($type);
-    // @codingStandardsIgnoreEnd
 }

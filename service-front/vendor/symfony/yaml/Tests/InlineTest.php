@@ -11,9 +11,10 @@
 
 namespace Symfony\Component\Yaml\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Inline;
 
-class InlineTest extends \PHPUnit_Framework_TestCase
+class InlineTest extends TestCase
 {
     /**
      * @dataProvider getTestsForParse
@@ -456,5 +457,26 @@ class InlineTest extends \PHPUnit_Framework_TestCase
     public function testNotSupportedMissingValue()
     {
         Inline::parse('{this, is not, supported}');
+    }
+
+    public function testVeryLongQuotedStrings()
+    {
+        $longStringWithQuotes = str_repeat("x\r\n\\\"x\"x", 1000);
+
+        $yamlString = Inline::dump(array('longStringWithQuotes' => $longStringWithQuotes));
+        $arrayFromYaml = Inline::parse($yamlString);
+
+        $this->assertEquals($longStringWithQuotes, $arrayFromYaml['longStringWithQuotes']);
+    }
+
+    public function testBooleanMappingKeysAreConvertedToStrings()
+    {
+        $this->assertSame(array('false' => 'foo'), Inline::parse('{false: foo}'));
+        $this->assertSame(array('true' => 'foo'), Inline::parse('{true: foo}'));
+    }
+
+    public function testTheEmptyStringIsAValidMappingKey()
+    {
+        $this->assertSame(array('' => 'foo'), Inline::parse('{ "": foo }'));
     }
 }
