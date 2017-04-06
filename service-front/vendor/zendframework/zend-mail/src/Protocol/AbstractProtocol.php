@@ -89,7 +89,7 @@ abstract class AbstractProtocol
         $this->validHost = new Validator\ValidatorChain();
         $this->validHost->attach(new Validator\Hostname(Validator\Hostname::ALLOW_ALL));
 
-        if (!$this->validHost->isValid($host)) {
+        if (! $this->validHost->isValid($host)) {
             throw new Exception\RuntimeException(implode(', ', $this->validHost->getMessages()));
         }
 
@@ -206,7 +206,14 @@ abstract class AbstractProtocol
         $errorStr = '';
 
         // open connection
-        $this->socket = @stream_socket_client($remote, $errorNum, $errorStr, self::TIMEOUT_CONNECTION);
+        set_error_handler(
+            function ($error, $message = '') {
+                throw new Exception\RuntimeException(sprintf('Could not open socket: %s', $message), $error);
+            },
+            E_WARNING
+        );
+        $this->socket = stream_socket_client($remote, $errorNum, $errorStr, self::TIMEOUT_CONNECTION);
+        restore_error_handler();
 
         if ($this->socket === false) {
             if ($errorNum == 0) {
@@ -246,7 +253,7 @@ abstract class AbstractProtocol
     protected function _send($request)
     {
         // @codingStandardsIgnoreEnd
-        if (!is_resource($this->socket)) {
+        if (! is_resource($this->socket)) {
             throw new Exception\RuntimeException('No connection has been established to ' . $this->host);
         }
 
@@ -275,7 +282,7 @@ abstract class AbstractProtocol
     protected function _receive($timeout = null)
     {
         // @codingStandardsIgnoreEnd
-        if (!is_resource($this->socket)) {
+        if (! is_resource($this->socket)) {
             throw new Exception\RuntimeException('No connection has been established to ' . $this->host);
         }
 
@@ -293,7 +300,7 @@ abstract class AbstractProtocol
         // Check meta data to ensure connection is still valid
         $info = stream_get_meta_data($this->socket);
 
-        if (!empty($info['timed_out'])) {
+        if (! empty($info['timed_out'])) {
             throw new Exception\RuntimeException($this->host . ' has timed out');
         }
 
@@ -322,7 +329,7 @@ abstract class AbstractProtocol
         $this->response = [];
         $errMsg = '';
 
-        if (!is_array($code)) {
+        if (! is_array($code)) {
             $code = [$code];
         }
 
@@ -332,8 +339,8 @@ abstract class AbstractProtocol
 
             if ($errMsg !== '') {
                 $errMsg .= ' ' . $msg;
-            } elseif ($cmd === null || !in_array($cmd, $code)) {
-                $errMsg =  $msg;
+            } elseif ($cmd === null || ! in_array($cmd, $code)) {
+                $errMsg = $msg;
             }
 
         // The '-' message prefix indicates an information string instead of a response string.

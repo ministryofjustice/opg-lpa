@@ -32,7 +32,9 @@ $body->setParts([$html, $image]);
 
 $message = new Message();
 $message->setBody($body);
-$message->getHeaders()->addHeaderLine('Content-Type', 'multipart/related');
+
+$contentTypeHeader = $message->getHeaders()->get('Content-Type');
+$contentTypeHeader->setType('multipart/related');
 ```
 
 Note that the above code requires us to manually specify the message content
@@ -65,7 +67,9 @@ $body->setParts([$text, $html]);
 
 $message = new Message();
 $message->setBody($body);
-$message->getHeaders()->addHeaderLine('Content-Type', 'multipart/alternative');
+
+$contentTypeHeader = $message->getHeaders()->get('Content-Type');
+$contentTypeHeader->setType('multipart/alternative');
 ```
 
 The only differences from the first example are:
@@ -98,37 +102,36 @@ use Zend\Mime\Part as MimePart;
 
 $body = new MimeMessage();
 
-$text = new MimePart($textContent);
-$text->type = Mime::TYPE_TEXT;
-$text->charset = 'utf-8';
+$text           = new MimePart($textContent);
+$text->type     = Mime::TYPE_TEXT;
+$text->charset  = 'utf-8';
 $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
-$html = new MimePart($htmlMarkup);
-$html->type = Mime::TYPE_HTML;
-$html->charset = 'utf-8';
+$html           = new MimePart($htmlMarkup);
+$html->type     = Mime::TYPE_HTML;
+$html->charset  = 'utf-8';
 $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
 $content = new MimeMessage();
+// This order is important for email clients to properly display the correct version of the content
 $content->setParts([$text, $html]);
 
 $contentPart = new MimePart($content->generateMessage());
-$contentPart->type = sprintf(
-    "multipart/alternative\n boundary=\"%s\",
-    $content->getMime()->boundary()
-);
 
-$image = new MimePart(fopen($pathToImage, 'r'));
-$image->type = 'image/jpeg';
-$image->filename = 'image-file-name.jpg';
+$image              = new MimePart(fopen($pathToImage, 'r'));
+$image->type        = 'image/jpeg';
+$image->filename    = 'image-file-name.jpg';
 $image->disposition = Mime::DISPOSITION_ATTACHMENT;
-$image->encoding = Mime::ENCODING_BASE64;
+$image->encoding    = Mime::ENCODING_BASE64;
 
 $body = new MimeMessage();
 $body->setParts([$contentPart, $image]);
 
 $message = new Message();
 $message->setBody($body);
-$message->geHeaders()->addHeaderLine('Content-Type', 'multipart/related');
+
+$contentTypeHeader = $message->getHeaders()->get('Content-Type');
+$contentTypeHeader->setType('multipart/related');
 ```
 
 ## Setting custom MIME boundaries

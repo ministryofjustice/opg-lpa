@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.1 - 2017-01-16
+
+### Added
+
+- [#22](https://github.com/zendframework/zend-mime/pull/22) adds the ability to
+  decode a single-part MIME message via `Zend\Mime\Message::createFromMessage()`
+  by omitting the `$boundary` argument.
+
+### Changes
+
+- [#14](https://github.com/zendframework/zend-mime/pull/14) adds checks for
+  duplicate parts when adding them to a MIME message, and now throws an
+  `InvalidArgumentException` when detected.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#13](https://github.com/zendframework/zend-mime/pull/13) fixes issues with
+  qp-octets produced by Outlook.
+- [#17](https://github.com/zendframework/zend-mime/pull/17) fixes a syntax error
+  in how are thrown by `Zend\Mime\Part::setContent()`.
+- [#18](https://github.com/zendframework/zend-mime/pull/18) fixes how non-ASCII
+  header values are encoded, ensuring that it allows the first word to be of
+  arbitrary length.
+
 ## 2.6.0 - 2016-04-20
 
 ### Added
