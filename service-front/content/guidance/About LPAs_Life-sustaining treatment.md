@@ -62,8 +62,3 @@ You can also let people know your views on treatments and care in:
 See [The 2 types of LPA](/help/#topic-the-2-types-of-lpa) for more information.
 
 There's more about life-sustaining treatment, advance decisions and how health professionals must respond to your written wishes in chapter 9 of the <a href="http://www.justice.gov.uk/protecting-the-vulnerable/mental-capacity-act" rel="external" target="_blank">Mental Capacity Act 2005 Code of Practice</a>.
-
-### Related help topics
-* [Attorneys](/help/#topic-attorneys)
-* [Instructions and preferences](/help/#topic-instructions-and-preferences)
-* [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)

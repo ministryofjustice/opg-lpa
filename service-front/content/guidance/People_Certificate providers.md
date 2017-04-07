@@ -53,9 +53,3 @@ The certificate provider must not be:
 * an owner, manager, director or employee of a care home where you live, or a member of their family
 * anyone running or working for a trust corporation appointed as an attorney in this LPA
 * any other person the Court of Protection may consider is not sufficiently independent
-
-### Related help topics
-
-* [People to notify](/help/#topic-people-to-notify)
-* [Signing the LPA](/help/#topic-signing-the-lpa)
-* [Registering the LPA](/help/#topic-registering-the-lpa)

@@ -127,7 +127,3 @@ You should avoid these common mistakes:
 * Don’t add health and welfare instructions to a property and financial affairs LPA. Don't add property and financial instructions to a health and welfare LPA. You should make a separate LPA for each instead.
 * You can't tell an attorney to change your will – it's outside their powers.
 * You can't give an attorney power to appoint a replacement attorney.
-
-### Related help topics
-* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)
-* [Life-sustaining treatment](/help/#topic-life-sustaining-treatment)

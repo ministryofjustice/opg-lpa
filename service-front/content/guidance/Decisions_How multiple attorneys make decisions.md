@@ -99,9 +99,3 @@ In both examples, 'everything else' means all decisions about your day-to-day ca
 * Do you know what will happen if one attorney can't act any more?
 * Do you want replacement attorneys? They're an important backup if your attorneys have to make some or all decisions together.
 
-### Related help topics
-* [Attorneys](/help/#topic-attorneys)
-* [Replacement attorneys](/help/#topic-replacement-attorneys)
-* [Restrictions and guidance](/help/#topic-instructions-and-preferences)
-
-
