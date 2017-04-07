@@ -66,10 +66,4 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
 
         return new ViewModel(['form'=>$form]);
     }
-
-    private function cleanUpReplacementAttorneyDecisions(){
-        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
-        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
-        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
-    }
 }
