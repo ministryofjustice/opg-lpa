@@ -148,7 +148,8 @@
         {% endif %}
 
         {# WHEN REPLACEMENT ATTORNEYS STEP IN #}
-        {% if lpa.document.replacementAttorneyDecisions is defined %}
+        {% if lpa.document.replacementAttorneyDecisions is defined and
+        (lpa.document.replacementAttorneyDecisions.when is not empty or lpa.document.replacementAttorneyDecisions.how is not empty) %}
 
             <tr class="group-start">
                 <td class="table-summary-heading" colspan="3">
