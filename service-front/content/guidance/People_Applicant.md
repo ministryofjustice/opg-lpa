@@ -25,7 +25,3 @@ If you've said some or all decisions can be made jointly and severally:
 * those who apply must sign section 15
 
 If more than one attorney applies to register your LPA, OPG will send the registered and stamped LPA to the attorney whose name appears first.
-
-### Related help topics
-* [Correspondence address](/help/#topic-correspondence-address)
-* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)

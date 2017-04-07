@@ -37,7 +37,3 @@ or:
 > This lasting power of attorney only applies if my GP or another doctor confirms in writing that I don't have capacity to make specific decisions about property or finances.
 
 However, if you trust your attorneys to assess your mental capacity, you do not need to add instructions.
-
-### Related help topics
-* [Registering the LPA](/help/#topic-registering-the-lpa)
-* [Instructions and preferences](/help/#topic-instructions-and-preferences)

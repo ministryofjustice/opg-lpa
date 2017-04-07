@@ -5,7 +5,3 @@ You can use this service to fill out and print a lasting power of attorney (LPA)
 You need to pay £82 to apply to register an LPA. You can pay the fee on this website and then post the forms to OPG. OPG checks the LPA and contacts you if anything needs changing. OPG then registers and stamps it and returns it to you by post. Your LPA is then ready to use.
 
 OPG advises registering your LPA as soon as it's finished, although you don't have to. If there are errors and you lose your mental capacity before the LPA's registered, it won't be possible to use the LPA.
-
-### Related help topics
-* [Registering your LPA](/help/#topic-registering-the-lpa)
-* [The 2 types of LPA](/help/#topic-the-2-types-of-lpa)
