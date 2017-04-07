@@ -22,7 +22,6 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
                         'when'
                 );
             }
-
             // set data for validation
             $form->setData($postData);
 
@@ -53,6 +52,8 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
                         throw new \RuntimeException('API client failed to set replacement step in decisions for id: '.$lpaId);
                     }
                 }
+
+                $this->cleanUpReplacementAttorneyDecisions();
 
                 return $this->moveToNextRoute();
             }

@@ -59,16 +59,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.25.3",
+            "version": "3.25.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c5d85fbaaea30e598eab4ff07c4213787b00b080"
+                "reference": "f5181b893c8822c5dc3986e4e52eddff66bbd04f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c5d85fbaaea30e598eab4ff07c4213787b00b080",
-                "reference": "c5d85fbaaea30e598eab4ff07c4213787b00b080",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f5181b893c8822c5dc3986e4e52eddff66bbd04f",
+                "reference": "f5181b893c8822c5dc3986e4e52eddff66bbd04f",
                 "shasum": ""
             },
             "require": {
@@ -135,7 +135,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-04-04T20:52:10+00:00"
+            "time": "2017-04-05T23:01:19+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -834,23 +834,23 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/master",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/5.0.1",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
             "time": "2016-12-23T09:38:29+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "v2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "ea12348e164a777b94ec5987eeb6fbd79b4ac82e"
+                "reference": "5c56eec72be13e25331cef96a1f70529b4c63ee7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/ea12348e164a777b94ec5987eeb6fbd79b4ac82e",
-                "reference": "ea12348e164a777b94ec5987eeb6fbd79b4ac82e",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/5c56eec72be13e25331cef96a1f70529b4c63ee7",
+                "reference": "5c56eec72be13e25331cef96a1f70529b4c63ee7",
                 "shasum": ""
             },
             "require": {
@@ -874,10 +874,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/v2.1.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/2.1.2",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-02-08T12:03:06+00:00"
+            "time": "2017-04-05T13:44:54+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -2711,16 +2711,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.2.6",
+            "version": "v3.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "c57009887010eb4e58bfca2970314a5b820b24b9"
+                "reference": "cb0b6418f588952c9290b3df4ca650f1b7ab570a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/c57009887010eb4e58bfca2970314a5b820b24b9",
-                "reference": "c57009887010eb4e58bfca2970314a5b820b24b9",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/cb0b6418f588952c9290b3df4ca650f1b7ab570a",
+                "reference": "cb0b6418f588952c9290b3df4ca650f1b7ab570a",
                 "shasum": ""
             },
             "require": {
@@ -2760,7 +2760,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-04T12:23:14+00:00"
+            "time": "2017-04-04T15:30:56+00:00"
         },
         {
             "name": "symfony/intl",
