@@ -160,12 +160,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             $form->setData($postData);
 
             if ($form->isValid()) {
-                // update with new details
-                if ($attorney instanceof Human) {
-                    $attorney->populate($form->getModelDataFromValidatedForm());
-                } else {
-                    $attorney->populate($form->getModelDataFromValidatedForm());
-                }
+
+                //  Update the attorney with new details
+                $attorney->populate($form->getModelDataFromValidatedForm());
 
                 // persist to the api
                 if (!$this->getLpaApplicationService()->setReplacementAttorney($lpaId, $attorney, $attorney->id)) {
