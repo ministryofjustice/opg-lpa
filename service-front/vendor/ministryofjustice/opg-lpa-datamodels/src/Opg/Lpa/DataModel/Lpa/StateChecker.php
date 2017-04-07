@@ -156,39 +156,21 @@ class StateChecker {
      */
     protected function paymentResolved()
     {
-        if(!($this->lpa->payment instanceof Payment)) {
-            return false;
-        }
+        if ($this->lpa->payment instanceof Payment) {
+            //  If the payment method is cheque or the amount is zero or the payment is reduced due to UC then the payment is considered resolved
+            if ($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE
+                || $this->lpa->payment->amount == 0
+                || $this->lpa->payment->reducedFeeUniversalCredit) {
 
-        if($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) {
-            // has exemption
-            return true;
-        }
-        elseif($this->lpa->payment->reducedFeeUniversalCredit) {
-            // receive universal credit
-            return true;
-        }
-        else {
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-                // pay by card
-                if($this->lpa->payment->reference != null) {
-                    // payment ref received from payment service provider
-                    return true;
-                }
-                else {
-                    // payment ref not received from payment service provider
-                    return false;
-                }
-            }
-            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                // pay by cheque
+                return true;
+            } elseif ($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD
+                && $this->lpa->payment->reference != null) {
+
                 return true;
             }
-            else {
-                // must have a payment method if amount is greater than 0.
-                return false;
-            }
         }
+
+        return false;
     }
 
     /**
