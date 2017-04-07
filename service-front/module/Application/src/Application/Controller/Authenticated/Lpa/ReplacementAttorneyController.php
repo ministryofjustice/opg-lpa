@@ -271,10 +271,4 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         return $viewModel;
     }
-
-    private function cleanUpReplacementAttorneyDecisions(){
-        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
-        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
-        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
-    }
 }
