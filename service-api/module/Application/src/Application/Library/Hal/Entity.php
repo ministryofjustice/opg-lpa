@@ -51,6 +51,7 @@ class Entity extends Hal
         if (!$this->entity instanceof StatsEntity) {
             if ($this->entity instanceof UsersEntity) {
                 $callbackParam = 'api-v1/user';
+                $this->addLink('user', call_user_func($routeCallback, 'api-v1/user', $this->entity));
             } elseif ($this->entity instanceof ApplicationsEntity) {
                 $callbackParam = 'api-v1/user/level-1';
                 $this->addLink('user', call_user_func($routeCallback, 'api-v1/user', $this->entity));
