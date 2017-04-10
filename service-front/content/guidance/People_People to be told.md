@@ -62,7 +62,3 @@ A person to notify can object to an LPA's registration if:
 * Have you discussed what's involved with your people to notify?
 * Do they understand why you want to name them and what will happen if an application to register your LPA is made?
 * Are they happy to be named in your LPA?
-
-### Related help topics
-* [Certificate providers](/help/#topic-certificate-providers)
-* [Registering the LPA](/help/#topic-registering-the-lpa)

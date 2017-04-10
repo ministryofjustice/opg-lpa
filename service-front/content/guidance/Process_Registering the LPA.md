@@ -61,8 +61,3 @@ The 4-week wait is set by law. It gives people time to raise concerns they have 
 OPG also uses the time to check that the LPA has been made correctly and there's nothing that would make it invalid or unworkable. If there is something that must be corrected before it can be registered, OPG will contact you.
 
 The registered LPA document that OPG sends you is the same form that you filled in and sent to OPG – but you will see it's been stamped, once OPG has registered it. 
-
-### Related help topics
-* [Signing the LPA](/help/#topic-signing-the-lpa)
-* [Fees and reductions](/help/#topic-fees-and-reductions)
-* [People to notify](/help/#topic-people-to-notify)
