@@ -1,82 +1,64 @@
 <?php
+
 namespace Application\Controller\Version1;
 
 use RuntimeException;
 
-use Zend\Mvc\Exception;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Controller\AbstractRestfulController;
-
-use Application\Model\Rest\ResourceInterface;
-use Application\Model\Rest\EntityInterface;
-use Application\Model\Rest\RouteProviderInterface;
-
-use Application\Model\Rest\Lock\LockedException;
-
-use Zend\Http\Response as HttpResponse;
-
+use Application\Library\Hal;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-
+use Application\Model\Rest\EntityInterface;
+use Application\Model\Rest\Lock\LockedException;
+use Application\Model\Rest\ResourceInterface;
+use Application\Model\Rest\RouteProviderInterface;
+use Zend\Http\Response as HttpResponse;
+use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
-
-use Application\Library\Hal\Hal;
-use Application\Library\Hal\HalResponse;
-use Application\Library\Hal\Entity as HalEntity;
-use Application\Library\Hal\Collection as HalCollection;
-
 use ZfcRbac\Exception\UnauthorizedException;
 
-class RestController extends AbstractRestfulController {
-
+class RestController extends AbstractRestfulController
+{
     /**
      * @var ResourceInterface The resource model to use.
      */
     private $resource;
-
-    //---
 
     /**
      * Sets the Resource identified in the URL.
      *
      * @param ResourceInterface $resource
      */
-    public function setResource( ResourceInterface $resource ){
+    public function setResource(ResourceInterface $resource)
+    {
         $this->resource = $resource;
         $this->identifierName = $resource->getIdentifier();
-    } // function
+    }
 
     /**
      * @return ResourceInterface The Resource current being used.
      */
-    public function getResource(){
-
-        if( !isset($this->resource) || !($this->resource instanceof ResourceInterface) ){
+    public function getResource()
+    {
+        if (!isset($this->resource) || !($this->resource instanceof ResourceInterface)) {
             throw new RuntimeException('A resource has not been set');
         }
 
         return $this->resource;
+    }
 
-    } // function
-
-    //----------------------------------------------------
-
-    public function onDispatch(MvcEvent $event) {
-
+    public function onDispatch(MvcEvent $event)
+    {
         try {
-
             $return = parent::onDispatch($event);
-
-        } catch( UnauthorizedException $e ){
+        } catch (UnauthorizedException $e) {
             $return = new ApiProblem(401, 'Access Denied');
-        } catch ( LockedException $e ){
-            $return = new ApiProblem( 403, 'LPA has been locked' );
+        } catch (LockedException $e) {
+            $return = new ApiProblem(403, 'LPA has been locked');
         }
 
-        //---
-
-        if ($return instanceof Hal) {
-            return new HalResponse($return, 'json');
+        if ($return instanceof Hal\Hal) {
+            return new Hal\HalResponse($return, 'json');
         }
 
         if ($return instanceof ApiProblem) {
@@ -84,8 +66,7 @@ class RestController extends AbstractRestfulController {
         }
 
         return $return;
-
-    } // function
+    }
 
     /**
      * Retrieve the identifier, if any
@@ -100,20 +81,17 @@ class RestController extends AbstractRestfulController {
      * @param  \Zend\Stdlib\RequestInterface $request
      * @return false|mixed
      */
-    protected function getIdentifier($routeMatch, $request){
-
+    protected function getIdentifier($routeMatch, $request)
+    {
         $resource = $this->getResource();
 
         // If the resource is a singular,
-        if( $resource->getType() == $resource::TYPE_SINGULAR ){
+        if ($resource->getType() == $resource::TYPE_SINGULAR) {
             return true;
         }
 
-        return parent::getIdentifier( $routeMatch, $request );
-
-    } // function
-
-    //----------------------------------------------------
+        return parent::getIdentifier($routeMatch, $request);
+    }
 
     /**
      * Create a new resource
@@ -121,37 +99,29 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $data
      * @return mixed
      */
-    public function create($data){
-
-        if( !is_callable( [ $this->getResource(), 'create' ] ) ){
+    public function create($data)
+    {
+        if (!is_callable([$this->getResource(), 'create'])) {
             return new ApiProblem(405, 'The POST method has not been defined on this entity');
         }
 
-        $result = $this->getResource()->create( $data );
+        $result = $this->getResource()->create($data);
 
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
+        } elseif ($result instanceof EntityInterface) {
+            $hal = new Hal\Entity($result);
 
-        } elseif( $result instanceof EntityInterface ) {
+            $hal->setLinks([$this, 'generateRoute']);
 
-            $hal = new HalEntity( $result );
-
-            $hal->setLinks( [ $this, 'generateRoute' ] );
-
-            $response = new HalResponse( $hal, 'json' );
+            $response = new Hal\HalResponse($hal, 'json');
             $response->setStatusCode(201);
-            $response->getHeaders()->addHeaderLine('Location', $hal->getUri() );
+            $response->getHeaders()->addHeaderLine('Location', $hal->getUri());
 
             return $response;
-
         }
 
-        // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
     /**
@@ -160,29 +130,21 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $id
      * @return mixed
      */
-    public function delete($id){
-
-        if( !is_callable( [ $this->getResource(), 'delete' ] ) ){
+    public function delete($id)
+    {
+        if (!is_callable([$this->getResource(), 'delete'])) {
             return new ApiProblem(405, 'The DELETE method has not been defined');
         }
 
-        $result = @$this->getResource()->delete( $id );
+        $result = @$this->getResource()->delete($id);
 
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
-
-        } elseif( $result === true ) {
-
+        } elseif ($result === true) {
             return new NoContentResponse();
-
         }
 
-        // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
     /**
@@ -193,7 +155,7 @@ class RestController extends AbstractRestfulController {
      *
      * @return mixed
      */
-    public function deleteList()
+    public function deleteList($data)
     {
         return new ApiProblem(405, 'The DELETE method has not been defined on this collection');
     }
@@ -204,43 +166,33 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $id
      * @return mixed
      */
-    public function get($id){
-
-        if( !is_callable( [ $this->getResource(), 'fetch' ] ) ){
+    public function get($id)
+    {
+        if (!is_callable([$this->getResource(), 'fetch'])) {
             return new ApiProblem(405, 'The GET method has not been defined');
         }
 
-        $result = $this->getResource()->fetch( $id );
+        $result = $this->getResource()->fetch($id);
 
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
-
-        } elseif( $result instanceof EntityInterface ) {
-
-            if( count($result->toArray()) == 0 ){
+        } elseif ($result instanceof EntityInterface) {
+            if (count($result->toArray()) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = new HalEntity( $result );
+            $hal = new Hal\Entity($result);
 
-            $hal->setLinks( [ $this, 'generateRoute' ] );
+            $hal->setLinks([$this, 'generateRoute']);
 
-            $response = new HalResponse( $hal, 'json' );
+            $response = new Hal\HalResponse($hal, 'json');
 
             return $response;
-
-        } elseif( $result instanceof HttpResponse ){
-
+        } elseif ($result instanceof HttpResponse) {
             return $result;
-
         }
 
-        // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
     /**
@@ -248,17 +200,15 @@ class RestController extends AbstractRestfulController {
      *
      * @return mixed
      */
-    public function getList(){
-
-        if( !is_callable( [ $this->getResource(), 'fetchAll' ] ) ){
+    public function getList()
+    {
+        if (!is_callable([$this->getResource(), 'fetchAll'])) {
             return new ApiProblem(405, 'The GET method has not been defined on this collection');
         }
 
-        //---
-
         $query = $this->params()->fromQuery();
 
-        if( isset($query['page']) && is_numeric($query['page']) ){
+        if (isset($query['page']) && is_numeric($query['page'])) {
             $page = (int)$query['page'];
         } else {
             $page = 1;
@@ -266,33 +216,22 @@ class RestController extends AbstractRestfulController {
 
         unset($query['page']);
 
-        //---
+        $collections = $this->getResource()->fetchAll($query);
 
-        $collections = $this->getResource()->fetchAll( $query );
-
-        //---
-
-        if( $collections instanceof ApiProblem ){
-
+        if ($collections instanceof ApiProblem) {
             return $collections;
-
-        } elseif( $collections === null ) {
-
+        } elseif ($collections === null) {
             return new NoContentResponse();
-
         }
 
         $collections->setCurrentPageNumber($page);
 
-        //---
+        $hal = new Hal\Collection($collections, $this->getResource()->getName());
 
-        $hal = new HalCollection( $collections, $this->getResource()->getName() );
+        $hal->setLinks([$this, 'generateRoute']);
 
-        $hal->setLinks( [ $this, 'generateRoute' ] );
-
-        return new HalResponse( $hal, 'json' );
-
-    } // function
+        return new Hal\HalResponse($hal, 'json');
+    }
 
     /**
      * Retrieve HEAD metadata for the resource
@@ -332,40 +271,33 @@ class RestController extends AbstractRestfulController {
      *
      * @param  $id
      * @param  $data
+     * @return mixed
      */
-    public function patch($id, $data){
-
-        if( !is_callable( [ $this->getResource(), 'patch' ] ) ){
+    public function patch($id, $data)
+    {
+        if (!is_callable([$this->getResource(), 'patch'])) {
             return new ApiProblem(405, 'The PATCH method has not been defined');
         }
 
-        $result = @$this->getResource()->patch( $data, $id );
+        $result = @$this->getResource()->patch($data, $id);
 
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
-
-        } elseif( $result instanceof EntityInterface ) {
-
-            if( count($result->toArray()) == 0 ){
+        } elseif ($result instanceof EntityInterface) {
+            if (count($result->toArray()) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = new HalEntity( $result );
+            $hal = new Hal\Entity($result);
 
-            $hal->setLinks( [ $this, 'generateRoute' ] );
+            $hal->setLinks([$this, 'generateRoute']);
 
-            $response = new HalResponse( $hal, 'json' );
+            $response = new Hal\HalResponse($hal, 'json');
 
             return $response;
-
         }
 
-        // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
     /**
@@ -403,52 +335,42 @@ class RestController extends AbstractRestfulController {
      * @param  mixed $data
      * @return mixed
      */
-    public function update($id, $data){
-
-        if( !is_callable( [ $this->getResource(), 'update' ] ) ){
+    public function update($id, $data)
+    {
+        if (!is_callable([$this->getResource(), 'update'])) {
             return new ApiProblem(405, 'The PUT method has not been defined');
         }
 
-        $result = @$this->getResource()->update( $data, $id );
+        $result = @$this->getResource()->update($data, $id);
 
-        //---
-
-        if( $result instanceof ApiProblem ){
-
+        if ($result instanceof ApiProblem) {
             return $result;
-
-        } elseif( $result instanceof EntityInterface ) {
-
-            if( count($result->toArray()) == 0 ){
+        } elseif ($result instanceof EntityInterface) {
+            if (count($result->toArray()) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = new HalEntity( $result );
+            $hal = new Hal\Entity($result);
 
-            $hal->setLinks( [ $this, 'generateRoute' ] );
+            $hal->setLinks([$this, 'generateRoute']);
 
-            $response = new HalResponse( $hal, 'json' );
+            $response = new Hal\HalResponse($hal, 'json');
 
             return $response;
-
         }
 
-        // If we get here...
         return new ApiProblem(500, 'Unable to process request');
-
     }
 
     /**
      * Basic functionality for when a page is not available
      *
-     * @return array
+     * @return ApiProblem
      */
     public function notFoundAction()
     {
         return new ApiProblem(404, 'Page not found');
     }
-
-    //-----------------------------------------
 
     /**
      * This function is passed as a callback into anything that needs to be able to generate a route.
@@ -458,22 +380,21 @@ class RestController extends AbstractRestfulController {
      * @param array $params
      * @return string
      */
-    public function generateRoute( $routeName, RouteProviderInterface $provider, $params = array() ){
-
+    public function generateRoute($routeName, RouteProviderInterface $provider, $params = array())
+    {
         $original = $this->params()->fromQuery();
+
         unset($original['page']);
 
-        $params = array_merge( $original, $params );
+        $params = array_merge($original, $params);
 
         $resource = $this->getResource();
 
         return $this->url()->fromRoute($routeName, [
-                'userId'=>$resource->getRouteUser()->userId(),
-                'lpaId'=>$provider->lpaId(),
-                'resource' => $resource->getName(),
-                'resourceId' => $provider->resourceId()
-            ],[ 'query' => $params ]);
-
-    } // function
-
-} // class
+            'userId'=>$resource->getRouteUser()->userId(),
+            'lpaId'=>$provider->lpaId(),
+            'resource' => $resource->getName(),
+            'resourceId' => $provider->resourceId()
+        ], ['query' => $params]);
+    }
+}

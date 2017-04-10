@@ -1,8 +1,8 @@
 <?php
+
 namespace Application\Library\Hal;
 
 use InvalidArgumentException;
-
 use Zend\Http\Response;
 
 /**
@@ -11,8 +11,8 @@ use Zend\Http\Response;
  * Class HalResponse
  * @package Application\Library\Http
  */
-class HalResponse extends Response {
-
+class HalResponse extends Response
+{
     /**
      * @var Hal The Hal document.
      */
@@ -27,26 +27,23 @@ class HalResponse extends Response {
      * @var array The supported formats.
      */
     protected $formats = [
-        'xml' => 'application/hal+xml',
+        'xml'  => 'application/hal+xml',
         'json' => 'application/hal+json',
     ];
-
 
     /**
      * @param Hal $hal A Hal document
      * @param string $format Either 'json' or 'xml'.
      */
-    public function __construct( Hal $hal, $format ){
-
-        if( !isset( $this->formats[$format] ) ){
-            throw new InvalidArgumentException( 'Invalid format requested' );
+    public function __construct(Hal $hal, $format)
+    {
+        if (!isset($this->formats[$format])) {
+            throw new InvalidArgumentException('Invalid format requested');
         }
 
         $this->hal = $hal;
         $this->format = $format;
-
-    } // function
-
+    }
 
     /**
      * Retrieve the content
@@ -57,9 +54,8 @@ class HalResponse extends Response {
      */
     public function getContent()
     {
-        return $this->hal->getContent( $this->format );
+        return $this->hal->getContent($this->format);
     }
-
 
     /**
      * Retrieve headers
@@ -72,11 +68,11 @@ class HalResponse extends Response {
     public function getHeaders()
     {
         $headers = parent::getHeaders();
+
         if (!$headers->has('content-type')) {
             $headers->addHeaderLine('content-type', $this->formats[$this->format]);
         }
+
         return $headers;
     }
-
-
-} // class
+}
