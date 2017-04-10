@@ -14,7 +14,7 @@
         "amount": 27.5,
         "reference": "61ln49caftebdu75rg23716x7bqcuo3q",
         "date": "2015-01-14T21:42:05.000000+0000",
-        "reducedFeeReceivesBenefits": false,
+        "reducedFeeReceivesBenefits": true,
         "reducedFeeAwardedDamages": true,
         "reducedFeeLowIncome": true,
         "reducedFeeUniversalCredit": false
@@ -337,7 +337,7 @@
         "address": "cor@gmail.com"
       },
       "phone": {
-        "number": "12312334232"
+        "number": "01234 123456"
       },
       "contactByPost": true,
       "contactInWelsh": true

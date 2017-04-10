@@ -1,169 +1,159 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lpa120 extends AbstractForm
 {
     private $basePdfTemplate;
-    
+
     public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
-        
-        // generate a file path with lpa id and timestamp;
+
+        //  Generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
-        
-        $this->basePdfTemplate = $this->pdfTemplatePath."/LPA120.pdf";
+
+        $this->basePdfTemplate = $this->pdfTemplatePath . '/LPA120.pdf';
     }
-    
+
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
-     * 
-     * @return Form object | null
+     *
+     * @return $this
      */
     public function generate()
     {
-        Logger::getInstance()->info(
-            'Generating Lpa120',
-            [
-                'lpaId' => $this->lpa->id
-            ]
-        );
-        
-        // check eligibility for exemption or remission.
-        if(!$this->lpa->repeatCaseNumber &&
-            !$this->lpa->payment->reducedFeeLowIncome && 
-            !($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) &&
-            !$this->lpa->payment->reducedFeeUniversalCredit) {
-                throw new \RuntimeException("LPA120 is not available for this LPA.");
-            }
-        
+        $lpa = $this->lpa;
+        $lpaPayment = $lpa->payment;
+
+        Logger::getInstance()->info('Generating Lpa120', [
+            'lpaId' => $lpa->id
+        ]);
+
+        //  Check eligibility for exemption or remission.
+        if(!$lpa->repeatCaseNumber
+            && !$lpaPayment->reducedFeeLowIncome
+            && !($lpaPayment->reducedFeeReceivesBenefits && $lpaPayment->reducedFeeAwardedDamages)
+            && !$lpaPayment->reducedFeeUniversalCredit) {
+
+            throw new \RuntimeException("LPA120 is not available for this LPA.");
+        }
+
         $pdf = PdftkInstance::getInstance($this->basePdfTemplate);
-        
+
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
-        
+
         // populate forms
         $mappings = $this->dataMapping();
-        
+
         $pdf->fillForm($mappings)
             ->flatten()
             ->saveAs($this->generatedPdfFilePath);
 
         $this->protectPdf();
-        
+
         return $this;
-        
-    } // function generate()
-    
+    }
+
     /**
-     * Data mapping
-     * 
+     * Get the data mapping for this document
+     *
      * @return array
+     * @throws \Exception
      */
     protected function dataMapping()
     {
-        if($this->lpa->payment->reducedFeeReceivesBenefits === true) {
-            $benefits = 'yes';
-        }
-        elseif($this->lpa->payment->reducedFeeReceivesBenefits === false) {
-            $benefits = 'no';
-        }
-        else {
-            $benefits = null;
-        }
-        
-        if($this->lpa->payment->reducedFeeAwardedDamages === true) {
-            $damages = 'no';
-        }
-        elseif($this->lpa->payment->reducedFeeAwardedDamages === false) {
-            $damages = 'yes';
-        }
-        else {
-            $damages = null;
-        }
-        
-        if($this->lpa->payment->reducedFeeLowIncome === true) {
-            $income = 'yes';
-        }
-        elseif($this->lpa->payment->reducedFeeLowIncome === false) {
-            $income = 'no';
-        }
-        else {
-            $income = null;
-        }
-        
-        if($this->lpa->payment->reducedFeeUniversalCredit === true) {
-            $uc = 'yes';
-        }
-        elseif($this->lpa->payment->reducedFeeUniversalCredit === false) {
-            $uc = 'no';
-        }
-        else {
-            $uc = null;
-        }
-        
-        // get applicant object
-        if($this->lpa->document->whoIsRegistering == 'donor') {
-            $applicant = $this->lpa->document->donor;
+        $lpa = $this->lpa;
+        $lpaDocument = $lpa->document;
+        $lpaPayment = $lpa->payment;
+
+        //  Get applicant object
+        if ($lpaDocument->whoIsRegistering == 'donor') {
+            $applicant = $lpaDocument->donor;
             $applicantType = 'donor';
-        }
-        else {
-            if(!is_array($this->lpa->document->whoIsRegistering)) {
-                throw new \Exception('When generating LAP120, applicant was found invalid');
-            }
-            
-            // get the first element in the whoIsRegistering array as the applicant of the LPA.
-            foreach($this->lpa->document->whoIsRegistering as $attorneyId) {
-                $applicant = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
+        } elseif (is_array($lpaDocument->whoIsRegistering)) {
+            //  Get the first element in the whoIsRegistering array as the attorney applicant of the LPA
+            foreach ($lpaDocument->whoIsRegistering as $attorneyId) {
+                $applicant = $lpaDocument->getPrimaryAttorneyById($attorneyId);
                 $applicantType = 'attorney';
                 break;
             }
+        } else {
+            throw new \Exception('When generating LAP120, applicant was found invalid');
         }
-        
-        // convert address object to array and remove empty field.
-        $address = [];
-        if(($applicant->address->address1!=null)&&($applicant->address->address1!='')) $address[] = $applicant->address->address1;
-        if(($applicant->address->address2!=null)&&($applicant->address->address2!='')) $address[] = $applicant->address->address2;
-        if(($applicant->address->address3!=null)&&($applicant->address->address3!='')) $address[] = $applicant->address->address3;
-        if(($applicant->address->postcode!=null)&&($applicant->address->postcode!='')) $address[] = $applicant->address->postcode;
-        
-        if($applicant->name instanceof Name) {
-            $applicantNameTitle = strtolower($applicant->name->title);
-            if(!in_array($applicantNameTitle, ['mr','mrs','miss','ms'])) {
-                $applicantNameTitle = 'other';
+
+        //  Get the applicant name details
+        $applicantTitle = null;
+        $applicantTitleOther = null;
+        $applicantFirstName = null;
+        $applicantLastName = $applicant->name;  //  Default the applicant last name here in case the value is a string for a company
+
+        if ($applicant->name instanceof Elements\Name) {
+            $applicantTitle = strtolower($applicant->name->title);
+
+            //  If the applicant title is an other type then swap the values around
+            if (!in_array($applicantTitle, ['mr','mrs','miss','ms'])) {
+                $applicantTitleOther = $applicant->name->title; //  Use the original value here and not the lowercase version
+                $applicantTitle = 'other';
             }
+
+            $applicantFirstName = $applicant->name->first;
+            $applicantLastName = $applicant->name->last;
         }
-        
+
+        //  If the correspondent has a phone number then grab that value now
+        $applicantPhoneNumber = null;
+
+        if ($lpaDocument->correspondent instanceof Correspondence
+            && $lpaDocument->correspondent->phone instanceof Elements\PhoneNumber) {
+
+            $applicantPhoneNumber = $lpaDocument->correspondent->phone->number;
+        }
+
         $mappings = array(
-                'donor-full-name'   => $this->fullName($this->lpa->document->donor->name),
-                'donor-address'     => "\n".implode(', ', array(
-                        $this->lpa->document->donor->address->address1,
-                        $this->lpa->document->donor->address->address2,
-                        $this->lpa->document->donor->address->address3,
-                        $this->lpa->document->donor->address->postcode
-                )),
-                'lpa-type' => ($this->lpa->document->type==Document::LPA_TYPE_PF)?'property-and-financial-affairs':'health-and-welfare',
-                'is-repeat-application'     => ($this->lpa->repeatCaseNumber===null)?null:self::CHECK_BOX_ON,
-                'case-number'               => $this->lpa->repeatCaseNumber,
-                'applicant-type'             => $applicantType,
-                'applicant-name-title'  => $applicantNameTitle,
-                'applicant-name-title-other'  => ($applicantNameTitle=='other')?$applicant->name->title:null,
-                'applicant-name-first'  => ($applicant->name instanceof Name)?$applicant->name->first:null,
-                'applicant-name-last'   => ($applicant->name instanceof Name)?$applicant->name->last:$applicant->name,
-                'applicant-address'     => "\n".implode(', ', $address),
-                'applicant-email-address' => ($applicant->email instanceof EmailAddress)?$applicant->email->address:null,
-                'receive-benefits'          => $benefits,
-                'damage-awarded'            => $damages,
-                'low-income'                => $income,
-                'receive-universal-credit'  => $uc,
+            'donor-full-name'            => $this->fullName($lpaDocument->donor->name),
+            'donor-address'              => "\n" . (string) $lpaDocument->donor->address,
+            'lpa-type'                   => ($lpaDocument->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare'),
+            'is-repeat-application'      => (is_null($lpa->repeatCaseNumber) ? null : self::CHECK_BOX_ON),
+            'case-number'                => $lpa->repeatCaseNumber,
+            'applicant-type'             => $applicantType,
+            'applicant-name-title'       => $applicantTitle,
+            'applicant-name-title-other' => $applicantTitleOther,
+            'applicant-name-first'       => $applicantFirstName,
+            'applicant-name-last'        => $applicantLastName,
+            'applicant-address'          => "\n" . ($applicant->address instanceof Elements\Address ? (string) $applicant->address : ''),
+            'applicant-phone-number'     => $applicantPhoneNumber,
+            'applicant-email-address'    => ($applicant->email instanceof Elements\EmailAddress ? (string) $applicant->email : null),
+            'receive-benefits'           => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeReceivesBenefits),
+            'damage-awarded'             => (is_null($lpaPayment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$lpaPayment->reducedFeeAwardedDamages)),
+            'low-income'                 => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeLowIncome),
+            'receive-universal-credit'   => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeUniversalCredit),
         );
-        
+
         return $mappings;
-    } // function dataMapping()
-}  // class Lpa120
+    }
+
+    /**
+     * Simple function to return a yes/no string or null value
+     *
+     * @param $valueIn
+     * @return null|string
+     */
+    private function getYesNoNullValueFromBoolean($valueIn)
+    {
+        if ($valueIn === true) {
+            return 'yes';
+        } elseif($valueIn === false) {
+            return 'no';
+        }
+
+        return null;
+    }
+}
