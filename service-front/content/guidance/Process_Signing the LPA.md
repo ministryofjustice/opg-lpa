@@ -60,6 +60,3 @@ You can use this service to check your order of signing is correct before sendin
 If you find that the dates are in the wrong order, then you need to print the document again and have the relevant people sign it in the correct order before you attempt to register the LPA.
 
 If you send your LPA in with an incorrect signing order, you will have to complete some or all parts of it again and may incur additional fees.
-
-### Related help topics
-* [Registering the LPA](/help/#topic-registering-the-lpa)

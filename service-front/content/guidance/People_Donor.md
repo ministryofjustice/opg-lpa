@@ -49,9 +49,3 @@ Bankruptcy does not affect a health and welfare LPA.
 ## Other names
 
 If the donor uses more than one name or used to be known by a different name, they (or the person helping them) should make a list of the other names they use. A list will help attorneys deal with banks and other organisations on the donor’s behalf when the donors use the LPA.
-
-### Related help topics
-* [LPA basics](/help/#topic-lpa-basics)
-* [Attorneys](/help/#topic-attorneys)
-* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)
-

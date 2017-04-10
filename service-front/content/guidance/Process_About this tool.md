@@ -47,8 +47,3 @@ You need to make quite a few decisions when you make your LPA. You should think 
 * Do you want to state any preferences about your beliefs and values to guide your attorneys' decision-making?
 * Who's the independent person – the certificate provider – who can sign your LPA to confirm that you understand it and no one is forcing you to make it? This person is a safeguard who can raise concerns when you make your LPA.
 * Are there any 'people to notify' about your LPA when it is about to be registered? These people are an optional safeguard who can raise concerns about your LPA before it can be used.
-
-
-### Related help topics
-* [LPA basics](/help/#topic-lpa-basics)
-* [Fees and reductions](/help/#topic-fees-and-reductions)

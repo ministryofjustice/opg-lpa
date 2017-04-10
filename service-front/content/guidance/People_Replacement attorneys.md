@@ -73,7 +73,3 @@ You can only state an order if your attorneys act jointly and severally. You can
 * Would you want new attorneys to replace original ones in a particular order? (This is only possible if you have said that attorneys should make decisions jointly and severally.)
 
 You need to choose your replacements as carefully as your original attorneys.
-
-### Related help topics
-* [Attorneys](/help/#topic-attorneys)
-* [How multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions)

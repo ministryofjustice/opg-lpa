@@ -89,7 +89,3 @@ Most donors take some time choosing the best people to be their attorneys. Consi
 * Do they know you, your beliefs and your preferences well enough to make decisions for you?
 * Do they have the skills to act under your LPA and do they manage their own affairs well? For example, are they good with money?
 * Who can be your replacement attorneys?
-
-### Related help topics
-* [Instructions and preferences](/help/#topic-instructions-and-preferences)
-* [Replacement attorneys](/help/#topic-replacement-attorneys)

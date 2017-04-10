@@ -102,8 +102,3 @@ Send a copy of your benefit award letter to OPG with all the following:
 * application for remission form (LPA120A)
 
 OPG will contact you to let you know how much you'll have to pay and to arrange payment. OPG aims to do this within 7 working days of getting your application.
-
-
-### Related help topics
-* [Registering the LPA](/help/#topic-registering-the-lpa)
-

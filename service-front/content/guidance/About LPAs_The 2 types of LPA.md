@@ -52,8 +52,3 @@ If you've made an advance decision, you can still make an LPA. If you want the a
 
 When making a health and welfare LPA, you'll have to decide whether your attorneys or your doctors should make decisions about life-sustaining treatment. If you let your attorneys decide about life-sustaining treatments that you've previously made an advance decision about, the LPA will take the place of the advance decision.
 
-
-### Related help topics
-* [When an LPA can be used](/help/#topic-when-an-lpa-can-be-used)
-* [Life-sustaining treatment](/help/#topic-life-sustaining-treatment)
-* [Instructions and preferences](/help/#topic-instructions-and-preferences)

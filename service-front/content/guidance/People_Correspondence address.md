@@ -19,7 +19,3 @@ OPG might need to get in touch with the correspondent to:
 * ask a question about your LPA
 
 The correspondent will also receive the LPA once it is registered.
-
-### Related help topics
-* [Applicant](/help/#topic-applicant)
-* [Registering the LPA](/help/#topic-registering-the-lpa)
