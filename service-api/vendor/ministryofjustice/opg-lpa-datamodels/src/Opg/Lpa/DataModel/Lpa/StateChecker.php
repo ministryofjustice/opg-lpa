@@ -107,11 +107,11 @@ class StateChecker {
         $lpa = $this->getLpa();
 
         //---
-        
+
         if( !($lpa->payment instanceof Payment) ){
             return false;
         }
-        
+
         return $this->isEligibleForFeeReduction();
 
     } // function
@@ -149,51 +149,33 @@ class StateChecker {
 
     //------------------------------------------------------------------------
     // Below are the functions copied from the front2 model.
-    
+
     /**
      * Payment either paid online or offline, or no payment to be taken.
      * @return boolean
      */
     protected function paymentResolved()
     {
-        if(!($this->lpa->payment instanceof Payment)) {
-            return false;
-        }
-        
-        if($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages) {
-            // has exemption
-            return true;
-        }
-        elseif($this->lpa->payment->reducedFeeUniversalCredit) {
-            // receive universal credit
-            return true;
-        }
-        else {
-            if($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD) {
-                // pay by card
-                if($this->lpa->payment->reference != null) {
-                    // payment ref received from payment service provider
-                    return true;
-                }
-                else {
-                    // payment ref not received from payment service provider
-                    return false;
-                }
-            }
-            elseif($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE) {
-                // pay by cheque
+        if ($this->lpa->payment instanceof Payment) {
+            //  If the payment method is cheque or the amount is zero or the payment is reduced due to UC then the payment is considered resolved
+            if ($this->lpa->payment->method == Payment::PAYMENT_TYPE_CHEQUE
+                || $this->lpa->payment->amount == 0
+                || $this->lpa->payment->reducedFeeUniversalCredit) {
+
+                return true;
+            } elseif ($this->lpa->payment->method == Payment::PAYMENT_TYPE_CARD
+                && $this->lpa->payment->reference != null) {
+
                 return true;
             }
-            else {
-                // must have a payment method if amount is greater than 0.
-                return false;
-            }
         }
+
+        return false;
     }
-    
+
     /**
      * is the donor eligible for fee reduction due to having benefit, damage, income or universal credit.
-     * 
+     *
      * @return boolean
      */
     public function isEligibleForFeeReduction()
@@ -202,8 +184,8 @@ class StateChecker {
         if(!($lpa->payment instanceof Payment)) {
             return false;
         }
-        
-        return ((($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages)) 
+
+        return ((($lpa->payment->reducedFeeReceivesBenefits) && ($lpa->payment->reducedFeeAwardedDamages))
                 || ($lpa->payment->reducedFeeUniversalCredit)
                 || ($lpa->payment->reducedFeeLowIncome));
     }
@@ -232,8 +214,8 @@ class StateChecker {
     }
 
     /**
-     * Lpa all required properties has value to qualify as an Instrument 
-     * 
+     * Lpa all required properties has value to qualify as an Instrument
+     *
      * @return boolean
      */
     protected function lpaHasFinishedCreation()
@@ -308,17 +290,17 @@ class StateChecker {
         return $complete;
 
     }
-    
+
     /**
      * LPA Instrument is created and created date is set
-     * 
+     *
      * @return boolean
      */
     protected function lpaHasCreated()
     {
         return ($this->lpaHasFinishedCreation() && ($this->lpa->createdAt!==null));
     }
-    
+
     protected function lpaHasPeopleToNotify($index = null)
     {
         if($index === null) {
@@ -369,7 +351,7 @@ class StateChecker {
             && ($this->lpa->document->replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS));
     }
 
-    protected function lpaWhenReplacementAttorneyStepInHasValue()
+    public function lpaWhenReplacementAttorneyStepInHasValue()
     {
         return ($this->lpaHasReplacementAttorney()
             && $this->lpaHasMultiplePrimaryAttorneys()
@@ -382,7 +364,7 @@ class StateChecker {
             ]));
     }
 
-    protected function lpaReplacementAttorneyStepInDepends()
+    public function lpaReplacementAttorneyStepInDepends()
     {
         return ($this->lpaHasReplacementAttorney()
             && $this->lpaHasMultiplePrimaryAttorneys()
@@ -391,7 +373,7 @@ class StateChecker {
             && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS));
     }
 
-    protected function lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()
+    public function lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()
     {
         return ($this->lpaHasReplacementAttorney()
             && $this->lpaHasMultiplePrimaryAttorneys()
@@ -400,7 +382,7 @@ class StateChecker {
             && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST));
     }
 
-    protected function lpaReplacementAttorneyStepInWhenFirstPrimaryUnableAct()
+    public function lpaReplacementAttorneyStepInWhenFirstPrimaryUnableAct()
     {
         return ($this->lpaHasReplacementAttorney()
             && $this->lpaHasMultiplePrimaryAttorneys()
@@ -409,12 +391,12 @@ class StateChecker {
             && ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST));
     }
 
-    protected function lpaHasMultipleReplacementAttorneys()
+    public function lpaHasMultipleReplacementAttorneys()
     {
         return ($this->lpaHasReplacementAttorney() && (count($this->lpa->document->replacementAttorneys) > 1));
     }
 
-    protected function lpaHasReplacementAttorney($index = null)
+    public function lpaHasReplacementAttorney($index = null)
     {
         if($index === null) {
             return ($this->lpaHasPrimaryAttorney()
@@ -439,28 +421,28 @@ class StateChecker {
             ]));
     }
 
-    protected function lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+    public function lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()
     {
         return ($this->lpaHasMultiplePrimaryAttorneys()
             && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
             && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY));
     }
 
-    protected function lpaPrimaryAttorneysMakeDecisionJointly()
+    public function lpaPrimaryAttorneysMakeDecisionJointly()
     {
         return ($this->lpaHasMultiplePrimaryAttorneys()
             && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
             && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY));
     }
 
-    protected function lpaPrimaryAttorneysMakeDecisionDepends()
+    public function lpaPrimaryAttorneysMakeDecisionDepends()
     {
         return ($this->lpaHasMultiplePrimaryAttorneys()
             && ($this->lpa->document->primaryAttorneyDecisions instanceof AbstractDecisions)
             && ($this->lpa->document->primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS));
     }
 
-    protected function lpaHasMultiplePrimaryAttorneys()
+    public function lpaHasMultiplePrimaryAttorneys()
     {
         return ($this->lpaHasPrimaryAttorney() && (count($this->lpa->document->primaryAttorneys) > 1));
     }
@@ -477,7 +459,7 @@ class StateChecker {
                 && ($this->lpa->document->primaryAttorneys[$index] instanceof AbstractAttorney));
         }
     }
-    
+
     protected function lpaHasTrustCorporation($whichGroup=null)
     {
         if($this->lpaHasWhenLpaStarts() || $this->lpaHasLifeSustaining()) {
@@ -502,7 +484,7 @@ class StateChecker {
                         return true;
                     }
                 }
-                
+
                 foreach($this->lpa->document->replacementAttorneys as $attorney) {
                     if($attorney instanceof TrustCorporation) {
                         return true;
