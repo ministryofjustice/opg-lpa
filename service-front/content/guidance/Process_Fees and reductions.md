@@ -75,7 +75,7 @@ You have to send OPG documents that prove you have a low income. These must be d
 * a recent tax return if you're self-employed
 * statements or vouchers showing interest from capital, stocks, shares or bonds
 
-You can also send an official letter or notice from the payer of non-means-tested benefits – this can't be a copy.
+You can also send an official letter or notice from the payer of non-means-tested benefits.
 
 If you don't have an income, you have to send OPG a signed statement explaining how you support yourself.
 
