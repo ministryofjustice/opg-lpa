@@ -6,63 +6,81 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class RepeatApplicationForm extends AbstractForm
 {
     protected $formElements = [
-            'isRepeatApplication' => [
-                    'type'      => 'Zend\Form\Element\Radio',
-                    'required'  => true,
-                    'options'   => [
-                            'value_options' => [
-                                    'is-repeat' => [
-                                            'value' => 'is-repeat',
-                                    ],
-                                    'is-new' => [
-                                            'value' => 'is-new',
-                                    ],
-                            ],
+        'isRepeatApplication' => [
+            'type'      => 'Zend\Form\Element\Radio',
+            'required'  => true,
+            'options'   => [
+                'value_options' => [
+                    'is-repeat' => [
+                        'value' => 'is-repeat',
                     ],
-            ],
-            'repeatCaseNumber' => [
-                    'type' => 'Text',
-                    'required'  => true,
-                    'validators' => [
-                        [
-                            'name' => 'Digits',
-                        ]
+                    'is-new' => [
+                        'value' => 'is-new',
                     ],
+                ],
             ],
-            'submit' => [
-                    'type' => 'Zend\Form\Element\Submit',
+        ],
+        'repeatCaseNumber' => [
+            'type' => 'Text',
+            'required'  => true,
+            'filters'  => [
+                [
+                    'name' => 'Word\DashToSeparator',
+                    'options' => [
+                        'separator' => '',
+                    ]
+                ],
             ],
+            'validators' => [
+                [
+                    'name' => 'Digits',
+                ]
+            ],
+        ],
+        'submit' => [
+            'type' => 'Zend\Form\Element\Submit',
+        ],
     ];
-    
+
     public function init()
     {
         $this->setName('form-repeat-application');
         parent::init();
     }
-    
-   /**
+
+    /**
     * Validate form input data through model validators.
-    * 
+    *
     * @return [isValid => bool, messages => [<formElementName> => string, ..]]
     */
     public function validateByModel()
     {
-        if($this->data['isRepeatApplication'] == 'is-new') {
-            return ['isValid'=>true, 'messages' => []];
-        }
-        elseif($this->data['isRepeatApplication'] == 'is-repeat') {
-            $lpa = new Lpa(['repeatCaseNumber' => (int) $this->data['repeatCaseNumber']]);
+        $isValid = false;
+        $messages = [];
+
+        if ($this->data['isRepeatApplication'] == 'is-new') {
+            $isValid = true;
+        } elseif ($this->data['isRepeatApplication'] == 'is-repeat') {
+            //  Create an LPA and validate it with the validation in the data models
+            $lpaData = [
+                'repeatCaseNumber' => (int) $this->data['repeatCaseNumber'],
+            ];
+
+            $lpa = new Lpa($lpaData);
+
             $validation = $lpa->validate(['repeatCaseNumber']);
-        
-            if(count($validation) == 0) {
-                return ['isValid'=>true, 'messages' => []];
-            }
-            else {
-                return [
-                        'isValid'=>false,
-                        'messages' => $this->modelValidationMessageConverter($validation),
-                ];
+
+            if (count($validation) == 0) {
+                $isValid = true;
+            } else {
+                $isValid = false;
+                $messages = $this->modelValidationMessageConverter($validation);
             }
         }
+
+        return [
+            'isValid'  => $isValid,
+            'messages' => $messages,
+        ];
     }
 }

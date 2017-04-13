@@ -85,7 +85,7 @@ abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
 
             // add additional filters if given
             if (array_key_exists('filters', $elm)) {
-                $filterParams['filters'] += $elm['filters'];
+                $filterParams['filters'] = array_merge($filterParams['filters'], $elm['filters']);
             }
 
             // add validators if given
