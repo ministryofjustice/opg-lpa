@@ -48,10 +48,10 @@ class DateCheckController extends AbstractLpaController
                 }
 
                 $result = DateCheck::checkDates([
-                    'donor'                 => $data['sign-date-donor'],
-                    'donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $data['sign-date-donor-life-sustaining'] : null,
-                    'certificate-provider'  => $data['sign-date-certificate-provider'],
-                    'attorneys'             => $attorneySignatureDates,
+                    'donor'                 => $this->arrayToDate($data['sign-date-donor']),
+                    'donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $this->arrayToDate($data['sign-date-donor-life-sustaining']) : null,
+                    'certificate-provider'  => $this->arrayToDate($data['sign-date-certificate-provider']),
+                    'attorneys'             => array_map([$this, arrayToDate], $attorneySignatureDates),
                 ]);
 
                 if ($result === true) {
@@ -102,5 +102,13 @@ class DateCheckController extends AbstractLpaController
         return new ViewModel([
             'returnTarget' => $returnTarget,
         ]);
+    }
+
+    private function arrayToDate(array $dateArray)
+    {
+        $day = $dateArray['day'];
+        $month = $dateArray['month'];
+        $year = $dateArray['year'];
+        return strtotime("$month-$day-$year");
     }
 }

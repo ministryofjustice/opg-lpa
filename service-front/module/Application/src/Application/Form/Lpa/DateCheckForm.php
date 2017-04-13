@@ -46,24 +46,14 @@ class DateCheckForm extends AbstractForm
         //  Loop through to the date element names and add the configuration to the
         foreach ($dateElementNames as $dateElementName) {
             $this->formElements[$dateElementName] = [
-                'type'       => 'Text',
+                'type'       => 'Application\Form\Fieldset\Dob',
                 'attributes' => [
                     'id' => $dateElementName,
                 ],
                 'required'   => true,
                 'validators' => [
                     [
-                        'name'    => 'Date',
-                        'options' => [
-                            'format' => 'd/m/Y',
-                        ],
-                    ],
-                    [
-                        'name'    => 'StringLength',
-                        'options' => [
-                            'min' => 10,
-                            'max' => 10,
-                        ],
+                        'name'    => 'Application\Form\Validator\Date',
                     ],
                 ],
             ];

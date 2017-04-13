@@ -14,11 +14,11 @@ class DateCheck implements ServiceLocatorAwareInterface
      * signed the LPA in the correct order
      *
      * Expects and array [
-     *  'donor' => 'dd/mm/yyyy',
-     *  'certificate-provider' => 'dd/mm/yyyy',
+     *  'donor' => date,
+     *  'certificate-provider' => date,
      *    'attorneys' => [
-     *      'dd/mm/yyyy',
-     *      'dd/mm/yyyy', // 1 or more attorney dates
+     *      date,
+     *      date, // 1 or more attorney dates
      *    ]
      *  ];
      *
@@ -27,29 +27,29 @@ class DateCheck implements ServiceLocatorAwareInterface
      */
     public static function checkDates(array $dates)
     {
-        $donor = self::convertUkDateToTimestamp($dates['donor']);
-        $certificateProvider = self::convertUkDateToTimestamp($dates['certificate-provider']);
+        $donor = $dates['donor'];
+        $certificateProvider = $dates['certificate-provider'];
 
         if (isset($dates['donor-life-sustaining'])) {
-            $donorLifeSustaining = self::convertUkDateToTimestamp($dates['donor-life-sustaining']);
+            $donorLifeSustaining = $dates['donor-life-sustaining'];
         }
 
-        $minAttorneyDate = self::convertUkDateToTimestamp($dates['attorneys'][0]);
+        $minAttorneyDate = $dates['attorneys'][0];
         for ($i = 1; $i < count($dates['attorneys']); $i++) {
-            $timestamp = self::convertUkDateToTimestamp($dates['attorneys'][$i]);
+            $timestamp = $dates['attorneys'][$i];
 
             if ($timestamp < $minAttorneyDate) {
                 $minAttorneyDate = $timestamp;
             }
         }
 
+        if (isset($donorLifeSustaining) && $donor != $donorLifeSustaining) {
+            return 'The donor must sign Section 5 and Section 9 on the same date.';
+        }
+
         // Donor must be first
         if ($donor > $certificateProvider || $donor > $minAttorneyDate) {
             return 'The donor must be the first person to sign the LPA.';
-        }
-
-        if (isset($donorLifeSustaining) && $donor != $donorLifeSustaining) {
-            return 'The donor must sign Section 5 and Section 9 on the same date.';
         }
 
         // CP must be next
@@ -59,37 +59,4 @@ class DateCheck implements ServiceLocatorAwareInterface
 
         return true;
     }
-
-    /**
-     * Convert a date in dd/mm/yyyy format to a timestamp
-     *
-     * strtotime documentation:
-     *
-     * "Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator
-     * between the various components: if the separator is a slash (/), then the
-     * American m/d/y is assumed; whereas if the separator is a dash (-) or a dot (.),
-     * then the European d-m-y format is assumed."
-     *
-     * We expect a UK date in the format dd/mm/yyyy so we need to convert this to dd-mm-yyyy
-     *
-     * @param string $ukDateString
-     * @return number A unix timestamp value
-     * @throws \Exception
-     */
-    private static function convertUkDateToTimestamp($ukDateString)
-    {
-        $parts = explode('/', $ukDateString, 3);
-
-        $validFormat = count($parts) == 3 && checkdate($parts[1], $parts[0], $parts[2]);
-
-        if (!$validFormat) {
-            throw new \Exception('Date not in dd/mm/yyyy format ' . $ukDateString);
-        }
-
-        $date = str_replace('/', '-', $ukDateString);
-        $YmdDate = date('Y-m-d', strtotime($date));
-
-        return strtotime($YmdDate);
-    }
-
 }
