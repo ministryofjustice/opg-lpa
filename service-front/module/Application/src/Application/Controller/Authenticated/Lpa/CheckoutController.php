@@ -20,34 +20,25 @@ class CheckoutController extends AbstractLpaController
             return $this->redirectToMoreInfoRequired();
         }
 
-        /*
-         * At present we are sending a percentage of users to GOV Pay, and the remaining users to WorldPay.
-         * The percentage to send to GOV Pay is stored in the cache.
-         *
-         * We use crc32() % 100, with the user's id, to put them into a segment, 1 - 100.
-         *
-         */
-
-        $segmentsSentToGovPay = $this->cache()->getItem('gov-pay-percentage');
+        //  Determine what percentage of users to send directly to WorldPay
+        $segmentsSentToWorldPay = $this->cache()->getItem('worldpay-percentage');
 
         // Sanity checks...
-        if (!is_numeric($segmentsSentToGovPay) || $segmentsSentToGovPay < 0 || $segmentsSentToGovPay > 100) {
-            $segmentsSentToGovPay = 0;
+        if (!is_numeric($segmentsSentToWorldPay) || $segmentsSentToWorldPay < 0 || $segmentsSentToWorldPay > 100) {
+            $segmentsSentToWorldPay = 0;
         }
 
         // Take the user's id and puts them into a segment between 1 and 100.
         $segment = (abs(crc32($this->getUser()->id())) % 100) + 1;
 
         // If the user's segment falls at or below the set percentage.
-        $useGdsPay = ($segment <= (int)$segmentsSentToGovPay);
-
-        //-------
+        $useWorldPay = ($segment <= (int)$segmentsSentToWorldPay);
 
         $paymentViewVars = array();
 
         // Note: all POSTs are for WorldPay to this method.
         // This protects against the case where an admin changes the 'percentage' whilst a user is mid payment.
-        if (!$useGdsPay || $this->request->isPost()) {
+        if ($useWorldPay || $this->request->isPost()) {
             $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
 
             $response = $this->processWorldPayForm($worldPayForm);
@@ -59,15 +50,13 @@ class CheckoutController extends AbstractLpaController
             $paymentViewVars['worldpayForm'] = $worldPayForm;
         }
 
-        //---
-
         $isRepeatApplication = ($this->getLpa()->repeatCaseNumber != null);
 
-        $lowIncomeFee = Calculator::getLowIncomeFee( $isRepeatApplication );
-        $paymentViewVars['lowIncomeFee'] = (floor( $lowIncomeFee ) == $lowIncomeFee ) ? $lowIncomeFee : money_format('%i', $lowIncomeFee);
+        $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
+        $paymentViewVars['lowIncomeFee'] = (floor($lowIncomeFee) == $lowIncomeFee ? $lowIncomeFee : money_format('%i', $lowIncomeFee));
 
-        $fullFee = Calculator::getFullFee( $isRepeatApplication );
-        $paymentViewVars['fullFee'] = (floor( $fullFee ) == $fullFee ) ? $fullFee : money_format('%i', $fullFee);
+        $fullFee = Calculator::getFullFee($isRepeatApplication);
+        $paymentViewVars['fullFee'] = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
 
         return new ViewModel($paymentViewVars);
     }
@@ -75,6 +64,7 @@ class CheckoutController extends AbstractLpaController
     private function redirectToMoreInfoRequired()
     {
         $this->redirect()->toRoute('lpa/more-info-required', ['lpa-id' => $this->getLpa()->id]);
+
         return $this->getResponse();
     }
 
