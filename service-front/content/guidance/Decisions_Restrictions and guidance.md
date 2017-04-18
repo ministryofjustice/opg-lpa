@@ -32,9 +32,7 @@ You must write an instruction if:
 * My attorneys must not make any gifts.
 * My attorneys must not sell my home unless, in my doctor's opinion, I can no longer live independently.
 * My attorneys must send annual accounts to my brothers and sisters.
-* My attorney(s) may transfer my investments into a discretionary management scheme. Or, if I already had investments in a discretionary management scheme before I lost capacity to make financial decisions, I want the scheme to continue. 
-
-I understand in both cases that managers of the scheme will make investment decisions and my investments will be held in their names or the names of their nominees. (There’s no guarantee your banks will accept this wording. You may want to seek legal advice before you write an instruction about a discretionary management scheme.)
+* My attorney(s) may transfer my investments into a discretionary management scheme. Or, if I already had investments in a discretionary management scheme before I lost capacity to make financial decisions, I want the scheme to continue. I understand in both cases that managers of the scheme will make investment decisions and my investments will be held in their names or the names of their nominees. (There’s no guarantee your banks will accept this wording. You may want to seek legal advice before you write an instruction about a discretionary management scheme).
 
 ### Health and welfare LPA
 
