@@ -52,7 +52,7 @@
 
 {{ form().openTag( form )|raw }}
 
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
 
@@ -97,7 +97,7 @@
     </fieldset>
 
     <h2 class="heading-medium flush--top">Your phone number (optional)</h2>
- 
+
     <fieldset>
         <legend class="group text">
         </legend>
@@ -109,11 +109,11 @@
             {{ formElement(phone) }}
         </div>
     </fieldset>
-    
+
     <input type="submit" name="send" id="send" class="button" value="Send feedback">
 
 {{ form().closeTag|raw }}
 
 {% endblock content %}
-            
-            
+
+

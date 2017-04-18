@@ -1,63 +1,67 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class HowAttorneysMakeDecisionForm extends AbstractForm
+class HowAttorneysMakeDecisionForm extends AbstractLpaForm
 {
     protected $formElements = [
-            'how' => [
-                    'type' => 'Zend\Form\Element\Radio',
-                    'required' => true,
-                    'options' => [
-                            'value_options' => [
-                                    'jointly-attorney-severally' => [
-                                            'value' => 'jointly-attorney-severally', 
-                                    ],
-                                    'jointly' => [
-                                            'value' => 'jointly',
-                                    ],
-                                    'depends' => [
-                                            'value' => 'depends',
-                                    ],
-                            ],
+        'how' => [
+            'type'     => 'Radio',
+            'required' => true,
+            'options'  => [
+                'value_options' => [
+                    'jointly-attorney-severally' => [
+                        'value' => 'jointly-attorney-severally',
                     ],
+                    'jointly' => [
+                        'value' => 'jointly',
+                    ],
+                    'depends' => [
+                        'value' => 'depends',
+                    ],
+                ],
             ],
-            'howDetails' => [
-                    'required' => true,
-                    'type' => 'TextArea',
-            ],
-            'submit' => [
-                    'type' => 'Zend\Form\Element\Submit',
-            ],
+        ],
+        'howDetails' => [
+            'required' => true,
+            'type'     => 'TextArea',
+        ],
+        'submit' => [
+            'type' => 'Submit',
+        ],
     ];
-    
-    public function init ()
+
+    public function init()
     {
         $this->setName('form-primary-attorney-decisions');
-        
+
         parent::init();
     }
-    
-   /**
-    * Validate form input data through model validators.
-    * 
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
+
+    /**
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
     public function validateByModel()
     {
         $decision = new PrimaryAttorneyDecisions($this->data);
-        
+
         $validation = $decision->validate(['how']);
-        
-        if(count($validation) == 0) {
-            return ['isValid'=>true, 'messages' => []];
+
+        $isValid = true;
+        $messages = [];
+
+        if (count($validation) != 0) {
+            $isValid = false;
+            $messages = $this->modelValidationMessageConverter($validation);
         }
-        else {
-            return [
-                    'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
-            ];
-        }
+
+        return [
+            'isValid'  => $isValid,
+            'messages' => $messages,
+        ];
     }
 }

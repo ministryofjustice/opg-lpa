@@ -126,7 +126,7 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
     {{ formElement(form.get('who')) }}
 
     <h2 class="heading-medium">Correspondent's details?</h2>

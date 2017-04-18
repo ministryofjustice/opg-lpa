@@ -1,7 +1,8 @@
 <?php
+
 namespace Application\Form\Lpa;
 
-abstract class AbstractActorForm extends AbstractForm
+abstract class AbstractActorForm extends AbstractLpaForm
 {
     /**
      * An actor model object is a Donor, Human, TrustCorporation, CertificateProvider, PeopleToNotify model object.
@@ -11,9 +12,9 @@ abstract class AbstractActorForm extends AbstractForm
     protected $actorModel;
 
     /**
-     * Validate form input data through model validators.
+     * Validate form input data through model validators
      *
-     * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+     * @return array
      */
     public function validateByModel()
     {
@@ -49,14 +50,19 @@ abstract class AbstractActorForm extends AbstractForm
             }
         }
 
-        if (empty($message) && (count($validation) == 0)) {
-            return ['isValid'=>true, 'messages' => []];
-        } else {
-            return [
-                'isValid'=>false,
-                'messages' => $this->modelValidationMessageConverter($validation),
-            ];
+        //  Determine the validation result
+        $isValid = true;
+        $messages = [];
+
+        if (!empty($message) || count($validation) != 0) {
+            $isValid = false;
+            $messages = $this->modelValidationMessageConverter($validation);
         }
+
+        return [
+            'isValid'  => $isValid,
+            'messages' => $messages,
+        ];
     }
 
     /**

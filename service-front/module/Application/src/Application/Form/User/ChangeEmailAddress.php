@@ -1,129 +1,112 @@
 <?php
+
 namespace Application\Form\User;
 
-use Zend\Validator;
-
+use Application\Form\AbstractForm;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Zend\Authentication\Exception\InvalidArgumentException;
+use Zend\Validator\Identical;
+use Zend\Validator\NotEmpty;
 
-class ChangeEmailAddress extends AbstractForm {
-
+class ChangeEmailAddress extends AbstractForm
+{
     /**
      * @var AuthenticationService
      */
     private $authenticationService;
 
-    //---
+    public function init()
+    {
+        $this->setName('change-email-address');
 
-    public function __construct( $formName = 'change-email-address' ){
-
-        parent::__construct($formName);
-
-        //---
-
-        $this->add(array(
+        $this->add([
             'name' => 'password_current',
             'type' => 'Password',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'email',
             'type' => 'Email',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'email_confirm',
             'type' => 'Email',
-        ));
+        ]);
 
-        //--------------------------------
-
+        //  Add data to the input filter
         $this->setUseInputFilterDefaults(false);
-        
-        $inputFilter = $this->getInputFilter();
 
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'email',
             'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options' => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
-                    'name'    => 'EmailAddress',
-                ),
-            ),
-            
-        ));
+                    ],
+                ],
+                [
+                    'name' => 'EmailAddress',
+                ],
+            ],
+        ]);
 
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'email_confirm',
             'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options' => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'name'    => 'Identical',
-                    'options' => array(
+                    'options' => [
                         'token' => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did-not-match',
+                            Identical::NOT_SAME => 'did-not-match',
                         ],
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'password_current',
             'required' => true,
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options' => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
-        //---
-
-        $this->setInputFilter( $inputFilter );
-
-    } // function
-
+        parent::init();
+    }
 
     /**
      * Set the Authentication Service used to validate the user's password.
      *
      * @param AuthenticationService $authenticationService
      */
-    public function setAuthenticationService( AuthenticationService $authenticationService ){
+    public function setAuthenticationService(AuthenticationService $authenticationService)
+    {
         $this->authenticationService = $authenticationService;
     }
 
@@ -135,17 +118,15 @@ class ChangeEmailAddress extends AbstractForm {
      * @param $value string The value from the password text field.
      * @return bool
      */
-    public function validatePassword( $value ){
-
-        if( !( $this->authenticationService instanceof AuthenticationService ) ){
+    public function validatePassword($value)
+    {
+        if (!$this->authenticationService instanceof AuthenticationService) {
             throw new InvalidArgumentException('AuthenticationService not set');
         }
 
         // Set the password in teh adapter.
-        $this->authenticationService->getAdapter()->setPassword( $value );
+        $this->authenticationService->getAdapter()->setPassword($value);
 
         return $this->authenticationService->verify()->isValid();
-
     }
-
-} // class
+}

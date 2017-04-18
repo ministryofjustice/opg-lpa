@@ -1,7 +1,8 @@
 <?php
+
 namespace Application\Form\Admin;
 
-use Application\Form\General\AbstractForm;
+use Application\Form\AbstractForm;
 use Zend\Validator\StringLength;
 
 /**
@@ -14,23 +15,18 @@ class SystemMessageForm extends AbstractForm
 {
     private $maxMessageLength = 8000;
 
-    public function __construct($formName = null)
+    public function init()
     {
-        parent::__construct('admin-system-message');
+        $this->setName('admin-system-message');
 
         $this->add([
             'name' => 'message',
             'type' => 'Textarea',
         ]);
 
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add([
+        //  Add data to the input filter
+        $this->addToInputFilter([
             'name'     => 'message',
-            'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
             'required' => false,
             'validators' => [
                 [
@@ -45,6 +41,6 @@ class SystemMessageForm extends AbstractForm
             ],
         ]);
 
-        $this->setInputFilter($inputFilter);
+        parent::init();
     }
 }

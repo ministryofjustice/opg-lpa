@@ -4,24 +4,18 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class DateCheckForm extends AbstractForm
+class DateCheckForm extends AbstractLpaForm
 {
-    protected $lpa;
-
-    protected $formElements;
-
-    public function __construct($name, $options)
-    {
-        if (array_key_exists('lpa', $options)) {
-            $this->lpa = $options['lpa'];
-            unset($options['lpa']);
-        }
-
-        parent::__construct('form-date-checker', $options);
-    }
+    protected $formElements = [
+        'submit' => [
+            'type' => 'Submit',
+        ],
+    ];
 
     public function init()
     {
+        $this->setName('form-date-checker');
+
         //  Set up the date element input names
         $dateElementNames = [
             'sign-date-donor',
@@ -59,19 +53,18 @@ class DateCheckForm extends AbstractForm
             ];
         }
 
-        //  Add the submit input
-        $this->formElements['submit'] = [
-            'type' => 'Submit',
-        ];
-
         parent::init();
     }
 
     /**
-     * Validate form input data through model validators.
+     * Validate form input data through model validators
+     *
+     * @return array
      */
     public function validateByModel()
     {
-        return ['isValid' => true];
+        return [
+            'isValid' => true
+        ];
     }
 }
