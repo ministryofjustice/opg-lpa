@@ -1,6 +1,8 @@
 <?php
+
 namespace Application\Form\General;
 
+use Application\Form\AbstractForm;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
 
@@ -14,34 +16,31 @@ class FeedbackForm extends AbstractForm
 {
     private $maxFeedbackLength = 2000;
 
-    public function __construct($formName = null)
+    public function init()
     {
-
-        parent::__construct('send-feedback');
-
-        $valueOptions = [
-            'very-satisfied' => [
-                'value' => 'very-satisfied',
-            ],
-            'satisfied' => [
-                'value' => 'satisfied',
-            ],
-            'neither-satisfied-or-dissatisfied' => [
-                'value' => 'neither-satisfied-or-dissatisfied',
-            ],
-            'dissatisfied' => [
-                'value' => 'dissatisfied',
-            ],
-            'very-dissatisfied' => [
-                'value' => 'very-dissatisfied',
-            ],
-        ];
+        $this->setName('send-feedback');
 
         $this->add([
-            'name' => 'rating',
-            'type' => 'Radio',
-            'options'   => [
-                'value_options' => $valueOptions,
+            'name'    => 'rating',
+            'type'    => 'Radio',
+            'options' => [
+                'value_options' => [
+                    'very-satisfied' => [
+                        'value' => 'very-satisfied',
+                    ],
+                    'satisfied' => [
+                        'value' => 'satisfied',
+                    ],
+                    'neither-satisfied-or-dissatisfied' => [
+                        'value' => 'neither-satisfied-or-dissatisfied',
+                    ],
+                    'dissatisfied' => [
+                        'value' => 'dissatisfied',
+                    ],
+                    'very-dissatisfied' => [
+                        'value' => 'very-dissatisfied',
+                    ],
+                ],
                 'disable_inarray_validator' => true,
             ],
         ]);
@@ -61,19 +60,14 @@ class FeedbackForm extends AbstractForm
             'type' => 'Text',
         ]);
 
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add([
-            'name'     => 'rating',
+        //  Add data to the input filter
+        $this->addToInputFilter([
+            'name'          => 'rating',
             'error_message' => 'cannot-be-empty',
         ]);
 
-        $inputFilter->add([
+        $this->addToInputFilter([
             'name'     => 'details',
-            'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
             'validators' => [
                 [
                     'name'    => 'NotEmpty',
@@ -96,27 +90,21 @@ class FeedbackForm extends AbstractForm
             ],
         ]);
 
-        $inputFilter->add([
+        $this->addToInputFilter([
             'name'     => 'email',
             'required' => false,
-            'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
             'validators' => [
-                ['name' => 'EmailAddress'],
+                [
+                    'name' => 'EmailAddress'
+                ],
             ],
         ]);
 
-        $inputFilter->add([
+        $this->addToInputFilter([
             'name'     => 'phone',
             'required' => false,
-            'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
         ]);
 
-        $this->setInputFilter($inputFilter);
+        parent::init();
     }
 }

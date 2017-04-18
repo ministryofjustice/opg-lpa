@@ -103,7 +103,7 @@
 {# begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <h2 class="heading-medium">What is your name?</h2>
 

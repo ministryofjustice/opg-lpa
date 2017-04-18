@@ -1,60 +1,57 @@
 <?php
+
 namespace Application\Form\User;
 
-use Zend\Validator;
+use Zend\Validator\Identical;
+use Zend\Validator\NotEmpty;
 
-class Registration extends SetPassword {
+class Registration extends SetPassword
+{
+    public function init()
+    {
+        $this->setName('registration');
 
-    public function __construct( $formName = 'registration' ){
-
-        parent::__construct($formName);
-
-        //---
-
-        $this->add(array(
+        $this->add([
             'name' => 'email',
             'type' => 'Email',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'email_confirm',
             'type' => 'Email',
-        ));
+        ]);
 
-        $this->add(array(
-            'name' => 'terms',
-            'type' => 'Checkbox',
+        $this->add([
+            'name'    => 'terms',
+            'type'    => 'Checkbox',
             'options' => [
                 'use_hidden_element' => false,
             ]
-        ));
+        ]);
 
-        //--------------------------------
-
+        //  Add data to the input filter
         $this->setUseInputFilterDefaults(false);
 
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'email',
             'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-                array('name' => 'StringToLower'),
-            ),
-            'validators' => array(
-                array(
-                    'name'    => 'NotEmpty',
+            'filters'  => [
+                [
+                    'name' => 'StringToLower'
+                ],
+            ],
+            'validators' => [
+                [
+                    'name'                   => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
-                        'messages' => [
-                                Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                    'options'                => [
+                        'messages'           => [
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
-                    'name'    => 'EmailAddress',
+                    ],
+                ],
+                [
+                    'name'                   => 'EmailAddress',
                     'break_chain_on_failure' => true,
                     /* We'll just use the ZF2 messages for these - there are lots of them
                      * and they include such classics as:
@@ -62,63 +59,55 @@ class Registration extends SetPassword {
                      * "'%hostname%' is not in a routable network segment.
                      * The email address should not be resolved from public network"
                      */
-                )
-            ),
-        ));
+                ]
+            ],
+        ]);
 
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'email_confirm',
             'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
-                    'name'    => 'NotEmpty',
+            'validators' => [
+                [
+                    'name'                   => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options'                => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
-                    'name'    => 'Identical',
+                    ],
+                ],
+                [
+                    'name'                   => 'Identical',
                     'break_chain_on_failure' => true,
-                    'options' => array(
-                        'token' => 'email',
+                    'options'                => [
+                        'token'    => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did-not-match',
+                            Identical::NOT_SAME => 'did-not-match',
                         ],
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
-        $inputFilter->add(array(
-            'name'     => 'terms',
-            'required' => true,
+        $this->addToInputFilter([
+            'name'          => 'terms',
+            'required'      => true,
             'error_message' => 'must-be-checked',
-            'validators' => array(
-                array(
+            'validators'    => [
+                [
                     'name'    => 'Identical',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options' => [
                         'token' => '1',
                         'literal' => true,
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'must-be-checked',
+                            Identical::NOT_SAME => 'must-be-checked',
                         ],
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
-        //---
-
-        $this->setInputFilter( $inputFilter );
-
-    } // function
-
-} // class
+        parent::init();
+    }
+}

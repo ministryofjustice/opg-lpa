@@ -22,7 +22,7 @@
 
     {{ form().openTag( form )|raw }}
 
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
         <div class="section-intro">
             <h2>

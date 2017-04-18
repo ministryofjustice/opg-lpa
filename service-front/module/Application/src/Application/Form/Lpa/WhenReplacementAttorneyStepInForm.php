@@ -1,63 +1,67 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
-class WhenReplacementAttorneyStepInForm extends AbstractForm
+class WhenReplacementAttorneyStepInForm extends AbstractLpaForm
 {
     protected $formElements = [
-            'when' => [
-                'type'      => 'Zend\Form\Element\Radio',
-                'required'  => true,
-                'options'   => [
-                    'value_options' => [
-                        'first'  => [
-                                'value' => 'first',
-                        ],
-                        'last'   => [
-                                'value' => 'last',
-                        ],
-                        'depends' => [
-                                'value' => 'depends'
-                        ],
+        'when' => [
+            'type'      => 'Radio',
+            'required'  => true,
+            'options'   => [
+                'value_options' => [
+                    'first'  => [
+                        'value' => 'first',
+                    ],
+                    'last'   => [
+                        'value' => 'last',
+                    ],
+                    'depends' => [
+                        'value' => 'depends'
                     ],
                 ],
             ],
-            'whenDetails' => [
-                    'type' => 'TextArea',
-                    'required' => true,
-            ],
-            'submit' => [
-                    'type' => 'Zend\Form\Element\Submit',
-            ],
+        ],
+        'whenDetails' => [
+            'type'     => 'TextArea',
+            'required' => true,
+        ],
+        'submit' => [
+            'type' => 'Submit',
+        ],
     ];
-    
-    public function init ()
+
+    public function init()
     {
         $this->setName('form-when-replacement-attonrey-step-in');
-        
+
         parent::init();
     }
-    
-   /**
-    * Validate form input data through model validators.
-    * 
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
+
+    /**
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
     public function validateByModel()
     {
         $document = new ReplacementAttorneyDecisions($this->data);
-        
+
         $validation = $document->validate(['when']);
-        
-        if(count($validation) == 0) {
-            return ['isValid'=>true, 'messages' => []];
+
+        $isValid = true;
+        $messages = [];
+
+        if (count($validation) != 0) {
+            $isValid = false;
+            $messages = $this->modelValidationMessageConverter($validation);
         }
-        else {
-            return [
-                    'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
-            ];
-        }
+
+        return [
+            'isValid'  => $isValid,
+            'messages' => $messages,
+        ];
     }
 }

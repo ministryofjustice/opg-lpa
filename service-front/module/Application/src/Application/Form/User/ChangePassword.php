@@ -1,77 +1,67 @@
 <?php
-namespace Application\Form\User;
 
-use Zend\Validator;
+namespace Application\Form\User;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Zend\Authentication\Exception\InvalidArgumentException;
+use Zend\Validator\Callback;
+use Zend\Validator\NotEmpty;
 
-class ChangePassword extends SetPassword {
-
+class ChangePassword extends SetPassword
+{
     /**
      * @var AuthenticationService
      */
     private $authenticationService;
 
-    //---
+    public function init()
+    {
+        $this->setName('change-password');
 
-    public function __construct( $formName = 'change-password' ){
-
-        parent::__construct($formName);
-
-        //---
-
-        $this->add(array(
+        $this->add([
             'name' => 'password_current',
             'type' => 'Password',
-        ));
+        ]);
 
-        //--------------------------------
+        //  Add data to the input filter
         $this->setUseInputFilterDefaults(false);
-        
-        $inputFilter = $this->getInputFilter();
 
-        //---
-
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'password_current',
             'required' => true,
-            'validators' => array(
-                array(
+            'validators' => [
+                [
                     'name'    => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options' => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'name'    => 'Callback',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options' => [
                         'callback' => [ $this, 'validatePassword' ],
                         'messages' => [
-                            Validator\Callback::INVALID_VALUE => 'is-incorrect',
+                            Callback::INVALID_VALUE => 'is-incorrect',
                         ],
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
-        //---
-
-        $this->setInputFilter( $inputFilter );
-
-    } // function
-
+        parent::init();
+    }
 
     /**
      * Set the Authentication Service used to validate the user's password.
      *
      * @param AuthenticationService $authenticationService
      */
-    public function setAuthenticationService( AuthenticationService $authenticationService ){
+    public function setAuthenticationService(AuthenticationService $authenticationService)
+    {
         $this->authenticationService = $authenticationService;
     }
 
@@ -83,17 +73,15 @@ class ChangePassword extends SetPassword {
      * @param $value string The value from the password text field.
      * @return bool
      */
-    public function validatePassword( $value ){
-
-        if( !( $this->authenticationService instanceof AuthenticationService ) ){
+    public function validatePassword($value)
+    {
+        if (!$this->authenticationService instanceof AuthenticationService) {
             throw new InvalidArgumentException('AuthenticationService not set');
         }
 
-        // Set the password in teh adapter.
-        $this->authenticationService->getAdapter()->setPassword( $value );
+        // Set the password in the adapter
+        $this->authenticationService->getAdapter()->setPassword($value);
 
         return $this->authenticationService->verify()->isValid();
-
     }
-
-} // class
+}

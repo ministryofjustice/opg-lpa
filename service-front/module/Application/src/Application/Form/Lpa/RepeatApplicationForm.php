@@ -1,13 +1,14 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class RepeatApplicationForm extends AbstractForm
+class RepeatApplicationForm extends AbstractLpaForm
 {
     protected $formElements = [
         'isRepeatApplication' => [
-            'type'      => 'Zend\Form\Element\Radio',
+            'type'      => 'Radio',
             'required'  => true,
             'options'   => [
                 'value_options' => [
@@ -38,29 +39,28 @@ class RepeatApplicationForm extends AbstractForm
             ],
         ],
         'submit' => [
-            'type' => 'Zend\Form\Element\Submit',
+            'type' => 'Submit',
         ],
     ];
 
     public function init()
     {
         $this->setName('form-repeat-application');
+
         parent::init();
     }
 
     /**
-    * Validate form input data through model validators.
-    *
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
     public function validateByModel()
     {
-        $isValid = false;
+        $isValid = ($this->data['isRepeatApplication'] == 'is-new');
         $messages = [];
 
-        if ($this->data['isRepeatApplication'] == 'is-new') {
-            $isValid = true;
-        } elseif ($this->data['isRepeatApplication'] == 'is-repeat') {
+        if ($this->data['isRepeatApplication'] == 'is-repeat') {
             //  Create an LPA and validate it with the validation in the data models
             $lpaData = [
                 'repeatCaseNumber' => (int) $this->data['repeatCaseNumber'],

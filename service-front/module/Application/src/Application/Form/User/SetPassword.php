@@ -2,7 +2,10 @@
 
 namespace Application\Form\User;
 
-use Zend\Validator;
+use Application\Form\AbstractForm;
+use Zend\Validator\Identical;
+use Zend\Validator\NotEmpty;
+use Zend\Validator\StringLength;
 
 /**
  * For to request a password reset email be sent out.
@@ -12,107 +15,95 @@ use Zend\Validator;
  */
 class SetPassword extends AbstractForm
 {
-
-    public function __construct($formName = 'set-password')
+    public function init()
     {
-        parent::__construct($formName);
+        $this->setName('set-password');
 
-        //---
-
-        $this->add(array(
+        $this->add([
             'name' => 'password',
             'type' => 'Password',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'password_confirm',
             'type' => 'Password',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'skip_confirm_password',
             'type' => 'Hidden',
-        ));
+        ]);
 
-        //--------------------------------
+        //  Add data to the input filter
         $this->setUseInputFilterDefaults(false);
 
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'password',
             'required' => true,
-            'validators' => array(
-                array(
-                    'name'    => 'NotEmpty',
+            'validators' => [
+                [
+                    'name'                   => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options'                => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'name'    => 'StringLength',
-                    'options' => array(
+                    'options' => [
                         'encoding' => 'UTF-8',
                         'min'      => 8,
                         'messages' => [
-                            Validator\StringLength::TOO_SHORT => 'min-length-%min%',
+                            StringLength::TOO_SHORT => 'min-length-%min%',
                         ],
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'name' => 'Application\Form\Validator\Password',
-                ),
-            ),
-        )); // add
+                ],
+            ],
+        ]);
 
-        $this->setInputFilter($inputFilter);
-    } // function
+        $this->addToInputFilter([
+            'name'     => 'password_confirm',
+            'required' => true,
+            'validators' => [
+                [
+                    'name'                   => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options'                => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ],
+                ],
+                [
+                    'name'                   => 'Identical',
+                    'break_chain_on_failure' => true,
+                    'options'                => [
+                        'token'    => 'password',
+                        'messages' => [
+                            Identical::NOT_SAME => 'did-not-match',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
 
-    /**
-     * @param array $data The data from the request to validate
-     */
+        parent::init();
+    }
+
     public function isValid()
     {
-        $this->checkPasswordConfirm($this->data);
+        //  If the skip confirm password flag has been passed then remove the input filter configuration for the password confirm input
+        if (array_key_exists('skip_confirm_password', $this->data) && !empty($this->data['skip_confirm_password'])) {
+            $this->getInputFilter()
+                 ->remove('password_confirm');
+        }
+
+        //  Continue validation
         return parent::isValid();
     }
-
-    protected function checkPasswordConfirm($data)
-    {
-
-        if (!$data['skip_confirm_password']) {
-            $inputFilter = $this->getInputFilter();
-
-            $inputFilter->add(array(
-                'name'     => 'password_confirm',
-                'required' => true,
-                'validators' => array(
-                    array(
-                        'name'    => 'NotEmpty',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'messages' => [
-                                Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                            ],
-                        ),
-                    ),
-                    array(
-                        'name'    => 'Identical',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'token' => 'password',
-                            'messages' => [
-                                Validator\Identical::NOT_SAME => 'did-not-match',
-                            ],
-                        ),
-                    ),
-                ),
-            )); // add
-
-            $this->setInputFilter($inputFilter);
-        }
-    }
-} // class
+}

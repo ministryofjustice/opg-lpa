@@ -52,7 +52,9 @@ class AdminController extends AbstractAuthenticatedController
 
     public function systemMessageAction()
     {
-        $form = new SystemMessageForm();
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Admin\SystemMessageForm');
 
         if ($this->request->isPost()) {
             $post = $this->request->getPost();
@@ -81,7 +83,9 @@ class AdminController extends AbstractAuthenticatedController
 
     public function paymentSwitchAction()
     {
-        $form = new PaymentSwitch();
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Admin\PaymentSwitch');
 
         $saved = false;
 

@@ -1,73 +1,78 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Zend\Form\Fieldset;
 use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 
-class CorrespondenceFieldset extends Fieldset //implements InputFilterProviderInterface
+class CorrespondenceFieldset extends Fieldset
 {
-    
-    public function __construct()
+    /**
+     * @param  null|int|string  $name    Optional name for the element
+     * @param  array            $options Optional options for the element
+     */
+    public function __construct($name = null, $options = [])
     {
-        parent::__construct('fieldset-correspondence');
+        parent::__construct('fieldset-correspondence', $options);
+
         $this->setHydrator(new ClassMethodsHydrator(false))
-            ->setObject(new Correspondence());
-        
+             ->setObject(new Correspondence());
+
         $this->add([
-                'name' => 'contactByEmail',
-                'type' => 'Zend\Form\Element\Checkbox',
-                'options' => [
-                        'checked_value' => true,
-                        'unchecked_value' => false,
-                ],
+            'name' => 'contactByEmail',
+            'type' => 'Checkbox',
+            'options' => [
+                'checked_value' => true,
+                'unchecked_value' => false,
+            ],
         ]);
-        
+
         $this->add([
-                'name' => 'contactByPhone',
-                'type' => 'Zend\Form\Element\Checkbox',
-                'options' => [
-                        'checked_value' => true,
-                        'unchecked_value' => false,
-                ],
+            'name' => 'contactByPhone',
+            'type' => 'Checkbox',
+            'options' => [
+                'checked_value' => true,
+                'unchecked_value' => false,
+            ],
         ]);
-        
+
         $this->add([
-                'name' => 'contactByPost',
-                'type' => 'Zend\Form\Element\Checkbox',
-                'options' => [
-                        'checked_value' => true,
-                        'unchecked_value' => false,
-                ],
+            'name' => 'contactByPost',
+            'type' => 'Checkbox',
+            'options' => [
+                'checked_value' => true,
+                'unchecked_value' => false,
+            ],
         ]);
-        
+
         $this->add([
-                'name' => 'contactInWelsh',
-                'type' => 'Zend\Form\Element\Checkbox',
-                'options' => [
-                        'checked_value' => true,
-                        'unchecked_value' => false,
-                ],
+            'name' => 'contactInWelsh',
+            'type' => 'Checkbox',
+            'options' => [
+                'checked_value' => true,
+                'unchecked_value' => false,
+            ],
         ]);
 
         $this->add([
             'name' => 'email-address',
-            'type' => 'Zend\Form\Element\Email',
+            'type' => 'Email',
         ]);
 
         $this->add([
             'name' => 'phone-number',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Text',
         ]);
-        
     }
-    
+
     public function setMessages($messages)
     {
         $this->messages = $messages;
+
         parent::setMessages($messages);
     }
-    
+
     public function getMessages()
     {
         return $this->messages;

@@ -17,7 +17,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $lpaId = $this->getLpa()->id;
 
         // set hidden form for saving empty array to replacement attorneys.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\BlankForm');
 
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());
@@ -52,14 +52,12 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             $attorneysParams[] = $params;
         }
 
-        $viewModelParams = [
+        return new ViewModel([
             'addRoute'  => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]),
             'lpaId'     => $lpaId,
             'attorneys' => $attorneysParams,
             'form'      => $form,
-        ];
-
-        return new ViewModel($viewModelParams);
+        ]);
     }
 
     public function addAction()
