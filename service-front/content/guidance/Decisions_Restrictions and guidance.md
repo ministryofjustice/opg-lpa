@@ -22,31 +22,28 @@ Use words such as 'must', 'shall' and 'have to' when writing instructions for yo
 
 You can add instructions about, for instance, managing your bank account or seeking professional advice about your tax.
 
-Workable examples:
+You must write an instruction if:
+* you have investments managed by a bank and want that to continue
+* you want to allow your attorneys to let a bank manage your investments
 
-> My attorneys must continue to make donations to charities that I have previously supported or for which I have set up standing order payments.
+### Workable examples of property and financial affairs instructions:
 
-> My attorneys must not make any gifts.
-
-> My attorneys must not sell my home unless, in my doctor's opinion, I can no longer live independently.
-
-> My attorneys must send annual accounts to my brothers and sisters.
-
-> My attorneys must instruct a tax accountant to prepare my annual tax return.
+* My attorneys must continue to make donations to charities that I have previously supported or for which I have set up standing order payments.
+* My attorneys must not make any gifts.
+* My attorneys must not sell my home unless, in my doctor's opinion, I can no longer live independently.
+* My attorneys must send annual accounts to my brothers and sisters.
+* My attorney(s) may transfer my investments into a discretionary management scheme. Or, if I already had investments in a discretionary management scheme before I lost capacity to make financial decisions, I want the scheme to continue. I understand in both cases that managers of the scheme will make investment decisions and my investments will be held in their names or the names of their nominees. (There’s no guarantee your banks will accept this wording. You may want to seek legal advice before you write an instruction about a discretionary management scheme).
 
 ### Health and welfare LPA
 
 You can add instructions about, for instance, medical treatment that fits with your beliefs.
 
-Workable examples:
+### Workable examples of health and welfare instructions:
 
-> My attorneys must ensure that I am fed a vegan diet with no animal products.
-
-> I consent to the disclosure to my attorneys of all relevant information concerning me.
-
-> My attorneys must refer to my advance decision to refuse treatment involving blood products, which is against my religion.
-
-> My attorneys must not decide that I am to move into residential care unless my doctor says that I can no longer live independently.
+* My attorneys must ensure that I am fed a vegan diet with no animal products.
+* I consent to the disclosure to my attorneys of all relevant information concerning me.
+* My attorneys must refer to my advance decision to refuse treatment involving blood products, which is against my religion.
+* My attorneys must not decide that I am to move into residential care unless my doctor says that I can no longer live independently.
 
 These are just a few examples. Don't add any that aren't right for you. You can make instructions about other things that matter to you.
 
@@ -59,15 +56,12 @@ Avoid words such as 'must' and 'shall'. Instead use words such as 'prefer' and '
 
 You can add preferences about how you'd like, for instance, your bank accounts or tax to be managed.
 
-Workable examples:
+### Workable examples of property and finance preferences:
 
-> I would like to maintain a minimum balance of £1,000 in my current account.
-
-> I prefer to invest in ethical funds.
-
-> I would like my attorneys to consult my doctor if they believe I may not have mental capacity to make decisions about my house.
-
-> I would like to donate £100 each year to Age UK.
+* I would like to maintain a minimum balance of £1,000 in my current account.
+* I prefer to invest in ethical funds.
+* I would like my attorneys to consult my doctor if they believe I may not have mental capacity to make decisions about my house.
+* I would like to donate £100 each year to Age UK.
 
 ### Health and welfare LPA
 
@@ -75,17 +69,12 @@ You can add preferences, for instance, about where you'd like to live and who yo
 
 You don’t have to leave any preferences. If your attorneys understand your beliefs and values, you may feel there is no need for further guidance in the LPA.
 
-Workable examples of preferences
+### Workable examples of health and welfare preferences:
 
-> I prefer to live within 5 miles of my sister.
-
-> I prefer to be prescribed generic medicine whenever possible.
-
-> I would like to take exercise at least 3 times a week whenever I am physically able to do so.
-
-> My attorneys should consult my family when making decisions about life-sustaining treatment.
-
-The last of these only applies if you allow your attorneys to decide about life-sustaining treatment.
+* I prefer to live within 5 miles of my sister.
+* I prefer to be prescribed generic medicine whenever possible.
+* I would like to take exercise at least 3 times a week whenever I am physically able to do so.
+* My attorneys should consult my family when making decisions about life-sustaining treatment (use this only if you have chosen option A to allow your attorneys to decide about life-sustaining treatment).
 
 ## Avoiding problems
 
@@ -94,16 +83,11 @@ There are things you can't make your attorneys do. If you would like your attorn
 ### Contradictions
 Don't appoint attorneys to make decisions in one way, then include an instruction that makes them act differently.
 
-If you have stated that your attorneys should act jointly – so they must agree unanimously on every decision – you can't add that, if one dies, the others can continue to act.
-
 If you have stated that your attorneys must act jointly and severally – so they can make any decision on your behalf on their own or together – you must not add these sort of instructions:
 
 * that one attorney has to do what another attorney says
 * that one attorney must deal with your business and another with your private affairs
-* that where attorneys disagree, the majority should decide
 * that they must make some decisions together – you should appoint them to act 'jointly for some decisions, and jointly and severally for other decisions' instead if this is what you want
-
-These instructions will not work.
 
 ### Gifts
 Instructions about gifts often cause problems. There are strict limits on the kinds of gifts that attorneys can give on your behalf. They can give presents on 'customary occasions', including weddings, birthdays and religious holidays. They can donate to charities you’ve previously given to. Any gifts should be 'reasonable' and take into account how much money you have.
