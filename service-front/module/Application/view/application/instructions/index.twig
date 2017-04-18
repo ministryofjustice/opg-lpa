@@ -41,6 +41,13 @@
 
             <p>The optional section below lets you add instructions or preferences for your attorneys. You don't have to put anything there, but you can state things that the attorneys must or mustn't do or give guidance that you'd like them to follow.</p>
 
+            <p>
+                {% if isPfLpa %}
+                    For example, you could add instructions about giving gifts, managing investments or seeking professional tax advice. You could add preferences about making charitable donations or managing your bank accounts.
+                {% else %}
+                    For example, you could add instructions about your diet or medical treatment that fits with your beliefs. You could add preferences about where you'd like to live or taking exercise.
+                {% endif %}
+            </p>
         </div>
     </div>
 
