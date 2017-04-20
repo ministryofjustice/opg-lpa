@@ -1,7 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
 {% block pageTitle %}
-    Pay vs GOV Pay Percentage
+    Direct WorldPay Percentage
 {% endblock %}
 
 {% set form = formErrorTextExchange(form, []) %}
@@ -20,7 +20,7 @@
 }) ? ''}}
 
 
-{{ percentage.setOptions( { label: 'Percentage of users going to GOV Pay (excluding %)' }) ? '' }}
+{{ percentage.setOptions( { label: 'Percentage of users going to WorldPay directly (excluding %)' }) ? '' }}
 
 {{ form.prepare() ? '' }}
 
@@ -36,17 +36,17 @@
     {% endif %}
 
     <div class="text">
-        <p>Enter the percentage of users who will be directed to GOV Pay as opposed to WorldPay.</p>
+        <p>Enter the percentage of users who will be forwarded to WorldPay directly (bypassing GOV Pay).</p>
         <p>For example, enter:</p>
         <ul class="list list-bullet">
-            <li>0 for all users to be directed to WorldPay</li>
-            <li>100 for all users to be directed to GOV Pay</li>
-            <li>20 for 20% of users to be directed to GOV Pay (and thus 80% will be sent to WorldPay)</li>
+            <li>0 for all users to be directed to GOV Pay</li>
+            <li>100 for all users to be directed to WorldPay directly (bypassing GOV Pay).</li>
+            <li>20 for 20% of users to be directed to WorldPay (and thus 80% will be sent to GOV Pay)</li>
         </ul>
     </div>
 
     <fieldset>
-        <legend class="visuallyhidden">Enter the percentage to be sent to GOV Pay</legend>
+        <legend class="visuallyhidden">Enter the percentage to be sent to WorldPay directly</legend>
 
         {{ macros.formGroup(percentage) }}
 
