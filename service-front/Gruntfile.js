@@ -96,9 +96,6 @@ module.exports = function (grunt) {
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
 
-          // UI Framework
-          'assets/js/ui_framework/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js',
-
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
           'assets/js/opg/jquery-plugin-opg-spinner.js',
