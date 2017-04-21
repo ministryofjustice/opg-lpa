@@ -4174,7 +4174,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     checkReusedDetails: function () {
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
       $('#dob-date-day').trigger('change');
-      $('input[name="name-first').trigger('change');
+      $('input[name="name-first"]').trigger('change');
     },
 
     renderForm: function (html) {
@@ -4253,7 +4253,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
           moj.Events.trigger('FormPopup.renderSelectionButtons');
-
           //  If the form submitted a reuse details parameter then execute the check details
           if ($form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails');
@@ -4348,7 +4347,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         $select.val(value);
       }
       // add select box after element
-      $text.data('moj.TitleSwitch', true).after($select).change(function () {
+      $text.data('moj.TitleSwitch', true);
+      $text.after($select).change(function () {
         var value = $(this).val();
 
         if (_.contains(_this.options, value)) {
@@ -4363,7 +4363,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       // this accessibility fix is excluded on ie8 and lower
       // because it's breaking for some reason
       if (!$('html').hasClass('lte-ie8')) {
-        $text.append($('<label>', { 'for': $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
+        $text.before($('<label>', { 'for': $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
       }
     },
 
@@ -4386,7 +4386,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     }
   };
 
-})();;
+})();
+;
 // Postcode lookup module for LPA
 // Dependencies: moj, _, jQuery
 

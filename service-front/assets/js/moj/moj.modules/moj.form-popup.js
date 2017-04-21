@@ -91,7 +91,7 @@
     checkReusedDetails: function () {
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
       $('#dob-date-day').trigger('change');
-      $('input[name="name-first').trigger('change');
+      $('input[name="name-first"]').trigger('change');
     },
 
     renderForm: function (html) {
@@ -170,7 +170,6 @@
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
           moj.Events.trigger('FormPopup.renderSelectionButtons');
-
           //  If the form submitted a reuse details parameter then execute the check details
           if ($form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails');
