@@ -44,16 +44,14 @@ class WhenLpaStartsForm extends AbstractLpaForm
 
         $validation = $decisions->validate(['when']);
 
-        $isValid = true;
         $messages = [];
 
-        if (count($validation) != 0) {
-            $isValid = false;
+        if ($validation->hasErrors()) {
             $messages = $this->modelValidationMessageConverter($validation);
         }
 
         return [
-            'isValid'  => $isValid,
+            'isValid'  => !$validation->hasErrors(),
             'messages' => $messages,
         ];
     }

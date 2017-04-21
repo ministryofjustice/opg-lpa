@@ -61,18 +61,12 @@ class CorrespondenceForm extends AbstractActorForm
             }
         }
 
-        $modelValidation = $correspondent->validate(['contactByPost', 'contactInWelsh', 'email', 'phone']);
+        $validation = $correspondent->validate(['contactByPost', 'contactInWelsh', 'email', 'phone']);
 
-        $isValid = true;
         $messages = [];
 
-        if (count($modelValidation) == 0) {
-            if (count($error['correspondence']) != 0) {
-                $isValid = false;
-                $messages = $error;
-            }
-        } else {
-            $errors = $this->modelValidationMessageConverter($modelValidation);
+        if ($validation->hasErrors()) {
+            $errors = $this->modelValidationMessageConverter($validation);
 
             //  The following 2 if statements are a hack to ensure human readable error messages are show.
             //  The present our computer -> human method does not support this FieldSet use case.
@@ -92,12 +86,13 @@ class CorrespondenceForm extends AbstractActorForm
                 }
             }
 
-            $isValid = false;
             $messages = array_merge($error, ['correspondence' => $errors]);
+        } elseif (count($error['correspondence']) != 0) {
+            $messages = $error;
         }
 
         return [
-            'isValid'  => $isValid,
+            'isValid'  => !$validation->hasErrors(),
             'messages' => $messages,
         ];
     }

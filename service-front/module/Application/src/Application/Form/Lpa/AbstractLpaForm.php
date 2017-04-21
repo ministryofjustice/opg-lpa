@@ -43,7 +43,6 @@ abstract class AbstractLpaForm extends AbstractForm
 
     public function init()
     {
-        // add elements
         foreach ($this->formElements as $name => $elm) {
             //  Add the element
             $this->add([
@@ -129,14 +128,8 @@ abstract class AbstractLpaForm extends AbstractForm
         $messages = [];
 
         foreach ($validationResponse as $validationErrorKey => $validationErrors) {
-            if (!strstr($validationErrorKey, '/')) {
-                // If the error only relates to a single field...
-                // Swap dots for dashes...
-                $field = str_replace('.', '-', $validationErrorKey);
-
-                $messages[$field] = $validationErrors['messages'];
-            } else {
-                // else it relates to double fields...
+            if (strstr($validationErrorKey, '/')) {
+                //  The error relates to multiple fields
                 $errorKeyStubs = explode('.', $validationErrorKey);
 
                 $fields = [
@@ -145,13 +138,13 @@ abstract class AbstractLpaForm extends AbstractForm
                 ];
 
                 foreach ($errorKeyStubs as $stub) {
-                    if (!strstr($stub, '/')) {
-                        $fields[0] .= "{$stub}-";
-                        $fields[1] .= "{$stub}-";
-                    } else {
+                    if (strstr($stub, '/')) {
                         $subFields = explode('/', $stub);
                         $fields[0] .= "{$subFields[0]}-";
                         $fields[1] .= "{$subFields[1]}-";
+                    } else {
+                        $fields[0] .= "{$stub}-";
+                        $fields[1] .= "{$stub}-";
                     }
                 }
 
@@ -159,9 +152,14 @@ abstract class AbstractLpaForm extends AbstractForm
                     $field = rtrim($field, '-');
 
                     $messages[$field] = array_map(function ($v) {
-                        return 'linked-1-'.$v;
+                        return 'linked-1-' . $v;
                     }, $validationErrors['messages']);
                 }
+            } else {
+                //  If the error only relates to a single field swap any dots for dashes in the field name
+                $field = str_replace('.', '-', $validationErrorKey);
+
+                $messages[$field] = $validationErrors['messages'];
             }
         }
 
@@ -191,17 +189,15 @@ abstract class AbstractLpaForm extends AbstractForm
                 $m = &$m[$names[$i]];
             }
 
+            $m = $value;
+
             if ($this->has($key) && ($this->get($key) instanceof Checkbox || $this->get($key) instanceof Radio)) {
-                // convert checkbox/radio value "" to false and "1" to true
+                //  If possible convert the value to a boolean
                 if ($value == "0" || $value === false || $value == "" || $value === null) {
                     $m = false;
                 } elseif ($value == "1" || $value === true) {
                     $m = true;
-                } else {
-                    $m = $value;
                 }
-            } else {
-                $m = $value;
             }
         }
 

@@ -57,23 +57,20 @@ class RepeatApplicationForm extends AbstractLpaForm
      */
     public function validateByModel()
     {
-        $isValid = ($this->data['isRepeatApplication'] == 'is-new');
+        $isValid = true;
         $messages = [];
 
+        //  If this is a repeat application validate the repeat case number
         if ($this->data['isRepeatApplication'] == 'is-repeat') {
             //  Create an LPA and validate it with the validation in the data models
-            $lpaData = [
+            $lpa = new Lpa([
                 'repeatCaseNumber' => (int) $this->data['repeatCaseNumber'],
-            ];
-
-            $lpa = new Lpa($lpaData);
+            ]);
 
             $validation = $lpa->validate(['repeatCaseNumber']);
+            $isValid = !$validation->hasErrors();
 
-            if (count($validation) == 0) {
-                $isValid = true;
-            } else {
-                $isValid = false;
+            if ($validation->hasErrors()) {
                 $messages = $this->modelValidationMessageConverter($validation);
             }
         }
