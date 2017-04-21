@@ -4,8 +4,7 @@ Here are words you'll see when you're making your lasting power of attorney (LPA
 
 
 **Applicant** 
-> The applicant is the person who applies to register the LPA – that can be you (the donor) or one or more of your attorneys. The Office of the Public Guardian (OPG) usually sends the registered and stamped LPA to the applicant. However, if you 
- OPG to correspond with someone else about your LPA application, OPG will send the registered LPA to that person.
+> The applicant is the person who applies to register the LPA – that can be you (the donor) or one or more of your attorneys. The Office of the Public Guardian (OPG) usually sends the registered and stamped LPA to the applicant. However, if you want OPG to correspond with someone else about your LPA application, OPG will send the registered LPA to that person.
 
 **Attorney**
 > Attorneys are the people you choose to make decisions for you. You know them well and trust them to respect your views and act in your best interests. Attorneys don't need to be lawyers. Many people choose their wife, husband, civil partner, partner, children, other relatives or close friends. Attorneys must be at least 18 years old.
