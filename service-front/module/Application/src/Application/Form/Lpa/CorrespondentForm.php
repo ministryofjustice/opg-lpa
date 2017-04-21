@@ -73,6 +73,9 @@ class CorrespondentForm extends AbstractActorForm
     {
         $this->setName('form-correspondent');
 
+        //  Set the actor model so it can be used during validation
+        $this->actorModel = new Correspondence();
+
         parent::init();
     }
 
@@ -111,17 +114,5 @@ class CorrespondentForm extends AbstractActorForm
     public function isEditable()
     {
         return $this->isEditable;
-    }
-
-    /**
-     * Validate form input data through model validators
-     *
-     * @return array
-     */
-    public function validateByModel()
-    {
-        $this->actorModel = new Correspondence();
-
-        return parent::validateByModel();
     }
 }

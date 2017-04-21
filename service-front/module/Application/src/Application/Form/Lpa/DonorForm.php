@@ -63,18 +63,9 @@ class DonorForm extends AbstractActorForm
     {
         $this->setName('form-donor');
 
-        parent::init();
-    }
-
-    /**
-     * Validate form input data through model validators
-     *
-     * @return array
-     */
-    public function validateByModel()
-    {
+        //  Set the actor model so it can be used during validation
         $this->actorModel = new Donor();
 
-        return parent::validateByModel();
+        parent::init();
     }
 }

@@ -42,18 +42,9 @@ class TrustCorporationForm extends AbstractActorForm
     {
         $this->setName('form-trust-corporation');
 
-        parent::init();
-    }
-
-    /**
-     * Validate form input data through model validators
-     *
-     * @return array
-     */
-    public function validateByModel()
-    {
+        //  Set the actor model so it can be used during validation
         $this->actorModel = new TrustCorporation();
 
-        return parent::validateByModel();
+        parent::init();
     }
 }
