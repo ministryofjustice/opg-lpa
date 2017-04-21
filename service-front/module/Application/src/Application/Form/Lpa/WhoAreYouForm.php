@@ -78,16 +78,14 @@ class WhoAreYouForm extends AbstractLpaForm
 
         $validation = $whoAreYou->validate();
 
-        $isValid = true;
         $messages = [];
 
-        if (count($validation) != 0) {
-            $isValid = false;
+        if ($validation->hasErrors()) {
             $messages = $this->modelValidationMessageConverter($validation, $this->data);
         }
 
         return [
-            'isValid'  => $isValid,
+            'isValid'  => !$validation->hasErrors(),
             'messages' => $messages,
         ];
     }
@@ -104,26 +102,30 @@ class WhoAreYouForm extends AbstractLpaForm
         $modelData = [];
 
         if (array_key_exists($formData['who'], WhoAreYou::options())) {
-            $modelData['who'] = $formData['who'];
+            //  Get the form data
+            $who = $formData['who'];
 
-            switch ($formData['who']) {
-                case 'professional':
-                    $modelData['subquestion'] = $formData['professional'];
+            //  Set the default model data
+            $subQuestion = null;
+            $qualifier = null;
 
-                    if ($formData['professional'] == 'other') {
-                        $modelData['qualifier'] = $formData['professional-other'];
-                    } else {
-                        $modelData['qualifier'] = null;
-                    }
-                    break;
-                case 'organisation':
-                    $modelData['subquestion'] = null;
-                    $modelData['qualifier'] = $formData['organisation'];
-                    break;
-                default:
-                    $modelData['subquestion'] = null;
-                    $modelData['qualifier'] = null;
+            //  Set the model data accordingly
+            if ($who == 'professional') {
+                $subQuestion = $formData['professional'];
+
+                if ($subQuestion == 'other') {
+                    $qualifier = $formData['professional-other'];
+                }
+            } elseif ($who == 'organisation') {
+                $qualifier = $formData['organisation'];
             }
+
+            //  Set the model data
+            $modelData = [
+                'who'         => $who,
+                'subquestion' => $subQuestion,
+                'qualifier'   => $qualifier,
+            ];
         }
 
         return $modelData;

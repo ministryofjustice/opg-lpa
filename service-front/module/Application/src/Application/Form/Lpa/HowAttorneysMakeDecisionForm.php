@@ -51,16 +51,14 @@ class HowAttorneysMakeDecisionForm extends AbstractLpaForm
 
         $validation = $decision->validate(['how']);
 
-        $isValid = true;
         $messages = [];
 
-        if (count($validation) != 0) {
-            $isValid = false;
+        if ($validation->hasErrors()) {
             $messages = $this->modelValidationMessageConverter($validation);
         }
 
         return [
-            'isValid'  => $isValid,
+            'isValid'  => !$validation->hasErrors(),
             'messages' => $messages,
         ];
     }
