@@ -2,6 +2,8 @@
 
 namespace Application\Form\Lpa;
 
+use Opg\Lpa\DataModel\AbstractData;
+
 abstract class AbstractActorForm extends AbstractLpaForm
 {
     /**
@@ -19,6 +21,11 @@ abstract class AbstractActorForm extends AbstractLpaForm
     public function validateByModel()
     {
         $dataForModel = $this->convertFormDataForModel($this->data);
+
+        //  Check that the actor model has been set before proceeding
+        if (!$this->actorModel instanceof AbstractData) {
+            throw new \RuntimeException('Actor model in the actor form must be set before the data can be validated by model');
+        }
 
         $this->actorModel->populate($dataForModel);
         $validation = $this->actorModel->validate();

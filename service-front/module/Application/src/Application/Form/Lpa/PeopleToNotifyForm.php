@@ -37,18 +37,9 @@ class PeopleToNotifyForm extends AbstractActorForm
     {
         $this->setName('form-people-to-notify');
 
-        parent::init();
-    }
-
-    /**
-     * Validate form input data through model validators
-     *
-     * @return array
-     */
-    public function validateByModel()
-    {
+        //  Set the actor model so it can be used during validation
         $this->actorModel = new NotifiedPerson();
 
-        return parent::validateByModel();
+        parent::init();
     }
 }
