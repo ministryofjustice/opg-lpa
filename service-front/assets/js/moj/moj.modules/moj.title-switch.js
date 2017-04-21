@@ -70,7 +70,8 @@
         $select.val(value);
       }
       // add select box after element
-      $text.data('moj.TitleSwitch', true).after($select).change(function () {
+      $text.data('moj.TitleSwitch', true);
+      $text.after($select).change(function () {
         var value = $(this).val();
 
         if (_.contains(_this.options, value)) {
@@ -85,7 +86,7 @@
       // this accessibility fix is excluded on ie8 and lower
       // because it's breaking for some reason
       if (!$('html').hasClass('lte-ie8')) {
-        $text.append($('<label>', { 'for': $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
+        $text.before($('<label>', { 'for': $text.attr('id'),'text':'Title', 'class':'visuallyhidden' }));
       }
     },
 
