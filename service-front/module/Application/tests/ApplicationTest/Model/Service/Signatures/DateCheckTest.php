@@ -3,6 +3,7 @@ namespace ApplicationTest\Model;
 
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Service\Signatures\DateCheck;
+use DateTime;
 
 /**
  * FormFlowChecker test case.
@@ -21,12 +22,12 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testAllSignedInCorrectOrder()
     {
         $dates = [
-            'donor' => '14/01/2015',
-            'certificate-provider' => '16/01/2015',
+            'donor' => new DateTime('2015-01-14'),
+            'certificate-provider' => new DateTime('2015-01-16'),
             'attorneys' => [
-                '18/01/2015',
-                '16/01/2015',
-                '17/01/2015',
+                new DateTime('2015-01-18'),
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
             ],
         ];
 
@@ -36,11 +37,11 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testDonorSignsAfterCertificateProvider()
     {
         $dates = [
-            'donor' => '14/01/2015',
-            'certificate-provider' => '12/01/2015',
+            'donor' => new DateTime('2015-01-14'),
+            'certificate-provider' => new DateTime('2015-01-12'),
             'attorneys' => [
-                '16/01/2015',
-                '17/01/2015',
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
             ],
         ];
 
@@ -50,11 +51,11 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testCertificateProviderSignsAfterOneOfTheAttorneys()
     {
         $dates = [
-            'donor' => '14/01/2015',
-            'certificate-provider' => '17/01/2015',
+            'donor' => new DateTime('2015-01-14'),
+            'certificate-provider' => new DateTime('2015-01-17'),
             'attorneys' => [
-                '16/01/2015',
-                '18/01/2015',
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-18'),
             ],
         ];
 
@@ -64,11 +65,11 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testDonorSignsAfterEveryoneElse()
     {
         $dates = [
-            'donor' => '14/02/2015',
-            'certificate-provider' => '17/01/2015',
+            'donor' => new DateTime('2015-02-14'),
+            'certificate-provider' => new DateTime('2015-01-15'),
             'attorneys' => [
-                '16/01/2015',
-                '18/01/2015',
+                new DateTime('2015-02-15'),
+                new DateTime('2015-02-18'),
             ],
         ];
 
@@ -78,11 +79,11 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testOneAttorneySignsBeforeEveryoneElse()
     {
         $dates = [
-            'donor' => '14/02/2015',
-            'certificate-provider' => '17/01/2015',
+            'donor' => new DateTime('2015-02-14'),
+            'certificate-provider' => new DateTime('2015-01-17'),
             'attorneys' => [
-                '06/01/2015',
-                '18/01/2015',
+                new DateTime('2015-01-06'),
+                new DateTime('2015-01-18'),
             ],
         ];
 
@@ -96,4 +97,3 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     {
     }
 }
-
