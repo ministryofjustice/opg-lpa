@@ -1,16 +1,9 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints as SymfonyConstraints;
 
-/**
- * @Annotation
- * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
- *
- * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
- */
 class Choice extends SymfonyConstraints\Choice
 {
     use ValidatorPathTrait;
@@ -22,16 +15,14 @@ class Choice extends SymfonyConstraints\Choice
     public $message = 'invalid-value-selected';
     public $multipleMessage = 'invalid-values-selected';
 
-    public function __construct($options = null){
-
+    public function __construct($options = null)
+    {
         // Include the allowed values in the error message
-        if( isset($options['choices']) ){
+        if (isset($options['choices'])) {
             $this->message = 'allowed-values:'.implode(',', $options['choices']);
             $this->multipleMessage = 'allowed-values:'.implode(',', $options['choices']);
         }
 
-        parent::__construct( $options );
+        parent::__construct($options);
     }
-
-
 }

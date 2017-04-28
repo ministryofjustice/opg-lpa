@@ -48,6 +48,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionCodeDeploy(array $args = [])
  * @method \Aws\CodePipeline\CodePipelineClient createCodePipeline(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionCodePipeline(array $args = [])
+ * @method \Aws\CodeStar\CodeStarClient createCodeStar(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionCodeStar(array $args = [])
  * @method \Aws\CognitoIdentity\CognitoIdentityClient createCognitoIdentity(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionCognitoIdentity(array $args = [])
  * @method \Aws\CognitoIdentityProvider\CognitoIdentityProviderClient createCognitoIdentityProvider(array $args = [])
@@ -120,6 +122,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionKms(array $args = [])
  * @method \Aws\Lambda\LambdaClient createLambda(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionLambda(array $args = [])
+ * @method \Aws\LexModelBuildingService\LexModelBuildingServiceClient createLexModelBuildingService(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionLexModelBuildingService(array $args = [])
  * @method \Aws\LexRuntimeService\LexRuntimeServiceClient createLexRuntimeService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionLexRuntimeService(array $args = [])
  * @method \Aws\Lightsail\LightsailClient createLightsail(array $args = [])
@@ -195,7 +199,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.25.3';
+    const VERSION = '3.26.3';
 
     /** @var array Arguments for creating clients */
     private $args;
