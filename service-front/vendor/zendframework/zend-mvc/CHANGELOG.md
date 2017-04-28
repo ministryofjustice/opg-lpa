@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.12 - 2017-04-27
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#235](https://github.com/zendframework/zend-mvc/pull/235) fixes
+  `FormAnnotationBuilderFactory::injectFactory()` to pass the correct
+  arguments to the plugin manager's `injectFactory()` initializer when running
+  under zend-servicemanager v2.
+
+## 2.7.11 - 2017-04-27
+
+### Added
+
+- [#233](https://github.com/zendframework/zend-mvc/pull/233) adds a `replace`
+  entry to the `composer.json` indicating the package replaces
+  zendframework/zend-router. This is done to prevent errors from installing both
+  zend-mvc v2 with zend-router, which could lead to subtle errors when checking
+  exceptions, locating route types, etc. Users should upgrade to zend-mvc v3 if
+  they wish to use the standalone zend-router package.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#229](https://github.com/zendframework/zend-mvc/pull/229) removes the
+  zend-version package from the `require-dev` and `suggest` sections of
+  `composer.json`, and updates the `RouteNotFoundStrategy::getConsoleBanner()`
+  method to no longer use the version constant. Since zend-version has had no
+  real meaning since the 2.5 release, this removes ambiguity for end-users.
+
+### Fixed
+
+- [#223](https://github.com/zendframework/zend-mvc/pull/223) fixes how the
+  `FormAnnotationBuilderFactory` injects the builder with the
+  `FormElementManager` service such that it will work with the latest zend-form
+  releases.
+
 ## 2.7.10 - 2016-06-13
 
 ### Added

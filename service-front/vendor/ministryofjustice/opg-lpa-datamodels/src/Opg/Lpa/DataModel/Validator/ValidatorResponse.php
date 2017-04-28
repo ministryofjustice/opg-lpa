@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator;
 
 use ArrayObject;
@@ -9,15 +10,15 @@ use ArrayObject;
  * Class ValidatorResponse
  * @package Opg\Lpa\DataModel\Validator
  */
-class ValidatorResponse extends ArrayObject implements ValidatorResponseInterface {
-
+class ValidatorResponse extends ArrayObject implements ValidatorResponseInterface
+{
     /**
      * Return true if this response contains one or more errors. False otherwise.
      *
      * @return bool
      */
-    public function hasErrors(){
-        return ( count( $this ) > 0 );
+    public function hasErrors()
+    {
+        return (count($this) > 0);
     }
-
-} // class
+}
