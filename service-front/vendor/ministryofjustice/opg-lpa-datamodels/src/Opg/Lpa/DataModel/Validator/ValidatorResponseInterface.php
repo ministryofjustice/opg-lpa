@@ -1,10 +1,14 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator;
 
-use IteratorAggregate, ArrayAccess, Serializable, Countable;
+use IteratorAggregate;
+use ArrayAccess;
+use Serializable;
+use Countable;
 
-interface ValidatorResponseInterface extends IteratorAggregate, ArrayAccess, Serializable, Countable {
-
+interface ValidatorResponseInterface extends IteratorAggregate, ArrayAccess, Serializable, Countable
+{
     /**
      * Return true iff this response contains one or more errors. False otherwise.
      *
@@ -18,5 +22,4 @@ interface ValidatorResponseInterface extends IteratorAggregate, ArrayAccess, Ser
      * @return array
      */
     public function getArrayCopy();
-
-} // interface
+}

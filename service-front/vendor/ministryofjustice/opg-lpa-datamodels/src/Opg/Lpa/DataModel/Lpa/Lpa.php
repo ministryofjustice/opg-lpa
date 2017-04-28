@@ -1,14 +1,13 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Lpa;
 
 use Opg\Lpa\DataModel\AbstractData;
-
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a full LPA document, plus associated metadata.
@@ -16,8 +15,8 @@ use Opg\Lpa\DataModel\Validator\Constraints as Assert;
  * Class Lpa
  * @package Opg\Lpa\DataModel\Lpa
  */
-class Lpa extends AbstractData {
-
+class Lpa extends AbstractData
+{
     /**
      * @var int The LPA identifier.
      */
@@ -88,16 +87,19 @@ class Lpa extends AbstractData {
     /**
      * @var array Metadata relating to the LPA. Clients can use this value however they wish.
      */
-    protected $metadata = array();
+    protected $metadata = [];
 
-    //------------------------------------------------
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata){
-
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
         $metadata->addPropertyConstraints('id', [
             new Assert\NotBlank,
-            new Assert\Type([ 'type' => 'int' ]),
-            new Assert\Range([ 'min' => 0, 'max' => 99999999999 ]),
+            new Assert\Type([
+                'type' => 'int'
+            ]),
+            new Assert\Range([
+                'min' => 0,
+                'max' => 99999999999
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('startedAt', [
@@ -124,58 +126,75 @@ class Lpa extends AbstractData {
 
         $metadata->addPropertyConstraints('user', [
             new Assert\NotBlank,
-            new Assert\Type([ 'type' => 'xdigit' ]),
-            new Assert\Length([ 'min' => 32, 'max' => 32 ]),
+            new Assert\Type([
+                'type' => 'xdigit'
+            ]),
+            new Assert\Length([
+                'min' => 32,
+                'max' => 32
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('payment', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Payment\Payment' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Payment\Payment'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('whoAreYouAnswered', [
             new Assert\NotNull,
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('locked', [
             new Assert\NotNull,
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('seed', [
-            new Assert\Type([ 'type' => 'int' ]),
-            new Assert\Range([ 'min' => 0, 'max' => 99999999999 ]),
+            new Assert\Type([
+                'type' => 'int'
+            ]),
+            new Assert\Range([
+                'min' => 0,
+                'max' => 99999999999
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('repeatCaseNumber', [
-            new Assert\Type([ 'type' => 'int' ]),
+            new Assert\Type([
+                'type' => 'int'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('document', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Document' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Document\Document'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('metadata', [
             new Assert\NotNull,
-            new Assert\Type([ 'type' => 'array' ]),
-            new Assert\Callback(function ($value, ExecutionContextInterface $context){
-
+            new Assert\Type([
+                'type' => 'array'
+            ]),
+            new Assert\Callback(function ($value, ExecutionContextInterface $context) {
                 // Max allowed size when JSON encoded in bytes.
                 $bytes = 1024 * 1024 * 1;
 
                 // Put a $bytes limit (when JSON encoded) on the metadata array.
-                if( is_array($value) && strlen( json_encode($value) ) >  $bytes ){
-                    $context->buildViolation( 'must-be-less-than-or-equal:'.$bytes.'-bytes' )->addViolation();
+                if (is_array($value) && strlen(json_encode($value)) >  $bytes) {
+                    $context->buildViolation('must-be-less-than-or-equal:' . $bytes . '-bytes')->addViolation();
                 }
-
-            }) // Assert\Callback
+            })
         ]);
-
-    } // function
-
-    //------------------------------------------------
+    }
 
     /**
      * Map property values to their correct type.
@@ -184,67 +203,60 @@ class Lpa extends AbstractData {
      * @param mixed $v mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map( $property, $v ){
-
-        switch( $property ){
+    protected function map($property, $v)
+    {
+        switch ($property) {
             case 'startedAt':
             case 'updatedAt':
             case 'createdAt':
             case 'completedAt':
             case 'lockedAt':
-                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
+                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
             case 'payment':
-                return ($v instanceof Payment || is_null($v)) ? $v : new Payment( $v );
+                return (($v instanceof Payment || is_null($v)) ? $v : new Payment($v));
             case 'document':
-                return ($v instanceof Document || is_null($v)) ? $v : new Document( $v );
+                return (($v instanceof Document || is_null($v)) ? $v : new Document($v));
         }
 
-        // else...
-        return parent::map( $property, $v );
-
-    } // function
-
-    //------------------------------------------------
+        return parent::map($property, $v);
+    }
 
     /**
      * Returns $this as an array suitable for inserting into MongoDB.
      *
      * @return array
      */
-    public function toMongoArray(){
+    public function toMongoArray()
+    {
         $data = parent::toMongoArray();
 
         // Rename 'id' to '_id' (keeping it at the beginning of the array)
-        $data = [ '_id'=>$data['id'] ] + $data;
+        $data = ['_id' => $data['id']] + $data;
 
         unset($data['id']);
 
         return $data;
     }
 
-    //------------------------------------------------
-
     /**
      * Return an abbreviated (summary) version of the LPA.
      *
      * @return array
      */
-    public function abbreviatedToArray(){
-
+    public function abbreviatedToArray()
+    {
         $data = $this->toArray();
 
         // Include these top level fields...
-        $data = array_intersect_key( $data, array_flip([
+        $data = array_intersect_key($data, array_flip([
             'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'completedAt', 'user', 'locked', 'document', 'metadata'
         ]));
 
         // Include these document level fields...
-        $data['document'] = array_intersect_key( $data['document'], array_flip([
+        $data['document'] = array_intersect_key($data['document'], array_flip([
             'donor', 'type'
         ]));
 
         return $data;
-
-    } // function
-
-} // class
+    }
+}

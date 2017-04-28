@@ -1,19 +1,10 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
-/**
- * @Annotation
- * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
- *
- * @author Benjamin Dulau <benjamin.dulau@gmail.com>
- * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
- */
 class Image extends File
 {
     // Don't reuse values used in File
-
     const SIZE_NOT_DETECTED_ERROR = 10;
     const TOO_WIDE_ERROR = 11;
     const TOO_NARROW_ERROR = 12;
@@ -26,8 +17,7 @@ class Image extends File
     const PORTRAIT_NOT_ALLOWED_ERROR = 19;
 
     // Include the mapping from the base class
-
-    protected static $errorNames = array(
+    protected static $errorNames = [
         self::NOT_FOUND_ERROR => 'NOT_FOUND_ERROR',
         self::NOT_READABLE_ERROR => 'NOT_READABLE_ERROR',
         self::EMPTY_ERROR => 'EMPTY_ERROR',
@@ -43,7 +33,7 @@ class Image extends File
         self::SQUARE_NOT_ALLOWED_ERROR => 'SQUARE_NOT_ALLOWED_ERROR',
         self::LANDSCAPE_NOT_ALLOWED_ERROR => 'LANDSCAPE_NOT_ALLOWED_ERROR',
         self::PORTRAIT_NOT_ALLOWED_ERROR => 'PORTRAIT_NOT_ALLOWED_ERROR',
-    );
+    ];
 
     public $mimeTypes = 'image/*';
     public $minWidth;
