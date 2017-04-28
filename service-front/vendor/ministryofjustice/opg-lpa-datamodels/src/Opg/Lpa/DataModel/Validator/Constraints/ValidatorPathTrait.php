@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
 /**
@@ -21,8 +22,7 @@ trait ValidatorPathTrait {
      */
     public function validatedBy()
     {
-        $pathParts = explode('\\',get_class($this));
-        return 'Symfony\\Component\\Validator\\Constraints\\'.end( $pathParts ).'Validator';
+        $pathParts = explode('\\', get_class($this));
+        return 'Symfony\\Component\\Validator\\Constraints\\' . end($pathParts) . 'Validator';
     }
-
-} // trait
+}
