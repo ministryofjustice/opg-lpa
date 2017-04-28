@@ -1,15 +1,16 @@
 <?php
+
 namespace Opg\Lpa\DataModel;
 
-interface AccessorInterface {
-
+interface AccessorInterface
+{
     /**
      * Returns the value for the requested property.
      *
      * @param string $property The property name.
      * @return mixed
      */
-    public function get( $property );
+    public function get($property);
 
     /**
      * Alias of get(), allowing access to properties via the $lap->{property} syntax.
@@ -18,7 +19,7 @@ interface AccessorInterface {
      * @return mixed
      *
      */
-    public function __get( $property );
+    public function __get($property);
 
     /**
      * Sets a property's value.
@@ -27,7 +28,7 @@ interface AccessorInterface {
      * @param mixed $value The value to set the property to.
      * @return mixed
      */
-    public function set( $property, $value );
+    public function set($property, $value);
 
     /**
      * Sets a property's value, after validating it.
@@ -35,9 +36,8 @@ interface AccessorInterface {
      * @param string $property The property name to set.
      * @return AbstractData Returns $this to allow chaining.
      * @throws \InvalidArgumentException If the property name is invalid.
-     * @throws \Opg\Lpa\DataModel\Validator\ValidatorException If the property value does not validate.
      */
-    public function __set( $property, $value );
+    public function __set($property, $value);
 
     /**
      * Returns an array representation of $this instance.
@@ -73,5 +73,4 @@ interface AccessorInterface {
      * @return array
      */
     public function flatten();
-
-} // interface
+}

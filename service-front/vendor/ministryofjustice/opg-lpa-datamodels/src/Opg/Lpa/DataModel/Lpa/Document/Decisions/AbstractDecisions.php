@@ -1,14 +1,13 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Elements;
-
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-abstract class AbstractDecisions extends AbstractData {
-
+abstract class AbstractDecisions extends AbstractData
+{
     const LPA_DECISION_HOW_DEPENDS = 'depends';
     const LPA_DECISION_HOW_JOINTLY = 'jointly';
     const LPA_DECISION_HOW_SINGLE_ATTORNEY = 'single-attorney';
@@ -31,27 +30,30 @@ abstract class AbstractDecisions extends AbstractData {
      */
     protected $howDetails;
 
-    //------------------------------------------------
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata){
-
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
         $metadata->addPropertyConstraints('how', [
-            // Can be null
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Choice([ 'choices' => [
-                self::LPA_DECISION_HOW_DEPENDS,
-                self::LPA_DECISION_HOW_JOINTLY,
-                self::LPA_DECISION_HOW_SINGLE_ATTORNEY,
-                self::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-            ] ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Choice([
+                'choices' => [
+                    self::LPA_DECISION_HOW_DEPENDS,
+                    self::LPA_DECISION_HOW_JOINTLY,
+                    self::LPA_DECISION_HOW_SINGLE_ATTORNEY,
+                    self::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+                ]
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('howDetails', [
-            // Can be null
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'min' => 1, 'max' => (1000*1024) ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'min' => 1,
+                'max' => (1000 * 1024)
+            ]),
         ]);
-
-    } // function
-
-} // abstract class
+    }
+}

@@ -1,12 +1,13 @@
 <?php
+
 namespace Opg\Lpa\DataModel;
 
-use DateTime, InvalidArgumentException, JsonSerializable;
-
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
-
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use DateTime;
+use InvalidArgumentException;
+use JsonSerializable;
 
 /**
  * This class is extended by all entities that make up an LPA, including the LPA object itself.
@@ -21,9 +22,8 @@ use Symfony\Component\Validator\ConstraintViolationList;
  * Class AbstractData
  * @package Opg\Lpa\DataModel\Lpa
  */
-abstract class AbstractData implements AccessorInterface, JsonSerializable, Validator\ValidatableInterface {
-
-
+abstract class AbstractData implements AccessorInterface, JsonSerializable, Validator\ValidatableInterface
+{
     /**
      * Builds and populates $this chunk of the LPA.
      *
@@ -34,36 +34,27 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @param null|string|array $data
      */
-    public function __construct( $data = null ){
-
+    public function __construct($data = null)
+    {
         // If it's a string...
-        if( is_string( $data ) ){
-
+        if (is_string($data)) {
             // Assume it's JSON.
-            $data = json_decode( $data, true );
+            $data = json_decode($data, true);
 
             // Throw an exception if it turns out to not be JSON...
-            if( is_null($data) ){ throw new InvalidArgumentException('Invalid JSON passed to constructor'); }
-
-        } // if
-
-
-        // If it's [now] an array...
-        if( is_array($data) ){
-
-            $this->populate( $data );
-
-        } elseif( !is_null( $data ) ){
-
-            // else if it's not null (or array) now, it was an invalid data type...
-            throw new InvalidArgumentException('Invalid argument passed to constructor');
-
+            if (is_null($data)) {
+                throw new InvalidArgumentException('Invalid JSON passed to constructor');
+            }
         }
 
-    } // function
-
-    //--------------------------------------
-    // Getter
+        // If it's [now] an array...
+        if (is_array($data)) {
+            $this->populate($data);
+        } elseif (!is_null($data)) {
+            // else if it's not null (or array) now, it was an invalid data type...
+            throw new InvalidArgumentException('Invalid argument passed to constructor');
+        }
+    }
 
     /**
      * Determines whether a property with the passed name exists.
@@ -71,8 +62,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $property
      * @return bool
      */
-    public function __isset( $property ){
-        return isset( $this->{$property} );
+    public function __isset($property)
+    {
+        return isset($this->{$property});
     }
 
     /**
@@ -82,8 +74,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @return mixed
      * @throws InvalidArgumentException If the property does not exist.
      */
-    public function &__get( $property ){
-        return $this->get( $property );
+    public function &__get($property)
+    {
+        return $this->get($property);
     }
 
     /**
@@ -93,18 +86,14 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @return mixed
      * @throws InvalidArgumentException If the property does not exist.
      */
-    public function &get( $property ){
-
-        if( !property_exists( $this, $property ) ){
+    public function &get($property)
+    {
+        if (!property_exists($this, $property)) {
             throw new InvalidArgumentException("$property is not a valid property");
         }
 
         return $this->{$property};
-
-    } // function
-
-    //--------------------------------------
-    // Setter
+    }
 
     /**
      * Sets a property's value, after validating it.
@@ -113,8 +102,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @return AbstractData Returns $this to allow chaining.
      * @throws InvalidArgumentException If the property name is invalid.
      */
-    public function __set( $property, $value ){
-        return $this->set( $property, $value );
+    public function __set($property, $value)
+    {
+        return $this->set($property, $value);
     }
 
     /**
@@ -124,43 +114,32 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param mixed $value The value to set the property to.
      * @return mixed
      */
-    public function set( $property, $value ){
-
-        if( !property_exists( $this, $property ) ){
+    public function set($property, $value)
+    {
+        if (!property_exists($this, $property)) {
             throw new InvalidArgumentException("$property is not a valid property");
         }
 
-        //---
 
-        /**
-         * MongoDates should be converted to Datatime.
-         * Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
-         */
-        if( class_exists('\MongoDate') && $value instanceof \MongoDate ){
-
-            if( (float)phpversion("mongo") >= 1.6 ){
+        //  MongoDates should be converted to Datatime.
+        //  Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
+        if (class_exists('\MongoDate') && $value instanceof \MongoDate) {
+            if ((float)phpversion("mongo") >= 1.6) {
                 $value = $value->toDateTime();
             } else {
                 // sprintf %06d ensures a full 6 digit value is returns, even if there are prefixing zeros.
-                $value = new DateTime( date( 'Y-m-d\TH:i:s', $value->sec ).".".sprintf("%06d", $value->usec)."+0000" );
+                $value = new DateTime(date('Y-m-d\TH:i:s', $value->sec) . "." . sprintf("%06d", $value->usec) . "+0000");
             }
-
         }
 
-        //---
-
         // Map the value (if needed)...
-        $value = $this->map( $property, $value );
-
-        //---
+        $value = $this->map($property, $value);
 
         $this->{$property} = $value;
 
         return $this;
+    }
 
-    } // function
-
-    //--------------------------------------
     // Validation
 
     /**
@@ -168,8 +147,13 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @return ValidatorResponse
      */
-    public function validateAllGroups(){
-        return $this->validate( array(), [ 'Default', 'required-at-api', 'required-at-pdf' ] );
+    public function validateAllGroups()
+    {
+        return $this->validate([], [
+            'Default',
+            'required-at-api',
+            'required-at-pdf'
+        ]);
     }
 
     /**
@@ -177,165 +161,136 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @return ValidatorResponse
      */
-    public function validateForApi(){
-        return $this->validate( array(), [ 'Default', 'required-at-api' ] );
+    public function validateForApi()
+    {
+        return $this->validate([], [
+            'Default',
+            'required-at-api'
+        ]);
     }
 
     /**
      * Validates the concrete class which this method is called on.
      *
-     * @param $properties Array An array of property names to check. An empty array means all properties.
-     * @param $groups Array An array of what validator groups to check (if any).
+     * @param $properties array An array of property names to check. An empty array means all properties.
+     * @param $groups array An array of what validator groups to check (if any).
      * @return ValidatorResponse
      * @throws InvalidArgumentException
      */
-    public function validate( Array $properties = array(), Array $groups = array() ){
-
-        $validator = Validation::createValidatorBuilder()
-            ->setApiVersion( Validation::API_VERSION_2_5 )
-            ->addMethodMapping('loadValidatorMetadata')->getValidator();
+    public function validate(array $properties = [], array $groups = [])
+    {
+        $validator = Validation::createValidatorBuilder()->setApiVersion(Validation::API_VERSION_2_5)
+                                                         ->addMethodMapping('loadValidatorMetadata')
+                                                         ->getValidator();
 
         // Marge any other require groups in along with Default.
-        $groups = array_unique( array_merge( $groups, ['Default'] ) );
+        $groups = array_unique(array_merge($groups, ['Default']));
 
-        if( !empty($properties) ){
-
+        if (!empty($properties)) {
             // Validate the passed properties...
-
             $violations = new ConstraintViolationList();
 
-            foreach( $properties as $property ){
-                $result = $validator->validateProperty( $this, $property, $groups );
-                $violations->addAll( $result );
+            foreach ($properties as $property) {
+                $result = $validator->validateProperty($this, $property, $groups);
+                $violations->addAll($result);
             }
-
         } else {
             // Validate all properties...
-            $violations = $validator->validate( $this, null, $groups );
+            $violations = $validator->validate($this, null, $groups);
         }
-
-        //---
 
         $response = new ValidatorResponse();
 
         // If there no errors, we can return straight away.
-        if( count($violations) == 0 ){
+        if (count($violations) == 0) {
             return $response;
         }
 
-        //---
-
-        foreach($violations as $violation){
-
+        foreach ($violations as $violation) {
             $field = $violation->getPropertyPath();
 
             // If this is the first time we've seen an error for this field...
-            if( !isset($response[$field]) ){
-
+            if (!isset($response[$field])) {
                 $value = $violation->getInvalidValue();
 
                 // If the value is an object...
-                if( is_object($value) ) {
-
+                if (is_object($value)) {
                     if (method_exists($value, '__toString')) {
-
                         $value = get_class($this) . ' / ' . (string)$value;
-
                     } elseif ($value instanceof DateTime) {
-
                         $value = $value->format(DateTime::ISO8601);
-
                     } else {
-
                         $value = get_class($this);
-
                     }
-
-                } elseif( is_array($value) ){
-
-                    $value = implode(', ', array_map(function($v){
+                } elseif (is_array($value)) {
+                    $value = implode(', ', array_map(function ($v) {
                         return get_class($v);
-                    }, $value) );
-
+                    }, $value));
                 }
 
                 $response[$field] = [
                     'value' => $value,
-                    'messages' => array()
+                    'messages' => []
                 ];
-
-            } // if
-
-            //---
+            }
 
             // Include the error message
             $response[$field]['messages'][] = $violation->getMessage();
-
-        } // foreach
-
-        //---
+        }
 
         return $response;
-
-    } // function
-
-    //-------------------
+    }
 
     /**
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
      * @return array
      */
-    public function toArray( $dateFormat = 'string' ){
-
-        if( $dateFormat == 'mongo' && !class_exists('\MongoDate') ){
+    public function toArray($dateFormat = 'string')
+    {
+        if ($dateFormat == 'mongo' && !class_exists('\MongoDate')) {
             throw new InvalidArgumentException('You not have the PHP Mongo extension installed');
         }
 
-        //---
+        $values = get_object_vars($this);
 
-        $values = get_object_vars( $this );
-
-        foreach( $values as $k=>$v ){
-
-            if ( $v instanceof DateTime ) {
-
-                switch($dateFormat){
+        foreach ($values as $k => $v) {
+            if ($v instanceof DateTime) {
+                switch ($dateFormat) {
                     case 'string':
-                        $values[$k] = $v->format( 'Y-m-d\TH:i:s.uO' ); // ISO8601 including microseconds
+                        $values[$k] = $v->format('Y-m-d\TH:i:s.uO'); // ISO8601 including microseconds
                         break;
                     case 'mongo':
                         //Convert to MongoDate, including microseconds...
-                        $values[$k] = new \MongoDate( $v->getTimestamp(), (int)$v->format('u') );
+                        $values[$k] = new \MongoDate($v->getTimestamp(), (int)$v->format('u'));
                         break;
                     default:
-                } // switch
-
-            } // if
+                }
+            }
 
             // Recursively build this array...
-            if( $v instanceof AccessorInterface ) {
-                $values[$k] = $v->toArray( $dateFormat );
+            if ($v instanceof AccessorInterface) {
+                $values[$k] = $v->toArray($dateFormat);
             }
 
             // If the value is an array, check if it contains instances of AccessorInterface...
-            if( is_array($v) ){
+            if (is_array($v)) {
                 // If so, map them...
-                foreach( $v as $a=>$b ){
-                    if( $b instanceof AccessorInterface ) {
-                        $values[$k][$a] = $b->toArray( $dateFormat );
+                foreach ($v as $a => $b) {
+                    if ($b instanceof AccessorInterface) {
+                        $values[$k][$a] = $b->toArray($dateFormat);
                     }
                 }
-            } // if
-
-        } // foreach
+            }
+        }
 
         return $values;
+    }
 
-    } // function
+    public function getArrayCopy()
+    {
+        throw new \Exception('Is this used anywhere? If not I am going to remove it.');
 
-    public function getArrayCopy(){
-        throw new \Exception( 'Is this used anywhere? If not I am going to remove it.' );
         return $this->toArray();
     }
 
@@ -344,10 +299,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @return array
      */
-    public function toMongoArray(){
-        return $this->toArray( 'mongo' );
-
-        //MongoDate
+    public function toMongoArray()
+    {
+        return $this->toArray('mongo');
     }
 
     /**
@@ -355,8 +309,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @return array
      */
-    public function jsonSerialize(){
-        return $this->toArray( 'string' );
+    public function jsonSerialize()
+    {
+        return $this->toArray('string');
     }
 
     /**
@@ -365,11 +320,12 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param bool $pretty
      * @return string
      */
-    public function toJson( $pretty = true ){
-        if( $pretty ){
-            return json_encode( $this, JSON_PRETTY_PRINT );
+    public function toJson($pretty = true)
+    {
+        if ($pretty) {
+            return json_encode($this, JSON_PRETTY_PRINT);
         } else {
-            return json_encode( $this );
+            return json_encode($this);
         }
     }
 
@@ -385,26 +341,26 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *
      * @return array
      */
-    public function flatten($prefix = ''){
-        return $this->flattenArray( $this->toArray( 'string' ), $prefix );
+    public function flatten($prefix = '')
+    {
+        return $this->flattenArray($this->toArray('string'), $prefix);
     }
-
-    //-------------------
 
     /**
      * Method for recursively walking over our array, flattening it.
      * To trigger it, call $this->flatten()
      */
-    private function flattenArray($array, $prefix) {
-        $result = array();
-        foreach($array as $key=>$value) {
-            if(is_array($value)) {
+    private function flattenArray($array, $prefix)
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
                 $result = $result + $this->flattenArray($value, $prefix . $key . '-');
-            }
-            else {
+            } else {
                 $result[$prefix.$key] = $value;
             }
         }
+
         return $result;
     }
 
@@ -415,29 +371,25 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $array array Flat array.
      * @return array Multidimensional array
      */
-    private function unFlattenArray( $array ){
+    private function unFlattenArray($array)
+    {
+        $result = [];
 
-        $result = array();
-
-        foreach( $array as $key => $value ){
-
-            $keys = explode( '-', $key );
+        foreach ($array as $key => $value) {
+            $keys = explode('-', $key);
 
             $position = &$result;
 
-            foreach( $keys as $index ){
+            foreach ($keys as $index) {
                 $position = &$position[$index];
             }
 
             $position = $value;
-
         }
 
         return $result;
+    }
 
-    } // function
-
-    //-------------------
     // Hydrator methods
 
     /**
@@ -446,21 +398,18 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param array $data
      * @return self
      */
-    public function populate( Array $data ){
-
+    public function populate(array $data)
+    {
         // Foreach each passed property...
-        foreach( $data as $k => $v ){
-
+        foreach ($data as $k => $v) {
             // Only include known properties during the import...
-            if( property_exists( $this, $k ) && !is_null($v) ){
-                $this->set( $k, $v );
+            if (property_exists($this, $k) && !is_null($v)) {
+                $this->set($k, $v);
             }
-
-        } // foreach
+        }
 
         return $this;
-
-    } // function
+    }
 
     /**
      * Populates the concrete class' properties with the passed flat array.
@@ -468,15 +417,12 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param array $data
      * @return self
      */
-    public function populateWithFlatArray( Array $data ){
+    public function populateWithFlatArray(array $data)
+    {
+        $data = $this->unFlattenArray($data);
 
-        $data = $this->unFlattenArray( $data );
-
-        return $this->populate( $data );
-
-    } // function
-
-    //-------------------
+        return $this->populate($data);
+    }
 
     /**
      * Basic mapper. This should be overridden in the concrete class if needed.
@@ -487,8 +433,8 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $value mixed The value we've been passed.
      * @return mixed The potentially updated value.
      */
-    protected function map( $property, $value ){
+    protected function map($property, $value)
+    {
         return $value;
-    } // function
-
-} // abstract class
+    }
+}

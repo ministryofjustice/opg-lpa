@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Lpa;
 
 use InvalidArgumentException;
@@ -9,8 +10,8 @@ use InvalidArgumentException;
  * Class Formatter
  * @package Opg\Lpa\DataModel\Lpa
  */
-class Formatter {
-
+class Formatter
+{
     /**
      * Formats the id as an A, followed by 11 digits, split into 3 blocks of 4 characters.
      *
@@ -19,14 +20,12 @@ class Formatter {
      * @param int $value The LPA's id.
      * @return string The formatted value.
      */
-    public static function id( $value ){
-
-        if( !is_int($value) ){
+    public static function id($value)
+    {
+        if (!is_int($value)) {
             throw new InvalidArgumentException('The passed value must be an integer.');
         }
 
-        return trim( chunk_split( 'A'.sprintf("%011d", $value), 4, ' ') );
-
+        return trim(chunk_split('A' . sprintf("%011d", $value), 4, ' '));
     }
-
-}// class
+}

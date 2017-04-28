@@ -1,27 +1,18 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
-use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
-
-/**
- * @Annotation
- * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
- *
- * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
- */
 class Collection extends Composite
 {
     const MISSING_FIELD_ERROR = 1;
     const NO_SUCH_FIELD_ERROR = 2;
 
-    protected static $errorNames = array(
+    protected static $errorNames = [
         self::MISSING_FIELD_ERROR => 'MISSING_FIELD_ERROR',
         self::NO_SUCH_FIELD_ERROR => 'NO_SUCH_FIELD_ERROR',
-    );
+    ];
 
-    public $fields = array();
+    public $fields = [];
     public $allowExtraFields = false;
     public $allowMissingFields = false;
     public $extraFieldsMessage = 'This field was not expected.';
@@ -29,7 +20,7 @@ class Collection extends Composite
 
     public function getRequiredOptions()
     {
-        return array('fields');
+        return ['fields'];
     }
 
     protected function getCompositeOption()

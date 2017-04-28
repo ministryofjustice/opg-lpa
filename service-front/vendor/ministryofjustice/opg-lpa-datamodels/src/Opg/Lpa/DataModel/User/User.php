@@ -1,21 +1,19 @@
 <?php
+
 namespace Opg\Lpa\DataModel\User;
 
-use DateTime;
-
 use Opg\Lpa\DataModel\AbstractData;
-
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
-
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use DateTime;
 
 /**
  * Represents a user of the LPA platform.
  *
  * Class User
  */
-class User extends AbstractData {
-
+class User extends AbstractData
+{
     /**
      * @var string The user's internal ID.
      */
@@ -51,14 +49,17 @@ class User extends AbstractData {
      */
     protected $email;
 
-    //------------------------------------------------
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata){
-
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
         $metadata->addPropertyConstraints('id', [
             new Assert\NotBlank,
-            new Assert\Type([ 'type' => 'xdigit' ]),
-            new Assert\Length([ 'min' => 32, 'max' => 32 ]),
+            new Assert\Type([
+                'type' => 'xdigit'
+            ]),
+            new Assert\Length([
+                'min' => 32,
+                'max' => 32
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('createdAt', [
@@ -72,28 +73,33 @@ class User extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('name', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\Name' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\User\Name'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('address', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\Address' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\User\Address'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('dob', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\Dob' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\User\Dob'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\User\EmailAddress' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\User\EmailAddress'
+            ]),
             new Assert\Valid,
         ]);
-
-    } // function
-
-    //------------------------------------------------
+    }
 
     /**
      * Map property values to their correct type.
@@ -102,43 +108,39 @@ class User extends AbstractData {
      * @param mixed $v mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map( $property, $v ){
-
-        switch( $property ){
+    protected function map($property, $v)
+    {
+        switch ($property) {
             case 'updatedAt':
             case 'createdAt':
-                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
+                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
             case 'name':
-                return ($v instanceof Name || is_null($v)) ? $v : new Name( $v );
+                return (($v instanceof Name || is_null($v)) ? $v : new Name($v));
             case 'address':
-                return ($v instanceof Address || is_null($v)) ? $v : new Address( $v );
+                return (($v instanceof Address || is_null($v)) ? $v : new Address($v));
             case 'dob':
-                return ($v instanceof Dob || is_null($v)) ? $v : new Dob( $v );
+                return (($v instanceof Dob || is_null($v)) ? $v : new Dob($v));
             case 'email':
-                return ($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress( $v );
+                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
         }
 
-        // else...
-        return parent::map( $property, $v );
-
-    } // function
-
-    //------------------------------------------------
+        return parent::map($property, $v);
+    }
 
     /**
      * Returns $this as an array suitable for inserting into MongoDB.
      *
      * @return array
      */
-    public function toMongoArray(){
+    public function toMongoArray()
+    {
         $data = parent::toMongoArray();
 
         // Rename 'id' to '_id' (keeping it at the beginning of the array)
-        $data = [ '_id'=>$data['id'] ] + $data;
+        $data = ['_id' => $data['id']] + $data;
 
         unset($data['id']);
 
         return $data;
     }
-
-} // class
+}

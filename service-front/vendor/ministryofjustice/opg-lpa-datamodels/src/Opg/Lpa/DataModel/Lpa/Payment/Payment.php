@@ -1,13 +1,12 @@
 <?php
-namespace Opg\Lpa\DataModel\Lpa\Payment;
 
-use DateTime;
+namespace Opg\Lpa\DataModel\Lpa\Payment;
 
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
-
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use DateTime;
 
 /**
  * Represents payment information associated with an LPA.
@@ -15,8 +14,8 @@ use Opg\Lpa\DataModel\Validator\Constraints as Assert;
  * Class Payment
  * @package Opg\Lpa\DataModel\Lpa\Payment
  */
-class Payment extends AbstractData {
-
+class Payment extends AbstractData
+{
     const PAYMENT_TYPE_CARD = 'card';
     const PAYMENT_TYPE_CHEQUE = 'cheque';
 
@@ -73,33 +72,52 @@ class Payment extends AbstractData {
      */
     protected $reducedFeeUniversalCredit;
 
-    //------------------------------------------------
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata){
-
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
         $metadata->addPropertyConstraints('method', [
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Choice([ 'choices' => [ self::PAYMENT_TYPE_CARD, self::PAYMENT_TYPE_CHEQUE ] ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Choice([
+                'choices' => [
+                    self::PAYMENT_TYPE_CARD,
+                    self::PAYMENT_TYPE_CHEQUE
+                ]
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('amount', [
-            new Assert\Type([ 'type' => 'float' ]),
-            new Assert\Range([ 'min' => 0 ]),
+            new Assert\Type([
+                'type' => 'float'
+            ]),
+            new Assert\Range([
+                'min' => 0
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('reference', [
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'max' => 32 ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => 32
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('gatewayReference', [
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'max' => 64 ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => 64
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('date', [
@@ -107,24 +125,29 @@ class Payment extends AbstractData {
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeReceivesBenefits', [
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeAwardedDamages', [
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeLowIncome', [
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeUniversalCredit', [
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
-
-    } // function
-
-    //------------------------------------------------
+    }
 
     /**
      * Map property values to their correct type.
@@ -133,20 +156,17 @@ class Payment extends AbstractData {
      * @param mixed $v mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map( $property, $v ){
-
-        switch( $property ){
+    protected function map($property, $v)
+    {
+        switch ($property) {
             case 'date':
-                return ($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime( $v );
+                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
             case 'amount':
-                return ( !is_int( $v ) ) ? $v : (float)$v;
+                return (!is_int($v) ? $v : (float)$v);
             case 'email':
-                return ($v instanceof Elements\EmailAddress || is_null($v)) ? $v : new Elements\EmailAddress( $v );
+                return (($v instanceof Elements\EmailAddress || is_null($v)) ? $v : new Elements\EmailAddress($v));
         }
 
-        // else...
-        return parent::map( $property, $v );
-
-    } // function
-
-} // class
+        return parent::map($property, $v);
+    }
+}

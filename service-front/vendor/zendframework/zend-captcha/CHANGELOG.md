@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+
+## 2.7.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#31](https://github.com/zendframework/zend-captcha/pull/31) fixes using the
+  ReCaptcha response as the value parameter to isValid().
+
+## 2.7.0 - 2017-02-20
+
+### Added
+
+- [#29](https://github.com/zendframework/zend-captcha/pull/29) adds support for
+  zend-recaptch v3.
+
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.6.0 - 2016-06-21
+
+### Added
+
+- Adds and publishes documentation to https://zendframework.github.io/zend-captcha/
+- [#20](https://github.com/zendframework/zend-captcha/pull/20) adds support for
+  zend-math v3.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#20](https://github.com/zendframework/zend-captcha/pull/20) removes support for
+  PHP 5.5
+
+### Fixed
+
+- Nothing.
+
 ## 2.5.4 - 2016-02-23
 
 ### Added

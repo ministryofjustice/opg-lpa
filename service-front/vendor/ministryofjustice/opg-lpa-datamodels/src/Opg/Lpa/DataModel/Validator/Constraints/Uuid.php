@@ -1,14 +1,9 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints as SymfonyConstraints;
 
-/**
- * @Annotation
- *
- * @author Colin O'Dell <colinodell@gmail.com>
- * @author Bernhard Schussek <bschussek@gmail.com>
- */
 class Uuid extends SymfonyConstraints\Uuid
 {
     use ValidatorPathTrait;
@@ -20,14 +15,14 @@ class Uuid extends SymfonyConstraints\Uuid
     const INVALID_VERSION_ERROR = 5;
     const INVALID_VARIANT_ERROR = 6;
 
-    protected static $errorNames = array(
+    protected static $errorNames = [
         self::TOO_SHORT_ERROR => 'TOO_SHORT_ERROR',
         self::TOO_LONG_ERROR => 'TOO_LONG_ERROR',
         self::INVALID_CHARACTERS_ERROR => 'INVALID_CHARACTERS_ERROR',
         self::INVALID_HYPHEN_PLACEMENT_ERROR => 'INVALID_HYPHEN_PLACEMENT_ERROR',
         self::INVALID_VERSION_ERROR => 'INVALID_VERSION_ERROR',
         self::INVALID_VARIANT_ERROR => 'INVALID_VARIANT_ERROR',
-    );
+    ];
 
     // Possible versions defined by RFC 4122
     const V1_MAC = 1;
@@ -59,11 +54,11 @@ class Uuid extends SymfonyConstraints\Uuid
      *
      * @var int[]
      */
-    public $versions = array(
+    public $versions = [
         self::V1_MAC,
         self::V2_DCE,
         self::V3_MD5,
         self::V4_RANDOM,
         self::V5_SHA1,
-    );
+    ];
 }
