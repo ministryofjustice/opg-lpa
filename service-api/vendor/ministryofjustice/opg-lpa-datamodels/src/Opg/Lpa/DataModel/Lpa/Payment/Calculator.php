@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Lpa\Payment;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;

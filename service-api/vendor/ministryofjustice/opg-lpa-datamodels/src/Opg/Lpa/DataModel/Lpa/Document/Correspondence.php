@@ -1,12 +1,12 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
-
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents the person with whom Correspondence relating to the LPA should be sent.
@@ -14,8 +14,8 @@ use Opg\Lpa\DataModel\Validator\Constraints as Assert;
  * Class Correspondence
  * @package Opg\Lpa\DataModel\Lpa\Document
  */
-class Correspondence extends AbstractData {
-
+class Correspondence extends AbstractData
+{
     const WHO_DONOR = 'donor';
     const WHO_ATTORNEY = 'attorney';
     const WHO_OTHER = 'other';
@@ -68,63 +68,81 @@ class Correspondence extends AbstractData {
      * @var bool Set to true if any default values have been manually overridden
      */
     protected $contactDetailsEnteredManually;
-    
-    //------------------------------------------------
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata){
-
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
         $metadata->addPropertyConstraints('who', [
             new Assert\NotBlank,
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Choice([ 'choices' => [ self::WHO_DONOR, self::WHO_ATTORNEY, self::WHO_OTHER ] ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Choice([
+                'choices' => [
+                    self::WHO_DONOR,
+                    self::WHO_ATTORNEY,
+                    self::WHO_OTHER
+                ]
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('name', [
-            // Can be null
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('company', [
-            // Can be null
-            new Assert\Type([ 'type' => 'string' ]),
-            new Assert\Length([ 'min' => 1, 'max' => 75 ]),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'min' => 1,
+                'max' => 75
+            ]),
         ]);
 
         // We required either a name OR company to be set for a Correspondent to be considered valid.
-        $metadata->addConstraint( new Assert\Callback(function ($object, ExecutionContextInterface $context){
-            if( empty($object->name) && empty($object->company) ){
-                $context->buildViolation( (new Assert\NotNull())->message )->atPath('name/company')->addViolation();
+        $metadata->addConstraint(new Assert\Callback(function ($object, ExecutionContextInterface $context) {
+            if (empty($object->name) && empty($object->company)) {
+                $context->buildViolation((new Assert\NotNull())->message)->atPath('name/company')->addViolation();
             }
         }));
 
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank,
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('phone', [
-            new Assert\Type([ 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber' ]),
+            new Assert\Type([
+                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber'
+            ]),
             new Assert\Valid,
         ]);
 
         $metadata->addPropertyConstraints('contactByPost', [
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
 
         $metadata->addPropertyConstraints('contactInWelsh', [
-            new Assert\Type([ 'type' => 'bool' ]),
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
         ]);
-
-    } // function
-
-    //------------------------------------------------
+    }
 
     /**
      * Map property values to their correct type.
@@ -133,23 +151,19 @@ class Correspondence extends AbstractData {
      * @param mixed $v mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map( $property, $v ){
-
-        switch( $property ){
+    protected function map($property, $v)
+    {
+        switch ($property) {
             case 'name':
-                return ($v instanceof Elements\Name) ? $v : new Elements\Name( $v );
+                return ($v instanceof Elements\Name ? $v : new Elements\Name($v));
             case 'address':
-                return ($v instanceof Elements\Address) ? $v : new Elements\Address( $v );
+                return ($v instanceof Elements\Address ? $v : new Elements\Address($v));
             case 'email':
-                return ($v instanceof Elements\EmailAddress) ? $v : new Elements\EmailAddress( $v );
+                return ($v instanceof Elements\EmailAddress ? $v : new Elements\EmailAddress($v));
             case 'phone':
-                return ($v instanceof Elements\PhoneNumber) ? $v : new Elements\PhoneNumber( $v );
+                return ($v instanceof Elements\PhoneNumber ? $v : new Elements\PhoneNumber($v));
         }
 
-        // else...
-        return parent::map( $property, $v );
-
-    } // function
-
-
-} // class
+        return parent::map($property, $v);
+    }
+}

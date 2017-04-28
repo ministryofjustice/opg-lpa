@@ -1,16 +1,9 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints as SymfonyConstraints;
 
-/**
- * @Annotation
- * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
- *
- * @author The Whole Life To Learn <thewholelifetolearn@gmail.com>
- * @author Manuel Reinhard <manu@sprain.ch>
- * @author Bernhard Schussek <bschussek@gmail.com>
- */
 class Isbn extends SymfonyConstraints\Isbn
 {
     use ValidatorPathTrait;
@@ -21,13 +14,13 @@ class Isbn extends SymfonyConstraints\Isbn
     const CHECKSUM_FAILED_ERROR = 4;
     const TYPE_NOT_RECOGNIZED_ERROR = 5;
 
-    protected static $errorNames = array(
+    protected static $errorNames = [
         self::TOO_SHORT_ERROR => 'TOO_SHORT_ERROR',
         self::TOO_LONG_ERROR => 'TOO_LONG_ERROR',
         self::INVALID_CHARACTERS_ERROR => 'INVALID_CHARACTERS_ERROR',
         self::CHECKSUM_FAILED_ERROR => 'CHECKSUM_FAILED_ERROR',
         self::TYPE_NOT_RECOGNIZED_ERROR => 'TYPE_NOT_RECOGNIZED_ERROR',
-    );
+    ];
 
     public $isbn10Message = 'This value is not a valid ISBN-10.';
     public $isbn13Message = 'This value is not a valid ISBN-13.';
@@ -35,9 +28,6 @@ class Isbn extends SymfonyConstraints\Isbn
     public $type;
     public $message;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultOption()
     {
         return 'type';

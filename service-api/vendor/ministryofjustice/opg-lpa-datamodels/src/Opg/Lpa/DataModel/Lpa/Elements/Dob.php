@@ -1,13 +1,12 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Lpa\Elements;
 
+use Opg\Lpa\DataModel\AbstractData;
+use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 use DateTime;
 use RuntimeException;
-
-use Opg\Lpa\DataModel\AbstractData;
-
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 
 /**
  * Represents a date of birth.
@@ -17,20 +16,18 @@ use Opg\Lpa\DataModel\Validator\Constraints as Assert;
  */
 class Dob extends AbstractData
 {
-
     /**
      * @var \DateTime A date of birth. The time component of the DateTime object should be ignored.
      */
     protected $date;
 
-    //------------------------------------------------
-
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-
         // As there is only 1 property, include NotBlank as there is no point this object existing without it.
+        $lessThanOrEqualToToday = new Assert\LessThanOrEqual([
+            'value' => new \DateTime('today')
+        ]);
 
-        $lessThanOrEqualToToday = new Assert\LessThanOrEqual(['value' => new \DateTime('today')]);
         $lessThanOrEqualToToday->message = "must-be-less-than-or-equal-to-today";
 
         $metadata->addPropertyConstraints('date', [
@@ -39,8 +36,6 @@ class Dob extends AbstractData
             $lessThanOrEqualToToday,
         ]);
     }
-
-    //------------------------------------------------
 
     /**
      * @param string $property string Property name
@@ -57,13 +52,14 @@ class Dob extends AbstractData
 
                 if (is_string($v)) {
                     $date = date_parse_from_format(DateTime::ISO8601, $v);
+
                     if (!checkdate(@$date['month'], @$date['day'], @$date['year'])) {
                         throw new RuntimeException("Invalid date: $v. Date must exist and be in ISO-8601 format.");
                     }
                 }
                 return new DateTime($v);
-        } // switch
-        // else...
+        }
+
         return parent::map($property, $v);
-    } // function
-} // class
+    }
+}
