@@ -2,6 +2,106 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.3.0 - 2017-03-01
+
+### Added
+
+- [#180](https://github.com/zendframework/zend-servicemanager/pull/180) adds
+  explicit support for PSR-11 (ContainerInterface) by requiring
+  container-interop at a minimum version of 1.2.0, and adding a requirement on
+  psr/container 1.0. `Zend\ServiceManager\ServiceLocatorInterface` now
+  explicitly extends the `ContainerInterface` from both projects.
+  
+  Factory interfaces still typehint against the container-interop variant, as
+  changing the typehint would break backwards compatibility. Users can
+  duck-type most of these interfaces, however, by creating callables or
+  invokables that typehint against psr/container instead.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 3.2.1 - 2017-02-15
+
+### Added
+
+- [#176](https://github.com/zendframework/zend-servicemanager/pull/176) adds
+  the options `-i` or `--ignore-unresolved` to the shipped
+  `generate-deps-for-config-factory` command. This flag allows it to build
+  configuration for classes resolved by the `ConfigAbstractFactory` that
+  typehint on interfaces, which was previously unsupported.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#174](https://github.com/zendframework/zend-servicemanager/pull/174) updates
+  the `ConfigAbstractFactory` to allow the `config` service to be either an
+  `array` or an `ArrayObject`; previously, only `array` was supported.
+
+## 3.2.0 - 2016-12-19
+
+### Added
+
+- [#146](https://github.com/zendframework/zend-servicemanager/pull/146) adds
+  `Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory`, which enables a
+  configuration-based approach to providing class dependencies when all
+  dependencies are services known to the `ServiceManager`. Please see
+  [the documentation](doc/book/config-abstract-factory.md) for details.
+- [#154](https://github.com/zendframework/zend-servicemanager/pull/154) adds
+  `Zend\ServiceManager\Tool\ConfigDumper`, which will introspect a given class
+  to determine dependencies, and then create configuration for
+  `Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory`, merging it with
+  the provided configuration file. It also adds a vendor binary,
+  `generate-deps-for-config-factory`, for generating these from the command
+  line.
+- [#154](https://github.com/zendframework/zend-servicemanager/pull/154) adds
+  `Zend\ServiceManager\Tool\FactoryCreator`, which will introspect a given class
+  and generate a factory for it. It also adds a vendor binary,
+  `generate-factory-for-class`, for generating these from the command line.
+- [#153](https://github.com/zendframework/zend-servicemanager/pull/153) adds
+  `Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory`. This
+  class may be used as either a mapped factory or an abstract factory, and will
+  use reflection in order to determine which dependencies to use from the
+  container when instantiating the requested service, with the following rules:
+  - Scalar values are not allowed, unless they have default values associated.
+  - Values named `$config` type-hinted against `array` will be injected with the
+    `config` service, if present.
+  - All other array values will be provided an empty array.
+  - Class/interface typehints will be pulled from the container.
+- [#150](https://github.com/zendframework/zend-servicemanager/pull/150) adds
+  a "cookbook" section to the documentation, with an initial document detailing
+  the pros and cons of abstract factory usage.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#106](https://github.com/zendframework/zend-servicemanager/pull/106) adds
+  detection of multiple attempts to register the same instance or named abstract
+  factory, using a previous instance when detected. You may still use multiple
+  discrete instances, however.
+
 ## 3.1.2 - 2016-12-19
 
 ### Added
