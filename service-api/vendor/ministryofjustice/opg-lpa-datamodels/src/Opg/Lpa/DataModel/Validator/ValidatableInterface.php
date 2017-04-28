@@ -1,16 +1,15 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator;
 
-interface ValidatableInterface {
-
-
+interface ValidatableInterface
+{
     /**
      * Calls validate(), automatically including all validation groups.
      *
      * @return ValidatorResponse
      */
     public function validateAllGroups();
-
 
     /**
      * Validates the concrete class which this method is called on.
@@ -19,7 +18,5 @@ interface ValidatableInterface {
      * @param $groups Array An array of what validator groups to check (if any).
      * @return \Opg\Lpa\DataModel\Validator\ValidatorResponse
      */
-    public function validate( Array $properties = array(), Array $groups = array() );
-
-
-} // interface
+    public function validate(array $properties = [], array $groups = []);
+}

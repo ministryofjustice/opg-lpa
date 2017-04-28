@@ -1,20 +1,9 @@
 <?php
+
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints as SymfonyConstraints;
-use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
-/**
- * Validates that a value is a valid IP address.
- *
- * @Annotation
- * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
- *
- * @author Bernhard Schussek <bschussek@gmail.com>
- * @author Joseph Bielawski <stloyd@gmail.com>
- *
- * @api
- */
 class Ip extends SymfonyConstraints\Ip
 {
     use ValidatorPathTrait;
@@ -38,7 +27,7 @@ class Ip extends SymfonyConstraints\Ip
     const V6_ONLY_PUBLIC = '6_public';
     const ALL_ONLY_PUBLIC = 'all_public';
 
-    protected static $versions = array(
+    protected static $versions = [
         self::V4,
         self::V6,
         self::ALL,
@@ -54,10 +43,9 @@ class Ip extends SymfonyConstraints\Ip
         self::V4_ONLY_PUBLIC,
         self::V6_ONLY_PUBLIC,
         self::ALL_ONLY_PUBLIC,
-    );
+    ];
 
     public $version = self::V4;
 
     public $message = 'This is not a valid IP address.';
-
 }
