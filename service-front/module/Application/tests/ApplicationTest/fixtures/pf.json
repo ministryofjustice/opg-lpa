@@ -1,10 +1,10 @@
 {
-    "_id" : NumberLong(91333263035),
-    "startedAt" : ISODate("2017-03-07T17:19:10.695Z"),
-    "createdAt" : ISODate("2017-03-09T15:21:21.109Z"),
-    "updatedAt" : ISODate("2017-03-09T15:26:19.692Z"),
-    "completedAt" : ISODate("2017-03-09T15:26:19.692Z"),
-    "lockedAt" : ISODate("2017-03-09T15:26:19.563Z"),
+    "_id" : 91333263035,
+    "startedAt" : "2017-03-07T17:19:10.695Z",
+    "createdAt" : "2017-03-09T15:21:21.109Z",
+    "updatedAt" : "2017-03-09T15:26:19.692Z",
+    "completedAt" : "2017-03-09T15:26:19.692Z",
+    "lockedAt" : "2017-03-09T15:26:19.563Z",
     "user" : "3c500ccf2f8b65c67bc388e8872b31fc",
     "payment" : {
         "method" : "cheque",
@@ -38,7 +38,7 @@
                 "postcode" : "EH9K 8UC"
             },
             "dob" : {
-                "date" : ISODate("1948-10-07T00:00:00.000Z")
+                "date" : "1948-10-07T00:00:00.000Z"
             },
             "email" : {
                 "address" : "92zx2n1nk@wx.co.uk"
@@ -95,7 +95,7 @@
                 "postcode" : "WS1 3BQ"
             }
         },
-        "primaryAttorneys" : [ 
+        "primaryAttorneys" : [
             {
                 "name" : {
                     "title" : "Dr",
@@ -105,7 +105,7 @@
                 "dob" : {
                     "date" : "1959-10-04T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(1),
+                "id" : 1,
                 "address" : {
                     "address1" : "867 Richmond Road",
                     "address2" : "Saltney",
@@ -114,7 +114,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mr",
@@ -124,7 +124,7 @@
                 "dob" : {
                     "date" : "1925-06-30T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(2),
+                "id" : 2,
                 "address" : {
                     "address1" : "70 Manchester Road",
                     "address2" : "Seaton",
@@ -133,7 +133,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mrs",
@@ -143,7 +143,7 @@
                 "dob" : {
                     "date" : "1935-10-24T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(3),
+                "id" : 3,
                 "address" : {
                     "address1" : "765 St. John's Road",
                     "address2" : "Holbeach",
@@ -154,7 +154,7 @@
                 "type" : "human"
             }
         ],
-        "replacementAttorneys" : [ 
+        "replacementAttorneys" : [
             {
                 "name" : {
                     "title" : "Ms",
@@ -164,7 +164,7 @@
                 "dob" : {
                     "date" : "1981-04-07T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(1),
+                "id" : 1,
                 "address" : {
                     "address1" : "170 Queens Road",
                     "address2" : "Kilton",
@@ -173,7 +173,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mr",
@@ -183,7 +183,7 @@
                 "dob" : {
                     "date" : "1979-07-01T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(2),
+                "id" : 2,
                 "address" : {
                     "address1" : "279 Stanley Road",
                     "address2" : "Askern",
@@ -192,7 +192,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mrs",
@@ -202,7 +202,7 @@
                 "dob" : {
                     "date" : "1955-02-28T00:00:00.000000+0000"
                 },
-                "id" : NumberLong(3),
+                "id" : 3,
                 "address" : {
                     "address1" : "810 Grange Road",
                     "address2" : "Tow Law",
@@ -217,7 +217,7 @@
     },
     "metadata" : {
         "replacement-attorneys-confirmed" : true,
-        "analyticsReturnCount" : NumberLong(4),
+        "analyticsReturnCount" : 4,
         "people-to-notify-confirmed" : true,
         "instruction-confirmed" : true,
         "repeat-application-confirmed" : true

@@ -42,6 +42,7 @@ class Bootstrap
         $serviceManager = new ServiceManager(new ServiceManagerConfig());
         $serviceManager->setService('ApplicationConfig', $config);
         $serviceManager->get('ModuleManager')->loadModules();
+
         static::$serviceManager = $serviceManager;
     }
 
@@ -110,6 +111,7 @@ class Bootstrap
         return $dir . '/' . $path;
     }
 }
+
 
 Bootstrap::init();
 Bootstrap::chroot();
