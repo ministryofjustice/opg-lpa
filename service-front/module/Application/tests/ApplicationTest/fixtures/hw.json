@@ -1,10 +1,10 @@
 {
     "_id" : 5531003156,
-    "startedAt" : ISODate("2017-03-24T15:59:30.087Z"),
-    "createdAt" : ISODate("2017-03-24T16:19:50.672Z"),
-    "updatedAt" : ISODate("2017-03-24T16:21:52.804Z"),
-    "completedAt" : ISODate("2017-03-24T16:21:52.804Z"),
-    "lockedAt" : ISODate("2017-03-24T16:21:52.721Z"),
+    "startedAt" : "2017-03-24T15:59:30.087Z",
+    "createdAt" : "2017-03-24T16:19:50.672Z",
+    "updatedAt" : "2017-03-24T16:21:52.804Z",
+    "completedAt" : "2017-03-24T16:21:52.804Z",
+    "lockedAt" : "2017-03-24T16:21:52.721Z",
     "user" : "3c500ccf2f8b65c67bc388e8872b31fc",
     "payment" : {
         "method" : "cheque",
@@ -38,15 +38,15 @@
                 "postcode" : "EH9K 8UC"
             },
             "dob" : {
-                "date" : ISODate("1948-10-07T00:00:00.000Z")
+                "date" : "1948-10-07T00:00:00.000Z"
             },
             "email" : {
                 "address" : "92zx2n1nk@wx.co.uk"
             },
             "canSign" : true
         },
-        "whoIsRegistering" : [ 
-            "1", 
+        "whoIsRegistering" : [
+            "1",
             "2"
         ],
         "primaryAttorneyDecisions" : {
@@ -96,7 +96,7 @@
                 "postcode" : "WS1 3BQ"
             }
         },
-        "primaryAttorneys" : [ 
+        "primaryAttorneys" : [
             {
                 "name" : {
                     "title" : "Dr",
@@ -115,7 +115,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mr",
@@ -134,7 +134,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mrs",
@@ -155,7 +155,7 @@
                 "type" : "human"
             }
         ],
-        "replacementAttorneys" : [ 
+        "replacementAttorneys" : [
             {
                 "name" : {
                     "title" : "Ms",
@@ -174,7 +174,7 @@
                 },
                 "email" : null,
                 "type" : "human"
-            }, 
+            },
             {
                 "name" : {
                     "title" : "Mr",
