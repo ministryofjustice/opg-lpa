@@ -13,10 +13,6 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp ()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
         parent::setUp();
     }
 
@@ -40,975 +36,611 @@ class AccordionBottomTest extends \PHPUnit_Framework_TestCase
 
         $helperReturns = $this->getAccordion('lpa/form-type')->__invoke($lpa)->bottom();
 
-        echo json_encode($helperReturns);
-
         $this->assertEquals(
                 array(
-                        1 => array(
-                                'name' => 'donor.phtml',
-                                'routeName' => 'lpa/donor',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 2,
-                                        'values' => 'Miss Tayla Travis'
-                                )
-                        ),
-                        2 => array(
-                                'name' => 'life-sustaining.phtml',
-                                'routeName' => 'lpa/life-sustaining',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 3,
-                                        'values' => true
-                                )
-                        ),
-                        3 => array(
-                                'name' => 'primary-attorney.phtml',
-                                'routeName' => 'lpa/primary-attorney',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 4,
-                                        'values' => 'The attorneys are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
-                                )
-                        ),
-                        4 => array(
-                                'name' => 'how-primary-attorneys-make-decision.phtml',
-                                'routeName' => 'lpa/how-primary-attorneys-make-decision',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 5,
-                                        'values' => 'depends'
-                                )
-                        ),
-                        5 => array(
-                                'name' => 'replacement-attorney.phtml',
-                                'routeName' => 'lpa/replacement-attorney',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 6,
-                                        'values' => 'The replacement attorneys are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
-                                )
-                        ),
-                        6 => array(
-                                'name' => 'certificate-provider.phtml',
-                                'routeName' => 'lpa/certificate-provider',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 7,
-                                        'values' => 'Ms Carter Delaney'
-                                )
-                        ),
-                        7 => array(
-                                'name' => 'people-to-notify.phtml',
-                                'routeName' => 'lpa/people-to-notify',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 8,
-                                        'values' => 'is Miss Elizabeth Stout'
-                                )
-                        ),
-                        8 => array(
-                                'name' => 'instructions.phtml',
-                                'routeName' => 'lpa/instructions',
-                                'lpaId' => 99999999,
-                                'params' => array(
-                                        'idx' => 9,
-                                        'values' => 'Review'
-                                )
-                        )
+                    0 => array(
+                        'routeName' => 'lpa/donor',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/life-sustaining',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/primary-attorney',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/replacement-attorney',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    9 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    10 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    11 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    12 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    13 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
                 ), $helperReturns);
     }
 
-    // public function testDonor ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
-    //     $lpa->id = 99999999;
+    public function testDonor ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/donor')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/donor')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     2 => array(
-    //                             'name' => 'life-sustaining.phtml',
-    //                             'routeName' => 'lpa/life-sustaining',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 3,
-    //                                     'values' => true
-    //                             )
-    //                     ),
-    //                     3 => array(
-    //                             'name' => 'primary-attorney.phtml',
-    //                             'routeName' => 'lpa/primary-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 4,
-    //                                     'values' => 'The attorneys are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
-    //                             )
-    //                     ),
-    //                     4 => array(
-    //                             'name' => 'how-primary-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-primary-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 5,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     5 => array(
-    //                             'name' => 'replacement-attorney.phtml',
-    //                             'routeName' => 'lpa/replacement-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 6,
-    //                                     'values' => 'The replacement attorneys are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
-    //                             )
-    //                     ),
-    //                     6 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'Ms Carter Delaney'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'is Miss Elizabeth Stout'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/life-sustaining',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/primary-attorney',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/replacement-attorney',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    9 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    10 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    11 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    12 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
+    }
 
-    // public function testLifeSustaining ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
-    //     $lpa->id = 99999999;
+    public function testLifeSustaining ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/life-sustaining')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     3 => array(
-    //                             'name' => 'primary-attorney.phtml',
-    //                             'routeName' => 'lpa/primary-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 4,
-    //                                     'values' => 'The attorneys are Mr Bradley Adams, Mrs Jorja Sharp, Imran Landry, Dr Safaa Patrick and Thea Cantrell'
-    //                             )
-    //                     ),
-    //                     4 => array(
-    //                             'name' => 'how-primary-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-primary-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 5,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     5 => array(
-    //                             'name' => 'replacement-attorney.phtml',
-    //                             'routeName' => 'lpa/replacement-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 6,
-    //                                     'values' => 'The replacement attorneys are Mr Maisy Rivers, Billie Rasmussen and Miss Rory Boyle'
-    //                             )
-    //                     ),
-    //                     6 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'Ms Carter Delaney'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'is Miss Elizabeth Stout'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/primary-attorney',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/replacement-attorney',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    9 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    10 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    11 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
+    }
 
-    // public function testWhenLpaStarts ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testWhenLpaStarts ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/when-lpa-starts')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     3 => array(
-    //                             'name' => 'primary-attorney.phtml',
-    //                             'routeName' => 'lpa/primary-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 4,
-    //                                     'values' => 'The attorneys are Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier'
-    //                             )
-    //                     ),
-    //                     4 => array(
-    //                             'name' => 'how-primary-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-primary-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 5,
-    //                                     'values' => 'jointly-attorney-severally'
-    //                             )
-    //                     ),
-    //                     5 => array(
-    //                             'name' => 'replacement-attorney.phtml',
-    //                             'routeName' => 'lpa/replacement-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 6,
-    //                                     'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
-    //                             )
-    //                     ),
-    //                     6 => array(
-    //                             'name' => 'when-replacement-attorney-step-in.phtml',
-    //                             'routeName' => 'lpa/when-replacement-attorney-step-in',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'last'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'how-replacement-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-replacement-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/primary-attorney',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/replacement-attorney',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    9 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    10 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    11 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
+    }
 
-    // public function testPrimaryAttorney ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testPrimaryAttorney ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/primary-attorney')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     4 => array(
-    //                             'name' => 'how-primary-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-primary-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 5,
-    //                                     'values' => 'jointly-attorney-severally'
-    //                             )
-    //                     ),
-    //                     5 => array(
-    //                             'name' => 'replacement-attorney.phtml',
-    //                             'routeName' => 'lpa/replacement-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 6,
-    //                                     'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
-    //                             )
-    //                     ),
-    //                     6 => array(
-    //                             'name' => 'when-replacement-attorney-step-in.phtml',
-    //                             'routeName' => 'lpa/when-replacement-attorney-step-in',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'last'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'how-replacement-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-replacement-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/how-primary-attorneys-make-decision',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/replacement-attorney',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    9 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    10 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
+    }
 
-    // public function testPrimaryAttorneyDecision ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testPrimaryAttorneyDecision ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion(
-    //         'lpa/how-primary-attorneys-make-decision')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion(
+            'lpa/how-primary-attorneys-make-decision')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     5 => array(
-    //                             'name' => 'replacement-attorney.phtml',
-    //                             'routeName' => 'lpa/replacement-attorney',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 6,
-    //                                     'values' => 'The replacement attorneys are Ms Dennis Jackson, Mr Ethan Fulton and Mrs Aron Puckett'
-    //                             )
-    //                     ),
-    //                     6 => array(
-    //                             'name' => 'when-replacement-attorney-step-in.phtml',
-    //                             'routeName' => 'lpa/when-replacement-attorney-step-in',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'last'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'how-replacement-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-replacement-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/replacement-attorney',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    9 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
+    }
 
-    // public function testReplacementAttorney ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testReplacementAttorney ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     6 => array(
-    //                             'name' => 'when-replacement-attorney-step-in.phtml',
-    //                             'routeName' => 'lpa/when-replacement-attorney-step-in',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'last'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'how-replacement-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-replacement-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/when-replacement-attorney-step-in',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    8 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
 
-    //     $lpa->document->primaryAttorneys = [
-    //             $lpa->document->primaryAttorneys[0]
-    //     ];
+        $lpa->document->primaryAttorneys = [
+                $lpa->document->primaryAttorneys[0]
+        ];
 
-    //     $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     5 => array(
-    //                             'name' => 'how-replacement-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-replacement-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 6,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     6 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 7,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     7 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(array(), $helperReturns);
+    }
 
-    // public function testReplacementAttorneyStepIn ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testReplacementAttorneyStepIn ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion(
-    //         'lpa/when-replacement-attorney-step-in')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion(
+            'lpa/when-replacement-attorney-step-in')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     7 => array(
-    //                             'name' => 'how-replacement-attorneys-make-decision.phtml',
-    //                             'routeName' => 'lpa/how-replacement-attorneys-make-decision',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => 'depends'
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/certificate-provider',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/people-to-notify',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/instructions',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    6 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    7 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
+    }
 
-    // public function testReplacementAttorneyMakeDecision ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testCertificateProvider ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion(
-    //         'lpa/how-replacement-attorneys-make-decision')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     8 => array(
-    //                             'name' => 'certificate-provider.phtml',
-    //                             'routeName' => 'lpa/certificate-provider',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Dr Michaela Shepherd'
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/people-to-notify',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/instructions',
+                ),
+                2 => array(
+                    'routeName' => 'lpa/applicant',
+                ),
+                3 => array(
+                    'routeName' => 'lpa/correspondent',
+                ),
+                4 => array(
+                    'routeName' => 'lpa/who-are-you',
+                ),
+                5 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                6 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+                ), $helperReturns);
 
-    // public function testCertificateProvider ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+        $lpa->document->replacementAttorneyDecisions->when = 'first';
 
-    //     $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     9 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/people-to-notify',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/instructions',
+                ),
+                2 => array(
+                    'routeName' => 'lpa/applicant',
+                ),
+                3 => array(
+                    'routeName' => 'lpa/correspondent',
+                ),
+                4 => array(
+                    'routeName' => 'lpa/who-are-you',
+                ),
+                5 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                6 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+                ), $helperReturns);
 
-    //     $lpa->document->replacementAttorneyDecisions->when = 'first';
+        $lpa->document->primaryAttorneyDecisions->how = 'depends';
 
-    //     $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     8 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     9 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 10,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/people-to-notify',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/instructions',
+                ),
+                2 => array(
+                    'routeName' => 'lpa/applicant',
+                ),
+                3 => array(
+                    'routeName' => 'lpa/correspondent',
+                ),
+                4 => array(
+                    'routeName' => 'lpa/who-are-you',
+                ),
+                5 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                6 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+                ), $helperReturns);
+    }
 
-    //     $lpa->document->primaryAttorneyDecisions->how = 'depends';
+    public function testPeopleToNotify ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/certificate-provider')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/people-to-notify')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     7 => array(
-    //                             'name' => 'people-to-notify.phtml',
-    //                             'routeName' => 'lpa/people-to-notify',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 8,
-    //                                     'values' => ''
-    //                             )
-    //                     ),
-    //                     8 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 9,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/instructions',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/applicant',
+                ),
+                2 => array(
+                    'routeName' => 'lpa/correspondent',
+                ),
+                3 => array(
+                    'routeName' => 'lpa/who-are-you',
+                ),
+                4 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                5 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+                ), $helperReturns);
+    }
 
-    // public function testPeopleToNotify ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testInstructions ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
 
-    //     $helperReturns = $this->getAccordion('lpa/people-to-notify')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/instructions')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     10 => array(
-    //                             'name' => 'instructions.phtml',
-    //                             'routeName' => 'lpa/instructions',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 11,
-    //                                     'values' => 'Review'
-    //                             )
-    //                     )
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(array(
+            0 => array(
+                'routeName' => 'lpa/applicant',
+            ),
+            1 => array(
+                'routeName' => 'lpa/correspondent',
+            ),
+            2 => array(
+                'routeName' => 'lpa/who-are-you',
+            ),
+            3 => array(
+                'routeName' => 'lpa/repeat-application',
+            ),
+            4 => array(
+                'routeName' => 'lpa/fee-reduction',
+            )
+                ), $helperReturns);
+    }
 
-    // public function testInstructions ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
+    public function testApplicant ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
 
-    //     $helperReturns = $this->getAccordion('lpa/instructions')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/applicant')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals([], $helperReturns);
-    // }
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/correspondent',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/who-are-you',
+                ),
+                2 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                3 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+                ), $helperReturns);
+    }
 
-    // public function testApplicant ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
-    //     $lpa->createdAt = new \DateTime();
+    public function testCorrespondent ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
 
-    //     $helperReturns = $this->getAccordion('lpa/applicant')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/correspondent')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     1 => array(
-    //                             'name' => 'correspondent.phtml',
-    //                             'routeName' => 'lpa/correspondent',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 2,
-    //                                     'values' => 'Mrs Annabella Collier'
-    //                             )
-    //                     ),
-    //                     2 => array(
-    //                             'name' => 'who-are-you.phtml',
-    //                             'routeName' => 'lpa/who-are-you',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 3,
-    //                                     'values' => 'Who was using the LPA service answered'
-    //                             )
-    //                     ),
-    //                     3 => array(
-    //                             'name' => 'repeat-application.phtml',
-    //                             'routeName' => 'lpa/repeat-application',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 4,
-    //                                     'values' => "I’m making a repeat application"
-    //                             )
-    //                     ),
-    //                     4 => array (
-    //                             'name' => 'fee-reduction.phtml',
-    //                             'routeName' => 'lpa/fee-reduction',
-    //                             'lpaId' => 99999999,
-    //                             'params' =>
-    //                             array (
-    //                                     'idx' => 5,
-    //                                     'values' => 'I am applying for reduced fee',
-    //                             ),
-    //                     ),
-    //                     5 => array (
-    //                         'name' => 'payment.phtml',
-    //                         'routeName' => 'lpa/payment',
-    //                         'lpaId' => 99999999,
-    //                         'params' =>
-    //                             array (
-    //                               'idx' => 6,
-    //                               'values' => 'Application fee: £0.00 (Payment method: card)',
-    //                             ),
-    //                     ),
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/who-are-you',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                2 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+            ), $helperReturns);
+    }
 
-    // public function testCorrespondent ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
-    //     $lpa->createdAt = new \DateTime();
+    public function testWhoAreYou ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
 
-    //     $helperReturns = $this->getAccordion('lpa/correspondent')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/who-are-you')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     2 => array(
-    //                             'name' => 'who-are-you.phtml',
-    //                             'routeName' => 'lpa/who-are-you',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 3,
-    //                                     'values' => 'Who was using the LPA service answered'
-    //                             )
-    //                     ),
-    //                     3 => array(
-    //                             'name' => 'repeat-application.phtml',
-    //                             'routeName' => 'lpa/repeat-application',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 4,
-    //                                     'values' => 'I’m making a repeat application'
-    //                             )
-    //                     ),
-    //                     4 => array (
-    //                             'name' => 'fee-reduction.phtml',
-    //                             'routeName' => 'lpa/fee-reduction',
-    //                             'lpaId' => 99999999,
-    //                             'params' =>
-    //                             array (
-    //                                     'idx' => 5,
-    //                                     'values' => 'I am applying for reduced fee',
-    //                             ),
-    //                     ),
-    //                     5 => array (
-    //                         'name' => 'payment.phtml',
-    //                         'routeName' => 'lpa/payment',
-    //                         'lpaId' => 99999999,
-    //                         'params' =>
-    //                             array (
-    //                               'idx' => 6,
-    //                               'values' => 'Application fee: £0.00 (Payment method: card)',
-    //                             ),
-    //                     ),
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/repeat-application',
+                ),
+                1 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+            ), $helperReturns);
+    }
 
-    // public function testWhoAreYou ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
-    //     $lpa->createdAt = new \DateTime();
+    public function testRepeatApplication ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
 
-    //     $helperReturns = $this->getAccordion('lpa/who-are-you')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     3 => array(
-    //                             'name' => 'repeat-application.phtml',
-    //                             'routeName' => 'lpa/repeat-application',
-    //                             'lpaId' => 99999999,
-    //                             'params' => array(
-    //                                     'idx' => 4,
-    //                                     'values' => 'I’m making a repeat application'
-    //                             )
-    //                     ),
-    //                     4 => array (
-    //                         'name' => 'fee-reduction.phtml',
-    //                         'routeName' => 'lpa/fee-reduction',
-    //                         'lpaId' => 99999999,
-    //                         'params' =>
-    //                             array (
-    //                               'idx' => 5,
-    //                               'values' => 'I am applying for reduced fee',
-    //                             ),
-    //                     ),
-    //                     5 => array (
-    //                         'name' => 'payment.phtml',
-    //                         'routeName' => 'lpa/payment',
-    //                         'lpaId' => 99999999,
-    //                         'params' =>
-    //                             array (
-    //                               'idx' => 6,
-    //                               'values' => 'Application fee: £0.00 (Payment method: card)',
-    //                             ),
-    //                     ),
-    //             ), $helperReturns);
-    // }
+        $this->assertEquals(
+            array(
+                0 => array(
+                    'routeName' => 'lpa/fee-reduction',
+                )
+            ), $helperReturns);
+    }
 
-    // public function testRepeatApplication ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
-    //     $lpa->createdAt = new \DateTime();
+    public function testFeeReduction ()
+    {
+        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa->id = 99999999;
+        $lpa->createdAt = new \DateTime();
 
-    //     $helperReturns = $this->getAccordion('lpa/repeat-application')->__invoke($lpa)->bottom();
+        $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa)->bottom();
 
-    //     $this->assertEquals(
-    //             array(
-    //                     4 => array (
-    //                             'name' => 'fee-reduction.phtml',
-    //                             'routeName' => 'lpa/fee-reduction',
-    //                             'lpaId' => 99999999,
-    //                             'params' =>
-    //                             array (
-    //                                     'idx' => 5,
-    //                                     'values' => 'I am applying for reduced fee',
-    //                             ),
-    //                     ),
-    //                     5 => array (
-    //                         'name' => 'payment.phtml',
-    //                         'routeName' => 'lpa/payment',
-    //                         'lpaId' => 99999999,
-    //                         'params' =>
-    //                             array (
-    //                               'idx' => 6,
-    //                               'values' => 'Application fee: £0.00 (Payment method: card)',
-    //                             ),
-    //                     ),
-    //             ), $helperReturns);
-    // }
-
-    // public function testFeeReduction ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
-    //     $lpa->createdAt = new \DateTime();
-
-    //     $helperReturns = $this->getAccordion('lpa/fee-reduction')->__invoke($lpa)->bottom();
-
-    //     $this->assertEquals([
-    //             5 => array (
-    //                     'name' => 'payment.phtml',
-    //                     'routeName' => 'lpa/payment',
-    //                     'lpaId' => 99999999,
-    //                     'params' =>
-    //                     array (
-    //                             'idx' => 6,
-    //                             'values' => 'Application fee: £0.00 (Payment method: card)',
-    //                     ),
-    //             ),
-    //     ], $helperReturns);
-    // }
-
-    // public function testPayment ()
-    // {
-    //     $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
-    //     $lpa->id = 99999999;
-    //     $lpa->createdAt = new \DateTime();
-
-    //     $helperReturns = $this->getAccordion('lpa/payment')->__invoke($lpa);
-
-    //     $this->assertEquals([], $helperReturns);
-    // }
+        $this->assertEquals([], $helperReturns);
+    }
 
     private function getAccordion ($routeName)
     {

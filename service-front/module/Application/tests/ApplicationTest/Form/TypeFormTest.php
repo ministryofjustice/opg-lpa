@@ -2,22 +2,20 @@
 namespace ApplicationTest\Form;
 use Application\Form\Lpa\TypeForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Form\FormElementManager;
 
 class TypeFormTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testTypeFormReceiveValidData ()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
+        $typeForm = new TypeForm('name', []);
 
-        $typeForm = new TypeForm();
-
+        $this->addMockServiceLocatorTo($typeForm);
 
         $typeForm->setData(
                 [
-                        'secret'    => $typeForm->get('secret')->getValue(),
                         'type' => Document::LPA_TYPE_HW,
                 ]);
 
@@ -28,11 +26,9 @@ class TypeFormTest extends \PHPUnit_Framework_TestCase
 
     public function testTypeFormReceiveInvalidData ()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
+        $typeForm = new TypeForm('name', []);
 
-        $typeForm = new TypeForm();
+        $this->addMockServiceLocatorTo($typeForm);
 
         $typeForm->setData(
                 [
@@ -42,9 +38,6 @@ class TypeFormTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $typeForm->isValid());
         $this->assertEquals(
                 array(
-                        'secret' => array(
-                                'isEmpty' => "Value is required and can't be empty"
-                        ),
                         'type' => array(
                                 0 => 'allowed-values:property-and-financial,health-and-welfare'
                         )
@@ -55,27 +48,34 @@ class TypeFormTest extends \PHPUnit_Framework_TestCase
 
     public function testTypeFormReceiveCrossSiteForgeryAttack ()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
+        $typeForm = new TypeForm('name', []);
 
-        $typeForm = new TypeForm();
+        $this->addMockServiceLocatorTo($typeForm);
 
         $typeForm->setData(
                 [
-                        'secret'    => 'CSRF',
                         'type' => '',
                 ]);
 
         $this->assertEquals(0, $typeForm->isValid());
         $this->assertEquals(
                 array(
-                        'secret' => array(
-                                'notSame' => "The form submitted did not originate from the expected site"
-                        ),
                         'type' => array(
                                 0 => 'allowed-values:property-and-financial,health-and-welfare'
                         )
                 ), $typeForm->getMessages());
+    }
+
+    private function addMockServiceLocatorTo($form)
+    {
+        $mockServiceManager = $this->getMockBuilder(FormElementManager::class)->getMock();
+
+        $mockServiceManager->method('getServiceLocator')
+            ->will($this->returnSelf());
+
+        $mockServiceManager->method('get')
+            ->willReturn(['csrf' => ['salt' => 'Rando_Calrissian']]);
+
+        $form->setServiceLocator($mockServiceManager);
     }
 }

@@ -19,7 +19,7 @@
         "reducedFeeUniversalCredit" : null
     },
     "whoAreYouAnswered" : true,
-    "locked" : true,
+    "locked" : false,
     "seed" : null,
     "repeatCaseNumber" : null,
     "document" : {
