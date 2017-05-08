@@ -686,31 +686,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
     }
 
-    public function testRouteCreated()
-    {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
-        $this->addPeopleToNotify();
-        $this->setLpaInstructons();
-        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/created'));
-
-        $this->lpa->document->instruction = null;
-        $this->lpa->document->preference = false;
-        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/created'));
-    }
-
-    public function testRouteCreatedFallback()
-    {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/created'));
-    }
-
     public function testRouteDownload()
     {
         $this->setLpaCreated();
@@ -725,15 +700,12 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     public function testRouteApplicantFallback()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
         $this->addPeopleToNotify();
         $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
 
         $this->setLpaInstructons();
-        $this->assertEquals('lpa/created', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
+        $this->lpa->createdAt = "now";
+        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
     }
 
     public function testRouteCorrespondent()
@@ -826,17 +798,13 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     public function testRouteCompleteFallback()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
         $this->setRepeatApplication();
         $this->assertEquals('lpa/fee-reduction', $this->checker->getNearestAccessibleRoute('lpa/complete'));
 
         $this->setPayment();
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $this->lpa->payment->reference = null;
-        $this->assertEquals('lpa/payment', $this->checker->getNearestAccessibleRoute('lpa/complete'));
+        $this->assertEquals('lpa/checkout', $this->checker->getNearestAccessibleRoute('lpa/complete'));
     }
 
     public function testRouteViewDocs()
@@ -848,13 +816,9 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     public function testRouteViewDocsFallback()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
         $this->setPayment();
         $this->lpa->payment->reference = null;
-        $this->assertEquals('lpa/payment', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
+        $this->assertEquals('lpa/checkout', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
     }
 
     public function testReturnToFormType()
@@ -925,25 +889,12 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
     public function testReturnToInstructions()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
         $this->setLpaInstructons();
+        $this->addPeopleToNotify();
         $this->assertEquals('lpa/instructions', $this->checker->backToForm());
 
         $this->lpa->document->instruction = false;
-        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
-    }
-
-    public function testReturnToCreateLpa()
-    {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/created', $this->checker->backToForm());
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
     }
 
     public function testReturnToApplicant()
@@ -970,25 +921,10 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
     }
 
-    public function testReturnToFeeReduction()
+    public function testReturnToCheckout()
     {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
         $this->setFeeReduction();
-        $this->assertEquals('lpa/fee-reduction', $this->checker->backToForm());
-    }
-
-    public function testReturnToPayment()
-    {
-        $this->markTestIncomplete(
-            'This test is failing and needs to be fixed'
-        );
-
-        $this->setPayment();
-        $this->lpa->payment->reference = null;
-        $this->assertEquals('lpa/payment', $this->checker->backToForm());
+        $this->assertEquals('lpa/checkout', $this->checker->backToForm());
     }
 
     public function testReturnToViewDocs()

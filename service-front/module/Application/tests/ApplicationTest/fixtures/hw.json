@@ -4,7 +4,7 @@
     "createdAt" : "2017-03-24T16:19:50.672Z",
     "updatedAt" : "2017-03-24T16:21:52.804Z",
     "completedAt" : "2017-03-24T16:21:52.804Z",
-    "lockedAt" : "2017-03-24T16:21:52.721Z",
+    "lockedAt" : null,
     "user" : "3c500ccf2f8b65c67bc388e8872b31fc",
     "payment" : {
         "method" : "cheque",
@@ -19,7 +19,7 @@
         "reducedFeeUniversalCredit" : null
     },
     "whoAreYouAnswered" : true,
-    "locked" : true,
+    "locked" : false,
     "seed" : 91333263035,
     "repeatCaseNumber" : null,
     "document" : {
