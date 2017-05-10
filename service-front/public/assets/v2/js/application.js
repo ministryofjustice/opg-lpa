@@ -4580,7 +4580,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           $postcodeLabel.children('.error-message').remove();
           $postcodeLabel
             .append($(this.errorMessageTpl({
-              'errorMessage': "This isn't a valid postcode. Please check and change or enter the address manually."
+              'errorMessage': 'No address found for this postcode. Please try again or enter the address manually.'
             })));
           // if (confirm('No addresses were found for the postcode ' + this.query + '.  Would you like to enter the address manually?')) {
           //   $('.address-hideable').show();
