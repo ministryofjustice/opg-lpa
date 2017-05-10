@@ -3511,6 +3511,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
+this["lpa"]["templates"]["errors.formMessage"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<span class=\"error-message text\">";
+  if (helper = helpers.errorMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.errorMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>";
+  return buffer;
+  });
+
 this["lpa"]["templates"]["errors.formSummary"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -3610,7 +3624,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<p class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode lookup</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</p>\n";
+  return "<div class=\"form-group js-PostcodeLookup__search\">\n  <label class=\"form-label\" for=\"postcode-lookup\">Postcode lookup</label>\n  <input autocomplete=\"off\" type=\"text\" id=\"postcode-lookup\" class=\"postcode-input form-control js-PostcodeLookup__query\">\n  <a href=\"#\" id=\"find_uk_address\" class=\"postcode-button button js-PostcodeLookup__search-btn\" role=\"button\">Find UK address</a>\n</div>\n";
   });
 
 this["lpa"]["templates"]["postcodeLookup.search-result"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -4393,7 +4407,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 (function () {
   'use strict';
-  
+
   // will be populated with either "mojDs" or "postcodeAnywhere" following
   // initial call to F/E postcode endpoint
   var postcodeService = null;
@@ -4429,6 +4443,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       this.toggleTpl = lpa.templates['postcodeLookup.address-toggle'];
       this.resultTpl = lpa.templates['postcodeLookup.search-result'];
       this.changeTpl = lpa.templates['postcodeLookup.address-change'];
+      this.errorMessageTpl = lpa.templates['errors.formMessage'];
     },
 
     bindEvents: function () {
@@ -4473,13 +4488,22 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
       // store the current query
       this.query = this.$wrap.find('.js-PostcodeLookup__query').val();
+      var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+      var $postcodeLabel = $('label[for="postcode-lookup"]');
 
       if (!$el.hasClass('disabled')) {
         if (this.query !== '') {
           $el.spinner();
           this.findPostcode(this.query);
+          $searchContainer.removeClass('error');
+          $postcodeLabel.children('.error-message').remove();
         } else {
-          alert('Please enter a postcode');
+          $searchContainer.addClass('error');
+          $postcodeLabel.children('.error-message').remove();
+          $postcodeLabel
+            .append($(this.errorMessageTpl({
+              'errorMessage': 'Please enter a postcode'
+            })));
         }
       }
       return false;
@@ -4494,7 +4518,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     resultsChanged: function (e) {
       var $el = $(e.target),
       val = $el.val();
-      
+
       if (postcodeService === 'mojDs') {
           var $selectedOption = $el.find(':selected');
 
@@ -4506,7 +4530,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     	  $el.spinner();
           this.findAddress(val);
       }
-	      
+
       this.toggleAddress();
     },
 
@@ -4548,18 +4572,27 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     postcodeSuccess: function (response) {
       // not successful
       if (!response.success || response.addresses === null) {
+        var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+        var $postcodeLabel = $('label[for="postcode-lookup"]');
+
         if (response.isPostcodeValid) {
-          if (confirm('No addresses were found for the postcode ' + this.query + '.  Would you like to enter the address manually?')) {
-            $('.address-hideable').show();
-          }
+          $searchContainer.addClass('error');
+          $postcodeLabel.children('.error-message').remove();
+          $postcodeLabel
+            .append($(this.errorMessageTpl({
+              'errorMessage': "This isn't a valid postcode. Please check and change or enter the address manually."
+            })));
+          // if (confirm('No addresses were found for the postcode ' + this.query + '.  Would you like to enter the address manually?')) {
+          //   $('.address-hideable').show();
+          // }
         } else {
           alert('Please enter a valid UK postcode');
         }
       } else {
         // successful
-    	  
+
     	postcodeService = response.postcodeService;
-    	
+
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -4580,7 +4613,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           success: this.addressSuccess
         });
       },
-      
+
     addressSuccess: function (response) {
       this.populateFields(response);
     },
