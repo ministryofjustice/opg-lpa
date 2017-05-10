@@ -41,6 +41,17 @@ return [
                 ],
             ], // terms
 
+            'contact-us' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/contact-us',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'contact-us',
+                    ],
+                ],
+            ], // contact
+
             'forgot-password' => [
                 'type' => 'Segment',
                 'options' => [
