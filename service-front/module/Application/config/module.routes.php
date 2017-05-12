@@ -41,13 +41,13 @@ return [
                 ],
             ], // terms
 
-            'contact-us' => [
+            'contact' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/contact-us',
+                    'route'    => '/contact',
                     'defaults' => [
                         'controller' => 'General\HomeController',
-                        'action'     => 'contact-us',
+                        'action'     => 'contact',
                     ],
                 ],
             ], // contact
