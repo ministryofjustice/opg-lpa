@@ -28,7 +28,7 @@ class HomeController extends AbstractBaseController
         return new ViewModel();
     }
 
-    public function contactUsAction(){
+    public function contactAction(){
         return new ViewModel();
     }
 
