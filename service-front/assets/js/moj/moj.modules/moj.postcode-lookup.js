@@ -81,11 +81,11 @@
 
     searchClicked: function (e) {
       var $el = $(e.target);
+      var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+      var $postcodeLabel = $('label[for="postcode-lookup"]');
 
       // store the current query
       this.query = this.$wrap.find('.js-PostcodeLookup__query').val();
-      var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
-      var $postcodeLabel = $('label[for="postcode-lookup"]');
 
       if (!$el.hasClass('disabled')) {
         if (this.query !== '') {
@@ -178,16 +178,13 @@
             .append($(this.errorMessageTpl({
               'errorMessage': 'No address found for this postcode. Please try again or enter the address manually.'
             })));
-          // if (confirm('No addresses were found for the postcode ' + this.query + '.  Would you like to enter the address manually?')) {
-          //   $('.address-hideable').show();
-          // }
         } else {
           alert('Please enter a valid UK postcode');
         }
       } else {
         // successful
 
-    	postcodeService = response.postcodeService;
+        postcodeService = response.postcodeService;
 
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
