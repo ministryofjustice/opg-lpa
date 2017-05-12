@@ -72,7 +72,7 @@ class WhoAreYouForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $whoAreYou = new WhoAreYou($this->convertFormDataForModel($this->data));
 

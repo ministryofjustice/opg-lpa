@@ -71,7 +71,7 @@ class ApplicantForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $lpaDocument = clone $this->lpa->document;
 

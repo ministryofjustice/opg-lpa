@@ -38,7 +38,7 @@ class TypeForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $document = new Document($this->data);
 

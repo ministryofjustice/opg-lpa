@@ -45,7 +45,7 @@ class HowAttorneysMakeDecisionForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $decision = new PrimaryAttorneyDecisions($this->data);
 

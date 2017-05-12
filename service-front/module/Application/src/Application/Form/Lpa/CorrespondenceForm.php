@@ -36,7 +36,7 @@ class CorrespondenceForm extends AbstractActorForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $error = ['correspondence' => []];
 

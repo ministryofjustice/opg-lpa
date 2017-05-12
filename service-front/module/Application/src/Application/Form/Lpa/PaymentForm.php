@@ -31,7 +31,7 @@ class PaymentForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         return [
             'isValid' => true,

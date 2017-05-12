@@ -52,7 +52,7 @@ class IncomeAndUniversalCreditForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $lpa = new Payment([
             'reducedFeeLowIncome'       => (bool)$this->data['reducedFeeLowIncome'],
