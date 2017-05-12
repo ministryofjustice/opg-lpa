@@ -9,7 +9,7 @@ class Correspondence extends AbstractValidator
     const AT_LEAST_ONE_SELECTED = 'at-least-one-option-needs-to-be-selected';
 
     protected $messageTemplates = [
-            self::AT_LEAST_ONE_SELECTED => 'at-least-one-option-needs-to-be-selected',
+        self::AT_LEAST_ONE_SELECTED => 'at-least-one-option-needs-to-be-selected',
     ];
 
     public function isValid($value)
