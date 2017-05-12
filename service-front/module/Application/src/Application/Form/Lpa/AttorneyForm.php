@@ -21,11 +21,6 @@ class AttorneyForm extends AbstractActorForm
         ],
         'dob-date' => [
             'type' => 'Application\Form\Fieldset\Dob',
-            'validators' => [
-                [
-                    'name' => 'Application\Form\Validator\Date',
-                ],
-            ],
         ],
         'email-address' => [
             'type' => 'Email',
