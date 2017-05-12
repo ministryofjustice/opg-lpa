@@ -45,7 +45,7 @@ class WhenReplacementAttorneyStepInForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $document = new ReplacementAttorneyDecisions($this->data);
 

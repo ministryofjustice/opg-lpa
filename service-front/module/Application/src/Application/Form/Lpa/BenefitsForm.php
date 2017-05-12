@@ -55,7 +55,7 @@ class BenefitsForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $lpa = new Payment([
             'reducedFeeReceivesBenefits' => (bool)$this->data['reducedFeeReceivesBenefits'],

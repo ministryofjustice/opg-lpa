@@ -55,7 +55,7 @@ class RepeatApplicationForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $isValid = true;
         $messages = [];

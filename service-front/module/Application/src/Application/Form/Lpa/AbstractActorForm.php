@@ -18,7 +18,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         //  Check that the actor model has been set before proceeding
         if (!$this->actorModel instanceof AbstractData) {

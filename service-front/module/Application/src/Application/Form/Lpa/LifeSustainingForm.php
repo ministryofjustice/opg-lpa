@@ -41,7 +41,7 @@ class LifeSustainingForm extends AbstractLpaForm
      *
      * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         $decisions = new PrimaryAttorneyDecisions($this->convertFormDataForModel($this->data));
 
