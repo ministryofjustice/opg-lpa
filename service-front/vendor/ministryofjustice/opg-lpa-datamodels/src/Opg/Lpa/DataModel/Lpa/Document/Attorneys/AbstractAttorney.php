@@ -5,6 +5,7 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -48,14 +49,14 @@ abstract class AbstractAttorney extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('email', [
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
     }
 

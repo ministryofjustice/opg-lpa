@@ -6,6 +6,8 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
@@ -139,7 +141,7 @@ class Lpa extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Payment\Payment'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('whoAreYouAnswered', [
@@ -176,7 +178,7 @@ class Lpa extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Document'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('metadata', [
@@ -184,7 +186,7 @@ class Lpa extends AbstractData
             new Assert\Type([
                 'type' => 'array'
             ]),
-            new Assert\Callback(function ($value, ExecutionContextInterface $context) {
+            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
                 // Max allowed size when JSON encoded in bytes.
                 $bytes = 1024 * 1024 * 1;
 

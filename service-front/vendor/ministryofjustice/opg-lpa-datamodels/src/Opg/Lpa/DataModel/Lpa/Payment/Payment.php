@@ -5,6 +5,7 @@ namespace Opg\Lpa\DataModel\Lpa\Payment;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use DateTime;
 
@@ -90,7 +91,7 @@ class Payment extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('amount', [

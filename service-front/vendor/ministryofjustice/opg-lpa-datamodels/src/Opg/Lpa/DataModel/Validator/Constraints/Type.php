@@ -9,15 +9,4 @@ class Type extends SymfonyConstraints\Type
     use ValidatorPathTrait;
 
     public $message = 'expected-type:{{ type }}';
-    public $type;
-
-    public function getDefaultOption()
-    {
-        return 'type';
-    }
-
-    public function getRequiredOptions()
-    {
-        return ['type'];
-    }
 }
