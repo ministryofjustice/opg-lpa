@@ -6,9 +6,10 @@ class ReuseDetailsForm extends AbstractLpaForm
 {
     protected $formElements = [
         'reuse-details' => [
-            'type'      => 'Application\Form\Element\ReuseDetails',
-            'required'  => true,
-            'options'   => [
+            'type'          => 'Application\Form\Element\ReuseDetails',
+            'required'      => true,
+            'error_message' => 'cannot-be-empty',
+            'options'       => [
                 'value_options' => [],
             ],
         ],
@@ -30,19 +31,14 @@ class ReuseDetailsForm extends AbstractLpaForm
             ];
         }
 
-        parent::__construct('form-reuse-details', $options);
+        parent::__construct($name, $options);
     }
 
     public function init()
     {
-        $this->setUseInputFilterDefaults(false);
+        $this->setName('form-reuse-details');
 
-        //  Add data to the input filter
-        $this->addToInputFilter([
-            'name'          => 'reuse-details',
-            'required'      => true,
-            'error_message' => 'cannot-be-empty',
-        ]);
+        $this->setUseInputFilterDefaults(false);
 
         parent::init();
     }
