@@ -5,6 +5,7 @@ namespace Opg\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -32,7 +33,7 @@ class CertificateProvider extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('address', [
@@ -40,7 +41,7 @@ class CertificateProvider extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
     }
 
