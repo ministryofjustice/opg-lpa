@@ -7,17 +7,27 @@
     word-wrap: break-word;
 }
 
+.heading-xlarge {
+    margin-top: em(30, 32);
+    margin-bottom: em(15, 32);
+
+    @include media(tablet) {
+        margin-top: em(60, 48);
+        margin-bottom: em(30, 48);
+    }
+}
+
 // Duplicating heading classes as placeholders to enable proper extending
 // Headings
 %heading-xlarge {
     @include bold-48();
 
-    margin-top: em(15, 32);
-    margin-bottom: em(30, 32);
+    margin-top: em(30, 32);
+    margin-bottom: em(15, 32);
 
     @include media(tablet) {
-        margin-top: em(30, 48);
-        margin-bottom: em(60, 48);
+        margin-top: em(60, 48);
+        margin-bottom: em(30, 48);
     }
 
     .heading-secondary {
