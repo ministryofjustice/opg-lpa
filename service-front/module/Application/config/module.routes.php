@@ -41,6 +41,17 @@ return [
                 ],
             ], // terms
 
+            'contact' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/contact',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'contact',
+                    ],
+                ],
+            ], // contact
+
             'forgot-password' => [
                 'type' => 'Segment',
                 'options' => [
