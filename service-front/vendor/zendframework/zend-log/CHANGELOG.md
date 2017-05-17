@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.2 - 2017-05-17
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#74](https://github.com/zendframework/zend-log/pull/74) fixes how the various
+  plugin manager factories initialize the plugin manager instances, ensuring
+  they are injecting the relevant configuration from the `config` service and
+  thus seeding them with configured plugin services. This means that the
+  `log_processors`, `log_writers`, `log_filters`, and `log_formatters`
+  configuration will now be honored in non-zend-mvc contexts.
+- [#62](https://github.com/zendframework/zend-log/pull/62) fixes registration of
+  the alias and factory for the `PsrPlaceholder` processor plugin.
+- [#66](https://github.com/zendframework/zend-log/pull/66) fixes the namespace
+  of the `LogFormatterProviderInterface` when registering the
+  `LogFormatterManager` with the zend-modulemanager `ServiceListener`.
+- [#67](https://github.com/zendframework/zend-log/pull/67) ensures that content
+  being injected into a DOM node by `Zend\Log\Formatter\Xml` is escaped so that
+  XML entities will be properly emitted.
+- [#73](https://github.com/zendframework/zend-log/pull/73) adds a missing import
+  statement to the `Psr` log writer.
+
 ## 2.9.1 - 2016-08-11
 
 ### Added
