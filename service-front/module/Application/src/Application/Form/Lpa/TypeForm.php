@@ -8,8 +8,9 @@ class TypeForm extends AbstractLpaForm
 {
     protected $formElements = [
         'type' => [
-            'type'      => 'Application\Form\Element\Type',
-            'required'  => true,
+            'type'          => 'Application\Form\Element\Type',
+            'required'      => true,
+            'error_message' => 'cannot-be-empty',
         ],
         'submit' => [
             'type' => 'Submit',
@@ -21,14 +22,6 @@ class TypeForm extends AbstractLpaForm
         $this->setName('form-type');
 
         $this->setUseInputFilterDefaults(false);
-
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add([
-            'name'     => 'type',
-            'required' => true,
-            'error_message' => 'cannot-be-empty',
-        ]);
 
         parent::init();
     }
