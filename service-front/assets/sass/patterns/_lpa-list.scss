@@ -392,7 +392,8 @@
         }
 
         .lpa-donor {
-            .heading-medium {
+            .heading-medium,
+            .heading-small {
                 padding-right: 90px;
 
                 @include media($max-width: 300px) {

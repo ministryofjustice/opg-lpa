@@ -133,7 +133,7 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <input type="hidden" name="returnRoute" value="{{ returnRoute }}">
 

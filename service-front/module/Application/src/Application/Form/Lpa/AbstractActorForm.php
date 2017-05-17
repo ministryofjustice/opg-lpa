@@ -1,7 +1,10 @@
 <?php
+
 namespace Application\Form\Lpa;
 
-abstract class AbstractActorForm extends AbstractForm
+use Opg\Lpa\DataModel\AbstractData;
+
+abstract class AbstractActorForm extends AbstractLpaForm
 {
     /**
      * An actor model object is a Donor, Human, TrustCorporation, CertificateProvider, PeopleToNotify model object.
@@ -11,52 +14,59 @@ abstract class AbstractActorForm extends AbstractForm
     protected $actorModel;
 
     /**
-     * Validate form input data through model validators.
+     * Validate form input data through model validators
      *
-     * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+     * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
-        $dataForModel = $this->convertFormDataForModel($this->data);
+        //  Check that the actor model has been set before proceeding
+        if (!$this->actorModel instanceof AbstractData) {
+            throw new \RuntimeException('Actor model in the actor form must be set before the data can be validated by model');
+        }
 
+        $dataForModel = $this->convertFormDataForModel($this->data);
         $this->actorModel->populate($dataForModel);
         $validation = $this->actorModel->validate();
 
-        // set validation message for form elements
-        if ($validation->offsetExists('dob')) {
-            $validation['dob-date'] = $validation['dob'];
-            unset($validation['dob']);
-        } elseif ($validation->offsetExists('dob.date')) {
-            $validation['dob-date'] = $validation['dob.date'];
-            unset($validation['dob.date']);
-        }
+        $messages = [];
 
-        if (array_key_exists('email', $dataForModel) && ($dataForModel['email'] == null) && $validation->offsetExists('email')) {
-            $validation['email-address'] = $validation['email'];
-            unset($validation['email']);
-        }
-
-        if (array_key_exists('phone', $dataForModel) && ($dataForModel['phone'] == null) && $validation->offsetExists('phone')) {
-            $validation['phone-number'] = $validation['phone'];
-            unset($validation['phone']);
-        }
-
-        if (array_key_exists('name', $dataForModel) && ($dataForModel['name'] == null) && $validation->offsetExists('name')) {
-            if (array_key_exists('name-first', $this->data)) {
-                $validation['name-first'] = $validation['name'];
-                $validation['name-last']  = $validation['name'];
-                unset($validation['name']);
+        //  If there are any errors then map them across if required
+        if ($validation->hasErrors()) {
+            // set validation message for form elements
+            if ($validation->offsetExists('dob')) {
+                $validation['dob-date'] = $validation['dob'];
+                unset($validation['dob']);
+            } elseif ($validation->offsetExists('dob.date')) {
+                $validation['dob-date'] = $validation['dob.date'];
+                unset($validation['dob.date']);
             }
+
+            if (array_key_exists('email', $dataForModel) && ($dataForModel['email'] == null) && $validation->offsetExists('email')) {
+                $validation['email-address'] = $validation['email'];
+                unset($validation['email']);
+            }
+
+            if (array_key_exists('phone', $dataForModel) && ($dataForModel['phone'] == null) && $validation->offsetExists('phone')) {
+                $validation['phone-number'] = $validation['phone'];
+                unset($validation['phone']);
+            }
+
+            if (array_key_exists('name', $dataForModel) && ($dataForModel['name'] == null) && $validation->offsetExists('name')) {
+                if (array_key_exists('name-first', $this->data)) {
+                    $validation['name-first'] = $validation['name'];
+                    $validation['name-last'] = $validation['name'];
+                    unset($validation['name']);
+                }
+            }
+
+            $messages = $this->modelValidationMessageConverter($validation);
         }
 
-        if (empty($message) && (count($validation) == 0)) {
-            return ['isValid'=>true, 'messages' => []];
-        } else {
-            return [
-                'isValid'=>false,
-                'messages' => $this->modelValidationMessageConverter($validation),
-            ];
-        }
+        return [
+            'isValid'  => !$validation->hasErrors(),
+            'messages' => $messages,
+        ];
     }
 
     /**
@@ -68,12 +78,16 @@ abstract class AbstractActorForm extends AbstractForm
      */
     protected function convertFormDataForModel($formData)
     {
+        //  If it exists transfer the dob array into a string
         if (array_key_exists('dob-date', $formData)) {
-            if (($formData['dob-date']['year']>0) && ($formData['dob-date']['month']>0) && ($formData['dob-date']['day']>0)) {
-                $formData['dob-date'] = $formData['dob-date']['year'] . '-' . $formData['dob-date']['month'] . '-' . $formData['dob-date']['day'];
-            } else {
-                $formData['dob'] = null;
+            $dobDateArr = $formData['dob-date'];
+            $dobDateStr = null;
+
+            if (!empty($dobDateArr['year']) && !empty($dobDateArr['month']) && !empty($dobDateArr['day'])) {
+                $dobDateStr = $dobDateArr['year'] . '-' . $dobDateArr['month'] . '-' . $dobDateArr['day'];
             }
+
+            $formData['dob-date'] = $dobDateStr;
         }
 
         $dataForModel = parent::convertFormDataForModel($formData);

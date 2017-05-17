@@ -1,7 +1,10 @@
 <?php
+
 namespace Application\Form\User;
 
-use Zend\Validator;
+use Application\Form\AbstractForm;
+use Zend\Validator\Identical;
+use Zend\Validator\NotEmpty;
 
 /**
  * For to request a password reset email be sent out.
@@ -9,85 +12,69 @@ use Zend\Validator;
  * Class ResetPasswordEmail
  * @package Application\Form\User
  */
-class ResetPasswordEmail extends AbstractForm {
+class ResetPasswordEmail extends AbstractForm
+{
+    public function init()
+    {
+        $this->setName('reset-password-email');
 
-    public function __construct(){
-
-        parent::__construct('reset-password-email');
-
-        //---
-
-        $this->add(array(
+        $this->add([
             'name' => 'email',
             'type' => 'Email',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'email_confirm',
             'type' => 'Email',
-        ));
+        ]);
 
-        //--------------------------------
+        //  Add data to the input filter
         $this->setUseInputFilterDefaults(false);
-        
-        $inputFilter = $this->getInputFilter();
 
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'email',
             'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
-                    'name'    => 'NotEmpty',
+            'validators' => [
+                [
+                    'name'                   => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
-                        'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                    'options'                => [
+                        'messages'           => [
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'name'    => 'EmailAddress',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
 
-        $inputFilter->add(array(
+        $this->addToInputFilter([
             'name'     => 'email_confirm',
             'required' => true,
-            'filters'  => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
-                    'name'    => 'NotEmpty',
+            'validators' => [
+                [
+                    'name'                   => 'NotEmpty',
                     'break_chain_on_failure' => true,
-                    'options' => array(
+                    'options'                => [
                         'messages' => [
-                            Validator\NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
-                    ),
-                ),  
-                array(
+                    ],
+                ],
+                [
                     'name'    => 'Identical',
-                    'options' => array(
-                        'token' => 'email',
+                    'options' => [
+                        'token'    => 'email',
                         'messages' => [
-                            Validator\Identical::NOT_SAME => 'did-not-match',
+                            Identical::NOT_SAME => 'did-not-match',
                         ],
-                    ),
-                ),
-            )
-        ));
+                    ],
+                ],
+            ]
+        ]);
 
-        //---
-
-        $this->setInputFilter( $inputFilter );
-
-    } // function
-
-} // class
+        parent::init();
+    }
+}

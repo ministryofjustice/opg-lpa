@@ -4,6 +4,7 @@ namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -31,7 +32,7 @@ class Human extends AbstractAttorney
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('dob', [
@@ -39,7 +40,7 @@ class Human extends AbstractAttorney
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Dob'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
     }
 

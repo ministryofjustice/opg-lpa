@@ -55,7 +55,7 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.get( form.csrfName )) }}
+        {{ formElement(form.getCsrf) }}
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
 

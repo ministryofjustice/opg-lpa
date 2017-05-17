@@ -47,7 +47,7 @@
 {# begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <fieldset>
         <legend class="visuallyhidden">Change password</legend>

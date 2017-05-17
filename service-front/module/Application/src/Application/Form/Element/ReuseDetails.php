@@ -8,7 +8,7 @@ class ReuseDetails extends ZFRadio
 {
     /**
      * @param  array $options
-     * @return MultiCheckbox
+     * @return ReuseDetails
      */
     public function setValueOptions(array $options)
     {

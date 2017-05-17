@@ -1,13 +1,14 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class RepeatApplicationForm extends AbstractForm
+class RepeatApplicationForm extends AbstractLpaForm
 {
     protected $formElements = [
         'isRepeatApplication' => [
-            'type'      => 'Zend\Form\Element\Radio',
+            'type'      => 'Radio',
             'required'  => true,
             'options'   => [
                 'value_options' => [
@@ -38,42 +39,38 @@ class RepeatApplicationForm extends AbstractForm
             ],
         ],
         'submit' => [
-            'type' => 'Zend\Form\Element\Submit',
+            'type' => 'Submit',
         ],
     ];
 
     public function init()
     {
         $this->setName('form-repeat-application');
+
         parent::init();
     }
 
     /**
-    * Validate form input data through model validators.
-    *
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
-    public function validateByModel()
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
+    protected function validateByModel()
     {
-        $isValid = false;
+        $isValid = true;
         $messages = [];
 
-        if ($this->data['isRepeatApplication'] == 'is-new') {
-            $isValid = true;
-        } elseif ($this->data['isRepeatApplication'] == 'is-repeat') {
+        //  If this is a repeat application validate the repeat case number
+        if ($this->data['isRepeatApplication'] == 'is-repeat') {
             //  Create an LPA and validate it with the validation in the data models
-            $lpaData = [
+            $lpa = new Lpa([
                 'repeatCaseNumber' => (int) $this->data['repeatCaseNumber'],
-            ];
-
-            $lpa = new Lpa($lpaData);
+            ]);
 
             $validation = $lpa->validate(['repeatCaseNumber']);
+            $isValid = !$validation->hasErrors();
 
-            if (count($validation) == 0) {
-                $isValid = true;
-            } else {
-                $isValid = false;
+            if ($validation->hasErrors()) {
                 $messages = $this->modelValidationMessageConverter($validation);
             }
         }

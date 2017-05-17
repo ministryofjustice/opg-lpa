@@ -43,8 +43,8 @@ class DateCheck implements ServiceLocatorAwareInterface
             }
         }
 
-        if (isset($donorLifeSustaining) && $donor != $donorLifeSustaining) {
-            return 'The donor must sign Section 5 and Section 9 on the same date.';
+        if (isset($donorLifeSustaining) && $donor < $donorLifeSustaining) {
+            return 'The donor must sign Section 5 on the same day or before section 9.';
         }
 
         // Donor must be first

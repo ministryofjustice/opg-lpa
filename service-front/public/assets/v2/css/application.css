@@ -3356,11 +3356,15 @@ input[type=number] {
     padding: 0 0 6px;
     border-bottom: 0; }
   .lpa-table .lpa-donor .heading-medium,
-  .lpa-cards .lpa-donor .heading-medium {
+  .lpa-table .lpa-donor .heading-small,
+  .lpa-cards .lpa-donor .heading-medium,
+  .lpa-cards .lpa-donor .heading-small {
     padding-right: 90px; } }
   @media (max-width: 640px) and (max-width: 300px) {
     .lpa-table .lpa-donor .heading-medium,
-    .lpa-cards .lpa-donor .heading-medium {
+    .lpa-table .lpa-donor .heading-small,
+    .lpa-cards .lpa-donor .heading-medium,
+    .lpa-cards .lpa-donor .heading-small {
       padding-right: 50px; } }
 @media (max-width: 640px) {
   .lpa-table .lpa-number,

@@ -10,7 +10,7 @@
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
-    
+
 {{ message.setAttributes({
     id: 'message',
     rows: 10,
@@ -22,10 +22,10 @@
 {{ message.setOptions( { label: 'Message' }) ? '' }}
 
 {{ form.prepare() ? '' }}
-    
+
 {{ form().openTag( form )|raw }}
 
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <div class="text">
         <p>System messages will be seen by all visitors to the LPA service. They should be used to inform users of scheduled periods of maintenance or changes to the LPA service.</p>
@@ -35,12 +35,12 @@
         <legend class="visuallyhidden">Set the system message</legend>
 
         {{ macros.formGroup(message) }}
-        
+
     </fieldset>
 
 
 	<input type="submit" class="button" value="Set system message">
-                
+
 {{ form().closeTag|raw }}
 
 {% endblock %}
