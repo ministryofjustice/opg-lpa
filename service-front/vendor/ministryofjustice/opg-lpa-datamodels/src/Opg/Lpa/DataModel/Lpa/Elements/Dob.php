@@ -16,7 +16,9 @@ use DateTime;
 class Dob extends AbstractData
 {
     /**
-     * @var \DateTime A date of birth. The time component of the DateTime object should be ignored.
+     * A date of birth. The time component of the DateTime object should be ignored.
+     *
+     * @var DateTime
      */
     protected $date;
 
@@ -50,9 +52,24 @@ class Dob extends AbstractData
                 }
 
                 if (is_string($v)) {
-                    $date = date_parse_from_format(DateTime::ISO8601, $v);
+                    //  Assume the value is invalid until we have proved otherwise below
+                    $isValid = false;
 
-                    if (!checkdate(@$date['month'], @$date['day'], @$date['year'])) {
+                    //  Split the array into components
+                    $dateArr = explode('-', $v);
+
+                    if (count($dateArr) == 3) {
+                        //  Truncate the day value to lose any time data and try to create a DateTime object
+                        $dateArr[2] = substr($dateArr[2], 0, 2);
+
+                        //  Format the string and date to the same format to ensure that it is valid
+                        $dateFormat = 'Y-m-d';
+                        $date = DateTime::createFromFormat('Y-m-d', implode('-', $dateArr));
+
+                        $isValid = ($date instanceof DateTime && strpos($v, $date->format($dateFormat)) === 0);
+                    }
+
+                    if (!$isValid) {
                         //  The date is invalid so return '0' instead of null
                         //  This will allow the NotBlank validation to pass so we can display an appropriate date not valid message
                         return '0';
