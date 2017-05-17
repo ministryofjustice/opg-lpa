@@ -15,7 +15,7 @@ class FormRadio extends ZFFormRadioHelper
      * @param   array   $labelAttributes
      * @return  string
      */
-    public function outputOption(Radio $element, $option, $labelAttributes = array())
+    public function outputOption(Radio $element, $option, $labelAttributes = [])
     {
         $element = clone $element;
 
@@ -34,9 +34,9 @@ class FormRadio extends ZFFormRadioHelper
         $attributes['type'] = $this->getInputType();
         $selectedOptions    = (array) $element->getValue();
 
-        $options = array(
+        $options = [
             $option => $options[$option],
-        );
+        ];
 
         $rendered = $this->renderOptions($element, $options, $selectedOptions, $attributes);
 

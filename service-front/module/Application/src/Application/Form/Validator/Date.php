@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Form\Validator;
 
 use Zend\Validator\Date as DateValidator;
@@ -8,7 +9,7 @@ class Date extends DateValidator
 {
     const EMPTY_DATE = "emptyDate";
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         $this->messageTemplates = array_merge($this->messageTemplates, [
             self::EMPTY_DATE   => "Please enter all the date fields",
@@ -61,10 +62,6 @@ class Date extends DateValidator
 
     private function intBetweenInclusive($value, $min, $max)
     {
-        if (is_int($value)) {
-            return ($value >= $min && $value <= $max);
-        }
-
-        return false;
+        return (is_int($value) && $value >= $min && $value <= $max);
     }
 }

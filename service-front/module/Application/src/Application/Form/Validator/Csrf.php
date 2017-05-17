@@ -1,11 +1,11 @@
 <?php
-namespace Application\Form\Validator;
 
-use RuntimeException;
+namespace Application\Form\Validator;
 
 use Zend\Math\Rand;
 use Zend\Session\Container as SessionContainer;
 use Zend\Validator\Csrf as ZFCsrfValidator;
+use RuntimeException;
 
 /**
  * A simplified replacement of Zend's Csrf Validator.
@@ -21,16 +21,15 @@ use Zend\Validator\Csrf as ZFCsrfValidator;
  * Class Csrf
  * @package Application\Form\Validator
  */
-class Csrf extends ZFCsrfValidator {
-
+class Csrf extends ZFCsrfValidator
+{
     /**
      * Error messages
      * @var array
      */
-    protected $messageTemplates = array(
+    protected $messageTemplates = [
         self::NOT_SAME => "Oops! Something went wrong with the information you entered. Please try again.",
-    );
-
+    ];
 
     /**
      * Does the provided token match the one generated?
@@ -39,19 +38,15 @@ class Csrf extends ZFCsrfValidator {
      * @param  mixed $context
      * @return bool
      */
-    public function isValid($value, $context = null){
-
-        if( $value !== $this->getHash( true ) ){
-
+    public function isValid($value, $context = null)
+    {
+        if ($value !== $this->getHash(true)) {
             $this->error(self::NOT_SAME);
             return false;
-
         }
 
         return true;
-
     }
-
 
     /**
      * Generate CSRF token
@@ -65,25 +60,18 @@ class Csrf extends ZFCsrfValidator {
      */
     protected function generateHash()
     {
-
         $salt = $this->getSalt();
 
-        if( $salt == null || empty($salt) ){
+        if ($salt == null || empty($salt)) {
             throw new RuntimeException('CSRF salt cannot be null or empty');
         }
 
-        //---
-
         $session = new SessionContainer('CsrfValidator');
 
-        if( !isset($session->token) ){
-            $session->token = hash( 'sha512', Rand::getBytes(128, true) );
+        if (!isset($session->token)) {
+            $session->token = hash('sha512', Rand::getBytes(128, true));
         }
 
-        //---
-
-        $this->hash =  hash( 'sha512', $this->getName() . $session->token . $salt );
-
+        $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
     }
-
-} // class
+}

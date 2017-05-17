@@ -6,7 +6,6 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use DateTime;
-use RuntimeException;
 
 /**
  * Represents a date of birth.
@@ -54,9 +53,12 @@ class Dob extends AbstractData
                     $date = date_parse_from_format(DateTime::ISO8601, $v);
 
                     if (!checkdate(@$date['month'], @$date['day'], @$date['year'])) {
-                        throw new RuntimeException("Invalid date: $v. Date must exist and be in ISO-8601 format.");
+                        //  The date is invalid so return '0' instead of null
+                        //  This will allow the NotBlank validation to pass so we can display an appropriate date not valid message
+                        return '0';
                     }
                 }
+
                 return new DateTime($v);
         }
 

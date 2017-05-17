@@ -4,6 +4,7 @@ namespace Opg\Lpa\DataModel\WhoAreYou;
 
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
@@ -39,7 +40,7 @@ class WhoAreYou extends AbstractData
             ]),
         ]);
 
-        $metadata->addPropertyConstraint('subquestion', new Assert\Callback(function ($value, ExecutionContextInterface $context) {
+        $metadata->addPropertyConstraint('subquestion', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
             $object = $context->getObject();
             $options = $object::options();
 
@@ -59,7 +60,7 @@ class WhoAreYou extends AbstractData
             }
         }));
 
-        $metadata->addPropertyConstraint('qualifier', new Assert\Callback(function ($value, ExecutionContextInterface $context) {
+        $metadata->addPropertyConstraint('qualifier', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
             $object = $context->getObject();
             $options = $object::options();
 

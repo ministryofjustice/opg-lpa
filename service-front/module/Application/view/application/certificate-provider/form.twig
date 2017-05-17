@@ -108,8 +108,8 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
-    {{ formElementErrorsV2(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
+    {{ formElementErrorsV2(form.getCsrf) }}
 
     <h2 class="heading-medium">What is the certificate provider's name?</h2>
 

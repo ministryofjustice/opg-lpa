@@ -1,9 +1,10 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class TypeForm extends AbstractForm
+class TypeForm extends AbstractLpaForm
 {
     protected $formElements = [
         'type' => [
@@ -11,7 +12,7 @@ class TypeForm extends AbstractForm
             'required'  => true,
         ],
         'submit' => [
-            'type' => 'Zend\Form\Element\Submit',
+            'type' => 'Submit',
         ],
     ];
 
@@ -19,38 +20,39 @@ class TypeForm extends AbstractForm
     {
         $this->setName('form-type');
 
-        parent::init();
-
         $this->setUseInputFilterDefaults(false);
 
         $inputFilter = $this->getInputFilter();
 
-        $inputFilter->add(array(
+        $inputFilter->add([
             'name'     => 'type',
             'required' => true,
             'error_message' => 'cannot-be-empty',
-        ));
+        ]);
+
+        parent::init();
     }
 
-   /**
-    * Validate form input data through model validators.
-    *
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
-    public function validateByModel()
+    /**
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
+    protected function validateByModel()
     {
         $document = new Document($this->data);
 
         $validation = $document->validate(['type']);
 
-        if(count($validation) == 0) {
-            return ['isValid'=>true, 'messages' => []];
+        $messages = [];
+
+        if ($validation->hasErrors()) {
+            $messages = $this->modelValidationMessageConverter($validation);
         }
-        else {
-            return [
-                    'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
-            ];
-        }
+
+        return [
+            'isValid'  => !$validation->hasErrors(),
+            'messages' => $messages,
+        ];
     }
 }

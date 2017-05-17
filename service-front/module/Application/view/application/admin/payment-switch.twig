@@ -26,7 +26,7 @@
 
 {{ form().openTag( form )|raw }}
 
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     {% if save == true %}
         <div class="alert panel text alert-success" role="alert">

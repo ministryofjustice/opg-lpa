@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-class ReuseDetailsForm extends AbstractForm
+class ReuseDetailsForm extends AbstractLpaForm
 {
     protected $formElements = [
         'reuse-details' => [
@@ -13,17 +13,15 @@ class ReuseDetailsForm extends AbstractForm
             ],
         ],
         'submit' => [
-            'type' => 'Zend\Form\Element\Submit',
+            'type' => 'Submit',
         ],
     ];
 
     /**
-     * ReuseDetailsForm constructor
-     *
-     * @param int|null|string $name
-     * @param array $options
+     * @param  null|int|string  $name    Optional name for the element
+     * @param  array            $options Optional options for the element
      */
-    public function __construct($name, $options)
+    public function __construct($name = null, $options = [])
     {
         //  Extract the value options data now
         if (array_key_exists('actorReuseDetails', $options)) {
@@ -37,25 +35,24 @@ class ReuseDetailsForm extends AbstractForm
 
     public function init()
     {
-        parent::init();
-
         $this->setUseInputFilterDefaults(false);
 
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add(array(
+        //  Add data to the input filter
+        $this->addToInputFilter([
             'name'          => 'reuse-details',
             'required'      => true,
             'error_message' => 'cannot-be-empty',
-        ));
+        ]);
+
+        parent::init();
     }
 
     /**
-     * Validate form input data through model validators.
+     * Validate form input data through model validators
      *
-     * @return [isValid => bool, messages => [<formElementName> => string, ..]]
+     * @return array
      */
-    public function validateByModel()
+    protected function validateByModel()
     {
         return [
             'isValid'  => true,

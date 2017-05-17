@@ -1,8 +1,9 @@
 <?php
+
 namespace Application\Form\Admin;
 
-use Application\Form\General\AbstractForm;
-use Zend\Validator;
+use Application\Form\AbstractForm;
+use Zend\Validator\Between;
 
 /**
  * For an admin to set the system message
@@ -12,38 +13,38 @@ use Zend\Validator;
  */
 class PaymentSwitch extends AbstractForm
 {
-    public function __construct($formName = null)
+    public function init()
     {
-        parent::__construct('admin-payment-switch');
+        $this->setName('admin-payment-switch');
 
         $this->add([
             'name' => 'percentage',
             'type' => 'Number',
         ]);
 
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add([
+        //  Add data to the input filter
+        $this->addToInputFilter([
             'name'     => 'percentage',
             'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-                ['name' => 'Int'],
+                [
+                    'name' => 'Int'
+                ],
             ],
             'required' => true,
             'validators' => [
                 [
                     'name'    => 'Between',
                     'options' => [
-                        'min' => 0, 'max' => 100,
+                        'min' => 0,
+                        'max' => 100,
                         'messages' => [
-                            Validator\Between::NOT_BETWEEN => "Must be between 0 and 100",
+                            Between::NOT_BETWEEN => "Must be between 0 and 100",
                         ],
                     ],
                 ],
             ],
         ]);
 
-        $this->setInputFilter($inputFilter);
+        parent::init();
     }
 }

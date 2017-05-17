@@ -17,6 +17,7 @@ return array(
     'Raven_' => array($vendorDir . '/raven/raven/lib'),
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
     'Omnipay\\Common\\' => array($vendorDir . '/omnipay/common/src'),
+    'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Michelf' => array($vendorDir . '/michelf/php-markdown'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),

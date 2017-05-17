@@ -13,7 +13,9 @@ class FeedbackController extends AbstractBaseController
     {
         $container = new Container('feedback');
 
-        $form = new FeedbackForm();
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\General\FeedbackForm');
 
         $type = $form->get('rating');
         $typeValueOptions = $type->getOptions()['value_options'];
