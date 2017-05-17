@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.2 - 2017-05-17
+
+### Added
+
+- Nothing.
+
+### Changes
+
+- [#40](https://github.com/zendframework/zend-filter/pull/40) updates the
+  `Callback` filter's `setCallback()` method to allow passing a string name of a
+  class that is instantiable without constructor arguments, and which defines
+  `__invoke()`.
+- [#43](https://github.com/zendframework/zend-filter/pull/43) updates the
+  exception thrown by the `File\Rename` filter when the target already exists to
+  indicate the target filename path.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#56](https://github.com/zendframework/zend-filter/pull/56) fixes how the
+  `FilterPluginManagerFactory` factory initializes the plugin manager instance,
+  ensuring it is injecting the relevant configuration from the `config` service
+  and thus seeding it with configured translator loader services. This means
+  that the `filters` configuration will now be honored in non-zend-mvc contexts.
+- [#36](https://github.com/zendframework/zend-filter/pull/36) fixes an issue in
+  the constructor whereby a discovered option was not removed from the options
+  list after being used to set the compression algorithm.
+- [#49](https://github.com/zendframework/zend-filter/pull/49) and
+  [#51](https://github.com/zendframework/zend-filter/pull/51) fix logic within
+  the `Boolean` and `ToNull` filters to use boolean rather than arithmetic
+  operations, ensuring that if the same type is specified multiple times via the
+  options, it will be aggregated correctly internally, and thus ensure correct
+  operation of the filter.
+- [#55](https://github.com/zendframework/zend-filter/pull/55) adds a missing
+  import statement to the `Word\SeparatorToSeparatorFactory`.
+
 ## 2.7.1 - 2016-04-18
 
 ### Added
