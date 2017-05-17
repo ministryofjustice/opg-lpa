@@ -67,7 +67,10 @@ class Boolean extends AbstractFilter
             }
 
             if (is_array($typeOrOptions)) {
-                if (isset($typeOrOptions['type']) || isset($typeOrOptions['casting']) || isset($typeOrOptions['translations'])) {
+                if (isset($typeOrOptions['type'])
+                    || isset($typeOrOptions['casting'])
+                    || isset($typeOrOptions['translations'])
+                ) {
                     $this->setOptions($typeOrOptions);
                 } else {
                     $this->setType($typeOrOptions);
@@ -95,9 +98,9 @@ class Boolean extends AbstractFilter
             $detected = 0;
             foreach ($type as $value) {
                 if (is_int($value)) {
-                    $detected += $value;
+                    $detected |= $value;
                 } elseif (in_array($value, $this->constants)) {
-                    $detected += array_search($value, $this->constants);
+                    $detected |= array_search($value, $this->constants);
                 }
             }
 
@@ -106,7 +109,7 @@ class Boolean extends AbstractFilter
             $type = array_search($type, $this->constants);
         }
 
-        if (!is_int($type) || ($type < 0) || ($type > self::TYPE_ALL)) {
+        if (! is_int($type) || ($type < 0) || ($type > self::TYPE_ALL)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Unknown type value "%s" (%s)',
                 $type,
@@ -159,7 +162,7 @@ class Boolean extends AbstractFilter
      */
     public function setTranslations($translations)
     {
-        if (!is_array($translations) && !$translations instanceof Traversable) {
+        if (! is_array($translations) && ! $translations instanceof Traversable) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '"%s" expects an array or Traversable; received "%s"',
                 __METHOD__,
@@ -196,8 +199,7 @@ class Boolean extends AbstractFilter
         $casting = $this->getCasting();
 
         // LOCALIZED
-        if ($type >= self::TYPE_LOCALIZED) {
-            $type -= self::TYPE_LOCALIZED;
+        if ($type & self::TYPE_LOCALIZED) {
             if (is_string($value)) {
                 if (isset($this->options['translations'][$value])) {
                     return (bool) $this->options['translations'][$value];
@@ -206,80 +208,72 @@ class Boolean extends AbstractFilter
         }
 
         // FALSE_STRING ('false')
-        if ($type >= self::TYPE_FALSE_STRING) {
-            $type -= self::TYPE_FALSE_STRING;
+        if ($type & self::TYPE_FALSE_STRING) {
             if (is_string($value) && (strtolower($value) == 'false')) {
                 return false;
             }
 
-            if (!$casting && is_string($value) && (strtolower($value) == 'true')) {
+            if (! $casting && is_string($value) && (strtolower($value) == 'true')) {
                 return true;
             }
         }
 
         // NULL (null)
-        if ($type >= self::TYPE_NULL) {
-            $type -= self::TYPE_NULL;
+        if ($type & self::TYPE_NULL) {
             if ($value === null) {
                 return false;
             }
         }
 
         // EMPTY_ARRAY (array())
-        if ($type >= self::TYPE_EMPTY_ARRAY) {
-            $type -= self::TYPE_EMPTY_ARRAY;
+        if ($type & self::TYPE_EMPTY_ARRAY) {
             if (is_array($value) && ($value == [])) {
                 return false;
             }
         }
 
         // ZERO_STRING ('0')
-        if ($type >= self::TYPE_ZERO_STRING) {
-            $type -= self::TYPE_ZERO_STRING;
+        if ($type & self::TYPE_ZERO_STRING) {
             if (is_string($value) && ($value == '0')) {
                 return false;
             }
 
-            if (!$casting && (is_string($value)) && ($value == '1')) {
+            if (! $casting && (is_string($value)) && ($value == '1')) {
                 return true;
             }
         }
 
         // STRING ('')
-        if ($type >= self::TYPE_STRING) {
-            $type -= self::TYPE_STRING;
+        if ($type & self::TYPE_STRING) {
             if (is_string($value) && ($value == '')) {
                 return false;
             }
         }
 
         // FLOAT (0.0)
-        if ($type >= self::TYPE_FLOAT) {
-            $type -= self::TYPE_FLOAT;
+        if ($type & self::TYPE_FLOAT) {
             if (is_float($value) && ($value == 0.0)) {
                 return false;
             }
 
-            if (!$casting && is_float($value) && ($value == 1.0)) {
+            if (! $casting && is_float($value) && ($value == 1.0)) {
                 return true;
             }
         }
 
         // INTEGER (0)
-        if ($type >= self::TYPE_INTEGER) {
-            $type -= self::TYPE_INTEGER;
+        if ($type & self::TYPE_INTEGER) {
             if (is_int($value) && ($value == 0)) {
                 return false;
             }
 
-            if (!$casting && is_int($value) && ($value == 1)) {
+            if (! $casting && is_int($value) && ($value == 1)) {
                 return true;
             }
         }
 
         // BOOLEAN (false)
-        if ($type >= self::TYPE_BOOLEAN) {
-            $type -= self::TYPE_BOOLEAN;
+        if ($type & self::TYPE_BOOLEAN) {
             if (is_bool($value)) {
                 return $value;
             }

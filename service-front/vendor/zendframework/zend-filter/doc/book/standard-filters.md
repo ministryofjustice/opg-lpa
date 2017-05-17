@@ -340,6 +340,19 @@ $filter = new Zend\Filter\Callback(array('MyClass', 'reverse'));
 print $filter->filter('Hello!');
 ```
 
+As of PHP 5.5 you can use ::class resolution for given callback class:
+
+```php
+class MyClass
+{
+    public function __invoke($param);
+}
+
+// The filter definition
+$filter = new Zend\Filter\Callback(MyClass::class);
+print $filter->filter('Hello!');
+```
+
 To get the actual set callback use `getCallback()` and to set another callback
 use `setCallback()`.
 
@@ -908,7 +921,7 @@ printf("%s\n", $filter->filter('message'));
 04636a6cb8276fad0787a2e187803b6557f77825d5ca6ed4392be702b9754bb3MTIzNDU2Nzg5MDEyMzQ1NgZ+zPwTGpV6gQqPKECinig=
 ```
 
-> #### Use diffrent vectors
+> #### Use different vectors
 >
 > For security purposes, it's always better to use a different vector on each
 > encryption. We suggest using `setVector()` only in exceptional circumstances.

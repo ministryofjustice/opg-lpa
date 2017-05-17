@@ -14,6 +14,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionApplicationDiscoveryService(array $args = [])
  * @method \Aws\Appstream\AppstreamClient createAppstream(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionAppstream(array $args = [])
+ * @method \Aws\Athena\AthenaClient createAthena(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionAthena(array $args = [])
  * @method \Aws\AutoScaling\AutoScalingClient createAutoScaling(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionAutoScaling(array $args = [])
  * @method \Aws\Batch\BatchClient createBatch(array $args = [])
@@ -134,6 +136,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionMachineLearning(array $args = [])
  * @method \Aws\MarketplaceCommerceAnalytics\MarketplaceCommerceAnalyticsClient createMarketplaceCommerceAnalytics(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceCommerceAnalytics(array $args = [])
+ * @method \Aws\MarketplaceEntitlementService\MarketplaceEntitlementServiceClient createMarketplaceEntitlementService(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMarketplaceEntitlementService(array $args = [])
  * @method \Aws\MarketplaceMetering\MarketplaceMeteringClient createMarketplaceMetering(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceMetering(array $args = [])
  * @method \Aws\OpsWorks\OpsWorksClient createOpsWorks(array $args = [])
@@ -199,7 +203,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.26.3';
+    const VERSION = '3.28.0';
 
     /** @var array Arguments for creating clients */
     private $args;
