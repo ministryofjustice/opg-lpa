@@ -3,7 +3,7 @@
 namespace Opg\Lpa\DataModel\Validator\Constraints;
 
 /**
- * This train should be included in any 'Validator\Constraints' class that wants to use
+ * This trait should be included in any 'Validator\Constraints' class that wants to use
  * its original Symfony Validator (which should be all non-custom ones!).
  *
  * Class ValidatorPathTrait

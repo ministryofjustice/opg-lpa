@@ -6,8 +6,11 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints\All as AllConstraintSymfony;
+use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Document extends AbstractData
 {
@@ -115,10 +118,10 @@ class Document extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Donor'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
-        $metadata->addPropertyConstraint('whoIsRegistering', new Assert\Callback(function ($value, ExecutionContextInterface $context) {
+        $metadata->addPropertyConstraint('whoIsRegistering', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
             if (is_null($value) || $value == 'donor') {
                 return;
             }
@@ -154,25 +157,25 @@ class Document extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('replacementAttorneyDecisions', [
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('correspondent', [
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Document\Correspondence'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         // instruction should be string, null or boolean false.
-        $metadata->addPropertyConstraint('instruction', new Assert\Callback(function ($value, ExecutionContextInterface $context) {
+        $metadata->addPropertyConstraint('instruction', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
             if (is_string($value) && strlen($value) > 10000) {
                 $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
             }
@@ -185,7 +188,7 @@ class Document extends AbstractData
         }));
 
         // preference should be string, null or boolean false.
-        $metadata->addPropertyConstraint('preference', new Assert\Callback(function ($value, ExecutionContextInterface $context) {
+        $metadata->addPropertyConstraint('preference', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
             if (is_string($value) && strlen($value) > 10000) {
                 $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
             }
@@ -201,7 +204,7 @@ class Document extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Document\CertificateProvider'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('primaryAttorneys', [
@@ -209,7 +212,7 @@ class Document extends AbstractData
             new Assert\Type([
                 'type' => 'array'
             ]),
-            new Assert\All([
+            new AllConstraintSymfony([
                 'constraints' => [
                     new Assert\Type([
                         'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney'
@@ -224,7 +227,7 @@ class Document extends AbstractData
             new Assert\Type([
                 'type' => 'array'
             ]),
-            new Assert\All([
+            new AllConstraintSymfony([
                 'constraints' => [
                     new Assert\Type([
                         'type' => '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney'
@@ -235,7 +238,7 @@ class Document extends AbstractData
         ]);
 
         // Allow only N trust corporation(s) across primaryAttorneys and replacementAttorneys.
-        $metadata->addConstraint(new Assert\Callback(function ($object, ExecutionContextInterface $context) {
+        $metadata->addConstraint(new CallbackConstraintSymfony(function ($object, ExecutionContextInterface $context) {
             $max = 1;
             $attorneys = array_merge($object->primaryAttorneys, $object->replacementAttorneys);
 
@@ -259,7 +262,7 @@ class Document extends AbstractData
             new Assert\Count([
                 'max' => 5
             ]),
-            new Assert\All([
+            new AllConstraintSymfony([
                 'constraints' => [
                     new Assert\Type([
                         'type' => '\Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson'

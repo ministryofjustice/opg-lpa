@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
@@ -6,20 +7,6 @@ use Zend\Form\FormInterface;
 
 class CorrespondentForm extends AbstractActorForm
 {
-    /**
-     * Flag to indicate if the data in this form can be edited - by default it is
-     *
-     * @var bool
-     */
-    private $isEditable = true;
-
-    /**
-     * Flag to indicate if a trust has been selected during the data bind
-     *
-     * @var bool
-     */
-    private $trustSelected = false;
-
     protected $formElements = [
         'who' => [
             'type'       => 'Hidden',
@@ -64,17 +51,32 @@ class CorrespondentForm extends AbstractActorForm
             'type' => 'Text',
         ],
         'submit' => [
-            'type' => 'Zend\Form\Element\Submit',
+            'type' => 'Submit',
         ],
     ];
 
     /**
-     * @param  null|int|string  $name    Optional name for the element
-     * @param  array            $options Optional options for the element
+     * Flag to indicate if the data in this form can be edited - by default it is
+     *
+     * @var bool
      */
-    public function __construct($name = null, $options = [])
+    private $isEditable = true;
+
+    /**
+     * Flag to indicate if a trust has been selected during the data bind
+     *
+     * @var bool
+     */
+    private $trustSelected = false;
+
+    public function init()
     {
-        parent::__construct('form-correspondent', $options);
+        $this->setName('form-correspondent');
+
+        //  Set the actor model so it can be used during validation
+        $this->actorModel = new Correspondence();
+
+        parent::init();
     }
 
     public function bind($data, $flags = FormInterface::VALUES_NORMALIZED)
@@ -112,17 +114,5 @@ class CorrespondentForm extends AbstractActorForm
     public function isEditable()
     {
         return $this->isEditable;
-    }
-
-   /**
-    * Validate form input data through model validators.
-    *
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
-    public function validateByModel()
-    {
-        $this->actorModel = new Correspondence();
-
-        return parent::validateByModel();
     }
 }

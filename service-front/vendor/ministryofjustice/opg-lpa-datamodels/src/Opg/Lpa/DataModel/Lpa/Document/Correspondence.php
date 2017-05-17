@@ -5,8 +5,10 @@ namespace Opg\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
+use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * Represents the person with whom Correspondence relating to the LPA should be sent.
@@ -89,7 +91,7 @@ class Correspondence extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('company', [
@@ -103,7 +105,7 @@ class Correspondence extends AbstractData
         ]);
 
         // We required either a name OR company to be set for a Correspondent to be considered valid.
-        $metadata->addConstraint(new Assert\Callback(function ($object, ExecutionContextInterface $context) {
+        $metadata->addConstraint(new CallbackConstraintSymfony(function ($object, ExecutionContextInterface $context) {
             if (empty($object->name) && empty($object->company)) {
                 $context->buildViolation((new Assert\NotNull())->message)->atPath('name/company')->addViolation();
             }
@@ -114,21 +116,21 @@ class Correspondence extends AbstractData
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('email', [
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('phone', [
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber'
             ]),
-            new Assert\Valid,
+            new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('contactByPost', [

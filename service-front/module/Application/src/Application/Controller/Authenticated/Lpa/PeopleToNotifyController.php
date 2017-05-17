@@ -14,7 +14,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $lpaId = $this->getLpa()->id;
 
         // set hidden form for saving empty array to peopleToNotify.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\BlankForm');
 
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());

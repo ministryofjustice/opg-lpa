@@ -1,6 +1,8 @@
 <?php
+
 namespace Application\Form\User;
 
+use Application\Form\AbstractForm;
 
 /**
  * Form for logging into the site
@@ -8,46 +10,42 @@ namespace Application\Form\User;
  * Class Login
  * @package Application\Form\User
  */
-class Login extends AbstractForm {
+class Login extends AbstractForm
+{
+    public function init()
+    {
+        $this->setName('login');
 
-    public function __construct( $formName = 'login' ){
-
-        parent::__construct($formName);
-
-        //---
-
-        $this->add(array(
+        $this->add([
             'name' => 'email',
             'type' => 'Email',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'password',
             'type' => 'Password',
-        ));
+        ]);
 
-        //----------------------------------
-
-        $inputFilter = $this->getInputFilter();
-
-        $inputFilter->add(array(
-            'name'     => 'email',
+        //  Add data to the input filter
+        $this->addToInputFilter([
+            'name'                   => 'email',
             'break_chain_on_failure' => true,
-            'required' => true,
-            'error_message' => 'cannot-be-empty',
-            'filters'  => array(
-                array('name' => 'StringTrim'),
-                array('name' => 'StringToLower'),
-            ),
-        ));
+            'required'               => true,
+            'error_message'          => 'cannot-be-empty',
+            'filters'                => [
+                [
+                    'name' => 'StringToLower'
+                ],
+            ],
+        ]);
 
-        $inputFilter->add(array(
-            'name'     => 'password',
+        $this->addToInputFilter([
+            'name'                   => 'password',
             'break_chain_on_failure' => true,
-            'required' => true,
-            'error_message' => 'cannot-be-empty',
-        ));
+            'required'               => true,
+            'error_message'          => 'cannot-be-empty',
+        ]);
 
-    } // function
-
-} // class
+        parent::init();
+    }
+}
