@@ -2220,22 +2220,30 @@ input[type=number] {
   overflow-wrap: break-word;
   word-wrap: break-word; }
 
+.heading-xlarge {
+  margin-top: 0.9375em;
+  margin-bottom: 0.46875em; }
+  @media (min-width: 641px) {
+    .heading-xlarge {
+      margin-top: 1.25em;
+      margin-bottom: 0.625em; } }
+
 .popup .help-sections h1 {
   font-family: "nta", Arial, sans-serif;
   font-weight: 700;
   text-transform: none;
   font-size: 32px;
   line-height: 1.09375;
-  margin-top: 0.46875em;
-  margin-bottom: 0.9375em; }
+  margin-top: 0.9375em;
+  margin-bottom: 0.46875em; }
   @media (min-width: 641px) {
     .popup .help-sections h1 {
       font-size: 48px;
       line-height: 1.04167; } }
   @media (min-width: 641px) {
     .popup .help-sections h1 {
-      margin-top: 0.625em;
-      margin-bottom: 1.25em; } }
+      margin-top: 1.25em;
+      margin-bottom: 0.625em; } }
   .popup .help-sections h1 .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-weight: 400;
@@ -2357,6 +2365,14 @@ input[type=number] {
 .hidden {
   display: none !important;
   visibility: hidden !important; }
+
+.heading-medium .icon {
+  display: inline-block;
+  position: relative;
+  top: 0.4em;
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0 0.25em 0 0; }
 
 .icon-information {
   width: 27px;
@@ -2565,6 +2581,82 @@ input[type=number] {
   @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
     .icon-person {
       background-image: url("/assets/v2/images/icons/icon-person-2x.png");
+      background-size: 100%; } }
+
+.icon-phone {
+  width: 36px;
+  height: 36px;
+  background-image: url("/assets/v2/images/icons/icon-phone.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-phone {
+      background-image: url("/assets/v2/images/icons/icon-phone-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-phone {
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-phone.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-phone {
+      background-image: url("/assets/v2/images/icons/icon-phone-2x.png");
+      background-size: 100%; } }
+
+.icon-email {
+  width: 36px;
+  height: 36px;
+  background-image: url("/assets/v2/images/icons/icon-email.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-email {
+      background-image: url("/assets/v2/images/icons/icon-email-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-email {
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-email.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-email {
+      background-image: url("/assets/v2/images/icons/icon-email-2x.png");
+      background-size: 100%; } }
+
+.icon-post {
+  width: 36px;
+  height: 36px;
+  background-image: url("/assets/v2/images/icons/icon-post.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-post {
+      background-image: url("/assets/v2/images/icons/icon-post-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-post {
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-post.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-post {
+      background-image: url("/assets/v2/images/icons/icon-post-2x.png");
+      background-size: 100%; } }
+
+.icon-fax {
+  width: 36px;
+  height: 36px;
+  background-image: url("/assets/v2/images/icons/icon-fax.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-fax {
+      background-image: url("/assets/v2/images/icons/icon-fax-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-fax {
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-fax.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-fax {
+      background-image: url("/assets/v2/images/icons/icon-fax-2x.png");
       background-size: 100%; } }
 
 .help-sections ul,
