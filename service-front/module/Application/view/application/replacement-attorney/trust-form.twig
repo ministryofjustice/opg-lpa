@@ -96,7 +96,7 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <h2 class="heading-medium">Company's details</h2>
 

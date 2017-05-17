@@ -1,48 +1,50 @@
 <?php
+
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class InstructionsAndPreferencesForm extends AbstractForm
+class InstructionsAndPreferencesForm extends AbstractLpaForm
 {
     protected $formElements = [
-            'instruction' => [
-                    'type' => 'Textarea',
-            ],
-            'preference' => [
-                    'type' => 'Textarea',
-            ],
-            'submit' => [
-                    'type' => 'Zend\Form\Element\Submit',
-            ],
+        'instruction' => [
+            'type' => 'Textarea',
+        ],
+        'preference' => [
+            'type' => 'Textarea',
+        ],
+        'submit' => [
+            'type' => 'Submit',
+        ],
     ];
-    
-    public function init ()
+
+    public function init()
     {
         $this->setName('form-instructions-and-preferences');
-        
+
         parent::init();
     }
-    
-   /**
-    * Validate form input data through model validators.
-    * 
-    * @return [isValid => bool, messages => [<formElementName> => string, ..]]
-    */
-    public function validateByModel()
+
+    /**
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
+    protected function validateByModel()
     {
         $document = new Document($this->data);
-        
+
         $validation = $document->validate(['instructions, preferences']);
-        
-        if(count($validation) == 0) {
-            return ['isValid'=>true, 'messages' => []];
+
+        $messages = [];
+
+        if ($validation->hasErrors()) {
+            $messages = $this->modelValidationMessageConverter($validation);
         }
-        else {
-            return [
-                    'isValid'=>false,
-                    'messages' => $this->modelValidationMessageConverter($validation),
-            ];
-        }
+
+        return [
+            'isValid'  => !$validation->hasErrors(),
+            'messages' => $messages,
+        ];
     }
 }

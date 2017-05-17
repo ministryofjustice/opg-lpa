@@ -44,7 +44,7 @@
     {# begin form #}
     {{ worldpayForm.prepare() ? '' }}
     {{ form().openTag( worldpayForm )|raw }}
-    {{ formElement(worldpayForm.get( worldpayForm.csrfName )) }}
+    {{ formElement(worldpayForm.getCsrf) }}
 
     {# Error summary #}
     {{ macros.formErrorSummary(error,worldpayForm,'There was a problem submitting the form') }}

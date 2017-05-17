@@ -129,7 +129,7 @@
     {{ form.prepare() ? '' }}
 
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.get( form.csrfName )) }}
+        {{ formElement(form.getCsrf) }}
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 

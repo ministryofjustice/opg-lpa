@@ -30,9 +30,9 @@
         'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     },
     'dob-date' : {
-        "must-be-less-than-or-equal-to-today" : "Date of birth must be before today",
-        "The input does not appear to be a valid date" : "Please enter a valid date",
-        "Please enter all the date fields" : "Please enter the attorney's date of birth"
+        'cannot-be-blank' : 'Please enter the attorney\'s date of birth',
+        'must-be-less-than-or-equal-to-today' : 'Date of birth must be before today',
+        'expected-type:DateTime' : 'Please enter a valid date of birth'
     }
 }) %}
 
@@ -74,6 +74,7 @@
     id: 'dob-date-day',
     type: 'number',
     class: 'form-control',
+    maxlength: '2',
     min: '1',
     max: '31',
     pattern: '[0-9]*'
@@ -83,6 +84,7 @@
     id: 'dob-date-month',
     type: 'number',
     class: 'form-control',
+    maxlength: '2',
     min: '1',
     max: '12',
     pattern: '[0-9]*'
@@ -92,6 +94,7 @@
     id: 'dob-date-year',
     type: 'number',
     class: 'form-control',
+    maxlength: '4',
     pattern: '[0-9]*'
 })  ? ''}}
 
@@ -157,7 +160,7 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.get( form.csrfName )) }}
+    {{ formElement(form.getCsrf) }}
 
     <h2 class="heading-medium">What is the attorney's name?</h2>
 

@@ -5,6 +5,7 @@ namespace Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -77,7 +78,7 @@ class Address extends AbstractData
         ]);
 
         // We required either address2 OR postcode to be set for an address to be considered valid.
-        $metadata->addConstraint(new Assert\Callback(function ($object, ExecutionContextInterface $context) {
+        $metadata->addConstraint(new CallbackConstraintSymfony(function ($object, ExecutionContextInterface $context) {
             if (empty($object->address2) && empty($object->postcode)) {
                 $context->buildViolation((new Assert\NotNull())->message)->atPath('address2/postcode')->addViolation();
             }

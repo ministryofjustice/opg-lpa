@@ -3,7 +3,7 @@
 
 (function () {
   'use strict';
-  
+
   // will be populated with either "mojDs" or "postcodeAnywhere" following
   // initial call to F/E postcode endpoint
   var postcodeService = null;
@@ -39,6 +39,7 @@
       this.toggleTpl = lpa.templates['postcodeLookup.address-toggle'];
       this.resultTpl = lpa.templates['postcodeLookup.search-result'];
       this.changeTpl = lpa.templates['postcodeLookup.address-change'];
+      this.errorMessageTpl = lpa.templates['errors.formMessage'];
     },
 
     bindEvents: function () {
@@ -80,6 +81,8 @@
 
     searchClicked: function (e) {
       var $el = $(e.target);
+      var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+      var $postcodeLabel = $('label[for="postcode-lookup"]');
 
       // store the current query
       this.query = this.$wrap.find('.js-PostcodeLookup__query').val();
@@ -88,8 +91,15 @@
         if (this.query !== '') {
           $el.spinner();
           this.findPostcode(this.query);
+          $searchContainer.removeClass('error');
+          $postcodeLabel.children('.error-message').remove();
         } else {
-          alert('Please enter a postcode');
+          $searchContainer.addClass('error');
+          $postcodeLabel.children('.error-message').remove();
+          $postcodeLabel
+            .append($(this.errorMessageTpl({
+              'errorMessage': 'Please enter a postcode'
+            })));
         }
       }
       return false;
@@ -104,7 +114,7 @@
     resultsChanged: function (e) {
       var $el = $(e.target),
       val = $el.val();
-      
+
       if (postcodeService === 'mojDs') {
           var $selectedOption = $el.find(':selected');
 
@@ -116,7 +126,7 @@
     	  $el.spinner();
           this.findAddress(val);
       }
-	      
+
       this.toggleAddress();
     },
 
@@ -158,18 +168,24 @@
     postcodeSuccess: function (response) {
       // not successful
       if (!response.success || response.addresses === null) {
+        var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+        var $postcodeLabel = $('label[for="postcode-lookup"]');
+
         if (response.isPostcodeValid) {
-          if (confirm('No addresses were found for the postcode ' + this.query + '.  Would you like to enter the address manually?')) {
-            $('.address-hideable').show();
-          }
+          $searchContainer.addClass('error');
+          $postcodeLabel.children('.error-message').remove();
+          $postcodeLabel
+            .append($(this.errorMessageTpl({
+              'errorMessage': 'No address found for this postcode. Please try again or enter the address manually.'
+            })));
         } else {
           alert('Please enter a valid UK postcode');
         }
       } else {
         // successful
-    	  
-    	postcodeService = response.postcodeService;
-    	
+
+        postcodeService = response.postcodeService;
+
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -190,7 +206,7 @@
           success: this.addressSuccess
         });
       },
-      
+
     addressSuccess: function (response) {
       this.populateFields(response);
     },
