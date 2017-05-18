@@ -16,8 +16,6 @@ class TypeController extends AbstractAuthenticatedController
                      ->get('FormElementManager')
                      ->get('Application\Form\Lpa\TypeForm');
 
-
-
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());
 
