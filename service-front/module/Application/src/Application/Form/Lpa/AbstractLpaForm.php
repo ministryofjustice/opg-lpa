@@ -54,11 +54,11 @@ abstract class AbstractLpaForm extends AbstractForm
 
             //  Add data to the input filter
             $this->addToInputFilter([
-                'name'       => $name,
-                'required'   => (array_key_exists('required', $elm) ? $elm['required'] : false),
-                'filters'    => (array_key_exists('filters', $elm) ? $elm['filters'] : []),
-                'validators' => (array_key_exists('validators', $elm) ? $elm['validators'] : []),
-
+                'name'          => $name,
+                'required'      => (array_key_exists('required', $elm) ? $elm['required'] : false),
+                'error_message' => (array_key_exists('error_message', $elm) ? $elm['error_message'] : null),
+                'filters'       => (array_key_exists('filters', $elm) ? $elm['filters'] : []),
+                'validators'    => (array_key_exists('validators', $elm) ? $elm['validators'] : []),
             ]);
         }
 
