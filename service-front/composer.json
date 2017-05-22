@@ -1,6 +1,6 @@
 {
     "name": "ministryofjustice/opg-lpa-front",
-    "description": "Skeleton Application for ZF2",
+    "description": "Front end service for creating Lasting Power of Attorney PDF documents",
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
     "prefer-stable": true,
