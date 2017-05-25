@@ -8,12 +8,12 @@ class Choice extends SymfonyConstraints\Choice
 {
     use ValidatorPathTrait;
 
+    //  Values are overwritten in the constructor
+    public $message = 'invalid-value-selected';
+    public $multipleMessage = 'invalid-values-selected';
     public $minMessage = 'minimum-number-of-values:{{ limit }}';
     public $maxMessage = 'maximum-number-of-values:{{ limit }}';
 
-    // Values are overridden in the constructor
-    public $message = 'invalid-value-selected';
-    public $multipleMessage = 'invalid-values-selected';
 
     public function __construct($options = null)
     {
