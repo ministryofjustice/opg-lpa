@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.2 - 2017-05-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#161](https://github.com/zendframework/zend-form/pull/161) adds an import
+  statement to the `ElementFactory`, fixing an error whereby checks for
+  `Traversable` creation options would lead to a service creation exception;
+  these now correctly identify traversable options and convert them to an array.
+- [#164](https://github.com/zendframework/zend-form/pull/164) fixes how the
+  `FormElementManagerFactory` factory initializes the plugin manager instance,
+  ensuring it is injecting the relevant configuration from the `config` service
+  and thus seeding it with configured form/form element services.  This means
+  that the `form_elements` configuration will now be honored in non-zend-mvc
+  contexts.
+- [#159](https://github.com/zendframework/zend-form/pull/159) fixes the behavior
+  of the `min` and `max` attributes of the various `DateTime` elements, ensuring
+  that the elements raise an exception during instantiation if the values
+  provided are in a format that `DateTime` does not recognize for the element
+  type in question.
+
 ## 2.10.1 - 2017-04-26
 
 ### Added
