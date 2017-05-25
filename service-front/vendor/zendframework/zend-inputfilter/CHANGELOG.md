@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.4 - 2017-05-18
+
+### Added
+
+- Nothing.
+
+### Changes
+
+- [#122](https://github.com/zendframework/zend-inputfilter/pull/122) maps the
+  `Zend\InputFilter\InputFilterPluginManager` service to
+  `Zend\InputFilter\InputFilterPluginManagerFactory`, and adds an alias from
+  `InputFitlerPluginManager` to the fully qualified class name. This change
+  allows you to request the service using either the original short name, or the
+  fully qualified class name.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#137](https://github.com/zendframework/zend-inputfilter/pull/137) fixes how the
+  `InputFilterPluginManagerFactory` factory initializes the plugin manager
+  instance, ensuring it is injecting the relevant configuration from the
+  `config` service and thus seeding it with configured input filter services.
+  This means that the `input_filters` configuration will now be honored in
+  non-zend-mvc contexts.
+
 ## 2.7.3 - 2016-08-18
 
 ### Added
