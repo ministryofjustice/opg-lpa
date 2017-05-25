@@ -1,6 +1,7 @@
 <?php
 namespace Opg\Lpa\Pdf\Service\Forms;
 
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
@@ -23,15 +24,10 @@ class CoversheetInstrument extends AbstractForm
         
         $filePath = $this->registerTempFile('Coversheet');
         
-        $coversheetInstrument = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP1_CoversheetInstrument.pdf');
-        
-        $coversheetInstrument->fillForm(
-            array(
-                    'lpa-type'   => ("property-and-financial" == $this->lpa->document->type)? 'property and financial affairs.':'health and welfare.',
-                    'lpa-number' => \Opg\Lpa\DataModel\Lpa\Formatter::id($this->lpa->id).'.',
-            ))
-        ->flatten()
-        ->saveAs($filePath);
+        $coversheetInstrument = PdftkInstance::getInstance($this->pdfTemplatePath . '//' . ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'LP1F_CoversheetInstrument.pdf' : 'LP1H_CoversheetInstrument.pdf'));
+
+        $coversheetInstrument->flatten()
+                             ->saveAs($filePath);
         
         return $this->interFileStack;
     } // function generate()
