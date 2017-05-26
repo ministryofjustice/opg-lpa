@@ -20,7 +20,7 @@ class Correspondence extends AbstractData
 {
     const WHO_DONOR = 'donor';
     const WHO_ATTORNEY = 'attorney';
-    const WHO_OTHER = 'other';
+    const WHO_CERTIFICATE_PROVIDER = 'certificateProvider';
 
     /**
      * @var string The person's role within this LPA.
