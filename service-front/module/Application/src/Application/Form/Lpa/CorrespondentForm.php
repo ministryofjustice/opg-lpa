@@ -87,7 +87,7 @@ class CorrespondentForm extends AbstractActorForm
         $type = (isset($data['type']) ? $data['type'] : null);
 
         //  Check to see if the data should be editable
-        if ($who == Correspondence::WHO_DONOR || ($who == Correspondence::WHO_ATTORNEY && $type == 'human')) {
+        if ($who == Correspondence::WHO_DONOR || ($who == Correspondence::WHO_ATTORNEY && $type == 'human') || $who == Correspondence::WHO_CERTIFICATE_PROVIDER) {
             $this->isEditable = false;
         }
 
