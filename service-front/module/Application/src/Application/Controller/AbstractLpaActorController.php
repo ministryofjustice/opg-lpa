@@ -494,7 +494,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         if ($correspondent instanceof Correspondence) {
             //  Only allow the data to be updated if the actor type is correct
             if (($actor instanceof Donor && $correspondent->who == Correspondence::WHO_DONOR)
-                || ($actor instanceof Attorneys\AbstractAttorney && $correspondent->who == Correspondence::WHO_ATTORNEY)) {
+                || ($actor instanceof Attorneys\AbstractAttorney && $correspondent->who == Correspondence::WHO_ATTORNEY)
+                || ($actor instanceof CertificateProvider && $correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER)) {
 
                 //  Get the correct name to compare (for a trust that will be the company name)
                 $isTrust = ($actor instanceof Attorneys\TrustCorporation);
