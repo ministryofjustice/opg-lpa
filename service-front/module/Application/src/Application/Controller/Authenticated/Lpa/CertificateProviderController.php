@@ -114,6 +114,9 @@ class CertificateProviderController extends AbstractLpaActorController
                     throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);
                 }
 
+                //  Attempt to update the LPA correspondent too
+                $this->updateCorrespondentData($cp);
+
                 return $this->moveToNextRoute();
             }
         } else {
