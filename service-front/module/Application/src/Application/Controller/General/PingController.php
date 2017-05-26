@@ -13,7 +13,7 @@ class PingController extends AbstractBaseController {
         $result = $this->getServiceLocator()->get('SiteStatus')->check();
 
         return new ViewModel( [ 'status'=>$result ] );
-        
+
     }
 
     /**
@@ -53,10 +53,12 @@ class PingController extends AbstractBaseController {
 
         $result['commit'] = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : 'unknown';
 
+        $result['tag'] = $this->getServiceLocator()->get('Config')['version']['tag'];
+
         return new JsonModel( $result );
 
     }
-    
+
     public function pingdomAction(){
 
         $start = round(microtime(true) * 1000);
