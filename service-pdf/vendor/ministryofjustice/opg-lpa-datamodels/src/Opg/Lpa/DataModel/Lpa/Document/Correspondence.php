@@ -20,6 +20,7 @@ class Correspondence extends AbstractData
 {
     const WHO_DONOR = 'donor';
     const WHO_ATTORNEY = 'attorney';
+    const WHO_CERTIFICATE_PROVIDER = 'certificateProvider';
     const WHO_OTHER = 'other';
 
     /**
@@ -82,6 +83,7 @@ class Correspondence extends AbstractData
                 'choices' => [
                     self::WHO_DONOR,
                     self::WHO_ATTORNEY,
+                    self::WHO_CERTIFICATE_PROVIDER,
                     self::WHO_OTHER
                 ]
             ]),
