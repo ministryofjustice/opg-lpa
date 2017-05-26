@@ -178,6 +178,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             foreach ($lpaDocument->primaryAttorneys as $attorney) {
                 $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), Correspondence::WHO_ATTORNEY, '(attorney)');
             }
+
+            $actorReuseDetails[] = $this->getReuseDetailsForActor($lpaDocument->certificateProvider->toArray(), Correspondence::WHO_CERTIFICATE_PROVIDER, '(certificate provider)');
         } else {
             //  Loop through the seed details for this LPA
             foreach ($this->getSeedLpaActorDetails() as $type => $actorData) {
