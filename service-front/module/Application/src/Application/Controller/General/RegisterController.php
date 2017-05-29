@@ -1,130 +1,124 @@
 <?php
+
 namespace Application\Controller\General;
 
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
+use Zend\Http\Response as HttpResponse;
+use Zend\View\Model\ViewModel;
 
-class RegisterController extends AbstractBaseController {
-
-    protected $contentHeader = 'blank-header-partial.phtml';
-
+class RegisterController extends AbstractBaseController
+{
     /**
      * Register a new account.
      *
-     * @return ViewModel
+     * @return ViewModel|\Zend\Http\Response
      */
-    public function indexAction(){
+    public function indexAction()
+    {
+        $request = $this->getRequest();
 
-        // gov.uk is not allowed to point users directly at this page.
-        if( $this->getRequest()->getHeader('Referer') != false ){
-            if( $this->getRequest()->getHeader('Referer')->uri()->getHost() === 'www.gov.uk' ){
+        //  gov.uk is not allowed to point users directly at this page
+        $referer = $request->getHeader('Referer');
+
+        if ($referer != false) {
+            if ($referer->uri()->getHost() === 'www.gov.uk') {
                 return $this->redirect()->toRoute('home');
             }
         }
 
-        //---
+        $response = $this->preventAuthenticatedUser();
 
-        $check = $this->preventAuthenticatedUser();
+        if ($response instanceof HttpResponse) {
+            //  The user is already logged in so log a message and then
+            $identity = $this->getServiceLocator()
+                             ->get('AuthenticationService')
+                             ->getIdentity();
 
-        if( $check !== true ) {
+            $this->log()->info('Authenticated user attempted to access registration page', $identity->toArray());
 
-            $this->log()->info(
-                'Authenticated user attempted to access registration page',
-                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
-            );
-
-            return $check;
+            return $response;
         }
 
-        //---
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\User\Registration');
+        $form->setAttribute('action', $this->url()->fromRoute($currentRoute = $this->getEvent()->getRouteMatch()->getMatchedRouteName()));
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\Registration');
-        $form->setAttribute( 'action', $this->url()->fromRoute('register') );
-
-        $error = null;
-
-        //---
-
-        $request = $this->getRequest();
+        $viewModel = new ViewModel();
+        $viewModel->form = $form;
 
         if ($request->isPost()) {
-
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
+                $data = $form->getData();
 
-                // Create a callback for the Model to get the callback URL from.
-                $callback = function( $token ) {
-                    return $this->url()->fromRoute('register/callback', [ 'token'=>$token ], [ 'force_canonical' => true ] );
+                //  Create a callback for the Model to get the callback URL from
+                $callback = function ($token) {
+                    return $this->url()->fromRoute('register/callback', [
+                        'token' => $token
+                    ], [
+                        'force_canonical' => true
+                    ]);
                 };
 
-                $result = $this->getServiceLocator()->get('Register')->registerAccount(
-                    $form->getData()['email'],
-                    $form->getData()['password'],
-                    $callback
-                );
+                $result = $this->getServiceLocator()
+                               ->get('Register')
+                               ->registerAccount(
+                                   $data['email'],
+                                   $data['password'],
+                                   $callback
+                               );
 
-                if( $result === true ){
-
-                    return (new ViewModel( ['email'=>$form->getData()['email']] ))->setTemplate('application/register/email-sent');
-
+                if ($result === true) {
+                    $viewModel->email = $data['email'];
+                    $viewModel->setTemplate('application/register/email-sent');
+                } else {
+                    $viewModel->error = $result;
                 }
+            }
+        }
 
-                $error = $result;
-
-            } // if
-
-        } // if
-
-        //---
-
-        return new ViewModel( compact('form', 'error') );
-
-    } // function
+        return $viewModel;
+    }
 
     /**
      * Confirm the email address, activating the account.
      *
      * @return ViewModel
      */
-    public function confirmAction(){
-
+    public function confirmAction()
+    {
         $token = $this->params()->fromRoute('token');
 
-        if( empty($token) ){
-            return new ViewModel( [ 'error'=>'invalid-token' ] );
+        if (empty($token)) {
+            return new ViewModel([
+                'error' => 'invalid-token'
+            ]);
         }
 
-        //---
-
         // Ensure they're not logged in whilst activating a new account.
-        $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+        $this->getServiceLocator()
+             ->get('AuthenticationService')
+             ->clearIdentity();
 
-        $session = $this->getServiceLocator()->get('SessionManager');
+        $session = $this->getServiceLocator()
+                        ->get('SessionManager');
         $session->getStorage()->clear();
         $session->initialise();
 
-        //---
+        //  Returns true if the user account exists and the account was activated
+        //  Returns false if the user account does not exist
+        $success = $this->getServiceLocator()
+                        ->get('Register')
+                        ->activateAccount($token);
 
-        /**
-         * This returns:
-         *      TRUE - If the user account exists. The account has been activated, or was already activated.
-         *      FALSE - If the user account does not exist.
-         *
-         *  Alas no other details are returned.
-         */
-        $success = $this->getServiceLocator()->get('Register')->activateAccount( $token );
+        $viewModel = new ViewModel();
 
-        if(isset($this->contentHeader)) {
-            $this->layout()->contentHeader = $this->contentHeader;
+        if (!$success) {
+            $viewModel->error = 'account-missing';
         }
 
-        if( !$success ){
-            return new ViewModel( [ 'error'=>'account-missing' ] );
-        }
-
-        return new ViewModel();
-
-    } // function
-
-} // class
+        return $viewModel;
+    }
+}
