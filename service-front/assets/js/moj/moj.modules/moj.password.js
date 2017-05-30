@@ -10,32 +10,39 @@
             this.hookupShowPasswordToggles();
         },
 
-        hookupShowPasswordToggles: function(){
+        hookupShowPasswordToggles: function() {
             var link = $('.js-showHidePassword');
-            var skipConfirm = $('#js-skipConfirmPassword');
+            var skipConfirmPassword = $('#js-skipConfirmPassword');
             var pwdConfirmParent = $('#password_confirm').parent();
 
+            //  The show/hide password links are themselves hidden by default so they're not available for non-JS - show them now
             link.removeClass('hidden');
 
-            link.click(function(){
+            //  By default ensure that the confirm password hidden validation skip value is set to false and show the link
+            skipConfirmPassword.val(0);
+
+            link.click(function() {
                 var pwd = $('#' + $(this).attr('data-for'));
                 var alsoHideConfirm = $(this).attr('data-alsoHideConfirm');
 
-                if (pwd.attr('type') === "password"){
-                    pwd.attr('type', 'text');
-                    $(this).html("Hide password");
+                //  Determine if we are showing or hiding the password confirm input
+                var isShowing = (pwd.attr('type') === "password");
+
+                if (isShowing) {
                     if (alsoHideConfirm) {
                         pwdConfirmParent.addClass('hidden');
-                        skipConfirm.val(1);
+                        skipConfirmPassword.val(1);
                     }
                 } else {
-                    pwd.attr('type', 'password');
-                    $(this).html("Show password");
                     if (alsoHideConfirm) {
                         pwdConfirmParent.removeClass('hidden');
-                        skipConfirm.val(0);
+                        skipConfirmPassword.val(0);
                     }
                 }
+
+                //  Change the input values as required
+                pwd.attr('type', (isShowing ? 'text' : 'password'));
+                $(this).html(isShowing ? 'Hide password' : 'Show password');
 
                 return false;
             });
