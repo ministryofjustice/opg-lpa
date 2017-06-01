@@ -48,6 +48,7 @@ class FormFlowChecker extends StateChecker
         'lpa/people-to-notify/delete'                   => 'isPeopleToNotifyDeleteAccessible',
         'lpa/instructions'                              => 'isInstructionsAccessible',
         'lpa/download'                                  => 'isDownloadAccessible',
+        'lpa/download/draft'                            => 'isDownloadAccessible',
         'lpa/download/file'                             => 'isDownloadAccessible',
         'lpa/applicant'                                 => 'isApplicantAccessible',
         'lpa/correspondent'                             => 'isCorrespondentAccessible',
