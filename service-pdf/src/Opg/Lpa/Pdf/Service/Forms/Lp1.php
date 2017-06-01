@@ -13,6 +13,7 @@ use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
+use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 use mikehaertl\pdftk\Pdf;
@@ -657,6 +658,9 @@ abstract class Lp1 extends AbstractForm
             $pdf->addFile($this->interFileStack['Coversheet'], 'A');
             $pdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
 
+            //  Add the blank single page PDF incase we need to cat it around continuation sheets
+            $pdf->addFile(Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf', 'BLANK');
+
             $registrationPdf->addFile($this->interFileStack['Coversheet'], 'A');
             $registrationPdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
         } else {
@@ -689,7 +693,8 @@ abstract class Lp1 extends AbstractForm
                 $fileTag = $this->nextTag($fileTag);
                 $pdf->addFile($cs1, $fileTag);
 
-                // add a CS1 page
+                // add a CS1 page with a leading blank page
+                $pdf->cat(1, null, 'BLANK');
                 $pdf->cat(1, null, $fileTag);
             }
         }
@@ -700,7 +705,8 @@ abstract class Lp1 extends AbstractForm
                 $fileTag = $this->nextTag($fileTag);
                 $pdf->addFile($cs2, $fileTag);
 
-                // add a CS2 page
+                // add a CS2 page with a leading blank page
+                $pdf->cat(1, null, 'BLANK');
                 $pdf->cat(1, null, $fileTag);
             }
         }
@@ -710,7 +716,8 @@ abstract class Lp1 extends AbstractForm
             $fileTag = $this->nextTag($fileTag);
             $pdf->addFile($this->interFileStack['CS3'], $fileTag);
 
-            // add a CS3 page
+            // add a CS3 page with a leading blank page
+            $pdf->cat(1, null, 'BLANK');
             $pdf->cat(1, null, $fileTag);
         }
 
@@ -719,8 +726,18 @@ abstract class Lp1 extends AbstractForm
             $fileTag = $this->nextTag($fileTag);
             $pdf->addFile($this->interFileStack['CS4'], $fileTag);
 
-            // add a CS4 page
+            // add a CS4 page with a leading blank page
+            $pdf->cat(1, null, 'BLANK');
             $pdf->cat(1, null, $fileTag);
+        }
+
+        //  If any continuation sheets were added then insert a trailing blank page
+        if (array_key_exists('CS1', $this->interFileStack)
+            || array_key_exists('CS2', $this->interFileStack)
+            || array_key_exists('CS3', $this->interFileStack)
+            || array_key_exists('CS4', $this->interFileStack)) {
+
+            $pdf->cat(1, null, 'BLANK');
         }
 
         // Registration section
