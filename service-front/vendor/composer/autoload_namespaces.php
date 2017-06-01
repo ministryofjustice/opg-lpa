@@ -14,7 +14,7 @@ return array(
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
-    'Raven_' => array($vendorDir . '/raven/raven/lib'),
+    'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
     'Omnipay\\Common\\' => array($vendorDir . '/omnipay/common/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
