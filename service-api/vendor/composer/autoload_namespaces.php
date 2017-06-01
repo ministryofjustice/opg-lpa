@@ -13,7 +13,7 @@ return array(
     'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Rbac\\' => array($vendorDir . '/zfr/rbac/src'),
-    'Raven_' => array($vendorDir . '/raven/raven/lib'),
+    'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Nocarrier' => array($vendorDir . '/nocarrier/hal/src'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),

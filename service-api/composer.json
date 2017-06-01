@@ -22,7 +22,7 @@
         "zfcampus/zf-api-problem": "1.0.*",
         "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
-        "ministryofjustice/opg-lpa-logger": "^1.0.3",
+        "ministryofjustice/opg-lpa-logger": "1.1.*",
         "ministryofjustice/opg-lpa-datamodels": "^2.2",
         "zf-commons/zfc-rbac": "~2.4",
         "nsmithuk/zf-config-dump": "^1.0",
