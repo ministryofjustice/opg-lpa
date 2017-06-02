@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "200b7b7cbdb680bb99c9bf5417e5801c",
+    "content-hash": "ede8fac3ac8e64c0f55b7c249855d3b8",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.28.0",
+            "version": "3.28.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "af653f256d99ff372ce3e3be3048e7e5373ab1bc"
+                "reference": "9c33b9dff5848adc25199f88487b1927edcfe074"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/af653f256d99ff372ce3e3be3048e7e5373ab1bc",
-                "reference": "af653f256d99ff372ce3e3be3048e7e5373ab1bc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9c33b9dff5848adc25199f88487b1927edcfe074",
+                "reference": "9c33b9dff5848adc25199f88487b1927edcfe074",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-05-18T20:44:27+00:00"
+            "time": "2017-05-31T19:00:01+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -560,22 +560,22 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "v1.0.6",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "f923e0bdb1d8d9b30fc4a3de1a823a30e42c7dd4"
+                "reference": "b24af9e1052f0f9c26fb73d02b467dccde8d4b95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/f923e0bdb1d8d9b30fc4a3de1a823a30e42c7dd4",
-                "reference": "f923e0bdb1d8d9b30fc4a3de1a823a30e42c7dd4",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/b24af9e1052f0f9c26fb73d02b467dccde8d4b95",
+                "reference": "b24af9e1052f0f9c26fb73d02b467dccde8d4b95",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "^3.0",
                 "php": ">=5.4.0",
-                "raven/raven": "0.11.0",
+                "sentry/sentry": "<1.0.0",
                 "zendframework/zend-log": "^2.3.7"
             },
             "require-dev": {
@@ -593,10 +593,10 @@
             ],
             "description": "Common logger component for OPG LPA modules",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.0.6",
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/v1.1.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-01-16T14:35:01+00:00"
+            "time": "2017-06-01T14:48:52+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -914,32 +914,38 @@
             "time": "2016-10-10T12:19:37+00:00"
         },
         {
-            "name": "raven/raven",
-            "version": "0.11.0",
+            "name": "sentry/sentry",
+            "version": "0.22.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/getsentry/raven-php.git",
-                "reference": "2b651d779cdbac8b6456b3b0f06c8c77e43f79dd"
+                "url": "https://github.com/getsentry/sentry-php.git",
+                "reference": "49d4c0c4f2c298c9f15a07416debb5352a209b79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/raven-php/zipball/2b651d779cdbac8b6456b3b0f06c8c77e43f79dd",
-                "reference": "2b651d779cdbac8b6456b3b0f06c8c77e43f79dd",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/49d4c0c4f2c298c9f15a07416debb5352a209b79",
+                "reference": "49d4c0c4f2c298c9f15a07416debb5352a209b79",
                 "shasum": ""
             },
             "require": {
+                "ext-curl": "*",
+                "monolog/monolog": "*",
                 "php": ">=5.2.4"
             },
+            "conflict": {
+                "raven/raven": "*"
+            },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*"
+                "friendsofphp/php-cs-fixer": "^1.8.0",
+                "phpunit/phpunit": "^4.6.6"
             },
             "bin": [
-                "bin/raven"
+                "bin/sentry"
             ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.8.x-dev"
+                    "dev-master": "0.22.x-dev"
                 }
             },
             "autoload": {
@@ -949,7 +955,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -963,8 +969,7 @@
                 "log",
                 "logging"
             ],
-            "abandoned": "sentry/sentry",
-            "time": "2015-03-24T23:17:13+00:00"
+            "time": "2016-06-23T19:41:24+00:00"
         },
         {
             "name": "symfony/intl",
@@ -1103,7 +1108,7 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v2.8.20",
+            "version": "v2.8.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
@@ -2596,7 +2601,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.20",
+            "version": "v2.8.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
