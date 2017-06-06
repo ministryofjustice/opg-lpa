@@ -45,11 +45,19 @@ abstract class AbstractWorker
             if (property_exists($lpaDecode, 'id')) {
                 $lpaId = $lpaDecode->id;
             } else {
-                throw new \Exception('Missing field: id in JSON for docId: ' . $docId . ' This can be caused by incorrectly configured encryption keys.');
+                throw new Exception('Missing field: id in JSON for docId: ' . $docId . ' This can be caused by incorrectly configured encryption keys.');
             }
         }
 
-        $this->logger->info("${docId}: Generating PDF\n", ['lpaId' => $lpaId]);
+
+
+        $this->logger->info("${docId}: Generating PDF\n", [
+            'lpaId' => $lpaId
+        ]);
+
+        //  Initialise the log message params
+        $message = "${docId}: PDF successfully generated";
+        $isError = false;
 
         try {
             $this->logger->info("Creating LPA document from JSON", ['lpaId' => $lpaId]);
@@ -71,27 +79,24 @@ abstract class AbstractWorker
             $result = $generator->generate();
 
             // Check the result...
-            if ($result === true) {
-                // All is good.
-                $this->logAndShow($lpaId, "${docId}: PDF successfully generated");
-            } else {
+            if ($result !== true) {
                 // Else there was an error.
-                $this->logAndShow($lpaId, "${docId}: PDF generation failed: $result");
+                throw new Exception($result);
             }
         } catch (Exception $e) {
-            $this->logAndShow($lpaId, "${docId}: PDF generation failed with exception: " . $e->getMessage());
+            $isError = true;
+            $message = "${docId}: PDF generation failed with exception: " . $e->getMessage();
         }
-    }
 
-    /**
-     * Log the message and show at the command line
-     *
-     * @param $lpaId
-     * @param $message
-     */
-    private function logAndShow($lpaId, $message)
-    {
-        $this->logger->info($message, ['lpaId' => $lpaId]);
+        if ($isError) {
+            $this->logger->err($message, [
+                'lpaId' => $lpaId
+            ]);
+        } else {
+            $this->logger->info($message, [
+                'lpaId' => $lpaId
+            ]);
+        }
 
         echo $message . "\n";
     }
