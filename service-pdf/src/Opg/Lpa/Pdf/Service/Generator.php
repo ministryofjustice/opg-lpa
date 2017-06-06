@@ -19,13 +19,29 @@ class Generator implements GeneratorInterface {
     const TYPE_FORM_LP1    = 'LP1';
     const TYPE_FORM_LP3     = 'LP3';
     const TYPE_FORM_LPA120  = 'LPA120';
-    
+
+    /**
+     * Logger utility
+     *
+     * @var Logger
+     */
+    protected $logger;
+
     protected $config;
     protected $formType;
     protected $lpa;
     protected $response;
-    
-    public function __construct( $formType, Lpa $lpa, ResponseInterface $response ){
+
+    /**
+     * Generator constructor
+     *
+     * @param $formType
+     * @param Lpa $lpa
+     * @param ResponseInterface $response
+     */
+    public function __construct($formType, Lpa $lpa, ResponseInterface $response)
+    {
+        $this->logger = Logger::getInstance();
 
         # CHECK $TYPE IS VALID. THROW AN EXCEPTION IF NOT.
 
@@ -33,10 +49,9 @@ class Generator implements GeneratorInterface {
         $this->formType = $formType;
         $this->lpa = $lpa;
         $this->response = $response;
-        
+
         // copy pdf template files to ram if they haven't.
         $this->copyPdfSourceToRam();
-        
     }
 
     /**
@@ -49,23 +64,20 @@ class Generator implements GeneratorInterface {
 
         if( $this->lpa->validate()->hasErrors() ){
             // The LPA is invalid.
-            
-            Logger::getInstance()->info(
-                'LPA failed validation in PDF generator',
-                [
-                    'lpaId' => $this->lpa->id
-                ]
-            );
+
+            $this->logger->info('LPA failed validation in PDF generator', [
+                'lpaId' => $this->lpa->id
+            ]);
 
             var_dump($this->lpa->validate());
-            
+
             throw new RuntimeException('LPA failed validation');
         }
-        
+
         //---
 
         $state = new StateChecker( $this->lpa );
-        
+
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
         switch($this->formType) {
             case self::TYPE_FORM_LP1:
@@ -106,74 +118,64 @@ class Generator implements GeneratorInterface {
                 throw new \UnexpectedValueException('Invalid form type: '.$this->formType);
                 return;
         }
-        
+
         if($pdf->generate()) {
             $filePath = $pdf->getPdfFilePath();
-            
-            Logger::getInstance()->info(
-                'PDF Filepath is ' . $filePath,
-                [
-                    'lpaId' => $this->lpa->id
-                ]
-            );
+
+            $this->logger->info('PDF Filepath is ' . $filePath, [
+                'lpaId' => $this->lpa->id
+            ]);
         }
         else {
             return false;
         }
-        
+
         //---
 
         # PASS THE GENERATED FILE TO $this->response->save( new SplFileInfo( $filePath ) );
-        
+
         $this->response->save( new \SplFileInfo( $filePath ) );
 
         //---
 
         # DELETE THE LOCAL TEMP FILE
         $pdf->cleanup();
-        
+
         //--- temp files deleted at the end of $pdf's life cycle - in it's destructor.
 
         return true;
 
     } // function
-    
+
     /**
      * Copy LPA PDF template files into ram disk if they are not found on the ram disk.
      */
     private function copyPdfSourceToRam()
     {
-        // check if 
+        // check if
         if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'])) {
-            
-            Logger::getInstance()->info(
-                'Making template path on RAM disk',
-                [
-                    'lpaId' => $this->lpa->id
-                ]
-            );
-            
+
+            $this->logger->info('Making template path on RAM disk', [
+                'lpaId' => $this->lpa->id
+            ]);
+
             \mkdir($this->config['service']['assets']['template_path_on_ram_disk'], 0777, true);
         }
-        
+
         foreach(glob($this->config['service']['assets']['source_template_path'].'/*.pdf') as $pdf_source) {
             $pathInfo = pathinfo($pdf_source);
-            
+
             if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'])) {
-                
+
                 $dest = $this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'];
-                
-                Logger::getInstance()->info(
-                    'Copying PDF source to RAM disk',
-                    [
-                        'lpaId' => $this->lpa->id,
-                        'destination' => $dest,
-                    ]
-                );
-                
+
+                $this->logger->info('Copying PDF source to RAM disk', [
+                    'lpaId' => $this->lpa->id,
+                    'destination' => $dest,
+                ]);
+
                 copy($pdf_source, $dest);
             }
         }
     }
-
-} // class
+}

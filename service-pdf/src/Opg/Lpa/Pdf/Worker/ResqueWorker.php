@@ -1,10 +1,10 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Worker;
 
+use Opg\Lpa\Pdf\Config\Config;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
-use Opg\Lpa\Pdf\Logger\Logger;
-use Opg\Lpa\Pdf\Config\Config;
 
 class ResqueWorker extends AbstractWorker {
 
@@ -36,7 +36,7 @@ class ResqueWorker extends AbstractWorker {
 
         $messageSize = strlen( $this->args['lpa'] );
 
-        Logger::getInstance()->info("New message: $messageSize bytes\n");
+        $this->logger->info("New message: $messageSize bytes\n");
 
         //---------------------------------------------
         // Decrypt the JSON...

@@ -14,7 +14,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 use mikehaertl\pdftk\Pdf;
 use Zend\Barcode\Barcode;
@@ -61,7 +60,7 @@ abstract class Lp1 extends AbstractForm
      */
     public function generate()
     {
-        Logger::getInstance()->info('Generating Lp1', [
+        $this->logger->info('Generating Lp1', [
             'lpaId' => $this->lpa->id
         ]);
 
@@ -79,7 +78,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateStandardForm()
     {
-        Logger::getInstance()->info('Generating Standard Form', [
+        $this->logger->info('Generating Standard Form', [
             'lpaId' => $this->lpa->id
         ]);
 
@@ -172,7 +171,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
-        Logger::getInstance()->info('Generating Additional Pages', [
+        $this->logger->info('Generating Additional Pages', [
             'lpaId' => $this->lpa->id
         ]);
 
@@ -316,7 +315,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateCoversheets()
     {
-        Logger::getInstance()->info('Generating Coversheets', [
+        $this->logger->info('Generating Coversheets', [
             'lpaId' => $this->lpa->id
         ]);
 

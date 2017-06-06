@@ -2,9 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3AdditionalAttorneyPage extends AbstractForm
@@ -16,39 +14,36 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
     {
         parent::__construct($lpa);
     }
-    
+
     public function generate()
     {
-        Logger::getInstance()->info(
-            'Generating Lp3 Additional Attorney Page',
-            [
-                'lpaId' => $this->lpa->id
-            ]
-        );
-        
+        $this->logger->info('Generating Lp3 Additional Attorney Page', [
+            'lpaId' => $this->lpa->id
+        ]);
+
         $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if($noOfAttorneys <= Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             return;
         }
-        
+
         $additionalAttorneys = $noOfAttorneys - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
         $additionalPages = ceil($additionalAttorneys/Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM);
         $populatedAttorneys = 0;
-        
+
         $attorneys = $this->lpa->document->primaryAttorneys;
         sort($attorneys);
         for($i=0; $i<$additionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalAttorneys');
-            
+
             $pdfFormData = array();
             if($this->lpa->document->primaryAttorneyDecisions->how != null) {
                 $pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
             }
-            
+
             $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
             for($j=0; $j < Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
                 if($populatedAttorneys >= $additionalAttorneys) break;
-                
+
                 $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * ( 1 + $i ) + $j;
                 if(is_string($attorneys[$attorneyIndex]->name)) {
                     $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-name-last']         = $attorneys[$attorneyIndex]->name;
@@ -62,20 +57,20 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                 $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address2']  = $attorneys[$attorneyIndex]->address->address2;
                 $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-address3']  = $attorneys[$attorneyIndex]->address->address3;
                 $pdfFormData['lpa-document-primaryAttorneys-'.$j.'-address-postcode']  = $attorneys[$attorneyIndex]->address->postcode;
-                
+
                 if(++$populatedAttorneys == $additionalAttorneys) {
                     break;
                 }
             }
-            
+
             $pdfFormData['footer-right-page-three'] = Config::getInstance()['footer']['lp3'];
-            
+
             $additionalAttorneyPage = PdftkInstance::getInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
             $additionalAttorneyPage
                 ->fillForm($pdfFormData)
                 ->flatten()
                 ->saveAs($filePath);
-            
+
         } //endfor
 
         if($additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
@@ -86,13 +81,11 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
             }
             $this->drawCrossLines($filePath, $crossLineParams);
         }
-        
+
         return $this->interFileStack;
-        
-    } // function generate()
-    
+    }
+
     public function __destruct()
     {
-        
     }
-} // class Lp3AdditionalApplicantPage
+}

@@ -2,13 +2,24 @@
 
 namespace Opg\Lpa\Pdf\Worker;
 
-use Exception;
-
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Generator;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Exception;
 
-abstract class AbstractWorker {
+abstract class AbstractWorker
+{
+    /**
+     * Logger utility
+     *
+     * @var Logger
+     */
+    protected $logger;
+
+    public function __construct()
+    {
+        $this->logger = Logger::getInstance();
+    }
 
     /**
      * Return the object for handling the response.
@@ -42,11 +53,11 @@ abstract class AbstractWorker {
 
         //---
 
-        Logger::getInstance()->info("${docId}: Generating PDF\n", ['lpaId' => $lpaId]);
+        $this->logger->info("${docId}: Generating PDF\n", ['lpaId' => $lpaId]);
 
         try {
 
-            Logger::getInstance()->info("Creating LPA document from JSON", ['lpaId' => $lpaId]);
+            $this->logger->info("Creating LPA document from JSON", ['lpaId' => $lpaId]);
 
             // Instantiate an LPA document from the JSON
             $lpaObj = new Lpa( $lpa );
@@ -54,12 +65,12 @@ abstract class AbstractWorker {
             // Create and config the $response object.
             $response = $this->getResponseObject( $docId );
 
-            Logger::getInstance()->info("Creating generator", ['lpaId' => $lpaId]);
+            $this->logger->info("Creating generator", ['lpaId' => $lpaId]);
 
             // Create an instance of the PDF generator service.
             $generator = new Generator( $type, $lpaObj, $response );
 
-            Logger::getInstance()->info("Starting PDF generation", ['lpaId' => $lpaId]);
+            $this->logger->info("Starting PDF generation", ['lpaId' => $lpaId]);
 
             // Run the process.
             $result = $generator->generate();
@@ -87,7 +98,7 @@ abstract class AbstractWorker {
 
     private function logAndShow($lpaId, $message) {
 
-        Logger::getInstance()->info($message, ['lpaId' => $lpaId]);
+        $this->logger->info($message, ['lpaId' => $lpaId]);
 
         echo $message . "\n";
 
