@@ -679,6 +679,15 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'draft' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/draft',
+                                    'defaults' => [
+                                        'action' => 'index',
+                                    ],
+                                ],
+                            ],
                             'file' => [
                                 'type'    => 'Segment',
                                 'options' => [
