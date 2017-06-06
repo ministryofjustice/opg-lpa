@@ -18,9 +18,7 @@ class Cs4 extends AbstractForm
 
     public function generate()
     {
-        $this->logger->info('Generating Cs4', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $filePath = $this->registerTempFile('CS4');
 

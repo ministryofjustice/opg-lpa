@@ -36,9 +36,7 @@ class Lp3 extends AbstractForm
      */
     public function generate()
     {
-        $this->logger->info('Generating Lp3', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         // will not generate pdf if there's no people to notify
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);

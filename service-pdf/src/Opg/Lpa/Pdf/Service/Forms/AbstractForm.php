@@ -138,6 +138,22 @@ abstract class AbstractForm
         $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
     }
 
+    /**
+     * Common function to log the start of generation - if the generated filename is null then the class name will be used to determine it
+     *
+     * @param string    $generatedFilename
+     */
+    protected function logGenerationStatement($generatedFilename = null)
+    {
+        //  Determine the filename for the PDF being generated
+        if (is_null($generatedFilename)) {
+            $generatedFilename = basename(str_replace('\\', '/', get_class($this)));
+        }
+
+        $this->logger->info('Generating ' . $generatedFilename, [
+            'lpaId' => $this->lpa->id
+        ]);
+    }
 
     protected function protectPdf(){
 

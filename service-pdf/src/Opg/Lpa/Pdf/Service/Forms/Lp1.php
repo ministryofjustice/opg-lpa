@@ -60,9 +60,7 @@ abstract class Lp1 extends AbstractForm
      */
     public function generate()
     {
-        $this->logger->info('Generating Lp1', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $this->generateStandardForm();
         $this->generateAdditionalPages();
@@ -78,9 +76,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateStandardForm()
     {
-        $this->logger->info('Generating Standard Form', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement('Standard Form');
 
         // register a random generated temp file path, and store it $interFileStack
         $filePath = $this->registerTempFile('LP1');
@@ -171,9 +167,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateAdditionalPages()
     {
-        $this->logger->info('Generating Additional Pages', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement('Additional Pages');
 
         $cs1ActorTypes = [];
 
@@ -315,9 +309,7 @@ abstract class Lp1 extends AbstractForm
      */
     protected function generateCoversheets()
     {
-        $this->logger->info('Generating Coversheets', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement('Coversheets');
 
         if (!$this->registrationIsComplete) {
             $coversheetInstrument = new CoversheetInstrument($this->lpa);

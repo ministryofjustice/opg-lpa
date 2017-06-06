@@ -21,9 +21,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
     public function generate()
     {
-        $this->logger->info('Generating Lpa Additional Applicant Page', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $totalApplicant = count($this->lpa->document->whoIsRegistering);
         $totalAdditionalApplicant = $totalApplicant - Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;

@@ -29,9 +29,7 @@ class Lpa120 extends AbstractForm
      */
     public function generate()
     {
-        $this->logger->info('Generating Lpa120', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $lpa = $this->lpa;
         $lpaPayment = $lpa->payment;

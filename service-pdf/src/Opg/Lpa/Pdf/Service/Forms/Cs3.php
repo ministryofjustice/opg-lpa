@@ -15,9 +15,7 @@ class Cs3 extends AbstractForm
 
     public function generate()
     {
-        $this->logger->info('Generating Cs3', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $filePath = $this->registerTempFile('CS3');
 

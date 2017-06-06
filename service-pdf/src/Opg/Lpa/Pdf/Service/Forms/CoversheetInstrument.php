@@ -14,9 +14,7 @@ class CoversheetInstrument extends AbstractForm
 
     public function generate()
     {
-        $this->logger->info('Generating Coversheet Instrument', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $filePath = $this->registerTempFile('Coversheet');
 

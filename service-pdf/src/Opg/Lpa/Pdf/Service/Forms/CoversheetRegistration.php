@@ -14,9 +14,7 @@ class CoversheetRegistration extends AbstractForm
 
     public function generate()
     {
-        $this->logger->info('Generating Coversheet Registration', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $filePath = $this->registerTempFile('Coversheet');
 

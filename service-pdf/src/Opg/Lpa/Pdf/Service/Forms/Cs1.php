@@ -67,9 +67,7 @@ class Cs1 extends AbstractForm
      */
     public function generate()
     {
-        $this->logger->info('Generating Cs1', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $additionalActors = [];
 

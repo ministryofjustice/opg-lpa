@@ -21,9 +21,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 
     public function generate()
     {
-        $this->logger->info('Generating Lp1 Additional Attorney Signature Page', [
-            'lpaId' => $this->lpa->id
-        ]);
+        $this->logGenerationStatement();
 
         $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
 
