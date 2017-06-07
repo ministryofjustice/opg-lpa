@@ -1,14 +1,12 @@
 <?php
+
 namespace Application\Model;
 
-use Opg\Lpa\DataModel\Lpa\StateChecker;
-
+use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Application\Model\Service\Lpa\Metadata;
-
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\DataModel\Lpa\StateChecker;
 
 class FormFlowChecker extends StateChecker
 {
