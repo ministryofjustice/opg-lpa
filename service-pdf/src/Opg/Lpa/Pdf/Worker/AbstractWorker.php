@@ -22,14 +22,6 @@ abstract class AbstractWorker
     }
 
     /**
-     * Return the object for handling the response.
-     *
-     * @param $docId
-     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
-     */
-    abstract protected function getResponseObject($docId);
-
-    /**
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
      * @param string $lpa JSON document representing the LPA document.
@@ -37,43 +29,42 @@ abstract class AbstractWorker
      */
     public function run($docId, $type, $lpa)
     {
-        if (is_array($lpa) && isset($lpa['id'])) {
-            $lpaId = $lpa['id'];
-        } else {
-            $lpaDecode = json_decode($lpa);
-
-            if (property_exists($lpaDecode, 'id')) {
-                $lpaId = $lpaDecode->id;
-            } else {
-                throw new Exception('Missing field: id in JSON for docId: ' . $docId . ' This can be caused by incorrectly configured encryption keys.');
-            }
-        }
-
-
-
-        $this->logger->info("${docId}: Generating PDF\n", [
-            'lpaId' => $lpaId
-        ]);
+        $lpaId = null;
 
         //  Initialise the log message params
         $message = "${docId}: PDF successfully generated";
         $isError = false;
 
         try {
-            $this->logger->info("Creating LPA document from JSON", ['lpaId' => $lpaId]);
+            if (is_array($lpa) && isset($lpa['id'])) {
+                $lpaId = $lpa['id'];
+            } else {
+                $lpaDecode = json_decode($lpa);
+
+                if (property_exists($lpaDecode, 'id')) {
+                    $lpaId = $lpaDecode->id;
+                } else {
+                    throw new Exception('Missing field: id in JSON for docId: ' . $docId . ' This can be caused by incorrectly configured encryption keys.');
+                }
+            }
 
             // Instantiate an LPA document from the JSON
             $lpaObj = new Lpa($lpa);
 
-            // Create and config the $response object.
+            // Create and config the $response object
             $response = $this->getResponseObject($docId);
 
-            $this->logger->info("Creating generator", ['lpaId' => $lpaId]);
+            $this->logger->info("Creating generator", [
+                'lpaId' => $lpaId
+            ]);
 
             // Create an instance of the PDF generator service.
             $generator = new Generator($type, $lpaObj, $response);
 
-            $this->logger->info("Starting PDF generation", ['lpaId' => $lpaId]);
+
+            $this->logger->info("${docId}: Generating PDF\n", [
+                'lpaId' => $lpaId
+            ]);
 
             // Run the process.
             $result = $generator->generate();
@@ -100,4 +91,12 @@ abstract class AbstractWorker
 
         echo $message . "\n";
     }
+
+    /**
+     * Return the object for handling the response.
+     *
+     * @param $docId
+     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
+     */
+    abstract protected function getResponseObject($docId);
 }
