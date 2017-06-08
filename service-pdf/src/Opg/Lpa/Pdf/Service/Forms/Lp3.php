@@ -294,25 +294,21 @@ class Lp3 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        if($this->countIntermediateFiles() == 1) {
-            $this->generatedPdfFilePath = $this->interFileStack['LP3'][0];
-            return;
-        }
-        
         $pdf = PdftkInstance::getInstance();
         
         $fileTag = 'A';
         if(array_key_exists('LP3', $this->interFileStack)) {
             $pdf->addFile($this->interFileStack['LP3'][0], 'A');
+            //Concatenating the pdf pages forces the toolkit to compress the file effectively significantly reducing its file size
+            $pdf->cat(1, 3, $fileTag);
             if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
-                $pdf->cat(1, 3, $fileTag);
                 foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
                     $fileTag = $this->nextTag($fileTag);
                     $pdf->addFile($additionalPage, $fileTag);
                     $pdf->cat(1, null, $fileTag);
                 }
-                $pdf->cat(4, null, 'A');
             }
+            $pdf->cat(4, null, 'A');
         }
         else {
             foreach($this->interFileStack['LP3-1'] as $lp3Path) {
