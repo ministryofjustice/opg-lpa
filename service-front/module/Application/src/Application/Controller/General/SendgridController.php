@@ -87,7 +87,7 @@ class SendgridController extends AbstractBaseController
 
         } catch ( \Exception $e ){
 
-            $this->getServiceLocator()->get('Logger')->alert("Failed sending 'This mailbox is not monitored' email to ".$userEmail." due to:\n".$e->getMessage());
+            $this->log()->alert("Failed sending 'This mailbox is not monitored' email to ".$userEmail." due to:\n".$e->getMessage());
 
             return "failed-sending-email";
 
