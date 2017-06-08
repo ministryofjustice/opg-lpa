@@ -1,15 +1,12 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Worker;
 
+use DynamoQueue\Worker\ProcessorInterface;
+use Opg\Lpa\Pdf\Config\Config;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
-
 use Zend\Filter\Decompress;
-
-use Opg\Lpa\Pdf\Logger\Logger;
-use Opg\Lpa\Pdf\Config\Config;
-
-use DynamoQueue\Worker\ProcessorInterface;
 
 class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface {
 
@@ -36,7 +33,7 @@ class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface {
 
         $messageSize = strlen( $message );
 
-        Logger::getInstance()->info("New message: $messageSize bytes\n");
+        $this->logger->info("New message: $messageSize bytes\n");
 
         //---------------------------------------------
         // Decrypt the JSON...

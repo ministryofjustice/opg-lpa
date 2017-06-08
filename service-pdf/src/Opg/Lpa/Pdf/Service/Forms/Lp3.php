@@ -7,49 +7,43 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3 extends AbstractForm
 {
     private $Lp3Template, $Lp3PageOneTemplate, $Lp3PageTwoTemplate, $Lp3PageThreeTemplate, $Lp3PageFourTemplate;
-    
+
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
-    
+
     public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
-        
+
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
-        
+
         $this->Lp3Template = $this->pdfTemplatePath."/LP3.pdf";
         $this->Lp3PageOneTemplate = $this->pdfTemplatePath."/LP3-1.pdf";
         $this->Lp3PageTwoTemplate = $this->pdfTemplatePath."/LP3-2.pdf";
         $this->Lp3PageThreeTemplate = $this->pdfTemplatePath."/LP3-3.pdf";
         $this->Lp3PageFourTemplate = $this->pdfTemplatePath."/LP3-4.pdf";
     }
-    
+
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
-     * 
+     *
      * @return Form object | null
      */
     public function generate()
     {
-        Logger::getInstance()->info(
-            'Generating Lp3',
-            [
-                'lpaId' => $this->lpa->id
-            ]
-        );
-        
+        $this->logGenerationStatement();
+
         // will not generate pdf if there's no people to notify
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if($noOfPeopleToNotify == 0) {
             throw new \RuntimeException("LP3 is not available for this LPA.");
         }
-        
+
         if($noOfPeopleToNotify == 1) {
             $this->generateSingleNotificationPdf();
         }
@@ -64,43 +58,42 @@ class Lp3 extends AbstractForm
                 }
 
             }
-            
+
             $this->generatePageTwoPdf();
             $this->generatePageThreePdf();
             $this->generatePageFourPdf();
         }
-        
+
         // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
         $generatedAdditionalAttorneyPages = (new Lp3AdditionalAttorneyPage($this->lpa))->generate();
         $this->mergerIntermediateFilePaths($generatedAdditionalAttorneyPages);
-        
+
         // merge intermediate files.
         $this->mergePdfs();
 
         $this->protectPdf();
-        
+
         return $this;
-        
-    } // function generate()
-    
+    }
+
     /**
      * Fill LP3 form with values in the data model object.
-     * 
+     *
      * @param NotifiedPerson $peopleToNotify
      */
     protected function generateSingleNotificationPdf()
     {
         $pdf = PdftkInstance::getInstance($this->Lp3Template);
-        
+
         $filePath = $this->registerTempFile('LP3');
-        
+
         // populate forms
         $mappings = $this->dataMapping( current($this->lpa->document->peopleToNotify) );
-        
+
         $pdf->fillForm($mappings)
             ->flatten()
             ->saveAs($filePath);
-        
+
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             $crossLineParams = array(2=>array());
@@ -110,65 +103,65 @@ class Lp3 extends AbstractForm
             }
             $this->drawCrossLines($filePath, $crossLineParams);
         }
-        
+
     } // function generateStandardForm()
-    
+
     protected function generatePageOnePdf(NotifiedPerson $peopleToNotify)
     {
         $pdf = PdftkInstance::getInstance($this->Lp3PageOneTemplate);
-        
+
         $filePath = $this->registerTempFile('LP3-1');
-        
+
         // populate forms
         $mappings = $this->dataMappingPageOne($peopleToNotify);
-        
+
         $pdf->fillForm($mappings)
             ->flatten()
             ->saveAs($filePath);
     }
-    
+
     protected function generatePageTwoPdf()
     {
         $pdf = PdftkInstance::getInstance($this->Lp3PageTwoTemplate);
-    
+
         $filePath = $this->registerTempFile('LP3-2');
-    
+
         // populate forms
         $mappings = $this->dataMappingPageTwo();
-    
+
         $pdf->fillForm($mappings)
         ->flatten()
         ->saveAs($filePath);
     }
-    
+
     protected function generatePageThreePdf()
     {
         $pdf = PdftkInstance::getInstance($this->Lp3PageThreeTemplate);
-    
+
         $filePath = $this->registerTempFile('LP3-3');
-    
+
         // populate forms
         $mappings = $this->dataMappingPageThree();
-    
+
         $pdf->fillForm($mappings)
         ->flatten()
         ->saveAs($filePath);
     }
-    
+
     protected function generatePageFourPdf()
     {
         $pdf = PdftkInstance::getInstance($this->Lp3PageFourTemplate);
-    
+
         $filePath = $this->registerTempFile('LP3-4');
-    
+
         // populate forms
         $mappings = $this->dataMappingPageFour();
-    
+
         $pdf->fillForm($mappings)
         ->flatten()
         ->saveAs($filePath);
     }
-    
+
     /**
      * Data mapping
      * @param NotifiedPerson $peopleToNotify
@@ -178,7 +171,7 @@ class Lp3 extends AbstractForm
     {
         return array_merge($this->dataMappingPageOne($peopleToNotify), $this->dataMappingPageTwo(), $this->dataMappingPageThree(), $this->dataMappingPageFour());
     }
-    
+
     /**
      * Data mapping
      * @param NotifiedPerson $peopleToNotify
@@ -194,12 +187,12 @@ class Lp3 extends AbstractForm
         $pdfFormData['lpa-document-peopleToNotify-address-address2']   = $peopleToNotify->address->address2;
         $pdfFormData['lpa-document-peopleToNotify-address-address3']   = $peopleToNotify->address->address3;
         $pdfFormData['lpa-document-peopleToNotify-address-postcode']   = $peopleToNotify->address->postcode;
-    
+
         $pdfFormData['footer-right-page-one'] = Config::getInstance()['footer']['lp3'];
-    
+
         return $pdfFormData;
     } // function dataMapping()
-    
+
     /**
      * Data mapping
      *
@@ -215,26 +208,26 @@ class Lp3 extends AbstractForm
         $pdfFormData['lpa-document-donor-address-address2']   = $this->lpa->document->donor->address->address2;
         $pdfFormData['lpa-document-donor-address-address3']   = $this->lpa->document->donor->address->address3;
         $pdfFormData['lpa-document-donor-address-postcode']   = $this->lpa->document->donor->address->postcode;
-    
+
         if($this->lpa->document->whoIsRegistering == 'donor') {
             $pdfFormData['who-is-applicant'] = 'donor';
         }
         else {
             $pdfFormData['who-is-applicant'] = 'attorney';
         }
-    
+
         if($this->lpa->document->type == Document::LPA_TYPE_PF) {
             $pdfFormData['lpa-type'] = 'property-and-financial-affairs';
         }
         elseif($this->lpa->document->type == Document::LPA_TYPE_HW) {
             $pdfFormData['lpa-type'] = 'health-and-welfare';
         }
-    
+
         $pdfFormData['footer-right-page-two'] = Config::getInstance()['footer']['lp3'];
-    
+
         return $pdfFormData;
     } // function dataMapping()
-    
+
     /**
      * Data mapping
      *
@@ -248,7 +241,7 @@ class Lp3 extends AbstractForm
         } elseif ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
             $pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
-    
+
         $i=0;
         foreach($this->lpa->document->primaryAttorneys as $attorney) {
             if($attorney instanceof TrustCorporation) {
@@ -259,20 +252,20 @@ class Lp3 extends AbstractForm
                 $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $attorney->name->first;
                 $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name->last;
             }
-    
+
             $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address1'] = $attorney->address->address1;
             $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address2'] = $attorney->address->address2;
             $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address3'] = $attorney->address->address3;
             $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $attorney->address->postcode;
-    
+
             if(++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) break;
         }
-    
+
         $pdfFormData['footer-right-page-three'] = Config::getInstance()['footer']['lp3'];
-    
+
         return $pdfFormData;
     } // function dataMapping()
-    
+
     /**
      * Data mapping
      *
@@ -281,21 +274,21 @@ class Lp3 extends AbstractForm
     protected function dataMappingPageFour()
     {
         $pdfFormData = [];
-    
+
         $pdfFormData['footer-right-page-four'] = Config::getInstance()['footer']['lp3'];
-    
+
         return $pdfFormData;
     } // function dataMapping()
-    
-    
-    
+
+
+
     /**
      * Merge intermediate pdf files into one file.
      */
     protected function mergePdfs()
     {
         $pdf = PdftkInstance::getInstance();
-        
+
         $fileTag = 'A';
         if(array_key_exists('LP3', $this->interFileStack)) {
             $pdf->addFile($this->interFileStack['LP3'][0], 'A');
@@ -312,27 +305,27 @@ class Lp3 extends AbstractForm
         }
         else {
             foreach($this->interFileStack['LP3-1'] as $lp3Path) {
-                
+
                 // attach page one
                 $pdf->addFile($lp3Path, $fileTag);
-                
+
                 // add page one
                 $pdf->cat(1, null, $fileTag);
-                
+
                 // attach page two
                 $fileTag = $this->nextTag($fileTag);
                 $pdf->addFile($this->interFileStack['LP3-2'][0], $fileTag);
-                
+
                 // add page two
                 $pdf->cat(1, null, $fileTag);
-                
+
                 // attach page three
                 $fileTag = $this->nextTag($fileTag);
                 $pdf->addFile($this->interFileStack['LP3-3'][0], $fileTag);
-                
+
                 // add page three
                 $pdf->cat(1, null, $fileTag);
-                
+
                 if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
                     foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
                         $fileTag = $this->nextTag($fileTag);
@@ -340,19 +333,19 @@ class Lp3 extends AbstractForm
                         $pdf->cat(1, null, $fileTag);
                     }
                 }
-                
+
                 // attach page four
                 $fileTag = $this->nextTag($fileTag);
                 $pdf->addFile($this->interFileStack['LP3-4'][0], $fileTag);
-                
+
                 // add page four
                 $pdf->cat(1, null, $fileTag);
-                
+
                 $fileTag = $this->nextTag($fileTag);
-                
+
             } // endfor
         }
-        
+
         $pdf->saveAs($this->generatedPdfFilePath);
     } // function mergePdfs()
-} // class Lp3
+}
