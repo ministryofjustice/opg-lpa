@@ -5,12 +5,10 @@
 {% import "application/macros.twig" as macros %}
 
 {# Error messages #}
+
 {% set form = formErrorTextExchange(form, {
     'correspondence' : {
-        "at-least-one-option-needs-to-be-selected" : "At least one option must be selected",
-        "phone-number" : {
-            "cannot-be-blank" : "Please enter the phone number"
-        }
+        "at-least-one-option-needs-to-be-selected" : "At least one option must be selected"
     }
 }) %}
 
@@ -135,7 +133,7 @@
 
         <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
 
-        <fieldset>
+        <fieldset id="correspondence">
             <legend class="visuallyhidden">Contact options</legend>
 
             <p>You can choose more than one.</p>
