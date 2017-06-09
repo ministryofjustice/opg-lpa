@@ -4,14 +4,9 @@ namespace Application\Form;
 
 use Application\Form\Validator\Csrf as CsrfValidator;
 use Zend\Form\Element\Csrf;
-use Zend\Form\Form;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-abstract class AbstractCsrfForm extends Form implements ServiceLocatorAwareInterface
+abstract class AbstractCsrfForm extends AbstractForm
 {
-    use ServiceLocatorAwareTrait;
-
     /**
      * @var Csrf
      */
@@ -19,14 +14,9 @@ abstract class AbstractCsrfForm extends Form implements ServiceLocatorAwareInter
 
     public function init()
     {
-        $this->setAttribute('method', 'post');
-        $this->setAttribute('novalidate', 'novalidate');
-
         $this->setCsrf();
 
         parent::init();
-
-        $this->prepare();
     }
 
     /**
@@ -63,29 +53,5 @@ abstract class AbstractCsrfForm extends Form implements ServiceLocatorAwareInter
     public function getCsrf()
     {
         return $this->csrf;
-    }
-
-    /**
-     * Add input data to input filter
-     *
-     * @param array $inputData
-     */
-    protected function addToInputFilter(array $inputData)
-    {
-        //  Merge the required input filters into the input data
-        $inputData = array_merge_recursive([
-            'filters'  => [
-                [
-                    'name' => 'StripTags'
-                ],
-                [
-                    'name' => 'StringTrim'
-                ],
-            ]
-        ], $inputData);
-
-        $filter = $this->getInputFilter();
-
-        $filter->add($inputData);
     }
 }
