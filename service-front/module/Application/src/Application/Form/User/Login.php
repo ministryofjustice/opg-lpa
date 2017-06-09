@@ -2,7 +2,7 @@
 
 namespace Application\Form\User;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 
 /**
  * Form for logging into the site
@@ -10,7 +10,7 @@ use Application\Form\AbstractForm;
  * Class Login
  * @package Application\Form\User
  */
-class Login extends AbstractForm
+class Login extends AbstractCsrfForm
 {
     public function init()
     {
