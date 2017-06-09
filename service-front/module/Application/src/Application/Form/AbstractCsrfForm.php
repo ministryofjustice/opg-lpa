@@ -8,7 +8,7 @@ use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
+abstract class AbstractCsrfForm extends Form implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
 

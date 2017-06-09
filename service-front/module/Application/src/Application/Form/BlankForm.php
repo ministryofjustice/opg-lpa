@@ -2,5 +2,5 @@
 
 namespace Application\Form;
 
-class BlankForm extends AbstractForm
+class BlankForm extends AbstractCsrfForm
 {}

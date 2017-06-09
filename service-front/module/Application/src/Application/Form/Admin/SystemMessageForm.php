@@ -2,7 +2,7 @@
 
 namespace Application\Form\Admin;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Zend\Validator\StringLength;
 
 /**
@@ -11,7 +11,7 @@ use Zend\Validator\StringLength;
  * Class SystemMessageForm
  * @package Application\Form\Admin
  */
-class SystemMessageForm extends AbstractForm
+class SystemMessageForm extends AbstractCsrfForm
 {
     private $maxMessageLength = 8000;
 

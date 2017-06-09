@@ -2,13 +2,13 @@
 
 namespace Application\Form\User;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Zend\Authentication\Exception\InvalidArgumentException;
 use Zend\Validator\Identical;
 use Zend\Validator\NotEmpty;
 
-class ChangeEmailAddress extends AbstractForm
+class ChangeEmailAddress extends AbstractCsrfForm
 {
     /**
      * @var AuthenticationService
