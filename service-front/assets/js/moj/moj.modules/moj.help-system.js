@@ -56,6 +56,8 @@
         }
         var href = $(this).attr('href'),
           topic = href.substring(href.lastIndexOf('#') + 1);
+        // report the click to ga
+        ga('send', 'pageview', href);
         // set the current click as the source
         self.source = $(this);
         // select topic
