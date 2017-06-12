@@ -17,10 +17,10 @@ class DateCheckController extends AbstractLpaController
         //  If the return route has been submitted in the post then just use it
         $returnRoute = $this->params()->fromPost('returnRoute', null);
 
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+
         if (is_null($returnRoute)) {
             //  If we came from the "LPA complete" route then set the return target back there
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
             if ($currentRouteName == 'lpa/date-check/complete') {
                 $returnRoute = 'lpa/complete';
             }
@@ -30,6 +30,9 @@ class DateCheckController extends AbstractLpaController
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', [
             'lpa' => $lpa,
         ]);
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, [
+            'lpa-id' => $lpa->id
+        ]));
 
         if ($this->request->isPost()) {
             //  Set the post data in the form and validate it

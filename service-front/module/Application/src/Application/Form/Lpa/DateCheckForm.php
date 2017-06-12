@@ -17,15 +17,15 @@ class DateCheckForm extends AbstractLpaForm
         $this->setName('form-date-checker');
 
         //  Set up the date element input names
-        $dateElementNames = [
-            'sign-date-donor',
-            'sign-date-certificate-provider',
-        ];
+        $dateElementNames = [];
 
         //  If applicable add the life sustaining date
         if ($this->lpa->document->type === Document::LPA_TYPE_HW) {
             $dateElementNames[] = 'sign-date-donor-life-sustaining';
         }
+
+        $dateElementNames[] = 'sign-date-donor';
+        $dateElementNames[] = 'sign-date-certificate-provider';
 
         //  Add a signing date for each attorney
         foreach ($this->lpa->document->primaryAttorneys as $idx => $attorney) {
