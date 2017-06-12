@@ -38,62 +38,72 @@ class CorrespondenceForm extends AbstractActorForm
      */
     protected function validateByModel()
     {
-        $error = ['correspondence' => []];
+        //  Set the form data in a correspondent model so it can be validated
+        $correspondenceData = $this->data['correspondence'];
 
         $correspondent = new Correspondence([
-            'contactByPost' => (bool)$this->data['correspondence']['contactByPost'],
-            'contactByInWelsh' => (bool)$this->data['correspondence']['contactInWelsh'],
+            'contactByPost' => (bool)$correspondenceData['contactByPost'],
+            'contactByInWelsh' => (bool)$correspondenceData['contactInWelsh'],
         ]);
 
-        if ($this->data['correspondence']['contactByPhone'] == "1") {
-            if (empty($this->data['correspondence']['phone-number'])) {
-                $error['correspondence']['contactByPhone'] = ["Please enter the correspondent's phone number"];
-            } else {
-                $correspondent->phone = [ 'number' => $this->data['correspondence']['phone-number'] ];
-            }
+        if ($correspondenceData['contactByPhone'] == '1') {
+            $correspondent->phone = [
+                'number' => $correspondenceData['phone-number']
+            ];
         }
 
-        if ($this->data['correspondence']['contactByEmail'] == "1") {
-            if (empty($this->data['correspondence']['email-address'])) {
-                $error['correspondence']['contactByEmail'] = ["Please enter the correspondent's email address"];
-            } else {
-                $correspondent->email = [ 'address' => $this->data['correspondence']['email-address'] ];
-            }
+        if ($correspondenceData['contactByEmail'] == '1') {
+            $correspondent->email = [
+                'address' => $correspondenceData['email-address']
+            ];
         }
 
-        $validation = $correspondent->validate(['contactByPost', 'contactInWelsh', 'email', 'phone']);
+        $validation = $correspondent->validate([
+            'contactByPost',
+            'contactInWelsh',
+            'email',
+            'phone'
+        ]);
 
         $messages = [];
 
+        //  If validation failed then get the error messages
         if ($validation->hasErrors()) {
-            $errors = $this->modelValidationMessageConverter($validation);
+            $messages = $this->modelValidationMessageConverter($validation);
 
             //  The following 2 if statements are a hack to ensure human readable error messages are show.
             //  The present our computer -> human method does not support this FieldSet use case.
-            if (is_array($errors) && isset($errors['phone-number']) && is_array($errors['phone-number'])) {
-                foreach ($errors['phone-number'] as $key => $message) {
-                    if ($message == 'invalid-phone-number') {
-                        $errors['phone-number'][$key] = 'Invalid phone number';
+            if (is_array($messages)) {
+                //  Define the message mappings
+                $messageMappings = [
+                    'email-address' => [
+                        'cannot-be-blank'       => 'Please enter the correspondent\'s email address',
+                        'invalid-email-address' => 'Please enter a valid email address',
+                    ],
+                    'phone-number' => [
+                        'cannot-be-blank'       => 'Please enter the correspondent\'s phone number',
+                        'invalid-phone-number'  => 'Please enter a valid phone number',
+                    ],
+                ];
+
+                //  Loop through the messages and try to translate any messages
+                foreach ($messages as $fieldName => &$fieldMessages) {
+                    if (array_key_exists($fieldName, $messageMappings)) {
+                        foreach ($fieldMessages as $fieldMessageKey => $fieldMessage) {
+                            if (array_key_exists($fieldMessage, $messageMappings[$fieldName])) {
+                                $fieldMessages[$fieldMessageKey] = $messageMappings[$fieldName][$fieldMessage];
+                            }
+                        }
                     }
                 }
             }
-
-            if (is_array($errors) && isset($errors['email-address']) && is_array($errors['email-address'])) {
-                foreach ($errors['email-address'] as $key => $message) {
-                    if ($message == 'invalid-email-address') {
-                        $errors['email-address'][$key] = 'Invalid email address';
-                    }
-                }
-            }
-
-            $messages = array_merge($error, ['correspondence' => $errors]);
-        } elseif (count($error['correspondence']) != 0) {
-            $messages = $error;
         }
 
         return [
             'isValid'  => !$validation->hasErrors(),
-            'messages' => $messages,
+            'messages' => [
+                'correspondence' => $messages,
+            ],
         ];
     }
 }

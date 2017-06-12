@@ -31,6 +31,9 @@ class CorrespondentController extends AbstractLpaActorController
                      ->get('Application\Form\Lpa\CorrespondenceForm', [
                          'lpa' => $this->getLpa()
                      ]);
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/correspondent', [
+            'lpa-id' => $this->getLpa()->id
+        ]));
 
         //  Determine some details about the existing correspondent
         $correspondent = $this->getLpaCorrespondent();
@@ -41,15 +44,30 @@ class CorrespondentController extends AbstractLpaActorController
             $form->setData($this->request->getPost());
 
             if ($form->isValid()) {
-                //  If the correspondent data is not a correspondence type then transfer the data now
-                if (!$correspondent instanceof Correspondence) {
-                    $correspondent = new Correspondence([
-                        'who'     => ($correspondent instanceof Donor ? Correspondence::WHO_DONOR : Correspondence::WHO_ATTORNEY),
-                        'name'    => ($correspondent instanceof TrustCorporation ? null : $correspondent->name),
-                        'company' => ($correspondent instanceof TrustCorporation ? $correspondent->name : null),
-                        'address' => $correspondent->address,
-                    ]);
+                //  Set the initial correspondent data - if the correspondent isn't a correspondent object then set up for the first time
+                $correspondentData = [];
+
+                //  If the correspondent data is a correspondence object then unset some data now
+                if ($correspondent instanceof Correspondence) {
+                    $correspondentData = array_replace_recursive($correspondent->toArray(), $correspondentData);
+
+                    //  Remove the email address and telephone number - they will be added back in below if necessary
+                    if (isset($correspondentData['email'])) {
+                        unset($correspondentData['email']);
+                    }
+
+                    if (isset($correspondentData['phone'])) {
+                        unset($correspondentData['phone']);
+                    }
+                } else {
+                    $correspondentData['who']     = ($correspondent instanceof Donor ? Correspondence::WHO_DONOR : Correspondence::WHO_ATTORNEY);
+                    $correspondentData['name']    = (!$correspondent instanceof TrustCorporation ? $correspondent->name->toArray() : null);
+                    $correspondentData['company'] = ($correspondent instanceof TrustCorporation ? $correspondent->name : null);
+                    $correspondentData['address'] = $correspondent->address->toArray();
                 }
+
+                //  Recreate the correspondent object with the data
+                $correspondent = new Correspondence($correspondentData);
 
                 //  Populate the remaining data for the correspondent from the form data
                 $formData = $form->getData();
