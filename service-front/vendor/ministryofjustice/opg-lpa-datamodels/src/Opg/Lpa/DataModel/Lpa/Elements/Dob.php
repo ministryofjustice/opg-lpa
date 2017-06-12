@@ -62,11 +62,16 @@ class Dob extends AbstractData
                         //  Truncate the day value to lose any time data and try to create a DateTime object
                         $dateArr[2] = substr($dateArr[2], 0, 2);
 
+                        //  If required add any leading zeros to the day and month
+                        $dateArr[1] = str_pad($dateArr[1], 2, '0', STR_PAD_LEFT);
+                        $dateArr[2] = str_pad($dateArr[2], 2, '0', STR_PAD_LEFT);
+
                         //  Format the string and date to the same format to ensure that it is valid
                         $dateFormat = 'Y-m-d';
-                        $date = DateTime::createFromFormat('Y-m-d', implode('-', $dateArr));
+                        $dateIn = implode('-', $dateArr);
+                        $date = DateTime::createFromFormat('Y-m-d', $dateIn);
 
-                        $isValid = ($date instanceof DateTime && strpos($v, $date->format($dateFormat)) === 0);
+                        $isValid = ($date instanceof DateTime && strpos($dateIn, $date->format($dateFormat)) === 0);
                     }
 
                     if (!$isValid) {
