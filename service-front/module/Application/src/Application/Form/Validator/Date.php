@@ -45,10 +45,11 @@ class Date extends DateValidator
                 return false;
             }
 
+            //  Year minimum value is to ensure that the value is 4 digits long
             if (!checkdate($month, $day, $year)
                 || !$this->intBetweenInclusive($day, 1, 31)
                 || !$this->intBetweenInclusive($month, 1, 12)
-                || !$this->intBetweenInclusive($year, 1, 9999)) {
+                || !$this->intBetweenInclusive($year, 1000, 9999)) {
 
                 $this->error(parent::INVALID_DATE);
                 return false;
