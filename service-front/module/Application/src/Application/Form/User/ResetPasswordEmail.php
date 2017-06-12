@@ -2,7 +2,7 @@
 
 namespace Application\Form\User;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Zend\Validator\Identical;
 use Zend\Validator\NotEmpty;
 
@@ -12,7 +12,7 @@ use Zend\Validator\NotEmpty;
  * Class ResetPasswordEmail
  * @package Application\Form\User
  */
-class ResetPasswordEmail extends AbstractForm
+class ResetPasswordEmail extends AbstractCsrfForm
 {
     public function init()
     {

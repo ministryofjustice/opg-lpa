@@ -2,7 +2,7 @@
 
 namespace Application\Form\General;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
 
@@ -12,7 +12,7 @@ use Zend\Validator\StringLength;
  * Class Feedback
  * @package Application\Form\General
  */
-class FeedbackForm extends AbstractForm
+class FeedbackForm extends AbstractCsrfForm
 {
     private $maxFeedbackLength = 2000;
 
