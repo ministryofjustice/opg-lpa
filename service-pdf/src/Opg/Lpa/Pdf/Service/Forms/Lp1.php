@@ -563,6 +563,7 @@ abstract class Lp1 extends AbstractForm
                     $this->pdfFormData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;
 
                     break;
+                case Correspondence::WHO_CERTIFICATE_PROVIDER:
                 case Correspondence::WHO_OTHER:
                     $this->pdfFormData['who-is-correspondent'] = 'other';
                     $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
