@@ -2,13 +2,13 @@
 
 namespace Application\Form\User;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Zend\Form\FormInterface;
 use Zend\Validator\Between;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
 
-class AboutYou extends AbstractForm
+class AboutYou extends AbstractCsrfForm
 {
     public function init()
     {

@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Zend\Form\Element\Checkbox;
@@ -10,7 +10,7 @@ use Zend\Form\Element\Radio;
 use Zend\Form\FormInterface;
 use Zend\Validator\EmailAddress;
 
-abstract class AbstractLpaForm extends AbstractForm
+abstract class AbstractLpaForm extends AbstractCsrfForm
 {
     /**
      * LPA object if it was passed in via the constructor

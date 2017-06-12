@@ -22,7 +22,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Application\Form\Lpa\DonorForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
-        $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
+        $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertEquals('form-donor', $this->form->getName());
     }
 

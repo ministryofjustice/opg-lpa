@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\User;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientError;
 use Zend\Mime\Message as MimeMessage;
@@ -24,10 +24,10 @@ class Details implements ServiceLocatorAwareInterface
     /**
      * Update the user's basic details.
      *
-     * @param AbstractForm $details
+     * @param AbstractCsrfForm $details
      * @return mixed
      */
-    public function updateAllDetails(AbstractForm $details)
+    public function updateAllDetails(AbstractCsrfForm $details)
     {
 
         $this->getServiceLocator()->get('Logger')->info(
@@ -82,14 +82,14 @@ class Details implements ServiceLocatorAwareInterface
     /**
      * Update the user's email address.
      *
-     * @param AbstractForm $details
+     * @param AbstractCsrfForm $details
      * @param Callback function $activateEmailCallback
      * @param string $currentAddress
      * @param string $userId
      *
      * @return bool|string
      */
-    public function requestEmailUpdate(AbstractForm $details, $activateEmailCallback, $currentAddress, $userId)
+    public function requestEmailUpdate(AbstractCsrfForm $details, $activateEmailCallback, $currentAddress, $userId)
     {
         $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
 
@@ -262,10 +262,10 @@ class Details implements ServiceLocatorAwareInterface
     /**
      * Update the user's password.
      *
-     * @param AbstractForm $details
+     * @param AbstractCsrfForm $details
      * @return bool|string
      */
-    public function updatePassword(AbstractForm $details)
+    public function updatePassword(AbstractCsrfForm $details)
     {
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
 

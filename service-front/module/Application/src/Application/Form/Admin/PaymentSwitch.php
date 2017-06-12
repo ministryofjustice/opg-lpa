@@ -2,7 +2,7 @@
 
 namespace Application\Form\Admin;
 
-use Application\Form\AbstractForm;
+use Application\Form\AbstractCsrfForm;
 use Zend\Validator\Between;
 
 /**
@@ -11,7 +11,7 @@ use Zend\Validator\Between;
  * Class SystemMessageForm
  * @package Application\Form\Admin
  */
-class PaymentSwitch extends AbstractForm
+class PaymentSwitch extends AbstractCsrfForm
 {
     public function init()
     {
