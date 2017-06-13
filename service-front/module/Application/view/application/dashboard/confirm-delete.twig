@@ -1,0 +1,25 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+	Are you sure you want to delete this LPA?
+{% endblock %}
+
+
+{% block content %}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Are you sure you want to delete this LPA?</h2>
+</header>
+
+<div class="form-popup">
+    <div class="form">
+        <h2 class="heading-medium">{{ donorName }}</h2>
+        <p>{{ formatLpaId(lpaId) }}</p>
+        <a href="/user/dashboard/delete-lpa/{{ lpaId }}" class="button-warning">Delete</a>
+        <a href="" class="button-secondary">Cancel</a>
+    </div>
+</div>
+
+
+{% endblock %}
