@@ -160,6 +160,27 @@ class DashboardController extends AbstractAuthenticatedController
         return $this->redirect()->toRoute('user/dashboard');
     }
 
+    public function confirmDeleteLpaAction()
+    {
+        $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+
+        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication($lpaId);
+
+        $viewModel = new ViewModel([
+            'lpaId' => $lpa->id,
+            'donorName' => $lpa->document->donor->name
+        ]);
+
+        $viewModel->setTemplate('application/dashboard/confirm-delete.twig');
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            //$viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        return $viewModel;
+    }
+
     //---
 
     /**

@@ -445,6 +445,18 @@ return [
                                     ],
                                 ],
                             ],
+                            'confirm-delete-lpa' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/confirm-delete-lpa/:lpa-id',
+                                    'constraints' => [
+                                        'lpa-id' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action'     => 'confirm-delete-lpa',
+                                    ],
+                                ],
+                            ],
                         ],
                     ], // dashboard
 
