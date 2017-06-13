@@ -2,69 +2,87 @@
 
 namespace Application\Form\Lpa;
 
+use Application\Form\AbstractCsrfForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class DateCheckForm extends AbstractLpaForm
+class DateCheckForm extends AbstractCsrfForm
 {
-    protected $formElements = [
-        'submit' => [
-            'type' => 'Submit',
-        ],
-    ];
+    /**
+     * LPA object if it was passed in via the constructor
+     *
+     * @var Lpa
+     */
+    protected $lpa;
+
+    /**
+     * @param  null|int|string  $name    Optional name for the element
+     * @param  array            $options Optional options for the element
+     */
+    public function __construct($name = null, $options = [])
+    {
+        //  If an LPA has been passed in the options then extract it and set as a variable now
+        if (array_key_exists('lpa', $options)) {
+            $this->lpa = $options['lpa'];
+            unset($options['lpa']);
+        }
+
+        parent::__construct('form-date-checker', $options);
+    }
 
     public function init()
     {
-        $this->setName('form-date-checker');
-
-        //  Set up the date element input names
-        $dateElementNames = [
-            'sign-date-donor',
-            'sign-date-certificate-provider',
-        ];
-
-        //  If applicable add the life sustaining date
+        //  If applicable add the life sustaining date element
         if ($this->lpa->document->type === Document::LPA_TYPE_HW) {
-            $dateElementNames[] = 'sign-date-donor-life-sustaining';
+            $this->addDataCheckFieldset('sign-date-donor-life-sustaining');
         }
+
+        $this->addDataCheckFieldset('sign-date-donor');
+        $this->addDataCheckFieldset('sign-date-certificate-provider');
 
         //  Add a signing date for each attorney
         foreach ($this->lpa->document->primaryAttorneys as $idx => $attorney) {
-            $dateElementNames[] = 'sign-date-attorney-' . $idx;
+            $this->addDataCheckFieldset('sign-date-attorney-' . $idx);
         }
 
         //  Add a signing date for each replacement attorney
         foreach ($this->lpa->document->replacementAttorneys as $idx => $attorney) {
-            $dateElementNames[] = 'sign-date-replacement-attorney-' . $idx;
+            $this->addDataCheckFieldset('sign-date-replacement-attorney-' . $idx);
         }
 
-        //  Loop through to the date element names and add the configuration to the
-        foreach ($dateElementNames as $dateElementName) {
-            $this->formElements[$dateElementName] = [
-                'type'       => 'Application\Form\Fieldset\Dob',
-                'attributes' => [
-                    'id' => $dateElementName,
-                ],
-                'required'   => true,
-                'validators' => [
-                    [
-                        'name'    => 'Application\Form\Validator\Date',
-                    ],
-                ],
-            ];
-        }
+        //  Add the submit button
+        $this->add([
+            'name'  => 'submit',
+            'type'  => 'Submit',
+        ]);
 
         parent::init();
     }
 
     /**
-     * Validate form input data through model validators
+     * Add a standard data element to the form
      *
-     * @return array
+     * @param $elementName
      */
-    protected function validateByModel()
+    private function addDataCheckFieldset($elementName)
     {
-        return [
-            'isValid' => true
-        ];
+        //  Add the fieldset
+        $this->add([
+            'name'       => $elementName,
+            'type'       => 'Application\Form\Fieldset\Dob',
+            'attributes' => [
+                'id' => $elementName,
+            ],
+        ]);
+
+        //  Add data to the input filter
+        $this->addToInputFilter([
+            'name'          => $elementName,
+            'required'      => true,
+            'validators'    => [
+                [
+                    'name' => 'Application\Form\Validator\Date',
+                ],
+            ],
+        ]);
     }
 }
