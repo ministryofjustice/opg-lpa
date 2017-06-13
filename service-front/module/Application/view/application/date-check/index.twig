@@ -2,43 +2,53 @@
 
 {% import "application/macros.twig" as macros %}
 
-{% set form = formErrorTextExchange(form,  {
+{% block pageTitle %}
+    Check signature dates
+{% endblock %}
+
+{% set errorMappings = {
     'sign-date-donor-life-sustaining': {
-        'Value is required and can\'t be empty': 'Please enter the donor\'s signature date'
+        'Please enter all the date fields': 'Please enter the donor\'s signature date',
+        'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
     },
     'sign-date-donor': {
-        'Value is required and can\'t be empty': 'Please enter the donor\'s signature date'
+        'Please enter all the date fields': 'Please enter the donor\'s signature date',
+        'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
     },
     'sign-date-certificate-provider': {
-        'Value is required and can\'t be empty': 'Please enter the certificate provider\'s signature date'
-    },
-    'sign-date-attorney-0': {
-        'Value is required and can\'t be empty': 'Please enter the attorney\'s signature date'
-    },
-    'sign-date-attorney-1': {
-        'Value is required and can\'t be empty': 'Please enter the attorney\'s signature date'
-    },
-    'sign-date-attorney-2': {
-        'Value is required and can\'t be empty': 'Please enter the attorney\'s signature date'
-    },
-    'sign-date-replacement-attorney-0': {
-        'Value is required and can\'t be empty': 'Please enter the replacements attorney\'s signature date'
-    },
-    'sign-date-replacement-attorney-1': {
-        'Value is required and can\'t be empty': 'Please enter the replacements attorney\'s signature date'
-    },
-    'sign-date-replacement-attorney-2': {
-        'Value is required and can\'t be empty': 'Please enter the replacements attorney\'s signature date'
+        'Please enter all the date fields': 'Please enter the certificate provider\'s signature date',
+        'The input does not appear to be a valid date': 'The certificate provider\'s signature date does not appear to be a valid date'
     }
-}) %}
+} %}
+
+{# Loop through the attorneys and add mappings for each #}
+{% for idx, attorney in lpa.document.primaryAttorneys %}
+    {% set messageKey = 'sign-date-attorney-' ~ idx %}
+
+    {% set errorMappings = errorMappings|merge({
+        (messageKey) : {
+            'Please enter all the date fields': 'Please enter the attorney\'s signature date',
+            'The input does not appear to be a valid date': 'The attorney\'s signature date does not appear to be a valid date'
+        }
+    }) %}
+{% endfor %}
+
+{% for idx, attorney in lpa.document.replacementAttorneys %}
+    {% set messageKey = 'sign-date-replacement-attorney-' ~ idx %}
+
+    {% set errorMappings = errorMappings|merge({
+        (messageKey) : {
+            'Please enter all the date fields': 'Please enter the replacement attorney\'s signature date',
+            'The input does not appear to be a valid date': 'The replacement attorney\'s signature date does not appear to be a valid date'
+        }
+    }) %}
+{% endfor %}
+
+{% set form = formErrorTextExchange(form, errorMappings) %}
 
 {% block errorSummary %}
     {# Error summary #}
     {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
-{% endblock %}
-
-{% block pageTitle %}
-    Check signature dates
 {% endblock %}
 
 {% block content %}
@@ -149,7 +159,7 @@
 
                     <p>This person signed Section 5 of the LPA on</p>
 
-                    <div class="date-check-dates">
+                    <div id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
                         <div class="form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ donorLifeSustainingElementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(donorLifeSustainingElementDay) }}
@@ -180,7 +190,7 @@
 
                 <p>This person signed Section 9 of the LPA on</p>
 
-                <div class="date-check-dates">
+                <div id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
                     <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'error'}}">
                         <label class="form-label" for="{{ donorElementDay.getAttribute('id') }}">Day</label>
                         {{ formElement(donorElementDay) }}
@@ -217,7 +227,7 @@
 
                 <p>This person signed Section 10 of the LPA on</p>
 
-                <div class="date-check-dates">
+                <div id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates">
                     <div class="form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
                         <label class="form-label" for="{{ certificateProviderElementDay.getAttribute('id') }}">Day</label>
                         {{ formElement(certificateProviderElementDay) }}
@@ -271,7 +281,7 @@
                         {% endif %}
                     </p>
 
-                    <div class="date-check-dates">
+                    <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(elementDay) }}
@@ -327,7 +337,7 @@
                         {% endif %}
                     </p>
 
-                    <div class="date-check-dates">
+                    <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(elementDay) }}
