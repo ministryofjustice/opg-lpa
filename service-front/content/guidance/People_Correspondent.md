@@ -1,6 +1,6 @@
-# Correspondence address
+# Correspondent
 
-The Office of the Public Guardian (OPG) will contact the person named in the correspondence address about the progress of an application to register an LPA. They will also send the registered LPA to this correspondent. 
+The Office of the Public Guardian (OPG) will contact the person named as the correspondent about the progress of an application to register an LPA. They will also send the registered LPA to this correspondent.
 
 ## Who can be the correspondent
 
@@ -10,7 +10,7 @@ The correspondent can be:
 * a solicitor or other legal professional
 * someone else you'd prefer to receive OPG correspondence
 
-There can only be one correspondent for each LPA application.
+There can only be one correspondent for each LPA application. Unless you change it, the applicant will automatically be selected as the correspondent.
 
 ## Why OPG makes contact
 OPG might need to get in touch with the correspondent to:
