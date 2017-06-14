@@ -31,21 +31,4 @@ class GuidanceController extends AbstractBaseController
         return $model;
 
     }
-
-    public function indexNonTwigAction()
-    {
-        $guidanceService = $this->getServiceLocator()->get('Guidance');
-
-        $model = new ViewModel($guidanceService->parseMarkdown());
-
-        $model->setTemplate('guidance/opg-help-system.phtml');
-
-        if ($this->request->isXmlHttpRequest()) {
-            // if this is accessed via ajax request, disable layout, and return the core text content
-            $model->setTerminal(true);
-        }
-
-       return $model;
-
-    }
 }
