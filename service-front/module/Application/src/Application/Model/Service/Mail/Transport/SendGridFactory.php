@@ -1,39 +1,32 @@
 <?php
+
 namespace Application\Model\Service\Mail\Transport;
 
-use RuntimeException;
-
-use SendGrid as SendGridClient;
-
+use Zend\Mail\Transport\TransportInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use SendGrid as SendGridClient;
+use RuntimeException;
 
-use Zend\Mail\Transport\TransportInterface;
-
-class SendGridFactory implements FactoryInterface {
-
+class SendGridFactory implements FactoryInterface
+{
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
      * @return TransportInterface
      */
-    public function createService(ServiceLocatorInterface $serviceLocator){
-
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
         $config = $serviceLocator->get('Config');
+        $sendGridConfig = $config['email']['sendgrid'];
 
-        if( !isset($config['email']['sendgrid']['user']) || !isset($config['email']['sendgrid']['key']) ){
-            throw new RuntimeException('Sendgrid settings not found ');
+        if (!isset($sendGridConfig['user']) || !isset($sendGridConfig['key'])) {
+            throw new RuntimeException('Sendgrid settings not found');
         }
 
-        $config = $config['email']['sendgrid'];
+        $client = new SendGridClient($sendGridConfig['user'], $sendGridConfig['key']);
 
-        //---
-
-        $client = new SendGridClient( $config['user'], $config['key'] );
-
-        return new SendGrid( $client );
-
+        return new SendGrid($client);
     }
-
-} // class
+}
