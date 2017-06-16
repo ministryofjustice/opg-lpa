@@ -10,14 +10,40 @@ use Exception;
 
 class SendgridController extends AbstractBaseController
 {
+    /**
+     * No reply email address to use
+     *
+     * @var string
+     */
+    private $blackHoleAddress = 'blackhole@lastingpowerofattorney.service.gov.uk';
+
     public function bounceAction()
     {
+        $fromAddress = $this->request->getPost('from');
+        $originalToAddress = $this->request->getPost('to');
+
+        //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
+        if (!is_string($fromAddress) || !is_string($originalToAddress) || strpos(strtolower($originalToAddress), $this->blackHoleAddress) !== false) {
+            $this->log()->err('Sender or recipient missing, or email sent to ' . $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', [
+                'from-address' => $fromAddress,
+                'to-address'   => $originalToAddress,
+            ]);
+
+            return $this->getResponse();
+        }
+
         $token = $this->params()->fromRoute('token');
 
         $config = $this->getServiceLocator()->get('config');
         $emailConfig = $config['email'];
 
         if (!$token || $token !== $emailConfig['sendgrid']['webhook']['token']) {
+            $this->log()->err('Missing or invalid bounce token used', [
+                'from-address' => $fromAddress,
+                'to-address'   => $originalToAddress,
+                'token'        => $token,
+            ]);
+
             $response = $this->getResponse();
             $response->setStatusCode(403);
             $response->setContent('Invalid Token');
@@ -25,18 +51,9 @@ class SendgridController extends AbstractBaseController
             return $response;
         }
 
-        $blackHoleAddress = 'blackhole@lastingpowerofattorney.service.gov.uk';
-
-        $fromAddress = $this->request->getPost('from');
-        $originalToAddress = $this->request->getPost('to');
-
-        //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
-        if (!is_string($fromAddress) || !is_string($originalToAddress) || strpos(strtolower($originalToAddress), $blackHoleAddress) !== false) {
-            return $this->getResponse();
-        }
-
+        //  Log the attempt to compose the email
         $messageService = new MessageService();
-        $messageService->addFrom($blackHoleAddress, $emailConfig['sender']['default']['name']);
+        $messageService->addFrom($this->blackHoleAddress, $emailConfig['sender']['default']['name']);
         $messageService->addCategory('opg');
         $messageService->addCategory('opg-lpa');
         $messageService->addCategory('opg-lpa-autoresponse');

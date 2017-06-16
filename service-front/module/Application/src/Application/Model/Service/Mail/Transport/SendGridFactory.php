@@ -25,8 +25,9 @@ class SendGridFactory implements FactoryInterface
             throw new RuntimeException('Sendgrid settings not found');
         }
 
+        //  Inject the SendGrid client and the logger into the service
         $client = new SendGridClient($sendGridConfig['user'], $sendGridConfig['key']);
 
-        return new SendGrid($client);
+        return new SendGrid($client, $serviceLocator->get('Logger'));
     }
 }
