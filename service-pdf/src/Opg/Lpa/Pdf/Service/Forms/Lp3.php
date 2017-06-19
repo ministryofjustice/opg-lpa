@@ -11,7 +11,7 @@ use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3 extends AbstractForm
 {
-    private $Lp3Template, $Lp3PageOneTemplate, $Lp3PageTwoTemplate, $Lp3PageThreeTemplate, $Lp3PageFourTemplate;
+    private $Lp3Template;
 
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
 
@@ -23,10 +23,6 @@ class Lp3 extends AbstractForm
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
 
         $this->Lp3Template = $this->pdfTemplatePath."/LP3.pdf";
-        $this->Lp3PageOneTemplate = $this->pdfTemplatePath."/LP3-1.pdf";
-        $this->Lp3PageTwoTemplate = $this->pdfTemplatePath."/LP3-2.pdf";
-        $this->Lp3PageThreeTemplate = $this->pdfTemplatePath."/LP3-3.pdf";
-        $this->Lp3PageFourTemplate = $this->pdfTemplatePath."/LP3-4.pdf";
     }
 
     /**
@@ -108,7 +104,7 @@ class Lp3 extends AbstractForm
 
     protected function generatePageOnePdf(NotifiedPerson $peopleToNotify)
     {
-        $pdf = PdftkInstance::getInstance($this->Lp3PageOneTemplate);
+        $pdf = PdftkInstance::getInstance($this->Lp3Template);
 
         $filePath = $this->registerTempFile('LP3-1');
 
@@ -122,7 +118,7 @@ class Lp3 extends AbstractForm
 
     protected function generatePageTwoPdf()
     {
-        $pdf = PdftkInstance::getInstance($this->Lp3PageTwoTemplate);
+        $pdf = PdftkInstance::getInstance($this->Lp3Template);
 
         $filePath = $this->registerTempFile('LP3-2');
 
@@ -136,7 +132,7 @@ class Lp3 extends AbstractForm
 
     protected function generatePageThreePdf()
     {
-        $pdf = PdftkInstance::getInstance($this->Lp3PageThreeTemplate);
+        $pdf = PdftkInstance::getInstance($this->Lp3Template);
 
         $filePath = $this->registerTempFile('LP3-3');
 
@@ -150,7 +146,7 @@ class Lp3 extends AbstractForm
 
     protected function generatePageFourPdf()
     {
-        $pdf = PdftkInstance::getInstance($this->Lp3PageFourTemplate);
+        $pdf = PdftkInstance::getInstance($this->Lp3Template);
 
         $filePath = $this->registerTempFile('LP3-4');
 
@@ -317,14 +313,14 @@ class Lp3 extends AbstractForm
                 $pdf->addFile($this->interFileStack['LP3-2'][0], $fileTag);
 
                 // add page two
-                $pdf->cat(1, null, $fileTag);
+                $pdf->cat(2, null, $fileTag);
 
                 // attach page three
                 $fileTag = $this->nextTag($fileTag);
                 $pdf->addFile($this->interFileStack['LP3-3'][0], $fileTag);
 
                 // add page three
-                $pdf->cat(1, null, $fileTag);
+                $pdf->cat(3, null, $fileTag);
 
                 if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
                     foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
@@ -339,7 +335,7 @@ class Lp3 extends AbstractForm
                 $pdf->addFile($this->interFileStack['LP3-4'][0], $fileTag);
 
                 // add page four
-                $pdf->cat(1, null, $fileTag);
+                $pdf->cat(4, null, $fileTag);
 
                 $fileTag = $this->nextTag($fileTag);
 
