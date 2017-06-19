@@ -40,24 +40,13 @@ class Lp3 extends AbstractForm
             throw new \RuntimeException("LP3 is not available for this LPA.");
         }
 
-        if($noOfPeopleToNotify == 1) {
-            $this->generateSingleNotificationPdf();
-        }
-        else {
+        foreach($this->lpa->document->peopleToNotify as $peopleToNotify) {
 
-            // Loop over each person, adding a page for them.
-            foreach($this->lpa->document->peopleToNotify as $peopleToNotify) {
-
-                if( $peopleToNotify instanceof NotifiedPerson ){
-                    // Generate a standard notification letter for each person to be notified.
-                    $this->generatePageOnePdf( $peopleToNotify );
-                }
-
+            if( $peopleToNotify instanceof NotifiedPerson ){
+                // Generate a standard notification letter for each person to be notified.
+                $this->generateSingleNotificationPdf($peopleToNotify);
             }
 
-            $this->generatePageTwoPdf();
-            $this->generatePageThreePdf();
-            $this->generatePageFourPdf();
         }
 
         // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
@@ -77,14 +66,14 @@ class Lp3 extends AbstractForm
      *
      * @param NotifiedPerson $peopleToNotify
      */
-    protected function generateSingleNotificationPdf()
+    protected function generateSingleNotificationPdf(NotifiedPerson $peopleToNotify)
     {
         $pdf = PdftkInstance::getInstance($this->Lp3Template);
 
         $filePath = $this->registerTempFile('LP3');
 
         // populate forms
-        $mappings = $this->dataMapping( current($this->lpa->document->peopleToNotify) );
+        $mappings = $this->dataMapping($peopleToNotify);
 
         $pdf->fillForm($mappings)
             ->flatten()
@@ -101,62 +90,6 @@ class Lp3 extends AbstractForm
         }
 
     } // function generateStandardForm()
-
-    protected function generatePageOnePdf(NotifiedPerson $peopleToNotify)
-    {
-        $pdf = PdftkInstance::getInstance($this->Lp3Template);
-
-        $filePath = $this->registerTempFile('LP3-1');
-
-        // populate forms
-        $mappings = $this->dataMappingPageOne($peopleToNotify);
-
-        $pdf->fillForm($mappings)
-            ->flatten()
-            ->saveAs($filePath);
-    }
-
-    protected function generatePageTwoPdf()
-    {
-        $pdf = PdftkInstance::getInstance($this->Lp3Template);
-
-        $filePath = $this->registerTempFile('LP3-2');
-
-        // populate forms
-        $mappings = $this->dataMappingPageTwo();
-
-        $pdf->fillForm($mappings)
-        ->flatten()
-        ->saveAs($filePath);
-    }
-
-    protected function generatePageThreePdf()
-    {
-        $pdf = PdftkInstance::getInstance($this->Lp3Template);
-
-        $filePath = $this->registerTempFile('LP3-3');
-
-        // populate forms
-        $mappings = $this->dataMappingPageThree();
-
-        $pdf->fillForm($mappings)
-        ->flatten()
-        ->saveAs($filePath);
-    }
-
-    protected function generatePageFourPdf()
-    {
-        $pdf = PdftkInstance::getInstance($this->Lp3Template);
-
-        $filePath = $this->registerTempFile('LP3-4');
-
-        // populate forms
-        $mappings = $this->dataMappingPageFour();
-
-        $pdf->fillForm($mappings)
-        ->flatten()
-        ->saveAs($filePath);
-    }
 
     /**
      * Data mapping
@@ -285,61 +218,18 @@ class Lp3 extends AbstractForm
     {
         $pdf = PdftkInstance::getInstance();
 
-        $fileTag = 'A';
-        if(array_key_exists('LP3', $this->interFileStack)) {
-            $pdf->addFile($this->interFileStack['LP3'][0], 'A');
+        //$fileTag = 'A';
+        foreach($this->interFileStack['LP3'] as $lp3Path) {
+            $pdf->addFile($lp3Path);
             //Concatenating the pdf pages forces the toolkit to compress the file effectively significantly reducing its file size
-            $pdf->cat(1, 3, $fileTag);
+            $pdf->cat(1, 3);
             if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
                 foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
-                    $fileTag = $this->nextTag($fileTag);
-                    $pdf->addFile($additionalPage, $fileTag);
-                    $pdf->cat(1, null, $fileTag);
+                    $pdf->addFile($additionalPage);
+                    $pdf->cat(1, null);
                 }
             }
-            $pdf->cat(4, null, 'A');
-        }
-        else {
-            foreach($this->interFileStack['LP3-1'] as $lp3Path) {
-
-                // attach page one
-                $pdf->addFile($lp3Path, $fileTag);
-
-                // add page one
-                $pdf->cat(1, null, $fileTag);
-
-                // attach page two
-                $fileTag = $this->nextTag($fileTag);
-                $pdf->addFile($this->interFileStack['LP3-2'][0], $fileTag);
-
-                // add page two
-                $pdf->cat(2, null, $fileTag);
-
-                // attach page three
-                $fileTag = $this->nextTag($fileTag);
-                $pdf->addFile($this->interFileStack['LP3-3'][0], $fileTag);
-
-                // add page three
-                $pdf->cat(3, null, $fileTag);
-
-                if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
-                    foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
-                        $fileTag = $this->nextTag($fileTag);
-                        $pdf->addFile($additionalPage, $fileTag);
-                        $pdf->cat(1, null, $fileTag);
-                    }
-                }
-
-                // attach page four
-                $fileTag = $this->nextTag($fileTag);
-                $pdf->addFile($this->interFileStack['LP3-4'][0], $fileTag);
-
-                // add page four
-                $pdf->cat(4, null, $fileTag);
-
-                $fileTag = $this->nextTag($fileTag);
-
-            } // endfor
+            $pdf->cat(4, null);
         }
 
         $pdf->saveAs($this->generatedPdfFilePath);
