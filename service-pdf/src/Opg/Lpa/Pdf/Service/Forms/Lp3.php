@@ -209,8 +209,6 @@ class Lp3 extends AbstractForm
         return $pdfFormData;
     } // function dataMapping()
 
-
-
     /**
      * Merge intermediate pdf files into one file.
      */
@@ -218,18 +216,21 @@ class Lp3 extends AbstractForm
     {
         $pdf = PdftkInstance::getInstance();
 
-        //$fileTag = 'A';
+        $fileTag = 'A';
         foreach($this->interFileStack['LP3'] as $lp3Path) {
-            $pdf->addFile($lp3Path);
+            $lp3FileTag = $fileTag;
+            $pdf->addFile($lp3Path, $lp3FileTag);
             //Concatenating the pdf pages forces the toolkit to compress the file effectively significantly reducing its file size
-            $pdf->cat(1, 3);
+            $pdf->cat(1, 3, $lp3FileTag);
             if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
                 foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
-                    $pdf->addFile($additionalPage);
-                    $pdf->cat(1, null);
+                    $fileTag = $this->nextTag($fileTag);
+                    $pdf->addFile($additionalPage, $fileTag);
+                    $pdf->cat(1, null, $fileTag);
                 }
             }
-            $pdf->cat(4, null);
+            $pdf->cat(4, null, $lp3FileTag);
+            $fileTag = $this->nextTag($fileTag);
         }
 
         $pdf->saveAs($this->generatedPdfFilePath);
