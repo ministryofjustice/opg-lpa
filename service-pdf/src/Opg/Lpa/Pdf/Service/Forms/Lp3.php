@@ -231,6 +231,13 @@ class Lp3 extends AbstractForm
             }
             $pdf->cat(4, null, $lp3FileTag);
             $fileTag = $this->nextTag($fileTag);
+
+            //If the number of attorney pages is an even number, we need to add a blank page to ensure double sided printing works correctly
+            $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
+            if(floor($numOfAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM)%2 == 1) {
+                $pdf->addFile(Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf', 'BLANK');
+                $pdf->cat(1, null, 'BLANK');
+            }
         }
 
         $pdf->saveAs($this->generatedPdfFilePath);
