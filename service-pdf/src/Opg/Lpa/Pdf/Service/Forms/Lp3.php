@@ -216,8 +216,10 @@ class Lp3 extends AbstractForm
     {
         $pdf = PdftkInstance::getInstance();
 
+        $noOfLp3 = count($this->interFileStack['LP3']);
         $fileTag = 'A';
-        foreach($this->interFileStack['LP3'] as $lp3Path) {
+        for($i = 0; $i < $noOfLp3; $i++) {
+            $lp3Path = $this->interFileStack['LP3'][$i];
             $lp3FileTag = $fileTag;
             $pdf->addFile($lp3Path, $lp3FileTag);
             //Concatenating the pdf pages forces the toolkit to compress the file effectively significantly reducing its file size
@@ -234,7 +236,7 @@ class Lp3 extends AbstractForm
 
             //If the number of attorney pages is an even number, we need to add a blank page to ensure double sided printing works correctly
             $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
-            if(floor($numOfAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM)%2 == 1) {
+            if($i + 1 < $noOfLp3 && floor($numOfAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM)%2 == 1) {
                 $pdf->addFile(Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf', 'BLANK');
                 $pdf->cat(1, null, 'BLANK');
             }
