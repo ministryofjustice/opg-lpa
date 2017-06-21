@@ -27,8 +27,6 @@ class Lp3 extends AbstractForm
 
     /**
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
-     *
-     * @return Form object | null
      */
     public function generate()
     {
@@ -36,17 +34,15 @@ class Lp3 extends AbstractForm
 
         // will not generate pdf if there's no people to notify
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
-        if($noOfPeopleToNotify == 0) {
+        if ($noOfPeopleToNotify == 0) {
             throw new \RuntimeException("LP3 is not available for this LPA.");
         }
 
-        foreach($this->lpa->document->peopleToNotify as $peopleToNotify) {
-
-            if( $peopleToNotify instanceof NotifiedPerson ){
+        foreach ($this->lpa->document->peopleToNotify as $peopleToNotify) {
+            if ($peopleToNotify instanceof NotifiedPerson) {
                 // Generate a standard notification letter for each person to be notified.
                 $this->generateSingleNotificationPdf($peopleToNotify);
             }
-
         }
 
         // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
@@ -80,15 +76,14 @@ class Lp3 extends AbstractForm
             ->saveAs($filePath);
 
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
-        if($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+        if ($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             $crossLineParams = array(2=>array());
-            for($i=self::MAX_ATTORNEYS_ON_STANDARD_FORM - $numOfAttorneys; $i>=1; $i--) {
+            for ($i=self::MAX_ATTORNEYS_ON_STANDARD_FORM - $numOfAttorneys; $i>=1; $i--) {
                 // draw on page 2.
                 $crossLineParams[2][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
             }
             $this->drawCrossLines($filePath, $crossLineParams);
         }
-
     } // function generateStandardForm()
 
     /**
@@ -98,7 +93,12 @@ class Lp3 extends AbstractForm
      */
     protected function dataMapping(NotifiedPerson $peopleToNotify)
     {
-        return array_merge($this->dataMappingPageOne($peopleToNotify), $this->dataMappingPageTwo(), $this->dataMappingPageThree(), $this->dataMappingPageFour());
+        return array_merge(
+            $this->dataMappingPageOne($peopleToNotify),
+            $this->dataMappingPageTwo(),
+            $this->dataMappingPageThree(),
+            $this->dataMappingPageFour()
+        );
     }
 
     /**
@@ -138,17 +138,15 @@ class Lp3 extends AbstractForm
         $pdfFormData['lpa-document-donor-address-address3']   = $this->lpa->document->donor->address->address3;
         $pdfFormData['lpa-document-donor-address-postcode']   = $this->lpa->document->donor->address->postcode;
 
-        if($this->lpa->document->whoIsRegistering == 'donor') {
+        if ($this->lpa->document->whoIsRegistering == 'donor') {
             $pdfFormData['who-is-applicant'] = 'donor';
-        }
-        else {
+        } else {
             $pdfFormData['who-is-applicant'] = 'attorney';
         }
 
-        if($this->lpa->document->type == Document::LPA_TYPE_PF) {
+        if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
             $pdfFormData['lpa-type'] = 'property-and-financial-affairs';
-        }
-        elseif($this->lpa->document->type == Document::LPA_TYPE_HW) {
+        } elseif ($this->lpa->document->type == Document::LPA_TYPE_HW) {
             $pdfFormData['lpa-type'] = 'health-and-welfare';
         }
 
@@ -165,18 +163,17 @@ class Lp3 extends AbstractForm
     protected function dataMappingPageThree()
     {
         $pdfFormData = [];
-        if(count($this->lpa->document->primaryAttorneys) == 1) {
+        if (count($this->lpa->document->primaryAttorneys) == 1) {
             $pdfFormData['how-attorneys-act'] = 'only-one-attorney-appointed';
         } elseif ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
             $pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
 
         $i=0;
-        foreach($this->lpa->document->primaryAttorneys as $attorney) {
-            if($attorney instanceof TrustCorporation) {
+        foreach ($this->lpa->document->primaryAttorneys as $attorney) {
+            if ($attorney instanceof TrustCorporation) {
                 $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name;
-            }
-            else {
+            } else {
                 $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-title'] = $attorney->name->title;
                 $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $attorney->name->first;
                 $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name->last;
@@ -187,7 +184,9 @@ class Lp3 extends AbstractForm
             $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address3'] = $attorney->address->address3;
             $pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $attorney->address->postcode;
 
-            if(++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) break;
+            if (++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+                break;
+            }
         }
 
         $pdfFormData['footer-right-page-three'] = Config::getInstance()['footer']['lp3'];
@@ -218,14 +217,14 @@ class Lp3 extends AbstractForm
 
         $noOfLp3 = count($this->interFileStack['LP3']);
         $fileTag = 'A';
-        for($i = 0; $i < $noOfLp3; $i++) {
+        for ($i = 0; $i < $noOfLp3; $i++) {
             $lp3Path = $this->interFileStack['LP3'][$i];
             $lp3FileTag = $fileTag;
             $pdf->addFile($lp3Path, $lp3FileTag);
-            //Concatenating the pdf pages forces the toolkit to compress the file effectively significantly reducing its file size
+            //Concatenating the pdf pages forces the toolkit to compress the file significantly reducing its file size
             $pdf->cat(1, 3, $lp3FileTag);
-            if(array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
-                foreach($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
+            if (array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
+                foreach ($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
                     $fileTag = $this->nextTag($fileTag);
                     $pdf->addFile($additionalPage, $fileTag);
                     $pdf->cat(1, null, $fileTag);
@@ -234,10 +233,12 @@ class Lp3 extends AbstractForm
             $pdf->cat(4, null, $lp3FileTag);
             $fileTag = $this->nextTag($fileTag);
 
-            //If the number of attorney pages is an even number, we need to add a blank page to ensure double sided printing works correctly
+            //If the number of attorney pages is an even number, we need to add a blank page
+            //to ensure double sided printing works correctly
             $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
-            if($i + 1 < $noOfLp3 && floor($numOfAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM)%2 == 1) {
-                $pdf->addFile(Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf', 'BLANK');
+            if ($i + 1 < $noOfLp3 && floor($numOfAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM)%2 == 1) {
+                $fileName = Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf';
+                $pdf->addFile($fileName, 'BLANK');
                 $pdf->cat(1, null, 'BLANK');
             }
         }
