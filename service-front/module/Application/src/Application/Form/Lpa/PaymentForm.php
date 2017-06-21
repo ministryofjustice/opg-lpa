@@ -2,40 +2,39 @@
 
 namespace Application\Form\Lpa;
 
-class PaymentForm extends AbstractLpaForm
+use Application\Form\AbstractCsrfForm;
+
+class PaymentForm extends AbstractCsrfForm
 {
-    protected $formElements = [
-        'email' => [
-            'required' => true,
+    /**
+     * PaymentForm constructor
+     *
+     * @param null $name
+     * @param array $options
+     */
+    public function __construct($name = null, $options = [])
+    {
+        parent::__construct('form-payment', $options);
+
+        $this->add([
+            'name' => 'email',
             'type' => 'Email',
+        ]);
+
+        $this->addToInputFilter([
+            'name'     => 'email',
+            'required' => true,
             'validators' => [
                 [
                     'name' => 'EmailAddress',
-                ]
+                ],
             ],
-        ],
-        'submit' => [
-            'type' => 'Submit',
-        ],
-    ];
+        ]);
 
-    public function init()
-    {
-        $this->setName('form-payment');
-
-        parent::init();
-    }
-
-    /**
-     * Validate form input data through model validators
-     *
-     * @return array
-     */
-    protected function validateByModel()
-    {
-        return [
-            'isValid' => true,
-            'messages' => []
-        ];
+        //  Add the submit button
+        $this->add([
+            'name'  => 'submit',
+            'type'  => 'Submit',
+        ]);
     }
 }
