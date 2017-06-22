@@ -26,18 +26,23 @@ class FeedbackForm extends AbstractCsrfForm
             'options' => [
                 'value_options' => [
                     'very-satisfied' => [
+                        'label' => 'Very satisfied',
                         'value' => 'very-satisfied',
                     ],
                     'satisfied' => [
+                        'label' => 'Satisfied',
                         'value' => 'satisfied',
                     ],
                     'neither-satisfied-or-dissatisfied' => [
+                        'label' => 'Neither satisfied nor dissatisfied',
                         'value' => 'neither-satisfied-or-dissatisfied',
                     ],
                     'dissatisfied' => [
+                        'label' => 'Dissatisfied',
                         'value' => 'dissatisfied',
                     ],
                     'very-dissatisfied' => [
+                        'label' => 'Very dissatisfied',
                         'value' => 'very-dissatisfied',
                     ],
                 ],
