@@ -38,16 +38,18 @@ class Lp3 extends AbstractForm
             throw new \RuntimeException("LP3 is not available for this LPA.");
         }
 
-        foreach ($this->lpa->document->peopleToNotify as $peopleToNotify) {
-            if ($peopleToNotify instanceof NotifiedPerson) {
+        foreach ($this->lpa->document->peopleToNotify as $personToNotify) {
+            if ($personToNotify instanceof NotifiedPerson) {
                 // Generate a standard notification letter for each person to be notified.
-                $this->generateSingleNotificationPdf($peopleToNotify);
+                $this->generateNotificationPdf($personToNotify);
             }
         }
 
-        // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
-        $generatedAdditionalAttorneyPages = (new Lp3AdditionalAttorneyPage($this->lpa))->generate();
-        $this->mergerIntermediateFilePaths($generatedAdditionalAttorneyPages);
+        if (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
+            $generatedAdditionalAttorneyPages = (new Lp3AdditionalAttorneyPage($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneyPages);
+        }
 
         // merge intermediate files.
         $this->mergePdfs();
@@ -60,16 +62,16 @@ class Lp3 extends AbstractForm
     /**
      * Fill LP3 form with values in the data model object.
      *
-     * @param NotifiedPerson $peopleToNotify
+     * @param NotifiedPerson $personToNotify
      */
-    protected function generateSingleNotificationPdf(NotifiedPerson $peopleToNotify)
+    protected function generateNotificationPdf(NotifiedPerson $personToNotify)
     {
         $pdf = PdftkInstance::getInstance($this->Lp3Template);
 
         $filePath = $this->registerTempFile('LP3');
 
         // populate forms
-        $mappings = $this->dataMapping($peopleToNotify);
+        $mappings = $this->dataMapping($personToNotify);
 
         $pdf->fillForm($mappings)
             ->flatten()
@@ -88,13 +90,13 @@ class Lp3 extends AbstractForm
 
     /**
      * Data mapping
-     * @param NotifiedPerson $peopleToNotify
+     * @param NotifiedPerson $personToNotify
      * @return array
      */
-    protected function dataMapping(NotifiedPerson $peopleToNotify)
+    protected function dataMapping(NotifiedPerson $personToNotify)
     {
         return array_merge(
-            $this->dataMappingPageOne($peopleToNotify),
+            $this->dataMappingPageOne($personToNotify),
             $this->dataMappingPageTwo(),
             $this->dataMappingPageThree(),
             $this->dataMappingPageFour()
@@ -103,19 +105,19 @@ class Lp3 extends AbstractForm
 
     /**
      * Data mapping
-     * @param NotifiedPerson $peopleToNotify
+     * @param NotifiedPerson $personToNotify
      * @return array
      */
-    protected function dataMappingPageOne(NotifiedPerson $peopleToNotify)
+    protected function dataMappingPageOne(NotifiedPerson $personToNotify)
     {
         $pdfFormData = [];
-        $pdfFormData['lpa-document-peopleToNotify-name-title']         = $peopleToNotify->name->title;
-        $pdfFormData['lpa-document-peopleToNotify-name-first']         = $peopleToNotify->name->first;
-        $pdfFormData['lpa-document-peopleToNotify-name-last']          = $peopleToNotify->name->last;
-        $pdfFormData['lpa-document-peopleToNotify-address-address1']   = $peopleToNotify->address->address1;
-        $pdfFormData['lpa-document-peopleToNotify-address-address2']   = $peopleToNotify->address->address2;
-        $pdfFormData['lpa-document-peopleToNotify-address-address3']   = $peopleToNotify->address->address3;
-        $pdfFormData['lpa-document-peopleToNotify-address-postcode']   = $peopleToNotify->address->postcode;
+        $pdfFormData['lpa-document-peopleToNotify-name-title']         = $personToNotify->name->title;
+        $pdfFormData['lpa-document-peopleToNotify-name-first']         = $personToNotify->name->first;
+        $pdfFormData['lpa-document-peopleToNotify-name-last']          = $personToNotify->name->last;
+        $pdfFormData['lpa-document-peopleToNotify-address-address1']   = $personToNotify->address->address1;
+        $pdfFormData['lpa-document-peopleToNotify-address-address2']   = $personToNotify->address->address2;
+        $pdfFormData['lpa-document-peopleToNotify-address-address3']   = $personToNotify->address->address3;
+        $pdfFormData['lpa-document-peopleToNotify-address-postcode']   = $personToNotify->address->postcode;
 
         $pdfFormData['footer-right-page-one'] = Config::getInstance()['footer']['lp3'];
 
