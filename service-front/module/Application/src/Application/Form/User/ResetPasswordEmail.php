@@ -45,7 +45,7 @@ class ResetPasswordEmail extends AbstractCsrfForm
                     ],
                 ],
                 [
-                    'name'    => 'EmailAddress',
+                    'name'    => 'Application\Form\Validator\EmailAddress',
                 ],
             ],
         ]);

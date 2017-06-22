@@ -26,7 +26,7 @@ class PaymentForm extends AbstractCsrfForm
             'required' => true,
             'validators' => [
                 [
-                    'name' => 'EmailAddress',
+                    'name' => 'Application\Form\Validator\EmailAddress',
                 ],
             ],
         ]);

@@ -95,7 +95,7 @@ class FeedbackForm extends AbstractCsrfForm
             'required' => false,
             'validators' => [
                 [
-                    'name' => 'EmailAddress'
+                    'name' => 'Application\Form\Validator\EmailAddress'
                 ],
             ],
         ]);
