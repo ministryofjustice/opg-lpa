@@ -21,6 +21,9 @@ class PaymentForm extends AbstractCsrfForm
             'type' => 'Email',
         ]);
 
+        //  Add data to the input filter
+        $this->setUseInputFilterDefaults(false);
+
         $this->addToInputFilter([
             'name'     => 'email',
             'required' => true,

@@ -66,6 +66,8 @@ class FeedbackForm extends AbstractCsrfForm
         ]);
 
         //  Add data to the input filter
+        $this->setUseInputFilterDefaults(false);
+
         $this->addToInputFilter([
             'name'          => 'rating',
             'error_message' => 'cannot-be-empty',
