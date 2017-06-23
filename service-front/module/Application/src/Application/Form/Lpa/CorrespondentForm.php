@@ -27,17 +27,6 @@ class CorrespondentForm extends AbstractActorForm
         'company' => [
             'type' => 'Text',
         ],
-        'email-address' => [
-            'type' => 'Email',
-            'validators' => [
-                [
-                    'name' => 'EmailAddress',
-                ]
-            ],
-        ],
-        'phone-number' => [
-            'type' => 'Text',
-        ],
         'address-address1' => [
             'type' => 'Text',
         ],
@@ -52,6 +41,12 @@ class CorrespondentForm extends AbstractActorForm
         ],
         'submit' => [
             'type' => 'Submit',
+        ],
+        'email-address' => [
+            'type' => 'Email',
+        ],
+        'phone-number' => [
+            'type' => 'Text',
         ],
     ];
 
