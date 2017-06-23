@@ -52,8 +52,6 @@ class Dob extends AbstractData
                 }
 
                 if (is_string($v)) {
-                    //  Assume the value is invalid until we have proved otherwise below
-                    $isValid = false;
 
                     //  Split the array into components
                     $dateArr = explode('-', $v);
@@ -66,22 +64,23 @@ class Dob extends AbstractData
                         $dateArr[1] = str_pad($dateArr[1], 2, '0', STR_PAD_LEFT);
                         $dateArr[2] = str_pad($dateArr[2], 2, '0', STR_PAD_LEFT);
 
+                        //  Remove any leading zeros from the year
+                        $dateArr[0] = ltrim($dateArr[0], '0');
+
                         //  Format the string and date to the same format to ensure that it is valid
                         $dateFormat = 'Y-m-d';
                         $dateIn = implode('-', $dateArr);
                         $date = DateTime::createFromFormat('Y-m-d', $dateIn);
 
-                        $isValid = ($date instanceof DateTime && strpos($dateIn, $date->format($dateFormat)) === 0);
-                    }
-
-                    if (!$isValid) {
-                        //  The date is invalid so return '0' instead of null
-                        //  This will allow the NotBlank validation to pass so we can display an appropriate date not valid message
-                        return '0';
+                        if ($date instanceof DateTime && strpos($dateIn, $date->format($dateFormat)) === 0) {
+                            return $date;
+                        }
                     }
                 }
 
-                return new DateTime($v);
+                //  The date is invalid so return '0' instead of null
+                //  This will allow the NotBlank validation to pass so we can display an appropriate date not valid message
+                return '0';
         }
 
         return parent::map($property, $v);
