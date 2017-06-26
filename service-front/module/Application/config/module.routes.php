@@ -959,6 +959,19 @@ return [
                                     ],
                                 ],
                             ],
+                            'confirm-delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/confirm-delete/:idx',
+                                    'constraints' => [
+                                        'idx' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action'     => 'confirm-delete',
+                                    ],
+                                ],
+                            ],
+
                             'delete' => [
                                 'type'    => 'Segment',
                                 'options' => [
