@@ -38,6 +38,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                     'address'   => $peopleToNotify->address
                 ],
                 'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
                 'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
             ];
         }
@@ -163,6 +164,39 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         return $viewModel;
     }
+
+        public function confirmDeleteAction()
+    {
+        $lpaId = $this->getLpa()->id;
+        $lpaDocument = $this->getLpa()->document;
+
+        $personIdx = $this->params()->fromRoute('idx');
+
+        if (array_key_exists($personIdx, $lpaDocument->peopleToNotify)) {
+            $notifiedPerson = $lpaDocument->peopleToNotify[$personIdx];
+        }
+
+        // if attorney idx does not exist in lpa, return 404.
+        if (!isset($notifiedPerson)) {
+            return $this->notFoundAction();
+        }
+
+        $viewModel = new ViewModel([
+            'deleteRoute' => $this->url()->fromRoute('lpa/people-to-notify/delete', ['lpa-id' => $lpaId, 'idx' => $personIdx]),
+            'personName' => $notifiedPerson->name
+        ]);
+
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        //  Add a cancel URL for this action
+        $this->addCancelUrlToView($viewModel, 'lpa/people-to-notify');
+
+        return $viewModel;
+    }
+
 
     public function deleteAction()
     {
