@@ -1279,6 +1279,8 @@ hr {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
   -webkit-appearance: none;
   -webkit-box-shadow: 0 2px 0 #003618;
   -moz-box-shadow: 0 2px 0 #003618;
@@ -2659,6 +2661,25 @@ input[type=number] {
       background-image: url("/assets/v2/images/icons/icon-fax-2x.png");
       background-size: 100%; } }
 
+.icon-bin {
+  width: 27px;
+  height: 27px;
+  background-image: url("/assets/v2/images/icons/icon-bin.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-bin {
+      background-image: url("/assets/v2/images/icons/icon-bin-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-bin {
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-bin.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-bin {
+      background-image: url("/assets/v2/images/icons/icon-bin-2x.png");
+      background-size: 100%; } }
+
 .help-sections ul,
 .help-sections ol {
   margin-top: 5px;
@@ -2781,6 +2802,8 @@ input[type=number] {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
   -webkit-appearance: none;
   -webkit-box-shadow: 0 2px 0 #b5babe;
   -moz-box-shadow: 0 2px 0 #b5babe;
@@ -2837,6 +2860,8 @@ input[type=number] {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
   -webkit-appearance: none;
   -webkit-box-shadow: 0 2px 0 #6a0812;
   -moz-box-shadow: 0 2px 0 #6a0812;
@@ -3495,6 +3520,8 @@ input[type=number] {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
   -webkit-appearance: none;
   -webkit-box-shadow: 0 2px 0 #b5babe;
   -moz-box-shadow: 0 2px 0 #b5babe;
@@ -3551,6 +3578,8 @@ input[type=number] {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
   -webkit-appearance: none;
   -webkit-box-shadow: 0 2px 0 #6a0812;
   -moz-box-shadow: 0 2px 0 #6a0812;
@@ -3865,6 +3894,8 @@ input[type=number] {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    outline: 1px solid transparent;
+    outline-offset: -1px;
     -webkit-appearance: none;
     -webkit-box-shadow: 0 2px 0 #b5babe;
     -moz-box-shadow: 0 2px 0 #b5babe;
@@ -3939,19 +3970,16 @@ input[type=number] {
     @media (max-width: 640px) {
       .form-popup .form {
         padding-top: 0; } }
-    .form-popup .form .heading-medium.reuse-details-heading {
-      display: block; }
-      @media (min-width: 641px) {
-        .form-popup .form .heading-medium.reuse-details-heading {
-          margin-top: 0; } }
     @media (min-width: 641px) {
-      .form-popup .form .heading-medium {
+      .form-popup .form > .heading-medium {
+        margin-top: 0;
+        margin-bottom: 0; } }
+    @media (min-width: 641px) {
+      .form-popup .form .popup-exclude {
         display: none; } }
-    .form-popup .form.reuse-details-form .heading-medium {
-      display: block; }
-      @media (min-width: 641px) {
-        .form-popup .form.reuse-details-form .heading-medium {
-          margin-top: 0; } }
+    @media (min-width: 641px) {
+      .form-popup .form.reuse-details-form .heading-medium {
+        margin-top: 0; } }
   .form-popup .form-group {
     margin-top: 0;
     margin-bottom: 15px; }
