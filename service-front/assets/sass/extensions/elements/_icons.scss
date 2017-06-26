@@ -172,3 +172,11 @@
         background-size: contain;
     }
 }
+
+.icon-bin {
+    @include icon(icon-bin, 27, 27);
+    @include media(mobile) {
+        @include icon(icon-bin, 27, 27);
+        background-size: contain;
+    }
+}
