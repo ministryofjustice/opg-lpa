@@ -34,7 +34,11 @@ class Entity implements EntityInterface {
     }
 
     public function equals($comparisonEntity){
-        return $this == $comparisonEntity;
+        return $this->lpa == $comparisonEntity->lpa;
+    }
+
+    public function equalsIgnoreMetadata($comparisonEntity){
+        return $this->lpa->document == $comparisonEntity->lpa->document;
     }
 
 } // class

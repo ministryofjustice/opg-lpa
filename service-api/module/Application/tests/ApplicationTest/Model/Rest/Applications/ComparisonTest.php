@@ -33,6 +33,20 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals($lpa, $comparisonLpa);
     }
 
+    public function testLpaIsNotEqualMetadata()
+    {
+        $lpa = self::getPfLpa();
+        $comparisonLpa = self::getPfLpa();
+        $comparisonLpa->metadata['analyticsReturnCount']++;
+
+        //Verify edits have been applied
+        $this->assertEquals(4, $lpa->metadata['analyticsReturnCount']);
+        $this->assertEquals(5, $comparisonLpa->metadata['analyticsReturnCount']);
+
+        $this->assertFalse($lpa == $comparisonLpa);
+        $this->assertNotEquals($lpa, $comparisonLpa);
+    }
+
     public function testEntityIsEqual()
     {
         $lpaEntity = self::getPfLpaEntity();
@@ -52,6 +66,16 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Edited", $comparisonLpaEntity->getLpa()->document->donor->name->first);
 
         $this->assertFalse($lpaEntity->equals($comparisonLpaEntity));
+    }
+
+    public function testEntityIsEqualIgnoringMetadata()
+    {
+        $lpaEntity = self::getPfLpaEntity();
+        $comparisonLpaEntity = self::getPfLpaEntity();
+
+        $comparisonLpaEntity->getLpa()->metadata['analyticsReturnCount']++;
+
+        $this->assertTrue($lpaEntity->equalsIgnoreMetadata($comparisonLpaEntity));
     }
 
     private function getPfLpa()
