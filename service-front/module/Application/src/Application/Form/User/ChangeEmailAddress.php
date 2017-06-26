@@ -5,6 +5,7 @@ namespace Application\Form\User;
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Zend\Authentication\Exception\InvalidArgumentException;
+use Zend\Validator\Callback;
 use Zend\Validator\Identical;
 use Zend\Validator\NotEmpty;
 
@@ -38,6 +39,32 @@ class ChangeEmailAddress extends AbstractCsrfForm
         $this->setUseInputFilterDefaults(false);
 
         $this->addToInputFilter([
+            'name'     => 'password_current',
+            'required' => true,
+            'validators' => [
+                [
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ],
+                ],
+                [
+                    'name'    => 'Callback',
+                    'break_chain_on_failure' => true,
+                    'options' => [
+                        'callback' => [ $this, 'validatePassword' ],
+                        'messages' => [
+                            Callback::INVALID_VALUE => 'is-incorrect',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->addToInputFilter([
             'name'     => 'email',
             'required' => true,
             'validators' => [
@@ -51,7 +78,7 @@ class ChangeEmailAddress extends AbstractCsrfForm
                     ],
                 ],
                 [
-                    'name' => 'EmailAddress',
+                    'name' => 'Application\Form\Validator\EmailAddress',
                 ],
             ],
         ]);
@@ -75,22 +102,6 @@ class ChangeEmailAddress extends AbstractCsrfForm
                         'token' => 'email',
                         'messages' => [
                             Identical::NOT_SAME => 'did-not-match',
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'password_current',
-            'required' => true,
-            'validators' => [
-                [
-                    'name'    => 'NotEmpty',
-                    'break_chain_on_failure' => true,
-                    'options' => [
-                        'messages' => [
-                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
                         ],
                     ],
                 ],

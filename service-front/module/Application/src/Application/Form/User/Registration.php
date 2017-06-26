@@ -51,14 +51,7 @@ class Registration extends SetPassword
                     ],
                 ],
                 [
-                    'name'                   => 'EmailAddress',
-                    'break_chain_on_failure' => true,
-                    /* We'll just use the ZF2 messages for these - there are lots of them
-                     * and they include such classics as:
-                     *
-                     * "'%hostname%' is not in a routable network segment.
-                     * The email address should not be resolved from public network"
-                     */
+                    'name' => 'Application\Form\Validator\EmailAddress',
                 ]
             ],
         ]);
