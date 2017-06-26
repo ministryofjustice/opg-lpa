@@ -33,4 +33,8 @@ class Entity implements EntityInterface {
         return $this->lpa->toArray();
     }
 
+    public function equals($comparisonEntity){
+        return $this == $comparisonEntity;
+    }
+
 } // class
