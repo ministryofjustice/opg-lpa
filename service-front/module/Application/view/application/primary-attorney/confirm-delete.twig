@@ -4,7 +4,6 @@
     Create a lasting power of attorney
 {% endblock %}
 
-
 {% block content %}
 
 <header class="popup-header">
@@ -13,16 +12,9 @@
 </header>
 
 <div class="form">
-    <h2 class="heading-medium">person
-        {# {% if donorName %}
-            {{ donorName }}
-        {% else %}
-            No donor added
-        {% endif %} #}
-    </h2>
-    {# <p>{{ formatLpaId(lpaId) }}</p> #}
-    <a href="/user/dashboard/delete-lpa/" class="button button-warning flush--left">Delete</a>
-    <a href="/user/dashboard" class="button button-secondary js-cancel">Cancel</a>
+    <h2 class="heading-medium push--bottom">{{ attorneyName }}</h2>
+    <a href="{{ deleteRoute }}" class="button button-warning flush--left">Delete</a>
+    <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
 </div>
 
 

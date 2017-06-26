@@ -206,7 +206,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
     public function confirmDeleteAction()
     {
-
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
 
@@ -222,34 +221,19 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         $viewModel = new ViewModel([
-            'attorneyId' => $attorneyIdx
+            'deleteRoute' => $this->url()->fromRoute('lpa/primary-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
+            'attorneyName' => $attorney->name
         ]);
 
-        // if ($this->isPopup()) {
-        //     $viewModel->setTerminal(true);
-        //     $viewModel->isPopup = true;
-        // }
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        //  Add a cancel URL for this action
+        $this->addCancelUrlToView($viewModel, 'lpa/primary-attorney');
 
         return $viewModel;
-
-
-        // $lpa = $this->getLpa();
-
-        // $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
-
-        // $viewModel = new ViewModel([
-        //     'attId' => $lpa->id,
-        //     //'attorneyName' => $lpa->document->donor->name
-        // ]);
-
-        // $viewModel->setTemplate('application/dashboard/confirm-delete.twig');
-
-        // if ($this->getRequest()->isXmlHttpRequest()) {
-        //     //$viewModel->setTerminal(true);
-        //     $viewModel->isPopup = true;
-        // }
-
-        // return $viewModel;
     }
 
     public function deleteAction()
