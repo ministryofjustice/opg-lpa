@@ -8,16 +8,22 @@
 {% block content %}
 
 <header class="popup-header">
-    <i class="icon icon-person"></i>
+    <i class="icon icon-bin"></i>
     <h2 class="heading-small popup-header-title">Are you sure you want to delete this LPA?</h2>
 </header>
 
 <div class="form-popup">
     <div class="form">
-        <h2 class="heading-medium">{{ donorName }}</h2>
+        <h2 class="heading-medium">
+            {% if donorName %}
+                {{ donorName }}
+            {% else %}
+                No donor added
+            {% endif %}
+        </h2>
         <p>{{ formatLpaId(lpaId) }}</p>
-        <a href="/user/dashboard/delete-lpa/{{ lpaId }}" class="button-warning">Delete</a>
-        <a href="" class="button-secondary">Cancel</a>
+        <a href="/user/dashboard/delete-lpa/{{ lpaId }}" class="button button-warning flush--left">Delete</a>
+        <a href="" class="button button-secondary js-cancel">Cancel</a>
     </div>
 </div>
 
