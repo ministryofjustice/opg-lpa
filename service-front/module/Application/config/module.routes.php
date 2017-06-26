@@ -971,7 +971,6 @@ return [
                                     ],
                                 ],
                             ],
-
                             'delete' => [
                                 'type'    => 'Segment',
                                 'options' => [
