@@ -38,7 +38,7 @@ class Entity implements EntityInterface {
     }
 
     public function equalsIgnoreMetadata($comparisonEntity){
-        return $this->lpa->document == $comparisonEntity->lpa->document;
+        return $this->lpa !== null && $comparisonEntity->lpa !== null && $this->lpa->document == $comparisonEntity->lpa->document;
     }
 
 } // class

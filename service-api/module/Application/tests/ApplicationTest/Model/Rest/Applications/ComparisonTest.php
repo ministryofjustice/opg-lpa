@@ -23,6 +23,7 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = self::getPfLpa();
         $comparisonLpa = self::getPfLpa();
+
         $comparisonLpa->document->donor->name->first = "Edited";
 
         //Verify edits have been applied
@@ -37,6 +38,7 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = self::getPfLpa();
         $comparisonLpa = self::getPfLpa();
+
         $comparisonLpa->metadata['analyticsReturnCount']++;
 
         //Verify edits have been applied
@@ -45,6 +47,17 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($lpa == $comparisonLpa);
         $this->assertNotEquals($lpa, $comparisonLpa);
+    }
+
+    public function testLpaIsEqualIgnoringMetadata()
+    {
+        $lpa = self::getPfLpa();
+        $comparisonLpa = self::getPfLpa();
+
+        $comparisonLpa->metadata['analyticsReturnCount']++;
+
+        $this->assertTrue($lpa->document == $comparisonLpa->document);
+        $this->assertEquals($lpa->document, $comparisonLpa->document);
     }
 
     public function testEntityIsEqual()
@@ -59,11 +72,26 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
     {
         $lpaEntity = self::getPfLpaEntity();
         $comparisonLpaEntity = self::getPfLpaEntity();
+
         $comparisonLpaEntity->getLpa()->document->donor->name->first = "Edited";
 
         //Verify edits have been applied
         $this->assertEquals("Ayden", $lpaEntity->getLpa()->document->donor->name->first);
         $this->assertEquals("Edited", $comparisonLpaEntity->getLpa()->document->donor->name->first);
+
+        $this->assertFalse($lpaEntity->equals($comparisonLpaEntity));
+    }
+
+    public function testEntityIsNotEqualMetadata()
+    {
+        $lpaEntity = self::getPfLpaEntity();
+        $comparisonLpaEntity = self::getPfLpaEntity();
+
+        $comparisonLpaEntity->getLpa()->metadata['analyticsReturnCount']++;
+
+        //Verify edits have been applied
+        $this->assertEquals(4, $lpaEntity->getLpa()->metadata['analyticsReturnCount']);
+        $this->assertEquals(5, $comparisonLpaEntity->getLpa()->metadata['analyticsReturnCount']);
 
         $this->assertFalse($lpaEntity->equals($comparisonLpaEntity));
     }

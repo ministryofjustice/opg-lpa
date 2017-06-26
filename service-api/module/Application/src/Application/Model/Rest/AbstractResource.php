@@ -210,14 +210,24 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         $lastUpdated = new \MongoDate( $lpa->updatedAt->getTimestamp(), (int)$lpa->updatedAt->format('u') );
 
-        // Record the time we updated the document.
-        $lpa->updatedAt = new DateTime();
+        $existingLpa = new Lpa();
+        $existingLpaResult = $collection->findOne( [ '_id'=>$lpa->id ] );
+        if( !is_null($existingLpaResult) ){
+            $existingLpaResult = [ 'id' => $existingLpaResult['_id'] ] + $existingLpaResult;
+            $existingLpa = new Lpa( $existingLpaResult );
+        }
 
-        $this->info('Setting updated time', [
-                'lpaid' => $lpa->id,
-                'updatedAt' => $lpa->updatedAt,
-            ]
-        );
+        //Only update the edited date if the LPA document itself has changed
+        if($lpa->document != $existingLpa->document) {
+            // Record the time we updated the document.
+            $lpa->updatedAt = new DateTime();
+
+            $this->info('Setting updated time', [
+                    'lpaid' => $lpa->id,
+                    'updatedAt' => $lpa->updatedAt,
+                ]
+            );
+        }
         
         // updatedAt is included in the query so that data isn't overwritten
         // if the Document has changed since this process loaded it.
