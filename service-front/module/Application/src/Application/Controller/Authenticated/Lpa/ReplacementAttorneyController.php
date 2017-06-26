@@ -40,6 +40,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                     'address'   => $attorney->address
                 ],
                 'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
                 'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
             ];
 
@@ -187,6 +188,38 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
 
         $viewModel->form = $form;
+
+        //  Add a cancel URL for this action
+        $this->addCancelUrlToView($viewModel, 'lpa/replacement-attorney');
+
+        return $viewModel;
+    }
+
+    public function confirmDeleteAction()
+    {
+        $lpaId = $this->getLpa()->id;
+        $lpaDocument = $this->getLpa()->document;
+
+        $attorneyIdx = $this->params()->fromRoute('idx');
+
+        if (array_key_exists($attorneyIdx, $lpaDocument->replacementAttorneys)) {
+            $attorney = $lpaDocument->replacementAttorneys[$attorneyIdx];
+        }
+
+        // if attorney idx does not exist in lpa, return 404.
+        if (!isset($attorney)) {
+            return $this->notFoundAction();
+        }
+
+        $viewModel = new ViewModel([
+            'deleteRoute' => $this->url()->fromRoute('lpa/replacement-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
+            'attorneyName' => $attorney->name
+        ]);
+
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
 
         //  Add a cancel URL for this action
         $this->addCancelUrlToView($viewModel, 'lpa/replacement-attorney');

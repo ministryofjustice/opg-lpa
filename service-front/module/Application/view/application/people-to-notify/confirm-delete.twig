@@ -1,0 +1,21 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Create a lasting power of attorney
+{% endblock %}
+
+{% block content %}
+
+<header class="popup-header">
+    <i class="icon icon-bin"></i>
+    <h2 class="heading-small popup-header-title">Are you sure you want to remove this person?</h2>
+</header>
+
+<div class="form">
+    <h2 class="heading-medium push--bottom">{{ personName }}</h2>
+    <a href="{{ deleteRoute }}" class="button button-warning flush--left">Delete</a>
+    <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+</div>
+
+
+{% endblock %}
