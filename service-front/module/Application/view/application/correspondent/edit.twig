@@ -129,7 +129,7 @@
     {{ formElement(form.getCsrf) }}
     {{ formElement(form.get('who')) }}
 
-    <h2 class="heading-medium">Correspondent's details?</h2>
+    <h2 class="heading-medium popup-exclude">Correspondent's details?</h2>
 
     <fieldset>
         <legend class="visuallyhidden">Add correspondent's details</legend>
@@ -140,7 +140,7 @@
 
     </fieldset>
 
-    <h2 class="heading-medium">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
+    <h2 class="heading-medium popup-exclude">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
 
     <fieldset>
         <legend class="visually hidden">Add company name</legend>
@@ -155,7 +155,7 @@
         {% endif %}
     </fieldset>
 
-    <h2 class="heading-medium">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
+    <h2 class="heading-medium popup-exclude">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
 
     <fieldset class="postcodelookup">
         <legend class="visuallyhidden">Add address details</legend>
@@ -192,7 +192,7 @@
 
     </fieldset>
 
-    <h2 class="heading-medium">Correspondent's contact details?</h2>
+    <h2 class="heading-medium popup-exclude">Correspondent's contact details?</h2>
 
     <fieldset>
         <legend class="visuallyhidden">Add correspondent's contact details</legend>
