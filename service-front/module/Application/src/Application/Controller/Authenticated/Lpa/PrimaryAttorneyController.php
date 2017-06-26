@@ -26,6 +26,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                         'address'   => $attorney->address
                     ],
                     'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                    'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
                     'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
                 ];
 
@@ -201,6 +202,54 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $this->addCancelUrlToView($viewModel, 'lpa/primary-attorney');
 
         return $viewModel;
+    }
+
+    public function confirmDeleteAction()
+    {
+
+        $lpaId = $this->getLpa()->id;
+        $lpaDocument = $this->getLpa()->document;
+
+        $attorneyIdx = $this->params()->fromRoute('idx');
+
+        if (array_key_exists($attorneyIdx, $lpaDocument->primaryAttorneys)) {
+            $attorney = $lpaDocument->primaryAttorneys[$attorneyIdx];
+        }
+
+        // if attorney idx does not exist in lpa, return 404.
+        if (!isset($attorney)) {
+            return $this->notFoundAction();
+        }
+
+        $viewModel = new ViewModel([
+            'attorneyId' => $attorneyIdx
+        ]);
+
+        // if ($this->isPopup()) {
+        //     $viewModel->setTerminal(true);
+        //     $viewModel->isPopup = true;
+        // }
+
+        return $viewModel;
+
+
+        // $lpa = $this->getLpa();
+
+        // $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
+
+        // $viewModel = new ViewModel([
+        //     'attId' => $lpa->id,
+        //     //'attorneyName' => $lpa->document->donor->name
+        // ]);
+
+        // $viewModel->setTemplate('application/dashboard/confirm-delete.twig');
+
+        // if ($this->getRequest()->isXmlHttpRequest()) {
+        //     //$viewModel->setTerminal(true);
+        //     $viewModel->isPopup = true;
+        // }
+
+        // return $viewModel;
     }
 
     public function deleteAction()
