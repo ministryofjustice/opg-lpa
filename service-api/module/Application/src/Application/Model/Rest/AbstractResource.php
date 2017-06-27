@@ -218,7 +218,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         }
 
         //Only update the edited date if the LPA document itself has changed
-        if($lpa->document != $existingLpa->document) {
+        if(!$lpa->equalsIgnoreMetadata($existingLpa)) {
             // Record the time we updated the document.
             $lpa->updatedAt = new DateTime();
 
