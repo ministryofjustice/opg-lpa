@@ -221,11 +221,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         // Setting the trust flag
-        if (isset($attorney->number)) {
-            $isTrust = true;
-        } else {
-            $isTrust = false;
-        }
+        $isTrust = isset($attorney->number);
 
         $viewModel = new ViewModel([
             'deleteRoute' => $this->url()->fromRoute('lpa/primary-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),

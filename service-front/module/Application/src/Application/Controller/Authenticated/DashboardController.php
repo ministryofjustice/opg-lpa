@@ -174,7 +174,7 @@ class DashboardController extends AbstractAuthenticatedController
         $viewModel->setTemplate('application/dashboard/confirm-delete.twig');
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            //$viewModel->setTerminal(true);
+            $viewModel->setTerminal(true);
             $viewModel->isPopup = true;
         }
 
