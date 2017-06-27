@@ -25,6 +25,10 @@
 
     {% if (attorneys) %}
 
+        <h3 class="heading-medium flush--top">
+            The attorney{% if attorneys|length > 1 %}s{% endif %}
+        </h3>
+
         <ul>
             {% for attorney in attorneys %}
                 {% include 'application/primary-attorney/partials/attorney.twig' with attorney %}
