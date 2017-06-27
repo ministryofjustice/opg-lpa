@@ -60,8 +60,11 @@
 
     .action-delete {
         @include media(tablet) {
-            display: block;
+            display: inline-block;
             margin: 6px $gutter 0 0;
+            + .spinner {
+                margin: 0 16px -3px -16px;
+            }
         }
     }
 }
