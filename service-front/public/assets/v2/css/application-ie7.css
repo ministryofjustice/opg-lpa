@@ -3224,8 +3224,10 @@ input[type=number] {
     .person-actions .action-edit[type=submit].button {
       filter: none; }
   .person-actions .action-delete {
-    display: block;
+    display: inline-block;
     margin: 6px 30px 0 0; }
+    .person-actions .action-delete + .spinner {
+      margin: 0 16px -3px -16px; }
 
 .form-popup {
   font-family: "nta", Arial, sans-serif;
