@@ -213,7 +213,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         $viewModel = new ViewModel([
             'deleteRoute' => $this->url()->fromRoute('lpa/replacement-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
-            'attorneyName' => $attorney->name
+            'attorneyName' => $attorney->name,
+            'attorneyAddress' => $attorney->address,
         ]);
 
         if ($this->isPopup()) {
