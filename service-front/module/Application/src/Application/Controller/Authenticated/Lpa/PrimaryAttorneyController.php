@@ -220,9 +220,18 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
+        // Setting the trust flag
+        if (isset($attorney->number)) {
+            $isTrust = true;
+        } else {
+            $isTrust = false;
+        }
+
         $viewModel = new ViewModel([
             'deleteRoute' => $this->url()->fromRoute('lpa/primary-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
-            'attorneyName' => $attorney->name
+            'attorneyName' => $attorney->name,
+            'attorneyAddress' => $attorney->address,
+            'isTrust' => $isTrust,
         ]);
 
         if ($this->isPopup()) {

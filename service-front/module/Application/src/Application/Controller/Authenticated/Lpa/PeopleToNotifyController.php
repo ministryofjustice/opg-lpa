@@ -183,7 +183,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         $viewModel = new ViewModel([
             'deleteRoute' => $this->url()->fromRoute('lpa/people-to-notify/delete', ['lpa-id' => $lpaId, 'idx' => $personIdx]),
-            'personName' => $notifiedPerson->name
+            'personName' => $notifiedPerson->name,
+            'personAddress' => $notifiedPerson->address,
         ]);
 
         if ($this->isPopup()) {
