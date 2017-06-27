@@ -1,6 +1,6 @@
 # Signing the LPA
 
-The people involved in the LPA must sign it in the correct order. If they don't, the Office of the Public Guardian won't register it and your attorneys will not be able to use it.
+The LPA must be signed in the right order - if not, OPG cannot register the LPA and you may have to pay the application fee again. Everyone can sign on the same day or different days, as long as people sign in the right order.
 
 ### Order of signing
 
@@ -20,17 +20,17 @@ You must sign:
 
 * section 9
 * any continuation sheets (you may have one or more copies of either continuation sheet 1 or 2)
-* the statement about life-sustaining treatment on page 6, if it is a health and welfare LPA
+* the statement about life-sustaining treatment at section 5, if it is a health and welfare LPA
 
-An independent witness must then sign. Your signatures must be made and witnessed on the same date. 
+An independent witness must then sign. Your signatures must be made and witnessed on the same date.
 
-If you can't sign the document, there will be an extra sheet with the LPA (continuation sheet A3) that someone must sign for you. You must be present and must tell the person to sign. Two witnesses must watch when continuation sheet A3 is signed.
+If you can't physically sign or make a mark on the document, there will be an extra sheet with the LPA (continuation sheet 3) that someone must sign for you. You must be present and must tell the person to sign. Two witnesses must watch when continuation sheet 3 is signed.
 
 ### Certificate provider(s)
 
 The certificate provider must sign section 10 next.
 
-They should sign as soon as possible after the donor - they can sign on the same day and must sign within a year. 
+They should sign as soon as possible after the donor - they can sign on the same day.
 
 ### Attorneys and replacement attorneys
 
@@ -40,17 +40,17 @@ Their signatures must be witnessed. You (the donor) can't be a witness but your 
 
 If one of your attorneys is a trust corporation, they must complete continuation sheet 4 instead of section 11.
 
-Attorneys and replacements should sign as soon as possible after the certificate providers. They can sign on the same day and must sign within a year.
+Attorneys and replacements should sign as soon as possible after the certificate providers. They can sign on the same day.
 
 ### Witnesses
 
-Witnesses are impartial people aged at least 18 years who watch you and your attorneys (including any replacements) sign your LPA. Witnesses must then sign the LPA to confirm that they saw you and your attorneys sign it. 
+Witnesses are impartial people aged at least 18 years who watch you and your attorneys (including any replacements) sign your LPA. Witnesses must then sign the LPA to confirm that they saw you and your attorneys sign it. Witnesses must also give their full name and address.
 
-Your (the donor's) witness can't be:
+Who can be a witness in the LPA?
 
-* one of your attorneys
-* one of your replacement attorneys
-* an employee of a trust corporation that you've named as an attorney or replacement attorney
+* anyone aged 18 or over, apart from the donor, can be a witness in an LPA
+* the certificate provider and any ‘people to notify’ can be a witness
+* attorneys or replacement attorneys can witness each other’s signature but not the donor’s
 
 The same person can witness both donor and attorney signatures, so long as they are not one of your attorneys. But you don’t have to use the same witness for all signatures.
 
