@@ -126,7 +126,6 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.ui-behaviour.js',
           'assets/js/moj/moj.modules/moj.applicant.js',
           'assets/js/moj/moj.modules/moj.fees.js',
-          'assets/js/moj/moj.modules/moj.confirm.js',
           'assets/js/moj/moj.modules/moj.who-are-you.js',
 
           // Init Script
