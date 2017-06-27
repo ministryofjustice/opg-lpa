@@ -211,10 +211,14 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
+        // Setting the trust flag
+        $isTrust = isset($attorney->number);
+
         $viewModel = new ViewModel([
             'deleteRoute' => $this->url()->fromRoute('lpa/replacement-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
             'attorneyName' => $attorney->name,
             'attorneyAddress' => $attorney->address,
+            'isTrust' => $isTrust,
         ]);
 
         if ($this->isPopup()) {

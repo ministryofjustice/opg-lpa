@@ -165,7 +165,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-        public function confirmDeleteAction()
+    public function confirmDeleteAction()
     {
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
