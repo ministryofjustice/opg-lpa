@@ -3,7 +3,7 @@
 	{% import _self as macros %}
 
     <hr class="visuallyhidden">
-    
+
     {{ macros.showTypeHeaderIfLpasExist(lpas, type, headingText) }}
 
 	<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
@@ -18,13 +18,13 @@
     </tr>
     </thead>
     <tbody>
-    
+
 	{% for key,lpa in lpas %}
 	    {% if (type == 'all' or type == lpa.type) %}
-	    	 
+
         <tr>
             <td class="lpa-donor">
-                <h3 class="heading-{{ shortList == true ? 'medium' : 'small' }} flush--ends">  
+                <h3 class="heading-{{ shortList == true ? 'medium' : 'small' }} flush--ends">
                 {% if lpa.donor|length > 0 %}
                     {{ lpa.donor }}
                 {% else %}
@@ -64,12 +64,12 @@
 
                                 {% if lpa.progress != 'Started' %}
                                     <li>
-                                        <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span class="extra-text">LPA</span> details</a>     
+                                        <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span class="extra-text">LPA</span> details</a>
                                     </li>
                                 {% endif %}
 
                                 <li class="last">
-                                    <a href="/user/dashboard/delete-lpa/{{ lpa.id }}" class="js-confirm" data-confirm-question="Are you sure you want to delete this LPA?">Delete <span class="extra-text">LPA</span></a>
+                                    <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}" class="js-form-popup">Delete <span class="extra-text">LPA</span></a>
                                 </li>
                             </ul>
                         </div>
@@ -79,19 +79,19 @@
                 </div>
             </td>
         </tr>
-        
+
         {% endif %}
 
     {% endfor %}
-    
+
     </tbody>
 	</table>
 {% endmacro %}
 
 {% macro showTypeHeaderIfLpasExist(lpas, type, headingText) %}
-	
+
 	{% set found = false %}
-	
+
 	{% for key,lpa in lpas %}
 		{% if not found %}
     	    {% if (type == lpa.type) %}
@@ -109,9 +109,9 @@
                     {% endif %}
                     {{ headingText }}
                 </h2>
-    	    	{% set found = true %} 
+    	    	{% set found = true %}
     	   	{% endif %}
-    	{% endif %}	   	
+    	{% endif %}
 	{% endfor %}
-	
+
 {% endmacro %}
