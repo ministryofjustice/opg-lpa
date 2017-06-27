@@ -22,11 +22,6 @@ class Dob extends AbstractData
      */
     protected $date;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        self::loadValidatorMetadataCommon($metadata, null);
-    }
-
     protected static function loadValidatorMetadataCommon(ClassMetadata $metadata, $message)
     {
         // As there is only 1 property, include NotBlank as there is no point this object existing without it.
@@ -35,7 +30,7 @@ class Dob extends AbstractData
         ]);
 
         if ($message !== null) {
-            $lessThanOrEqualToToday->message = "must-be-less-than-or-equal-to-today";
+            $lessThanOrEqualToToday->message = $message;
         }
 
         $metadata->addPropertyConstraints('date', [
@@ -59,7 +54,6 @@ class Dob extends AbstractData
                 }
 
                 if (is_string($v)) {
-
                     //  Split the array into components
                     $dateArr = explode('-', $v);
 
@@ -86,7 +80,8 @@ class Dob extends AbstractData
                 }
 
                 //  The date is invalid so return '0' instead of null
-                //  This will allow the NotBlank validation to pass so we can display an appropriate date not valid message
+                //  This will allow the NotBlank validation to pass
+                //  so we can display an appropriate date not valid message
                 return '0';
         }
 

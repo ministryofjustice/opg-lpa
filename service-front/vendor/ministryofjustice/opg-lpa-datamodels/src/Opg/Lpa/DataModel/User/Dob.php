@@ -14,10 +14,10 @@ use RuntimeException;
  */
 class Dob extends BaseDob
 {
-    /**
-     * @var \DateTime A date of birth. The time component of the DateTime object should be ignored.
-     */
-    protected $date;
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        self::loadValidatorMetadataCommon($metadata, null);
+    }
 
     /**
      * @param string $property string Property name
@@ -27,7 +27,7 @@ class Dob extends BaseDob
     protected function map($property, $v)
     {
         $mapped = parent::map($property, $v);
-        if($mapped === null || $mapped === '0') {
+        if ($mapped === null || $mapped === '0') {
             throw new RuntimeException("Invalid date: $v. Date must exist and be in ISO-8601 format.");
         }
 
