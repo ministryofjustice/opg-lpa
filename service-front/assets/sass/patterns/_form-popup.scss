@@ -25,14 +25,16 @@
             padding-top: 0;
         }
 
-        .heading-medium {
-            &.reuse-details-heading {
-                display: block;
-
-                @include media(tablet) {
-                    margin-top: 0;
-                }
+        > .heading-medium {
+            @include media(tablet) {
+                margin-top: 0;
+                margin-bottom: 0;
             }
+        }
+
+        // For hiding in the popup on tablets and up
+        // Used for .heading-medium primarily
+        .popup-exclude {
             @include media(tablet) {
                 display: none;
             }
@@ -40,8 +42,6 @@
 
         &.reuse-details-form {
             .heading-medium {
-                display: block;
-
                 @include media(tablet) {
                     margin-top: 0;
                 }
