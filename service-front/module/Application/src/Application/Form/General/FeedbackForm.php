@@ -26,18 +26,23 @@ class FeedbackForm extends AbstractCsrfForm
             'options' => [
                 'value_options' => [
                     'very-satisfied' => [
+                        'label' => 'Very satisfied',
                         'value' => 'very-satisfied',
                     ],
                     'satisfied' => [
+                        'label' => 'Satisfied',
                         'value' => 'satisfied',
                     ],
                     'neither-satisfied-or-dissatisfied' => [
+                        'label' => 'Neither satisfied nor dissatisfied',
                         'value' => 'neither-satisfied-or-dissatisfied',
                     ],
                     'dissatisfied' => [
+                        'label' => 'Dissatisfied',
                         'value' => 'dissatisfied',
                     ],
                     'very-dissatisfied' => [
+                        'label' => 'Very dissatisfied',
                         'value' => 'very-dissatisfied',
                     ],
                 ],
@@ -61,6 +66,8 @@ class FeedbackForm extends AbstractCsrfForm
         ]);
 
         //  Add data to the input filter
+        $this->setUseInputFilterDefaults(false);
+
         $this->addToInputFilter([
             'name'          => 'rating',
             'error_message' => 'cannot-be-empty',
@@ -95,7 +102,7 @@ class FeedbackForm extends AbstractCsrfForm
             'required' => false,
             'validators' => [
                 [
-                    'name' => 'EmailAddress'
+                    'name' => 'Application\Form\Validator\EmailAddress'
                 ],
             ],
         ]);

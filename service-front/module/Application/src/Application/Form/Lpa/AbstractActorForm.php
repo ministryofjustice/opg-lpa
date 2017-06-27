@@ -42,11 +42,6 @@ abstract class AbstractActorForm extends AbstractLpaForm
                 unset($validation['dob.date']);
             }
 
-            if (array_key_exists('email', $dataForModel) && ($dataForModel['email'] == null) && $validation->offsetExists('email')) {
-                $validation['email-address'] = $validation['email'];
-                unset($validation['email']);
-            }
-
             if (array_key_exists('phone', $dataForModel) && ($dataForModel['phone'] == null) && $validation->offsetExists('phone')) {
                 $validation['phone-number'] = $validation['phone'];
                 unset($validation['phone']);

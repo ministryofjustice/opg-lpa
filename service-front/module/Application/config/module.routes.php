@@ -137,18 +137,6 @@ return [
                 ],
             ], // guidance
 
-            'guidance-non-twig' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/guide/v1[/:section]',
-                    'defaults' => [
-                        'controller' => 'General\GuidanceController',
-                        'action'     => 'indexNonTwig',
-                        'section'    => '',
-                    ],
-                ],
-            ], // guidance
-
             'enable-cookie' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [

@@ -30,8 +30,8 @@
 	* Process_Registering the LPA.md
 * Applicant
 	* People_Applicant.md
-* Correspondence address
-	* People_Correspondence address.md
+* Correspondent
+	* People_Correspondent.md
 * Fees and reductions
 	* Process_Fees and reductions.md
 * Glossary
