@@ -17,6 +17,10 @@
 
     {% if (peopleToNotify) %}
 
+        <h3 class="heading-medium flush--top">
+            The {% if peopleToNotify|length > 1 %}people{% else %}person{% endif %} to notify
+        </h3>
+
         <ul>
             {% for person in peopleToNotify %}
                 {% include 'application/people-to-notify/partials/people-to-notify.twig' with person %}
