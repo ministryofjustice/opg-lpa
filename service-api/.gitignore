@@ -13,3 +13,4 @@ vendor/bin
 node_modules/*
 bower_downloads/*
 local.php.old
+module/Application/tests/coverage/
