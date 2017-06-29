@@ -261,4 +261,24 @@ class Lpa extends AbstractData
 
         return $data;
     }
+
+    /**
+     * Perform a deep compare of this LPA against a supplied comparison
+     *
+     * @param $comparisonLpa
+     * @return bool
+     */
+    public function equals($comparisonLpa){
+        return $this == $comparisonLpa;
+    }
+
+    /**
+     * Perform a deep compare of this LPA's document against a supplied comparison ignoring the metadata properties
+     *
+     * @param $comparisonLpa
+     * @return bool
+     */
+    public function equalsIgnoreMetadata($comparisonLpa){
+        return $comparisonLpa !== null && $this->document == $comparisonLpa->document;
+    }
 }
