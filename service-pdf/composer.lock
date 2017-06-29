@@ -520,16 +520,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "2.2.8",
+            "version": "2.2.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "92905b4c21a3a8ba7be3e2e97ae5bd36086cf644"
+                "reference": "7c9fa125c63ae2dcb7cf0bc0e44422353959da5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/92905b4c21a3a8ba7be3e2e97ae5bd36086cf644",
-                "reference": "92905b4c21a3a8ba7be3e2e97ae5bd36086cf644",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/7c9fa125c63ae2dcb7cf0bc0e44422353959da5f",
+                "reference": "7c9fa125c63ae2dcb7cf0bc0e44422353959da5f",
                 "shasum": ""
             },
             "require": {
@@ -553,10 +553,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/2.2.8",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2266-day-month-leading-zeros",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-06-27T13:00:25+00:00"
+            "time": "2017-06-29T13:35:30+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
