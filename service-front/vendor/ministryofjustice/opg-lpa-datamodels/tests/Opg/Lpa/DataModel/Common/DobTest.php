@@ -67,6 +67,15 @@ class DobTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $mapped);
     }
 
+    public function testDateTimeMapZeroTime()
+    {
+        $dob = new TestableDob();
+        $expected = new \DateTime('01-12-1982 00:00:00');
+        $mapped = $dob->testDateMap('1982-12-01T00:00:00.000000+0000');
+
+        $this->assertEquals($expected, $mapped);
+    }
+
     public function testDateMapLeadingZeros()
     {
         $dob = new TestableDob();
