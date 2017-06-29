@@ -13,3 +13,4 @@ nbproject
 .project
 .settings
 local.php.old
+tests/coverage/
