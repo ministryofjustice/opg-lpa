@@ -29,10 +29,11 @@ class Dob extends AbstractData
 
         if (is_string($v)) {
             //  Split the array into components
+            $timeIndex = strpos($v, 'T');
             $dateArr = explode('-', $v);
             $timeArr = array('00', '00', '00.000000+0000');
-            $timeIndex = strpos($v, 'T');
             if ($timeIndex) {
+                $dateArr = explode('-', substr($v, 0, $timeIndex));
                 $timeArr = explode(':', substr($v, $timeIndex + 1));
             }
 
