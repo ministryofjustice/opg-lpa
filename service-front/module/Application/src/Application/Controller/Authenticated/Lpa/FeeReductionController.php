@@ -10,9 +10,6 @@ use Zend\Form\Element;
 
 class FeeReductionController extends AbstractLpaController
 {
-
-    protected $contentHeader = 'registration-partial.phtml';
-
     public function indexAction()
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeReductionForm');

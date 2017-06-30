@@ -29,11 +29,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             return $authenticated;
         }
 
-        # load content header in the layout if controller has a $contentHeader
-        if (isset($this->contentHeader)) {
-            $this->layout()->contentHeader = $this->contentHeader;
-        }
-
         //  Try to get the lpa for this controller - if we can't find one then redirect to the user dashboard
         $lpa = null;
 
