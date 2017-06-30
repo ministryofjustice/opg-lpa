@@ -7,7 +7,7 @@ return array(
     'version' => [
         'commit' => $commit,
         'cache' => ( !is_null($commit) ) ? abs( crc32( $commit ) ) : time(),
-        'tag' => getenv('OPG_LPA_FRONT_DOCKER_TAG')
+        'tag' => getenv('OPG_DOCKER_TAG'),
     ],
 
     'stack' => [
