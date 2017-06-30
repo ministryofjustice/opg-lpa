@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3eef56f3df3f02e58a4b5648125d944b",
+    "content-hash": "f2420dd12bf08fdb844c53b6e14ea9f0",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -548,16 +548,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "2.2.7",
+            "version": "2.2.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "460cb1d0f232b0e8bccb9b76bb8eaeb20163ef49"
+                "reference": "83aa7deafed4bb5d2718fa3e3743307746381873"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/460cb1d0f232b0e8bccb9b76bb8eaeb20163ef49",
-                "reference": "460cb1d0f232b0e8bccb9b76bb8eaeb20163ef49",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/83aa7deafed4bb5d2718fa3e3743307746381873",
+                "reference": "83aa7deafed4bb5d2718fa3e3743307746381873",
                 "shasum": ""
             },
             "require": {
@@ -581,10 +581,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/2.2.7",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2266-day-month-leading-zeros",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-06-12T15:32:22+00:00"
+            "time": "2017-06-29T14:27:27+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
