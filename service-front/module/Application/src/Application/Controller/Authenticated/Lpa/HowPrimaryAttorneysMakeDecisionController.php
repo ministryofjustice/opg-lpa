@@ -9,9 +9,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
 {
-
-    protected $contentHeader = 'creation-partial.phtml';
-
     public function indexAction()
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
