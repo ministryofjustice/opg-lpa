@@ -7,6 +7,7 @@ return array(
     'version' => [
         'commit' => $commit,
         'cache' => ( !is_null($commit) ) ? abs( crc32( $commit ) ) : time(),
+        'tag' => getenv('OPG_DOCKER_TAG'),
     ],
 
     'stack' => [
@@ -161,13 +162,13 @@ return array(
                         'name' => 'Office of the Public Guardian',
                         'address' => 'opg@lastingpowerofattorney.service.gov.uk',
                 ],
-                
+
                 'feedback' => [
                         'name' => 'User Feedback',
                         'address' => 'opg@lastingpowerofattorney.service.gov.uk',
                 ],
         ], // opg email sender
-        
+
     ], // email
 
 
@@ -215,7 +216,7 @@ return array(
         'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
         'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
-    
+
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gsi.gov.uk',
-    
+
 );
