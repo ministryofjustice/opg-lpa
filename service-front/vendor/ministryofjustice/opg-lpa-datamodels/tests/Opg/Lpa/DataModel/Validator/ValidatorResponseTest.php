@@ -1,8 +1,10 @@
 <?php
 
+namespace OpgTest\Lpa\DataModel\Validator;
+
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 
-class ValidatorResponseTest extends PHPUnit_Framework_TestCase {
+class ValidatorResponseTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Test that with no errors, hasErrors() returns false.

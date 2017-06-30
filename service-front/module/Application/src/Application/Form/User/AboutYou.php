@@ -3,6 +3,7 @@
 namespace Application\Form\User;
 
 use Application\Form\AbstractCsrfForm;
+use Opg\Lpa\DataModel\Common\Dob;
 use Zend\Form\FormInterface;
 use Zend\Validator\Between;
 use Zend\Validator\NotEmpty;
@@ -309,9 +310,9 @@ class AboutYou extends AbstractCsrfForm
             }
 
             // Ensure the date is in the past...
-            $date = new \DateTime("{$this->data['dob-date-year']}-{$this->data['dob-date-month']}-{$this->data['dob-date-day']}");
+            $date = Dob::parseDob("{$this->data['dob-date-year']}-{$this->data['dob-date-month']}-{$this->data['dob-date-day']}");
 
-            if ($date >= new \DateTime('today')) {
+            if (!($date instanceof \DateTime) || $date >= new \DateTime('today')) {
                 $this->setMessages(['dob-date-day' => ['invalid-date']]);
                 return parent::isValid() & false;
             }
