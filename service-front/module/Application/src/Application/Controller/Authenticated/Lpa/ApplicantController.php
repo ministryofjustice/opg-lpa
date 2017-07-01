@@ -30,6 +30,7 @@ class ApplicantController extends AbstractLpaController
                 // persist data
                 if ($postData['whoIsRegistering'] == Correspondence::WHO_DONOR) {
                     $applicants = Correspondence::WHO_DONOR;
+                    $existingValue = $lpa->document->correspondent->who;
                 } else {
                     if (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
                         $applicants = $form->getData()['attorneyList'];
@@ -38,9 +39,11 @@ class ApplicantController extends AbstractLpaController
                     }
                 }
 
-                // save applicant
-                if (!$this->getLpaApplicationService()->setWhoIsRegistering($lpaId, $applicants)) {
-                    throw new \RuntimeException('API client failed to set applicant for id: '.$lpaId);
+                // save applicant if the value has changed
+                if ($applicants != $lpa->document->whoIsRegistering) {
+                    if (!$this->getLpaApplicationService()->setWhoIsRegistering($lpaId, $applicants)) {
+                        throw new \RuntimeException('API client failed to set applicant for id: ' . $lpaId);
+                    }
                 }
 
                 return $this->moveToNextRoute();
