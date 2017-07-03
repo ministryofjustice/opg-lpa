@@ -239,7 +239,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         // Ensure that one (and only one) document was updated.
         // If not, something when wrong.
-        if( $result['nModified'] !== 1 ){
+        if( $result['nModified'] !== 0 && $result['nModified'] !== 1 ){
             throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
         }
         
