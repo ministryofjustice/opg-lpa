@@ -24,20 +24,30 @@ class InstructionsController extends AbstractLpaController
             $form->setData($postData);
 
             if ($form->isValid()) {
+                $data = $form->getData();
                 $lpaId = $lpa->id;
 
-                // persist data
-                if (!$this->getLpaApplicationService()->setInstructions($lpaId, $form->getData()['instruction'])) {
-                    throw new \RuntimeException('API client failed to set LPA instructions for id: ' . $lpaId);
+                // persist data if it has changed
+                if (is_null($lpa->document->instruction) || $data['instruction'] != $lpa->document->instruction) {
+                    if (!$this->getLpaApplicationService()->setInstructions($lpaId, $data['instruction'])) {
+                        throw new \RuntimeException('API client failed to set LPA instructions for id: ' . $lpaId);
+                    }
                 }
 
-                if (!$this->getLpaApplicationService()->setPreferences($lpaId, $form->getData()['preference'])) {
-                    throw new \RuntimeException('API client failed to set LPA preferences for id: ' . $lpaId);
+                if (is_null($lpa->document->preference) || $data['preference'] != $lpa->document->preference) {
+                    if (!$this->getLpaApplicationService()->setPreferences($lpaId, $data['preference'])) {
+                        throw new \RuntimeException('API client failed to set LPA preferences for id: ' . $lpaId);
+                    }
                 }
 
-                $this->getLpaApplicationService()->setMetaData($lpaId, [
-                    'instruction-confirmed' => true
-                ]);
+                if (!isset($lpa->metadata)
+                    || !isset($lpa->metadata['instruction-confirmed'])
+                    || $lpa->metadata['instruction-confirmed'] !== true) {
+
+                    $this->getLpaApplicationService()->setMetaData($lpaId, [
+                        'instruction-confirmed' => true
+                    ]);
+                }
 
                 return $this->moveToNextRoute();
             }
