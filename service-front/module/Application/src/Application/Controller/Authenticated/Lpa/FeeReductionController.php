@@ -17,19 +17,20 @@ class FeeReductionController extends AbstractLpaController
     {
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeReductionForm');
         $lpa = $this->getLpa();
+        $existingLpaPayment = $lpa->payment;
 
         //---
 
         // If a option has already been selected before...
-        if($lpa->payment instanceof Payment) {
+        if($existingLpaPayment instanceof Payment) {
 
-            if($lpa->payment->reducedFeeReceivesBenefits && $lpa->payment->reducedFeeAwardedDamages) {
+            if($existingLpaPayment->reducedFeeReceivesBenefits && $existingLpaPayment->reducedFeeAwardedDamages) {
                 $reductionOptionsValue = 'reducedFeeReceivesBenefits';
             }
-            elseif($lpa->payment->reducedFeeUniversalCredit) {
+            elseif($existingLpaPayment->reducedFeeUniversalCredit) {
                 $reductionOptionsValue = 'reducedFeeUniversalCredit';
             }
-            elseif($lpa->payment->reducedFeeLowIncome) {
+            elseif($existingLpaPayment->reducedFeeLowIncome) {
                 $reductionOptionsValue = 'reducedFeeLowIncome';
             }
             else {
@@ -143,11 +144,19 @@ class FeeReductionController extends AbstractLpaController
                         break;
                 }
 
-                // calculate payment amount and set payment in LPA
-                Calculator::calculate($lpa);
+                //  If there is an existing payment and the selected values have not changed then save the LPA to update
+                if (is_null($existingLpaPayment)
+                    || $existingLpaPayment->reducedFeeReceivesBenefits != $lpa->payment->reducedFeeReceivesBenefits
+                    || $existingLpaPayment->reducedFeeAwardedDamages != $lpa->payment->reducedFeeAwardedDamages
+                    || $existingLpaPayment->reducedFeeLowIncome != $lpa->payment->reducedFeeLowIncome
+                    || $existingLpaPayment->reducedFeeUniversalCredit != $lpa->payment->reducedFeeUniversalCredit) {
 
-                if(!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                    throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in FeeReductionController');
+                    // calculate payment amount and set payment in LPA
+                    Calculator::calculate($lpa);
+
+                    if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                        throw new \RuntimeException('API client failed to set payment details for id: ' . $lpa->id . ' in FeeReductionController');
+                    }
                 }
 
                 return $this->moveToNextRoute();
