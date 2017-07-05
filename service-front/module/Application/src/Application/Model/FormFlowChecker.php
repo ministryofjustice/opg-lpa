@@ -5,6 +5,7 @@ namespace Application\Model;
 use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 
@@ -59,6 +60,7 @@ class FormFlowChecker extends StateChecker
         'lpa/checkout/pay/response'                     => 'isPaymentAccessible',
         'lpa/checkout/confirm'                          => 'isPaymentAccessible',
         'lpa/checkout/worldpay'                         => 'isPaymentAccessible',
+        'lpa/checkout/worldpay/return'                  => 'isPaymentAccessible',
         'lpa/checkout/worldpay/return/success'          => 'isOnlinePaymentSuccessAccessible',
         'lpa/checkout/worldpay/return/failure'          => 'isOnlinePaymentFailureAccessible',
         'lpa/checkout/worldpay/return/cancel'           => 'isOnlinePaymentCancelAccessible',
@@ -147,6 +149,11 @@ class FormFlowChecker extends StateChecker
      */
     public function getNearestAccessibleRoute($currentRouteName, $param=null)
     {
+        //  If there is no LPA then just return to the dashboard
+        if (!$this->lpa instanceof Lpa) {
+            return 'user/dashboard';
+        }
+
         // check if route exists in the mapping table.
         if(!array_key_exists($currentRouteName, static::$accessibleFunctionMap)) {
             throw new \RuntimeException('Check() received an undefined route: '. $currentRouteName);
@@ -629,7 +636,7 @@ class FormFlowChecker extends StateChecker
 
     private function isOnlinePaymentSuccessAccessible()
     {
-        if(($this->lpa->payment instanceof Payment) &&
+        if($this->isPaymentAccessible() === true &&
                 ($this->lpa->payment->method == 'card')) {
             return true;
         }
@@ -640,7 +647,7 @@ class FormFlowChecker extends StateChecker
 
     private function isOnlinePaymentFailureAccessible()
     {
-        if(($this->lpa->payment instanceof Payment) &&
+        if($this->isPaymentAccessible() === true &&
                 ($this->lpa->payment->method == 'card')) {
             return true;
         }
@@ -651,18 +658,7 @@ class FormFlowChecker extends StateChecker
 
     private function isOnlinePaymentCancelAccessible()
     {
-        if(($this->lpa->payment instanceof Payment) &&
-                ($this->lpa->payment->method == 'card')) {
-            return true;
-        }
-        else {
-            return 'lpa/checkout';
-        }
-    }
-
-    private function isOnlinePaymentPendingAccessible()
-    {
-        if(($this->lpa->payment instanceof Payment) &&
+        if($this->isPaymentAccessible() === true &&
                 ($this->lpa->payment->method == 'card')) {
             return true;
         }
