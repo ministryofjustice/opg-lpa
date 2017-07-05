@@ -16,7 +16,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Application\Model\Service\Lpa\Metadata;
-use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 
 /**
@@ -216,36 +215,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
     }
 
-    public function testRoutePrimaryAttorneyEditTrust()
-    {
-        $this->addPrimaryAttorneyTrust();
-        $this->assertEquals('lpa/primary-attorney/edit-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyEditTrustFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyDeleteTrust()
-    {
-        $this->addPrimaryAttorneyTrust();
-        $this->assertEquals('lpa/primary-attorney/delete-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyDeleteTrustFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
-    }
-
     public function testRouteHowPrimaryAttorneysMakeDecision()
     {
         $this->addPrimaryAttorney(2);
@@ -354,44 +323,6 @@ class FormFlowCheckerTest extends AbstractHttpControllerTestCase
 
         $this->addPrimaryAttorney(2);
         $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
-    }
-
-    public function testRouteReplacementAttorneyEditTrust()
-    {
-        $this->addReplacementAttorneyTrust();
-        $this->assertEquals('lpa/replacement-attorney/edit-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-    }
-
-    public function testRouteReplacementAttorneyEditTrustFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-    }
-
-    public function testRouteReplacementAttorneyDeleteTrust()
-    {
-        $this->addReplacementAttorneyTrust();
-        $this->assertEquals('lpa/replacement-attorney/delete-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-    }
-
-    public function testRouteReplacementAttorneyDeleteTrustFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
     }
 
     public function testRouteWhenReplacementAttorneyStepIn()
