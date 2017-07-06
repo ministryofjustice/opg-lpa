@@ -2,16 +2,16 @@
 namespace OpgTest\Lpa\Pdf\Service;
 
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\Pdf\Service\Forms\Lp1;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\Pdf\Service\Forms\Cs1;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
+use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Lpa\Elements\Address;
+use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 
 class Lp1fTest extends BaseClass

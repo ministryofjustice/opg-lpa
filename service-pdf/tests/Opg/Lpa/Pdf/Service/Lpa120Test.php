@@ -3,9 +3,9 @@ namespace OpgTest\Lpa\Pdf\Service;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Elements\Dob;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 
 class Lpa120Test extends BaseClass
 {
