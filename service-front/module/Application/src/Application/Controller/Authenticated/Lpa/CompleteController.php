@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Common\Name;
 use Zend\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController

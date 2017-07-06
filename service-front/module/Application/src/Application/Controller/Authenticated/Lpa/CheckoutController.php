@@ -5,7 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Zend\Http\Response as HttpResponse;

@@ -2,7 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel\User;
 
-use Opg\Lpa\DataModel\User\Dob;
+use Opg\Lpa\DataModel\Common\Dob;
 
 class TestableDob extends Dob
 {
