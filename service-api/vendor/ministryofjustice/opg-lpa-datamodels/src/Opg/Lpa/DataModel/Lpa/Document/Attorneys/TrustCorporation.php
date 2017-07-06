@@ -48,9 +48,9 @@ class TrustCorporation extends AbstractAttorney
         ]);
     }
 
-    public function toArray()
+    public function toArray($dateFormat = 'string')
     {
-        return array_merge(parent::toArray(), [
+        return array_merge(parent::toArray($dateFormat), [
             'type' => 'trust'
         ]);
     }

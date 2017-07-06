@@ -31,7 +31,8 @@ class Dob extends AbstractData
             //  Split the array into components
             $timeIndex = strpos($v, 'T');
             $dateArr = explode('-', $v);
-            $timeArr = array('00', '00', '00.000000+0000');
+            $defaultTimeArr = array('00', '00', '00.000000+0000');
+            $timeArr = $defaultTimeArr;
             if ($timeIndex) {
                 $dateArr = explode('-', substr($v, 0, $timeIndex));
                 $timeArr = explode(':', substr($v, $timeIndex + 1));
@@ -54,7 +55,19 @@ class Dob extends AbstractData
                 $dateFormat = 'Y-m-d H:i:s.uO';
                 $dateIn = implode('-', $dateArr) . ' ' . implode(':', $timeArr);
                 $parsedDate = DateTime::createFromFormat($dateFormat, $dateIn);
+                if ($parsedDate instanceof DateTime && strpos($dateIn, $parsedDate->format($dateFormat)) === 0) {
+                    return $parsedDate;
+                }
 
+                //  Try again with ISO-8601 format
+                $parsedDate = DateTime::createFromFormat('Y-m-d\TH:i:s.u\Z', $v);
+                if ($parsedDate !== false && $parsedDate instanceof DateTime) {
+                    return $parsedDate;
+                }
+
+                //  Finally try with default time
+                $dateIn = implode('-', $dateArr) . ' ' . implode(':', $defaultTimeArr);
+                $parsedDate = DateTime::createFromFormat($dateFormat, $dateIn);
                 if ($parsedDate instanceof DateTime && strpos($dateIn, $parsedDate->format($dateFormat)) === 0) {
                     return $parsedDate;
                 }
@@ -74,21 +87,16 @@ class Dob extends AbstractData
      */
     protected $date;
 
-    protected static function loadValidatorMetadataCommon(ClassMetadata $metadata, $message)
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         // As there is only 1 property, include NotBlank as there is no point this object existing without it.
-        $lessThanOrEqualToToday = new Assert\LessThanOrEqual([
-            'value' => new \DateTime('today')
-        ]);
-
-        if ($message !== null) {
-            $lessThanOrEqualToToday->message = $message;
-        }
-
         $metadata->addPropertyConstraints('date', [
             new Assert\NotBlank,
             new Assert\Custom\DateTimeUTC,
-            $lessThanOrEqualToToday,
+            new Assert\LessThanOrEqual([
+                'value' => new \DateTime('today'),
+                'message' => 'must-be-less-than-or-equal-to-today'
+            ]),
         ]);
     }
 
