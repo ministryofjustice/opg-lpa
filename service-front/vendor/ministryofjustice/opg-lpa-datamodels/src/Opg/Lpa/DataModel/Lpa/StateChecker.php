@@ -103,10 +103,6 @@ class StateChecker
 
         $lpa = $this->getLpa();
 
-        if (!$lpa->payment instanceof Payment) {
-            return false;
-        }
-
         return $this->isEligibleForFeeReduction();
     }
 
@@ -217,8 +213,8 @@ class StateChecker
         // AND have > 0 Primary Attorneys
         $complete = $complete && $this->lpaHasPrimaryAttorney();
 
-        // AND one of these must not be null...
-        $complete = $complete && $this->lpa->document->instruction !== null || $this->lpa->document->preference !== null;
+        // AND instructions or preferences to not be null (they can be blank)...
+        $complete = $complete && $this->hasInstructionOrPreference();
 
         // AND if there is > 1 Primary Attorney
         if ($this->lpaHasMultiplePrimaryAttorneys()) {
@@ -267,6 +263,12 @@ class StateChecker
     protected function lpaHasCreated()
     {
         return ($this->lpaHasFinishedCreation() && $this->lpa->createdAt !== null);
+    }
+
+    protected function hasInstructionOrPreference()
+    {
+        return ($this->lpaHasCertificateProvider()
+            && ($this->lpa->document->instruction !== null || $this->lpa->document->preference !== null));
     }
 
     protected function lpaHasPeopleToNotify($index = null)
