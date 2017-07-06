@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ede8fac3ac8e64c0f55b7c249855d3b8",
+    "content-hash": "4f09a83444f79e44850de98dc347d109",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -520,20 +520,21 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "2.2.13",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "83aa7deafed4bb5d2718fa3e3743307746381873"
+                "reference": "c26acd4d7d01ab7413b3393f308647c9fbf22ee2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/83aa7deafed4bb5d2718fa3e3743307746381873",
-                "reference": "83aa7deafed4bb5d2718fa3e3743307746381873",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/c26acd4d7d01ab7413b3393f308647c9fbf22ee2",
+                "reference": "c26acd4d7d01ab7413b3393f308647c9fbf22ee2",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "1.2.*",
+                "ext-mongo": ">=1.4.5",
                 "php": ">=5.5.9",
                 "symfony/intl": "2.6.*",
                 "symfony/validator": "2.6.*"
@@ -553,10 +554,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2266-day-month-leading-zeros",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/3.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-06-29T14:27:27+00:00"
+            "time": "2017-07-06T11:52:44+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

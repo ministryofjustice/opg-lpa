@@ -224,6 +224,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                     }
                 } elseif (is_array($value)) {
                     $value = implode(', ', array_map(function ($v) {
+                        if(is_string($v)) {
+                            return $v;
+                        }
                         return get_class($v);
                     }, $value));
                 }
@@ -244,6 +247,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
+     * @param string $dateFormat
      * @return array
      */
     public function toArray($dateFormat = 'string')

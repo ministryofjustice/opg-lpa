@@ -3,7 +3,10 @@
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Elements;
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -17,7 +20,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Donor extends AbstractData
 {
     /**
-     * @var Elements\Name Their name.
+     * @var Name Their name.
      */
     protected $name;
 
@@ -27,17 +30,17 @@ class Donor extends AbstractData
     protected $otherNames;
 
     /**
-     * @var Elements\Address Their postal address.
+     * @var Address Their postal address.
      */
     protected $address;
 
     /**
-     * @var Elements\Dob Their date of birth.
+     * @var Dob Their date of birth.
      */
     protected $dob;
 
     /**
-     * @var Elements\EmailAddress Their email address.
+     * @var EmailAddress Their email address.
      */
     protected $email;
 
@@ -51,7 +54,7 @@ class Donor extends AbstractData
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
+                'type' => '\Opg\Lpa\DataModel\Common\Name'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -69,7 +72,7 @@ class Donor extends AbstractData
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address'
+                'type' => '\Opg\Lpa\DataModel\Common\Address'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -77,14 +80,14 @@ class Donor extends AbstractData
         $metadata->addPropertyConstraints('dob', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Dob'
+                'type' => '\Opg\Lpa\DataModel\Common\Dob'
             ]),
             new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('email', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
+                'type' => '\Opg\Lpa\DataModel\Common\EmailAddress'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -108,13 +111,13 @@ class Donor extends AbstractData
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Elements\Name ? $v : new Elements\Name($v));
+                return ($v instanceof Name ? $v : new Name($v));
             case 'address':
-                return ($v instanceof Elements\Address ? $v : new Elements\Address($v));
+                return ($v instanceof Address ? $v : new Address($v));
             case 'dob':
-                return (($v instanceof Elements\Dob || is_null($v)) ? $v : new Elements\Dob($v));
+                return (($v instanceof Dob || is_null($v)) ? $v : new Dob($v));
             case 'email':
-                return (($v instanceof Elements\EmailAddress || is_null($v)) ? $v : new Elements\EmailAddress($v));
+                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
         }
 
         return parent::map($property, $v);

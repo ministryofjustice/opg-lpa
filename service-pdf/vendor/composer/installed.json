@@ -2697,21 +2697,22 @@
     },
     {
         "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "2.2.13",
-        "version_normalized": "2.2.13.0",
+        "version": "3.0.0",
+        "version_normalized": "3.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "83aa7deafed4bb5d2718fa3e3743307746381873"
+            "reference": "c26acd4d7d01ab7413b3393f308647c9fbf22ee2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/83aa7deafed4bb5d2718fa3e3743307746381873",
-            "reference": "83aa7deafed4bb5d2718fa3e3743307746381873",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/c26acd4d7d01ab7413b3393f308647c9fbf22ee2",
+            "reference": "c26acd4d7d01ab7413b3393f308647c9fbf22ee2",
             "shasum": ""
         },
         "require": {
             "egulias/email-validator": "1.2.*",
+            "ext-mongo": ">=1.4.5",
             "php": ">=5.5.9",
             "symfony/intl": "2.6.*",
             "symfony/validator": "2.6.*"
@@ -2720,7 +2721,7 @@
             "phpspec/phpspec": "~2.0",
             "phpunit/phpunit": "4.3.*"
         },
-        "time": "2017-06-29T14:27:27+00:00",
+        "time": "2017-07-06T11:52:44+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2733,7 +2734,7 @@
         ],
         "description": "PHP data models that represent a Lasting Power of Attorney",
         "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2266-day-month-leading-zeros",
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/3.0.0",
             "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
         }
     }
