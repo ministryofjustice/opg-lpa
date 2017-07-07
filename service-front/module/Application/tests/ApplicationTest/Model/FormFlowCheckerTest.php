@@ -1428,6 +1428,22 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
     }
 
+    public function testBackToFormAccessNAResponses()
+    {
+        //  This test is to access the NA responses in the returnToWhenReplacementAttorneyStepIn and returnToHowReplacementAttorneysMakeDecision functions
+        $this->setLpaTypeHW()
+             ->setLpaDonor()
+             ->setLpaLifeSustainingTreatment()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionDepends()
+             ->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+    }
+
     /*
      * ####################################
      * #### LPA set up functions below ####
