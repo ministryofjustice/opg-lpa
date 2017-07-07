@@ -246,6 +246,12 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function toArray($dateFormat = 'string')
     {
+        // @codeCoverageIgnoreStart
+        if ($dateFormat == 'mongo' && !class_exists('\MongoDate')) {
+            throw new InvalidArgumentException('You not have the PHP Mongo extension installed');
+        }
+        // @codeCoverageIgnoreEnd
+
         $values = get_object_vars($this);
 
         foreach ($values as $k => $v) {
