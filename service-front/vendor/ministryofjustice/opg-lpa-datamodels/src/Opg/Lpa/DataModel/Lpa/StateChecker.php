@@ -101,8 +101,6 @@ class StateChecker
             return false;
         }
 
-        $lpa = $this->getLpa();
-
         return $this->isEligibleForFeeReduction();
     }
 
