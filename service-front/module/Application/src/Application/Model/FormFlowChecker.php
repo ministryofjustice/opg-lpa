@@ -110,7 +110,7 @@ class FormFlowChecker extends StateChecker
         'lpa/primary-attorney/delete'                   => 'lpa/primary-attorney',
         'lpa/primary-attorney/add-trust'                => 'lpa/primary-attorney',
         'lpa/how-primary-attorneys-make-decision'       => 'lpa/replacement-attorney',
-        'lpa/replacement-attorney'                      => ['lpa/when-replacement-attorney-step-in', 'lpa/how-replacement-attorneys-make-decision', 'lpa/how-replacement-attorneys-make-decision', 'lpa/certificate-provider'],
+        'lpa/replacement-attorney'                      => ['lpa/when-replacement-attorney-step-in', 'lpa/how-replacement-attorneys-make-decision', 'lpa/certificate-provider'],
         'lpa/replacement-attorney/add'                  => 'lpa/replacement-attorney',
         'lpa/replacement-attorney/edit'                 => 'lpa/replacement-attorney',
         'lpa/replacement-attorney/delete'               => 'lpa/replacement-attorney',

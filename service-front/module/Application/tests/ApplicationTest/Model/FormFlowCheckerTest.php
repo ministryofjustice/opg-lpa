@@ -48,6 +48,68 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
      */
     private $lpaRoutes = [];
 
+    /**
+     * Next route
+     *
+     * @var array
+     */
+    private $nextRouteDestinations = [
+        'lpa-type-no-id'                                => 'lpa/donor',
+        'lpa/form-type'                                 => 'lpa/donor',
+        'lpa/donor'                                     => [
+            'lpa/when-lpa-starts',
+            'lpa/life-sustaining'
+        ],
+        'lpa/donor/add'                                 => 'lpa/donor',
+        'lpa/donor/edit'                                => 'lpa/donor',
+        'lpa/when-lpa-starts'                           => 'lpa/primary-attorney',
+        'lpa/life-sustaining'                           => 'lpa/primary-attorney',
+        'lpa/primary-attorney'                          => [
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney'
+        ],
+        'lpa/primary-attorney/add'                      => 'lpa/primary-attorney',
+        'lpa/primary-attorney/edit'                     => 'lpa/primary-attorney',
+        'lpa/primary-attorney/delete'                   => 'lpa/primary-attorney',
+        'lpa/primary-attorney/add-trust'                => 'lpa/primary-attorney',
+        'lpa/how-primary-attorneys-make-decision'       => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney'                      => [
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider'
+        ],
+        'lpa/replacement-attorney/add'                  => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney/edit'                 => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney/delete'               => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney/add-trust'            => 'lpa/replacement-attorney',
+        'lpa/when-replacement-attorney-step-in'         => [
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider'
+        ],
+        'lpa/how-replacement-attorneys-make-decision'   => 'lpa/certificate-provider',
+        'lpa/certificate-provider'                      => 'lpa/people-to-notify',
+        'lpa/certificate-provider/add'                  => 'lpa/certificate-provider',
+        'lpa/certificate-provider/edit'                 => 'lpa/certificate-provider',
+        'lpa/people-to-notify'                          => 'lpa/instructions',
+        'lpa/people-to-notify/add'                      => 'lpa/people-to-notify',
+        'lpa/people-to-notify/edit'                     => 'lpa/people-to-notify',
+        'lpa/people-to-notify/delete'                   => 'lpa/people-to-notify',
+        'lpa/instructions'                              => 'lpa/applicant',
+        'lpa/applicant'                                 => 'lpa/correspondent',
+        'lpa/correspondent'                             => 'lpa/who-are-you',
+        'lpa/correspondent/edit'                        => 'lpa/correspondent',
+        'lpa/who-are-you'                               => 'lpa/repeat-application',
+        'lpa/repeat-application'                        => 'lpa/fee-reduction',
+        'lpa/fee-reduction'                             => 'lpa/checkout',
+        'lpa/payment'                                   => 'lpa/payment/summary',
+        'lpa/payment/summary'                           => 'lpa/complete',
+        'lpa/checkout/cheque'                           => 'lpa/complete',
+        'lpa/checkout/confirm'                          => 'lpa/complete',
+        'lpa/checkout/pay/response'                     => 'lpa/complete',
+        'lpa/checkout/worldpay/return/success'          => 'lpa/complete',
+
+    ];
+
     protected function setUp()
     {
         $serviceManager = Bootstrap::getServiceManager();
@@ -1074,6 +1136,304 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testNextRoutesForAllRoutes()
+    {
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            //  Based on this route determine which route should come next
+            $expectedRoute = $lpaRoute;
+
+            if (array_key_exists($lpaRoute, $this->nextRouteDestinations)) {
+                $expectedRoute = $this->nextRouteDestinations[$lpaRoute];
+
+                //  If the expected route is an array then just set the expected route back to the lpaRoute value
+                //  We will check the permutations of array values in the next tests
+                if (is_array($expectedRoute)) {
+                    $expectedRoute = $lpaRoute;
+                }
+            }
+
+            $this->assertEquals($expectedRoute, $this->checker->nextRoute($lpaRoute));
+        }
+    }
+
+    public function testNextRoutesFromDonorToWhenLpaStarts()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor();
+
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->nextRoute('lpa/donor'));
+    }
+
+    public function testNextRoutesFromDonorToLifeSustainingTreatment()
+    {
+        //  Set up the LPA
+        $this->setLpaTypeHW()
+             ->setLpaDonor();
+
+        $this->assertEquals('lpa/life-sustaining', $this->checker->nextRoute('lpa/donor'));
+    }
+
+    public function testNextRoutesFromPrimaryAttorneysToHowMakeDecisions()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney();
+
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->nextRoute('lpa/primary-attorney'));
+    }
+
+    public function testNextRoutesFromPrimaryAttorneysToReplacementAttorneys()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->addPrimaryAttorney()
+             ->setLpaStartsWhenNoCapacity();
+
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->nextRoute('lpa/primary-attorney'));
+    }
+
+    public function testNextRoutesFromReplacementAttorneysToWhenStepIn()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney();
+
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->nextRoute('lpa/replacement-attorney'));
+    }
+
+    public function testNextRoutesFromReplacementAttorneysToHowMakeDecisions()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney();
+
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->nextRoute('lpa/replacement-attorney'));
+    }
+
+    public function testNextRoutesFromReplacementAttorneysToCertificateProvider()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney();
+
+        $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/replacement-attorney'));
+    }
+
+    public function testNextRoutesFromWhenStepInToHowMakeDecisions()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
+    }
+
+    public function testNextRoutesFromWhenStepInToCertificateProvider()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+
+        $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
+    }
+
+    public function testBackToFormPF()
+    {
+        //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
+        //  and keep checking the back to form result
+
+        //  Check for LPA type
+        $this->assertEquals('lpa/form-type', $this->checker->backToForm());
+
+        //  Check for donor
+        $this->setLpaTypePF()
+             ->setLpaDonor();
+        $this->assertEquals('lpa/donor', $this->checker->backToForm());
+
+        //  Check for when LPA starts
+        $this->setLpaStartsWhenNoCapacity();
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->backToForm());
+
+        //  Check for primary attorney
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->backToForm());
+
+        //  Check for how primary attorneys make decisions
+        $this->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for replacement attorney
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for certificate provider
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
+
+        //  Check for people to notify
+        $this->addPersonToNotify();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
+
+        //  Check for instructions and preferences
+        $this->setInstructons();
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+
+        //  Check for applicant
+        $this->setApplicant();
+        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
+
+        //  Check for correspondent
+        $this->setCorrespondent();
+        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
+
+        //  Check for who are you
+        $this->setWhoAreYou();
+        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
+
+        //  Check for repeat application
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
+
+        //  Check for fee reduction
+        $this->lpa->payment = new Payment();    //  Use a fully unpopulated payment object to get to the fee reduction screen
+        $this->assertEquals('lpa/fee-reduction', $this->checker->backToForm());
+
+        //  Check for checkout
+        $this->setPayment();
+        $this->assertEquals('lpa/checkout', $this->checker->backToForm());
+
+        //  Check for view docs
+        $this->setLpaCompleted();
+        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
+    }
+
+    public function testBackToFormHW()
+    {
+        //  Gradually build up a H&W LPA (as would happen if it was being filled in online)
+        //  and keep checking the back to form result
+
+        //  Check for LPA type
+        $this->assertEquals('lpa/form-type', $this->checker->backToForm());
+
+        //  Check for donor
+        $this->setLpaTypeHW()
+             ->setLpaDonor();
+        $this->assertEquals('lpa/donor', $this->checker->backToForm());
+
+        //  Check for when life sustaining treatment
+        $this->setLpaLifeSustainingTreatment();
+        $this->assertEquals('lpa/life-sustaining', $this->checker->backToForm());
+
+        //  Check for primary attorney
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->backToForm());
+
+        //  Check for how primary attorneys make decisions
+        $this->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for replacement attorney
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for certificate provider
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
+
+        //  Check for people to notify
+        $this->addPersonToNotify();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
+
+        //  Check for instructions and preferences
+        $this->setInstructons();
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+
+        //  Check for applicant
+        $this->setApplicant();
+        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
+
+        //  Check for correspondent
+        $this->setCorrespondent();
+        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
+
+        //  Check for who are you
+        $this->setWhoAreYou();
+        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
+
+        //  Check for repeat application
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
+
+        //  Check for fee reduction
+        $this->lpa->payment = new Payment();    //  Use a fully unpopulated payment object to get to the fee reduction screen
+        $this->assertEquals('lpa/fee-reduction', $this->checker->backToForm());
+
+        //  Check for checkout
+        $this->setPayment();
+        $this->assertEquals('lpa/checkout', $this->checker->backToForm());
+
+        //  Check for view docs
+        $this->setLpaCompleted();
+        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
+    }
+
+    /*
+     * ####################################
+     * #### LPA set up functions below ####
+     * ####################################
+     */
+
     private function setLpaTypePF()
     {
         $this->lpa->document->type = Document::LPA_TYPE_PF;
@@ -1277,6 +1637,10 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
 
     private function setPayment()
     {
+        if (!$this->lpa->payment instanceof Payment) {
+            $this->lpa->payment = new Payment();
+        }
+
         $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $this->lpa->payment->reference = "PAYMENT RECEIVED";
 
