@@ -723,17 +723,7 @@ class FormFlowChecker extends StateChecker
         return ($this->lpaHasPrimaryAttorney() && (count($this->lpa->document->primaryAttorneys) == 1));
     }
 
-    protected function lpaHasNoPrimaryAttorney()
-    {
-        return (count($this->lpa->document->primaryAttorneys)==0);
-    }
-
 ######################## return functions #####################
-
-    private function returnToNewLpa()
-    {
-        return true;
-    }
 
     private function returnToFormType()
     {
