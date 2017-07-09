@@ -61,7 +61,10 @@
         </div>
     </div>
 
-    <p><a href="{{ nextRoute }}" class="button">Continue</a></p>
+    <div class="form-group">
+        <a href="{{ nextRoute }}" class="button">Continue</a>
+        {{ goToFinalCheckLink(lpa) }}
+    </div>
 
     {% else %}
     <div class="accordion-info">
