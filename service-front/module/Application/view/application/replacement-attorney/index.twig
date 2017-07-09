@@ -67,11 +67,10 @@
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
 	    {{ formElement(form.getCsrf) }}
-
-	    <div class="form-group">
-	    	<input type="submit" name="save" value="Save and continue" class="button divorced">
-	    </div>
-
+		<div class="form-group">
+            <input type="submit" name="save" value="Save and continue" class="button">
+            {{ goToFinalCheckLink(lpa) }}
+		</div>
     {{ form().closeTag|raw }}
 
 </li>
