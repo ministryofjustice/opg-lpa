@@ -22,9 +22,9 @@ Talk to the people before you name them and explain that:
 
 ## How people are notified
 
-Just before you apply to register your LPA, you must send each of the people to notify a form (LP3) to let them know about it. If your attorneys apply to register your LPA, they must do the same. You can download this form when you apply to register the LPA with this service.
+When you apply to register your LPA, you must also send each of the people to notify a form (LP3) to let them know about it. If your attorneys apply to register your LPA, they must do the same. The form sets out reasons why people can object to the registration of an LPA and how to object.
 
-The form sets out reasons why people can object and how to object.
+You'll be able to download this form when you've completed the registration section in this online service. You'll see it on the same page as the completed LPA form itself. You should post the form to notify people and the LPA form at the same time.
 
 ## Where there are no concerns
 
