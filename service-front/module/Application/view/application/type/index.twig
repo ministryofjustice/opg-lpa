@@ -14,14 +14,20 @@
 {# Set form fields variables #}
 {% set type = form.get('type') %}
 
-{% if not isChangeAllowed %}
-{{ type.setAttributes({'disabled': 'disabled'}) ? '' }}
-{% endif %}
-
 {# form fields config #}
 {{ type.setOptions({
-    label_attributes: {'class': 'block-label'}
+    label_attributes: {
+        'class': 'block-label'
+    }
 }) ? ''}}
+
+{# Disabling the radio buttons when not allowed to change #}
+{% if not isChangeAllowed %}
+{{ type.setAttributes({'disabled': 'disabled'}) ? '' }}
+{{ type.setOptions({
+    label_attributes: {'class': 'block-label disabled'}
+}) ? ''}}
+{% endif %}
 
 <li id="lpa-type-section" class="section current">
 

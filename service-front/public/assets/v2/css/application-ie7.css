@@ -2122,8 +2122,10 @@ input[type=number] {
   margin-bottom: 0.3125em;
   margin-top: 1.05263em; }
 
-[disabled="disabled"] {
-  opacity: .5; }
+[disabled="disabled"],
+.disabled {
+  opacity: .5 !important;
+  cursor: default !important; }
 
 .form-date {
   margin-bottom: 30px;
