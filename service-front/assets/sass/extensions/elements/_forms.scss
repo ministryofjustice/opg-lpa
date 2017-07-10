@@ -1,8 +1,10 @@
 // Forms
 // ==========================================================================
 
-[disabled="disabled"] {
-    opacity: .5;
+[disabled="disabled"],
+.disabled {
+    opacity: .5 !important;
+    cursor: default !important;
 }
 
 .form-date {
