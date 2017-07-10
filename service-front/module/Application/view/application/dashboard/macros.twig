@@ -48,7 +48,7 @@
                     <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
                 </div>
                 <div class="lpa-manage">
-                    {% if not shortList %}
+                    {% if not shortList and lpa.progress != 'Started' %}
                     <details>
                         <summary>
                             <span class="summary">Manage</span>
@@ -56,13 +56,10 @@
                     {% endif %}
                         <div>
                             <ul>
-                                {% if (lpa.progress == 'Completed' or lpa.progress == 'Created') %}
+                                {% if lpa.progress != 'Started' %}
                                     <li>
                                         <a href="/lpa/{{ lpa.id }}/date-check">Check <span class="extra-text">signing</span> dates</a>
                                     </li>
-                                {% endif %}
-
-                                {% if lpa.progress != 'Started' %}
                                     <li>
                                         <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span class="extra-text">LPA</span> details</a>
                                     </li>
@@ -73,7 +70,7 @@
                                 </li>
                             </ul>
                         </div>
-                    {% if not shortList %}
+                    {% if not shortList and lpa.progress != 'Started' %}
                     </details>
                     {% endif %}
                 </div>
