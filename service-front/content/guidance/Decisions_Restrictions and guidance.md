@@ -1,18 +1,48 @@
-# Instructions and preferences
+# Preferences and instructions
 
-You can leave instructions and preferences for your attorneys to direct and guide the way they act, but you don't have to. If you leave this blank, your attorneys will be free to make decisions they think are right.
+You can leave preferences and instructions for your attorneys to direct and guide the way they act, but you don't have to. If you leave this blank, your attorneys will be free to make decisions they think are right.
 
-Complicated or badly written instructions and preferences can make an LPA unworkable. The Office of the Public Guardian (OPG) might not register it or the Court of Protection might need to change it. If it goes to the court, the instructions will be 'severed', which means removed from the LPA. This can take a long time.
+Complicated or badly written preferences and instructions can make an LPA unworkable. The Office of the Public Guardian (OPG) might not register it or the Court of Protection might need to change it. If it goes to the court, the instructions will be 'severed', which means removed from the LPA. This can take a long time.
 
 If you're not sure about what you can put in this section of your LPA, you might want to get legal advice.
+
+### Preferences: definition
+
+This means things you'd like your attorneys to think about when acting under your LPA: your wishes, beliefs and values. Your attorneys don't have to follow this guidance but they should keep it in mind when making decisions for you.
 
 ### Instructions: definition
 
 These are things your attorneys must or must not do when making decisions for you.
 
-### Preferences: definition
 
-This means things you'd like your attorneys to think about when acting under your LPA: your wishes, beliefs and values. Your attorneys don't have to follow this guidance but they should keep it in mind when making decisions for you.
+## Preferences
+
+Avoid words such as 'must' and 'shall'. Instead use words such as 'prefer' and 'would like', so it is clear that you are giving your attorneys advice but not instructions. If you definitely want your attorneys to do something, include it in your instructions.
+
+### Property and financial affairs LPA
+
+You can add preferences about how you'd like, for instance, your bank accounts or tax to be managed.
+
+### Workable examples of property and finance preferences:
+
+* I would like to maintain a minimum balance of £1,000 in my current account.
+* I prefer to invest in ethical funds.
+* I would like my attorneys to consult my doctor if they believe I may not have mental capacity to make decisions about my house.
+* I would like to donate £100 each year to Age UK.
+
+### Health and welfare LPA
+
+You can add preferences, for instance, about where you'd like to live and who you'd prefer to look after you.
+
+You don’t have to leave any preferences. If your attorneys understand your beliefs and values, you may feel there is no need for further guidance in the LPA.
+
+### Workable examples of health and welfare preferences:
+
+* I prefer to live within 5 miles of my sister.
+* I prefer to be prescribed generic medicine whenever possible.
+* I would like to take exercise at least 3 times a week whenever I am physically able to do so.
+* My attorneys should consult my family when making decisions about life-sustaining treatment (use this only if you have chosen option A to allow your attorneys to decide about life-sustaining treatment).
+
 
 ## Instructions
 
@@ -47,34 +77,6 @@ You can add instructions about, for instance, medical treatment that fits with y
 
 These are just a few examples. Don't add any that aren't right for you. You can make instructions about other things that matter to you.
 
- 
-## Preferences
-
-Avoid words such as 'must' and 'shall'. Instead use words such as 'prefer' and 'would like', so it is clear that you are giving your attorneys advice but not instructions. If you definitely want your attorneys to do something, include it in your instructions.
-
-### Property and financial affairs LPA
-
-You can add preferences about how you'd like, for instance, your bank accounts or tax to be managed.
-
-### Workable examples of property and finance preferences:
-
-* I would like to maintain a minimum balance of £1,000 in my current account.
-* I prefer to invest in ethical funds.
-* I would like my attorneys to consult my doctor if they believe I may not have mental capacity to make decisions about my house.
-* I would like to donate £100 each year to Age UK.
-
-### Health and welfare LPA
-
-You can add preferences, for instance, about where you'd like to live and who you'd prefer to look after you.
-
-You don’t have to leave any preferences. If your attorneys understand your beliefs and values, you may feel there is no need for further guidance in the LPA.
-
-### Workable examples of health and welfare preferences:
-
-* I prefer to live within 5 miles of my sister.
-* I prefer to be prescribed generic medicine whenever possible.
-* I would like to take exercise at least 3 times a week whenever I am physically able to do so.
-* My attorneys should consult my family when making decisions about life-sustaining treatment (use this only if you have chosen option A to allow your attorneys to decide about life-sustaining treatment).
 
 ## Avoiding problems
 

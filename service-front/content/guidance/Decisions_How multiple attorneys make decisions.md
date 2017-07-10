@@ -35,7 +35,7 @@ If you choose this option, you must not say anywhere else in the LPA that certai
 
 You can say how you’d like your attorneys to make a particular decision in the preferences section of your LPA. However, they don’t have to follow your preferences.
 
-See [Instructions and preferences](/help/#topic-instructions-and-preferences) for more information.
+See [Preferences and instructions](/help/#topic-preferences-and-instructions) for more information.
 
 ## Jointly (attorneys agree every decision unanimously)
 

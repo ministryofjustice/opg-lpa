@@ -28,7 +28,7 @@ Choose this option if:
 
 * you want the security of having the LPA registered and ready to use in case you don't have mental capacity in the future
 
-When you reach the 'Instructions and preferences' section in this LPA service, you can add directions for how your attorneys should act. Some people explain how their mental capacity should be assessed. For example:
+When you reach the 'Preferences and instructions' section in this LPA service, you can add directions for how your attorneys should act. Some people explain how their mental capacity should be assessed. For example:
 
 > My attorneys shall only act under this power if they have obtained a written medical opinion stating that I am no longer mentally capable of managing and administering my property and financial affairs.
 
