@@ -2,6 +2,7 @@
 
 namespace ApplicationTest;
 
+use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
@@ -115,3 +116,5 @@ class Bootstrap
 
 Bootstrap::init();
 Bootstrap::chroot();
+
+require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';

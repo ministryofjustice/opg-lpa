@@ -4,21 +4,22 @@ namespace ApplicationTest\Model\Rest\Applications;
 
 use Application\Model\Rest\Applications\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use OpgTest\Lpa\DataModel\FixturesData;
 
 class ComparisonTest extends \PHPUnit_Framework_TestCase
 {
     public function testEntityIsEqual()
     {
-        $lpaEntity = self::getPfLpaEntity();
-        $comparisonLpaEntity = self::getPfLpaEntity();
+        $lpaEntity = self::getPfApplicationEntity();
+        $comparisonLpaEntity = self::getPfApplicationEntity();
 
         $this->assertTrue($lpaEntity->equals($comparisonLpaEntity));
     }
 
     public function testEntityIsNotEqual()
     {
-        $lpaEntity = self::getPfLpaEntity();
-        $comparisonLpaEntity = self::getPfLpaEntity();
+        $lpaEntity = self::getPfApplicationEntity();
+        $comparisonLpaEntity = self::getPfApplicationEntity();
 
         $comparisonLpaEntity->getLpa()->document->donor->name->first = "Edited";
 
@@ -31,8 +32,8 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
 
     public function testEntityIsNotEqualMetadata()
     {
-        $lpaEntity = self::getPfLpaEntity();
-        $comparisonLpaEntity = self::getPfLpaEntity();
+        $lpaEntity = self::getPfApplicationEntity();
+        $comparisonLpaEntity = self::getPfApplicationEntity();
 
         $comparisonLpaEntity->getLpa()->metadata['analyticsReturnCount']++;
 
@@ -45,21 +46,16 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
 
     public function testEntityIsEqualIgnoringMetadata()
     {
-        $lpaEntity = self::getPfLpaEntity();
-        $comparisonLpaEntity = self::getPfLpaEntity();
+        $lpaEntity = self::getPfApplicationEntity();
+        $comparisonLpaEntity = self::getPfApplicationEntity();
 
         $comparisonLpaEntity->getLpa()->metadata['analyticsReturnCount']++;
 
         $this->assertTrue($lpaEntity->equalsIgnoreMetadata($comparisonLpaEntity));
     }
 
-    private function getPfLpa()
+    private function getPfApplicationEntity()
     {
-        return new Lpa(file_get_contents(__DIR__ . '/../../../fixtures/pf.json'));
-    }
-
-    private function getPfLpaEntity()
-    {
-        return new Entity(self::getPfLpa());
+        return new Entity(FixturesData::getPfLpa());
     }
 }
