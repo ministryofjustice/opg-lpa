@@ -2127,6 +2127,9 @@ input[type=number] {
   opacity: .5 !important;
   cursor: default !important; }
 
+.disabled [disabled="disabled"] {
+  display: none; }
+
 .form-date {
   margin-bottom: 30px;
   overflow: hidden; }
