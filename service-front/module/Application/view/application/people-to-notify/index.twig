@@ -29,15 +29,19 @@
 
     {% endif %}
 
-    <div class="form-group">
-        <a href="{{ addRoute }}" class="{% if not (peopleToNotify) %}button{% endif %} js-form-popup" >
-            {% if (peopleToNotify) %}
-                Add another 'person to notify'
-            {% else %}
-                Add a 'person to notify'
-            {% endif %}
-        </a>
-    </div>
+    {% if peopleToNotify|length < 5 %}
+
+        <div class="form-group">
+            <a href="{{ addRoute }}" class="{% if not (peopleToNotify) %}button{% endif %} js-form-popup" >
+                {% if (peopleToNotify) %}
+                    Add another 'person to notify'
+                {% else %}
+                    Add a 'person to notify'
+                {% endif %}
+            </a>
+        </div>
+
+    {% endif %}
 
     {# begin form #}
     {{ form.prepare() ? '' }}
