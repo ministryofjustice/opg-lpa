@@ -2,7 +2,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\PdftkInstance;

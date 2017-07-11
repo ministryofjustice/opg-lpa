@@ -120,16 +120,10 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             throw new InvalidArgumentException("$property is not a valid property");
         }
 
-
         //  MongoDates should be converted to Datatime.
         //  Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
         if (class_exists('\MongoDate') && $value instanceof \MongoDate) {
-            if ((float)phpversion("mongo") >= 1.6) {
-                $value = $value->toDateTime();
-            } else {
-                // sprintf %06d ensures a full 6 digit value is returns, even if there are prefixing zeros.
-                $value = new DateTime(date('Y-m-d\TH:i:s', $value->sec) . "." . sprintf("%06d", $value->usec) . "+0000");
-            }
+            $value = $value->toDateTime();
         }
 
         // Map the value (if needed)...
@@ -224,6 +218,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                     }
                 } elseif (is_array($value)) {
                     $value = implode(', ', array_map(function ($v) {
+                        if(is_string($v)) {
+                            return $v;
+                        }
                         return get_class($v);
                     }, $value));
                 }
@@ -244,13 +241,16 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
+     * @param string $dateFormat
      * @return array
      */
     public function toArray($dateFormat = 'string')
     {
+        // @codeCoverageIgnoreStart
         if ($dateFormat == 'mongo' && !class_exists('\MongoDate')) {
             throw new InvalidArgumentException('You not have the PHP Mongo extension installed');
         }
+        // @codeCoverageIgnoreEnd
 
         $values = get_object_vars($this);
 

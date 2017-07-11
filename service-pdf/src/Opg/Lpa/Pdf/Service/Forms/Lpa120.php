@@ -2,10 +2,13 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Elements;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lpa120 extends AbstractForm
@@ -92,7 +95,7 @@ class Lpa120 extends AbstractForm
         $applicantFirstName = null;
         $applicantLastName = $applicant->name;  //  Default the applicant last name here in case the value is a string for a company
 
-        if ($applicant->name instanceof Elements\Name) {
+        if ($applicant->name instanceof Name) {
             $applicantTitle = strtolower($applicant->name->title);
 
             //  If the applicant title is an other type then swap the values around
@@ -109,7 +112,7 @@ class Lpa120 extends AbstractForm
         $applicantPhoneNumber = null;
 
         if ($lpaDocument->correspondent instanceof Correspondence
-            && $lpaDocument->correspondent->phone instanceof Elements\PhoneNumber) {
+            && $lpaDocument->correspondent->phone instanceof PhoneNumber) {
 
             $applicantPhoneNumber = $lpaDocument->correspondent->phone->number;
         }
@@ -125,9 +128,9 @@ class Lpa120 extends AbstractForm
             'applicant-name-title-other' => $applicantTitleOther,
             'applicant-name-first'       => $applicantFirstName,
             'applicant-name-last'        => $applicantLastName,
-            'applicant-address'          => "\n" . ($applicant->address instanceof Elements\Address ? (string) $applicant->address : ''),
+            'applicant-address'          => "\n" . ($applicant->address instanceof Address ? (string) $applicant->address : ''),
             'applicant-phone-number'     => $applicantPhoneNumber,
-            'applicant-email-address'    => ($applicant->email instanceof Elements\EmailAddress ? (string) $applicant->email : null),
+            'applicant-email-address'    => ($applicant->email instanceof EmailAddress ? (string) $applicant->email : null),
             'receive-benefits'           => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeReceivesBenefits),
             'damage-awarded'             => (is_null($lpaPayment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$lpaPayment->reducedFeeAwardedDamages)),
             'low-income'                 => $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeLowIncome),

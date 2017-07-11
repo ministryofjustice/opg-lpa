@@ -4,8 +4,8 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 

@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Elements\Name;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
@@ -184,7 +184,7 @@ abstract class AbstractForm
 
     /**
      * helper function - get fullname for a person
-     * @param Opg\Lpa\DataModel\Lpa\Elements\Name $personName
+     * @param Name $personName
      * @return string
      */
     protected function fullName(Name $personName)
