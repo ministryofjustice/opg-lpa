@@ -6692,54 +6692,6 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "ministryofjustice/opg-lpa-api-client",
-        "version": "6.0.1",
-        "version_normalized": "6.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-            "reference": "516e0a4eea8766f51c896ed0928fdcccd8dea715"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/516e0a4eea8766f51c896ed0928fdcccd8dea715",
-            "reference": "516e0a4eea8766f51c896ed0928fdcccd8dea715",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "^5.1.0",
-            "guzzlehttp/psr7": "^1.2",
-            "ministryofjustice/opg-lpa-datamodels": "3.0.*",
-            "php": ">=5.4.0",
-            "php-http/client-implementation": "^1.0",
-            "php-http/httplug": "^1.0",
-            "php-http/message": "^1.1",
-            "psr/http-message": "^1.0"
-        },
-        "require-dev": {
-            "php-http/guzzle5-adapter": "*",
-            "php-http/message": "^1.1",
-            "phpspec/phpspec": "~2.0",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2017-07-06T13:09:23+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "API Wrapper for opg-lpa-api",
-        "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/6.0.1",
-            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
-        }
-    },
-    {
         "name": "ministryofjustice/opg-lpa-datamodels",
         "version": "3.0.3",
         "version_normalized": "3.0.3.0",
@@ -6779,6 +6731,54 @@
         "support": {
             "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/3.0.3",
             "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
+        }
+    },
+    {
+        "name": "ministryofjustice/opg-lpa-api-client",
+        "version": "6.0.2",
+        "version_normalized": "6.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
+            "reference": "e94278e5f4686e9fdbdd024994cffb6e2a7a9508"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/e94278e5f4686e9fdbdd024994cffb6e2a7a9508",
+            "reference": "e94278e5f4686e9fdbdd024994cffb6e2a7a9508",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^5.1.0",
+            "guzzlehttp/psr7": "^1.2",
+            "ministryofjustice/opg-lpa-datamodels": "3.0.*",
+            "php": ">=5.4.0",
+            "php-http/client-implementation": "^1.0",
+            "php-http/httplug": "^1.0",
+            "php-http/message": "^1.1",
+            "psr/http-message": "^1.0"
+        },
+        "require-dev": {
+            "php-http/guzzle5-adapter": "*",
+            "php-http/message": "^1.1",
+            "phpspec/phpspec": "~2.0",
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2017-07-11T09:44:04+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Opg\\Lpa\\Api\\Client\\": "src/Opg/Lpa/Api/Client/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "API Wrapper for opg-lpa-api",
+        "support": {
+            "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/6.0.1",
+            "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
         }
     }
 ]
