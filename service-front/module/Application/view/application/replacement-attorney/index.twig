@@ -6,40 +6,40 @@
 
 <li id="replacement-attorney-section" class="section current js-current">
 
-	<h2 class="heading-medium accordion-header flush--top">Do you want any replacement attorneys?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Do you want any replacement attorneys?</h2>
 
     <div class="accordion-info">
-    	<div class="text">
-    		<p>The people you add here step in if your original attorney can no longer act.</p>
-			<p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
+        <div class="text">
+            <p>The people you add here step in if your original attorney can no longer act.</p>
+            <p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
 
-			{% if (lpa.document.primaryAttorneyDecisions) %}
-		        {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
-		        <div class="alert" role="alert">
-		        	<i class="icon icon-information" role="presentation"></i>
-		        	<div class="alert-message">
-		        		<h3 class="heading-small flush--top">You appointed your original attorneys jointly</h3>
-						<p>This means if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorneys, unless you describe a different arrangement in the 'Instructions' section later.</p>
-						<p>If you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can normally no longer be used.</p>
-		        	</div>
-		        </div>
-				{% elseif (lpa.document.primaryAttorneyDecisions.how == 'depends') %}
-				<div class="alert" role="alert">
-		        	<i class="icon icon-information" role="presentation"></i>
-		        	<div class="alert-message">
-		        		<h3 class="heading-small flush--top">You appointed your original attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
-						<p>This means the people you add here will step in once the FIRST of your attorneys can no longer act.<p>
-						<p>The rest of your original attorneys will no longer be able to make the decisions that you specified must be made jointly.</p>
-		        	</div>
-		        </div>
-				{% endif %}
-	        {% endif %}
+            {% if (lpa.document.primaryAttorneyDecisions) %}
+                {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
+                <div class="alert" role="alert">
+                    <i class="icon icon-information" role="presentation"></i>
+                    <div class="alert-message">
+                        <h3 class="heading-small flush--top">You appointed your original attorneys jointly</h3>
+                        <p>This means if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorneys, unless you describe a different arrangement in the 'Instructions' section later.</p>
+                        <p>If you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can normally no longer be used.</p>
+                    </div>
+                </div>
+                {% elseif (lpa.document.primaryAttorneyDecisions.how == 'depends') %}
+                <div class="alert" role="alert">
+                    <i class="icon icon-information" role="presentation"></i>
+                    <div class="alert-message">
+                        <h3 class="heading-small flush--top">You appointed your original attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
+                        <p>This means the people you add here will step in once the FIRST of your attorneys can no longer act.<p>
+                        <p>The rest of your original attorneys will no longer be able to make the decisions that you specified must be made jointly.</p>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
 
-			<p><a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
-		</div>
-	</div>
+            <p><a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">Find out more about replacement attorneys</a></p>
+        </div>
+    </div>
 
-	{% if (attorneys) %}
+    {% if (attorneys) %}
 
         <h3 class="heading-medium flush--top">
             The replacement attorney{% if attorneys|length > 1 %}s{% endif %}
@@ -66,11 +66,10 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-	    {{ formElement(form.getCsrf) }}
-		<div class="form-group">
-            <input type="submit" name="save" value="Save and continue" class="button">
-            {{ goToFinalCheckLink(lpa) }}
-		</div>
+        {{ formElement(form.getCsrf) }}
+        <div class="form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
     {{ form().closeTag|raw }}
 
 </li>

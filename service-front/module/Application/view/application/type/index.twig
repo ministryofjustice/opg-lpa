@@ -61,12 +61,8 @@
             {% if not (isChangeAllowed) %}
             <div class="text">
                 <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a
-                 {{
-                    (lpa.document.type == 'health-and-welfare')
-                    ?'property  and financial affairs'
-                    :'health and welfare'
-                 }}
-                 LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
+                {{ (lpa.document.type == 'health-and-welfare' ? 'property and financial affairs' : 'health and welfare') }}
+                LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
             </div>
             {% endif %}
 
@@ -78,17 +74,16 @@
                         <p>At the end you can choose to reuse the details from this LPA so that you don't have to enter them again.</p>
                         <p>Remember, there is an application fee for each LPA.</p>
                     </div>
-        		</details>
+                </details>
             </div>
 
         </fieldset>
 
         <div class="form-group">
             {% if (isChangeAllowed) %}
-                <input type="submit" name="save" value="Save and continue" class="button">
+                {{ formElement(form.get('save')) }}
             {% else %}
-                <a href="{{ nextUrl }}" class="button">Continue</a>
-                {{ goToFinalCheckLink(lpa) }}
+                <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
             {% endif %}
         </div>
 

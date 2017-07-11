@@ -5,7 +5,7 @@ namespace Application\Form\Lpa;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 
-class WhoAreYouForm extends AbstractLpaForm
+class WhoAreYouForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'who' => [
@@ -54,9 +54,6 @@ class WhoAreYouForm extends AbstractLpaForm
         ],
         'organisation' => [
             'type' => 'Text'
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

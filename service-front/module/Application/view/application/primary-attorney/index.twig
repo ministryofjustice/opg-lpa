@@ -17,10 +17,10 @@
                     <li>An attorney must not be bankrupt or subject to a debt relief order</li>
                 {% endif %}
             </ul>
-    		<p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
-    		<p>There are some other things you must know and consider before you decide.</p>
-    		<p><a class="js-guidance" href="/guide#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
-    	</div>
+            <p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
+            <p>There are some other things you must know and consider before you decide.</p>
+            <p><a class="js-guidance" href="/guide#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
+        </div>
     </div>
 
     {% if (attorneys) %}
@@ -38,7 +38,7 @@
     {% endif %}
 
     <div class="form-group">
-        <a href="{{ addRoute }}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
+        <a href="{{ addUrl }}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
             {% if (attorneys) %}
                 Add another attorney?
             {% else %}
@@ -50,8 +50,7 @@
     {% if (attorneys) %}
 
         <div class="form-group">
-            <a href="{{ nextRoute }}" class="button">Save and continue</a>
-            {{ goToFinalCheckLink(lpa) }}
+            <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% endif %}

@@ -24,6 +24,7 @@ class TypeController extends AbstractAuthenticatedController
 
                 if (!$lpa instanceof Lpa) {
                     $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+
                     return $this->redirect()->toRoute('user/dashboard');
                 }
 
@@ -35,6 +36,7 @@ class TypeController extends AbstractAuthenticatedController
 
                 $formFlowChecker = new FormFlowChecker();
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+
                 return $this->redirect()->toRoute($formFlowChecker->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
             }
         }

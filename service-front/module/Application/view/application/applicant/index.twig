@@ -137,8 +137,7 @@
         </fieldset>
 
         <div class="form-group">
-            <input type="submit" name="save" value="Save and continue" class="button">
-            {{ goToFinalCheckLink(lpa) }}
+            {{ formElement(form.get('save')) }}
         </div>
 
 	{{ form().closeTag|raw }}

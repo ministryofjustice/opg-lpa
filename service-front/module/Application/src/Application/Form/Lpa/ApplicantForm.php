@@ -5,7 +5,7 @@ namespace Application\Form\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class ApplicantForm extends AbstractLpaForm
+class ApplicantForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'whoIsRegistering' => [
@@ -18,9 +18,6 @@ class ApplicantForm extends AbstractLpaForm
                     'attorney' => [],
                 ],
             ],
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

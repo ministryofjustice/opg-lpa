@@ -10,23 +10,20 @@ class CertificateProviderController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
 
-        $cp = $this->getLpa()->document->certificateProvider;
+        $viewModel = new ViewModel();
 
-        if ($cp instanceof CertificateProvider) {
-            return new ViewModel([
-                'certificateProvider' => [
-                    'name' => $cp->name,
-                    'address' => $cp->address,
-                ],
-                'editRoute' => $this->url()->fromRoute($currentRouteName.'/edit', ['lpa-id' => $lpaId]),
-                'nextRoute' => $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]),
-            ]);
-        } else {
-            return new ViewModel(['addRoute' => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId])]);
+        if ($this->getLpa()->document->certificateProvider instanceof CertificateProvider) {
+            $viewModel->editUrl = $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]);
+
+            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+            $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
         }
+
+        $viewModel->addUrl = $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]);
+
+        return $viewModel;
     }
 
     public function addAction()

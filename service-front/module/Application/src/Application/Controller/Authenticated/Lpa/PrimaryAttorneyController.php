@@ -15,40 +15,38 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
+
+        $viewModel = new ViewModel();
+
+        $viewModel->addUrl = $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]);
 
         if (count($this->getLpa()->document->primaryAttorneys) > 0) {
             $attorneysParams = [];
+
             foreach ($this->getLpa()->document->primaryAttorneys as $idx => $attorney) {
-                $params = [
-                    'attorney' => [
-                        'address'   => $attorney->address
-                    ],
-                    'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                    'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                    'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                $routeParams = [
+                    'lpa-id' => $lpaId,
+                    'idx' => $idx
                 ];
 
-                if ($attorney instanceof Human) {
-                    $params['attorney']['name'] = $attorney->name;
-                } else {
-                    $params['attorney']['name'] = $attorney->name;
-                }
-
-                $attorneysParams[] = $params;
+                $attorneysParams[] = [
+                    'attorney' => [
+                        'address' => $attorney->address,
+                        'name'    => $attorney->name,
+                    ],
+                    'editUrl'          => $this->url()->fromRoute('lpa/primary-attorney/edit', $routeParams),
+                    'confirmDeleteUrl' => $this->url()->fromRoute('lpa/primary-attorney/confirm-delete', $routeParams),
+                ];
             }
 
-            return new ViewModel([
-                'addRoute'  => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]),
-                'attorneys' => $attorneysParams,
-                'nextRoute' => $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId])
-            ]);
-        } else {
-            return new ViewModel([
-                'addRoute' => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]),
-            ]);
+            $viewModel->attorneys = $attorneysParams;
+
+            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+            $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
         }
+
+        return $viewModel;
     }
 
     public function addAction()
