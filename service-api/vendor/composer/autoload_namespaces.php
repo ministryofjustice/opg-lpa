@@ -16,6 +16,7 @@ return array(
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Nocarrier' => array($vendorDir . '/nocarrier/hal/src'),
+    'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
 );
