@@ -8,6 +8,7 @@ use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
 use RuntimeException;
 
+date_default_timezone_set('UTC');
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
 
