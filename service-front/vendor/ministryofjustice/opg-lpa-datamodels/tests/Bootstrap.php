@@ -11,3 +11,6 @@ $vendorAutoloadFile = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($vendorAutoloadFile)) {
     require $vendorAutoloadFile;
 }
+
+//Autoload test components
+require_once 'autoload.php';

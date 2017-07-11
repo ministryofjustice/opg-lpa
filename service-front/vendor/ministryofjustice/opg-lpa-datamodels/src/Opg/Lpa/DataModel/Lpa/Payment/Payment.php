@@ -3,7 +3,7 @@
 namespace Opg\Lpa\DataModel\Lpa\Payment;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Elements;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -89,7 +89,7 @@ class Payment extends AbstractData
 
         $metadata->addPropertyConstraints('email', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
+                'type' => '\Opg\Lpa\DataModel\Common\EmailAddress'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -165,7 +165,7 @@ class Payment extends AbstractData
             case 'amount':
                 return (!is_int($v) ? $v : (float)$v);
             case 'email':
-                return (($v instanceof Elements\EmailAddress || is_null($v)) ? $v : new Elements\EmailAddress($v));
+                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
         }
 
         return parent::map($property, $v);

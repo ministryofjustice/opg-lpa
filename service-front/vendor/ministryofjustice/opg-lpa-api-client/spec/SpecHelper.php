@@ -3,11 +3,10 @@ include 'vendor/autoload.php';
 
 use Opg\Lpa\Api\Client\Client;
 use Opg\Lpa\DataModel\User\User;
-use Opg\Lpa\DataModel\User\Name as UserName;
-use Opg\Lpa\DataModel\User\Address as UserAddress;
-use Opg\Lpa\DataModel\User\Dob as UserDob;
-use Opg\Lpa\DataModel\User\EmailAddress as UserEmailAddress;
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use Opg\Lpa\DataModel\Common\Name as UserName;
+use Opg\Lpa\DataModel\Common\Address as UserAddress;
+use Opg\Lpa\DataModel\Common\Dob as UserDob;
+use Opg\Lpa\DataModel\Common\EmailAddress as UserEmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 date_default_timezone_set('UTC');

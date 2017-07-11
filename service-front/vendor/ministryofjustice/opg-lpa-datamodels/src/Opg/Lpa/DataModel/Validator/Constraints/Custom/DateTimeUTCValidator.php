@@ -22,25 +22,13 @@ class DateTimeUTCValidator extends ConstraintValidator
         }
 
         if (!$value instanceof DateTime) {
-            if ($this->context instanceof ExecutionContextInterface) {
-                $this->context->buildViolation($constraint->notDateTimeMessage)
-                     ->setParameter('{{ value }}', $this->formatValue($value))
-                     ->addViolation();
-            } else {
-                $this->buildViolation($constraint->notDateTimeMessage)
-                     ->setParameter('{{ value }}', $this->formatValue($value))
-                     ->addViolation();
-            }
+            $this->context->buildViolation($constraint->notDateTimeMessage)
+                ->setParameter('{{ value }}', $this->formatValue($value))
+                ->addViolation();
         } elseif ($value->getOffset() !== 0) { // i.e. ensure there's no offset from UTC
-            if ($this->context instanceof ExecutionContextInterface) {
-                $this->context->buildViolation($constraint->notUtcMessage)
-                     ->setParameter('{{ value }}', $this->formatValue($value))
-                     ->addViolation();
-            } else {
-                $this->buildViolation($constraint->notUtcMessage)
-                     ->setParameter('{{ value }}', $this->formatValue($value))
-                     ->addViolation();
-            }
+            $this->context->buildViolation($constraint->notUtcMessage)
+                ->setParameter('{{ value }}', $this->formatValue($value))
+                ->addViolation();
         }
     }
 }
