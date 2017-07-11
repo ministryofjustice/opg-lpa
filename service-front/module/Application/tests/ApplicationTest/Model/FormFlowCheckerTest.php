@@ -1268,6 +1268,30 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
     }
 
+    public function testNextRoutesToFinalCheckForCompletedLpa()
+    {
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent()
+             ->setWhoAreYou()
+             ->setRepeatApplication()
+             ->setFeeReduction();
+
+        //  Loop through the LPA routes - if the LPA has been to the final check then the next route should always come back as the final check route
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            $this->assertEquals('lpa/checkout', $this->checker->nextRoute($lpaRoute));
+        }
+    }
+
     public function testBackToFormPF()
     {
         //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
@@ -1442,6 +1466,71 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
 
         $this->addReplacementAttorney();
         $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+    }
+
+    public function testFinalCheckAccessibleNoLpa()
+    {
+        $checker = new FormFlowChecker();
+
+        $this->assertFalse($checker->finalCheckAccessible());
+    }
+
+    public function testFinalCheckAccessible()
+    {
+        //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
+        //  and keep checking the final check accessible result
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setLpaTypePF()
+             ->setLpaDonor();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setLpaStartsWhenNoCapacity();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addPrimaryAttorney();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addPrimaryAttorney()
+            ->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addReplacementAttorney();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addCertificateProvider();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addPersonToNotify();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setInstructons();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setApplicant();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setCorrespondent();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setWhoAreYou();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setRepeatApplication();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->lpa->payment = new Payment();    //  Use a fully unpopulated payment object to get to the fee reduction screen
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setPayment();
+        $this->assertTrue($this->checker->finalCheckAccessible());
     }
 
     /*
