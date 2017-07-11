@@ -43,9 +43,9 @@
 
             <p>
                 {% if isPfLpa %}
-                    For example, you could add instructions about giving gifts, managing investments or seeking professional tax advice. You could add preferences about making charitable donations or managing your bank accounts.
+                    For example, you could add preferences about making charitable donations or managing your bank accounts. You could add instructions about giving gifts, managing investments or seeking professional tax advice.
                 {% else %}
-                    For example, you could add instructions about your diet or medical treatment that fits with your beliefs. You could add preferences about where you'd like to live or taking exercise.
+                    For example, you could add preferences about where you'd like to live or taking exercise. You could add instructions about your diet or medical treatment that fits with your beliefs.
                 {% endif %}
             </p>
         </div>
@@ -59,7 +59,7 @@
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
 
-            <summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra instructions or preferences for the attorneys? (optional)</summary>
+            <summary data-journey-click="stageprompt.lpa:help.inline:create/review:add-extra-instructions-for-the-attorneys" role="button" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
 
             <div>
 
