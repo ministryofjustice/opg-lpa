@@ -177,7 +177,8 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         //------------------------
 
         // Note: user has to match.
-        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ] );
+        $userId = $this->getRouteUser()->userId();
+        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=> $userId] );
 
         if( is_null($result) ){
             return new ApiProblem( 
