@@ -203,12 +203,15 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
     public function deleteAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
+
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
-        if (array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+        if (array_key_exists($personIdx, $lpa->document->peopleToNotify)) {
             // persist data to the api
-            if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
+            $personToNotifyId = $lpa->document->peopleToNotify[$personIdx]->id;
+
+            if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpa->id, $personToNotifyId)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }
         } else {
@@ -216,6 +219,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->moveToNextRoute();
+        return $this->redirect()->toRoute('lpa/primary-attorney', [
+            'lpa-id' => $lpa->id
+        ]);
     }
 }

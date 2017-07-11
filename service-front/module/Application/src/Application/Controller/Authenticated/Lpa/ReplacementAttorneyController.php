@@ -236,13 +236,15 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
     public function deleteAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
-        if (array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+        if (array_key_exists($attorneyIdx, $lpa->document->replacementAttorneys)) {
             // persist data to the api
-            if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
-                throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+            $replacementAttorneyId = $lpa->document->replacementAttorneys[$attorneyIdx]->id;
+
+            if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpa->id, $replacementAttorneyId)) {
+                throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 
             $this->cleanUpReplacementAttorneyDecisions();
@@ -251,7 +253,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->moveToNextRoute();
+        return $this->redirect()->toRoute('lpa/replacement-attorney', [
+            'lpa-id' => $lpa->id
+        ]);
     }
 
     public function addTrustAction()
