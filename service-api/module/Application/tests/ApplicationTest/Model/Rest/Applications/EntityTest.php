@@ -45,12 +45,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->entity->resourceId());
     }
 
-    public function getLpa()
+    public function testGetLpa()
     {
         $this->assertSame($this->lpa, $this->entity->getLpa());
     }
 
-    public function toArray()
+    public function testToArray()
     {
         $this->assertSame($this->lpa->toArray(), $this->entity->toArray());
     }
