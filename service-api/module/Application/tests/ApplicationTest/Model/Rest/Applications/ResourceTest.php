@@ -10,6 +10,7 @@ use Application\Model\Rest\Users\Entity as UserEntity;
 use Mockery;
 use Mockery\Mock;
 use MongoCollection;
+use MongoCursor;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -73,6 +74,12 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->lpaCollection->shouldReceive('findOne')->with(['_id'=>(int)$this->pfLpaId, 'user'=>$this->userId])->andReturn($this->pfLpa->toMongoArray());
         $this->lpaCollection->shouldReceive('findOne')->with(['_id'=>(int)$this->hwLpaId, 'user'=>$this->userId])->andReturn($this->hwLpa->toMongoArray());
         $this->lpaCollection->shouldReceive('findOne')->andReturn(null);
+
+        $defaultCursor = Mockery::mock(MongoCursor::class);
+        $defaultCursor->shouldReceive('limit')->andReturn($defaultCursor);
+        $defaultCursor->shouldReceive('count')->andReturn(0);
+        $this->lpaCollection->shouldReceive('find')->andReturn($defaultCursor);
+
         $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
 
         $this->resource = new Resource();
@@ -111,10 +118,10 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->lpaCollection->shouldReceive('insert')->once();
 
         /* @var Entity */
-        $createdLpa = $this->resource->create(null);
+        $createdEntity = $this->resource->create(null);
 
-        $this->assertNotNull($createdLpa);
-        $this->assertGreaterThan(0, $createdLpa->lpaId());
+        $this->assertNotNull($createdEntity);
+        $this->assertGreaterThan(0, $createdEntity->lpaId());
         $this->lpaCollection->mockery_verify();
     }
 
@@ -135,19 +142,17 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFullLpa()
     {
-        $lpa = FixturesData::getHwLpa();
-
         $this->lpaCollection->shouldReceive('insert')->once();
 
         /* @var Entity */
-        $createdLpa = $this->resource->create($lpa->toArray());
+        $createdEntity = $this->resource->create($this->hwLpa->toArray());
 
-        $this->assertNotNull($createdLpa);
+        $this->assertNotNull($createdEntity);
         //Id should be generated
-        $this->assertNotEquals($lpa->get('id'), $createdLpa->lpaId());
-        $this->assertGreaterThan(0, $createdLpa->lpaId());
+        $this->assertNotEquals($this->hwLpa->get('id'), $createdEntity->lpaId());
+        $this->assertGreaterThan(0, $createdEntity->lpaId());
         //User should be reassigned to logged in user
-        $this->assertEquals($this->userId, $createdLpa->userId());
+        $this->assertEquals($this->userId, $createdEntity->userId());
 
         $this->lpaCollection->mockery_verify();
     }
@@ -161,69 +166,55 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->lpaCollection->shouldReceive('insert');
 
         /* @var Entity */
-        $createdLpa = $this->resource->create($lpa->toArray());
+        $createdEntity = $this->resource->create($lpa->toArray());
+        $createdLpa = $createdEntity->getLpa();
 
         //The following properties should be maintained
-        $this->assertEquals($lpa->get('document'), $createdLpa->getLpa()->get('document'));
-        $this->assertEquals($lpa->get('metadata'), $createdLpa->getLpa()->get('metadata'));
-        $this->assertEquals($lpa->get('payment'), $createdLpa->getLpa()->get('payment'));
-        $this->assertEquals($lpa->get('repeatCaseNumber'), $createdLpa->getLpa()->get('repeatCaseNumber'));
+        $this->assertEquals($lpa->get('document'), $createdLpa->get('document'));
+        $this->assertEquals($lpa->get('metadata'), $createdLpa->get('metadata'));
+        $this->assertEquals($lpa->get('payment'), $createdLpa->get('payment'));
+        $this->assertEquals($lpa->get('repeatCaseNumber'), $createdLpa->get('repeatCaseNumber'));
         //All others should be ignored
-        $this->assertNotEquals($lpa->get('startedAt'), $createdLpa->getLpa()->get('startedAt'));
-        $this->assertNotEquals($lpa->get('createdAt'), $createdLpa->getLpa()->get('updatedAt'));
-        $this->assertNotEquals($lpa->get('startedAt'), $createdLpa->getLpa()->get('startedAt'));
-        $this->assertNotEquals($lpa->get('completedAt'), $createdLpa->getLpa()->get('completedAt'));
-        $this->assertNotEquals($lpa->get('lockedAt'), $createdLpa->getLpa()->get('lockedAt'));
-        $this->assertNotEquals($lpa->get('user'), $createdLpa->getLpa()->get('user'));
-        $this->assertNotEquals($lpa->get('whoAreYouAnswered'), $createdLpa->getLpa()->get('whoAreYouAnswered'));
-        $this->assertNotEquals($lpa->get('locked'), $createdLpa->getLpa()->get('locked'));
-        $this->assertNotEquals($lpa->get('seed'), $createdLpa->getLpa()->get('seed'));
+        $this->assertNotEquals($lpa->get('startedAt'), $createdLpa->get('startedAt'));
+        $this->assertNotEquals($lpa->get('createdAt'), $createdLpa->get('updatedAt'));
+        $this->assertNotEquals($lpa->get('startedAt'), $createdLpa->get('startedAt'));
+        $this->assertNotEquals($lpa->get('completedAt'), $createdLpa->get('completedAt'));
+        $this->assertNotEquals($lpa->get('lockedAt'), $createdLpa->get('lockedAt'));
+        $this->assertNotEquals($lpa->get('user'), $createdLpa->get('user'));
+        $this->assertNotEquals($lpa->get('whoAreYouAnswered'), $createdLpa->get('whoAreYouAnswered'));
+        $this->assertNotEquals($lpa->get('locked'), $createdLpa->get('locked'));
+        $this->assertNotEquals($lpa->get('seed'), $createdLpa->get('seed'));
 
-        $this->lpaCollection->mockery_verify();
-    }
-
-    public function testPatchNullData()
-    {
-        $this->lpaCollection->shouldReceive('insert')->once();
-
-        /* @var Entity */
-        $patchedLpa = $this->resource->patch(null);
-
-        $this->assertNotNull($patchedLpa);
-        $this->assertGreaterThan(0, $patchedLpa->lpaId());
         $this->lpaCollection->mockery_verify();
     }
 
     public function testPatchMalformedData()
     {
         //The bad id value on this user will fail validation
-        $user = new User();
+        /*$user = new User();
         $user->set('id', 3);
-        $this->resource->setRouteUser(new UserEntity($user));
+        $this->resource->setRouteUser(new UserEntity($user));*/
 
         //So we expect an exception and for no document to be inserted
         $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object was created');
-        $this->lpaCollection->shouldNotReceive('insert');
+        $this->lpaCollection->shouldNotReceive('update');
 
-        $this->resource->patch(null);
+        $this->resource->patch($this->hwLpa->toArray(), $this->hwLpaId);
         $this->lpaCollection->mockery_verify();
     }
 
     public function testPatchFullLpa()
     {
-        $lpa = FixturesData::getHwLpa();
-
-        $this->lpaCollection->shouldReceive('insert')->once();
+        $this->lpaCollection->shouldReceive('update')->once()->andReturn(['nModified' => 0]);
 
         /* @var Entity */
-        $patchedLpa = $this->resource->patch($lpa->toArray());
+        $patchedEntity = $this->resource->patch($this->hwLpa->toArray(), $this->hwLpaId);
 
-        $this->assertNotNull($patchedLpa);
-        //Id should be generated
-        $this->assertNotEquals($lpa->get('id'), $patchedLpa->lpaId());
-        $this->assertGreaterThan(0, $patchedLpa->lpaId());
-        //User should be reassigned to logged in user
-        $this->assertEquals($this->userId, $patchedLpa->userId());
+        $this->assertNotNull($patchedEntity);
+        //Id should be retained
+        $this->assertEquals($this->hwLpa->get('id'), $patchedEntity->lpaId());
+        //User should not be reassigned to logged in user
+        $this->assertEquals($this->hwLpa->user, $patchedEntity->userId());
 
         $this->lpaCollection->mockery_verify();
     }
@@ -234,26 +225,27 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $lpa->set('lockedAt', new DateTime());
         $lpa->set('locked', true);
 
-        $this->lpaCollection->shouldReceive('insert');
+        $this->lpaCollection->shouldReceive('update')->once()->andReturn(['nModified' => 0]);
 
         /* @var Entity */
-        $patchedLpa = $this->resource->patch($lpa->toArray());
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $this->hwLpaId);
+        $patchedLpa = $patchedEntity->getLpa();
 
         //The following properties should be maintained
-        $this->assertEquals($lpa->get('document'), $patchedLpa->getLpa()->get('document'));
-        $this->assertEquals($lpa->get('metadata'), $patchedLpa->getLpa()->get('metadata'));
-        $this->assertEquals($lpa->get('payment'), $patchedLpa->getLpa()->get('payment'));
-        $this->assertEquals($lpa->get('repeatCaseNumber'), $patchedLpa->getLpa()->get('repeatCaseNumber'));
+        $this->assertEquals($lpa->get('document'), $patchedLpa->get('document'));
+        $this->assertEquals($lpa->get('metadata'), $patchedLpa->get('metadata'));
+        $this->assertEquals($lpa->get('payment'), $patchedLpa->get('payment'));
+        $this->assertEquals($lpa->get('repeatCaseNumber'), $patchedLpa->get('repeatCaseNumber'));
         //All others should be ignored
-        $this->assertNotEquals($lpa->get('startedAt'), $patchedLpa->getLpa()->get('startedAt'));
-        $this->assertNotEquals($lpa->get('createdAt'), $patchedLpa->getLpa()->get('updatedAt'));
-        $this->assertNotEquals($lpa->get('startedAt'), $patchedLpa->getLpa()->get('startedAt'));
-        $this->assertNotEquals($lpa->get('completedAt'), $patchedLpa->getLpa()->get('completedAt'));
-        $this->assertNotEquals($lpa->get('lockedAt'), $patchedLpa->getLpa()->get('lockedAt'));
-        $this->assertNotEquals($lpa->get('user'), $patchedLpa->getLpa()->get('user'));
-        $this->assertNotEquals($lpa->get('whoAreYouAnswered'), $patchedLpa->getLpa()->get('whoAreYouAnswered'));
-        $this->assertNotEquals($lpa->get('locked'), $patchedLpa->getLpa()->get('locked'));
-        $this->assertNotEquals($lpa->get('seed'), $patchedLpa->getLpa()->get('seed'));
+        $this->assertNotEquals($lpa->get('startedAt'), $patchedLpa->get('startedAt'));
+        $this->assertNotEquals($lpa->get('createdAt'), $patchedLpa->get('updatedAt'));
+        $this->assertNotEquals($lpa->get('startedAt'), $patchedLpa->get('startedAt'));
+        $this->assertNotEquals($lpa->get('completedAt'), $patchedLpa->get('completedAt'));
+        $this->assertNotEquals($lpa->get('lockedAt'), $patchedLpa->get('lockedAt'));
+        $this->assertNotEquals($lpa->get('user'), $patchedLpa->get('user'));
+        $this->assertNotEquals($lpa->get('whoAreYouAnswered'), $patchedLpa->get('whoAreYouAnswered'));
+        $this->assertNotEquals($lpa->get('locked'), $patchedLpa->get('locked'));
+        $this->assertNotEquals($lpa->get('seed'), $patchedLpa->get('seed'));
 
         $this->lpaCollection->mockery_verify();
     }
