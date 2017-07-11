@@ -4,7 +4,7 @@
 
 <li id="certificate-provider-section" class="section current js-current">
 
-	<h2 class="heading-medium accordion-header flush--top">Who is the certificate provider?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who is the certificate provider?</h2>
 
     <div class="accordion-info">
         <div class="text">
@@ -14,50 +14,49 @@
 
             <ul class="list list-bullet">
                 <li>a person who has known you well personally for at least 2 years, or</li>
-				<li>a person with relevant professional skills and expertise</li>
+                <li>a person with relevant professional skills and expertise</li>
             </ul>
 
             <p>There are some <strong class="bold-small">people who can't be your certificate provider</strong>:</p>
 
             <ul class="list list-bullet">
                 <li>any of your attorneys or replacement attorneys for this or any other LPA or enduring power of attorney</li>
-				<li>a member of your family or of any of your attorneys' families – including spouses, civil partners, in-laws and step-relations</li>
-				<li>an unmarried partner, boyfriend or girlfriend of you or any of your attorneys</li>
-				<li>your business partner or any attorney’s business partner</li>
-				<li>your employee or any attorney’s employee</li>
-				<li>anyone running or working for a care home where you live, or a member of their family</li>
-				<li>anyone running or working for a trust corporation appointed as an attorney in this LPA</li>
+                <li>a member of your family or of any of your attorneys' families – including spouses, civil partners, in-laws and step-relations</li>
+                <li>an unmarried partner, boyfriend or girlfriend of you or any of your attorneys</li>
+                <li>your business partner or any attorney’s business partner</li>
+                <li>your employee or any attorney’s employee</li>
+                <li>anyone running or working for a care home where you live, or a member of their family</li>
+                <li>anyone running or working for a trust corporation appointed as an attorney in this LPA</li>
             </ul>
 
             <p>
-            	<a class="js-guidance" href="/guide#topic-certificate-providers" data-journey-click="stageprompt.lpa:help:certificate-providers">Find out how to choose a certificate provider</a>
+                <a class="js-guidance" href="/guide#topic-certificate-providers" data-journey-click="stageprompt.lpa:help:certificate-providers">Find out how to choose a certificate provider</a>
             </p>
         </div>
     </div>
 
-    {% if (certificateProvider) %}
+    {% if (lpa.document.certificateProvider) %}
 
         <h3 class="heading-medium flush--top">The certificate provider</h3>
 
         <div class="person person--wider">
-            <h3 class="person-name heading-small flush--ends">{{ certificateProvider['name'] }}</h3>
-            <p class="person-address flush--ends">{{ certificateProvider['address'] }}</p>
+            <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
+            <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ editRoute }}" data-form="certificateprovider1" class="action-edit js-form-popup">View/edit details</a>
+                    <a href="{{ editUrl }}" data-form="certificateprovider1" class="action-edit js-form-popup">View/edit details</a>
                 </li>
             </ul>
         </div>
 
         <div class="form-group">
-            <a href="{{ nextRoute }}" class="button">Save and continue</a>
-            {{ goToFinalCheckLink(lpa) }}
+            <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
-	{% else %}
+    {% else %}
 
         <div class="form-group">
-            <a href="{{ addRoute }}" class="button js-form-popup">Add a certificate provider</a>
+            <a href="{{ addUrl }}" class="button js-form-popup">Add a certificate provider</a>
         </div>
 
     {% endif %}

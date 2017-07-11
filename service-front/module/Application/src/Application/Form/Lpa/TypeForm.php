@@ -4,16 +4,13 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class TypeForm extends AbstractLpaForm
+class TypeForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'type' => [
             'type'          => 'Application\Form\Element\Type',
             'required'      => true,
             'error_message' => 'cannot-be-empty',
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

@@ -10,7 +10,11 @@ class LifeSustainingController extends AbstractLpaController
 {
     public function indexAction()
     {
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\LifeSustainingForm');
+        $lpa = $this->getLpa();
+
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\LifeSustainingForm', [
+            'lpa' => $lpa,
+        ]);
 
         if($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -19,7 +23,7 @@ class LifeSustainingController extends AbstractLpaController
 
             if($form->isValid()) {
 
-                $lpaId = $this->getLpa()->id;
+                $lpaId = $lpa->id;
 
                 if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
                     $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;

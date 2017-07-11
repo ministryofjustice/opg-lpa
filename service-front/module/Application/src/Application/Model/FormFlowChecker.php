@@ -153,6 +153,13 @@ class FormFlowChecker extends StateChecker
     ];
 
     /**
+     * Route for the final check screen
+     *
+     * @var string
+     */
+    private $finalCheckRoute = 'lpa/checkout';
+
+    /**
      * String key to show that a route is not applicable for the LPA concerned
      *
      * @var string
@@ -215,6 +222,11 @@ class FormFlowChecker extends StateChecker
      */
     public function nextRoute($currentRoute, $personIdex = null)
     {
+        //  If the final check route is accessible then that is automatically the next route
+        if ($this->finalCheckAccessible()) {
+            return $this->finalCheckRoute;
+        }
+
         $nextRoute = $currentRoute;
 
         if (array_key_exists($currentRoute, $this->nextRouteMap)) {
@@ -256,6 +268,20 @@ class FormFlowChecker extends StateChecker
         }
 
         return $lastValidRoute;
+    }
+
+    /**
+     * Centralised function to indicate if the final check page (checkout) should be available for the current LPA
+     *
+     * @return bool
+     */
+    public function finalCheckAccessible()
+    {
+        if ($this->lpa instanceof Lpa) {
+            return ($this->finalCheckRoute == $this->backToForm());
+        }
+
+        return false;
     }
 
     private function isLpaAccessible()

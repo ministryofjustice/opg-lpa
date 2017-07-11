@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 
-class CorrespondenceForm extends AbstractActorForm
+class CorrespondenceForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'correspondence' => [
@@ -18,9 +18,6 @@ class CorrespondenceForm extends AbstractActorForm
                     'name' => 'Application\Form\Validator\Correspondence',
                 ]
             ],
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

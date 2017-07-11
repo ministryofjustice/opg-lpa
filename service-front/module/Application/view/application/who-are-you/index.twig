@@ -62,8 +62,7 @@
     </div>
 
     <div class="form-group">
-        <a href="{{ nextRoute }}" class="button">Continue</a>
-        {{ goToFinalCheckLink(lpa) }}
+        <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
     </div>
 
     {% else %}
@@ -171,7 +170,7 @@
         </fieldset>
 
         <div class="form-group">
-            <input type="submit" name="save" value="Save and continue" class="button">
+            {{ formElement(form.get('save')) }}
         </div>
 
     {{ form().closeTag|raw }}

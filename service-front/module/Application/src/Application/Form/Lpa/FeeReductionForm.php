@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-class FeeReductionForm extends AbstractLpaForm
+class FeeReductionForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'reductionOptions' => [
@@ -24,9 +24,6 @@ class FeeReductionForm extends AbstractLpaForm
                     ],
                 ],
             ],
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 
