@@ -6,8 +6,8 @@ use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\Elements\EmailAddress;
-use Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 

@@ -3,6 +3,10 @@
 namespace Opg\Lpa\DataModel\User;
 
 use Opg\Lpa\DataModel\AbstractData;
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -75,28 +79,28 @@ class User extends AbstractData
 
         $metadata->addPropertyConstraints('name', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\User\Name'
+                'type' => '\Opg\Lpa\DataModel\Common\Name'
             ]),
             new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('address', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\User\Address'
+                'type' => '\Opg\Lpa\DataModel\Common\Address'
             ]),
             new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('dob', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\User\Dob'
+                'type' => '\Opg\Lpa\DataModel\Common\Dob'
             ]),
             new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('email', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\User\EmailAddress'
+                'type' => '\Opg\Lpa\DataModel\Common\EmailAddress'
             ]),
             new ValidConstraintSymfony,
         ]);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f6475ec565575ea2ce84d12364fa4b14",
+    "content-hash": "96cdd7607b04615065d2343b3025a36a",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -840,22 +840,22 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-api-client",
-            "version": "5.0.1",
+            "version": "6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-api-client.git",
-                "reference": "346dc1a55a52506059e2a77a61b78f49bd0fe8ba"
+                "reference": "e94278e5f4686e9fdbdd024994cffb6e2a7a9508"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/346dc1a55a52506059e2a77a61b78f49bd0fe8ba",
-                "reference": "346dc1a55a52506059e2a77a61b78f49bd0fe8ba",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-api-client/zipball/e94278e5f4686e9fdbdd024994cffb6e2a7a9508",
+                "reference": "e94278e5f4686e9fdbdd024994cffb6e2a7a9508",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^5.1.0",
                 "guzzlehttp/psr7": "^1.2",
-                "ministryofjustice/opg-lpa-datamodels": "^2.0",
+                "ministryofjustice/opg-lpa-datamodels": "3.0.*",
                 "php": ">=5.4.0",
                 "php-http/client-implementation": "^1.0",
                 "php-http/httplug": "^1.0",
@@ -879,33 +879,33 @@
             ],
             "description": "API Wrapper for opg-lpa-api",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/5.0.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-api-client/tree/6.0.1",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-api-client/issues"
             },
-            "time": "2016-12-23T09:38:29+00:00"
+            "time": "2017-07-11T09:44:04+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "2.2.13",
+            "version": "3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "83aa7deafed4bb5d2718fa3e3743307746381873"
+                "reference": "1c464c0c10ab4b1b6f6f3416b191d5e87c5562ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/83aa7deafed4bb5d2718fa3e3743307746381873",
-                "reference": "83aa7deafed4bb5d2718fa3e3743307746381873",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/1c464c0c10ab4b1b6f6f3416b191d5e87c5562ff",
+                "reference": "1c464c0c10ab4b1b6f6f3416b191d5e87c5562ff",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "1.2.*",
+                "ext-mongo": ">=1.4.5",
                 "php": ">=5.5.9",
                 "symfony/intl": "2.6.*",
                 "symfony/validator": "2.6.*"
             },
             "require-dev": {
-                "phpspec/phpspec": "~2.0",
                 "phpunit/phpunit": "4.3.*"
             },
             "type": "library",
@@ -919,10 +919,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2266-day-month-leading-zeros",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/3.0.3",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-06-29T14:27:27+00:00"
+            "time": "2017-07-07T11:32:43+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

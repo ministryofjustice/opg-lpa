@@ -55,7 +55,7 @@
         "replacementAttorneyDecisions" : {
             "whenDetails" : null,
             "how" : null,
-            "when" : "first",
+            "replacementAttorneyDecisions" : "first",
             "howDetails" : null
         },
         "correspondent" : {
@@ -75,7 +75,9 @@
             "email" : {
                 "address" : "92zx2n1nk@wx.co.uk"
             },
-            "phone" : null,
+            "phone" : {
+                "number" : "012412141535"
+            },
             "contactByPost" : false,
             "contactInWelsh" : false,
             "contactDetailsEnteredManually" : null

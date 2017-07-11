@@ -2,7 +2,8 @@
 
 namespace Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
-use Opg\Lpa\DataModel\Lpa\Elements;
+use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -16,12 +17,12 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Human extends AbstractAttorney
 {
     /**
-     * @var Elements\Name Their name.
+     * @var Name Their name.
      */
     protected $name;
 
     /**
-     * @var Elements\Dob Their date of birth.
+     * @var Dob Their date of birth.
      */
     protected $dob;
 
@@ -30,7 +31,7 @@ class Human extends AbstractAttorney
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
+                'type' => '\Opg\Lpa\DataModel\Common\Name'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -38,7 +39,7 @@ class Human extends AbstractAttorney
         $metadata->addPropertyConstraints('dob', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Dob'
+                'type' => '\Opg\Lpa\DataModel\Common\Dob'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -55,17 +56,17 @@ class Human extends AbstractAttorney
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Elements\Name ? $v : new Elements\Name($v));
+                return ($v instanceof Name ? $v : new Name($v));
             case 'dob':
-                return ($v instanceof Elements\Dob ? $v : new Elements\Dob($v));
+                return ($v instanceof Dob ? $v : new Dob($v));
         }
 
         return parent::map($property, $v);
     }
 
-    public function toArray()
+    public function toArray($dateFormat = 'string')
     {
-        return array_merge(parent::toArray(), [
+        return array_merge(parent::toArray($dateFormat), [
             'type' => 'human'
         ]);
     }

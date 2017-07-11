@@ -3,7 +3,10 @@
 namespace Opg\Lpa\DataModel\Lpa\Document;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Elements;
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
@@ -29,7 +32,7 @@ class Correspondence extends AbstractData
     protected $who;
 
     /**
-     * @var Elements\Name Their name.
+     * @var Name Their name.
      */
     protected $name;
 
@@ -39,21 +42,21 @@ class Correspondence extends AbstractData
     protected $company;
 
     /**
-     * @var Elements\Address Their postal address.
+     * @var Address Their postal address.
      */
     protected $address;
 
     /**
      * If this is set, we can contact them by email.
      *
-     * @var Elements\EmailAddress Their email address.
+     * @var EmailAddress Their email address.
      */
     protected $email;
 
     /**
      * If this is set, we can contact them by phone.
      *
-     * @var Elements\PhoneNumber Their phone number.
+     * @var PhoneNumber Their phone number.
      */
     protected $phone;
 
@@ -91,7 +94,7 @@ class Correspondence extends AbstractData
 
         $metadata->addPropertyConstraints('name', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Name'
+                'type' => '\Opg\Lpa\DataModel\Common\Name'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -116,21 +119,21 @@ class Correspondence extends AbstractData
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\Address'
+                'type' => '\Opg\Lpa\DataModel\Common\Address'
             ]),
             new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('email', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\EmailAddress'
+                'type' => '\Opg\Lpa\DataModel\Common\EmailAddress'
             ]),
             new ValidConstraintSymfony,
         ]);
 
         $metadata->addPropertyConstraints('phone', [
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Lpa\Elements\PhoneNumber'
+                'type' => '\Opg\Lpa\DataModel\Common\PhoneNumber'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -159,13 +162,13 @@ class Correspondence extends AbstractData
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Elements\Name ? $v : new Elements\Name($v));
+                return ($v instanceof Name ? $v : new Name($v));
             case 'address':
-                return ($v instanceof Elements\Address ? $v : new Elements\Address($v));
+                return ($v instanceof Address ? $v : new Address($v));
             case 'email':
-                return ($v instanceof Elements\EmailAddress ? $v : new Elements\EmailAddress($v));
+                return ($v instanceof EmailAddress ? $v : new EmailAddress($v));
             case 'phone':
-                return ($v instanceof Elements\PhoneNumber ? $v : new Elements\PhoneNumber($v));
+                return ($v instanceof PhoneNumber ? $v : new PhoneNumber($v));
         }
 
         return parent::map($property, $v);
