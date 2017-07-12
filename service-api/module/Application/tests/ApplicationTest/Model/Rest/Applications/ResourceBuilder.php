@@ -24,6 +24,7 @@ class ResourceBuilder
     private $locked = false;
     private $updateNumberModified = null;
     private $insert = false;
+    private $toDelete;
 
     /**
      * @return TestableResource
@@ -70,6 +71,18 @@ class ResourceBuilder
                         ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
                         ->andReturn($this->getDefaultCursor());
                 }
+            }
+
+            if ($this->toDelete === null) {
+                $this->lpaCollection->shouldNotReceive('save');
+            } else {
+                $this->lpaCollection->shouldReceive('findOne')
+                    ->with(['_id' => (int)$this->toDelete->id, 'user' => $this->user->id], [ '_id'=>true ])
+                    ->andReturn(['_id' => $this->toDelete->id]);
+                $this->lpaCollection->shouldReceive('find')
+                    ->with(['user' => $this->user->id], [ '_id'=>true ])
+                    ->andReturn([['_id' => $this->toDelete->id]]);
+                $this->lpaCollection->shouldReceive('save');
             }
         }
 
@@ -155,8 +168,19 @@ class ResourceBuilder
         return $this;
     }
 
+    /**
+     * @param Lpa $toDelete
+     * @return ResourceBuilder
+     */
+    public function withToDelete($toDelete)
+    {
+        $this->toDelete = $toDelete;
+        return $this;
+    }
+
     public function verify()
     {
+        $this->lpaCollection->mockery_verify();
         Mockery::close();
     }
 

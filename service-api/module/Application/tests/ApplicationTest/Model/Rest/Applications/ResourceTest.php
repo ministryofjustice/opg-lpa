@@ -454,4 +454,44 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
 
         $resourceBuilder->verify();
     }
+
+    public function testDeleteNotFound()
+    {
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->build();
+
+        $response = $resource->delete(-1);
+
+        $this->assertTrue($response instanceof ApiProblem);
+        $this->assertEquals(404, $response->status);
+        $this->assertEquals('Document not found', $response->detail);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testDelete()
+    {
+        $lpa = FixturesData::getPfLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withToDelete($lpa)->build();
+
+        $response = $resource->delete($lpa->id);
+
+        $this->assertTrue($response);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testDeleteAll()
+    {
+        $lpa = FixturesData::getPfLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withToDelete($lpa)->build();
+
+        $response = $resource->deleteAll();
+
+        $this->assertTrue($response);
+
+        $resourceBuilder->verify();
+    }
 }
