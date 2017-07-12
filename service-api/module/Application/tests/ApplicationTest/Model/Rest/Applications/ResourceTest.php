@@ -12,6 +12,7 @@ use Application\Model\Rest\Applications\Resource;
 use Application\Model\Rest\Lock\LockedException;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -522,5 +523,62 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $lpaCollection['count']);
         $this->assertEquals(1, count($lpaCollection['items']));
         $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
+    }
+
+    public function testFetchAllSearchById()
+    {
+        $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+
+        /** @var Collection $response */
+        $response = $resource->fetchAll(['search' => $lpas[1]->id]);
+
+        $this->assertEquals(1, $response->count());
+        $lpaCollection = $response->toArray();
+        $this->assertEquals(1, $lpaCollection['count']);
+        $this->assertEquals(1, count($lpaCollection['items']));
+        $this->assertEquals($lpas[1], $lpaCollection['items'][0]->getLpa());
+    }
+
+    public function testFetchAllSearchByIdAndFilter()
+    {
+        $user = FixturesData::getUser();
+        $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser($user)->withLpas($lpas)->build();
+
+        /** @var Collection $response */
+        $response = $resource->fetchAll(['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
+
+        $this->assertEquals(0, $response->count());
+    }
+
+    public function testFetchAllSearchByReference()
+    {
+        $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+
+        /** @var Collection $response */
+        $response = $resource->fetchAll(['search' => Formatter::id($lpas[0]->id)]);
+
+        $this->assertEquals(1, $response->count());
+        $lpaCollection = $response->toArray();
+        $this->assertEquals(1, $lpaCollection['count']);
+        $this->assertEquals(1, count($lpaCollection['items']));
+        $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
+    }
+
+    public function testFetchAllSearchByName()
+    {
+        $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+
+        /** @var Collection $response */
+        $response = $resource->fetchAll(['search' => $lpas[0]->document->donor->name]);
+
+        $this->assertEquals(0, $response->count());
     }
 }

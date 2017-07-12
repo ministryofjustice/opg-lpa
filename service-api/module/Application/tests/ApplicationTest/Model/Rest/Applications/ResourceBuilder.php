@@ -94,6 +94,15 @@ class ResourceBuilder
                 $this->lpaCollection->shouldReceive('find')
                     ->with(['user' => $this->user->id])
                     ->andReturn(new DummyLpaMongoCursor($this->lpas));
+
+                foreach ($this->lpas as $lpa) {
+                    $this->lpaCollection->shouldReceive('find')
+                        ->with(['user' => $this->user->id, '_id' => $lpa->id])
+                        ->andReturn(new DummyLpaMongoCursor([$lpa]));
+                }
+
+                $this->lpaCollection->shouldReceive('find')
+                    ->andReturn($this->getDefaultCursor());
             }
         }
 
