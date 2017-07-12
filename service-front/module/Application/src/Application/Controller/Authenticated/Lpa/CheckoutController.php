@@ -11,6 +11,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Zend\Http\Response as HttpResponse;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Model\ViewModel;
+use RuntimeException;
 
 class CheckoutController extends AbstractLpaController
 {
@@ -82,7 +83,7 @@ class CheckoutController extends AbstractLpaController
         $this->verifyLpaPaymentAmount($lpa);
 
         if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-            throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
+            throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
         }
 
         //---
@@ -100,7 +101,7 @@ class CheckoutController extends AbstractLpaController
 
         // Sanity check; making sure this method isn't called if there's something to pay.
         if ($lpa->payment->amount != 0) {
-            throw new \RuntimeException('Invalid option');
+            throw new RuntimeException('Invalid option');
         }
 
         //---
@@ -155,6 +156,11 @@ class CheckoutController extends AbstractLpaController
         if (!is_null($lpa->payment->gatewayReference)) {
             // Look the payment up on Pay
             $payment = $paymentClient->getPayment($lpa->payment->gatewayReference);
+
+            //  If the payment is null (possibly due to bad ref) then redirect to the failure view
+            if (is_null($payment)) {
+                throw new RuntimeException('Invalid GovPay payment reference: ' . $lpa->payment->gatewayReference);
+            }
 
             if ($payment->isSuccess()) {
                 // Payment has already been made.
@@ -230,7 +236,7 @@ class CheckoutController extends AbstractLpaController
 
                 //  Save the LPA to update the details
                 if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpaPayment)) {
-                    throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
+                    throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
                 }
             }
         }
@@ -421,7 +427,7 @@ class CheckoutController extends AbstractLpaController
                 $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
 
                 if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                    throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
+                    throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
                 }
 
                 //---
