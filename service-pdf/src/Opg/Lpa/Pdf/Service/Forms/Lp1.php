@@ -433,7 +433,10 @@ abstract class Lp1 extends AbstractForm
 
         $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
         if ($noOfPeopleToNotify > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+            //Property and Finance
             $this->pdfFormData['has-more-than-4-notified-people'] = self::CHECK_BOX_ON;
+            //Health and Welfare
+            $this->pdfFormData['has-more-than-5-notified-people'] = self::CHECK_BOX_ON;
         }
 
         if ($noOfPeopleToNotify < self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
