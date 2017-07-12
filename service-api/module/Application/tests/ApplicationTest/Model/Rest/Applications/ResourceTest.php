@@ -3,126 +3,124 @@
 namespace ApplicationTest\Model\Rest\Applications;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Model\Rest\Applications\Entity;
 use Application\Model\Rest\Applications\Resource;
-use Application\Model\Rest\Users\Entity as UserEntity;
+use Application\Model\Rest\Lock\LockedException;
 use Mockery;
-use Mockery\Mock;
-use MongoCollection;
-use MongoCursor;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
-use Zend\Log\LoggerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\AuthorizationService;
 
 class ResourceTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Lpa
-     */
-    private $pfLpa;
-    private $pfLpaId;
-
-    /**
-     * @var Lpa
-     */
-    private $hwLpa;
-    private $hwLpaId;
-
-    /**
-     * @var User
-     */
-    private $user = null;
-    private $userId;
-
-    /**
-     * @var Resource
-     */
-    private $resource = null;
-
-    /**
-     * @var Mock
-     */
-    private $lpaCollection = null;
-
-    protected function setUp()
+    public function testGetRouteUserException()
     {
-        parent::setUp();
-
-        $this->pfLpa = FixturesData::getPfLpa();
-        $this->pfLpaId = $this->pfLpa->id;
-
-        $this->hwLpa = FixturesData::getHwLpa();
-        $this->hwLpaId = $this->hwLpa->id;
-
-        $this->user = FixturesData::getUser();
-        $this->userId = $this->user->id;
-
-        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
-        $authorizationServiceMock->shouldReceive('isGranted')->andReturn(true);
-
-        $loggerMock = Mockery::mock(LoggerInterface::class);
-        $loggerMock->shouldReceive('info');
-
-        $serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-
-        $this->lpaCollection = Mockery::mock(MongoCollection::class);
-        $this->lpaCollection->shouldReceive('findOne')->with(['_id'=>(int)$this->pfLpaId, 'user'=>$this->userId])->andReturn($this->pfLpa->toMongoArray());
-        $this->lpaCollection->shouldReceive('findOne')->with(['_id'=>(int)$this->hwLpaId, 'user'=>$this->userId])->andReturn($this->hwLpa->toMongoArray());
-        $this->lpaCollection->shouldReceive('findOne')->andReturn(null);
-
-        $defaultCursor = Mockery::mock(MongoCursor::class);
-        $defaultCursor->shouldReceive('limit')->andReturn($defaultCursor);
-        $defaultCursor->shouldReceive('count')->andReturn(0);
-        $this->lpaCollection->shouldReceive('find')->andReturn($defaultCursor);
-
-        $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
-
-        $this->resource = new Resource();
-        $this->resource->setServiceLocator($serviceLocatorMock);
-        $this->resource->setAuthorizationService($authorizationServiceMock);
-        $this->resource->setRouteUser(new UserEntity($this->user));
+        $this->setExpectedException(\RuntimeException::class, 'Route User not set');
+        $resource = new Resource();
+        $resource->getRouteUser();
     }
 
-    public function tearDown()
+    public function testSetLpa()
     {
-        Mockery::close();
+        $pfLpa = FixturesData::getPfLpa();
+        $resource = new Resource();
+        $resource->setLpa($pfLpa);
+        $lpa = $resource->getLpa();
+        $this->assertTrue($pfLpa === $lpa);
+    }
+
+    public function testGetLpaException()
+    {
+        $this->setExpectedException(\RuntimeException::class, 'LPA not set');
+        $resource = new Resource();
+        $resource->getLpa();
     }
 
     public function testGetType()
     {
-        $this->assertEquals('collections', $this->resource->getType());
+        $resource = new Resource();
+        $this->assertEquals('collections', $resource->getType());
     }
 
     public function testFetchNotFound()
     {
-        $entity = $this->resource->fetch(-1);
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->build();
+
+        $entity = $resource->fetch(-1);
+
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(404, $entity->status);
         $this->assertEquals('Document -1 not found for user e551d8b14c408f7efb7358fb258f1b12', $entity->detail);
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchHwLpa()
     {
-        $entity = $this->resource->fetch($this->hwLpaId);
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        
+        $entity = $resource->fetch($lpa->id);
         $this->assertTrue($entity instanceof Entity);
-        $this->assertEquals($this->hwLpa, $entity->getLpa());
+        $this->assertEquals($lpa, $entity->getLpa());
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchNotAuthenticated()
+    {
+        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
+        $authorizationServiceMock->shouldReceive('isGranted')->andReturn(false);
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withAuthorizationService($authorizationServiceMock)
+            ->build();
+
+        $this->setExpectedException(UnauthorizedException::class, 'You need to be authenticated to access this resource');
+        $resource->fetch(1);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchMissingPermission()
+    {
+        $user = FixturesData::getUser();
+        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
+        $authorizationServiceMock->shouldReceive('isGranted')->with('isAuthorizedToManageUser', $user->id)
+            ->andReturn(false);
+        $authorizationServiceMock->shouldReceive('isGranted')->andReturn(true);
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser($user)
+            ->withAuthorizationService($authorizationServiceMock)
+            ->build();
+
+        $this->setExpectedException(UnauthorizedException::class, 'You do not have permission to access this resource');
+        $resource->fetch(1);
+
+        $resourceBuilder->verify();
     }
 
     public function testCreateNullData()
     {
-        $this->lpaCollection->shouldReceive('insert')->once();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withInsert(true)->build();
 
         /* @var Entity */
-        $createdEntity = $this->resource->create(null);
+        $createdEntity = $resource->create(null);
 
         $this->assertNotNull($createdEntity);
         $this->assertGreaterThan(0, $createdEntity->lpaId());
-        $this->lpaCollection->mockery_verify();
+
+        $resourceBuilder->verify();
     }
 
     public function testCreateMalformedData()
@@ -130,43 +128,56 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         //The bad id value on this user will fail validation
         $user = new User();
         $user->set('id', 3);
-        $this->resource->setRouteUser(new UserEntity($user));
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser($user)->build();
 
         //So we expect an exception and for no document to be inserted
         $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object was created');
-        $this->lpaCollection->shouldNotReceive('insert');
 
-        $this->resource->create(null);
-        $this->lpaCollection->mockery_verify();
+        $resource->create(null);
+
+        $resourceBuilder->verify();
     }
 
     public function testCreateFullLpa()
     {
-        $this->lpaCollection->shouldReceive('insert')->once();
+        $user = FixturesData::getUser();
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser($user)
+            ->withLpa($lpa)
+            ->withInsert(true)
+            ->build();
 
         /* @var Entity */
-        $createdEntity = $this->resource->create($this->hwLpa->toArray());
+        $createdEntity = $resource->create($lpa->toArray());
 
         $this->assertNotNull($createdEntity);
         //Id should be generated
-        $this->assertNotEquals($this->hwLpa->get('id'), $createdEntity->lpaId());
+        $this->assertNotEquals($lpa->id, $createdEntity->lpaId());
         $this->assertGreaterThan(0, $createdEntity->lpaId());
         //User should be reassigned to logged in user
-        $this->assertEquals($this->userId, $createdEntity->userId());
+        $this->assertEquals($user->id, $createdEntity->userId());
 
-        $this->lpaCollection->mockery_verify();
+        $resourceBuilder->verify();
     }
 
     public function testCreateFilterIncomingData()
     {
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa(FixturesData::getHwLpa())
+            ->withInsert(true)
+            ->build();
+
         $lpa = FixturesData::getHwLpa();
         $lpa->set('lockedAt', new DateTime());
         $lpa->set('locked', true);
 
-        $this->lpaCollection->shouldReceive('insert');
-
         /* @var Entity */
-        $createdEntity = $this->resource->create($lpa->toArray());
+        $createdEntity = $resource->create($lpa->toArray());
         $createdLpa = $createdEntity->getLpa();
 
         //The following properties should be maintained
@@ -185,38 +196,116 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals($lpa->get('locked'), $createdLpa->get('locked'));
         $this->assertNotEquals($lpa->get('seed'), $createdLpa->get('seed'));
 
-        $this->lpaCollection->mockery_verify();
+        $resourceBuilder->verify();
     }
 
-    public function testPatchMalformedData()
+    public function testPatchValidationError()
     {
-        //The bad id value on this user will fail validation
-        /*$user = new User();
-        $user->set('id', 3);
-        $this->resource->setRouteUser(new UserEntity($user));*/
+        $pfLpa = FixturesData::getPfLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($pfLpa)
+            ->build();
 
-        //So we expect an exception and for no document to be inserted
-        $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object was created');
-        $this->lpaCollection->shouldNotReceive('update');
+        //Make sure the LPA is invalid
+        $lpa = new Lpa();
+        $lpa->id = $pfLpa->id;
+        $lpa->document = new Document();
+        $lpa->document->type = 'invalid';
 
-        $this->resource->patch($this->hwLpa->toArray(), $this->hwLpaId);
-        $this->lpaCollection->mockery_verify();
+        $validationError = $resource->patch($lpa->toArray(), $lpa->id);
+
+        $this->assertTrue($validationError instanceof ValidationApiProblem);
+        $this->assertEquals(400, $validationError->status);
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
+        $this->assertEquals('Bad Request', $validationError->title);
+        $validation = $validationError->validation;
+        $this->assertEquals(1, count($validation));
+        $this->assertTrue(array_key_exists('document.type', $validation));
+
+        $resourceBuilder->verify();
+    }
+
+    public function testUpdateLpaValidationError()
+    {
+        $pfLpa = FixturesData::getPfLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($pfLpa)
+            ->build();
+
+        //Make sure the LPA is invalid
+        $lpa = new Lpa();
+        $lpa->id = $pfLpa->id;
+        $lpa->document = new Document();
+        $lpa->document->type = 'invalid';
+
+        $this->setExpectedException(\RuntimeException::class, 'LPA object is invalid');
+        $resource->testUpdateLpa($lpa);
+
+        $resourceBuilder->verify();
     }
 
     public function testPatchFullLpa()
     {
-        $this->lpaCollection->shouldReceive('update')->once()->andReturn(['nModified' => 0]);
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withUpdateNumberModified(1)
+            ->build();
 
         /* @var Entity */
-        $patchedEntity = $this->resource->patch($this->hwLpa->toArray(), $this->hwLpaId);
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
 
         $this->assertNotNull($patchedEntity);
         //Id should be retained
-        $this->assertEquals($this->hwLpa->get('id'), $patchedEntity->lpaId());
+        $this->assertEquals($lpa->id, $patchedEntity->lpaId());
         //User should not be reassigned to logged in user
-        $this->assertEquals($this->hwLpa->user, $patchedEntity->userId());
+        $this->assertEquals($lpa->user, $patchedEntity->userId());
 
-        $this->lpaCollection->mockery_verify();
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchLockedLpa()
+    {
+        $lpa = FixturesData::getPfLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withLocked(true)
+            ->build();
+
+        $this->setExpectedException(LockedException::class, 'LPA has already been locked.');
+        $resource->patch($lpa->toArray(), $lpa->id);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchSetCreatedDate()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->createdAt = null;
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withUpdateNumberModified(1)
+            ->build();
+
+        $this->assertNull($lpa->createdAt);
+
+        /* @var Entity */
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+
+        $this->assertNotNull($patchedEntity->getLpa()->createdAt);
+
+        $resourceBuilder->verify();
     }
 
     public function testPatchFilterIncomingData()
@@ -224,11 +313,15 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $lpa = FixturesData::getHwLpa();
         $lpa->set('lockedAt', new DateTime());
         $lpa->set('locked', true);
-
-        $this->lpaCollection->shouldReceive('update')->once()->andReturn(['nModified' => 0]);
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withUpdateNumberModified(1)
+            ->build();
 
         /* @var Entity */
-        $patchedEntity = $this->resource->patch($lpa->toArray(), $this->hwLpaId);
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
         $patchedLpa = $patchedEntity->getLpa();
 
         //The following properties should be maintained
@@ -247,6 +340,6 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals($lpa->get('locked'), $patchedLpa->get('locked'));
         $this->assertNotEquals($lpa->get('seed'), $patchedLpa->get('seed'));
 
-        $this->lpaCollection->mockery_verify();
+        $resourceBuilder->verify();
     }
 }
