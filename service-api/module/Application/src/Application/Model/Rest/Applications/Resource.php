@@ -6,7 +6,7 @@ use RuntimeException;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\UserConsumerInterface;
 
-use Zend\Paginator\Adapter\Null as PaginatorNull;
+use Zend\Paginator\Adapter\NullFill as PaginatorNull;
 use Zend\Paginator\Adapter\Callback as PaginatorCallback;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;

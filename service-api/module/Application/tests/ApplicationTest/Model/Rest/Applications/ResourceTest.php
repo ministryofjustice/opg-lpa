@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
+use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\Applications\Entity;
 use Application\Model\Rest\Applications\Resource;
 use Application\Model\Rest\Lock\LockedException;
@@ -14,6 +15,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
+use Zend\Paginator\Adapter\NullFill;
 use ZfcRbac\Service\AuthorizationService;
 
 class ResourceTest extends \PHPUnit_Framework_TestCase
@@ -493,5 +495,32 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($response);
 
         $resourceBuilder->verify();
+    }
+
+    public function testFetchAllNoRecords()
+    {
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->build();
+
+        /** @var Collection $response */
+        $response = $resource->fetchAll();
+
+        $this->assertEquals(0, $response->count());
+    }
+
+    public function testFetchAllOneRecord()
+    {
+        $lpas = [FixturesData::getHwLpa()];
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+
+        /** @var Collection $response */
+        $response = $resource->fetchAll();
+
+        $this->assertEquals(1, $response->count());
+        $lpaCollection = $response->toArray();
+        $this->assertEquals(1, $lpaCollection['count']);
+        $this->assertEquals(1, count($lpaCollection['items']));
+        $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
     }
 }

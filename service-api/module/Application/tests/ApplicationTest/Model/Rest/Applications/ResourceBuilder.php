@@ -25,6 +25,7 @@ class ResourceBuilder
     private $updateNumberModified = null;
     private $insert = false;
     private $toDelete;
+    private $lpas;
 
     /**
      * @return TestableResource
@@ -83,6 +84,16 @@ class ResourceBuilder
                     ->with(['user' => $this->user->id], [ '_id'=>true ])
                     ->andReturn([['_id' => $this->toDelete->id]]);
                 $this->lpaCollection->shouldReceive('save');
+            }
+
+            if ($this->lpas === null) {
+                $this->lpaCollection->shouldReceive('find')
+                    ->with(['user' => $this->user->id])
+                    ->andReturn($this->getDefaultCursor());
+            } else {
+                $this->lpaCollection->shouldReceive('find')
+                    ->with(['user' => $this->user->id])
+                    ->andReturn(new DummyLpaMongoCursor($this->lpas));
             }
         }
 
@@ -175,6 +186,16 @@ class ResourceBuilder
     public function withToDelete($toDelete)
     {
         $this->toDelete = $toDelete;
+        return $this;
+    }
+
+    /**
+     * @param Lpa[] $lpas
+     * @return ResourceBuilder
+     */
+    public function withLpas($lpas)
+    {
+        $this->lpas = $lpas;
         return $this;
     }
 
