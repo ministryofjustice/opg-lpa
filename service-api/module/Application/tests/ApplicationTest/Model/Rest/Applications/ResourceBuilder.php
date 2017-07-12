@@ -57,6 +57,9 @@ class ResourceBuilder
                 $this->lpaCollection->shouldReceive('findOne')
                     ->with(['_id' => (int)$this->lpa->id, 'user' => $this->user->id])
                     ->andReturn($this->lpa->toMongoArray());
+                $this->lpaCollection->shouldReceive('findOne')
+                    ->with(['_id' => $this->lpa->id])
+                    ->andReturn($this->lpa->toMongoArray());
 
                 if ($this->locked) {
                     $this->lpaCollection->shouldReceive('find')

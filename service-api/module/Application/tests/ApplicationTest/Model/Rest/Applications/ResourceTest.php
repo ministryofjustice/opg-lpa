@@ -142,14 +142,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
     public function testCreateFullLpa()
     {
         $user = FixturesData::getUser();
-        $lpa = FixturesData::getHwLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser($user)
-            ->withLpa($lpa)
             ->withInsert(true)
             ->build();
 
+        $lpa = FixturesData::getHwLpa();
         /* @var Entity */
         $createdEntity = $resource->create($lpa->toArray());
 
@@ -168,7 +167,6 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getHwLpa())
             ->withInsert(true)
             ->build();
 
@@ -187,8 +185,8 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($lpa->get('repeatCaseNumber'), $createdLpa->get('repeatCaseNumber'));
         //All others should be ignored
         $this->assertNotEquals($lpa->get('startedAt'), $createdLpa->get('startedAt'));
-        $this->assertNotEquals($lpa->get('createdAt'), $createdLpa->get('updatedAt'));
-        $this->assertNotEquals($lpa->get('startedAt'), $createdLpa->get('startedAt'));
+        $this->assertNotEquals($lpa->get('createdAt'), $createdLpa->get('createdAt'));
+        $this->assertNotEquals($lpa->get('updatedAt'), $createdLpa->get('updatedAt'));
         $this->assertNotEquals($lpa->get('completedAt'), $createdLpa->get('completedAt'));
         $this->assertNotEquals($lpa->get('lockedAt'), $createdLpa->get('lockedAt'));
         $this->assertNotEquals($lpa->get('user'), $createdLpa->get('user'));
@@ -205,7 +203,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())
-            ->withLpa($pfLpa)
+            ->withLpa(FixturesData::getPfLpa())
             ->build();
 
         //Make sure the LPA is invalid
@@ -249,16 +247,16 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resourceBuilder->verify();
     }
 
-    public function testPatchFullLpa()
+    public function testPatchFullLpaNoChanges()
     {
-        $lpa = FixturesData::getHwLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withLpa(FixturesData::getHwLpa())
+            ->withUpdateNumberModified(0)
             ->build();
 
+        $lpa = FixturesData::getHwLpa();
         /* @var Entity */
         $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
 
@@ -267,21 +265,48 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($lpa->id, $patchedEntity->lpaId());
         //User should not be reassigned to logged in user
         $this->assertEquals($lpa->user, $patchedEntity->userId());
+        //Updated date should not have changed as the LPA document hasn't changed
+        $this->assertEquals($lpa->updatedAt, $patchedEntity->getLpa()->updatedAt);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchFullLpaChanges()
+    {
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa(FixturesData::getHwLpa())
+            ->withUpdateNumberModified(1)
+            ->build();
+
+        $lpa = FixturesData::getHwLpa();
+        $lpa->document->instruction = 'Changed';
+        /* @var Entity */
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+
+        $this->assertNotNull($patchedEntity);
+        //Id should be retained
+        $this->assertEquals($lpa->id, $patchedEntity->lpaId());
+        //User should not be reassigned to logged in user
+        $this->assertEquals($lpa->user, $patchedEntity->userId());
+        //Updated date should not have changed as the LPA document hasn't changed
+        $this->assertNotEquals($lpa->updatedAt, $patchedEntity->getLpa()->updatedAt);
 
         $resourceBuilder->verify();
     }
 
     public function testPatchLockedLpa()
     {
-        $lpa = FixturesData::getPfLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
+            ->withLpa(FixturesData::getPfLpa())
             ->withLocked(true)
             ->build();
 
         $this->setExpectedException(LockedException::class, 'LPA has already been locked.');
+        $lpa = FixturesData::getPfLpa();
         $resource->patch($lpa->toArray(), $lpa->id);
 
         $resourceBuilder->verify();
@@ -308,15 +333,102 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resourceBuilder->verify();
     }
 
-    public function testPatchFilterIncomingData()
+    public function testPatchNotCreatedYet()
+    {
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa(FixturesData::getHwLpa())
+            ->withUpdateNumberModified(1)
+            ->build();
+
+        $lpa = FixturesData::getHwLpa();
+        //Remove primary attorneys so LPA is classed as not created
+        $lpa->document->certificateProvider = null;
+        /* @var Entity */
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+
+        $this->assertNull($patchedEntity->getLpa()->createdAt);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchSetCompletedAtNotLocked()
     {
         $lpa = FixturesData::getHwLpa();
-        $lpa->set('lockedAt', new DateTime());
-        $lpa->set('locked', true);
+        $lpa->completedAt = null;
+        $lpa->locked = false;
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
+            ->withUpdateNumberModified(1)
+            ->build();
+
+        $this->assertNull($lpa->completedAt);
+
+        /* @var Entity */
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+
+        $this->assertNull($patchedEntity->getLpa()->completedAt);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchSetCompletedAtLocked()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->completedAt = null;
+        $lpa->locked = true;
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withUpdateNumberModified(1)
+            ->build();
+
+        $this->assertNull($lpa->completedAt);
+
+        /* @var Entity */
+        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+
+        $this->assertNotNull($patchedEntity->getLpa()->completedAt);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchUpdateNumberModifiedError()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa(FixturesData::getHwLpa())
+            ->withUpdateNumberModified(2)
+            ->build();
+
+        $this->setExpectedException(\RuntimeException::class, 'Unable to update LPA. This might be because "updatedAt" has changed.');
+        $resource->patch($lpa->toArray(), $lpa->id);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testPatchFilterIncomingData()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->set('startedAt', new DateTime());
+        $lpa->set('createdAt', new DateTime());
+        $lpa->set('updatedAt', new DateTime());
+        $lpa->set('completedAt', new DateTime());
+        $lpa->set('user', 'changed');
+        $lpa->set('whoAreYouAnswered', false);
+        $lpa->set('lockedAt', new DateTime());
+        $lpa->set('locked', true);
+        $lpa->set('seed', 'changed');
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa(FixturesData::getHwLpa())
             ->withUpdateNumberModified(1)
             ->build();
 
@@ -331,8 +443,8 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($lpa->get('repeatCaseNumber'), $patchedLpa->get('repeatCaseNumber'));
         //All others should be ignored
         $this->assertNotEquals($lpa->get('startedAt'), $patchedLpa->get('startedAt'));
-        $this->assertNotEquals($lpa->get('createdAt'), $patchedLpa->get('updatedAt'));
-        $this->assertNotEquals($lpa->get('startedAt'), $patchedLpa->get('startedAt'));
+        $this->assertNotEquals($lpa->get('createdAt'), $patchedLpa->get('createdAt'));
+        $this->assertNotEquals($lpa->get('updatedAt'), $patchedLpa->get('updatedAt'));
         $this->assertNotEquals($lpa->get('completedAt'), $patchedLpa->get('completedAt'));
         $this->assertNotEquals($lpa->get('lockedAt'), $patchedLpa->get('lockedAt'));
         $this->assertNotEquals($lpa->get('user'), $patchedLpa->get('user'));
