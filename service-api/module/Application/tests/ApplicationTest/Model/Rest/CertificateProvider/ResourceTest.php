@@ -31,7 +31,6 @@ class ResourceTest extends AbstractResourceTest
         $lpa = FixturesData::getPfLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        /** @var Entity $entity */
         $entity = $resource->fetch();
         $this->assertEquals(new Entity($lpa->document->certificateProvider, $lpa), $entity);
         $resourceBuilder->verify();

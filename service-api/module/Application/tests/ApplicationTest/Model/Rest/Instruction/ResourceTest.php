@@ -8,7 +8,6 @@ use Application\Model\Rest\Instruction\Entity;
 use Application\Model\Rest\Instruction\Resource as InstructionResource;
 use Application\Model\Rest\Instruction\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
-use Opg\Lpa\DataModel\Lpa\Document\Instruction;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
@@ -31,7 +30,6 @@ class ResourceTest extends AbstractResourceTest
         $lpa = FixturesData::getPfLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        /** @var Entity $entity */
         $entity = $resource->fetch();
         $this->assertEquals(new Entity($lpa->document->instruction, $lpa), $entity);
         $resourceBuilder->verify();
