@@ -122,10 +122,13 @@ class CheckoutController extends AbstractLpaController
 
         // Send confirmation email.
         $this->getServiceLocator()->get('Communication')
-            ->sendRegistrationCompleteEmail($lpa, $this->url()
-                ->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
+             ->sendRegistrationCompleteEmail($lpa, $this->url()
+             ->fromRoute('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]));
 
-        return $this->moveToNextRoute();
+        //  Don't use the next route function here - just go directly to the completed view
+        return $this->redirect()->toRoute('lpa/complete', [
+            'lpa-id' => $this->getLpa()->id
+        ]);
     }
 
     //------------------------------------------------------------------------------
