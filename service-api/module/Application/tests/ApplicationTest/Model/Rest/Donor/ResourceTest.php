@@ -1,14 +1,14 @@
 <?php
 
-namespace ApplicationTest\Model\Rest\CertificateProvider;
+namespace ApplicationTest\Model\Rest\Donor;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\CertificateProvider\Entity;
-use Application\Model\Rest\CertificateProvider\Resource as CertificateProviderResource;
-use Application\Model\Rest\CertificateProvider\Resource;
+use Application\Model\Rest\Donor\Entity;
+use Application\Model\Rest\Donor\Resource as DonorResource;
+use Application\Model\Rest\Donor\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
@@ -21,7 +21,7 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchCheckAccess()
     {
-        /** @var CertificateProviderResource $resource */
+        /** @var DonorResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->fetch();
     }
@@ -33,13 +33,13 @@ class ResourceTest extends AbstractResourceTest
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
         /** @var Entity $entity */
         $entity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->document->certificateProvider, $lpa), $entity);
+        $this->assertEquals(new Entity($lpa->document->donor, $lpa), $entity);
         $resourceBuilder->verify();
     }
 
     public function testUpdateCheckAccess()
     {
-        /** @var CertificateProviderResource $resource */
+        /** @var DonorResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->update(null, -1);
     }
@@ -50,9 +50,9 @@ class ResourceTest extends AbstractResourceTest
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getHwLpa())->build();
 
         //Make sure certificate provider is invalid
-        $certificateProvider = new CertificateProvider();
+        $donor = new Donor();
 
-        $validationError = $resource->update($certificateProvider->toArray(), -1); //Id is ignored
+        $validationError = $resource->update($donor->toArray(), -1); //Id is ignored
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->status);
@@ -60,9 +60,11 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
         $this->assertEquals('Bad Request', $validationError->title);
         $validation = $validationError->validation;
-        $this->assertEquals(2, count($validation));
+        $this->assertEquals(4, count($validation));
         $this->assertTrue(array_key_exists('name', $validation));
         $this->assertTrue(array_key_exists('address', $validation));
+        $this->assertTrue(array_key_exists('dob', $validation));
+        $this->assertTrue(array_key_exists('canSign', $validation));
 
         $resourceBuilder->verify();
     }
@@ -78,7 +80,7 @@ class ResourceTest extends AbstractResourceTest
         //So we expect an exception and for no document to be updated
         $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object');
 
-        $resource->update($lpa->document->certificateProvider->toArray(), -1); //Id is ignored
+        $resource->update($lpa->document->donor->toArray(), -1); //Id is ignored
 
         $resourceBuilder->verify();
     }
@@ -93,19 +95,19 @@ class ResourceTest extends AbstractResourceTest
             ->withUpdateNumberModified(1)
             ->build();
 
-        $certificateProvider = new CertificateProvider($lpa->document->certificateProvider->toArray());
-        $certificateProvider->name->first = 'Edited';
+        $donor = new Donor($lpa->document->donor->toArray());
+        $donor->name->first = 'Edited';
 
-        $primaryAttorneyDecisionsEntity = $resource->update($certificateProvider->toArray(), -1); //Id is ignored
+        $primaryAttorneyDecisionsEntity = $resource->update($donor->toArray(), -1); //Id is ignored
 
-        $this->assertEquals(new Entity($certificateProvider, $lpa), $primaryAttorneyDecisionsEntity);
+        $this->assertEquals(new Entity($donor, $lpa), $primaryAttorneyDecisionsEntity);
 
         $resourceBuilder->verify();
     }
 
     public function testDeleteCheckAccess()
     {
-        /** @var CertificateProviderResource $resource */
+        /** @var DonorResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->delete();
     }
@@ -161,7 +163,7 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->delete(); //Id is ignored
 
         $this->assertTrue($response);
-        $this->assertNull($lpa->document->certificateProvider);
+        $this->assertNull($lpa->document->donor);
 
         $resourceBuilder->verify();
     }
