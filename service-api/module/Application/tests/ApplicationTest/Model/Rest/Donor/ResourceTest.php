@@ -98,9 +98,9 @@ class ResourceTest extends AbstractResourceTest
         $donor = new Donor($lpa->document->donor->toArray());
         $donor->name->first = 'Edited';
 
-        $primaryAttorneyDecisionsEntity = $resource->update($donor->toArray(), -1); //Id is ignored
+        $entity = $resource->update($donor->toArray(), -1); //Id is ignored
 
-        $this->assertEquals(new Entity($donor, $lpa), $primaryAttorneyDecisionsEntity);
+        $this->assertEquals(new Entity($donor, $lpa), $entity);
 
         $resourceBuilder->verify();
     }

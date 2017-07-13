@@ -96,9 +96,9 @@ class ResourceTest extends AbstractResourceTest
         $certificateProvider = new CertificateProvider($lpa->document->certificateProvider->toArray());
         $certificateProvider->name->first = 'Edited';
 
-        $primaryAttorneyDecisionsEntity = $resource->update($certificateProvider->toArray(), -1); //Id is ignored
+        $entity = $resource->update($certificateProvider->toArray(), -1); //Id is ignored
 
-        $this->assertEquals(new Entity($certificateProvider, $lpa), $primaryAttorneyDecisionsEntity);
+        $this->assertEquals(new Entity($certificateProvider, $lpa), $entity);
 
         $resourceBuilder->verify();
     }
