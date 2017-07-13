@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\Applications\Entity;
 use Application\Model\Rest\Applications\Resource;
@@ -47,7 +48,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
     public function testGetType()
     {
         $resource = new Resource();
-        $this->assertEquals('collections', $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
     }
 
     public function testFetchNotFound()
