@@ -19,6 +19,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                          'lpa' => $lpa,
                      ]);
 
+        //  There will be some primary attorney descisions at this point because they will have been created in an earlier step
         $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
 
         if ($this->request->isPost()) {
@@ -32,10 +33,6 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
             $form->setData($postData);
 
             if ($form->isValid()) {
-                if (!$primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-                    $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
-                }
-
                 $howAttorneysAct = $form->getData()['how'];
                 $howDetails = null;
 

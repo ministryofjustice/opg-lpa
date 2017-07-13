@@ -33,6 +33,7 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
             if ($form->isValid()) {
                 if (!$replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
                     $replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $lpa->document->replacementAttorneyDecisions = $replacementAttorneyDecisions;
                 }
 
                 $whenReplacementStepIn = $form->getData()['when'];

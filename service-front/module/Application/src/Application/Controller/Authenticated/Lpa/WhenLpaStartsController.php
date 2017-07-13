@@ -29,6 +29,7 @@ class WhenLpaStartsController extends AbstractLpaController
             if ($form->isValid()) {
                 if (!$primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
                     $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+                    $lpa->document->primaryAttorneyDecisions = $primaryAttorneyDecisions;
                 }
 
                 $whenToStart = $form->getData()['when'];
