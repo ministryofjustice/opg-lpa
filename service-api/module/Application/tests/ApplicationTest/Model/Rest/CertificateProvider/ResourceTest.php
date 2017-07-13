@@ -48,7 +48,7 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getHwLpa())->build();
 
-        //Make sure certificate provider is invalid
+        //Make sure the certificate provider is invalid
         $certificateProvider = new CertificateProvider();
 
         $validationError = $resource->update($certificateProvider->toArray(), -1); //Id is ignored

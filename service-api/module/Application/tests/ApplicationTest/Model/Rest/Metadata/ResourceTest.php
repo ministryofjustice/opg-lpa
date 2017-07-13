@@ -1,14 +1,13 @@
 <?php
 
-namespace ApplicationTest\Model\Rest\Donor;
+namespace ApplicationTest\Model\Rest\Metadata;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\Donor\Entity;
-use Application\Model\Rest\Donor\Resource as DonorResource;
-use Application\Model\Rest\Donor\Resource;
+use Application\Model\Rest\Metadata\Entity;
+use Application\Model\Rest\Metadata\Resource as MetadataResource;
+use Application\Model\Rest\Metadata\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
@@ -21,7 +20,7 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchCheckAccess()
     {
-        /** @var DonorResource $resource */
+        /** @var MetadataResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->fetch();
     }
@@ -32,43 +31,18 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
         $entity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->document->donor, $lpa), $entity);
+        $this->assertEquals(new Entity($lpa->metadata, $lpa), $entity);
         $resourceBuilder->verify();
     }
 
     public function testUpdateCheckAccess()
     {
-        /** @var DonorResource $resource */
+        /** @var MetadataResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->update(null, -1);
     }
 
     public function testUpdateValidationFailed()
-    {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getHwLpa())->build();
-
-        //Make sure the donor is invalid
-        $donor = new Donor();
-
-        $validationError = $resource->update($donor->toArray(), -1); //Id is ignored
-
-        $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
-        $validation = $validationError->validation;
-        $this->assertEquals(4, count($validation));
-        $this->assertTrue(array_key_exists('name', $validation));
-        $this->assertTrue(array_key_exists('address', $validation));
-        $this->assertTrue(array_key_exists('dob', $validation));
-        $this->assertTrue(array_key_exists('canSign', $validation));
-
-        $resourceBuilder->verify();
-    }
-
-    public function testUpdateMalformedData()
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
@@ -76,10 +50,16 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        //So we expect an exception and for no document to be updated
-        $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object');
+        $validationError = $resource->update(null, -1); //Id is ignored
 
-        $resource->update($lpa->document->donor->toArray(), -1); //Id is ignored
+        $this->assertTrue($validationError instanceof ValidationApiProblem);
+        $this->assertEquals(400, $validationError->status);
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
+        $this->assertEquals('Bad Request', $validationError->title);
+        $validation = $validationError->validation;
+        $this->assertEquals(1, count($validation));
+        $this->assertTrue(array_key_exists('user', $validation));
 
         $resourceBuilder->verify();
     }
@@ -94,28 +74,28 @@ class ResourceTest extends AbstractResourceTest
             ->withUpdateNumberModified(1)
             ->build();
 
-        $donor = new Donor($lpa->document->donor->toArray());
-        $donor->name->first = 'Edited';
+        $metadata = ['new' => 'Edited'];
 
-        $entity = $resource->update($donor->toArray(), -1); //Id is ignored
+        $entity = $resource->update($metadata, -1); //Id is ignored
 
-        $this->assertEquals(new Entity($donor, $lpa), $entity);
+        $this->assertEquals(new Entity($metadata, $lpa), $entity);
+        $this->assertEquals($metadata, $lpa->metadata);
 
         $resourceBuilder->verify();
     }
 
     public function testDeleteCheckAccess()
     {
-        /** @var DonorResource $resource */
+        /** @var MetadataResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->delete();
     }
 
     public function testDeleteValidationFailed()
     {
-        //LPA's document must be invalid
+        //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->document->primaryAttorneys = [];
+        $lpa->user = 3;
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
@@ -128,23 +108,7 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals('Bad Request', $validationError->title);
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('whoIsRegistering', $validation));
-
-        $resourceBuilder->verify();
-    }
-
-    public function testDeleteMalformedData()
-    {
-        //The bad id value on this user will fail validation
-        $lpa = FixturesData::getHwLpa();
-        $lpa->user = 3;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-
-        //So we expect an exception and for no document to be updated
-        $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object');
-
-        $resource->delete(); //Id is ignored
+        $this->assertTrue(array_key_exists('user', $validation));
 
         $resourceBuilder->verify();
     }
@@ -162,7 +126,7 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->delete(); //Id is ignored
 
         $this->assertTrue($response);
-        $this->assertNull($lpa->document->donor);
+        $this->assertEmpty($lpa->metadata);
 
         $resourceBuilder->verify();
     }
