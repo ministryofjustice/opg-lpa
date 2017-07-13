@@ -22,7 +22,6 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $lpa = FixturesData::getPfLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        /** @var Entity $replacementAttorneyDecisionsEntity */
         $replacementAttorneyDecisionsEntity = $resource->fetch();
         $this->assertEquals(new Entity($lpa->document->replacementAttorneyDecisions, $lpa), $replacementAttorneyDecisionsEntity);
         $resourceBuilder->verify();
