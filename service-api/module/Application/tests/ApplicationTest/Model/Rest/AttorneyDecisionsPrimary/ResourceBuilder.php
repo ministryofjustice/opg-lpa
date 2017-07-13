@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Model\Rest\AttorneyDecisionsPrimary;
 
-
 use Application\Model\Rest\AttorneyDecisionsPrimary\Resource as AttorneyDecisionsPrimaryResource;
 use ApplicationTest\AbstractResourceBuilder;
 

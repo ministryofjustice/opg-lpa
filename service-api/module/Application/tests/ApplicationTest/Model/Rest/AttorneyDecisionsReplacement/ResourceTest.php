@@ -1,12 +1,12 @@
 <?php
 
-namespace ApplicationTest\Model\Rest\AttorneyDecisionsPrimary;
+namespace ApplicationTest\Model\Rest\AttorneyDecisionsReplacement;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\AttorneyDecisionsPrimary\Entity;
-use Application\Model\Rest\AttorneyDecisionsPrimary\Resource;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Application\Model\Rest\AttorneyDecisionsReplacement\Entity;
+use Application\Model\Rest\AttorneyDecisionsReplacement\Resource;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends \PHPUnit_Framework_TestCase
@@ -22,9 +22,9 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $lpa = FixturesData::getPfLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        /** @var Entity $primaryAttorneyDecisionsEntity */
-        $primaryAttorneyDecisionsEntity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->document->primaryAttorneyDecisions, $lpa), $primaryAttorneyDecisionsEntity);
+        /** @var Entity $replacementAttorneyDecisionsEntity */
+        $replacementAttorneyDecisionsEntity = $resource->fetch();
+        $this->assertEquals(new Entity($lpa->document->replacementAttorneyDecisions, $lpa), $replacementAttorneyDecisionsEntity);
         $resourceBuilder->verify();
     }
 
@@ -34,7 +34,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getHwLpa())->build();
 
         //Make sure decisions are invalid
-        $decisions = new PrimaryAttorneyDecisions();
+        $decisions = new ReplacementAttorneyDecisions();
         $decisions->set('how', 'invalid');
 
         $validationError = $resource->update($decisions->toArray(), -1); //Id is ignored
@@ -77,11 +77,11 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
             ->withUpdateNumberModified(1)
             ->build();
 
-        $decisions = new PrimaryAttorneyDecisions();
+        $decisions = new ReplacementAttorneyDecisions();
 
-        $primaryAttorneyDecisionsEntity = $resource->update($decisions->toArray(), -1); //Id is ignored
+        $replacementAttorneyDecisionsEntity = $resource->update($decisions->toArray(), -1); //Id is ignored
 
-        $this->assertEquals(new Entity($decisions, $lpa), $primaryAttorneyDecisionsEntity);
+        $this->assertEquals(new Entity($decisions, $lpa), $replacementAttorneyDecisionsEntity);
 
         $resourceBuilder->verify();
     }
@@ -92,7 +92,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getHwLpa())->build();
 
         //Make sure decisions are invalid
-        $decisions = new PrimaryAttorneyDecisions();
+        $decisions = new ReplacementAttorneyDecisions();
         $decisions->set('how', 'invalid');
 
         $validationError = $resource->patch($decisions->toArray(), -1); //Id is ignored
@@ -120,7 +120,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         //So we expect an exception and for no document to be updated
         $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object');
 
-        $decisions = new PrimaryAttorneyDecisions();
+        $decisions = new ReplacementAttorneyDecisions();
         $resource->patch($decisions->toArray(), -1); //Id is ignored
 
         $resourceBuilder->verify();
@@ -136,15 +136,15 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
             ->withUpdateNumberModified(1)
             ->build();
 
-        $decisions = new PrimaryAttorneyDecisions();
-        $decisions->canSustainLife = false;
-        $decisions->when = 'no-capacity';
+        $decisions = new ReplacementAttorneyDecisions();
+        $decisions->when = 'last';
+        $decisions->whenDetails = 'test';
         $decisions->how = 'jointly-attorney-severally';
         $decisions->howDetails = 'test';
 
-        $primaryAttorneyDecisionsEntity = $resource->patch($decisions->toArray(), -1); //Id is ignored
+        $replacementAttorneyDecisionsEntity = $resource->patch($decisions->toArray(), -1); //Id is ignored
 
-        $this->assertEquals(new Entity($decisions, $lpa), $primaryAttorneyDecisionsEntity);
+        $this->assertEquals(new Entity($decisions, $lpa), $replacementAttorneyDecisionsEntity);
 
         $resourceBuilder->verify();
     }
@@ -152,7 +152,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
     public function testPatchNullDecisionsOnLpa()
     {
         $lpa = FixturesData::getHwLpa();
-        $lpa->document->primaryAttorneyDecisions = null;
+        $lpa->document->replacementAttorneyDecisions = null;
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())
@@ -160,15 +160,15 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
             ->withUpdateNumberModified(1)
             ->build();
 
-        $decisions = new PrimaryAttorneyDecisions();
-        $decisions->canSustainLife = false;
-        $decisions->when = 'no-capacity';
+        $decisions = new ReplacementAttorneyDecisions();
+        $decisions->when = 'last';
+        $decisions->whenDetails = 'test';
         $decisions->how = 'jointly-attorney-severally';
         $decisions->howDetails = 'test';
 
-        $primaryAttorneyDecisionsEntity = $resource->patch($decisions->toArray(), -1); //Id is ignored
+        $replacementAttorneyDecisionsEntity = $resource->patch($decisions->toArray(), -1); //Id is ignored
 
-        $this->assertEquals(new Entity($decisions, $lpa), $primaryAttorneyDecisionsEntity);
+        $this->assertEquals(new Entity($decisions, $lpa), $replacementAttorneyDecisionsEntity);
 
         $resourceBuilder->verify();
     }
