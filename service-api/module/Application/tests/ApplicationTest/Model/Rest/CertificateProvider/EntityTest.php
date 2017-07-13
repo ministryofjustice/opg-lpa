@@ -1,8 +1,8 @@
 <?php
 
-namespace ApplicationTest\Model\Rest\AttorneyDecisionsReplacement;
+namespace ApplicationTest\Model\Rest\CertificateProvider;
 
-use Application\Model\Rest\AttorneyDecisionsReplacement\Entity;
+use Application\Model\Rest\CertificateProvider\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 
@@ -26,8 +26,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         //  Set up an LPA to test
-        $this->lpa = FixturesData::getPfLpa();
-        $this->entity = new Entity($this->lpa->document->replacementAttorneyDecisions, $this->lpa);
+        $this->lpa = FixturesData::getHwLpa();
+        $this->entity = new Entity($this->lpa->document->certificateProvider, $this->lpa);
     }
 
     public function testUserId()
@@ -37,7 +37,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     public function testLpaId()
     {
-        $this->assertEquals('91333263035', $this->entity->lpaId());
+        $this->assertEquals('5531003156', $this->entity->lpaId());
     }
 
     public function testResourceId()
@@ -47,7 +47,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     public function testToArray()
     {
-        $this->assertEquals($this->lpa->document->replacementAttorneyDecisions->toArray(), $this->entity->toArray());
+        $this->assertEquals($this->lpa->document->certificateProvider->toArray(), $this->entity->toArray());
     }
 
     public function testToArrayNull()

@@ -253,6 +253,7 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->delete(); //Id is ignored
 
         $this->assertTrue($response);
+        $this->assertNull($lpa->document->replacementAttorneyDecisions);
 
         $resourceBuilder->verify();
     }

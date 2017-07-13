@@ -50,7 +50,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->lpa->document->replacementAttorneys[0]->toArray(), $this->entity->toArray());
     }
 
-    public function testToArrayNullDecisions()
+    public function testToArrayNull()
     {
         $entity = new Entity(null, $this->lpa);
         $this->assertEquals(array(), $entity->toArray());
