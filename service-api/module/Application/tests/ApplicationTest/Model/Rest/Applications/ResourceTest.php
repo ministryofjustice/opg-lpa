@@ -10,17 +10,18 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\Applications\Entity;
 use Application\Model\Rest\Applications\Resource;
+use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use Application\Model\Rest\Lock\LockedException;
+use ApplicationTest\Model\AbstractResourceTest;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
-use Zend\Paginator\Adapter\NullFill;
 use ZfcRbac\Service\AuthorizationService;
 
-class ResourceTest extends \PHPUnit_Framework_TestCase
+class ResourceTest extends AbstractResourceTest
 {
     public function testGetRouteUserException()
     {
@@ -49,6 +50,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
     {
         $resource = new Resource();
         $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+    }
+
+    public function testFetchCheckAccess()
+    {
+        /** @var ApplicationsResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->fetch(-1);
     }
 
     public function testFetchNotFound()
@@ -111,6 +119,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resource->fetch(1);
 
         $resourceBuilder->verify();
+    }
+
+    public function testCreateCheckAccess()
+    {
+        /** @var ApplicationsResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->create(null);
     }
 
     public function testCreateNullData()
@@ -199,6 +214,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals($lpa->get('seed'), $createdLpa->get('seed'));
 
         $resourceBuilder->verify();
+    }
+
+    public function testPatchCheckAccess()
+    {
+        /** @var ApplicationsResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->patch( null,-1);
     }
 
     public function testPatchValidationError()
@@ -459,6 +481,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resourceBuilder->verify();
     }
 
+    public function testDeleteCheckAccess()
+    {
+        /** @var ApplicationsResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->delete(-1);
+    }
+
     public function testDeleteNotFound()
     {
         $resourceBuilder = new ResourceBuilder();
@@ -486,6 +515,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $resourceBuilder->verify();
     }
 
+    public function testDeleteAllCheckAccess()
+    {
+        /** @var ApplicationsResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->deleteAll();
+    }
+
     public function testDeleteAll()
     {
         $lpa = FixturesData::getPfLpa();
@@ -497,6 +533,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($response);
 
         $resourceBuilder->verify();
+    }
+
+    public function testFetchAllCheckAccess()
+    {
+        /** @var ApplicationsResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->fetchAll();
     }
 
     public function testFetchAllNoRecords()

@@ -1,6 +1,6 @@
 <?php
 
-namespace ApplicationTest\Model;
+namespace ApplicationTest;
 
 use InvalidArgumentException;
 use Opg\Lpa\DataModel\Lpa\Document\Document;

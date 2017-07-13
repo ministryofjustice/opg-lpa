@@ -6,15 +6,24 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\AttorneyDecisionsReplacement\Entity;
 use Application\Model\Rest\AttorneyDecisionsReplacement\Resource;
+use Application\Model\Rest\AttorneyDecisionsReplacement\Resource as AttorneyDecisionsReplacementResource;
+use ApplicationTest\Model\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 
-class ResourceTest extends \PHPUnit_Framework_TestCase
+class ResourceTest extends AbstractResourceTest
 {
     public function testGetType()
     {
         $resource = new Resource();
         $this->assertEquals(AbstractResource::TYPE_SINGULAR, $resource->getType());
+    }
+
+    public function testFetchCheckAccess()
+    {
+        /** @var AttorneyDecisionsReplacementResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->fetch();
     }
 
     public function testFetch()
@@ -25,6 +34,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $replacementAttorneyDecisionsEntity = $resource->fetch();
         $this->assertEquals(new Entity($lpa->document->replacementAttorneyDecisions, $lpa), $replacementAttorneyDecisionsEntity);
         $resourceBuilder->verify();
+    }
+
+    public function testUpdateCheckAccess()
+    {
+        /** @var AttorneyDecisionsReplacementResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->update(null, -1);
     }
 
     public function testUpdateValidationFailed()
@@ -83,6 +99,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new Entity($decisions, $lpa), $replacementAttorneyDecisionsEntity);
 
         $resourceBuilder->verify();
+    }
+
+    public function testPatchCheckAccess()
+    {
+        /** @var AttorneyDecisionsReplacementResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->patch(null, -1);
     }
 
     public function testPatchValidationFailed()
@@ -170,6 +193,13 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new Entity($decisions, $lpa), $replacementAttorneyDecisionsEntity);
 
         $resourceBuilder->verify();
+    }
+
+    public function testDeleteCheckAccess()
+    {
+        /** @var AttorneyDecisionsReplacementResource $resource */
+        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
+        $resource->delete();
     }
 
     public function testDeleteValidationFailed()
