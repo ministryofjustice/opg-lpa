@@ -19,7 +19,7 @@ class HowReplacementAttorneysMakeDecisionController extends AbstractLpaControlle
                          'lpa' => $lpa,
                      ]);
 
-        $replacementAttorneyDecisions = $this->getLpa()->document->replacementAttorneyDecisions;
+        $replacementAttorneyDecisions = $lpa->document->replacementAttorneyDecisions;
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();
@@ -34,6 +34,7 @@ class HowReplacementAttorneysMakeDecisionController extends AbstractLpaControlle
             if ($form->isValid()) {
                 if (!$replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
                     $replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $lpa->document->replacementAttorneyDecisions = $replacementAttorneyDecisions;
                 }
 
                 $howAttorneysAct = $form->getData()['how'];
