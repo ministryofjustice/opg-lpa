@@ -42,6 +42,7 @@ class PHPUnit_TextUI_Command
     protected $longOptions = array(
       'colors' => null,
       'bootstrap=' => null,
+      'columns=' => null,
       'configuration=' => null,
       'coverage-clover=' => null,
       'coverage-crap4j=' => null,
@@ -251,6 +252,15 @@ class PHPUnit_TextUI_Command
                 case '--bootstrap': {
                     $this->arguments['bootstrap'] = $option[1];
                     }
+                break;
+
+                case '--columns': {
+                    if (is_numeric($option[1])) {
+                        $this->arguments['columns'] = (int) $option[1];
+                    } elseif ($option[1] == 'max') {
+                        $this->arguments['columns'] = 'max';
+                    }
+                }
                 break;
 
                 case 'c':
@@ -502,6 +512,7 @@ class PHPUnit_TextUI_Command
                     $this->arguments['disallowTestOutput']         = true;
                     $this->arguments['enforceTimeLimit']           = true;
                     $this->arguments['disallowTodoAnnotatedTests'] = true;
+                    $this->arguments['deprecatedStrictModeOption'] = true;
                     }
                 break;
 
@@ -896,13 +907,14 @@ Test Execution Options:
   --disallow-test-output    Be strict about output during tests.
   --enforce-time-limit      Enforce time limit based on test size.
   --disallow-todo-tests     Disallow @todo-annotated tests.
-  --strict                  Run tests in strict mode (enables all of the above).
 
   --process-isolation       Run each test in a separate PHP process.
   --no-globals-backup       Do not backup and restore \$GLOBALS for each test.
   --static-backup           Backup and restore static attributes for each test.
 
   --colors                  Use colors in output.
+  --columns <n>             Number of columns to use for progress outout.
+  --columns max             Use maximum number of columns for progress outout.
   --stderr                  Write to STDERR instead of STDOUT.
   --stop-on-error           Stop execution upon first error.
   --stop-on-failure         Stop execution upon first error or failure.
