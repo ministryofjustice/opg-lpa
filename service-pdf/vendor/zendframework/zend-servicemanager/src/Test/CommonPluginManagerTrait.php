@@ -1,7 +1,9 @@
 <?php
 /**
- * @link      http://github.com/zendframework/zend-servicemanager for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -53,7 +55,7 @@ trait CommonPluginManagerTrait
 
     public function testRegisteringInvalidElementRaisesException()
     {
-        $this->expectException($this->getServiceNotFoundException());
+        $this->setExpectedException($this->getServiceNotFoundException());
         $this->getPluginManager()->setService('test', $this);
     }
 
@@ -61,7 +63,7 @@ trait CommonPluginManagerTrait
     {
         $manager = $this->getPluginManager();
         $manager->setInvokableClass('test', get_class($this));
-        $this->expectException($this->getServiceNotFoundException());
+        $this->setExpectedException($this->getServiceNotFoundException());
         $manager->get('test');
     }
 
