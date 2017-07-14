@@ -94,6 +94,7 @@ return [
             'applicantNames'        => 'Application\View\Helper\ApplicantNames',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
+            'finalCheckAccessible'  => 'Application\View\Helper\FinalCheckAccessible',
         ],
     ],
 

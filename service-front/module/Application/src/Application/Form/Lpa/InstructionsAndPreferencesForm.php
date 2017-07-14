@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class InstructionsAndPreferencesForm extends AbstractLpaForm
+class InstructionsAndPreferencesForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'instruction' => [
@@ -12,9 +12,6 @@ class InstructionsAndPreferencesForm extends AbstractLpaForm
         ],
         'preference' => [
             'type' => 'Textarea',
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

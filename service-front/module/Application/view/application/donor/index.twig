@@ -6,7 +6,7 @@
 
 <li id="donor-section" class="section current js-current">
 
-	<h2 class="heading-medium accordion-header flush--top">Who is the donor for this LPA?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who is the donor for this LPA?</h2>
 
     <div class="accordion-info">
         <div class="text">
@@ -30,23 +30,23 @@
         <h3 class="heading-medium flush--top">The donor</h3>
 
         <div class="person person--wider">
-            <h3 class="person-name heading-small flush--ends">{{ donor['name'] }}</h3>
-            <p class="person-address flush--ends">{{ donor['address'] }}</p>
+            <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }}</h3>
+            <p class="person-address flush--ends">{{ lpa.document.donor.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ editDonorUrl }}" class="action-edit js-form-popup">View/edit details</a>
+                    <a href="{{ editUrl }}" class="action-edit js-form-popup">View/edit details</a>
                 </li>
             </ul>
         </div>
 
         <div class="form-group">
-            <a href="{{ nextRoute }}" class="button">Save and continue</a>
+            <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
-	{% else %}
+    {% else %}
 
         <div class="form-group">
-            <a href="{{ addRoute }}" class="button js-form-popup">Add donor details</a>
+            <a href="{{ addUrl }}" class="button js-form-popup">Add donor details</a>
         </div>
 
     {% endif %}

@@ -98,7 +98,7 @@
 
         <p class="push--bottom"><a class="js-guidance" href="/guide#topic-fees-and-reductions" data-journey-click="stageprompt.lpa:help:fees-and-reductions">Find out more about qualifying for a reduction</a></p>
 
-        <input type="submit" name="save" value="Save and continue" class="button">
+        {{ formElement(form.get('save')) }}
 
 	{{ form().closeTag|raw }}
 

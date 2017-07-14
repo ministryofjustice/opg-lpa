@@ -8,14 +8,13 @@ use Zend\View\Model\ViewModel;
 
 class InstructionsController extends AbstractLpaController
 {
-
-    protected $contentHeader = 'creation-partial.phtml';
-
     public function indexAction()
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\InstructionsAndPreferencesForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\InstructionsAndPreferencesForm', [
+            'lpa' => $lpa,
+        ]);
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

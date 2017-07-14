@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class WhenLpaStartsForm extends AbstractLpaForm
+class WhenLpaStartsForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'when' => [
@@ -14,15 +14,20 @@ class WhenLpaStartsForm extends AbstractLpaForm
                 'value_options' => [
                     'now' => [
                         'value' => 'now',
+                        'label' => 'as soon as it\'s registered (with my consent)',
+                        'label_attributes' => [
+                            'class' => 'block-label',
+                        ],
                     ],
                     'no-capacity' => [
                         'value' => 'no-capacity',
+                        'label' => 'only if I don\'t have mental capacity',
+                        'label_attributes' => [
+                            'class' => 'block-label',
+                        ],
                     ],
                 ],
             ],
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

@@ -8,7 +8,7 @@
 {% set form = formErrorTextExchange(form, {
     'canSustainLife' : {
         'Value is required and can\'t be empty' : 'Please choose an option'
-	}
+    }
 }) %}
 
 {# Set form fields variables #}
@@ -62,7 +62,7 @@
                 {{ formElementErrorsV2(canSustainLife) }}
                <!-- {{ formRadio(canSustainLife) }} -->
 
-				        {{ formRadio().outputOption(canSustainLife, "1", {"data-target":"js-can-sustain-life-true"} )|raw }}
+                        {{ formRadio().outputOption(canSustainLife, "1", {"data-target":"js-can-sustain-life-true"} )|raw }}
 
                 <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-true">
                     <p class="text">
@@ -72,7 +72,7 @@
                     </p>
                 </div>
 
-				        {{ formRadio().outputOption(canSustainLife, "0", {"data-target":"js-can-sustain-life-false"} )|raw }}
+                {{ formRadio().outputOption(canSustainLife, "0", {"data-target":"js-can-sustain-life-false"} )|raw }}
 
                 <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-false">
                     <p class="text">
@@ -88,7 +88,7 @@
         <p class="text">When you print your LPA document, you'll have to sign and date the option you've chosen. This must be witnessed. If any signatures, dates or witness details are missing from this page it will default to option B.</p>
 
         <div class="form-group">
-            <input type="submit" name="save" value="Save and continue" class="button">
+            {{ formElement(form.get('save')) }}
         </div>
 
     {{ form().closeTag|raw }}

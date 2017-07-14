@@ -15,40 +15,38 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $lpaId = $this->getLpa()->id;
+
+        $viewModel = new ViewModel();
+
+        $viewModel->addUrl = $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]);
 
         if (count($this->getLpa()->document->primaryAttorneys) > 0) {
             $attorneysParams = [];
+
             foreach ($this->getLpa()->document->primaryAttorneys as $idx => $attorney) {
-                $params = [
-                    'attorney' => [
-                        'address'   => $attorney->address
-                    ],
-                    'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                    'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                    'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                $routeParams = [
+                    'lpa-id' => $lpaId,
+                    'idx' => $idx
                 ];
 
-                if ($attorney instanceof Human) {
-                    $params['attorney']['name'] = $attorney->name;
-                } else {
-                    $params['attorney']['name'] = $attorney->name;
-                }
-
-                $attorneysParams[] = $params;
+                $attorneysParams[] = [
+                    'attorney' => [
+                        'address' => $attorney->address,
+                        'name'    => $attorney->name,
+                    ],
+                    'editUrl'          => $this->url()->fromRoute('lpa/primary-attorney/edit', $routeParams),
+                    'confirmDeleteUrl' => $this->url()->fromRoute('lpa/primary-attorney/confirm-delete', $routeParams),
+                ];
             }
 
-            return new ViewModel([
-                'addRoute'  => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]),
-                'attorneys' => $attorneysParams,
-                'nextRoute' => $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId])
-            ]);
-        } else {
-            return new ViewModel([
-                'addRoute' => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]),
-            ]);
+            $viewModel->attorneys = $attorneysParams;
+
+            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+            $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
         }
+
+        return $viewModel;
     }
 
     public function addAction()
@@ -244,59 +242,55 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     public function deleteAction()
     {
         $lpa = $this->getLpa();
-
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
-        $deletionFlag = true;
-
-
         if (array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
-            // check primaryAttorneyDecisions::how and replacementAttorneyDecisions::when
+            //  If the deletion of the attorney means there are no longer multiple attorneys then reset the how decisions
             if (count($lpa->document->primaryAttorneys) <= 2) {
-                if (($lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) &&
-                    ($lpa->document->primaryAttorneyDecisions->how != null)) {
-                        $lpa->document->primaryAttorneyDecisions->how = null;
-                        $lpa->document->primaryAttorneyDecisions->howDetails = null;
-                        $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $lpa->document->primaryAttorneyDecisions);
+                $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
+
+                if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions && $primaryAttorneyDecisions->how != null) {
+                    $primaryAttorneyDecisions->how = null;
+                    $primaryAttorneyDecisions->howDetails = null;
+
+                    $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $primaryAttorneyDecisions);
                 }
             }
 
+            $primaryAttorneyId = $lpa->document->primaryAttorneys[$attorneyIdx]->id;
 
+            //  If the attorney being removed was set as registering the LPA then remove from there too
+            $whoIsRegistering = $lpa->document->whoIsRegistering;
 
-            $attorneyId = $lpa->document->primaryAttorneys[$attorneyIdx]->id;
+            if (is_array($whoIsRegistering)) {
+                foreach ($whoIsRegistering as $idx => $aid) {
+                    if ($aid == $primaryAttorneyId) {
+                        unset($whoIsRegistering[$idx]);
 
-            // check whoIsRegistering
-            if (is_array($lpa->document->whoIsRegistering)) {
-                foreach ($lpa->document->whoIsRegistering as $idx => $aid) {
-                    if ($aid == $attorneyId) {
-                        unset($lpa->document->whoIsRegistering[$idx]);
-
-                        if (count($lpa->document->whoIsRegistering) == 0) {
-                            $lpa->document->whoIsRegistering = null;
+                        if (count($whoIsRegistering) == 0) {
+                            $whoIsRegistering = null;
                         }
 
-                        $this->getLpaApplicationService()->setWhoIsRegistering($lpa->id, $lpa->document->whoIsRegistering);
+                        $this->getLpaApplicationService()->setWhoIsRegistering($lpa->id, $whoIsRegistering);
                         break;
                     }
                 }
             }
 
             // delete attorney
-            if (!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa->id, $attorneyId)) {
+            if (!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa->id, $primaryAttorneyId)) {
                 throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 
             $this->cleanUpReplacementAttorneyDecisions();
-
-            $deletionFlag = true;
-        }
-
-        // if attorney idx does not exist in lpa, return 404.
-        if (!$deletionFlag) {
+        } else {
+            // if attorney idx does not exist in lpa, return 404.
             return $this->notFoundAction();
         }
 
-        return $this->moveToNextRoute();
+        return $this->redirect()->toRoute('lpa/primary-attorney', [
+            'lpa-id' => $lpa->id
+        ]);
     }
 
     public function addTrustAction()

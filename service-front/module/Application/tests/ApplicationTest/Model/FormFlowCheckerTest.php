@@ -1,1251 +1,1764 @@
 <?php
+
 namespace ApplicationTest\Model;
 
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\FormFlowChecker;
+use Application\Model\Service\Lpa\Metadata;
+use ApplicationTest\Bootstrap;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Application\Model\Service\Lpa\Metadata;
-use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use DateTime;
+use RuntimeException;
 
 /**
- * FormFlowChecker test case.
+ * FormFlowChecker unit test suite
+ *
+ * This set of unit tests with execute sequentially starting with a basic LPA datamodel - which will
+ * check the correct position in the flow to return the user to
  */
-class FormFlowCheckerTest extends AbstractHttpControllerTestCase
+class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
-     * @var Application\Model\FormFlowChecker $checker
-     */
-    private $checker;
-
-    /**
-     * @var Opg\Lpa\DataModel\Lpa\Lpa $lpa
+     * LPA document to test
+     *
+     * @var Lpa
      */
     private $lpa;
 
     /**
-     * @var string Document::LPA_TYPE_PF | Document::LPA_TYPE_HW
+     * @var FormFlowChecker
      */
-    private $formType;
+    private $checker;
 
     /**
-     * @var PrimaryAttorneyDecisions
+     * Available routes concerning an LPA document
+     *
+     * @var array
      */
-    private $primaryAttorneyDecisions;
+    private $lpaRoutes = [];
 
     /**
-     * @var ReplacementAttorneyDecisions
+     * Next route
+     *
+     * @var array
      */
-    private $replacementAttorneyDecisions;
+    private $nextRouteDestinations = [
+        'lpa-type-no-id'                                => 'lpa/donor',
+        'lpa/form-type'                                 => 'lpa/donor',
+        'lpa/donor'                                     => [
+            'lpa/when-lpa-starts',
+            'lpa/life-sustaining'
+        ],
+        'lpa/donor/add'                                 => 'lpa/donor',
+        'lpa/donor/edit'                                => 'lpa/donor',
+        'lpa/when-lpa-starts'                           => 'lpa/primary-attorney',
+        'lpa/life-sustaining'                           => 'lpa/primary-attorney',
+        'lpa/primary-attorney'                          => [
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney'
+        ],
+        'lpa/primary-attorney/add'                      => 'lpa/primary-attorney',
+        'lpa/primary-attorney/edit'                     => 'lpa/primary-attorney',
+        'lpa/primary-attorney/delete'                   => 'lpa/primary-attorney',
+        'lpa/primary-attorney/add-trust'                => 'lpa/primary-attorney',
+        'lpa/how-primary-attorneys-make-decision'       => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney'                      => [
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider'
+        ],
+        'lpa/replacement-attorney/add'                  => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney/edit'                 => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney/delete'               => 'lpa/replacement-attorney',
+        'lpa/replacement-attorney/add-trust'            => 'lpa/replacement-attorney',
+        'lpa/when-replacement-attorney-step-in'         => [
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider'
+        ],
+        'lpa/how-replacement-attorneys-make-decision'   => 'lpa/certificate-provider',
+        'lpa/certificate-provider'                      => 'lpa/people-to-notify',
+        'lpa/certificate-provider/add'                  => 'lpa/certificate-provider',
+        'lpa/certificate-provider/edit'                 => 'lpa/certificate-provider',
+        'lpa/people-to-notify'                          => 'lpa/instructions',
+        'lpa/people-to-notify/add'                      => 'lpa/people-to-notify',
+        'lpa/people-to-notify/edit'                     => 'lpa/people-to-notify',
+        'lpa/people-to-notify/delete'                   => 'lpa/people-to-notify',
+        'lpa/instructions'                              => 'lpa/applicant',
+        'lpa/applicant'                                 => 'lpa/correspondent',
+        'lpa/correspondent'                             => 'lpa/who-are-you',
+        'lpa/correspondent/edit'                        => 'lpa/correspondent',
+        'lpa/who-are-you'                               => 'lpa/repeat-application',
+        'lpa/repeat-application'                        => 'lpa/fee-reduction',
+        'lpa/fee-reduction'                             => 'lpa/checkout',
+        'lpa/payment'                                   => 'lpa/payment/summary',
+        'lpa/payment/summary'                           => 'lpa/complete',
+        'lpa/checkout/cheque'                           => 'lpa/complete',
+        'lpa/checkout/confirm'                          => 'lpa/complete',
+        'lpa/checkout/pay/response'                     => 'lpa/complete',
+        'lpa/checkout/worldpay/return/success'          => 'lpa/complete',
 
-    /**
-     * Prepares the environment before running a test.
-     */
-    protected function setUp ()
+    ];
+
+    protected function setUp()
     {
-        parent::setUp();
+        $serviceManager = Bootstrap::getServiceManager();
+        $config = $serviceManager->get('Config');
+        $allRoutes = $config['router']['routes'];
 
-        // set default form type
-        $this->formType = Document::LPA_TYPE_PF;
+        //  Extract the LPA routes from the service manager
+        $this->extractRoutes($allRoutes);
 
-        $this->lpa = $this->initLpa();
-
-        $this->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
-        $this->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+        $this->lpa = new Lpa();
+        $this->lpa->id = 1234567890;
+        $this->lpa->document = new Document();
 
         $this->checker = new FormFlowChecker($this->lpa);
     }
 
-    public function testRouteLpa()
+    private function extractRoutes(array $routesData, $parentRoute = '')
     {
-        $this->assertEquals('lpa', $this->checker->getNearestAccessibleRoute('lpa'));
+        foreach ($routesData as $routeName => $routeData) {
+            $thisRouteName = $parentRoute . $routeName;
+
+            //  Only add the route if it includes the string 'lpa'
+            if (stripos($thisRouteName, 'lpa') === 0) {
+                $this->lpaRoutes[] = $thisRouteName;
+            }
+
+            if (isset($routeData['child_routes']) && is_array($routeData['child_routes'])) {
+                $this->extractRoutes($routeData['child_routes'], $thisRouteName . '/');
+            }
+        }
     }
 
-    public function testRouteLpaFallback()
+    public function testRouteRedirectToDashboardNoLPA()
     {
-        $this->lpa->document = null;
-        $this->assertEquals('user/dashboard', $this->checker->getNearestAccessibleRoute('lpa'));
+        $checker = new FormFlowChecker();
+
+        //  Loop through the LPA routes - we should be redirected to the dashboard if there is no LPA set
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            $this->assertEquals('user/dashboard', $checker->getNearestAccessibleRoute($lpaRoute));
+        }
     }
 
-    public function testRouteFormType()
+    public function testRouteException()
     {
-        $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/form-type'));
+        $this->setExpectedException('RuntimeException');
+
+        $this->checker->getNearestAccessibleRoute('invalid-current-route-name');
     }
 
-    public function testRouteFormTypeFallback()
+    public function testRouteRedirectLockedLpa()
     {
-        $this->lpa->document = null;
-        $this->assertEquals('user/dashboard', $this->checker->getNearestAccessibleRoute('lpa/form-type'));
+        $lockedLpaPermittedPages = [
+            'lpa/complete',
+            'lpa/date-check',
+            'lpa/date-check/complete',
+            'lpa/date-check/valid',
+            'lpa/download',
+            'lpa/download/file',
+        ];
+
+        //  Set up the LPA
+        $this->lpa->locked = true;
+
+        //  Loop through the LPA routes - we should be redirected to the view documents page if the page isn't permitted
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            if (!in_array($lpaRoute, $lockedLpaPermittedPages)) {
+                $this->assertEquals('lpa/view-docs', $this->checker->getNearestAccessibleRoute($lpaRoute));
+            }
+        }
     }
 
-    public function testRouteDonor()
+    public function testRouteRedirectToDashboard()
     {
+        $lpa = new Lpa();
+        $this->checker = new FormFlowChecker($lpa);
+
+        $this->runAssertions('user/dashboard');
+    }
+
+    public function testRouteRedirectToType()
+    {
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+        ];
+
+        $this->runAssertions('lpa/form-type', $permittedRoutes);
+    }
+
+    public function testRouteRedirectToDonor()
+    {
+        //  Set up the LPA
         $this->setLpaTypePF();
-        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/donor'));
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+        ];
+
+        $this->runAssertions('lpa/donor', $permittedRoutes);
     }
 
-    public function testRouteDonorFallback()
+    public function testRouteRedirectToWhenLpaStarts()
     {
-        $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/donor'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+        ];
+
+        $this->runAssertions('lpa/when-lpa-starts', $permittedRoutes);
     }
 
-    public function testRouteDonorAdd()
+    public function testRouteRedirectToLifeSustainingTreatment()
     {
-        $this->setLpaTypePF();
-        $this->assertEquals('lpa/donor/add', $this->checker->getNearestAccessibleRoute('lpa/donor/add'));
+        //  Set up the LPA
+        $this->setLpaTypeHW()
+             ->setLpaDonor();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/life-sustaining',
+        ];
+
+        $this->runAssertions('lpa/life-sustaining', $permittedRoutes);
     }
 
-    public function testRouteDonorEdit()
+    public function testRouteRedirectToPrimaryAttorneyPF()
     {
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/donor/edit', $this->checker->getNearestAccessibleRoute('lpa/donor/edit'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+        ];
+
+        $this->runAssertions('lpa/primary-attorney', $permittedRoutes);
     }
 
-    public function testRouteWhenLpaStarts()
+    public function testRouteRedirectToPrimaryAttorneyHW()
     {
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/when-lpa-starts'));
+        //  Set up the LPA
+        $this->setLpaTypeHW()
+             ->setLpaDonor()
+             ->setLpaLifeSustainingTreatment();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/life-sustaining',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+        ];
+
+        $this->runAssertions('lpa/primary-attorney', $permittedRoutes);
     }
 
-    public function testRouteWhenLpaStartsOnHwTypeLpa()
+    public function testRouteRedirectToPrimaryAttorneyWhenTrustAdded()
     {
-        $this->formType = document::LPA_TYPE_HW;
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/when-lpa-starts'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney(false);
+
+        //  Test the redirect back to primary attorney screen if trying to access add trust when a trust has already been added
+        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
     }
 
-    public function testRouteLifeSustaining()
+    public function testRouteRedirectToHowPrimaryAttorneysMakeDecisions()
     {
-        $this->formType = document::LPA_TYPE_HW;
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/life-sustaining', $this->checker->getNearestAccessibleRoute('lpa/life-sustaining'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+        ];
+
+        $this->runAssertions('lpa/how-primary-attorneys-make-decision', $permittedRoutes);
     }
 
-    public function testRouteLifeSustainingWithPfTypeLpa()
+    public function testRouteRedirectToReplacementAttorney()
     {
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/life-sustaining'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+        ];
+
+        //  Set any special cases for redirects
+        $specialCases = [
+            //  If there is only one primary attorney then the make decisions route is not accessible
+            'lpa/how-primary-attorneys-make-decision' => 'lpa/primary-attorney',
+        ];
+
+        $this->runAssertions('lpa/replacement-attorney', $permittedRoutes, $specialCases);
     }
 
-    public function testRoutePrimaryAttorneyWithPfTypeLpa()
+    public function testRouteRedirectToReplacementAttorneyWhenTrustAdded()
     {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney(false);
+
+        //  Test the redirect back to primary attorney screen if trying to access add trust when a trust has already been added
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
     }
 
-    public function testRoutePrimaryAttorneyWithHwTypeLpa()
+    public function testRouteRedirectToReplacementAttorneyWhenMultiplePrimaryAttorneysDoNotMakeDecisionsJointlyAndSeverally()
     {
-        $this->setLifeSustaining();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
-    }
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionDepends()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney();
 
-    public function testRoutePrimaryAttorneyFallback()
-    {
-        $this->assertEquals('lpa/form-type', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
-
-        $this->setLpaTypePF();
-        $this->assertEquals('lpa/donor', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
-
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney'));
-    }
-
-    public function testRoutePrimaryAttorneyAdd()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add'));
-    }
-
-    public function testRoutePrimaryAttorneyAddFallback()
-    {
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add'));
-    }
-
-    public function testRoutePrimaryAttorneyEdit()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney/edit', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 0));
-    }
-
-    public function testRoutePrimaryAttorneyEditFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 0));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit', 1));
-    }
-
-    public function testRoutePrimaryAttorneyDelete()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney/delete', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 0));
-    }
-
-    public function testRoutePrimaryAttorneyDeleteFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 0));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete', 1));
-    }
-
-    public function testRoutePrimaryAttorneyAddTrust()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney/add-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyAddTrustFallback()
-    {
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyEditTrust()
-    {
-        $this->addPrimaryAttorneyTrust();
-        $this->assertEquals('lpa/primary-attorney/edit-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyEditTrustFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/edit-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyDeleteTrust()
-    {
-        $this->addPrimaryAttorneyTrust();
-        $this->assertEquals('lpa/primary-attorney/delete-trust', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
-    }
-
-    public function testRoutePrimaryAttorneyDeleteTrustFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/delete-trust'));
-    }
-
-    public function testRouteHowPrimaryAttorneysMakeDecision()
-    {
-        $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
-    }
-
-    public function testRouteHowPrimaryAttorneysMakeDecisionFallback()
-    {
-        $this->setLpaDonor();
-        $this->assertEquals('lpa/when-lpa-starts', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
-
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
-
-        $this->addPrimaryAttorney(1);
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-primary-attorneys-make-decision'));
-    }
-
-    public function testRouteReplacementAttorney()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
-    }
-
-    public function testRouteReplacementAttorneyFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
-
-        $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney'));
-    }
-
-    public function testRouteReplacementAttorneyAdd()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/replacement-attorney/add', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
-    }
-
-    public function testRouteReplacementAttorneyAddFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
-
-        $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add'));
-    }
-
-    public function testRouteReplacementAttorneyEdit()
-    {
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney/edit', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 0));
-    }
-
-    public function testRouteReplacementAttorneyEditFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 0));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 0));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit', 1));
-    }
-
-    public function testRouteReplacementAttorneyDelete()
-    {
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney/delete', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 0));
-    }
-
-    public function testRouteReplacementAttorneyDeleteFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 0));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 0));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete', 1));
-    }
-
-    public function testRouteReplacementAttorneyAddTrust()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney/add-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/replacement-attorney/add-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
-    }
-
-    public function testRouteReplacementAttorneyAddTrustFallback()
-    {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
-
-        $this->addPrimaryAttorney(2);
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
-    }
-
-    public function testRouteReplacementAttorneyEditTrust()
-    {
-        $this->addReplacementAttorneyTrust();
-        $this->assertEquals('lpa/replacement-attorney/edit-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-    }
-
-    public function testRouteReplacementAttorneyEditTrustFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/edit-trust'));
-    }
-
-    public function testRouteReplacementAttorneyDeleteTrust()
-    {
-        $this->addReplacementAttorneyTrust();
-        $this->assertEquals('lpa/replacement-attorney/delete-trust', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-    }
-
-    public function testRouteReplacementAttorneyDeleteTrustFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/delete-trust'));
-    }
-
-    public function testRouteWhenReplacementAttorneyStepIn()
-    {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
-    }
-
-    public function testRouteWhenReplacementAttorneyStepInFallback()
-    {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
-
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
-
-        $this->setPrimaryAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
-
-        $this->setPrimaryAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/when-replacement-attorney-step-in'));
-    }
-
-    public function testRouteHowReplacementAttorneysMakeDecision()
-    {
-        $this->addReplacementAttorney(2);
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
-
-        $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
-    }
-
-    public function testRouteHowReplacementAttorneysMakeDecisionFallback()
-    {
-        $this->setPrimaryAttorneysMakeDecisionJointly();
+        //  Test the redirect back to primary attorney screen if trying to access add trust when a trust has already been added
         $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
-
-        $this->setReplacementAttorneysStepInWhenFirstPrimaryUnableAct();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
-
-        $this->addPrimaryAttorney(2);
-        $this->addReplacementAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
     }
 
-    public function testRouteCertificateProvider1()
+    public function testRouteRedirectToWhenReplacementAttorneysStepIn()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionDepends();
-        $this->addReplacementAttorney(0);
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+        ];
+
+        $this->runAssertions('lpa/when-replacement-attorney-step-in', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider2()
+    public function testRouteRedirectToHowReplacementAttorneysMakeDecisions()
     {
-        $this->addPrimaryAttorney();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+        ];
+
+        $this->runAssertions('lpa/how-replacement-attorneys-make-decision', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider3()
+    public function testRouteRedirectToCertificateProvider()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointly();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+        ];
+
+        $this->runAssertions('lpa/certificate-provider', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider4()
+    public function testRouteRedirectToPeopleToNotify()
     {
-        $this->addPrimaryAttorney();
-        $this->addReplacementAttorney(2);
-        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider();
 
-        $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+        ];
 
-        $this->setReplacementAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $this->runAssertions('lpa/people-to-notify', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider5()
+    public function testRouteRedirectToInstructionsAndPreferences()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointly();
-        $this->addReplacementAttorney(2);
-        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify();
 
-        $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+        ];
 
-        $this->setReplacementAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $this->runAssertions('lpa/instructions', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider6()
+    public function testRouteRedirectToApplicant()
     {
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->setReplacementAttorneysStepInWhenFirstPrimaryUnableAct();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated();
 
-        $this->lpa->document->replacementAttorneyDecisions->when = ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST;
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/valid',
+        ];
 
-        $this->lpa->document->replacementAttorneyDecisions->when = ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS;
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $this->runAssertions('lpa/applicant', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider7()
+    public function testRouteRedirectToCorrespondent()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney(2);
-        $this->setReplacementAttorneysStepInWhenFirstPrimaryUnableAct();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant();
 
-        $this->setReplacementAttorneysStepInDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/valid',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/correspondent/edit',
+        ];
+
+        $this->runAssertions('lpa/correspondent', $permittedRoutes);
     }
 
-    public function testRouteCertificateProvider8()
+    public function testRouteRedirectToWhoAreYou()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney(2);
-        $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
-        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent();
 
-        $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/valid',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/correspondent/edit',
+        ];
 
-        $this->setReplacementAttorneysMakeDecisionDepends();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $this->runAssertions('lpa/who-are-you', $permittedRoutes);
     }
 
-    public function testRouteCertificateProviderFallback1()
+    public function testRouteRedirectToRepeatApplication()
     {
-        $this->addPrimaryAttorney();
-        $this->addReplacementAttorney(2);
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent()
+             ->setWhoAreYou();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/valid',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/correspondent/edit',
+            'lpa/who-are-you',
+        ];
+
+        $this->runAssertions('lpa/repeat-application', $permittedRoutes);
     }
 
-    public function testRouteCertificateProviderFallback2()
+    public function testRouteRedirectToFeeReduction()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointly();
-        $this->addReplacementAttorney(2);
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent()
+             ->setWhoAreYou()
+             ->setRepeatApplication();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/valid',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/correspondent/edit',
+            'lpa/who-are-you',
+            'lpa/repeat-application',
+        ];
+
+        $this->runAssertions('lpa/fee-reduction', $permittedRoutes);
     }
 
-    public function testRouteCertificateProviderFallback3()
+    public function testRouteRedirectToCheckout()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney(2);
-        $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent()
+             ->setWhoAreYou()
+             ->setRepeatApplication()
+             ->setFeeReduction();
+
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/valid',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/correspondent/edit',
+            'lpa/who-are-you',
+            'lpa/repeat-application',
+            'lpa/fee-reduction',
+            'lpa/checkout/cheque',
+            'lpa/checkout/pay',
+            'lpa/checkout/pay/response',
+            'lpa/checkout/confirm',
+            'lpa/checkout/worldpay',
+            'lpa/checkout/worldpay/return',
+        ];
+
+        $this->runAssertions('lpa/checkout', $permittedRoutes);
     }
 
-    public function testRouteCertificateProviderFallback4()
+    public function testRouteRedirectToComplete()
     {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+             ->setReplacementAttorneysMakeDecisionJointlySeverally()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent()
+             ->setWhoAreYou()
+             ->setRepeatApplication()
+             ->setFeeReduction()
+             ->setPayment()
+             ->setLpaCompleted();
 
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        $permittedRoutes = [
+            'lpa',
+            'lpa-type-no-id',
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/donor/add',
+            'lpa/donor/edit',
+            'lpa/when-lpa-starts',
+            'lpa/primary-attorney',
+            'lpa/primary-attorney/add',
+            'lpa/primary-attorney/add-trust',
+            'lpa/primary-attorney/edit',
+            'lpa/primary-attorney/confirm-delete',
+            'lpa/primary-attorney/delete',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/replacement-attorney/add',
+            'lpa/replacement-attorney/add-trust',
+            'lpa/replacement-attorney/edit',
+            'lpa/replacement-attorney/confirm-delete',
+            'lpa/replacement-attorney/delete',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/certificate-provider/add',
+            'lpa/certificate-provider/edit',
+            'lpa/people-to-notify',
+            'lpa/people-to-notify/add',
+            'lpa/people-to-notify/edit',
+            'lpa/people-to-notify/confirm-delete',
+            'lpa/people-to-notify/delete',
+            'lpa/summary',
+            'lpa/instructions',
+            'lpa/date-check',
+            'lpa/date-check/complete',
+            'lpa/date-check/valid',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/correspondent/edit',
+            'lpa/who-are-you',
+            'lpa/repeat-application',
+            'lpa/fee-reduction',
+            'lpa/checkout',
+            'lpa/checkout/cheque',
+            'lpa/checkout/pay',
+            'lpa/checkout/pay/response',
+            'lpa/checkout/confirm',
+            'lpa/checkout/worldpay',
+            'lpa/checkout/worldpay/return',
+            'lpa/checkout/worldpay/return/success',
+            'lpa/checkout/worldpay/return/failure',
+            'lpa/checkout/worldpay/return/cancel',
+            'lpa/view-docs',
+        ];
+
+        $this->runAssertions('lpa/complete', $permittedRoutes);
     }
 
-    public function testRouteCertificateProviderFallback5()
+    private function runAssertions($earliestRedirectRoute, array $permittedRoutes = [], array $specialCases = [])
     {
-        $this->setWhenLpaStarts();
-        $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        //  Set up any routes that are always permitted
+        $permittedRoutes = array_merge($permittedRoutes, [
+            'lpa/more-info-required',
+            'lpa/download',
+            'lpa/download/draft',
+            'lpa/download/file',
+            'lpa/reuse-details',
+        ]);
+
+        //  Set up any special cases for all tests against specific types of LPA
+        if (isset($this->lpa->document) && isset($this->lpa->document->type)) {
+            if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
+                //  Life sustaining treatment question is not applicable for P&F LPA
+                $specialCases['lpa/life-sustaining'] = 'lpa/donor';
+            } elseif ($this->lpa->document->type == Document::LPA_TYPE_HW) {
+                //  When LPA starts question is not applicable for H&W LPA
+                $specialCases['lpa/when-lpa-starts'] = 'lpa/donor';
+            }
+        }
+
+        //  Loop through the LPA routes - we should be redirected to the dashboard if the LPA doesn't have a document set
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            $expectedRoute = $earliestRedirectRoute;
+
+            if (in_array($lpaRoute, $permittedRoutes)) {
+                $expectedRoute = $lpaRoute;
+            } elseif (array_key_exists($lpaRoute, $specialCases)) {
+                $expectedRoute = $specialCases[$lpaRoute];
+            }
+
+            $this->assertEquals($expectedRoute, $this->checker->getNearestAccessibleRoute($lpaRoute));
+        }
     }
 
-    public function testRouteCertificateProviderFallback6()
+    public function testNextRoutesForAllRoutes()
     {
-        $this->addPrimaryAttorney();
-        $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/certificate-provider'));
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            //  Based on this route determine which route should come next
+            $expectedRoute = $lpaRoute;
+
+            if (array_key_exists($lpaRoute, $this->nextRouteDestinations)) {
+                $expectedRoute = $this->nextRouteDestinations[$lpaRoute];
+
+                //  If the expected route is an array then just set the expected route back to the lpaRoute value
+                //  We will check the permutations of array values in the next tests
+                if (is_array($expectedRoute)) {
+                    $expectedRoute = $lpaRoute;
+                }
+            }
+
+            $this->assertEquals($expectedRoute, $this->checker->nextRoute($lpaRoute));
+        }
     }
 
-
-    public function testRouteCertificateProviderAdd()
+    public function testNextRoutesFromDonorToWhenLpaStarts()
     {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify/add', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor();
+
+        $this->assertEquals('lpa/when-lpa-starts', $this->checker->nextRoute('lpa/donor'));
     }
 
-    public function testRouteCertificateProviderAddFallback()
+    public function testNextRoutesFromDonorToLifeSustainingTreatment()
     {
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
+        //  Set up the LPA
+        $this->setLpaTypeHW()
+             ->setLpaDonor();
+
+        $this->assertEquals('lpa/life-sustaining', $this->checker->nextRoute('lpa/donor'));
     }
 
-    public function testRouteCertificateProviderEdit()
+    public function testNextRoutesFromPrimaryAttorneysToHowMakeDecisions()
     {
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify/edit', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney();
+
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->nextRoute('lpa/primary-attorney'));
     }
 
-    public function testRouteCertificateProviderEditFallback()
+    public function testNextRoutesFromPrimaryAttorneysToReplacementAttorneys()
     {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->addPrimaryAttorney()
+             ->setLpaStartsWhenNoCapacity();
+
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->nextRoute('lpa/primary-attorney'));
     }
 
-    public function testRouteCertificateProviderDelete()
+    public function testNextRoutesFromReplacementAttorneysToWhenStepIn()
     {
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify/delete', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney();
+
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->nextRoute('lpa/replacement-attorney'));
     }
 
-    public function testRouteCertificateProviderDeleteFallback()
+    public function testNextRoutesFromReplacementAttorneysToHowMakeDecisions()
     {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney();
+
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->nextRoute('lpa/replacement-attorney'));
     }
 
-    public function testRoutePeopleToNotify()
+    public function testNextRoutesFromReplacementAttorneysToCertificateProvider()
     {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney();
+
+        $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/replacement-attorney'));
     }
 
-    public function testRoutePeopleToNotifyFallback()
+    public function testNextRoutesFromWhenStepInToHowMakeDecisions()
     {
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
     }
 
-    public function testRoutePeopleToNotifyAdd()
+    public function testNextRoutesFromWhenStepInToCertificateProvider()
     {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify/add', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally()
+             ->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+
+        $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
     }
 
-    public function testRoutePeopleToNotifyAddFallback()
+    public function testNextRoutesToFinalCheckForCompletedLpa()
     {
-        $this->addReplacementAttorney();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/add'));
+        //  Set up the LPA
+        $this->setLpaTypePF()
+             ->setLpaDonor()
+             ->setLpaStartsWhenNoCapacity()
+             ->addPrimaryAttorney()
+             ->addReplacementAttorney()
+             ->addCertificateProvider()
+             ->addPersonToNotify()
+             ->setInstructons()
+             ->setLpaCreated()
+             ->setApplicant()
+             ->setCorrespondent()
+             ->setWhoAreYou()
+             ->setRepeatApplication()
+             ->setFeeReduction();
+
+        //  Loop through the LPA routes - if the LPA has been to the final check then the next route should always come back as the final check route
+        foreach ($this->lpaRoutes as $lpaRoute) {
+            $this->assertEquals('lpa/checkout', $this->checker->nextRoute($lpaRoute));
+        }
     }
 
-    public function testRoutePeopleToNotifyEdit()
+    public function testBackToFormPF()
     {
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify/edit', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
-    }
+        //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
+        //  and keep checking the back to form result
 
-    public function testRoutePeopleToNotifyEditFallback()
-    {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/edit', 0));
-    }
-
-    public function testRoutePeopleToNotifyDelete()
-    {
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify/delete', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
-    }
-
-    public function testRoutePeopleToNotifyDeleteFallback()
-    {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/people-to-notify/delete', 0));
-    }
-
-    public function testRouteInstructions()
-    {
-        $this->addCertificateProvider();
-        $this->lpa->document->peopleToNotify = [];
-        $this->lpa->metadata[Metadata::PEOPLE_TO_NOTIFY_CONFIRMED] = true;
-        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
-
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
-    }
-
-    public function testRouteInstructionsFallback()
-    {
-        $this->addCertificateProvider();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->getNearestAccessibleRoute('lpa/instructions'));
-    }
-
-    public function testRouteDownload()
-    {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/download', $this->checker->getNearestAccessibleRoute('lpa/download', 'lp1'));
-    }
-
-    public function testRouteApplicant()
-    {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
-    }
-
-    public function testRouteApplicantFallback()
-    {
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
-
-        $this->setLpaInstructons();
-        $this->lpa->createdAt = "now";
-        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/applicant'));
-    }
-
-    public function testRouteCorrespondent()
-    {
-        $this->setLpaApplicant();
-        $this->assertEquals('lpa/correspondent', $this->checker->getNearestAccessibleRoute('lpa/correspondent'));
-    }
-
-    public function testRouteCorrespondentFallback()
-    {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent'));
-    }
-
-    public function testRouteCorrespondentEdit()
-    {
-        $this->setLpaCorrespondent();
-        $this->assertEquals('lpa/correspondent/edit', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
-    }
-
-    public function testRouteCorrespondentEditFallback()
-    {
-        $this->setLpaCreated();
-        $this->assertEquals('lpa/applicant', $this->checker->getNearestAccessibleRoute('lpa/correspondent/edit'));
-    }
-
-    public function testRouteWhoAreYou()
-    {
-        $this->setLpaCorrespondent();
-        $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
-    }
-
-    public function testRouteWhoAreYouFallback()
-    {
-        $this->setLpaApplicant();
-        $this->assertEquals('lpa/correspondent', $this->checker->getNearestAccessibleRoute('lpa/who-are-you'));
-    }
-
-    public function testRouteRepeatApplication()
-    {
-        $this->setWhoAreYouAnswered();
-        $this->assertEquals('lpa/repeat-application', $this->checker->getNearestAccessibleRoute('lpa/repeat-application'));
-    }
-
-    public function testRouteRepeatApplicationFallback()
-    {
-        $this->setLpaCorrespondent();
-        $this->assertEquals('lpa/who-are-you', $this->checker->getNearestAccessibleRoute('lpa/repeat-application'));
-    }
-
-    public function testRouteFeeReduction()
-    {
-        $this->setRepeatApplication();
-        $this->assertEquals('lpa/fee-reduction', $this->checker->getNearestAccessibleRoute('lpa/fee-reduction'));
-    }
-
-    public function testRouteFeeReductionFallback()
-    {
-        $this->setWhoAreYouAnswered();
-        $this->assertEquals('lpa/repeat-application', $this->checker->getNearestAccessibleRoute('lpa/fee-reduction'));
-    }
-
-    public function testRouteComplete()
-    {
-        $this->setPayment();
-        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-
-        $this->lpa->payment->reducedFeeReceivesBenefits = null;
-        $this->lpa->payment->reducedFeeLowIncome = null;
-        $this->lpa->payment->reducedFeeUniversalCredit = true;
-        Calculator::calculate($this->lpa);
-        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-
-        $this->lpa->payment->reducedFeeReceivesBenefits = true;
-        $this->lpa->payment->reducedFeeAwardedDamages = true;
-        $this->lpa->payment->reducedFeeUniversalCredit = null;
-        Calculator::calculate($this->lpa);
-        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-
-        $this->lpa->payment = new Payment();
-        Calculator::calculate($this->lpa);
-        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
-        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-
-        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-        $this->lpa->payment->reference = "PAYMENT RECEIVED";
-        $this->assertEquals('lpa/complete', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-
-    }
-
-    public function testRouteCompleteFallback()
-    {
-        $this->setRepeatApplication();
-        $this->assertEquals('lpa/fee-reduction', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-
-        $this->setPayment();
-        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-        $this->lpa->payment->reference = null;
-        $this->assertEquals('lpa/checkout', $this->checker->getNearestAccessibleRoute('lpa/complete'));
-    }
-
-    public function testRouteViewDocs()
-    {
-        $this->setPayment();
-        $this->lpa->completedAt = new \DateTime();
-        $this->assertEquals('lpa/view-docs', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
-    }
-
-    public function testRouteViewDocsFallback()
-    {
-        $this->setPayment();
-        $this->lpa->payment->reference = null;
-        $this->assertEquals('lpa/checkout', $this->checker->getNearestAccessibleRoute('lpa/view-docs'));
-    }
-
-    public function testReturnToFormType()
-    {
-        $this->setLpaTypePF();
+        //  Check for LPA type
         $this->assertEquals('lpa/form-type', $this->checker->backToForm());
-    }
 
-    public function testReturnToDonor()
-    {
-        $this->setLpaDonor();
+        //  Check for donor
+        $this->setLpaTypePF()
+             ->setLpaDonor();
         $this->assertEquals('lpa/donor', $this->checker->backToForm());
-    }
 
-    public function testReturnToLifeSustaining()
-    {
-        $this->setLifeSustaining();
-        $this->assertEquals('lpa/life-sustaining', $this->checker->backToForm());
-    }
-
-    public function testReturnToWhenLpaStarts()
-    {
-        $this->setWhenLpaStarts();
+        //  Check for when LPA starts
+        $this->setLpaStartsWhenNoCapacity();
         $this->assertEquals('lpa/when-lpa-starts', $this->checker->backToForm());
-    }
 
-    public function testReturnToPrimaryAttorney()
-    {
+        //  Check for primary attorney
         $this->addPrimaryAttorney();
         $this->assertEquals('lpa/primary-attorney', $this->checker->backToForm());
-    }
 
-    public function testReturnToHowPrimaryAttorneysMakeDecision()
-    {
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        //  Check for how primary attorneys make decisions
+        $this->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally();
         $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for replacement attorney
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for certificate provider
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
+
+        //  Check for people to notify
+        $this->addPersonToNotify();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
+
+        //  Check for instructions and preferences
+        $this->setInstructons();
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+
+        //  Check for applicant
+        $this->setApplicant();
+        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
+
+        //  Check for correspondent
+        $this->setCorrespondent();
+        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
+
+        //  Check for who are you
+        $this->setWhoAreYou();
+        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
+
+        //  Check for repeat application
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
+
+        //  Check for fee reduction
+        $this->lpa->payment = new Payment();    //  Use a fully unpopulated payment object to get to the fee reduction screen
+        $this->assertEquals('lpa/fee-reduction', $this->checker->backToForm());
+
+        //  Check for checkout
+        $this->setPayment();
+        $this->assertEquals('lpa/checkout', $this->checker->backToForm());
+
+        //  Check for view docs
+        $this->setLpaCompleted();
+        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
     }
 
-    public function testReturnToReplacementAttorney()
+    public function testBackToFormHW()
     {
+        //  Gradually build up a H&W LPA (as would happen if it was being filled in online)
+        //  and keep checking the back to form result
+
+        //  Check for LPA type
+        $this->assertEquals('lpa/form-type', $this->checker->backToForm());
+
+        //  Check for donor
+        $this->setLpaTypeHW()
+             ->setLpaDonor();
+        $this->assertEquals('lpa/donor', $this->checker->backToForm());
+
+        //  Check for when life sustaining treatment
+        $this->setLpaLifeSustainingTreatment();
+        $this->assertEquals('lpa/life-sustaining', $this->checker->backToForm());
+
+        //  Check for primary attorney
+        $this->addPrimaryAttorney();
+        $this->assertEquals('lpa/primary-attorney', $this->checker->backToForm());
+
+        //  Check for how primary attorneys make decisions
+        $this->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for replacement attorney
+        $this->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+
+        //  Check for when replacement attorney steps in
+        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
+        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
+
+        //  Check for certificate provider
+        $this->addCertificateProvider();
+        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
+
+        //  Check for people to notify
+        $this->addPersonToNotify();
+        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
+
+        //  Check for instructions and preferences
+        $this->setInstructons();
+        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+
+        //  Check for applicant
+        $this->setApplicant();
+        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
+
+        //  Check for correspondent
+        $this->setCorrespondent();
+        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
+
+        //  Check for who are you
+        $this->setWhoAreYou();
+        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
+
+        //  Check for repeat application
+        $this->setRepeatApplication();
+        $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
+
+        //  Check for fee reduction
+        $this->lpa->payment = new Payment();    //  Use a fully unpopulated payment object to get to the fee reduction screen
+        $this->assertEquals('lpa/fee-reduction', $this->checker->backToForm());
+
+        //  Check for checkout
+        $this->setPayment();
+        $this->assertEquals('lpa/checkout', $this->checker->backToForm());
+
+        //  Check for view docs
+        $this->setLpaCompleted();
+        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
+    }
+
+    public function testBackToFormAccessNAResponses()
+    {
+        //  This test is to access the NA responses in the returnToWhenReplacementAttorneyStepIn and returnToHowReplacementAttorneysMakeDecision functions
+        $this->setLpaTypeHW()
+             ->setLpaDonor()
+             ->setLpaLifeSustainingTreatment()
+             ->addPrimaryAttorney()
+             ->addPrimaryAttorney()
+             ->setPrimaryAttorneysMakeDecisionDepends()
+             ->addReplacementAttorney();
+        $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
+
         $this->addReplacementAttorney();
         $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
     }
 
-    public function testReturnToWhenReplacementAttorneyStepIn()
+    public function testFinalCheckAccessibleNoLpa()
     {
-        $this->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
-        $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->backToForm());
+        $checker = new FormFlowChecker();
+
+        $this->assertFalse($checker->finalCheckAccessible());
     }
 
-    public function testReturnToHowReplacementAttorneysMakeDecision()
+    public function testFinalCheckAccessible()
     {
-        $this->setReplacementAttorneysMakeDecisionJointly();
-        $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->backToForm());
-    }
+        //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
+        //  and keep checking the final check accessible result
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToCertificateProvider()
-    {
+        $this->setLpaTypePF()
+             ->setLpaDonor();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setLpaStartsWhenNoCapacity();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addPrimaryAttorney();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addPrimaryAttorney()
+            ->setPrimaryAttorneysMakeDecisionJointlySeverally();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addReplacementAttorney();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->addReplacementAttorney()
+             ->setReplacementAttorneysStepInWhenLastPrimaryUnableAct();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
+        $this->setReplacementAttorneysMakeDecisionJointlySeverally();
+        $this->assertFalse($this->checker->finalCheckAccessible());
+
         $this->addCertificateProvider();
-        $this->assertEquals('lpa/certificate-provider', $this->checker->backToForm());
-    }
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToPeopleToNotify()
-    {
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
-    }
+        $this->addPersonToNotify();
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToInstructions()
-    {
-        $this->setLpaInstructons();
-        $this->addPeopleToNotify();
-        $this->assertEquals('lpa/instructions', $this->checker->backToForm());
+        $this->setInstructons();
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-        $this->lpa->document->instruction = false;
-        $this->assertEquals('lpa/people-to-notify', $this->checker->backToForm());
-    }
+        $this->setApplicant();
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToApplicant()
-    {
-        $this->setLpaApplicant();
-        $this->assertEquals('lpa/applicant', $this->checker->backToForm());
-    }
+        $this->setCorrespondent();
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToCorrespondent()
-    {
-        $this->setLpaCorrespondent();
-        $this->assertEquals('lpa/correspondent', $this->checker->backToForm());
-    }
+        $this->setWhoAreYou();
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToWhoAreYou()
-    {
-        $this->setWhoAreYouAnswered();
-        $this->assertEquals('lpa/who-are-you', $this->checker->backToForm());
-    }
-
-    public function testReturnToRepeatApplication()
-    {
         $this->setRepeatApplication();
-        $this->assertEquals('lpa/repeat-application', $this->checker->backToForm());
-    }
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToCheckout()
-    {
-        $this->setFeeReduction();
-        $this->assertEquals('lpa/checkout', $this->checker->backToForm());
-    }
+        $this->lpa->payment = new Payment();    //  Use a fully unpopulated payment object to get to the fee reduction screen
+        $this->assertFalse($this->checker->finalCheckAccessible());
 
-    public function testReturnToViewDocs()
-    {
         $this->setPayment();
-        $this->lpa->completedAt = new \DateTime();
-        $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
+        $this->assertTrue($this->checker->finalCheckAccessible());
     }
 
-
-############################## Private methods ###########################################################################
-
-    private function setPayment()
-    {
-        $this->setFeeReduction();
-        Calculator::calculate($this->lpa);
-        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-        $this->lpa->payment->reference = "PAYMENT RECEIVED";
-    }
-
-    private function setFeeReduction()
-    {
-        $this->setRepeatApplication();
-        $this->lpa->payment = new Payment([
-                'reducedFeeReceivesBenefits' => false,
-                'reducedFeeAwardedDamages' => null,
-                'reducedFeeLowIncome' => true,
-                'reducedFeeUniversalCredit' => null,
-        ]);
-    }
-
-    private function setRepeatApplication()
-    {
-        $this->setWhoAreYouAnswered();
-        $this->lpa->repeatCaseNumber = '123456';
-        $this->lpa->metadata['repeat-application-confirmed'] = 1;
-    }
-
-    private function setWhoAreYouAnswered()
-    {
-        $this->setLpaCorrespondent();
-        $this->lpa->whoAreYouAnswered = true;
-    }
-
-    private function setLpaApplicant()
-    {
-        $this->setLpaCreated();
-        $this->lpa->document->whoIsRegistering = 'donor';
-    }
-
-    private function setLpaCorrespondent()
-    {
-        $this->setLpaApplicant();
-        $this->lpa->document->correspondent = new Correspondence();
-    }
-
-    private function setLpaCreated()
-    {
-        $this->setLpaInstructons();
-        $this->lpa->createdAt = new \DateTime();
-    }
-
-    private function setLpaInstructons()
-    {
-        $this->addPeopleToNotify();
-        $this->lpa->document->instruction = '...instructions...';
-    }
-
-    private function addPeopleToNotify($count=1)
-    {
-        if($this->lpa->document->certificateProvider == null) {
-            $this->addCertificateProvider();
-        }
-
-        if($count === 0) {
-            $this->lpa->metadata['people-to-notify-confirmed'] = 1;
-        }
-        else {
-            for($i=0; $i<$count; $i++) {
-                $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
-            }
-        }
-    }
-
-    private function addCertificateProvider()
-    {
-        $this->addReplacementAttorney();
-        $this->lpa->document->certificateProvider = new CertificateProvider();
-    }
-
-    private function setReplacementAttorneysMakeDecisionJointlySeverally()
-    {
-        if(count($this->lpa->document->replacementAttorneys) < 2) {
-            $this->addReplacementAttorney(2-count($this->lpa->document->replacementAttorneys));
-        }
-
-        $this->lpa->document->replacementAttorneyDecisions = $this->setReplacementAttorneyDecisions([
-            'how'   => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
-        ] );
-    }
-
-    private function setReplacementAttorneysMakeDecisionJointly()
-    {
-        if(count($this->lpa->document->replacementAttorneys) < 2) {
-            $this->addReplacementAttorney(2-count($this->lpa->document->replacementAttorneys));
-        }
-
-        $this->lpa->document->replacementAttorneyDecisions = $this->setReplacementAttorneyDecisions([
-            'how'   => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
-        ]);
-    }
-
-    private function setReplacementAttorneysMakeDecisionDepends()
-    {
-        if(count($this->lpa->document->replacementAttorneys) < 2) {
-            $this->addReplacementAttorney(2-count($this->lpa->document->replacementAttorneys));
-        }
-
-        $this->lpa->document->replacementAttorneyDecisions = $this->setReplacementAttorneyDecisions([
-            'how'   => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
-        ]);
-    }
-
-    private function setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
-    {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney(2);
-        $this->lpa->document->replacementAttorneyDecisions = $this->setReplacementAttorneyDecisions([
-            'when'   => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
-        ]);
-    }
-
-    private function setReplacementAttorneysStepInDepends()
-    {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->lpa->document->replacementAttorneyDecisions = $this->setReplacementAttorneyDecisions([
-            'when'   => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS,
-        ]);
-    }
-
-    private function setReplacementAttorneysStepInWhenFirstPrimaryUnableAct()
-    {
-        $this->addPrimaryAttorney(2);
-        $this->setPrimaryAttorneysMakeDecisionJointlySeverally();
-        $this->addReplacementAttorney();
-        $this->lpa->document->replacementAttorneyDecisions = $this->setReplacementAttorneyDecisions([
-            'when'   => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST,
-        ]);
-    }
-
-    private function addReplacementAttorneyTrust()
-    {
-        if(count($this->lpa->document->primaryAttorneys) == 0) {
-            $this->addPrimaryAttorney();
-        }
-
-        $this->lpa->document->replacementAttorneys[] = new TrustCorporation();
-    }
-
-    private function addReplacementAttorney($count=1)
-    {
-        if(count($this->lpa->document->primaryAttorneys) == 0) {
-            $this->addPrimaryAttorney();
-        }
-
-        if($count === 0) {
-            $this->lpa->metadata['replacement-attorneys-confirmed'] = 1;
-        }
-        else {
-            for($i=0; $i<$count; $i++) {
-                $this->lpa->document->replacementAttorneys[] = new Human();
-            }
-        }
-    }
-
-    private function setPrimaryAttorneysMakeDecisionJointlySeverally()
-    {
-        if(count($this->lpa->document->primaryAttorneys) < 2) {
-            $this->addPrimaryAttorney(2-count($this->lpa->document->primaryAttorneys));
-        }
-
-        $this->lpa->document->primaryAttorneyDecisions = $this->setPrimaryAttorneyDecisions([
-            'how'   => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
-        ] );
-    }
-
-    private function setPrimaryAttorneysMakeDecisionJointly()
-    {
-        if(count($this->lpa->document->primaryAttorneys) < 2) {
-            $this->addPrimaryAttorney(2-count($this->lpa->document->primaryAttorneys));
-        }
-
-        $this->lpa->document->primaryAttorneyDecisions = $this->setPrimaryAttorneyDecisions([
-            'how'   => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
-        ]);
-    }
-
-    private function setPrimaryAttorneysMakeDecisionDepends()
-    {
-        if(count($this->lpa->document->primaryAttorneys) < 2) {
-            $this->addPrimaryAttorney(2-count($this->lpa->document->primaryAttorneys));
-        }
-
-        $this->lpa->document->primaryAttorneyDecisions = $this->setPrimaryAttorneyDecisions([
-            'how'   => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
-        ]);
-    }
-
-    private function addPrimaryAttorneyTrust()
-    {
-        $this->setWhenLpaStarts();
-
-        $this->lpa->document->primaryAttorneys[] = new TrustCorporation();
-    }
-
-    private function addPrimaryAttorney($count=1)
-    {
-        $this->setWhenLpaStarts();
-
-        for($i=0; $i<$count; $i++) {
-            $this->lpa->document->primaryAttorneys[] = new Human();
-        }
-    }
-
-    private function setLifeSustaining()
-    {
-        $this->formType = Document::LPA_TYPE_HW;
-        if($this->lpa->document->donor == null) {
-            $this->setLpaDonor();
-        }
-
-        $this->lpa->document->primaryAttorneyDecisions = $this->setPrimaryAttorneyDecisions([
-            'canSustainLife' => true,
-        ]);
-    }
-
-    private function setWhenLpaStarts()
-    {
-        if($this->lpa->document->donor == null) {
-            $this->setLpaDonor();
-        }
-
-        $this->lpa->document->primaryAttorneyDecisions = $this->setPrimaryAttorneyDecisions([
-            'when'  => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY,
-        ]);
-    }
-
-    private function setLpaDonor()
-    {
-        if($this->formType == Document::LPA_TYPE_HW) {
-            $this->setLpaTypeHW();
-        }
-        else {
-            $this->setLpaTypePF();
-        }
-
-        $this->lpa->document->donor = new Donor();
-    }
+    /*
+     * ####################################
+     * #### LPA set up functions below ####
+     * ####################################
+     */
 
     private function setLpaTypePF()
     {
         $this->lpa->document->type = Document::LPA_TYPE_PF;
+
+        return $this;
     }
 
     private function setLpaTypeHW()
     {
         $this->lpa->document->type = Document::LPA_TYPE_HW;
+
+        return $this;
+    }
+
+    private function setLpaDonor()
+    {
+        $this->lpa->document->donor = new Donor();
+
+        return $this;
+    }
+
+    private function setLpaStartsWhenNoCapacity()
+    {
+        $this->setPrimaryAttorneyDecisions([
+            'when'  => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY,
+        ]);
+
+        return $this;
+    }
+
+    private function setLpaLifeSustainingTreatment()
+    {
+        $this->setPrimaryAttorneyDecisions([
+            'canSustainLife' => true,
+        ]);
+
+        return $this;
+    }
+
+    private function addPrimaryAttorney($isHuman = true)
+    {
+        $this->lpa->document->primaryAttorneys[] = ($isHuman ? new Human() : new TrustCorporation());
+
+        return $this;
+    }
+
+    private function setPrimaryAttorneysMakeDecisionDepends()
+    {
+        $this->setPrimaryAttorneyDecisions([
+            'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
+        ]);
+
+        return $this;
+    }
+
+    private function setPrimaryAttorneysMakeDecisionJointlySeverally()
+    {
+        $this->setPrimaryAttorneyDecisions([
+            'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+        ]);
+
+        return $this;
     }
 
     private function setPrimaryAttorneyDecisions($params)
     {
-        foreach($params as $property => $value) {
-            if(property_exists($this->primaryAttorneyDecisions, $property)) {
-                $this->primaryAttorneyDecisions->$property = $value;
-            }
-            else {
-                throw new \RuntimeException('Unknow property for primaryAttorneyDecisions: ' . $property);
-            }
+        //  If the primary attorney decisions have not yet been set do that now
+        if (!$this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+            $this->lpa->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
         }
 
-        return $this->primaryAttorneyDecisions;
+        foreach ($params as $property => $value) {
+            if (!property_exists($this->lpa->document->primaryAttorneyDecisions, $property)) {
+                throw new RuntimeException('Unknown property for primaryAttorneyDecisions: ' . $property);
+            }
+
+            $this->lpa->document->primaryAttorneyDecisions->$property = $value;
+        }
+
+        return $this;
+    }
+
+    private function addReplacementAttorney($isHuman = true)
+    {
+        $this->lpa->document->replacementAttorneys[] = ($isHuman ? new Human() : new TrustCorporation());
+        $this->lpa->metadata[Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED] = 1;
+
+        return $this;
+    }
+
+    private function setReplacementAttorneysMakeDecisionJointlySeverally()
+    {
+        $this->setReplacementAttorneyDecisions([
+            'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+        ]);
+
+        return $this;
+    }
+
+    private function setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+    {
+        $this->setReplacementAttorneyDecisions([
+            'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+        ]);
+
+        return $this;
     }
 
     private function setReplacementAttorneyDecisions($params)
     {
-        foreach($params as $property => $value) {
-            if(property_exists($this->replacementAttorneyDecisions, $property)) {
-                $this->replacementAttorneyDecisions->$property = $value;
-            }
-            else {
-                throw new \RuntimeException('Unknow property for replacementAttorneyDecisions: ' . $property);
-            }
+        //  If the replacement attorney decisions have not yet been set do that now
+        if (!$this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+            $this->lpa->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
         }
 
-        return $this->replacementAttorneyDecisions;
+        foreach ($params as $property => $value) {
+            if (!property_exists($this->lpa->document->replacementAttorneyDecisions, $property)) {
+                throw new RuntimeException('Unknown property for replacementAttorneyDecisions: ' . $property);
+            }
+
+            $this->lpa->document->replacementAttorneyDecisions->$property = $value;
+        }
+
+        return $this;
     }
 
-    private function initLpa()
+    private function addCertificateProvider()
     {
-        $this->lpa = new Lpa([
-        'id'                => rand(100000, 9999999999),
-        'createdAt'         => null,
-        'updatedAt'         => new \DateTime(),
-        'user'              => rand(10000, 9999999),
-        'locked'            => false,
-        'whoAreYouAnswered' => false,
-        'document'          => new Document(),
-        'metadata'          => [],
-        ]);
+        $this->lpa->document->certificateProvider = new CertificateProvider();
 
-        return $this->lpa;
+        return $this;
     }
 
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown ()
+    private function addPersonToNotify()
     {
-        $this->FormFlowChecker = null;
+        $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
+        $this->lpa->metadata[Metadata::PEOPLE_TO_NOTIFY_CONFIRMED] = 1;
+
+        return $this;
+    }
+
+    private function setInstructons()
+    {
+        $this->lpa->document->instruction = '...instructions...';
+
+        return $this;
+    }
+
+    private function setLpaCreated()
+    {
+        $this->lpa->createdAt = new DateTime();
+
+        return $this;
+    }
+
+    private function setApplicant()
+    {
+        $this->lpa->document->whoIsRegistering = 'donor';
+
+        return $this;
+    }
+
+    private function setCorrespondent()
+    {
+        $this->lpa->document->correspondent = new Correspondence();
+
+        return $this;
+    }
+
+    private function setWhoAreYou()
+    {
+        $this->lpa->whoAreYouAnswered = true;
+
+        return $this;
+    }
+
+    private function setRepeatApplication()
+    {
+        $this->lpa->repeatCaseNumber = '123456';
+        $this->lpa->metadata[Metadata::REPEAT_APPLICATION_CONFIRMED] = 1;
+
+        return $this;
+    }
+
+    private function setFeeReduction()
+    {
+        if (!$this->lpa->payment instanceof Payment) {
+            $this->lpa->payment = new Payment();
+        }
+
+        $this->lpa->payment->reducedFeeReceivesBenefits = false;
+        $this->lpa->payment->reducedFeeAwardedDamages = null;
+        $this->lpa->payment->reducedFeeLowIncome = true;
+        $this->lpa->payment->reducedFeeUniversalCredit = null;
+
+        //  Calculate the amount
+        Calculator::calculate($this->lpa);
+
+        return $this;
+    }
+
+    private function setPayment()
+    {
+        if (!$this->lpa->payment instanceof Payment) {
+            $this->lpa->payment = new Payment();
+        }
+
+        $this->lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
+        $this->lpa->payment->reference = "PAYMENT RECEIVED";
+
+        //  Calculate the amount
+        Calculator::calculate($this->lpa);
+
+        return $this;
+    }
+
+    private function setLpaCompleted()
+    {
+        $this->lpa->completedAt = new DateTime();
+
+        return $this;
     }
 }

@@ -14,10 +14,12 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
     public function indexAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
 
         // set hidden form for saving empty array to replacement attorneys.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\BlankForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
 
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());
@@ -39,9 +41,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 'attorney' => [
                     'address'   => $attorney->address
                 ],
-                'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpa->id, 'idx' => $idx]),
+                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
+                'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
             ];
 
             if ($attorney instanceof Human) {
@@ -54,8 +56,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
 
         return new ViewModel([
-            'addRoute'  => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]),
-            'lpaId'     => $lpaId,
+            'addRoute'  => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpa->id]),
+            'lpaId'     => $lpa->id,
             'attorneys' => $attorneysParams,
             'form'      => $form,
         ]);
@@ -234,13 +236,15 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
     public function deleteAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
-        if (array_key_exists($attorneyIdx, $this->getLpa()->document->replacementAttorneys)) {
+        if (array_key_exists($attorneyIdx, $lpa->document->replacementAttorneys)) {
             // persist data to the api
-            if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpaId, $this->getLpa()->document->replacementAttorneys[$attorneyIdx]->id)) {
-                throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
+            $replacementAttorneyId = $lpa->document->replacementAttorneys[$attorneyIdx]->id;
+
+            if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpa->id, $replacementAttorneyId)) {
+                throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 
             $this->cleanUpReplacementAttorneyDecisions();
@@ -249,7 +253,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->moveToNextRoute();
+        return $this->redirect()->toRoute('lpa/replacement-attorney', [
+            'lpa-id' => $lpa->id
+        ]);
     }
 
     public function addTrustAction()

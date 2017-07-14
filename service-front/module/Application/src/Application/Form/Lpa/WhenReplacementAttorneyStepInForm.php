@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
-class WhenReplacementAttorneyStepInForm extends AbstractLpaForm
+class WhenReplacementAttorneyStepInForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'when' => [
@@ -27,9 +27,6 @@ class WhenReplacementAttorneyStepInForm extends AbstractLpaForm
         'whenDetails' => [
             'type'     => 'TextArea',
             'required' => true,
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

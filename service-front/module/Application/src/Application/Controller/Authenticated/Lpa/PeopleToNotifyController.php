@@ -11,10 +11,12 @@ class PeopleToNotifyController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
 
         // set hidden form for saving empty array to peopleToNotify.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\BlankForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
 
         if ($this->request->isPost()) {
             $form->setData($this->request->getPost());
@@ -37,16 +39,16 @@ class PeopleToNotifyController extends AbstractLpaActorController
                     'name'      => $peopleToNotify->name,
                     'address'   => $peopleToNotify->address
                 ],
-                'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
-                'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpaId, 'idx' => $idx]),
+                'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpa->id, 'idx' => $idx]),
+                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
+                'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
             ];
         }
 
         $view = new ViewModel(['form' => $form, 'peopleToNotify' => $peopleToNotifyParams]);
 
         if (count($this->getLpa()->document->peopleToNotify) < 5) {
-            $view->addRoute  = $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId]);
+            $view->addRoute  = $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpa->id]);
         }
 
         return $view;
@@ -201,12 +203,15 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
     public function deleteAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
+
         $personIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
-        if (array_key_exists($personIdx, $this->getLpa()->document->peopleToNotify)) {
+        if (array_key_exists($personIdx, $lpa->document->peopleToNotify)) {
             // persist data to the api
-            if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpaId, $this->getLpa()->document->peopleToNotify[$personIdx]->id)) {
+            $personToNotifyId = $lpa->document->peopleToNotify[$personIdx]->id;
+
+            if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpa->id, $personToNotifyId)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
             }
         } else {
@@ -214,6 +219,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->moveToNextRoute();
+        return $this->redirect()->toRoute('lpa/primary-attorney', [
+            'lpa-id' => $lpa->id
+        ]);
     }
 }

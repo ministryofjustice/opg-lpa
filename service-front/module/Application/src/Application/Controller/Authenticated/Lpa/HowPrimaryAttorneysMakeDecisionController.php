@@ -3,59 +3,50 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Zend\View\Model\ViewModel;
+use RuntimeException;
 
 class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
 {
-
-    protected $contentHeader = 'creation-partial.phtml';
-
     public function indexAction()
     {
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
+        $lpa = $this->getLpa();
 
-        $lpaId = $this->getLpa()->id;
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm', [
+                         'lpa' => $lpa,
+                     ]);
 
-        if($this->request->isPost()) {
+        //  There will be some primary attorney descisions at this point because they will have been created in an earlier step
+        $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
+
+        if ($this->request->isPost()) {
             $postData = $this->request->getPost();
 
-            if($postData['how'] != PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                $form->setValidationGroup(
-                        'how'
-                );
+            if ($postData['how'] != PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                $form->setValidationGroup('how');
             }
 
             // set data for validation
             $form->setData($postData);
 
-            if($form->isValid()) {
-
-                if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-                    $decisions = $this->getLpa()->document->primaryAttorneyDecisions;
-                }
-                else {
-                    $decisions = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
-                }
-
+            if ($form->isValid()) {
                 $howAttorneysAct = $form->getData()['how'];
+                $howDetails = null;
 
-                if($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                if ($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
                     $howDetails = $form->getData()['howDetails'];
                 }
-                else {
-                    $howDetails = null;
-                }
 
-                if(($decisions->how !== $howAttorneysAct) || ($decisions->howDetails !== $howDetails)) {
-
-                    $decisions->how = $howAttorneysAct;
-                    $decisions->howDetails = $howDetails;
+                if ($primaryAttorneyDecisions->how !== $howAttorneysAct || $primaryAttorneyDecisions->howDetails !== $howDetails) {
+                    $primaryAttorneyDecisions->how = $howAttorneysAct;
+                    $primaryAttorneyDecisions->howDetails = $howDetails;
 
                     // persist data
-                    if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $decisions)) {
-                        throw new \RuntimeException('API client failed to set primary attorney decisions for id: '.$lpaId);
+                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $primaryAttorneyDecisions)) {
+                        throw new RuntimeException('API client failed to set primary attorney decisions for id: ' . $lpa->id);
                     }
 
                     $this->cleanUpReplacementAttorneyDecisions();
@@ -63,11 +54,10 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
 
                 return $this->moveToNextRoute();
             }
-        }
-        else {
-            $form->bind($this->getLpa()->document->primaryAttorneyDecisions->flatten());
+        } else {
+            $form->bind($primaryAttorneyDecisions->flatten());
         }
 
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel(['form' => $form]);
     }
 }
