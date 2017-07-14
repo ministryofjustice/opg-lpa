@@ -69,26 +69,24 @@ class Db extends AbstractWriter
             $db        = isset($db['db']) ? $db['db'] : null;
         }
 
-        if (! $db instanceof Adapter) {
+        if (!$db instanceof Adapter) {
             throw new Exception\InvalidArgumentException('You must pass a valid Zend\Db\Adapter\Adapter');
         }
 
         $tableName = (string) $tableName;
         if ('' === $tableName) {
-            throw new Exception\InvalidArgumentException(
-                'You must specify a table name. Either directly in the constructor, or via options'
-            );
+            throw new Exception\InvalidArgumentException('You must specify a table name. Either directly in the constructor, or via options');
         }
 
         $this->db        = $db;
         $this->tableName = $tableName;
         $this->columnMap = $columnMap;
 
-        if (! empty($separator)) {
+        if (!empty($separator)) {
             $this->separator = $separator;
         }
 
-        if (! $this->hasFormatter()) {
+        if (!$this->hasFormatter()) {
             $this->setFormatter(new DbFormatter());
         }
     }
@@ -125,22 +123,24 @@ class Db extends AbstractWriter
             $dataToInsert = $this->mapEventIntoColumn($event, $this->columnMap);
         }
 
-        $statement = $this->db->query($this->prepareInsert($dataToInsert));
+        $statement = $this->db->query($this->prepareInsert($this->db, $this->tableName, $dataToInsert));
         $statement->execute($dataToInsert);
     }
 
     /**
      * Prepare the INSERT SQL statement
      *
+     * @param  Adapter $db
+     * @param  string $tableName
      * @param  array $fields
      * @return string
      */
-    protected function prepareInsert(array $fields)
+    protected function prepareInsert(Adapter $db, $tableName, array $fields)
     {
         $keys = array_keys($fields);
-        $sql = 'INSERT INTO ' . $this->db->platform->quoteIdentifier($this->tableName) . ' (' .
-            implode(",", array_map([$this->db->platform, 'quoteIdentifier'], $keys)) . ') VALUES (' .
-            implode(",", array_map([$this->db->driver, 'formatParameterName'], $keys)) . ')';
+        $sql = 'INSERT INTO ' . $db->platform->quoteIdentifier($tableName) . ' (' .
+            implode(",", array_map([$db->platform, 'quoteIdentifier'], $keys)) . ') VALUES (' .
+            implode(",", array_map([$db->driver, 'formatParameterName'], $keys)) . ')';
 
         return $sql;
     }

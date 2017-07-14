@@ -14,9 +14,6 @@ use Zend\Validator\DateStep as DateStepValidator;
 
 class Time extends DateTime
 {
-
-    const DATETIME_FORMAT = 'H:i:s';
-
     /**
      * Seed attributes
      *
