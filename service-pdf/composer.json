@@ -27,7 +27,7 @@
         "zendframework/zend-barcode": "^2.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*"
+        "phpunit/phpunit": "^4.0"
     },
     "autoload": {
         "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"}

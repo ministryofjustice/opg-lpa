@@ -8,6 +8,4 @@ $baseDir = dirname($vendorDir);
 return array(
     $baseDir . '/config',
     $vendorDir . '/phpunit/php-file-iterator',
-    $vendorDir . '/phpunit/phpunit',
-    $vendorDir . '/symfony/yaml',
 );
