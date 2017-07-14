@@ -55,21 +55,11 @@ class CurrencyFormat extends AbstractHelper
     protected $showDecimals = true;
 
     /**
-     * Special condition to be checked due to ICU bug:
-     * http://bugs.icu-project.org/trac/ticket/10997
-     *
-     * @var bool
-     */
-    protected $correctionNeeded = false;
-
-
-
-    /**
      * @throws Exception\ExtensionNotLoadedException if ext/intl is not present
      */
     public function __construct()
     {
-        if (! extension_loaded('intl')) {
+        if (!extension_loaded('intl')) {
             throw new Exception\ExtensionNotLoadedException(sprintf(
                 '%s component requires the intl PHP extension',
                 __NAMESPACE__
@@ -129,7 +119,7 @@ class CurrencyFormat extends AbstractHelper
     ) {
         $formatterId = md5($locale);
 
-        if (! isset($this->formatters[$formatterId])) {
+        if (!isset($this->formatters[$formatterId])) {
             $this->formatters[$formatterId] = new NumberFormatter(
                 $locale,
                 NumberFormatter::CURRENCY
@@ -142,16 +132,11 @@ class CurrencyFormat extends AbstractHelper
 
         if ($showDecimals) {
             $this->formatters[$formatterId]->setAttribute(NumberFormatter::FRACTION_DIGITS, 2);
-            $this->correctionNeeded = false;
         } else {
             $this->formatters[$formatterId]->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
-            $defaultCurrencyCode = $this->formatters[$formatterId]->getTextAttribute(NumberFormatter::CURRENCY_CODE);
-            $this->correctionNeeded = $defaultCurrencyCode !== $currencyCode;
         }
 
-        $formattedNumber = $this->formatters[$formatterId]->formatCurrency($number, $currencyCode);
-
-        return $this->correctionNeeded ? $this->correctICUBug($formattedNumber, $this->formatters[$formatterId]) : $formattedNumber;
+        return $this->formatters[$formatterId]->formatCurrency($number, $currencyCode);
     }
 
     /**
@@ -244,19 +229,5 @@ class CurrencyFormat extends AbstractHelper
     public function shouldShowDecimals()
     {
         return $this->showDecimals;
-    }
-
-
-
-    /**
-     * @param string $formattedNumber
-     * @param NumberFormatter $formatter
-     * @return string
-     */
-    private function correctICUBug($formattedNumber, NumberFormatter $formatter)
-    {
-        $pattern = sprintf('/\%s\d+$/', $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL));
-
-        return preg_replace($pattern, '', $formattedNumber);
     }
 }

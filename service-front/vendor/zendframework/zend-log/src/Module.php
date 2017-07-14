@@ -59,7 +59,7 @@ class Module
         $serviceListener->addServiceManager(
             'LogFormatterManager',
             'log_formatters',
-            'Zend\Log\Formatter\LogFormatterProviderInterface',
+            'Zend\Log\Filter\LogFormatterProviderInterface',
             'getLogFormatterConfig'
         );
     }

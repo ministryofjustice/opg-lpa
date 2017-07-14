@@ -11,9 +11,7 @@ namespace Zend\Form\Element;
 
 use DateInterval;
 use DateTime as PhpDateTime;
-use DateTimeInterface;
 use Zend\Form\Element;
-use Zend\Form\Exception\InvalidArgumentException;
 use Zend\InputFilter\InputProviderInterface;
 use Zend\Validator\Date as DateValidator;
 use Zend\Validator\DateStep as DateStepValidator;
@@ -122,40 +120,17 @@ class DateTime extends Element implements InputProviderInterface
         $validators = [];
         $validators[] = $this->getDateValidator();
 
-        if (isset($this->attributes['min'])
-            && $this->valueIsValidDateTimeFormat($this->attributes['min'])
-        ) {
+        if (isset($this->attributes['min'])) {
             $validators[] = new GreaterThanValidator([
-                'min' => $this->attributes['min'],
+                'min'       => $this->attributes['min'],
                 'inclusive' => true,
             ]);
-        } elseif (isset($this->attributes['min'])
-            && ! $this->valueIsValidDateTimeFormat($this->attributes['min'])
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                '%1$s expects "min" to conform to %2$s; received "%3$s"',
-                __METHOD__,
-                static::DATETIME_FORMAT,
-                $this->attributes['min']
-            ));
         }
-
-        if (isset($this->attributes['max'])
-            && $this->valueIsValidDateTimeFormat($this->attributes['max'])
-        ) {
+        if (isset($this->attributes['max'])) {
             $validators[] = new LessThanValidator([
-                'max' => $this->attributes['max'],
+                'max'       => $this->attributes['max'],
                 'inclusive' => true,
             ]);
-        } elseif (isset($this->attributes['max'])
-            && ! $this->valueIsValidDateTimeFormat($this->attributes['max'])
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                '%1$s expects "max" to conform to %2$s; received "%3$s"',
-                __METHOD__,
-                static::DATETIME_FORMAT,
-                $this->attributes['max']
-            ));
         }
         if (! isset($this->attributes['step'])
             || 'any' !== $this->attributes['step']
@@ -170,7 +145,7 @@ class DateTime extends Element implements InputProviderInterface
     /**
      * Retrieves a Date Validator configured for a DateTime Input type
      *
-     * @return DateValidator
+     * @return DateTime
      */
     protected function getDateValidator()
     {
@@ -180,7 +155,7 @@ class DateTime extends Element implements InputProviderInterface
     /**
      * Retrieves a DateStep Validator configured for a DateTime Input type
      *
-     * @return DateStepValidator
+     * @return DateTime
      */
     protected function getStepValidator()
     {
@@ -215,19 +190,5 @@ class DateTime extends Element implements InputProviderInterface
             ],
             'validators' => $this->getValidators(),
         ];
-    }
-
-    /**
-     * Indicate whether or not a value represents a valid DateTime format.
-     *
-     * @param string $value
-     * @return bool
-     */
-    private function valueIsValidDateTimeFormat($value)
-    {
-        return PhpDateTime::createFromFormat(
-            static::DATETIME_FORMAT,
-            $value
-        ) instanceof DateTimeInterface;
     }
 }

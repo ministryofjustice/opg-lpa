@@ -19,6 +19,7 @@ use Zend\Stdlib\ArrayUtils;
 
 class ServiceListener implements ServiceListenerInterface
 {
+
     /**
      * Service manager post-configuration.
      *
@@ -27,7 +28,7 @@ class ServiceListener implements ServiceListenerInterface
     protected $configuredServiceManager;
 
     /**
-     * @var \Zend\Stdlib\CallbackHandler[]
+     * @var callable[]
      */
     protected $listeners = [];
 
@@ -199,10 +200,8 @@ class ServiceListener implements ServiceListenerInterface
 
             if (! $sm['service_manager'] instanceof ServiceManager) {
                 if (! $this->defaultServiceManager->has($sm['service_manager'])) {
-                    throw new Exception\RuntimeException(sprintf(
-                        'Could not find a valid ServiceManager for %s',
-                        $sm['service_manager']
-                    ));
+                    // No plugin manager registered by that name; nothing to configure.
+                    continue;
                 }
 
                 $instance = $this->defaultServiceManager->get($sm['service_manager']);
@@ -298,7 +297,7 @@ class ServiceListener implements ServiceListenerInterface
     {
         if (isset($config[$metadata['config_key']])
             && is_array($config[$metadata['config_key']])
-            && !empty($config[$metadata['config_key']])
+            && ! empty($config[$metadata['config_key']])
         ) {
             $this->serviceManagers[$key]['configuration']['merged_config'] = $config[$metadata['config_key']];
         }
