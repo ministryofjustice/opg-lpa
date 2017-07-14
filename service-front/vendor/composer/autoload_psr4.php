@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/type-resolver/src', $vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'Zend\\XmlRpc\\' => array($vendorDir . '/zendframework/zend-xmlrpc/src'),
     'Zend\\View\\' => array($vendorDir . '/zendframework/zend-view/src'),
     'Zend\\Version\\' => array($vendorDir . '/zendframework/zend-version/src'),
@@ -58,6 +59,7 @@ return array(
     'Zend\\Cache\\' => array($vendorDir . '/zendframework/zend-cache/src'),
     'Zend\\Barcode\\' => array($vendorDir . '/zendframework/zend-barcode/src'),
     'Zend\\Authentication\\' => array($vendorDir . '/zendframework/zend-authentication/src'),
+    'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Symfony\\Component\\VarDumper\\' => array($vendorDir . '/symfony/var-dumper'),
