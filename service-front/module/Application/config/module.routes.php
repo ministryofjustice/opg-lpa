@@ -502,16 +502,6 @@ return [
                             ],
                         ],
                     ],
-                    'benefits' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route'    => '/benefits',
-                            'defaults' => [
-                                'controller' => 'Authenticated\Lpa\BenefitsController',
-                                'action'     => 'index',
-                            ],
-                        ],
-                    ],
                     'certificate-provider' => [
                         'type' => 'Literal',
                         'options' => [
@@ -582,16 +572,6 @@ return [
                                         'action' => 'edit',
                                     ],
                                 ],
-                            ],
-                        ],
-                    ],
-                    'created' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route'    => '/created',
-                            'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CreatedController',
-                                'action'     => 'index',
                             ],
                         ],
                     ],
@@ -702,16 +682,6 @@ return [
                             ],
                         ],
                     ],
-                    'fee' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route'    => '/fee',
-                            'defaults' => [
-                                'controller' => 'Authenticated\Lpa\FeeController',
-                                'action'     => 'index',
-                            ],
-                        ],
-                    ],
                     'form-type' => [
                         'type' => 'Literal',
                         'options' => [
@@ -738,16 +708,6 @@ return [
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-                                'action'     => 'index',
-                            ],
-                        ],
-                    ],
-                    'income-and-universal-credit' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route'    => '/income-and-universal-credit',
-                            'defaults' => [
-                                'controller' => 'Authenticated\Lpa\IncomeAndUniversalCreditController',
                                 'action'     => 'index',
                             ],
                         ],
@@ -991,16 +951,6 @@ return [
                                         'action' => 'add-trust',
                                     ],
                                 ],
-                            ],
-                        ],
-                    ],
-                    'register' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route'    => '/register',
-                            'defaults' => [
-                                'controller' => 'Authenticated\Lpa\RegisterLpaController',
-                                'action'     => 'index',
                             ],
                         ],
                     ],

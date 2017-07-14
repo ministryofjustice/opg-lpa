@@ -14,7 +14,9 @@ class RepeatApplicationController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\RepeatApplicationForm');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\RepeatApplicationForm', [
+            'lpa' => $lpa,
+        ]);
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

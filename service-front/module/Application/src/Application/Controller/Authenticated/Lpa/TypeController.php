@@ -50,10 +50,13 @@ class TypeController extends AbstractLpaController
             ];
         }
 
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $this->getLpa()->id]);
+
         return new ViewModel([
             'form'                => $form,
             'cloneUrl'            => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $this->getLpa()->id]),
-            'nextUrl'             => $this->url()->fromRoute('lpa/donor', ['lpa-id' => $this->getLpa()->id]),
+            'nextUrl'             => $nextUrl,
             'isChangeAllowed'     => $isChangeAllowed,
             'analyticsDimensions' => $analyticsDimensions,
         ]);

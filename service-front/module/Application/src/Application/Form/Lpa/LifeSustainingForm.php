@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class LifeSustainingForm extends AbstractLpaForm
+class LifeSustainingForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'canSustainLife' => [
@@ -19,12 +19,6 @@ class LifeSustainingForm extends AbstractLpaForm
                         'value' => '0',
                     ],
                 ],
-            ],
-        ],
-        'submit' => [
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Save and continue'
             ],
         ],
     ];

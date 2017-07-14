@@ -3,51 +3,48 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Zend\Form\Element;
+use Zend\View\Model\ViewModel;
 
 class WhoAreYouController extends AbstractLpaController
 {
     public function indexAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
+
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
-        if($this->getLpa()->whoAreYouAnswered == true) {
-            return new ViewModel( ['nextRoute'=>$this->url()->fromRoute( $this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id'=>$lpaId] )] );
+        if ($lpa->whoAreYouAnswered == true) {
+            $nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+
+            return new ViewModel(['nextUrl' => $nextUrl]);
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhoAreYouForm');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpaId]));
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Lpa\WhoAreYouForm');
+        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpa->id]));
 
-        //---
-
-        if($this->request->isPost()) {
-
+        if ($this->request->isPost()) {
             $postData = $this->request->getPost();
 
             // set data for validation
             $form->setData($postData);
 
-            if($form->isValid()) {
-
+            if ($form->isValid()) {
                 // persist data
+                $whoAreYou = new WhoAreYou($form->getModelDataFromValidatedForm());
 
-                $whoAreYou = new WhoAreYou( $form->getModelDataFromValidatedForm() );
-
-                if( !$this->getLpaApplicationService()->setWhoAreYou($lpaId, $whoAreYou) ) {
-                    throw new \RuntimeException('API client failed to set Who Are You for id: '.$lpaId);
+                if (!$this->getLpaApplicationService()->setWhoAreYou($lpa->id, $whoAreYou)) {
+                    throw new \RuntimeException('API client failed to set Who Are You for id: ' . $lpa->id);
                 }
 
                 return $this->moveToNextRoute();
             }
         }
 
-        //---
-
         $who            = $form->get('who');
-
         $professional   = $form->get('professional');
 
         $whoOptions = [];
@@ -143,13 +140,10 @@ class WhoAreYouController extends AbstractLpaController
                 'checked' => (($professional->getValue() == 'other')? 'checked':null),
         ]);
 
-        //---
-
         return new ViewModel([
-                'form'=>$form,
-                'whoOptions' => $whoOptions,
-                'professionalOptions' => $professionalOptions,
-            ]
-        );
+            'form'                => $form,
+            'whoOptions'          => $whoOptions,
+            'professionalOptions' => $professionalOptions,
+        ]);
     }
 }

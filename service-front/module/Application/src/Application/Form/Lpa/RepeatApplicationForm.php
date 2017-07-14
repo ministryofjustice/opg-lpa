@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class RepeatApplicationForm extends AbstractLpaForm
+class RepeatApplicationForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'isRepeatApplication' => [
@@ -37,9 +37,6 @@ class RepeatApplicationForm extends AbstractLpaForm
                     'name' => 'Digits',
                 ]
             ],
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

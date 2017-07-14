@@ -4,7 +4,7 @@ namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
-class HowAttorneysMakeDecisionForm extends AbstractLpaForm
+class HowAttorneysMakeDecisionForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'how' => [
@@ -27,9 +27,6 @@ class HowAttorneysMakeDecisionForm extends AbstractLpaForm
         'howDetails' => [
             'required' => true,
             'type'     => 'TextArea',
-        ],
-        'submit' => [
-            'type' => 'Submit',
         ],
     ];
 

@@ -29,7 +29,7 @@ class TypeFormTest extends \PHPUnit_Framework_TestCase
     public function testElements()
     {
         $this->assertInstanceOf('Application\Form\Element\Type', $this->form->get('type'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
+        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
     }
 
     public function testValidateByModelOK()

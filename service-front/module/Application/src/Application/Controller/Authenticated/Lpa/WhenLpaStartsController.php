@@ -3,82 +3,54 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Zend\View\Model\ViewModel;
+use RuntimeException;
 
 class WhenLpaStartsController extends AbstractLpaController
 {
-
-    protected $contentHeader = 'creation-partial.phtml';
-
     public function indexAction()
     {
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\WhenLpaStartsForm');
+        $lpa = $this->getLpa();
 
-        $when = $form->get('when');
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Lpa\WhenLpaStartsForm', [
+                         'lpa' => $lpa,
+                     ]);
 
-        $whenValueOptions = $when->getOptions()['value_options'];
-        $whenValueOptions['now']['label'] = "as soon as it's registered (with my consent)";
-        $whenValueOptions['no-capacity']['label'] = "only if I don't have mental capacity";
+        $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
 
-        $whenValueOptions['now'] += [
-            'label_attributes' => [
-                'for' => 'now',
-                'class' => 'block-label'
-            ],
-            'attributes' => [
-                'id' => 'now',
-            ],
-        ];
-        $whenValueOptions['no-capacity'] += [
-            'label_attributes' => [
-                'for' => 'no-capacity',
-                'class' => 'block-label'
-            ],
-            'attributes' => [
-                'id' => 'no-capacity',
-            ],
-        ];
-
-        $when->setOptions( [ 'value_options' => $whenValueOptions ] );
-
-        if($this->request->isPost()) {
+        if ($this->request->isPost()) {
             $postData = $this->request->getPost();
 
             $form->setData($postData);
 
-            if($form->isValid()) {
-
-                $lpaId = $this->getLpa()->id;
-
-                if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-                    $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions;
-                }
-                else {
-                    $primaryAttorneyDecisions = $this->getLpa()->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+            if ($form->isValid()) {
+                if (!$primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+                    $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+                    $lpa->document->primaryAttorneyDecisions = $primaryAttorneyDecisions;
                 }
 
                 $whenToStart = $form->getData()['when'];
 
-                if($primaryAttorneyDecisions->when !== $whenToStart) {
-
+                if ($primaryAttorneyDecisions->when !== $whenToStart) {
                     $primaryAttorneyDecisions->when = $whenToStart;
 
                     // persist data
-                    if(!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpaId, $primaryAttorneyDecisions)) {
-                        throw new \RuntimeException('API client failed to set when LPA starts for id: '.$lpaId);
+                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $primaryAttorneyDecisions)) {
+                        throw new RuntimeException('API client failed to set when LPA starts for id: ' . $lpa->id);
                     }
                 }
 
                 return $this->moveToNextRoute();
             }
-        }
-        else {
-            if($this->getLpa()->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-                $form->bind($this->getLpa()->document->primaryAttorneyDecisions->flatten());
+        } else {
+            if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+                $form->bind($primaryAttorneyDecisions->flatten());
             }
         }
 
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel(['form' => $form]);
     }
 }

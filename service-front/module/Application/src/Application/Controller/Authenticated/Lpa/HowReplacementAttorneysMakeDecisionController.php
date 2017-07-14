@@ -3,69 +3,65 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Zend\View\Model\ViewModel;
+use RuntimeException;
 
 class HowReplacementAttorneysMakeDecisionController extends AbstractLpaController
 {
-
-    protected $contentHeader = 'creation-partial.phtml';
-
     public function indexAction()
     {
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm');
+        $lpa = $this->getLpa();
 
-        $lpaId = $this->getLpa()->id;
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm', [
+                         'lpa' => $lpa,
+                     ]);
 
-        if($this->request->isPost()) {
+        $replacementAttorneyDecisions = $lpa->document->replacementAttorneyDecisions;
+
+        if ($this->request->isPost()) {
             $postData = $this->request->getPost();
 
-            if($postData['how'] != ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                $form->setValidationGroup(
-                        'how'
-                );
+            if ($postData['how'] != ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                $form->setValidationGroup('how');
             }
 
             // set data for validation
             $form->setData($postData);
 
-            if($form->isValid()) {
-
-                if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                    $decisions = $this->getLpa()->document->replacementAttorneyDecisions;
-                }
-                else {
-                    $decisions = $this->getLpa()->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+            if ($form->isValid()) {
+                if (!$replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+                    $replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+                    $lpa->document->replacementAttorneyDecisions = $replacementAttorneyDecisions;
                 }
 
                 $howAttorneysAct = $form->getData()['how'];
+                $howDetails = null;
 
-                if($howAttorneysAct == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                if ($howAttorneysAct == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
                     $howDetails = $form->getData()['howDetails'];
                 }
-                else {
-                    $howDetails = null;
-                }
 
-                if(($decisions->how !== $howAttorneysAct) || ($decisions->howDetails !== $howDetails)) {
-                    $decisions->how = $howAttorneysAct;
-                    $decisions->howDetails = $howDetails;
+                if ($replacementAttorneyDecisions->how !== $howAttorneysAct || $replacementAttorneyDecisions->howDetails !== $howDetails) {
+                    $replacementAttorneyDecisions->how = $howAttorneysAct;
+                    $replacementAttorneyDecisions->howDetails = $howDetails;
 
                     // persist data
-                    if(!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpaId, $decisions)) {
-                        throw new \RuntimeException('API client failed to set replacement attorney decisions for id: '.$lpaId);
+                    if (!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa->id, $replacementAttorneyDecisions)) {
+                        throw new RuntimeException('API client failed to set replacement attorney decisions for id: ' . $lpa->id);
                     }
                 }
 
                 return $this->moveToNextRoute();
             }
-        }
-        else {
-            if($this->getLpa()->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
-                $form->bind($this->getLpa()->document->replacementAttorneyDecisions->flatten());
+        } else {
+            if ($replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
+                $form->bind($replacementAttorneyDecisions->flatten());
             }
         }
 
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel(['form' => $form]);
     }
 }

@@ -10,25 +10,20 @@ class DonorController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-
         $lpaId = $this->getLpa()->id;
 
         //  Set the add route in the view model
-        $viewModel = new ViewModel(['addRoute' => $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpaId])]);
+        $viewModel = new ViewModel();
+        $viewModel->addUrl = $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]);
 
-        $donor = $this->getLpa()->document->donor;
+        if ($this->getLpa()->document->donor instanceof Donor) {
+            //  Determine the next route
+            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+            $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
 
-        if ($donor instanceof Donor) {
             //  Set the donor data in the view model
-            $viewModel = new ViewModel([
-                'donor' => [
-                    'name'    => $donor->name,
-                    'address' => $donor->address,
-                ],
-                'editDonorUrl'  => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpaId]),
-                'nextRoute'     => $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId])
-            ]);
+            $viewModel->editUrl = $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]);
+            $viewModel->nextUrl =  $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId]);
         }
 
         return $viewModel;
