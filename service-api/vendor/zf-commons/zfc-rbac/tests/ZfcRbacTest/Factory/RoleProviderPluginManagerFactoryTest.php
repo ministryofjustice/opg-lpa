@@ -20,7 +20,6 @@ namespace ZfcRbacTest\Factory;
 
 use Zend\ServiceManager\ServiceManager;
 use ZfcRbac\Factory\RoleProviderPluginManagerFactory;
-use ZfcRbac\Role\RoleProviderPluginManager;
 
 /**
  * @covers \ZfcRbac\Factory\RoleProviderPluginManagerFactory
@@ -39,6 +38,7 @@ class RoleProviderPluginManagerFactoryTest extends \PHPUnit_Framework_TestCase
         $factory       = new RoleProviderPluginManagerFactory();
         $pluginManager = $factory->createService($serviceManager);
 
-        $this->assertInstanceOf(RoleProviderPluginManager::class, $pluginManager);
+        $this->assertInstanceOf('ZfcRbac\Role\RoleProviderPluginManager', $pluginManager);
+        $this->assertSame($serviceManager, $pluginManager->getServiceLocator());
     }
 }

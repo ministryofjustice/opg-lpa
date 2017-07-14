@@ -31,11 +31,8 @@ class HasRoleViewHelperFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $serviceManager = new ServiceManager();
 
-        if (method_exists($serviceManager, 'build')) {
-            $this->markTestSkipped('this test is only vor zend-servicemanager v2');
-        }
-
-        $pluginManager  = new HelperPluginManager($serviceManager);
+        $pluginManager  = new HelperPluginManager();
+        $pluginManager->setServiceLocator($serviceManager);
 
         $serviceManager->setService(
             'ZfcRbac\Service\RoleService',
@@ -44,25 +41,6 @@ class HasRoleViewHelperFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory   = new HasRoleViewHelperFactory();
         $viewHelper = $factory->createService($pluginManager);
-
-        $this->assertInstanceOf('ZfcRbac\View\Helper\HasRole', $viewHelper);
-    }
-
-    public function testFactoryV3()
-    {
-        $serviceManager = new ServiceManager();
-
-        if (!method_exists($serviceManager, 'build')) {
-            $this->markTestSkipped('this test is only vor zend-servicemanager v3');
-        }
-
-        $serviceManager->setService(
-            'ZfcRbac\Service\RoleService',
-            $this->getMock('ZfcRbac\Service\RoleService', [], [], '', false)
-        );
-
-        $factory   = new HasRoleViewHelperFactory();
-        $viewHelper = $factory($serviceManager, 'ZfcRbac\View\Helper\HasRole');
 
         $this->assertInstanceOf('ZfcRbac\View\Helper\HasRole', $viewHelper);
     }

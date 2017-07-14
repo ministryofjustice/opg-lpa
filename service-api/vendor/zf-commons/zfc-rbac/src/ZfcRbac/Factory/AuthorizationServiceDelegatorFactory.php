@@ -18,7 +18,6 @@
 
 namespace ZfcRbac\Factory;
 
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -33,40 +32,21 @@ use ZfcRbac\Service\AuthorizationServiceAwareInterface;
  */
 class AuthorizationServiceDelegatorFactory implements DelegatorFactoryInterface
 {
-    /**
-     * @param ContainerInterface $container
-     * @param string $name
-     * @param callable $callback
-     * @param array|null $options
-     * @return mixed
-     */
-    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
+    public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
     {
         $instanceToDecorate = call_user_func($callback);
 
         if (!$instanceToDecorate instanceof AuthorizationServiceAwareInterface) {
-            throw new RuntimeException("The service $name must implement AuthorizationServiceAwareInterface.");
+            throw new RuntimeException("The service $requestedName must implement AuthorizationServiceAwareInterface.");
         }
 
-        if ($container instanceof AbstractPluginManager) {
-            $container = $container->getServiceLocator();
+        if ($serviceLocator instanceof AbstractPluginManager) {
+            $serviceLocator = $serviceLocator->getServiceLocator();
         }
 
-        $authorizationService = $container->get('ZfcRbac\Service\AuthorizationService');
+        $authorizationService = $serviceLocator->get('ZfcRbac\Service\AuthorizationService');
         $instanceToDecorate->setAuthorizationService($authorizationService);
 
         return $instanceToDecorate;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param string $name
-     * @param string $requestedName
-     * @param callable $callback
-     * @return mixed
-     */
-    public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
-    {
-        return $this($serviceLocator, $requestedName, $callback);
     }
 }

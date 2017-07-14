@@ -19,6 +19,7 @@
 namespace ZfcRbac\Identity;
 
 use Zend\Authentication\AuthenticationServiceInterface;
+use ZfcRbac\Exception;
 
 /**
  * This provider uses the Zend authentication service to fetch the identity

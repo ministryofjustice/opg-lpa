@@ -18,7 +18,6 @@
 
 namespace ZfcRbac\Factory;
 
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\AuthorizationService;
@@ -32,37 +31,26 @@ use ZfcRbac\Service\AuthorizationService;
 class AuthorizationServiceFactory implements FactoryInterface
 {
     /**
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
-     * @return AuthorizationService
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        /* @var \Rbac\Rbac $rbac */
-        $rbac = $container->get('Rbac\Rbac');
-
-        /* @var \ZfcRbac\Service\RoleService $roleService */
-        $roleService = $container->get('ZfcRbac\Service\RoleService');
-
-        /* @var \ZfcRbac\Assertion\AssertionPluginManager $assertionPluginManager */
-        $assertionPluginManager = $container->get('ZfcRbac\Assertion\AssertionPluginManager');
-
-        /* @var \ZfcRbac\Options\ModuleOptions $moduleOptions */
-        $moduleOptions = $container->get('ZfcRbac\Options\ModuleOptions');
-
-        $authorizationService = new AuthorizationService($rbac, $roleService, $assertionPluginManager);
-        $authorizationService->setAssertions($moduleOptions->getAssertionMap());
-
-        return $authorizationService;
-    }
-
-    /**
      * {@inheritDoc}
      * @return AuthorizationService
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return $this($serviceLocator, AuthorizationService::class);
+        /* @var \Rbac\Rbac $rbac */
+        $rbac = $serviceLocator->get('Rbac\Rbac');
+
+        /* @var \ZfcRbac\Service\RoleService $roleService */
+        $roleService = $serviceLocator->get('ZfcRbac\Service\RoleService');
+
+        /* @var \ZfcRbac\Assertion\AssertionPluginManager $assertionPluginManager */
+        $assertionPluginManager = $serviceLocator->get('ZfcRbac\Assertion\AssertionPluginManager');
+
+        /* @var \ZfcRbac\Options\ModuleOptions $moduleOptions */
+        $moduleOptions = $serviceLocator->get('ZfcRbac\Options\ModuleOptions');
+
+        $authorizationService = new AuthorizationService($rbac, $roleService, $assertionPluginManager);
+        $authorizationService->setAssertions($moduleOptions->getAssertionMap());
+
+        return $authorizationService;
     }
 }
