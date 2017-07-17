@@ -29,7 +29,7 @@ class Entity implements EntityInterface {
     }
 
     public function userId(){
-        return $this->lpa->userId;
+        return $this->lpa->user;
     }
 
     public function lpaId(){
