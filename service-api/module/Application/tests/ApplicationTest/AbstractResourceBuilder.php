@@ -22,11 +22,14 @@ abstract class AbstractResourceBuilder
     protected $lpaCollection;
     protected $locked = false;
     protected $updateNumberModified = null;
+    protected $config = array();
+
+    protected $serviceLocatorMock = null;
 
     /**
      * @return AbstractResource
      */
-    public abstract function build();
+    abstract public function build();
 
     /**
      * @param Lpa $lpa
@@ -78,6 +81,16 @@ abstract class AbstractResourceBuilder
         return $this;
     }
 
+    /**
+     * @param array $config
+     * @return $this
+     */
+    public function withConfig($config)
+    {
+        $this->config = $config;
+        return $this;
+    }
+
     public function verify()
     {
         $this->lpaCollection->mockery_verify();
@@ -91,11 +104,12 @@ abstract class AbstractResourceBuilder
 
         $this->lpaCollection = Mockery::mock(MongoCollection::class);
 
-        $serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
+        $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
+        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
 
-        $resource->setServiceLocator($serviceLocatorMock);
+        $resource->setServiceLocator($this->serviceLocatorMock);
 
         if ($this->authorizationService === null) {
             $authorizationServiceMock = Mockery::mock(AuthorizationService::class);

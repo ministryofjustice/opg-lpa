@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Rest\Pdfs;
 
 use Application\Model\Rest\Pdfs\Collection;
 use Application\Model\Rest\Pdfs\Entity;
+use Application\Model\Rest\Pdfs\Resource;
 use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Adapter\NullFill;
@@ -39,8 +40,9 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = FixturesData::getHwLpa();
 
+        $resource = new Resource();
         $data = array();
-        foreach (['lpa120', 'lp3', 'lp1'] as $type) {
+        foreach ($resource->getPdfTypes() as $type) {
             $data[$type] = array(
                 'type' => $type,
                 'complete' => true,
