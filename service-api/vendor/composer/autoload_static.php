@@ -20,6 +20,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
     );
 
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'phpDocumentor\\Reflection\\' => 25,
+        ),
         'Z' => 
         array (
             'Zend\\XmlRpc\\' => 12,
@@ -76,6 +80,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Zend\\Authentication\\' => 20,
             'ZF\\ApiProblem\\' => 14,
             'ZFTest\\ApiProblem\\' => 18,
+        ),
+        'W' => 
+        array (
+            'Webmozart\\Assert\\' => 17,
         ),
         'S' => 
         array (
@@ -134,6 +142,12 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
     );
 
     public static $prefixDirsPsr4 = array (
+        'phpDocumentor\\Reflection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+        ),
         'Zend\\XmlRpc\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-xmlrpc/src',
@@ -350,6 +364,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         array (
             0 => __DIR__ . '/..' . '/zfcampus/zf-api-problem/test',
         ),
+        'Webmozart\\Assert\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -493,6 +511,13 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
                 0 => __DIR__ . '/..' . '/sentry/sentry/lib',
             ),
         ),
+        'P' => 
+        array (
+            'Prophecy\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
+            ),
+        ),
         'N' => 
         array (
             'Nocarrier' => 
@@ -538,6 +563,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'PHPUnit_Framework_Constraint' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint.php',
         'PHPUnit_Framework_Constraint_And' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/And.php',
         'PHPUnit_Framework_Constraint_ArrayHasKey' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/ArrayHasKey.php',
+        'PHPUnit_Framework_Constraint_ArraySubset' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/ArraySubset.php',
         'PHPUnit_Framework_Constraint_Attribute' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Attribute.php',
         'PHPUnit_Framework_Constraint_Callback' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Callback.php',
         'PHPUnit_Framework_Constraint_ClassHasAttribute' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/ClassHasAttribute.php',
@@ -948,6 +974,12 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'SebastianBergmann\\Environment\\Console' => __DIR__ . '/..' . '/sebastian/environment/src/Console.php',
         'SebastianBergmann\\Environment\\Runtime' => __DIR__ . '/..' . '/sebastian/environment/src/Runtime.php',
         'SebastianBergmann\\Exporter\\Exporter' => __DIR__ . '/..' . '/sebastian/exporter/src/Exporter.php',
+        'SebastianBergmann\\GlobalState\\Blacklist' => __DIR__ . '/..' . '/sebastian/global-state/src/Blacklist.php',
+        'SebastianBergmann\\GlobalState\\CodeExporter' => __DIR__ . '/..' . '/sebastian/global-state/src/CodeExporter.php',
+        'SebastianBergmann\\GlobalState\\Exception' => __DIR__ . '/..' . '/sebastian/global-state/src/Exception.php',
+        'SebastianBergmann\\GlobalState\\Restorer' => __DIR__ . '/..' . '/sebastian/global-state/src/Restorer.php',
+        'SebastianBergmann\\GlobalState\\RuntimeException' => __DIR__ . '/..' . '/sebastian/global-state/src/RuntimeException.php',
+        'SebastianBergmann\\GlobalState\\Snapshot' => __DIR__ . '/..' . '/sebastian/global-state/src/Snapshot.php',
         'SebastianBergmann\\RecursionContext\\Context' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Context.php',
         'SebastianBergmann\\RecursionContext\\Exception' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Exception.php',
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
