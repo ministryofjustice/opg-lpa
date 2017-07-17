@@ -11,8 +11,9 @@
 use SebastianBergmann\GlobalState\Snapshot;
 use SebastianBergmann\GlobalState\Restorer;
 use SebastianBergmann\GlobalState\Blacklist;
-use SebastianBergmann\RecursionContext\Context;
 use SebastianBergmann\Exporter\Exporter;
+use Prophecy\Exception\Prediction\PredictionException;
+use Prophecy\Prophet;
 
 /**
  * A TestCase defines the fixture to run multiple tests.
@@ -257,6 +258,11 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
      * @var SebastianBergmann\GlobalState\Snapshot
      */
     private $snapshot;
+
+    /**
+     * @var Prophecy\Prophet
+     */
+    private $prophet;
 
     /**
      * Constructs a test case with the given name.
@@ -740,6 +746,9 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
             $this->status        = PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED;
             $this->statusMessage = $e->getMessage();
         } catch (PHPUnit_Framework_AssertionFailedError $e) {
+            $this->status = PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE;
+            $this->statusMessage = $e->getMessage();
+        } catch (PredictionException $e) {
             $this->status        = PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE;
             $this->statusMessage = $e->getMessage();
         } catch (Exception $e) {
@@ -749,6 +758,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
 
         // Clean up the mock objects.
         $this->mockObjects = array();
+        $this->prophet     = null;
 
         // Tear down the fixture. An exception raised in tearDown() will be
         // caught and passed on when no exception was raised before.
@@ -813,6 +823,10 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
 
         // Workaround for missing "finally".
         if (isset($e)) {
+            if ($e instanceof PredictionException) {
+                $e = new PHPUnit_Framework_AssertionFailedError($e->getMessage());
+            }
+
             $this->onNotSuccessfulTest($e);
         }
     }
@@ -930,6 +944,26 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
             }
 
             $mockObject->__phpunit_verify();
+        }
+
+        if ($this->prophet !== null) {
+            try {
+                $this->prophet->checkPredictions();
+            } catch (Exception $e) {
+                /** Intentionally left empty */
+            }
+
+            foreach ($this->prophet->getProphecies() as $objectProphecy) {
+                foreach ($objectProphecy->getMethodProphecies() as $methodProphecies) {
+                    foreach ($methodProphecies as $methodProphecy) {
+                        $this->numAssertions += count($methodProphecy->getCheckedPredictions());
+                    }
+                }
+            }
+
+            if (isset($e)) {
+                throw $e;
+            }
         }
     }
 
@@ -1175,7 +1209,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
 
         $this->locale[$category] = setlocale($category, null);
 
-        $result = call_user_func_array( 'setlocale', $args );
+        $result = call_user_func_array('setlocale', $args);
 
         if ($result === false) {
             throw new PHPUnit_Framework_Exception(
@@ -1405,6 +1439,17 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
     }
 
     /**
+     * @param string|null $classOrInterface
+     * @return \Prophecy\Prophecy\ObjectProphecy
+     * @throws \LogicException
+     * @since  Method available since Release 4.5.0
+     */
+    protected function prophesize($classOrInterface = null)
+    {
+        return $this->getProphet()->prophesize($classOrInterface);
+    }
+
+    /**
      * Adds a value to the assertion counter.
      *
      * @param integer $count
@@ -1618,45 +1663,6 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
     }
 
     /**
-     * @param  mixed                                      $data       The data to export as a string
-     * @param  SebastianBergmann\RecursionContext\Context $processed  Contains all objects and arrays that have previously been processed
-     * @return string
-     * @since  Method available since Release 3.2.1
-     */
-    protected function dataToString(&$data, $processed = null)
-    {
-        $result = array();
-        $exporter = new Exporter();
-
-        if (!$processed) {
-            $processed = new Context;
-        }
-
-        $processed->add($data);
-
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                if ($processed->contains($data[$key]) !== false) {
-                    $result[] = '*RECURSION*';
-                }
-
-                else {
-                    $result[] = sprintf(
-                        'array(%s)',
-                        $this->dataToString($data[$key], $processed)
-                    );
-                }
-            }
-
-            else {
-                $result[] = $exporter->shortenedExport($value);
-            }
-        }
-
-        return join(', ', $result);
-    }
-
-    /**
      * Gets the data set description of a TestCase.
      *
      * @param  boolean $includeData
@@ -1674,8 +1680,10 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
                 $buffer .= sprintf(' with data set "%s"', $this->dataName);
             }
 
+            $exporter = new Exporter;
+
             if ($includeData) {
-                $buffer .= sprintf(' (%s)', $this->dataToString($this->data));
+                $buffer .= sprintf(' (%s)', $exporter->shortenedRecursiveExport($this->data));
             }
         }
 
@@ -1965,5 +1973,18 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
         }
 
         $this->snapshot = null;
+    }
+
+    /**
+     * @return Prophecy\Prophet
+     * @since Method available since Release 4.5.0
+     */
+    private function getProphet()
+    {
+        if ($this->prophet === null) {
+            $this->prophet = new Prophet;
+        }
+
+        return $this->prophet;
     }
 }
