@@ -2,22 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.9.1 - 2017-05-17
+## 2.9.0 - TBD
 
 ### Added
 
 - Nothing.
-
-### Changes
-
-- [#154](https://github.com/zendframework/zend-validator/pull/154) updates the
-  `CreditCard` validator to allow 19 digit Discover card values, and 13 and 19
-  digit Visa card values, which are now allowed (see
-  https://en.wikipedia.org/wiki/Payment_card_number).
-- [#162](https://github.com/zendframework/zend-validator/pull/162) updates the
-  `Hostname` validator to support `.hr` (Croatia) IDN domains.
-- [#163](https://github.com/zendframework/zend-validator/pull/163) updates the
-  `Iban` validator to support Belarus.
 
 ### Deprecated
 
@@ -29,18 +18,14 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- [#168](https://github.com/zendframework/zend-validator/pull/168) fixes how the
-  `ValidatorPluginManagerFactory` factory initializes the plugin manager instance,
-  ensuring it is injecting the relevant configuration from the `config` service
-  and thus seeding it with configured validator services. This means
-  that the `validators` configuration will now be honored in non-zend-mvc contexts.
+- Nothing.
 
-## 2.9.0 - 2017-03-17
+
+## 2.8.3 - TBD
 
 ### Added
 
-- [#78](https://github.com/zendframework/zend-validator/pull/78) added
-  `%length%` as an optional message variable in StringLength validator
+- Nothing.
 
 ### Deprecated
 
@@ -48,21 +33,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- [#151](https://github.com/zendframework/zend-validator/pull/151) dropped
-  php 5.5 support
+- Nothing.
 
 ### Fixed
 
-- [#147](https://github.com/zendframework/zend-validator/issues/147)
-  [#148](https://github.com/zendframework/zend-validator/pull/148) adds further
-  `"suggest"` clauses in `composer.json`, since some dependencies are not always
-  required, and may lead to runtime failures.
-- [#66](https://github.com/zendframework/zend-validator/pull/66) fixed
-  EmailAddress validator applying IDNA conversion to local part 
-- [#88](https://github.com/zendframework/zend-validator/pull/88) fixed NotEmpty
-  validator incorrectly applying types bitmaps
-- [#150](https://github.com/zendframework/zend-validator/pull/150) fixed Hostname
-  validator not allowing some characters in .dk IDN
+- Nothing.
+
 
 ## 2.8.2 - 2017-01-29
 

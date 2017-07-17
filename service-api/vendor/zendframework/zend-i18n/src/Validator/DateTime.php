@@ -86,7 +86,7 @@ class DateTime extends AbstractValidator
      */
     public function __construct($options = [])
     {
-        if (! extension_loaded('intl')) {
+        if (!extension_loaded('intl')) {
             throw new I18nException\ExtensionNotLoadedException(
                 sprintf('%s component requires the intl PHP extension', __NAMESPACE__)
             );
@@ -127,11 +127,7 @@ class DateTime extends AbstractValidator
      */
     public function getCalendar()
     {
-        if ($this->formatter && ! $this->invalidateFormatter) {
-            return $this->getIntlDateFormatter()->getCalendar();
-        } else {
-            return $this->calendar;
-        }
+        return ($this->formatter && !$this->invalidateFormatter) ? $this->getIntlDateFormatter()->getCalendar() : $this->calendar;
     }
 
     /**
@@ -178,11 +174,7 @@ class DateTime extends AbstractValidator
      */
     public function getPattern()
     {
-        if ($this->formatter && ! $this->invalidateFormatter) {
-            return $this->getIntlDateFormatter()->getPattern();
-        } else {
-            return $this->pattern;
-        }
+        return ($this->formatter && !$this->invalidateFormatter) ? $this->getIntlDateFormatter()->getPattern() : $this->pattern;
     }
 
     /**
@@ -229,11 +221,7 @@ class DateTime extends AbstractValidator
      */
     public function getTimezone()
     {
-        if ($this->formatter && ! $this->invalidateFormatter) {
-            return $this->getIntlDateFormatter()->getTimeZoneId();
-        } else {
-            return $this->timezone;
-        }
+        return ($this->formatter && !$this->invalidateFormatter) ? $this->getIntlDateFormatter()->getTimeZoneId() : $this->timezone;
     }
 
     /**
@@ -269,7 +257,7 @@ class DateTime extends AbstractValidator
      */
     public function isValid($value)
     {
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             $this->error(self::INVALID);
 
             return false;

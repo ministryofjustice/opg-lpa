@@ -18,7 +18,6 @@
 
 namespace ZfcRbac\Factory;
 
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\View\Strategy\RedirectStrategy;
@@ -32,26 +31,15 @@ use ZfcRbac\View\Strategy\RedirectStrategy;
 class RedirectStrategyFactory implements FactoryInterface
 {
     /**
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
-     * @return RedirectStrategy
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        /* @var \ZfcRbac\Options\ModuleOptions $moduleOptions */
-        $moduleOptions = $container->get('ZfcRbac\Options\ModuleOptions');
-        /** @var \Zend\Authentication\AuthenticationService $authenticationService */
-        $authenticationService = $container->get('Zend\Authentication\AuthenticationService');
-
-        return new RedirectStrategy($moduleOptions->getRedirectStrategy(), $authenticationService);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return $this($serviceLocator, RedirectStrategy::class);
+        /* @var \ZfcRbac\Options\ModuleOptions $moduleOptions */
+        $moduleOptions = $serviceLocator->get('ZfcRbac\Options\ModuleOptions');
+        /** @var \Zend\Authentication\AuthenticationService $authenticationService */
+        $authenticationService = $serviceLocator->get('Zend\Authentication\AuthenticationService');
+
+        return new RedirectStrategy($moduleOptions->getRedirectStrategy(), $authenticationService);
     }
 }

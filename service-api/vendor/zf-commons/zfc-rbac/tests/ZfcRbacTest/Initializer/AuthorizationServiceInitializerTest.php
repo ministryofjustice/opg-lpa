@@ -17,8 +17,6 @@
  */
 namespace ZfcRbacTest\Initializer;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Initializer\AuthorizationServiceInitializer;
 
 /**
@@ -33,16 +31,15 @@ class AuthorizationServiceInitializerTest extends \PHPUnit_Framework_TestCase
         $authServiceClassName = 'ZfcRbac\Service\AuthorizationService';
         $initializer          = new AuthorizationServiceInitializer();
         $instance             = new AuthorizationAwareFake();
-
-        $serviceLocator = $this->prophesize(ServiceLocatorInterface::class)->willImplement(ContainerInterface::class);
+        $serviceLocator       = $this->getMock('Zend\ServiceManager\ServiceLocatorInterface');
         $authorizationService = $this->getMock('ZfcRbac\Service\AuthorizationService', [], [], '', false);
 
-        $serviceLocator
-            ->get($authServiceClassName)
-            ->willReturn($authorizationService)
-            ->shouldBeCalled();
+        $serviceLocator->expects($this->once())
+            ->method('get')
+            ->with($authServiceClassName)
+            ->will($this->returnValue($authorizationService));
 
-        $initializer->initialize($instance, $serviceLocator->reveal());
+        $initializer->initialize($instance, $serviceLocator);
 
         $this->assertEquals($authorizationService, $instance->getAuthorizationService());
     }
