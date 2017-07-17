@@ -819,11 +819,7 @@ class FormFlowChecker extends StateChecker
 
     private function returnToInstructions()
     {
-        if (!empty($this->lpa->document->instruction) || !empty($this->lpa->document->preference)) {
-            return true;
-        }
-
-        return "NA";
+        return (!is_null($this->lpa->document->instruction) || !is_null($this->lpa->document->preference));
     }
 
     private function returnToApplicant()
