@@ -3216,6 +3216,9 @@ input[type=number] {
   margin-top: 21px;
   float: left; }
   @media (min-width: 641px) {
+    .lpa-table .lpa-manage ul > li:only-child {
+      padding-left: 24px; } }
+  @media (min-width: 641px) {
     .lpa-table .lpa-manage .extra-text {
       display: none; } }
 @media (min-width: 641px) {
