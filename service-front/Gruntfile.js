@@ -100,9 +100,6 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
           'assets/js/opg/jquery-plugin-opg-spinner.js',
 
-          // Polyfills
-          'assets/bower/govuk_elements/public/javascripts/govuk/details.polyfill.js',
-
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
           'assets/js/moj/moj.helpers.js',
@@ -127,6 +124,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.applicant.js',
           'assets/js/moj/moj.modules/moj.fees.js',
           'assets/js/moj/moj.modules/moj.who-are-you.js',
+          'assets/js/moj/moj.modules/moj.polyfill.js',
 
           // Init Script
           'assets/js/main.js',
