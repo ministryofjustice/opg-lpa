@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
 {
     public static $files = array (
+        '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -17,11 +18,14 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'ddc0a4d7e61c0286f0f8593b1903e894' => __DIR__ . '/..' . '/clue/stream-filter/src/functions.php',
         '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
         '34901568a1e26d13dd475cb2c85e0284' => __DIR__ . '/..' . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
-        '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'phpDocumentor\\Reflection\\' => 25,
+        ),
         'Z' => 
         array (
             'Zend\\XmlRpc\\' => 12,
@@ -76,6 +80,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\Cache\\' => 11,
             'Zend\\Barcode\\' => 13,
             'Zend\\Authentication\\' => 20,
+        ),
+        'W' => 
+        array (
+            'Webmozart\\Assert\\' => 17,
         ),
         'S' => 
         array (
@@ -147,6 +155,12 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
     );
 
     public static $prefixDirsPsr4 = array (
+        'phpDocumentor\\Reflection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+        ),
         'Zend\\XmlRpc\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-xmlrpc/src',
@@ -355,6 +369,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-authentication/src',
         ),
+        'Webmozart\\Assert\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -529,6 +547,13 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Raven_' => 
             array (
                 0 => __DIR__ . '/..' . '/sentry/sentry/lib',
+            ),
+        ),
+        'P' => 
+        array (
+            'Prophecy\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
             ),
         ),
         'O' => 
