@@ -2733,6 +2733,8 @@ input[type=number] {
 .lpa-table .lpa-manage {
   margin-top: 21px;
   float: left; }
+  .lpa-table .lpa-manage ul > li:only-child {
+    padding-left: 24px; }
   .lpa-table .lpa-manage .extra-text {
     display: none; }
 .lpa-table td:nth-child(6) {
