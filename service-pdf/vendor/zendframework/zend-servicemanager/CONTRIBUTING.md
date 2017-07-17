@@ -62,13 +62,13 @@ To run tests:
 
   If you don't have `curl` installed, you can also download `composer.phar` from https://getcomposer.org/
 
-- Run the tests:
+- Run the tests via `phpunit` and the provided PHPUnit config, like in this example:
 
   ```console
-  $ composer test
+  $ ./vendor/bin/phpunit
   ```
 
-You can turn on conditional tests with the `phpunit.xml` file.
+You can turn on conditional tests with the phpunit.xml file.
 To do so:
 
  -  Copy `phpunit.xml.dist` file to `phpunit.xml`
@@ -77,9 +77,9 @@ To do so:
 
 ## Running Coding Standards Checks
 
-This component follows [PSR-1](http://www.php-fig.org/psr/psr-1/) and
-[PSR-2](http://www.php-fig.org/psr/psr-2/) guidelines, and ships with tooling
-for both checking code against standards, as well as fixing most errors.
+This component uses [phpcs](https://github.com/squizlabs/PHP_CodeSniffer) for coding
+standards checks, and provides configuration for our selected checks.
+`phpcs` is installed by default via Composer.
 
 To run checks only:
 
@@ -87,13 +87,14 @@ To run checks only:
 $ composer cs-check
 ```
 
-To fix common errors:
+`phpcs` provides another tool, `phpcbf`, that can automatically fix many common
+problems:
 
 ```console
 $ composer cs-fix
 ```
 
-If you allow tooling to fix CS issues, please re-run the tests to ensure
+If you allow `phpcbf` to fix CS issues, please re-run the tests to ensure
 they pass, and make sure you add and commit the changes after verification.
 
 ## Recommended Workflow for Contributions
