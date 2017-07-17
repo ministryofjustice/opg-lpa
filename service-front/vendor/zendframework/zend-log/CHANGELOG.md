@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.9.2 - 2017-05-17
+## 2.8.4 - TBD
 
 ### Added
 
@@ -18,78 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- [#74](https://github.com/zendframework/zend-log/pull/74) fixes how the various
-  plugin manager factories initialize the plugin manager instances, ensuring
-  they are injecting the relevant configuration from the `config` service and
-  thus seeding them with configured plugin services. This means that the
-  `log_processors`, `log_writers`, `log_filters`, and `log_formatters`
-  configuration will now be honored in non-zend-mvc contexts.
-- [#62](https://github.com/zendframework/zend-log/pull/62) fixes registration of
-  the alias and factory for the `PsrPlaceholder` processor plugin.
-- [#66](https://github.com/zendframework/zend-log/pull/66) fixes the namespace
-  of the `LogFormatterProviderInterface` when registering the
-  `LogFormatterManager` with the zend-modulemanager `ServiceListener`.
-- [#67](https://github.com/zendframework/zend-log/pull/67) ensures that content
-  being injected into a DOM node by `Zend\Log\Formatter\Xml` is escaped so that
-  XML entities will be properly emitted.
-- [#73](https://github.com/zendframework/zend-log/pull/73) adds a missing import
-  statement to the `Psr` log writer.
-
-## 2.9.1 - 2016-08-11
-
-### Added
-
-- [#53](https://github.com/zendframework/zend-log/pull/53) adds a suggestion to
-  the package definition of ext/mongodb, for those who want to use the MongoDB
-  writer.
-
-### Deprecated
-
 - Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#56](https://github.com/zendframework/zend-log/pull/56) fixes an edge case
-  with the `AbstractWriter` whereby instantiating a
-  `Zend\Log\Writer\FormatterPluginManager` or `FilterPluginManager` prior to
-  creating a writer instance would lead to a naming conflict. New aliases were
-  added to prevent the conflict going forwards.
-
-## 2.9.0 - 2016-06-22
-
-### Added
-
-- [#46](https://github.com/zendframework/zend-log/pull/46) adds the ability to
-  specify log writer, formatter, filter, and processor plugin configuration via
-  the new top-level keys:
-  - `log_filters`
-  - `log_formatters`
-  - `log_processors`
-  - `log_writers`
-  These follow the same configuration patterns as any other service
-  manager/plugin manager as implemented by zend-servicemanager.
-
-  Additionally, you can now specify filer, formatter, and processor *services*
-  when specifying writer configuration for a logger, as these are now backed
-  by the above plugin managers.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Removes support for PHP 5.5.
-
-### Fixed
-
-- [#38](https://github.com/zendframework/zend-log/pull/38) adds the `MongoDb`
-  writer to the list of available writer plugins; the writer was added in a
-  previous release, but never enabled within the default set of writers.
 
 ## 2.8.3 - 2016-05-25
 

@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.3 - 2017-07-11
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#39](https://github.com/zendframework/zend-modulemanager/pull/39) and
+  [#53](https://github.com/zendframework/zend-modulemanager/pull/53) prevent
+  race conditions when writing cache files (merged configuration).
+- [#36](https://github.com/zendframework/zend-modulemanager/pull/36) removes a
+  throw from `ServiceListener::onLoadModulesPost()` that was previously emitted
+  when a named plugin manager did not have an associated service present yet.
+  Doing so allows plugin managers to be registered after configuration is fully
+  merged, instead of requiring they be defined early. This change allows
+  components to define their plugin managers via their `Module` classes.
+- [#58](https://github.com/zendframework/zend-modulemanager/pull/58) corrects
+  the typehint for the `ServiceListener::$listeners` property.
+
 ## 2.7.2 - 2016-05-16
 
 ### Added

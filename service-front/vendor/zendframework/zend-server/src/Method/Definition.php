@@ -212,10 +212,7 @@ class Definition
     public function setObject($object)
     {
         if (!is_object($object) && (null !== $object)) {
-            throw new Server\Exception\InvalidArgumentException(sprintf(
-                'Invalid object passed to %s',
-                __METHOD__
-            ));
+            throw new Server\Exception\InvalidArgumentException('Invalid object passed to ' . __CLASS__ . '::' . __METHOD__);
         }
         $this->object = $object;
         return $this;

@@ -15,9 +15,6 @@ use Zend\Validator\ValidatorInterface;
 
 class Month extends DateTime
 {
-
-    const DATETIME_FORMAT = 'Y-m';
-
     /**
      * Seed attributes
      *
