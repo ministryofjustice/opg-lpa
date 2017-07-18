@@ -5,18 +5,23 @@ namespace ApplicationTest\Model\Rest\Pdfs;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\Pdfs\Collection;
 use Application\Model\Rest\Pdfs\Entity;
 use Application\Model\Rest\Pdfs\Resource as PdfsResource;
 use Application\Model\Rest\Pdfs\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
 use Aws\Command;
+use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
+use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+use GuzzleHttp\Stream\StreamInterface as GuzzleStreamInterface;
+use Application\Library\Http\Response\File as FileResponse;
 
 class ResourceTest extends AbstractResourceTest
 {
@@ -43,7 +48,7 @@ class ResourceTest extends AbstractResourceTest
                 'encryption' => [
                     'keys' => [
                         'queue' => 'teststringlongenoughtobevalid123',
-                        'document' => null
+                        'document' => 'teststringlongenoughtobevalid123'
                     ],
                     'options' => [
                         'algorithm' => 'aes',
@@ -306,10 +311,99 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder->verify();
     }
 
+    public function testFetchLp1PdfCryptInvalidArgumentException()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $config = $this->config;
+        $config['pdf']['encryption']['keys']['document'] = 'Invalid';
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($config)
+            ->build();
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
+        $s3ResultBody->shouldReceive('getContents')->once();
+        $s3Result = new Result();
+        $s3Result['Body'] = $s3ResultBody;
+        $mockS3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
+        $resource->setS3Client($mockS3Client);
+
+        $this->setExpectedException(CryptInvalidArgumentException::class, 'Invalid encryption key');
+        $resource->fetch('lp1.pdf');
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchLp1Pdf()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($this->config)
+            ->build();
+
+        $config = $this->config['pdf']['encryption'];
+        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+        $blockCipher->setKey($config['keys']['document']);
+        $blockCipher->setBinaryOutput(true);
+        $encryptedData = $blockCipher->encrypt('test');
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
+        $s3ResultBody->shouldReceive('getContents')->andReturn($encryptedData)->once();
+        $s3Result = new Result();
+        $s3Result['Body'] = $s3ResultBody;
+        $mockS3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
+        $resource->setS3Client($mockS3Client);
+
+        $fileResponse = $resource->fetch('lp1.pdf');
+
+        $this->assertTrue($fileResponse instanceof FileResponse);
+
+        $resourceBuilder->verify();
+    }
+
     public function testFetchAllCheckAccess()
     {
         /** @var PdfsResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->fetchAll();
+    }
+
+    public function testFetchAll()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
+        $dynamoQueueClient->shouldReceive('deleteJob')->twice();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($this->config)
+            ->withDynamoQueueClient($dynamoQueueClient)
+            ->build();
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $mockS3Client->shouldReceive('headObject')->twice();
+        $resource->setS3Client($mockS3Client);
+
+        $collection = $resource->fetchAll();
+
+        $this->assertTrue($collection instanceof Collection);
+        $array = $collection->toArray();
+        $this->assertEquals(3, $array['count']);
+        $this->assertEquals(3, $array['total']);
+        $this->assertEquals(1, $array['pages']);
+        $items = $array['items'];
+        $this->assertArrayHasKey('lpa120', $items);
+        $this->assertArrayHasKey('lp1', $items);
+        $this->assertArrayHasKey('lp3', $items);
+
+        $resourceBuilder->verify();
     }
 }
