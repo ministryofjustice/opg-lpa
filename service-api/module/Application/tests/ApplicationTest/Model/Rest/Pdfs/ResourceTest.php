@@ -9,8 +9,11 @@ use Application\Model\Rest\Pdfs\Entity;
 use Application\Model\Rest\Pdfs\Resource as PdfsResource;
 use Application\Model\Rest\Pdfs\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
+use Aws\Command;
+use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 
@@ -38,8 +41,12 @@ class ResourceTest extends AbstractResourceTest
                 ],
                 'encryption' => [
                     'keys' => [
-                        'queue' => null,
+                        'queue' => 'teststringlongenoughtobevalid123',
                         'document' => null
+                    ],
+                    'options' => [
+                        'algorithm' => 'aes',
+                        'mode' => 'cbc'
                     ]
                 ]
             ]
@@ -128,22 +135,97 @@ class ResourceTest extends AbstractResourceTest
             'complete' => false,
             'status' => Entity::STATUS_NOT_AVAILABLE
         ], $lpa), $entity);
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchLp1InQueue()
     {
         $lpa = FixturesData::getHwLpa();
+        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
+        $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_WAITING)->once();
         $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->withConfig($this->config)->build();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($this->config)
+            ->withDynamoQueueClient($dynamoQueueClient)
+            ->build();
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+        $resource->setS3Client($mockS3Client);
 
         $entity = $resource->fetch('lp1');
 
         $this->assertTrue($entity instanceof Entity);
         $this->assertEquals(new Entity([
             'type' => 'lp1',
-            'complete' => false,
+            'complete' => true,
             'status' => Entity::STATUS_IN_QUEUE
         ], $lpa), $entity);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchLp1Ready()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
+        $dynamoQueueClient->shouldReceive('deleteJob')->once();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($this->config)
+            ->withDynamoQueueClient($dynamoQueueClient)
+            ->build();
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $mockS3Client->shouldReceive('headObject')->once();
+        $resource->setS3Client($mockS3Client);
+
+        $entity = $resource->fetch('lp1');
+
+        $this->assertTrue($entity instanceof Entity);
+        $this->assertEquals(new Entity([
+            'type' => 'lp1',
+            'complete' => true,
+            'status' => Entity::STATUS_READY
+        ], $lpa), $entity);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchLp1NotQueued()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
+        $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
+        $dynamoQueueClient->shouldReceive('deleteJob')->once();
+        $dynamoQueueClient->shouldReceive('enqueue')->once();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($this->config)
+            ->withDynamoQueueClient($dynamoQueueClient)
+            ->build();
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+        $resource->setS3Client($mockS3Client);
+
+        $entity = $resource->fetch('lp1');
+
+        $this->assertTrue($entity instanceof Entity);
+        $this->assertEquals(new Entity([
+            'type' => 'lp1',
+            'complete' => true,
+            'status' => Entity::STATUS_IN_QUEUE
+        ], $lpa), $entity);
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchNotFound()

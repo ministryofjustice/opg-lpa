@@ -3,14 +3,27 @@
 namespace ApplicationTest\Model\Rest\Pdfs;
 
 use Application\Model\Rest\Pdfs\Resource;
-use Aws\S3\S3Client;
-use Mockery;
+use Mockery\MockInterface;
 
 class TestableResource extends Resource
 {
+    private $s3Client = null;
+
+    /**
+     * @param MockInterface $s3Client
+     */
+    public function setS3Client($s3Client)
+    {
+        $this->s3Client = $s3Client;
+    }
+
     protected function getS3Client()
     {
-        return Mockery::mock(S3Client::class);
+        if ($this->s3Client === null) {
+            return parent::getS3Client();
+        }
+
+        return $this->s3Client;
     }
 
     public function testableGetS3Client()
