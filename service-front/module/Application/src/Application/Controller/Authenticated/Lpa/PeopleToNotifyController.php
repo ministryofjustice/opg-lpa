@@ -219,7 +219,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->redirect()->toRoute('lpa/primary-attorney', [
+        return $this->redirect()->toRoute('lpa/people-to-notify', [
             'lpa-id' => $lpa->id
         ]);
     }
