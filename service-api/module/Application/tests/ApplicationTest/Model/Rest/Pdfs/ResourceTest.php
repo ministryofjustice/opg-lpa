@@ -16,6 +16,7 @@ use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 
 class ResourceTest extends AbstractResourceTest
 {
@@ -99,6 +100,20 @@ class ResourceTest extends AbstractResourceTest
         $resource->fetch(-1);
     }
 
+    public function testFetchNotFound()
+    {
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getPfLpa())->build();
+
+        $entity = $resource->fetch(-1);
+
+        $this->assertTrue($entity instanceof ApiProblem);
+        $this->assertEquals(404, $entity->status);
+        $this->assertEquals('Document not found', $entity->detail);
+
+        $resourceBuilder->verify();
+    }
+
     public function testFetchValidationFailed()
     {
         //The bad id value on this user will fail validation
@@ -132,6 +147,24 @@ class ResourceTest extends AbstractResourceTest
         $this->assertTrue($entity instanceof Entity);
         $this->assertEquals(new Entity([
             'type' => 'lpa120',
+            'complete' => false,
+            'status' => Entity::STATUS_NOT_AVAILABLE
+        ], $lpa), $entity);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchLp3NotAvailable()
+    {
+        $lpa = FixturesData::getPfLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+
+        $entity = $resource->fetch('lp3');
+
+        $this->assertTrue($entity instanceof Entity);
+        $this->assertEquals(new Entity([
+            'type' => 'lp3',
             'complete' => false,
             'status' => Entity::STATUS_NOT_AVAILABLE
         ], $lpa), $entity);
@@ -228,12 +261,43 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder->verify();
     }
 
-    public function testFetchNotFound()
+    public function testFetchLp1CryptInvalidArgumentException()
     {
+        $lpa = FixturesData::getHwLpa();
+        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
+        $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
+        $dynamoQueueClient->shouldReceive('deleteJob')->once();
         $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getPfLpa())->build();
+        $config = $this->config;
+        $config['pdf']['encryption']['keys']['queue'] = 'Invalid';
+        $resource = $resourceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($config)
+            ->withDynamoQueueClient($dynamoQueueClient)
+            ->build();
 
-        $entity = $resource->fetch(-1);
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+        $resource->setS3Client($mockS3Client);
+
+        $this->setExpectedException(CryptInvalidArgumentException::class, 'Invalid encryption key');
+        $resource->fetch('lp1');
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchLpa120PdfNotAvailable()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->withConfig($this->config)->build();
+
+        $mockS3Client = Mockery::mock(S3Client::class);
+        $mockS3Client->shouldReceive('getObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+        $resource->setS3Client($mockS3Client);
+
+        $entity = $resource->fetch('lpa120.pdf');
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(404, $entity->status);
