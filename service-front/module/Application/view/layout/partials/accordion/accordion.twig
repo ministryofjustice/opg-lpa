@@ -11,7 +11,8 @@
         					'This LPA covers property and financial affairs' :
         					'This LPA covers health and welfare',
         		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+        		'readOnly': (lpa.document.donor is not empty)
         	})
         }}
     {% endif %}
