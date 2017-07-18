@@ -140,6 +140,12 @@
         margin-top: 21px;
         float: left;
 
+        ul > li:only-child {
+            @include media(tablet) {
+                padding-left: 24px;
+            }
+        }
+
         .extra-text {
             @include media(tablet) {
                 display: none;
