@@ -22,11 +22,28 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->config = ['pdf' => ['cache' => ['s3' => ['client' => [
-            'version' => '2006-03-01',
-            'region' => 'eu-west-1',
-            'credentials' => null,
-        ]]]]];
+        $this->config = [
+            'pdf' => [
+                'cache' => [
+                    's3' => [
+                        'settings' => [
+                            'Bucket' => null
+                        ],
+                        'client' => [
+                            'version' => '2006-03-01',
+                            'region' => 'eu-west-1',
+                            'credentials' => null
+                        ]
+                    ]
+                ],
+                'encryption' => [
+                    'keys' => [
+                        'queue' => null,
+                        'document' => null
+                    ]
+                ]
+            ]
+        ];
     }
 
     public function testGetType()
@@ -110,6 +127,22 @@ class ResourceTest extends AbstractResourceTest
             'type' => 'lpa120',
             'complete' => false,
             'status' => Entity::STATUS_NOT_AVAILABLE
+        ], $lpa), $entity);
+    }
+
+    public function testFetchLp1InQueue()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->withConfig($this->config)->build();
+
+        $entity = $resource->fetch('lp1');
+
+        $this->assertTrue($entity instanceof Entity);
+        $this->assertEquals(new Entity([
+            'type' => 'lp1',
+            'complete' => false,
+            'status' => Entity::STATUS_IN_QUEUE
         ], $lpa), $entity);
     }
 
