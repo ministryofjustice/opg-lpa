@@ -32,10 +32,22 @@ class SendgridController extends AbstractBaseController
             return $this->getResponse();
         }
 
-        $token = $this->params()->fromRoute('token');
-
         $config = $this->getServiceLocator()->get('config');
         $emailConfig = $config['email'];
+
+        //  Get the email blacklist to check if the destination email address is on that
+        $blacklistEmailAddresses = $emailConfig['blacklist'];
+
+        if (in_array($fromAddress, $blacklistEmailAddresses)) {
+            $this->log()->err('From email address is blacklisted - the unmonitored email will not be sent to this user', [
+                'from-address' => $fromAddress,
+                'to-address'   => $originalToAddress,
+            ]);
+
+            return $this->getResponse();
+        }
+
+        $token = $this->params()->fromRoute('token');
 
         if (!$token || $token !== $emailConfig['sendgrid']['webhook']['token']) {
             $this->log()->err('Missing or invalid bounce token used', [
