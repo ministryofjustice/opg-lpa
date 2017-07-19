@@ -1,11 +1,6 @@
-<phpunit
-    bootstrap="./Bootstrap.php"
-    colors="true"
-    strict="false"
-    syntaxCheck="false"
-    verbose="false">
+<phpunit bootstrap="./Bootstrap.php" colors="true" strict="false" syntaxCheck="false" verbose="false">
     <testsuite name="OpgLpaPdf">
-        <directory>./Opg</directory>
+        <directory>./OpgTest</directory>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
