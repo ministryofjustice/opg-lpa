@@ -30,7 +30,6 @@ class ApplicantController extends AbstractLpaController
                 // persist data
                 if ($postData['whoIsRegistering'] == Correspondence::WHO_DONOR) {
                     $applicants = Correspondence::WHO_DONOR;
-                    $existingValue = $lpa->document->correspondent->who;
                 } else {
                     if (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
                         $applicants = $form->getData()['attorneyList'];
