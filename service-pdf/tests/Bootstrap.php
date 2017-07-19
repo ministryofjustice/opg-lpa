@@ -21,11 +21,11 @@ spl_autoload_register(function ($class) {
             require_once $file;
         }
     }
-
-    //  If it exists, hook into the composer autoload file too
-    $composerAutoloadFile = __DIR__ . '/../vendor/autoload.php';
-
-    if (file_exists($composerAutoloadFile)) {
-        require_once $composerAutoloadFile;
-    }
 });
+
+//  If it exists, hook into the composer autoload file too
+$composerAutoloadFile = __DIR__ . '/../vendor/autoload.php';
+
+if (file_exists($composerAutoloadFile)) {
+    require_once $composerAutoloadFile;
+}
