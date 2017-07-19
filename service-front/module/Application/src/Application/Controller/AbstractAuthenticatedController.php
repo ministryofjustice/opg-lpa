@@ -1,16 +1,16 @@
 <?php
+
 namespace Application\Controller;
 
-use DateTime;
-use RuntimeException;
-
+use Application\Model\Service\Authentication\Identity\User as Identity;
+use Opg\Lpa\DataModel\User\User;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container as SessionContainer;
-use Application\Model\Service\Authentication\Identity\User as Identity;
 use Zend\Session\Container;
-
-use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
+use DateTime;
+use RuntimeException;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController
 {
@@ -82,8 +82,27 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
         $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
 
-        if( !isset($detailsContainer->user) || is_null($detailsContainer->user->name) ){
+        //  Check to see if the user object is present and well formed
+        if (isset($detailsContainer->user)) {
+            //  To check this simply try to take the data from one array and populate it into another object
+            try {
+                $userDataArr = $detailsContainer->user->toArray();
+                $tempUser = new User($userDataArr);
+            } catch (\Exception $ex) {
+                //  If seems there is a user associated with the session but it is not well formed
+                //  Therefore destroy the session and logout the user
+                $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+                $this->getServiceLocator()->get('SessionManager')->destroy([
+                    'clear_storage' => true
+                ]);
 
+                return $this->redirect()->toRoute('login', [
+                    'state' => 'timeout'
+                ]);
+            }
+        }
+
+        if (!isset($detailsContainer->user) || is_null($detailsContainer->user->name)) {
             $userDetails = $this->getServiceLocator()->get('AboutYouDetails')->load();
 
             // If the user details do not at least have a name
