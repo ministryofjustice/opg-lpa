@@ -1,4 +1,7 @@
 <?php
+
+use Opg\Lpa\Pdf\Config\Config;
+
 /**
  * Simple autoloader function to dynamically load
  * the required files as they are instantiated
@@ -29,3 +32,9 @@ $composerAutoloadFile = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($composerAutoloadFile)) {
     require_once $composerAutoloadFile;
 }
+
+//  Change the logging destination from a physical file to /dev/null while testing
+$loggerConfig = Config::getInstance()['log'];
+$loggerConfig['path'] = '/dev/null';
+
+Config::getInstance()['log'] = $loggerConfig;
