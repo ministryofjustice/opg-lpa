@@ -183,23 +183,17 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchLpasPerUser()
     {
+        $statMongoCursor = new DummyStatMongoCursor([['_id' => 1, 'count' => 2]]);
         $statsLpasCollection = Mockery::mock(MongoCollection::class);
         $statsLpasCollection->shouldReceive('setReadPreference');
-
-        $singleCursor = Mockery::mock(MongoCursor::class);
-        $singleCursor->shouldReceive('rewind')->andReturn($singleCursor);
-        $singleCursor->shouldReceive('count')->andReturn(1);
-        $singleCursor->shouldReceive('valid')->andReturn(false);
-
-        $statsLpasCollection->shouldReceive('find')->andReturn($singleCursor);
-
+        $statsLpasCollection->shouldReceive('find')->andReturn($statMongoCursor);
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withStatsLpasCollection($statsLpasCollection)->build();
 
         $entity = $resource->fetch('lpasperuser');
 
         $expectedStats = [
-            'byLpaCount' => []
+            'byLpaCount' => [1 => 2]
         ];
 
         $this->assertEquals(new Entity($expectedStats), $entity);
