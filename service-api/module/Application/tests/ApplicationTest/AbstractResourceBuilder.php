@@ -4,6 +4,7 @@ namespace ApplicationTest;
 
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity as UserEntity;
+use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
 use MongoCollection;
@@ -23,6 +24,7 @@ abstract class AbstractResourceBuilder
     protected $locked = false;
     protected $updateNumberModified = null;
     protected $config = array();
+    protected $applicationsResource = null;
 
     protected $serviceLocatorMock = null;
 
@@ -91,6 +93,16 @@ abstract class AbstractResourceBuilder
         return $this;
     }
 
+    /**
+     * @param $applicationsResource
+     * @return $this
+     */
+    public function withApplicationsResource($applicationsResource)
+    {
+        $this->applicationsResource = $applicationsResource;
+        return $this;
+    }
+
     public function verify()
     {
         $this->lpaCollection->mockery_verify();
@@ -108,12 +120,17 @@ abstract class AbstractResourceBuilder
         $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
         $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
         $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
+        $this->serviceLocatorMock->shouldReceive('get')->with('resource-applications')->andReturn($this->applicationsResource);
 
         $resource->setServiceLocator($this->serviceLocatorMock);
 
         if ($this->authorizationService === null) {
             $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
             $authorizationServiceMock->shouldReceive('isGranted')->andReturn(true);
+            if ($this->user !== null) {
+                $identity = new UserIdentity($this->user->id, $this->user->email);
+                $authorizationServiceMock->shouldReceive('getIdentity')->andReturn($identity);
+            }
             $resource->setAuthorizationService($authorizationServiceMock);
         } else {
             $resource->setAuthorizationService($this->authorizationService);
