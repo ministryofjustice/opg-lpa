@@ -38,7 +38,9 @@ class DynamoCronLockTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        new DynamoCronLock($this->config['cron']['lock']['dynamodb']);
+        $lock = new TestableDynamoCronLock($this->config['cron']['lock']['dynamodb']);
+        $client = $lock->testGetClient();
+        $this->assertTrue($client instanceof DynamoDbClient);
     }
 
     public function testGetLock()

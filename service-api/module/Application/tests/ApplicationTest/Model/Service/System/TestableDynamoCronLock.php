@@ -8,6 +8,11 @@ class TestableDynamoCronLock extends DynamoCronLock
 {
     public $mockClient = null;
 
+    public function testGetClient()
+    {
+        return $this->getClient();
+    }
+
     protected function getClient()
     {
         return $this->mockClient ?: parent::getClient();
