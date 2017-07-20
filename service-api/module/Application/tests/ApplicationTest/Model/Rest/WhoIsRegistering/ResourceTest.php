@@ -1,12 +1,13 @@
 <?php
 
-namespace ApplicationTest\Model\Rest\Instruction;
+namespace ApplicationTest\Model\Rest\WhoIsRegistering;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\Instruction\Entity;
-use Application\Model\Rest\Instruction\Resource as InstructionResource;
-use Application\Model\Rest\Instruction\Resource;
+use Application\Model\Rest\WhoIsRegistering\Entity;
+use Application\Model\Rest\WhoIsRegistering\Resource as WhoIsRegisteringResource;
+use Application\Model\Rest\WhoIsRegistering\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
@@ -20,7 +21,7 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchCheckAccess()
     {
-        /** @var InstructionResource $resource */
+        /** @var WhoIsRegisteringResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->fetch();
     }
@@ -31,13 +32,40 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
         $entity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->document->instruction, $lpa), $entity);
+        $this->assertEquals(new Entity($lpa->document->whoIsRegistering, $lpa), $entity);
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchArray()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $entity = $resource->fetch();
+        $this->assertEquals(new Entity([$lpa->document->primaryAttorneys[0], $lpa->document->primaryAttorneys[1]], $lpa), $entity);
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchArrayInvalidAttorneyId()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->document->whoIsRegistering[0] = -1;
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+
+        $entity = $resource->fetch();
+        $apiProblem = $entity->toArray()['who'][0];
+
+        $this->assertTrue($apiProblem instanceof ApiProblem);
+        $this->assertEquals(500, $apiProblem->status);
+        $this->assertEquals('Invalid attorney ID listed', $apiProblem->detail);
+
         $resourceBuilder->verify();
     }
 
     public function testUpdateCheckAccess()
     {
-        /** @var InstructionResource $resource */
+        /** @var WhoIsRegisteringResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->update(null, -1);
     }
@@ -91,17 +119,17 @@ class ResourceTest extends AbstractResourceTest
             ->withUpdateNumberModified(1)
             ->build();
 
-        $entity = $resource->update(['instruction' => 'Edited'], -1); //Id is ignored
+        $entity = $resource->update(['who' => [3]], -1); //Id is ignored
 
-        $this->assertEquals(new Entity('Edited', $lpa), $entity);
-        $this->assertEquals('Edited', $lpa->document->instruction);
+        $this->assertEquals(new Entity([$lpa->document->primaryAttorneys[2]], $lpa), $entity);
+        $this->assertEquals([3], $lpa->document->whoIsRegistering);
 
         $resourceBuilder->verify();
     }
 
     public function testDeleteCheckAccess()
     {
-        /** @var InstructionResource $resource */
+        /** @var WhoIsRegisteringResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
         $resource->delete();
     }
@@ -110,7 +138,7 @@ class ResourceTest extends AbstractResourceTest
     {
         //LPA's document must be invalid
         $lpa = FixturesData::getHwLpa();
-        $lpa->document->primaryAttorneys = [];
+        $lpa->document->type = 'Invalid';
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
@@ -123,7 +151,7 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals('Bad Request', $validationError->title);
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('whoIsRegistering', $validation));
+        $this->assertTrue(array_key_exists('type', $validation));
 
         $resourceBuilder->verify();
     }
@@ -157,7 +185,7 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->delete();
 
         $this->assertTrue($response);
-        $this->assertNull($lpa->document->instruction);
+        $this->assertNull($lpa->document->whoIsRegistering);
 
         $resourceBuilder->verify();
     }
