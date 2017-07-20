@@ -3,15 +3,22 @@
 namespace ApplicationTest\Model\Rest\Stats;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Stats\Entity;
+use Application\Model\Rest\Stats\Resource;
 use ApplicationTest\Model\AbstractResourceTest;
 use Mockery;
 use MongoCollection;
 use MongoCursor;
-use MongoDate;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetType()
+    {
+        $resource = new Resource();
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+    }
+
     public function testFetchTypeNotFound()
     {
         $resourceBuilder = new ResourceBuilder();
