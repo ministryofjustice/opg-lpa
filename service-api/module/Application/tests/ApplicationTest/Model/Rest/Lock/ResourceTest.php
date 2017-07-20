@@ -70,7 +70,7 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder->verify();
     }
 
-    public function testUpdateMalformedData()
+    public function testCreateMalformedData()
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();

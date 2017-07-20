@@ -13,7 +13,7 @@ use ApplicationTest\Model\Rest\Applications\ResourceBuilder as ApplicationsResou
 
 class ResourceTest extends AbstractResourceTest
 {
-    public function testGetSeed()
+    public function testGetType()
     {
         $resource = new Resource();
         $this->assertEquals(AbstractResource::TYPE_SINGULAR, $resource->getType());
