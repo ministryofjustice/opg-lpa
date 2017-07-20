@@ -54,7 +54,7 @@ class DynamoCronLock implements ServiceLocatorAwareInterface {
 
         try {
 
-            $this->client->updateItem([
+            $this->getClient()->updateItem([
                 'TableName' => $this->tableName,
                 'Key'       => [ 'id' => [ 'S' => "{$this->keyPrefix}/{$name}" ] ],
                 'ExpressionAttributeNames' => [
@@ -95,5 +95,10 @@ class DynamoCronLock implements ServiceLocatorAwareInterface {
         return false;
 
     } // function
+
+    protected function getClient()
+    {
+        return $this->client;
+    }
 
 } // class
