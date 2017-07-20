@@ -20,11 +20,12 @@ abstract class AbstractResourceBuilder
     protected $lpa;
     protected $user;
     protected $authorizationService;
-    protected $lpaCollection;
+    protected $lpaCollection = null;
     protected $locked = false;
     protected $updateNumberModified = null;
     protected $config = array();
     protected $applicationsResource = null;
+    protected $statsWhoCollection = null;
 
     protected $serviceLocatorMock = null;
 
@@ -103,6 +104,26 @@ abstract class AbstractResourceBuilder
         return $this;
     }
 
+    /**
+     * @param $lpaCollection
+     * @return $this
+     */
+    public function withLpaCollection($lpaCollection)
+    {
+        $this->lpaCollection = $lpaCollection;
+        return $this;
+    }
+
+    /**
+     * @param $statsWhoCollection
+     * @return $this
+     */
+    public function withStatsWhoCollection($statsWhoCollection)
+    {
+        $this->statsWhoCollection = $statsWhoCollection;
+        return $this;
+    }
+
     public function verify()
     {
         $this->lpaCollection->mockery_verify();
@@ -114,11 +135,13 @@ abstract class AbstractResourceBuilder
         $loggerMock = Mockery::mock(LoggerInterface::class);
         $loggerMock->shouldReceive('info');
 
-        $this->lpaCollection = Mockery::mock(MongoCollection::class);
+        $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
+        $this->statsWhoCollection = $this->statsWhoCollection ?: Mockery::mock(MongoCollection::class);
 
         $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
         $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-who')->andReturn($this->statsWhoCollection);
         $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
         $this->serviceLocatorMock->shouldReceive('get')->with('resource-applications')->andReturn($this->applicationsResource);
 
