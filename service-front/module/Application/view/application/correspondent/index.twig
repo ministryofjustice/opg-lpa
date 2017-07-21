@@ -7,17 +7,20 @@
 {# Error messages #}
 
 {% set form = formErrorTextExchange(form, {
+    'contactInWelsh' : {
+        'Value is required and can\'t be empty': 'A language must be selected'
+    },
     'correspondence' : {
         "at-least-one-option-needs-to-be-selected" : "At least one option must be selected"
     }
 }) %}
 
 {# Set form fields variables #}
+{% set contactInWelsh = form.get('contactInWelsh') %}
 {% set correspondence = form.get('correspondence') %}
 {% set contactByEmail = correspondence.get('contactByEmail') %}
 {% set contactByPhone = correspondence.get('contactByPhone') %}
 {% set contactByPost  = correspondence.get('contactByPost') %}
-{% set contactInWelsh = correspondence.get('contactInWelsh') %}
 {% set email = correspondence.get('email-address') %}
 {% set phone = correspondence.get('phone-number') %}
 
@@ -54,10 +57,6 @@
     id: 'contactInWelsh'
 }) ? '' }}
 
-{{ contactInWelsh.setOptions({
-    use_hidden_element: true
-}) ? '' }}
-
 {{ phone.setAttributes({
     id: 'phone-number',
     class: 'form-control'
@@ -79,10 +78,6 @@
 
 {{ contactByEmail.setOptions({
     label: (contactEmail ? 'Email (' ~ contactEmail ~ ')' : 'Email')
-}) ? '' }}
-
-{{ contactInWelsh.setOptions({
-    label: 'In Welsh'
 }) ? '' }}
 
 {{ phone.setOptions({
@@ -131,9 +126,19 @@
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
+        <h3 class="heading-medium flush--top">What language should we use?</h3>
+
+        <legend class="visuallyhidden">Language options</legend>
+
+        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'error'}}">
+            {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
+            {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
+        </div>
 
         <fieldset id="correspondence">
+
+            <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
+
             <legend class="visuallyhidden">Contact options</legend>
 
             <p>You can choose more than one.</p>
@@ -174,11 +179,6 @@
                         {{ formText(email) }}
                     </div>
                 </div>
-
-                <label class="text block-label" for="{{ contactInWelsh.getAttribute('id') }}">
-                    {{ formElement(contactInWelsh) }}
-                    {{ contactInWelsh.getOption('label')|raw }}
-                </label>
 
             </div>
 
