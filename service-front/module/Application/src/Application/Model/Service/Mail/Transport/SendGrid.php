@@ -78,8 +78,10 @@ class SendGrid implements TransportInterface
                   ->setFromName($from->getName());
 
             //  Log the attempt to send the message
-            $this->logger->info('Attempting to send email via SendGrid from ' . $email->getFrom() . ' to ' . implode(', ', $toEmails), [
-                'categories' => $categories
+            $this->logger->info('Attempting to send email via SendGrid', [
+                'from-address' => $email->getFrom(),
+                'to-address'   => $toEmails,
+                'categories'   => $categories
             ]);
 
             //  Check that CC and BCC addresses have not been used
