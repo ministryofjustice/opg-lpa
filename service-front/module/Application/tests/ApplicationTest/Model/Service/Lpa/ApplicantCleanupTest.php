@@ -80,6 +80,27 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($result);
     }
 
+    public function testWhenApplicantValidMultiplePrimaryAttorneys()
+    {
+        $lpa = FixturesData::getPfLpa();
+        //Verify there is more than one primary attorney
+        $this->assertGreaterThan(1, count($lpa->document->primaryAttorneys));
+        //Set primary attorney decisions as jointly
+        $lpa->document->primaryAttorneyDecisions->how = AbstractDecisions::LPA_DECISION_HOW_JOINTLY;
+        //Make the applicants valid
+        $whoIsRegistering = [];
+        foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
+            $whoIsRegistering[] = $primaryAttorney->id;
+        }
+        $lpa->document->whoIsRegistering = $whoIsRegistering;
+
+        $cleanup = new TestableApplicantCleanup();
+
+        $result = $cleanup->testWhenApplicantInvalid($lpa);
+
+        $this->assertFalse($result);
+    }
+
     public function testWhenApplicantInvalidSinglePrimaryAttorneyMultipleApplicant()
     {
         $lpa = FixturesData::getHwLpa();
@@ -128,7 +149,7 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result);
     }
 
-    public function testWhenApplicantMultiplePrimaryAttorneyIdMismatch()
+    public function testWhenApplicantInvalidMultiplePrimaryAttorneyIdMismatch()
     {
         $lpa = FixturesData::getPfLpa();
         //Verify there is more than one primary attorney
