@@ -2,11 +2,43 @@
 
 namespace ApplicationTest\Model\Service\Lpa;
 
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 {
+    public function testCleanUpValid()
+    {
+        $lpa = FixturesData::getPfLpa();
+        $lpaApplicationService = Mockery::mock(LpaApplicationService::class);
+        $lpaApplicationService->shouldNotReceive('deleteWhoIsRegistering');
+
+        $cleanup = new TestableApplicantCleanup();
+        $cleanup->invalidOverride = false;
+
+        $cleanup->cleanUp($lpa, $lpaApplicationService);
+
+        $lpaApplicationService->mockery_verify();
+        Mockery::close();
+    }
+
+    public function testCleanUpInvalid()
+    {
+        $lpa = FixturesData::getPfLpa();
+        $lpaApplicationService = Mockery::mock(LpaApplicationService::class);
+        $lpaApplicationService->shouldReceive('deleteWhoIsRegistering')->once();
+
+        $cleanup = new TestableApplicantCleanup();
+        $cleanup->invalidOverride = true;
+
+        $cleanup->cleanUp($lpa, $lpaApplicationService);
+
+        $lpaApplicationService->mockery_verify();
+        Mockery::close();
+    }
+
     public function testWhenApplicantValid()
     {
         $lpa = FixturesData::getPfLpa();
