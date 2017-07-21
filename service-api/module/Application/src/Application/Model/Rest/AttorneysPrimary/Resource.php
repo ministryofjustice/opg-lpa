@@ -7,7 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 
 use Application\Model\Rest\AbstractResource;
 
-use Zend\Paginator\Adapter\Null as PaginatorNull;
+use Zend\Paginator\Adapter\NullFill as PaginatorNull;
 use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
 
 use Application\Model\Rest\LpaConsumerInterface;

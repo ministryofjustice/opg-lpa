@@ -232,8 +232,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
                 $complete = $state->canGenerateLP3(); break;
             case 'lpa120':
                 $complete = $state->canGenerateLPA120(); break;
-            default:
-                $complete = false;
         }
 
         //---

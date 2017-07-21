@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.0",
         "ext-mongo": ">=1.4.5",
         "zendframework/zendframework": "^2.5",
         "aws/aws-sdk-php": "^3.0",
@@ -29,6 +29,7 @@
         "nsmithuk/dynamo-queue-php": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.0"
+        "phpunit/phpunit": "^4.0",
+        "mockery/mockery": "^0.9.9"
     }
 }

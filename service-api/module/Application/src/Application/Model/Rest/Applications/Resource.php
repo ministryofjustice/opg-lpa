@@ -6,7 +6,7 @@ use RuntimeException;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\UserConsumerInterface;
 
-use Zend\Paginator\Adapter\Null as PaginatorNull;
+use Zend\Paginator\Adapter\NullFill as PaginatorNull;
 use Zend\Paginator\Adapter\Callback as PaginatorCallback;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -177,7 +177,8 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         //------------------------
 
         // Note: user has to match.
-        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ] );
+        $userId = $this->getRouteUser()->userId();
+        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=> $userId] );
 
         if( is_null($result) ){
             return new ApiProblem( 

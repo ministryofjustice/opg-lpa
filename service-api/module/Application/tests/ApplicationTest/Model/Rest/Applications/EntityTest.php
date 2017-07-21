@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Rest\Applications;
 
 use Application\Model\Rest\Applications\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use OpgTest\Lpa\DataModel\FixturesData;
 
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +26,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         //  Set up an LPA to test
-        $this->lpa = new Lpa(file_get_contents(__DIR__ . '/../../../fixtures/pf.json'));
+        $this->lpa = FixturesData::getPfLpa();
         $this->entity = new Entity($this->lpa);
     }
 
@@ -44,12 +45,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->entity->resourceId());
     }
 
-    public function getLpa()
+    public function testGetLpa()
     {
         $this->assertSame($this->lpa, $this->entity->getLpa());
     }
 
-    public function toArray()
+    public function testToArray()
     {
         $this->assertSame($this->lpa->toArray(), $this->entity->toArray());
     }
