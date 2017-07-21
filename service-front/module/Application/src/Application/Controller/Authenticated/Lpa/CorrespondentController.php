@@ -71,10 +71,12 @@ class CorrespondentController extends AbstractLpaActorController
 
                 //  Populate the remaining data for the correspondent from the form data
                 $formData = $form->getData();
+
+                $correspondent->contactInWelsh = (bool)$formData['contactInWelsh'];
+
                 $correspondenceFormData = $formData['correspondence'];
 
                 $correspondent->contactByPost = (bool)$correspondenceFormData['contactByPost'];
-                $correspondent->contactInWelsh = (bool)$correspondenceFormData['contactInWelsh'];
 
                 if ($correspondenceFormData['contactByEmail']) {
                     $correspondent->email = [
@@ -82,7 +84,8 @@ class CorrespondentController extends AbstractLpaActorController
                     ];
                 }
 
-                if ($correspondenceFormData['contactByPhone']) {
+                //  Populate the phone details - unless contact in Welsh has been selected
+                if ($correspondenceFormData['contactByPhone'] && !$correspondent->contactInWelsh) {
                     $correspondent->phone = [
                         'number' => $correspondenceFormData['phone-number']
                     ];
@@ -96,14 +99,16 @@ class CorrespondentController extends AbstractLpaActorController
             }
         } else {
             //  Bind any required data to the correspondence form
-            $form->bind(['correspondence' => [
-                'contactByEmail' => !is_null($correspondentEmailAddress),
-                'email-address'  => $correspondentEmailAddress,
-                'contactByPhone' => !is_null($correspondentPhoneNumber),
-                'phone-number'   => $correspondentPhoneNumber,
-                'contactByPost'  => (isset($correspondent->contactByPost) ? $correspondent->contactByPost : false),
+            $form->bind([
                 'contactInWelsh' => (isset($correspondent->contactInWelsh) ? $correspondent->contactInWelsh : false),
-            ]]);
+                'correspondence' => [
+                    'contactByEmail' => !is_null($correspondentEmailAddress),
+                    'email-address'  => $correspondentEmailAddress,
+                    'contactByPhone' => !is_null($correspondentPhoneNumber),
+                    'phone-number'   => $correspondentPhoneNumber,
+                    'contactByPost'  => (isset($correspondent->contactByPost) ? $correspondent->contactByPost : false),
+                ]
+            ]);
         }
 
         //  Construct the correspondent's name to display - if there is a company then append those details also

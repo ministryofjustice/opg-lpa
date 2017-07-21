@@ -47,15 +47,6 @@ class CorrespondenceFieldset extends Fieldset
         ]);
 
         $this->add([
-            'name' => 'contactInWelsh',
-            'type' => 'Checkbox',
-            'options' => [
-                'checked_value' => true,
-                'unchecked_value' => false,
-            ],
-        ]);
-
-        $this->add([
             'name' => 'email-address',
             'type' => 'Email',
         ]);
