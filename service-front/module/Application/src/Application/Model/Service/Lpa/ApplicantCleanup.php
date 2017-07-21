@@ -2,85 +2,70 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\StateChecker;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class ApplicantCleanup
 {
+    /**
+     * Cleanup applicant data (whoIsRegistering) if invalid
+     *
+     * @param Lpa $lpa
+     * @param $client
+     */
+    public function cleanUp(Lpa $lpa, $client)
+    {
+        if ($this->whenApplicantInvalid($lpa)) {
+            $client->deleteWhoIsRegistering($lpa->id);
+        }
+    }
+
     /**
      * @param Lpa $lpa
      * @return bool
      */
     protected function whenApplicantInvalid(Lpa $lpa)
     {
-        return false;
-    }
+        //Applicant is only suspicious when it's an array as that means it's one or more of the primary attorneys
+        if ($lpa->document !== null && is_array($lpa->document->whoIsRegistering)) {
+            $primaryAttorneys = $lpa->document->primaryAttorneys;
+            $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
+            $whoIsRegistering = $lpa->document->whoIsRegistering;
 
-    /**
-     * Cleanup data to to with how the Replacement Attorneys should act
-     *
-     * @param Lpa $lpa
-     */
-    public function cleanUp(Lpa $lpa, $client)
-    {
-        $stateChecker = new StateChecker($lpa);
-        if ($this->whenDecisionsInvalid($lpa, $stateChecker)) {
-            $this->removeWhenDecisions($lpa, $client);
-        }
+            $noPrimaryAttorneys = count($primaryAttorneys);
+            $noApplicants = count($whoIsRegistering);
 
-        if ($this->howDecisionsInvalid($lpa, $stateChecker)) {
-            $this->removeHowDecisions($lpa, $client);
-        }
-    }
-
-    private function whenDecisionsInvalid(Lpa $lpa, StateChecker $stateChecker)
-    {
-        $decisions = $lpa->document->replacementAttorneyDecisions;
-        // there are some decisions to remove
-        if ($decisions instanceof ReplacementAttorneyDecisions &&
-            (!empty($decisions->when) || !empty($decisions->whenDetails))) {
-
-            if (!$stateChecker->lpaHasReplacementAttorney()
-               || !$stateChecker->lpaHasMultiplePrimaryAttorneys()
-               || !$stateChecker->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function removeWhenDecisions(Lpa $lpa, $client)
-    {
-        $lpa->document->replacementAttorneyDecisions->when = null;
-        $lpa->document->replacementAttorneyDecisions->whenDetails = null;
-        $client->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
-    }
-
-    private function howDecisionsInvalid(Lpa $lpa, StateChecker $stateChecker)
-    {
-        $decisions = $lpa->document->replacementAttorneyDecisions;
-        // there are some decisions to remove
-        if ($decisions instanceof ReplacementAttorneyDecisions &&
-            (!empty($decisions->how) || !empty($decisions->howDetails))) {
-
-            if (!$stateChecker->lpaHasMultipleReplacementAttorneys()) {
+            //More applicants than attorneys is always invalid
+            if ($noApplicants > $noPrimaryAttorneys) {
                 return true;
             }
 
-            if (!(count($lpa->document->primaryAttorneys) == 1) &&
-                !($stateChecker->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()) &&
-                !($stateChecker->lpaPrimaryAttorneysMakeDecisionJointly())) {
+            //If primary attorneys make decisions jointly, all must be applicants
+            if ($primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY && $noApplicants !== $noPrimaryAttorneys) {
+                return true;
+            }
+
+            //Verify all applicant ids are valid
+            $allApplicantIdsValid = true;
+            foreach ($whoIsRegistering as $id) {
+                foreach ($primaryAttorneys as $primaryAttorney) {
+                    if (!$allApplicantIdsValid) {
+                        break;
+                    }
+
+                    $allApplicantIdsValid = false;
+                    if ($id == $primaryAttorney->id) {
+                        $allApplicantIdsValid = true;
+                        continue;
+                    }
+                }
+            }
+
+            if (!$allApplicantIdsValid) {
                 return true;
             }
         }
-        return false;
-    }
 
-    private function removeHowDecisions(Lpa $lpa, $client)
-    {
-        $lpa->document->replacementAttorneyDecisions->how = null;
-        $lpa->document->replacementAttorneyDecisions->howDetails = null;
-        $client->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+        return false;
     }
 }
