@@ -46,23 +46,18 @@ class ApplicantCleanup
             }
 
             //Verify all applicant ids are valid
-            $allApplicantIdsValid = true;
             foreach ($whoIsRegistering as $id) {
+                $applicantIdValid = false;
                 foreach ($primaryAttorneys as $primaryAttorney) {
-                    if (!$allApplicantIdsValid) {
+                    if ($id == $primaryAttorney->id) {
+                        $applicantIdValid = true;
                         break;
                     }
-
-                    $allApplicantIdsValid = false;
-                    if ($id == $primaryAttorney->id) {
-                        $allApplicantIdsValid = true;
-                        continue;
-                    }
                 }
-            }
 
-            if (!$allApplicantIdsValid) {
-                return true;
+                if (!$applicantIdValid) {
+                    return true;
+                }
             }
         }
 
