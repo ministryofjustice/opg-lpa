@@ -2,11 +2,13 @@
 
 namespace ApplicationTest;
 
+use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
 use RuntimeException;
 
+date_default_timezone_set('UTC');
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
 
@@ -115,3 +117,5 @@ class Bootstrap
 
 Bootstrap::init();
 Bootstrap::chroot();
+
+require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';
