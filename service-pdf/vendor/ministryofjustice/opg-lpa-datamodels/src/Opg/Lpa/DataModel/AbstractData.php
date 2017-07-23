@@ -8,6 +8,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use DateTime;
 use InvalidArgumentException;
 use JsonSerializable;
+use MongoDB\BSON\UTCDateTime as MongoDate;
 
 /**
  * This class is extended by all entities that make up an LPA, including the LPA object itself.
@@ -120,9 +121,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             throw new InvalidArgumentException("$property is not a valid property");
         }
 
-        //  MongoDates should be converted to Datatime.
-        //  Once we have ext-mongo >= 1.6, we can use $value->toDateTime()
-        if (class_exists('\MongoDate') && $value instanceof \MongoDate) {
+        if (class_exists(MongoDate::class) && $value instanceof MongoDate) {
             $value = $value->toDateTime();
         }
 
@@ -247,7 +246,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     public function toArray($dateFormat = 'string')
     {
         // @codeCoverageIgnoreStart
-        if ($dateFormat == 'mongo' && !class_exists('\MongoDate')) {
+        if ($dateFormat == 'mongo' && !class_exists(MongoDate::class)) {
             throw new InvalidArgumentException('You not have the PHP Mongo extension installed');
         }
         // @codeCoverageIgnoreEnd
@@ -262,7 +261,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                         break;
                     case 'mongo':
                         //Convert to MongoDate, including microseconds...
-                        $values[$k] = new \MongoDate($v->getTimestamp(), (int)$v->format('u'));
+                        $values[$k] = new MongoDate($v->getTimestamp());
                         break;
                     default:
                 }
