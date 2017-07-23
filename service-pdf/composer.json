@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.9",
         "ext-proctitle": "*",
         "aws/aws-sdk-php": "^3.0",
         "mikehaertl/php-pdftk": "0.2.1",
