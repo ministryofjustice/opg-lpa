@@ -73,6 +73,7 @@ return array(
     'Opg\\Lpa\\Logger\\' => array($vendorDir . '/ministryofjustice/opg-lpa-logger/src/Opg/Lpa/Logger'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'MongoDB\\' => array($vendorDir . '/mongodb/mongodb/src'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
