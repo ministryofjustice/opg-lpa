@@ -10,7 +10,8 @@ class SummaryController extends AbstractLpaController
 {
     public function indexAction()
     {
-        $fromPage = $this->params()->fromRoute('from-page');
+        //  Get the return route from the query - if none was specified then default to the applicant route
+        $returnRoute = $this->params()->fromQuery('return-route', 'lpa/applicant');
 
         $isRepeatApplication = ($this->getLpa()->repeatCaseNumber != null);
 
@@ -21,7 +22,7 @@ class SummaryController extends AbstractLpaController
         $fullFee = (floor( $fullFee ) == $fullFee ) ? $fullFee : money_format('%i', $fullFee);
 
         $viewParams = [
-            'returnRoute' => 'lpa/' . $fromPage,
+            'returnRoute' => $returnRoute,
             'fullFee' => $fullFee,
             'lowIncomeFee' => $lowIncomeFee,
         ];
