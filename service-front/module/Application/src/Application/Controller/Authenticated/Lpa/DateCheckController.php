@@ -15,7 +15,7 @@ class DateCheckController extends AbstractLpaController
         $lpa = $this->getLpa();
 
         //  If the return route has been submitted in the post then just use it
-        $returnRoute = $this->params()->fromPost('returnRoute', null);
+        $returnRoute = $this->params()->fromPost('return-route', null);
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
@@ -94,16 +94,8 @@ class DateCheckController extends AbstractLpaController
             $returnRoute = 'user/dashboard';
         }
 
-        $params = [];
-
-        if ($returnRoute != 'user/dashboard') {
-            $params['lpa-id'] = $this->getLpa()->id;
-        }
-
-        $returnTarget = $this->url()->fromRoute($returnRoute, $params);
-
         return new ViewModel([
-            'returnTarget' => $returnTarget,
+            'returnRoute' => $returnRoute,
         ]);
     }
 
