@@ -604,13 +604,12 @@ return [
                         ],
                     ],
                     'summary' => [
-                        'type' => 'Segment',
+                        'type' => 'Literal',
                         'options' => [
-                            'route'    => '/:from-page/summary',
+                            'route'    => '/summary',
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\SummaryController',
                                 'action'     => 'index',
-                                'from-page'  => 'dashboard',
                             ],
                         ],
                     ],
