@@ -20,7 +20,6 @@
         "aws/aws-sdk-php": "^3.0",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
-        "phly/phly-mongo": "1.0.0",
         "guzzlehttp/guzzle": "^5.1.0",
         "ministryofjustice/opg-lpa-logger": "1.1.*",
         "ministryofjustice/opg-lpa-datamodels": "3.0.*",
