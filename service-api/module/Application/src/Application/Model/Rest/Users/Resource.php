@@ -3,6 +3,7 @@ namespace Application\Model\Rest\Users;
 
 use Application\Model\Rest\AbstractResource;
 
+use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\User\User;
 
 use Application\Library\DateTime;
@@ -193,22 +194,22 @@ class Resource extends AbstractResource {
 
         } else {
 
-            $lastUpdated = new \MongoDate($user->updatedAt->getTimestamp(), (int)$user->updatedAt->format('u'));
+            $lastUpdated = new UTCDateTime($user->updatedAt);
 
             // Record the time we updated the user.
             $user->updatedAt = new DateTime();
 
             // updatedAt is included in the query so that data isn't overwritten
             // if the User has changed since this process loaded it.
-            $result = $collection->update(
+            $result = $collection->updateMany(
                 ['_id' => $user->id, 'updatedAt' => $lastUpdated],
-                $user->toMongoArray(),
+                ['$set' => $user->toMongoArray()],
                 ['upsert' => false, 'multiple' => false]
             );
 
             // Ensure that one (and only one) document was updated.
             // If not, something when wrong.
-            if ($result['nModified'] !== 0 && $result['nModified'] !== 1) {
+            if ($result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1) {
                 throw new \RuntimeException('Unable to update User. This might be because "updatedAt" has changed.');
             }
 

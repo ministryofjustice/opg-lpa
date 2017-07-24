@@ -2,6 +2,7 @@
 namespace Application\Model\Rest\Applications;
 
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\Driver\Query;
 use RuntimeException;
 
 use Application\Model\Rest\AbstractResource;
@@ -253,9 +254,14 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         //---
 
         // Get the collection...
-        $cursor = $this->getCollection('lpa')->find( $query );
+        $collection = $this->getCollection('lpa');
 
-        $count = $cursor->count();
+        //$query = new Query($query);
+        //$cursor = new Mongo
+
+          //  $this->getCollection('lpa')->find( $query );
+
+        $count = $collection->count($query);
 
         // If there are no records, just return an empty paginator...
         if( $count == 0 ){
