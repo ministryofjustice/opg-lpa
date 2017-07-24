@@ -29,7 +29,8 @@
         "ministryofjustice/opg-lpa-datamodels": "4.0.*",
         "zf-commons/zfc-rbac": "~2.4",
         "nsmithuk/zf-config-dump": "^1.0",
-        "nsmithuk/dynamo-queue-php": "^1.0"
+        "nsmithuk/dynamo-queue-php": "^1.0",
+        "mongodb/mongodb": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0",

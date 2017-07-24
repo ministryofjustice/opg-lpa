@@ -43,6 +43,10 @@ class MongoConnectionFactory implements FactoryInterface
         }
     }
 
+    /**
+     * @param ServiceLocatorInterface $services
+     * @return Manager
+     */
     public function createService(ServiceLocatorInterface $services)
     {
         return new Manager($this->server, $this->options);

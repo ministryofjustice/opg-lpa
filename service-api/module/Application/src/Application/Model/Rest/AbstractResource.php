@@ -1,6 +1,8 @@
 <?php
 namespace Application\Model\Rest;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\Collection;
 use RuntimeException;
 
 use Application\Library\DateTime;
@@ -77,7 +79,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
     /**
      * @param $collection string Name of the requested collection.
-     * @return \MongoCollection
+     * @return Collection
      */
     public function getCollection( $collection ){
         return $this->getServiceLocator()->get( "MongoDB-Default-{$collection}" );
@@ -208,7 +210,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         //--------------------------------------------------------
 
-        $lastUpdated = new \MongoDate( $lpa->updatedAt->getTimestamp(), (int)$lpa->updatedAt->format('u') );
+        $lastUpdated = new UTCDateTime($lpa->updatedAt->getTimestamp());
 
         $existingLpa = new Lpa();
         $existingLpaResult = $collection->findOne( [ '_id'=>$lpa->id ] );

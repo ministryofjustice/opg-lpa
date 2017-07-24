@@ -7,10 +7,10 @@ use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
-use MongoCollection;
-use MongoCursor;
+use MongoDB\Collection as MongoCollection;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
+use Traversable;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\AuthorizationService;
@@ -207,7 +207,7 @@ abstract class AbstractResourceBuilder
      */
     protected function getDefaultCursor()
     {
-        $defaultCursor = Mockery::mock(MongoCursor::class);
+        $defaultCursor = Mockery::mock(Traversable::class);
         $defaultCursor->shouldReceive('limit')->andReturn($defaultCursor);
         $defaultCursor->shouldReceive('count')->andReturn(0);
         return $defaultCursor;
@@ -218,7 +218,7 @@ abstract class AbstractResourceBuilder
      */
     protected function getSingleCursor()
     {
-        $singleCursor = Mockery::mock(MongoCursor::class);
+        $singleCursor = Mockery::mock(Traversable::class);
         $singleCursor->shouldReceive('limit')->andReturn($singleCursor);
         $singleCursor->shouldReceive('count')->andReturn(1);
         return $singleCursor;

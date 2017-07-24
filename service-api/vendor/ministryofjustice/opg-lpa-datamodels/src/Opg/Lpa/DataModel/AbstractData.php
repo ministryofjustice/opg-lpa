@@ -261,7 +261,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                         break;
                     case 'mongo':
                         //Convert to MongoDate, including microseconds...
-                        $values[$k] = new MongoDate($v->getTimestamp());
+                        $values[$k] = new MongoDate($v);
                         break;
                     default:
                 }

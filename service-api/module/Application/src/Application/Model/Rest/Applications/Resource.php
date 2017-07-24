@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model\Rest\Applications;
 
+use MongoDB\BSON\UTCDateTime;
 use RuntimeException;
 
 use Application\Model\Rest\AbstractResource;
@@ -323,7 +324,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
          * So we just strip the document down to '_id' and 'updatedAt'.
          */
 
-        $result['updatedAt'] = new \MongoDate();
+        $result['updatedAt'] = new UTCDateTime();
 
         $collection->save( $result );
 
