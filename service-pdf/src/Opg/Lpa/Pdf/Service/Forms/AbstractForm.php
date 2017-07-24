@@ -29,6 +29,13 @@ abstract class AbstractForm
     protected $logger;
 
     /**
+     * Config utility
+     *
+     * @var Config
+     */
+    protected $config;
+
+    /**
      *
      * @var LPA model object
      */
@@ -52,13 +59,6 @@ abstract class AbstractForm
      * @var array
      */
     protected $interFileStack = array();
-
-    /**
-     * It's a ram disk folder and is the base path for storing
-     * intermediate files temporarily. Defined in config file.
-     * @var string
-     */
-    protected $intermediateFileBasePath;
 
     /**
      * The folder that stores template PDFs which all form elements values are empty.
@@ -131,11 +131,10 @@ abstract class AbstractForm
     public function __construct(Lpa $lpa)
     {
         $this->logger = Logger::getInstance();
+        $this->config = Config::getInstance();
 
         $this->lpa = $lpa;
-        $config = Config::getInstance();
-        $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
-        $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
+        $this->pdfTemplatePath = $this->config['service']['assets']['template_path_on_ram_disk'];
     }
 
     /**
@@ -155,17 +154,16 @@ abstract class AbstractForm
         ]);
     }
 
-    protected function protectPdf(){
+    protected function protectPdf()
+    {
+        $pdf = PdftkInstance::getInstance($this->generatedPdfFilePath);
 
-        $pdf = PdftkInstance::getInstance( $this->generatedPdfFilePath );
-
-        $password = Config::getInstance()['pdf']['password'];
+        $password = $this->config['pdf']['password'];
 
         $pdf->allow('Printing CopyContents')
             ->flatten()
-            ->setPassword( $password )
+            ->setPassword($password)
             ->saveAs($this->generatedPdfFilePath);
-
     }
 
     /**
@@ -218,9 +216,10 @@ abstract class AbstractForm
      */
     protected function getTmpFilePath($fileType)
     {
-        $filePath = $this->intermediateFileBasePath.'/'.$fileType.'-'.str_replace(array(' ','.'), '-', Formatter::id($this->lpa->id).'-'.microtime(true)).'.pdf';
-        return $filePath;
-    } // function getTmpFilePath($fileType)
+        $intermediateFileBasePath = $this->config['service']['assets']['intermediate_file_path'];
+
+        return $intermediateFileBasePath . '/' . $fileType . '-' . str_replace(array(' ', '.'), '-', Formatter::id($this->lpa->id) . '-' . microtime(true)) . '.pdf';
+    }
 
     /**
      * Register a temp file in self::$interFileStack
@@ -247,21 +246,30 @@ abstract class AbstractForm
      */
     protected function drawCrossLines($filePath, $params)
     {
-        // draw cross lines
-        $pdf = ZendPdfDocument::load($filePath);
-        foreach($params as $pageNo => $blockNames) {
-            $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
-            foreach($blockNames as $blockName) {
-                $page->drawLine(
+        //  Check to see if drawing cross lines is disabled or not
+        $disableDrawCrossLines = false;
+
+        if (isset($this->config['service']['disable_draw_cross_lines'])) {
+            $disableDrawCrossLines = (bool)$this->config['service']['disable_draw_cross_lines'];
+        }
+
+        if (!$disableDrawCrossLines) {
+            // draw cross lines
+            $pdf = ZendPdfDocument::load($filePath);
+            foreach ($params as $pageNo => $blockNames) {
+                $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
+                foreach ($blockNames as $blockName) {
+                    $page->drawLine(
                         $this->crossLineParams[$blockName]['bx'],
                         $this->crossLineParams[$blockName]['by'],
                         $this->crossLineParams[$blockName]['tx'],
                         $this->crossLineParams[$blockName]['ty']
-                );
-            }
-        } // foreach
+                    );
+                }
+            } // foreach
 
-        $pdf->save($filePath);
+            $pdf->save($filePath);
+        }
 
     } // function drawCrossLines()
 
