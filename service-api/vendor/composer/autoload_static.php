@@ -103,6 +103,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
+            'PhlyMongo\\' => 10,
         ),
         'O' => 
         array (
@@ -400,6 +401,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'PhlyMongo\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phly/phly-mongo/src',
         ),
         'Opg\\Lpa\\Logger\\' => 
         array (
@@ -1019,6 +1024,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'PHP_Token_XOR_EQUAL' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_YIELD' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_YIELD_FROM' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'PhlyMongo\\Module' => __DIR__ . '/..' . '/phly/phly-mongo/Module.php',
         'SebastianBergmann\\Comparator\\ArrayComparator' => __DIR__ . '/..' . '/sebastian/comparator/src/ArrayComparator.php',
         'SebastianBergmann\\Comparator\\Comparator' => __DIR__ . '/..' . '/sebastian/comparator/src/Comparator.php',
         'SebastianBergmann\\Comparator\\ComparisonFailure' => __DIR__ . '/..' . '/sebastian/comparator/src/ComparisonFailure.php',
