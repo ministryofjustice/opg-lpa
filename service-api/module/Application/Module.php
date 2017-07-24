@@ -168,7 +168,7 @@ class Module {
                 'Mongo-Default' => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default'];
                     $factory = new MongoConnectionFactory(
-                        'mongodb://'.implode(',', $config['hosts']), // Split the array out into comma separated values.
+                        'mongodb://'.implode(',', $config['hosts']) . '/' . $config['options']['db'], // Split the array out into comma separated values.
                         $config['options']
                     );
 

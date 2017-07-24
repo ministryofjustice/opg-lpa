@@ -947,16 +947,16 @@
         },
         {
             "name": "phly/phly-mongo",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/iterative-it/PhlyMongo.git",
-                "reference": "48885ff225f4206d4383a4a6652faa812b29dccd"
+                "reference": "e09ddfdcb0aa21781ea06c9fe665d733ab36c191"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/iterative-it/PhlyMongo/zipball/48885ff225f4206d4383a4a6652faa812b29dccd",
-                "reference": "48885ff225f4206d4383a4a6652faa812b29dccd",
+                "url": "https://api.github.com/repos/iterative-it/PhlyMongo/zipball/e09ddfdcb0aa21781ea06c9fe665d733ab36c191",
+                "reference": "e09ddfdcb0aa21781ea06c9fe665d733ab36c191",
                 "shasum": ""
             },
             "require": {
@@ -1014,9 +1014,9 @@
                 "zf2"
             ],
             "support": {
-                "source": "https://github.com/iterative-it/PhlyMongo/tree/2.0.1"
+                "source": "https://github.com/iterative-it/PhlyMongo/tree/2.0.2"
             },
-            "time": "2017-07-24T14:07:58+00:00"
+            "time": "2017-07-24T17:50:33+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

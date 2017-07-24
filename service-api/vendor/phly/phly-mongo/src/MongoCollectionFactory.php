@@ -29,6 +29,7 @@ class MongoCollectionFactory implements FactoryInterface
     {
         /** @var Database $db */
         $db = $services->get($this->dbService);
-        return $db->selectCollection($this->collectionName);
+        $collection = $db->selectCollection($this->collectionName, ['typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array']]);
+        return $collection;
     }
 }

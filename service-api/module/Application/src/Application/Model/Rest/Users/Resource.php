@@ -189,7 +189,7 @@ class Resource extends AbstractResource {
 
         if ($new){
 
-            $collection->insert( $user->toMongoArray() );
+            $collection->insertOne( $user->toMongoArray() );
 
         } else {
 
