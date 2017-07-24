@@ -6,9 +6,11 @@ RUN groupadd webservice && \
 RUN apt-get update && apt-get install -y \
     php5-curl php-pear php5-dev
 
-RUN pecl install mongo && \
-    echo "extension=mongo.so" > /etc/php5/mods-available/mongo.ini && \
-    php5enmod mongo
+RUN apt-get install -y pkg-config
+
+RUN pecl install mongodb && \
+    echo "extension=mongodb.so" > /etc/php5/mods-available/mongodb.ini && \
+    php5enmod mongodb
 
 RUN php5enmod mcrypt
 
