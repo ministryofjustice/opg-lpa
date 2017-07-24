@@ -108,4 +108,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             6       => 'else',
         ]);
     }
+
+    public function tearDown()
+    {
+        Config::destroy();
+    }
 }

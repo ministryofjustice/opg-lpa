@@ -83,7 +83,8 @@
             },
             "phone": null,
             "contactByPost": false,
-            "contactInWelsh": false
+            "contactInWelsh": false,
+            "contactDetailsEnteredManually": true
         },
         "instruction": "Maecenas posuere augue sed purus malesuada dapibus.",
         "preference": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -320,7 +321,7 @@
                 "address": {
                     "address1": "33 Junction road",
                     "address2": "Brighton",
-                    "address3": "Sussex", 
+                    "address3": "Sussex",
                     "postcode": "JL7 8AK"
                 }
             },
@@ -334,7 +335,7 @@
                 "address": {
                     "address1": "42 York Road",
                     "address2": "Canterbury",
-                    "address3": "Kent", 
+                    "address3": "Kent",
                     "postcode": "YL4 5DL"
                 }
             },
@@ -348,7 +349,7 @@
                 "address": {
                     "address1": "33 New Street",
                     "address2": "Mossley",
-                    "address3": "Greater Manchester", 
+                    "address3": "Greater Manchester",
                     "postcode": "MK47 9WD"
                 }
             }

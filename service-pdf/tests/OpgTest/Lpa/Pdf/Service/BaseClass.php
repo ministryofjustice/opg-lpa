@@ -34,7 +34,7 @@ class BaseClass extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->lpa = new Lpa(file_get_contents(__DIR__ . '/../../../../fixtures/base-lpa.json'));
+        $this->lpa = new Lpa(file_get_contents(__DIR__ . '/../../../../fixtures/lpa-pf.json'));
 
         $config = Config::getInstance();
 
