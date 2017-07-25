@@ -104,13 +104,13 @@
 					( lpa.document.replacementAttorneyDecisions.when == 'first' ?
 					'as soon as one of the original attorneys can no longer act' :
 					((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-						'as soon as none of the original attorneys can act' :
+						'only when none of the original attorneys can act' :
 						'as per instructions')),
             	'mobile' : 'The replacement attorneys will step in ' ~
 					( lpa.document.replacementAttorneyDecisions.when == 'first' ?
 					'as soon as one of the original attorneys can no longer act' :
 					((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-						'as soon as none of the original attorneys can act' :
+						'only when none of the original attorneys can act' :
 						'as per instructions')),
         		'status' : 'Complete',
         		'edit' : url(item.routeName, {'lpa-id': lpa.id})
