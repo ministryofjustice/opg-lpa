@@ -10,6 +10,7 @@ use Application\Model\Rest\Users\Resource as UsersResource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use ApplicationTest\Model\AbstractResourceTest;
 use Mockery;
+use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
 use PhlyMongo\MongoCollectionFactory;
@@ -34,7 +35,7 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
         $userCollection->shouldReceive('findOne')->andReturn(null)->twice();
-        $userCollection->shouldReceive('insert')->once();
+        $userCollection->shouldReceive('insertOne')->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
@@ -56,7 +57,7 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
-        $userCollection->shouldNotReceive('insert');
+        $userCollection->shouldNotReceive('insertOne');
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
@@ -79,7 +80,7 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
         $userCollection->shouldReceive('findOne')->andReturn(null)->once();
-        $userCollection->shouldReceive('insert')->once();
+        $userCollection->shouldReceive('insertOne')->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
@@ -101,7 +102,7 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
-        $userCollection->shouldNotReceive('update');
+        $userCollection->shouldNotReceive('updateOne');
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
@@ -126,7 +127,9 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
-        $userCollection->shouldReceive('update')->andReturn(['nModified' => 1])->once();
+        $updateResult = Mockery::mock(UpdateResult::class);
+        $updateResult->shouldReceive('getModifiedCount')->andReturn(1);
+        $userCollection->shouldReceive('updateOne')->andReturn($updateResult)->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
@@ -146,7 +149,9 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
-        $userCollection->shouldReceive('update')->andReturn(['nModified' => 2])->once();
+        $updateResult = Mockery::mock(UpdateResult::class);
+        $updateResult->shouldReceive('getModifiedCount')->andReturn(2);
+        $userCollection->shouldReceive('updateOne')->andReturn($updateResult)->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
@@ -171,7 +176,7 @@ class ResourceTest extends AbstractResourceTest
         $applicationsResource = Mockery::mock(ApplicationsResource::class);
         $applicationsResource->shouldReceive('deleteAll')->once();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('remove')->with([ '_id' => $user->id ], [ 'justOne' => true ])->once();
+        $userCollection->shouldReceive('deleteOne')->with([ '_id' => $user->id ])->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())

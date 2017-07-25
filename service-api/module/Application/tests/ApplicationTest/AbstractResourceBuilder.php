@@ -177,13 +177,13 @@ abstract class AbstractResourceBuilder
                     ->andReturn($this->lpa->toMongoArray());
 
                 if ($this->locked) {
-                    $this->lpaCollection->shouldReceive('find')
+                    $this->lpaCollection->shouldReceive('count')
                         ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
-                        ->andReturn($this->getSingleCursor());
+                        ->andReturn(1);
                 } else {
-                    $this->lpaCollection->shouldReceive('find')
+                    $this->lpaCollection->shouldReceive('count')
                         ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
-                        ->andReturn($this->getDefaultCursor());
+                        ->andReturn(0);
                 }
             }
         }
@@ -191,7 +191,6 @@ abstract class AbstractResourceBuilder
         if ($this->lpa === null) {
             $this->lpaCollection->shouldNotReceive('findOne');
             $this->lpaCollection->shouldNotReceive('find');
-            $this->lpaCollection->shouldNotReceive('count');
         }
 
         if ($addDefaults) {
@@ -199,9 +198,11 @@ abstract class AbstractResourceBuilder
         }
 
         if ($this->updateNumberModified === null) {
-            $this->lpaCollection->shouldNotReceive('update');
+            $this->lpaCollection->shouldNotReceive('updateOne');
         } else {
-            $this->lpaCollection->shouldReceive('update')->once()->andReturn(['nModified' => $this->updateNumberModified]);
+            $updateResult = Mockery::mock(UpdateResult::class);
+            $updateResult->shouldReceive('getModifiedCount')->andReturn($this->updateNumberModified);
+            $this->lpaCollection->shouldReceive('updateOne')->once()->andReturn($updateResult);
         }
 
         return $resource;

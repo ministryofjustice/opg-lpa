@@ -23,27 +23,32 @@ class ResourceBuilder extends AbstractResourceBuilder
 
         if ($this->user !== null) {
             if ($this->toDelete === null) {
-                $this->lpaCollection->shouldNotReceive('save');
+                $this->lpaCollection->shouldNotReceive('replaceOne');
             } else {
                 $this->lpaCollection->shouldReceive('findOne')
-                    ->with(['_id' => (int)$this->toDelete->id, 'user' => $this->user->id], [ '_id'=>true ])
+                    ->with(['_id' => (int)$this->toDelete->id, 'user' => $this->user->id], ['projection' => ['_id'=>true]])
                     ->andReturn(['_id' => $this->toDelete->id]);
                 $this->lpaCollection->shouldReceive('find')
                     ->with(['user' => $this->user->id], [ '_id'=>true ])
                     ->andReturn([['_id' => $this->toDelete->id]]);
-                $this->lpaCollection->shouldReceive('save');
+                $this->lpaCollection->shouldReceive('replaceOne');
             }
 
             if ($this->lpas === null) {
+                $this->lpaCollection->shouldReceive('count')
+                    ->with(['user' => $this->user->id])
+                    ->andReturn(0);
                 $this->lpaCollection->shouldReceive('find')
                     ->with(['user' => $this->user->id])
                     ->andReturn($this->getDefaultCursor());
             } else {
+                $options = ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 250];
+
                 $this->lpaCollection->shouldReceive('count')
                     ->with(['user' => $this->user->id])
                     ->andReturn(count($this->lpas));
                 $this->lpaCollection->shouldReceive('find')
-                    ->with(['user' => $this->user->id], ['sort' => [ 'updatedAt' => -1 ], 'skip' => 0, 'limit' => 250])
+                    ->with(['user' => $this->user->id], $options)
                     ->andReturn(new DummyLpaMongoCursor($this->lpas));
 
                 foreach ($this->lpas as $lpa) {
@@ -51,10 +56,13 @@ class ResourceBuilder extends AbstractResourceBuilder
                         ->with(['user' => $this->user->id, '_id' => $lpa->id])
                         ->andReturn(count($this->lpas));
                     $this->lpaCollection->shouldReceive('find')
-                        ->with(['user' => $this->user->id, '_id' => $lpa->id])
+                        ->with(['user' => $this->user->id, '_id' => $lpa->id], $options)
                         ->andReturn(new DummyLpaMongoCursor([$lpa]));
                 }
 
+                //Defaults
+                $this->lpaCollection->shouldReceive('count')
+                    ->andReturn(0);
                 $this->lpaCollection->shouldReceive('find')
                     ->andReturn($this->getDefaultCursor());
             }
