@@ -126,15 +126,6 @@
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <h3 class="heading-medium flush--top">What language should we use?</h3>
-
-        <legend class="visuallyhidden">Language options</legend>
-
-        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'error'}}">
-            {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
-            {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
-        </div>
-
         <fieldset id="correspondence">
 
             <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
@@ -183,6 +174,15 @@
             </div>
 
         </fieldset>
+
+        <h3 class="heading-medium flush--top">What language should we use?</h3>
+
+        <legend class="visuallyhidden">Language options</legend>
+
+        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'error'}}">
+            {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
+            {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
+        </div>
 
         <div class="form-group">
             {{ formElement(form.get('save')) }}
