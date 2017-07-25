@@ -74,19 +74,38 @@ class Lpa120 extends AbstractForm
         $lpaDocument = $lpa->document;
         $lpaPayment = $lpa->payment;
 
-        //  Get applicant object
-        if ($lpaDocument->whoIsRegistering == 'donor') {
-            $applicant = $lpaDocument->donor;
-            $applicantType = 'donor';
-        } elseif (is_array($lpaDocument->whoIsRegistering)) {
-            //  Get the first element in the whoIsRegistering array as the attorney applicant of the LPA
-            foreach ($lpaDocument->whoIsRegistering as $attorneyId) {
-                $applicant = $lpaDocument->getPrimaryAttorneyById($attorneyId);
+        $applicantType = 'other';
+        $applicantPhoneNumber = null;
+
+        //  The correspondent takes precedence over who is registering if specified
+        if ($lpaDocument->correspondent instanceof Correspondence) {
+            $applicant = $lpaDocument->correspondent;
+
+            if ($applicant->who == Correspondence::WHO_DONOR) {
+                $applicantType = 'donor';
+            } else if ($applicant->who == Correspondence::WHO_ATTORNEY) {
                 $applicantType = 'attorney';
-                break;
+            }
+
+            if ($applicant->phone instanceof PhoneNumber) {
+                //  If the correspondent has a phone number then grab that value now
+                $applicantPhoneNumber = $applicant->phone->number;
             }
         } else {
-            throw new \Exception('When generating LAP120, applicant was found invalid');
+            //  Get applicant object
+            if ($lpaDocument->whoIsRegistering == 'donor') {
+                $applicant = $lpaDocument->donor;
+                $applicantType = 'donor';
+            } elseif (is_array($lpaDocument->whoIsRegistering)) {
+                //  Get the first element in the whoIsRegistering array as the attorney applicant of the LPA
+                foreach ($lpaDocument->whoIsRegistering as $attorneyId) {
+                    $applicant = $lpaDocument->getPrimaryAttorneyById($attorneyId);
+                    $applicantType = 'attorney';
+                    break;
+                }
+            } else {
+                throw new \Exception('When generating LAP120, applicant was found invalid');
+            }
         }
 
         //  Get the applicant name details
@@ -106,15 +125,6 @@ class Lpa120 extends AbstractForm
 
             $applicantFirstName = $applicant->name->first;
             $applicantLastName = $applicant->name->last;
-        }
-
-        //  If the correspondent has a phone number then grab that value now
-        $applicantPhoneNumber = null;
-
-        if ($lpaDocument->correspondent instanceof Correspondence
-            && $lpaDocument->correspondent->phone instanceof PhoneNumber) {
-
-            $applicantPhoneNumber = $lpaDocument->correspondent->phone->number;
         }
 
         $mappings = array(
