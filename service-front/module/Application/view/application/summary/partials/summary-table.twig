@@ -167,7 +167,7 @@
                         ( lpa.document.replacementAttorneyDecisions.when == 'first' ?
                             'as soon as one of the original attorneys can no longer act' :
                             ((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-                                'as soon as none of the original attorneys can act' :
+                                'only when none of the original attorneys can act' :
                                 'as per instructions')) }}
                     </td>
                     <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}">Edit</a></td>
