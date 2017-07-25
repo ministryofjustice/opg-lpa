@@ -1,8 +1,9 @@
 <?php
 namespace Application\Model\Rest\Stats;
 
+use MongoDB\BSON\ObjectID as MongoId;
+use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Driver\ReadPreference;
-use MongoId, MongoDate, MongoCode;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;

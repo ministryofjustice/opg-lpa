@@ -1,8 +1,11 @@
 <?php
 namespace Application\Model\Service\System;
 
-use MongoCode;
+use MongoDB\BSON\Javascript as MongoCode;
 
+use MongoDB\Collection;
+use MongoDB\Driver\Command;
+use MongoDB\Driver\ReadPreference;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -19,11 +22,8 @@ class Stats implements ServiceLocatorAwareInterface {
 
     public function generate(){
 
+        /** @var Collection $collection */
         $collection = $this->getServiceLocator()->get('MongoDB-Default-lpa');
-        $db = $collection->db;
-
-        // Stats can (ideally) be processed on a secondary.
-        $db->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
         //------------------------------------
 
@@ -43,13 +43,18 @@ class Stats implements ServiceLocatorAwareInterface {
             }'
         );
 
-        $results = $db->command([
-            'mapreduce' => $collection->getName(),
+        $manager = $collection->getManager();
+
+        $command = new Command([
+            'mapreduce' => $collection->getCollectionName(),
             'map' => $map,
             'reduce' => $reduce,
             'out' => ['inline'=>1],
             'query' => [ 'user' => [ '$exists'=>true ] ],
-        ])['results'];
+        ]);
+
+        // Stats can (ideally) be processed on a secondary.
+        $results = $manager->executeCommand($collection->getDatabaseName(), $command, ReadPreference::RP_SECONDARY_PREFERRED)->toArray()['results'];
 
         //------------------------------------
 
