@@ -32,7 +32,7 @@ class Cs1 extends AbstractForm
     /**
      *
      * @param Lpa $lpa
-     * @param string $actorTypes
+     * @param array $actorTypes
      */
     public function __construct(Lpa $lpa, $actorTypes)
     {

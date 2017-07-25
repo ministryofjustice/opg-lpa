@@ -1,5 +1,5 @@
 {
-    "id": 51072955715,
+    "id": 51072955716,
     "startedAt": "2015-07-22T10:41:44.028000+0000",
     "createdAt": "2015-07-22T10:51:39.310000+0000",
     "updatedAt": "2015-07-28T11:41:05.596000+0000",
@@ -7,20 +7,20 @@
     "lockedAt": null,
     "user": "aaaa0a92862d5287e801331f98774cf7",
     "payment": {
-        "method": null,
+        "method": "card",
         "phone": null,
         "amount": 0,
-        "reference": null,
-        "date": null,
-        "reducedFeeReceivesBenefits": true,
-        "reducedFeeAwardedDamages": true,
+        "reference": "ABCD-1234",
+        "date": "2017-07-26T00:00:00.000000+0000",
+        "reducedFeeReceivesBenefits": null,
+        "reducedFeeAwardedDamages": null,
         "reducedFeeLowIncome": null,
-        "reducedFeeUniversalCredit": null
+        "reducedFeeUniversalCredit": true
     },
     "whoAreYouAnswered": true,
     "locked": false,
     "seed": null,
-    "repeatCaseNumber": null,
+    "repeatCaseNumber": 12345678,
     "document": {
         "type": "health-and-welfare",
         "donor": {
@@ -80,9 +80,11 @@
             "email": {
                 "address": "opglpademo+LouiseJames@gmail.com"
             },
-            "phone": null,
-            "contactByPost": false,
-            "contactInWelsh": false,
+            "phone": {
+                "number": "01234 123456"
+            },
+            "contactByPost": true,
+            "contactInWelsh": true,
             "contactDetailsEnteredManually": true
         },
         "instruction": "Maecenas posuere augue sed purus malesuada dapibus.",

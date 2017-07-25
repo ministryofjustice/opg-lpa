@@ -7,20 +7,20 @@
     "lockedAt": null,
     "user": "aaaa0a92862d5287e801331f98774cf7",
     "payment": {
-        "method": null,
+        "method": "card",
         "phone": null,
         "amount": 0,
-        "reference": null,
-        "date": null,
-        "reducedFeeReceivesBenefits": true,
-        "reducedFeeAwardedDamages": true,
+        "reference": "ABCD-1234",
+        "date": "2017-07-26T00:00:00.000000+0000",
+        "reducedFeeReceivesBenefits": null,
+        "reducedFeeAwardedDamages": null,
         "reducedFeeLowIncome": null,
-        "reducedFeeUniversalCredit": null
+        "reducedFeeUniversalCredit": true
     },
     "whoAreYouAnswered": true,
     "locked": false,
     "seed": null,
-    "repeatCaseNumber": null,
+    "repeatCaseNumber": 12345678,
     "document": {
         "type": "property-and-financial",
         "donor": {
@@ -81,9 +81,11 @@
             "email": {
                 "address": "opglpademo+LouiseJames@gmail.com"
             },
-            "phone": null,
-            "contactByPost": false,
-            "contactInWelsh": false,
+            "phone": {
+                "number": "01234 123456"
+            },
+            "contactByPost": true,
+            "contactInWelsh": true,
             "contactDetailsEnteredManually": true
         },
         "instruction": "Maecenas posuere augue sed purus malesuada dapibus.",
@@ -166,21 +168,6 @@
                 "type": "human"
             },
             {
-                "name": "Standard Trust",
-                "number": "678437685",
-                "id": 4,
-                "address": {
-                    "address1": "1 Laburnum Place",
-                    "address2": "Sketty",
-                    "address3": "Swansea, Abertawe",
-                    "postcode": "SA2 8HT"
-                },
-                "email": {
-                    "address": "opglpademo+trustcorp@gmail.com"
-                },
-                "type": "trust"
-            },
-            {
                 "name": {
                     "title": "Dr",
                     "first": "Henry",
@@ -189,7 +176,7 @@
                 "dob": {
                     "date": "1973-09-10T00:00:00.000000+0000"
                 },
-                "id": 5,
+                "id": 4,
                 "address": {
                     "address1": "Lark Meadow Drive",
                     "address2": "Solihull",
@@ -200,6 +187,21 @@
                     "address": "opglpademo+HenryTalor@gmail.com"
                 },
                 "type": "human"
+            },
+            {
+                "name": "Standard Trust",
+                "number": "678437685",
+                "id": 5,
+                "address": {
+                    "address1": "1 Laburnum Place",
+                    "address2": "Sketty",
+                    "address3": "Swansea, Abertawe",
+                    "postcode": "SA2 8HT"
+                },
+                "email": {
+                    "address": "opglpademo+trustcorp@gmail.com"
+                },
+                "type": "trust"
             },
             {
                 "name": {
