@@ -86,8 +86,8 @@ class Lpa120 extends AbstractForm
                 $applicantType = 'donor';
             } else if ($applicant->who == Correspondence::WHO_ATTORNEY) {
                 $applicantType = 'attorney';
-            } else if ($applicant->who == Correspondence::WHO_CERTIFICATE_PROVIDER) {
-                $applicantTypeOther = 'Cert provider';
+            } else {
+                $applicantTypeOther = 'Correspondent';
             }
 
             if ($applicant->phone instanceof PhoneNumber) {
