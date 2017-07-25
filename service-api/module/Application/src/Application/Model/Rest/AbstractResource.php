@@ -211,7 +211,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
 
         //--------------------------------------------------------
 
-        $lastUpdated = new UTCDateTime($lpa->updatedAt->getTimestamp());
+        $lastUpdated = new UTCDateTime($lpa->updatedAt);
 
         $existingLpa = new Lpa();
         $existingLpaResult = $collection->findOne( [ '_id'=>$lpa->id ] );
@@ -236,7 +236,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         // if the Document has changed since this process loaded it.
         $result = $collection->updateOne(
             [ '_id'=>$lpa->id, 'updatedAt'=>$lastUpdated ],
-            [ '$set'=> array_merge( $lpa->toMongoArray(), [ 'search' => $searchField ] )],
+            ['$set' => array_merge($lpa->toMongoArray(), ['search' => $searchField])],
             [ 'upsert'=>false, 'multiple'=>false ]
         );
 
