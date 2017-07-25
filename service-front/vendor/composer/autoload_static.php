@@ -8,6 +8,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
 {
     public static $files = array (
         '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
+        '3a37ebac017bc098e9a86b35401e7a68' => __DIR__ . '/..' . '/mongodb/mongodb/src/functions.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -113,6 +114,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'M' => 
         array (
             'Monolog\\' => 8,
+            'MongoDB\\' => 8,
             'MinistryOfJustice\\PostcodeInfo\\' => 31,
         ),
         'J' => 
@@ -428,6 +430,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'MongoDB\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mongodb/mongodb/src',
         ),
         'MinistryOfJustice\\PostcodeInfo\\' => 
         array (

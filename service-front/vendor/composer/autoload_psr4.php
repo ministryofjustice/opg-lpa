@@ -74,6 +74,7 @@ return array(
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Opg\\Lpa\\Api\\Client\\' => array($vendorDir . '/ministryofjustice/opg-lpa-api-client/src/Opg/Lpa/Api/Client'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'MongoDB\\' => array($vendorDir . '/mongodb/mongodb/src'),
     'MinistryOfJustice\\PostcodeInfo\\' => array($vendorDir . '/ministryofjustice/postcodeinfo-client-php/src'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),
