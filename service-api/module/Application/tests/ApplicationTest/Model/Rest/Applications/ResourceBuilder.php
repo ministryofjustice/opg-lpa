@@ -3,6 +3,8 @@
 namespace ApplicationTest\Model\Rest\Applications;
 
 use ApplicationTest\AbstractResourceBuilder;
+use Mockery;
+use MongoDB\Driver\Query;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class ResourceBuilder extends AbstractResourceBuilder
@@ -37,11 +39,17 @@ class ResourceBuilder extends AbstractResourceBuilder
                     ->with(['user' => $this->user->id])
                     ->andReturn($this->getDefaultCursor());
             } else {
-                $this->lpaCollection->shouldReceive('find')
+                $this->lpaCollection->shouldReceive('count')
                     ->with(['user' => $this->user->id])
+                    ->andReturn(count($this->lpas));
+                $this->lpaCollection->shouldReceive('find')
+                    ->with(['user' => $this->user->id], ['sort' => [ 'updatedAt' => -1 ], 'skip' => 0, 'limit' => 250])
                     ->andReturn(new DummyLpaMongoCursor($this->lpas));
 
                 foreach ($this->lpas as $lpa) {
+                    $this->lpaCollection->shouldReceive('count')
+                        ->with(['user' => $this->user->id, '_id' => $lpa->id])
+                        ->andReturn(count($this->lpas));
                     $this->lpaCollection->shouldReceive('find')
                         ->with(['user' => $this->user->id, '_id' => $lpa->id])
                         ->andReturn(new DummyLpaMongoCursor([$lpa]));
@@ -53,9 +61,9 @@ class ResourceBuilder extends AbstractResourceBuilder
         }
 
         if ($this->insert) {
-            $this->lpaCollection->shouldReceive('insert')->once();
+            $this->lpaCollection->shouldReceive('insertOne')->once();
         } else {
-            $this->lpaCollection->shouldNotReceive('insert');
+            $this->lpaCollection->shouldNotReceive('insertOne');
         }
 
         $this->lpaCollection->shouldReceive('findOne')->andReturn(null);

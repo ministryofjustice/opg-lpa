@@ -116,7 +116,7 @@ class Resource extends AbstractResource {
         $this->getServiceLocator()->get('resource-applications')->deleteAll();
 
         // Delete the user's About Me details.
-        $this->getCollection( 'user' )->remove( [ '_id' => $id ], [ 'justOne' => true ] );
+        $this->getCollection( 'user' )->deleteOne( [ '_id' => $id ] );
 
         return true;
 
@@ -201,7 +201,7 @@ class Resource extends AbstractResource {
 
             // updatedAt is included in the query so that data isn't overwritten
             // if the User has changed since this process loaded it.
-            $result = $collection->updateMany(
+            $result = $collection->updateOne(
                 ['_id' => $user->id, 'updatedAt' => $lastUpdated],
                 ['$set' => $user->toMongoArray()],
                 ['upsert' => false, 'multiple' => false]

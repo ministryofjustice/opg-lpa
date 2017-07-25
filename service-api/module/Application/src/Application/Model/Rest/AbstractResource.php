@@ -3,6 +3,7 @@ namespace Application\Model\Rest;
 
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
+use MongoDB\Driver\Manager;
 use RuntimeException;
 
 use Application\Library\DateTime;
@@ -133,7 +134,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         //--------------------------------------------------------
         // Check LPA in database isn't locked...
 
-        $locked = (bool)$collection->find( [ '_id'=>$lpa->id, 'locked'=>true ], [ '_id'=>true ] )->limit(1)->count( true );
+        $locked = $collection->count( [ '_id'=>$lpa->id, 'locked'=>true ], [ '_id'=>true ] ) > 0;
 
         if( $locked === true ){
             throw new LockedException('LPA has already been locked.');
@@ -233,15 +234,15 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         
         // updatedAt is included in the query so that data isn't overwritten
         // if the Document has changed since this process loaded it.
-        $result = $collection->update(
+        $result = $collection->updateOne(
             [ '_id'=>$lpa->id, 'updatedAt'=>$lastUpdated ],
-            array_merge( $lpa->toMongoArray(), [ 'search' => $searchField ] ),
+            [ '$set'=> array_merge( $lpa->toMongoArray(), [ 'search' => $searchField ] )],
             [ 'upsert'=>false, 'multiple'=>false ]
         );
 
         // Ensure that one (and only one) document was updated.
         // If not, something when wrong.
-        if( $result['nModified'] !== 0 && $result['nModified'] !== 1 ){
+        if( $result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1 ){
             throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
         }
         

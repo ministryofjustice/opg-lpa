@@ -8,6 +8,7 @@ use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
 use MongoDB\Collection as MongoCollection;
+use MongoDB\Driver\Manager;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Traversable;
@@ -17,6 +18,8 @@ use ZfcRbac\Service\AuthorizationService;
 
 abstract class AbstractResourceBuilder
 {
+    const LPA_COLLECTION_NAMESPACE = 'opglpa-api.lpa';
+
     protected $lpa;
     protected $user;
     protected $authorizationService;
@@ -137,6 +140,7 @@ abstract class AbstractResourceBuilder
 
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
         $this->statsWhoCollection = $this->statsWhoCollection ?: Mockery::mock(MongoCollection::class);
+        $this->mongodbManager = Mockery::mock();
 
         $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
@@ -187,6 +191,7 @@ abstract class AbstractResourceBuilder
         if ($this->lpa === null) {
             $this->lpaCollection->shouldNotReceive('findOne');
             $this->lpaCollection->shouldNotReceive('find');
+            $this->lpaCollection->shouldNotReceive('count');
         }
 
         if ($addDefaults) {
@@ -208,8 +213,7 @@ abstract class AbstractResourceBuilder
     protected function getDefaultCursor()
     {
         $defaultCursor = Mockery::mock(Traversable::class);
-        $defaultCursor->shouldReceive('limit')->andReturn($defaultCursor);
-        $defaultCursor->shouldReceive('count')->andReturn(0);
+        $defaultCursor->shouldReceive('toArray')->andReturn([]);
         return $defaultCursor;
     }
 
@@ -219,8 +223,7 @@ abstract class AbstractResourceBuilder
     protected function getSingleCursor()
     {
         $singleCursor = Mockery::mock(Traversable::class);
-        $singleCursor->shouldReceive('limit')->andReturn($singleCursor);
-        $singleCursor->shouldReceive('count')->andReturn(1);
+        $singleCursor->shouldReceive('toArray')->andReturn([0]);
         return $singleCursor;
     }
 }
