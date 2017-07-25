@@ -75,6 +75,7 @@ class Lpa120 extends AbstractForm
         $lpaPayment = $lpa->payment;
 
         $applicantType = 'other';
+        $applicantTypeOther = null;
         $applicantPhoneNumber = null;
 
         //  The correspondent takes precedence over who is registering if specified
@@ -85,6 +86,8 @@ class Lpa120 extends AbstractForm
                 $applicantType = 'donor';
             } else if ($applicant->who == Correspondence::WHO_ATTORNEY) {
                 $applicantType = 'attorney';
+            } else if ($applicant->who == Correspondence::WHO_CERTIFICATE_PROVIDER) {
+                $applicantTypeOther = 'Cert provider';
             }
 
             if ($applicant->phone instanceof PhoneNumber) {
@@ -134,6 +137,7 @@ class Lpa120 extends AbstractForm
             'is-repeat-application'      => (is_null($lpa->repeatCaseNumber) ? null : self::CHECK_BOX_ON),
             'case-number'                => $lpa->repeatCaseNumber,
             'applicant-type'             => $applicantType,
+            'applicant-type-other'       => $applicantTypeOther,
             'applicant-name-title'       => $applicantTitle,
             'applicant-name-title-other' => $applicantTitleOther,
             'applicant-name-first'       => $applicantFirstName,
