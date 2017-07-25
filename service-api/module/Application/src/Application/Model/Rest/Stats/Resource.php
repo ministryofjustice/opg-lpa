@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model\Rest\Stats;
 
+use MongoDB\Driver\ReadPreference;
 use MongoId, MongoDate, MongoCode;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
@@ -53,10 +54,6 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('lpa');
 
-        // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
-
-
         //-----------------------------
         // Broken down by month
 
@@ -80,19 +77,22 @@ class Resource extends AbstractResource {
             $month = array();
 
             // Started if we have a startedAt, but no createdAt...
-            $month['started'] = $collection->find([
+            $month['started'] = $collection->count([
                 'startedAt' => [ '$gte' => $from, '$lte' => $to ],
-            ])->count();
+                ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
+            ]);
 
             // Created if we have a createdAt, but no completedAt...
-            $month['created'] = $collection->find([
+            $month['created'] = $collection->count([
                 'createdAt' => [ '$gte' => $from, '$lte' => $to ],
-            ])->count();
+                ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
+            ]);
 
             // Count all the LPAs that have a completedAt...
-            $month['completed'] = $collection->find([
+            $month['completed'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ],
-            ])->count();
+                ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
+            ]);
 
             //---
 
@@ -116,53 +116,55 @@ class Resource extends AbstractResource {
         $pf = array();
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] = $pf['started'] = $collection->find([
+        $summary['started'] = $pf['started'] = $collection->count([
             'startedAt' => [ '$ne' => null ],
             'createdAt' => null,
             'document.type' => Document::LPA_TYPE_PF
-        ])->count();
+        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] = $pf['created'] = $collection->find([
+        $summary['created'] = $pf['created'] = $collection->count([
             'createdAt' => [ '$ne' => null ],
             'completedAt' => null,
             'document.type' => Document::LPA_TYPE_PF
-        ])->count();
+        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] = $pf['completed'] = $collection->find([
+        $summary['completed'] = $pf['completed'] = $collection->count([
             'completedAt' => [ '$ne' => null ],
             'document.type' => Document::LPA_TYPE_PF
-        ])->count();
+        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         //---
 
         $hw = array();
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] += $hw['started'] = $collection->find([
+        $summary['started'] += $hw['started'] = $collection->count([
             'startedAt' => [ '$ne' => null ],
             'createdAt' => null,
             'document.type' => Document::LPA_TYPE_HW
-        ])->count();
+        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] += $hw['created'] = $collection->find([
+        $summary['created'] += $hw['created'] = $collection->count([
             'createdAt' => [ '$ne' => null ],
             'completedAt' => null,
             'document.type' => Document::LPA_TYPE_HW
-        ])->count();
+        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] += $hw['completed'] = $collection->find([
+        $summary['completed'] += $hw['completed'] = $collection->count([
             'completedAt' => [ '$ne' => null ],
             'document.type' => Document::LPA_TYPE_HW
-        ])->count();
+        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         //--------------------
 
         // Deleted LPAs have no 'document'...
-        $summary['deleted'] = $collection->find( [ 'document' => [ '$exists' => false ] ] )->count();
+        $summary['deleted'] = $collection->count(
+            [ 'document' => [ '$exists' => false ]],
+            ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         //---
 
@@ -228,10 +230,6 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('stats-who');
 
-        // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
-
-
         //---------------------------------------
         // Convert the timestamps to MongoIds
 
@@ -256,7 +254,10 @@ class Resource extends AbstractResource {
 
             // Get the count for all top level...
             $result[$topLevel] = array(
-                'count' => $collection->find( [ 'who'=>$topLevel, '_id' => $range ] )->count(),
+                'count' => $collection->count(
+                    [ 'who'=>$topLevel, '_id' => $range ],
+                    ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
+                ),
             );
 
             //---
@@ -269,11 +270,11 @@ class Resource extends AbstractResource {
 
                 if( empty($subquestion) ){ continue; }
 
-                $result[$topLevel]['subquestions'][$subquestion] = $collection->find( [
+                $result[$topLevel]['subquestions'][$subquestion] = $collection->count( [
                     'who' => $topLevel,
                     'subquestion' => $subquestion,
                     '_id' => $range
-                ] )->count();
+                ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
             } // foreach
 
@@ -302,11 +303,9 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('stats-lpas');
 
-        // Stats can (ideally) be pulled from a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
-
         // Return all the cached data.
-        $cachedStats = $collection->find();
+        // Stats can (ideally) be pulled from a secondary.
+        $cachedStats = $collection->find([], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
 
         //---
 

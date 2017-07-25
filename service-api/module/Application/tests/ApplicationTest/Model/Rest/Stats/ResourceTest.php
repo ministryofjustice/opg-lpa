@@ -36,12 +36,7 @@ class ResourceTest extends AbstractResourceTest
     public function testFetchTypeLpa()
     {
         $lpaCollection = Mockery::mock(MongoCollection::class);
-        $lpaCollection->shouldReceive('setReadPreference');
-
-        $singleCursor = Mockery::mock(MongoCursor::class);
-        $singleCursor->shouldReceive('count')->andReturn(1);
-
-        $lpaCollection->shouldReceive('find')->andReturn($singleCursor);
+        $lpaCollection->shouldReceive('count')->andReturn(1);
 
         $start = new \DateTime('first day of this month');
         $start->setTime(0, 0, 0);
@@ -94,12 +89,7 @@ class ResourceTest extends AbstractResourceTest
     public function testFetchWhoAreYou()
     {
         $statsWhoCollection = Mockery::mock(MongoCollection::class);
-        $statsWhoCollection->shouldReceive('setReadPreference');
-
-        $singleCursor = Mockery::mock(MongoCursor::class);
-        $singleCursor->shouldReceive('count')->andReturn(1);
-
-        $statsWhoCollection->shouldReceive('find')->andReturn($singleCursor);
+        $statsWhoCollection->shouldReceive('count')->andReturn(1);
 
         $start = new \DateTime('first day of this month');
         $start->setTime(0, 0, 0);
