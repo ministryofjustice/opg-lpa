@@ -5,10 +5,6 @@ RUN groupadd supervisor
 RUN apt-get update && apt-get install -y \
     php5-cli php5-dev pdftk php5-mcrypt php5-curl
 
-RUN pecl install mongo && \
-    echo "extension=mongo.so" > /etc/php5/mods-available/mongo.ini && \
-    php5enmod mongo
-
 RUN php5enmod mcrypt
 
 RUN pecl install proctitle-0.1.2 && \
