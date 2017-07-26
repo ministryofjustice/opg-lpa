@@ -95,7 +95,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         //  Set the instructions and preferences to null so that the can generate test fails
         $lpa = $this->getLpa();
-        $lpa->payment->reducedFeeReceivesBenefits = false;
+        $lpa->payment = null;
 
         $generator = new Generator(Generator::TYPE_FORM_LPA120, $lpa, $this->getResponse());
 
