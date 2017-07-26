@@ -224,6 +224,7 @@ abstract class AbstractForm
      * Draw cross lines
      * @param string $filePath
      * @param array $params[pageNo=>crossLineParamName]
+     * @codeCoverageIgnore
      */
     protected function drawCrossLines($filePath, $params)
     {
