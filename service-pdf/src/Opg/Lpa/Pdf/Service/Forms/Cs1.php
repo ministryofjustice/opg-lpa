@@ -98,9 +98,6 @@ class Cs1 extends AbstractForm
                 $formData['cs1-'.$pIdx.'-name-first'] = $actor['person']->name->first;
                 $formData['cs1-'.$pIdx.'-name-last']  = $actor['person']->name->last;
             }
-            else {
-                $formData['cs1-'.$pIdx.'-name-last'] = $actor['person']->name;
-            }
 
             $formData['cs1-'.$pIdx.'-address-address1'] = $actor['person']->address->address1;
             $formData['cs1-'.$pIdx.'-address-address2'] = $actor['person']->address->address2;
