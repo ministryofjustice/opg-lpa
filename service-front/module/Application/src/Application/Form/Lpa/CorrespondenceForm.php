@@ -7,6 +7,28 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 class CorrespondenceForm extends AbstractMainFlowForm
 {
     protected $formElements = [
+        'contactInWelsh' => [
+            'type' => 'Radio',
+            'required' => true,
+            'options' => [
+                'value_options' => [
+                    'english' => [
+                        'value' => '0',
+                        'label' => 'English',
+                        'label_attributes' => [
+                            'class' => 'block-label',
+                        ],
+                    ],
+                    'welsh' => [
+                        'value' => '1',
+                        'label' => 'Cymraeg',
+                        'label_attributes' => [
+                            'class' => 'block-label',
+                        ],
+                    ],
+                ],
+            ],
+        ],
         'correspondence' => [
             'type' => 'Application\Form\Lpa\CorrespondenceFieldset',
             'options' => [
@@ -40,7 +62,7 @@ class CorrespondenceForm extends AbstractMainFlowForm
 
         $correspondent = new Correspondence([
             'contactByPost' => (bool)$correspondenceData['contactByPost'],
-            'contactByInWelsh' => (bool)$correspondenceData['contactInWelsh'],
+            'contactByInWelsh' => (bool)$this->data['contactInWelsh'],
         ]);
 
         if ($correspondenceData['contactByPhone'] == '1') {
