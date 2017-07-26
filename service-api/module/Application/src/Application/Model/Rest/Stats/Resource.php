@@ -55,6 +55,9 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('lpa');
 
+        // Stats can (ideally) be processed on a secondary.
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
+
         //-----------------------------
         // Broken down by month
 
@@ -72,28 +75,28 @@ class Resource extends AbstractResource {
         for( $i = 1; $i <=4; $i++ ){
 
             // Convert to MongoDate...
-            $from = new MongoDate( $start->getTimestamp() );
-            $to =   new MongoDate( $end->getTimestamp() );
+            $from = new MongoDate( $start );
+            $to =   new MongoDate( $end );
 
             $month = array();
 
             // Started if we have a startedAt, but no createdAt...
-            $month['started'] = $collection->count([
-                'startedAt' => [ '$gte' => $from, '$lte' => $to ],
-                ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
-            ]);
+            $month['started'] = $collection->count(
+                ['startedAt' => [ '$gte' => $from, '$lte' => $to ]],
+                $readPreference
+            );
 
             // Created if we have a createdAt, but no completedAt...
-            $month['created'] = $collection->count([
-                'createdAt' => [ '$gte' => $from, '$lte' => $to ],
-                ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
-            ]);
+            $month['created'] = $collection->count(
+                ['createdAt' => [ '$gte' => $from, '$lte' => $to ]],
+                $readPreference
+            );
 
             // Count all the LPAs that have a completedAt...
-            $month['completed'] = $collection->count([
-                'completedAt' => [ '$gte' => $from, '$lte' => $to ],
-                ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
-            ]);
+            $month['completed'] = $collection->count(
+                ['completedAt' => [ '$gte' => $from, '$lte' => $to ]],
+                $readPreference
+            );
 
             //---
 
@@ -121,20 +124,20 @@ class Resource extends AbstractResource {
             'startedAt' => [ '$ne' => null ],
             'createdAt' => null,
             'document.type' => Document::LPA_TYPE_PF
-        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        ], $readPreference);
 
         // Created if we have a createdAt, but no completedAt...
         $summary['created'] = $pf['created'] = $collection->count([
             'createdAt' => [ '$ne' => null ],
             'completedAt' => null,
             'document.type' => Document::LPA_TYPE_PF
-        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        ], $readPreference);
 
         // Count all the LPAs that have a completedAt...
         $summary['completed'] = $pf['completed'] = $collection->count([
             'completedAt' => [ '$ne' => null ],
             'document.type' => Document::LPA_TYPE_PF
-        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        ], $readPreference);
 
         //---
 
@@ -145,27 +148,27 @@ class Resource extends AbstractResource {
             'startedAt' => [ '$ne' => null ],
             'createdAt' => null,
             'document.type' => Document::LPA_TYPE_HW
-        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        ], $readPreference);
 
         // Created if we have a createdAt, but no completedAt...
         $summary['created'] += $hw['created'] = $collection->count([
             'createdAt' => [ '$ne' => null ],
             'completedAt' => null,
             'document.type' => Document::LPA_TYPE_HW
-        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        ], $readPreference);
 
         // Count all the LPAs that have a completedAt...
         $summary['completed'] += $hw['completed'] = $collection->count([
             'completedAt' => [ '$ne' => null ],
             'document.type' => Document::LPA_TYPE_HW
-        ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        ], $readPreference);
 
         //--------------------
 
         // Deleted LPAs have no 'document'...
         $summary['deleted'] = $collection->count(
             [ 'document' => [ '$exists' => false ]],
-            ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+            $readPreference);
 
         //---
 
@@ -231,6 +234,9 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('stats-who');
 
+        // Stats can (ideally) be processed on a secondary.
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
+
         //---------------------------------------
         // Convert the timestamps to MongoIds
 
@@ -257,7 +263,7 @@ class Resource extends AbstractResource {
             $result[$topLevel] = array(
                 'count' => $collection->count(
                     [ 'who'=>$topLevel, '_id' => $range ],
-                    ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]
+                    $readPreference
                 ),
             );
 
@@ -275,7 +281,7 @@ class Resource extends AbstractResource {
                     'who' => $topLevel,
                     'subquestion' => $subquestion,
                     '_id' => $range
-                ], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+                ], $readPreference);
 
             } // foreach
 
@@ -288,7 +294,7 @@ class Resource extends AbstractResource {
     } // function
 
     //-------------------------------------------------------------------------
-    
+
     /**
      * Returns a list of lpa counts and user counts, in order to
      * answer questions of the form how many users have five LPAs?
@@ -296,7 +302,7 @@ class Resource extends AbstractResource {
      * This data comes from a pre-generated cache.
      *
      * @return array
-     * 
+     *
      * The key of the return array is the number of LPAs
      * The value is the number of users with this many LPAs
      */
@@ -304,9 +310,11 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('stats-lpas');
 
-        // Return all the cached data.
+        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
+
         // Stats can (ideally) be pulled from a secondary.
-        $cachedStats = $collection->find([], ['readPreference' => ReadPreference::RP_SECONDARY_PREFERRED]);
+        $cachedStats = $collection->find([], $readPreference);
 
         //---
 

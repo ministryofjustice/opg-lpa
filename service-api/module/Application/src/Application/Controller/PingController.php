@@ -1,8 +1,10 @@
 <?php
 namespace Application\Controller;
 
+use MongoDB\Database;
+use MongoDB\Driver\Command;
+use MongoDB\Driver\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use GuzzleHttp\Client as GuzzleClient;
 
@@ -129,18 +131,22 @@ class PingController extends AbstractActionController {
      */
     private function canConnectToMongo(){
 
-        $connection = $this->getServiceLocator()->get('Mongo-Default');
+        /** @var Manager $manager */
+        $manager = $this->getServiceLocator()->get('Mongo-Default');
+        /** @var Database $database */
+        $database = $this->getServiceLocator()->get('MongoDB-Default');
 
-        $connection->connect();
+        $pingCommand = new Command([ping => 1]);
+        $manager->executeCommand($database->getDatabaseName(), $pingCommand);
 
         //---
 
         $primaryFound = false;
 
-        foreach( $connection->getConnections() as $server ){
+        foreach( $manager->getServers() as $server ){
 
             // If the connection is to primary, all is okay.
-            if( $server['connection']['connection_type_desc'] == 'PRIMARY' ){
+            if( $server->isPrimary() ){
                 $primaryFound = true;
                 break;
             }

@@ -54,7 +54,11 @@ class Stats implements ServiceLocatorAwareInterface {
         ]);
 
         // Stats can (ideally) be processed on a secondary.
-        $results = $manager->executeCommand($collection->getDatabaseName(), $command, ReadPreference::RP_SECONDARY_PREFERRED)->toArray()['results'];
+        $results = $manager->executeCommand(
+            $collection->getDatabaseName(),
+            $command,
+            new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
+        )->toArray()['results'];
 
         //------------------------------------
 
