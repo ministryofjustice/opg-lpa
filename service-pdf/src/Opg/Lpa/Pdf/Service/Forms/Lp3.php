@@ -11,8 +11,6 @@ use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lp3 extends AbstractForm
 {
-    private $Lp3Template;
-
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
 
     public function __construct(Lpa $lpa)
@@ -22,7 +20,7 @@ class Lp3 extends AbstractForm
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
 
-        $this->Lp3Template = $this->pdfTemplatePath."/LP3.pdf";
+        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP3.pdf');
     }
 
     /**
@@ -66,16 +64,14 @@ class Lp3 extends AbstractForm
      */
     protected function generateNotificationPdf(NotifiedPerson $personToNotify)
     {
-        $pdf = PdftkInstance::getInstance($this->Lp3Template);
-
         $filePath = $this->registerTempFile('LP3');
 
         // populate forms
         $mappings = $this->dataMapping($personToNotify);
 
-        $pdf->fillForm($mappings)
-            ->flatten()
-            ->saveAs($filePath);
+        $this->pdf->fillForm($mappings)
+             ->flatten()
+             ->saveAs($filePath);
 
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if ($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
