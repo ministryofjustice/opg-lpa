@@ -191,25 +191,6 @@ abstract class AbstractForm
     }
 
     /**
-     * Count no of generated intermediate files
-     * @return number
-     */
-    protected function countIntermediateFiles()
-    {
-        $count = 0;
-        foreach($this->interFileStack as $type=>$paths) {
-            if(is_array($paths)) {
-                $count += count($paths);
-            }
-            else {
-                $count++;
-            }
-        }
-
-        return $count;
-    } // function countIntermediateFiles()
-
-    /**
      *
      * @param string $fileType
      * @return string
