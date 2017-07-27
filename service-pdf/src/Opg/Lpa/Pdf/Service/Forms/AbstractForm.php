@@ -9,6 +9,7 @@ use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Service\PdftkInstance;
 use ZendPdf\PdfDocument as ZendPdfDocument;
+use mikehaertl\pdftk\Pdf;
 
 abstract class AbstractForm
 {
@@ -40,6 +41,12 @@ abstract class AbstractForm
      * @var LPA model object
      */
     protected $lpa;
+
+    /**
+     *
+     * @var Pdf
+     */
+    protected $pdf;
 
     /**
      * Data to be populated into PDF form elements.
