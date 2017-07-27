@@ -5077,14 +5077,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var sectionToScrollTo = $('.js-current');
 
       if (sectionToScrollTo.offset() !== undefined ) {
-        //  If this section is the applicant section then actually scroll to the section above to reveal the review link
-        if (sectionToScrollTo.attr('id') == 'applicant-section') {
-          sectionToScrollTo = sectionToScrollTo.prev();
-        }
-
         setTimeout(function() {
           window.scrollTo(0, sectionToScrollTo.offset().top - 20);
-        }, 200);
+        }, 1);
       }
     }
   };
