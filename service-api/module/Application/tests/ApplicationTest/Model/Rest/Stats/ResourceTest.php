@@ -207,4 +207,26 @@ class ResourceTest extends AbstractResourceTest
 
         $resourceBuilder->verify();
     }
+
+    public function testFetchWelshLanguage()
+    {
+        $lpaCollection = Mockery::mock(MongoCollection::class);
+        $lpaCollection->shouldReceive('setReadPreference');
+        $lpaCollection->shouldReceive('count')->andReturn(1);
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withLpaCollection($lpaCollection)->build();
+
+        $entity = $resource->fetch('welshlanguage');
+
+        $expectedStats = [
+            'completed' => 1,
+            'correspondent' => 1,
+            'contactInEnglish' => 1,
+            'contactInWelsh' => 1
+        ];
+
+        $this->assertEquals(new Entity($expectedStats), $entity);
+
+        $resourceBuilder->verify();
+    }
 }

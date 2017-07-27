@@ -31,6 +31,9 @@ class Resource extends AbstractResource {
             case 'lpasperuser':
                 return new Entity( $this->getLpasPerUser() );
 
+            case 'welshlanguage':
+                return new Entity( $this->getWelshLanguageStats() );
+
             default:
                 return new ApiProblem( 404, 'Stats type not found.' );
 
@@ -320,5 +323,22 @@ class Resource extends AbstractResource {
         ];
 
     } // function getLpasPerUser()
+
+    private function getWelshLanguageStats()
+    {
+        $collection = $this->getCollection('lpa');
+
+        // Stats can (ideally) be processed on a secondary.
+        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
+
+        $welshLanguageStats = [
+            'completed' => $collection->count(['completedAt' => ['$ne' => null]]),
+            'correspondent' => $collection->count(['completedAt' => ['$ne' => null], 'document.correspondent' => ['$ne' => null]]),
+            'contactInEnglish' => $collection->count(['completedAt' => ['$ne' => null], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => false]),
+            'contactInWelsh' => $collection->count(['completedAt' => ['$ne' => null], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => true])
+        ];
+
+        return $welshLanguageStats;
+    }
         
 } // class
