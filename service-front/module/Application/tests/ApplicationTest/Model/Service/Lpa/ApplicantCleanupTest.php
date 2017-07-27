@@ -13,10 +13,10 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = FixturesData::getPfLpa();
         $lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $lpaApplicationService->shouldNotReceive('deleteWhoIsRegistering');
+        $lpaApplicationService->shouldNotReceive('setWhoIsRegistering');
 
         $cleanup = new TestableApplicantCleanup();
-        $cleanup->invalidOverride = false;
+        $cleanup->updatedApplicantOverride = $lpa->document->whoIsRegistering;
 
         $cleanup->cleanUp($lpa, $lpaApplicationService);
 
@@ -28,10 +28,10 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
     {
         $lpa = FixturesData::getPfLpa();
         $lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $lpaApplicationService->shouldReceive('deleteWhoIsRegistering')->once();
+        $lpaApplicationService->shouldReceive('setWhoIsRegistering')->once();
 
         $cleanup = new TestableApplicantCleanup();
-        $cleanup->invalidOverride = true;
+        $cleanup->updatedApplicantOverride = [1];
 
         $cleanup->cleanUp($lpa, $lpaApplicationService);
 
@@ -47,9 +47,9 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertFalse($result);
+        $this->assertEquals($lpa->document->whoIsRegistering, $result);
     }
 
     public function testWhenApplicantValidNullApplicant()
@@ -60,9 +60,9 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertFalse($result);
+        $this->assertEquals($lpa->document->whoIsRegistering, $result);
     }
 
     public function testWhenApplicantValidSinglePrimaryAttorney()
@@ -75,9 +75,9 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertFalse($result);
+        $this->assertEquals($lpa->document->whoIsRegistering, $result);
     }
 
     public function testWhenApplicantValidMultiplePrimaryAttorneys()
@@ -96,12 +96,12 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertFalse($result);
+        $this->assertEquals($lpa->document->whoIsRegistering, $result);
     }
 
-    public function testWhenApplicantInvalidSinglePrimaryAttorneyMultipleApplicant()
+    public function testGetUpdatedApplicantSinglePrimaryAttorneyMultipleApplicant()
     {
         $lpa = FixturesData::getHwLpa();
         //Set a single primary attorney
@@ -111,12 +111,13 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertTrue($result);
+        $this->assertNotEquals($lpa->document->whoIsRegistering, $result);
+        $this->assertEquals([1], $result);
     }
 
-    public function testWhenApplicantInvalidSinglePrimaryAttorneyIdMismatch()
+    public function testGetUpdatedApplicantSinglePrimaryAttorneyIdMismatch()
     {
         $lpa = FixturesData::getHwLpa();
         //Set a single primary attorney
@@ -126,12 +127,13 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertTrue($result);
+        $this->assertNotEquals($lpa->document->whoIsRegistering, $result);
+        $this->assertEquals([], $result);
     }
 
-    public function testWhenApplicantInvalid()
+    public function testGetUpdatedApplicant()
     {
         $lpa = FixturesData::getPfLpa();
         //Verify there is more than one primary attorney
@@ -144,12 +146,13 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertTrue($result);
+        $this->assertNotEquals($lpa->document->whoIsRegistering, $result);
+        $this->assertEquals([1, 2, 3], $result);
     }
 
-    public function testWhenApplicantInvalidMultiplePrimaryAttorneyIdMismatch()
+    public function testGetUpdatedApplicantMultiplePrimaryAttorneyIdMismatch()
     {
         $lpa = FixturesData::getPfLpa();
         //Verify there is more than one primary attorney
@@ -168,8 +171,9 @@ class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
 
         $cleanup = new TestableApplicantCleanup();
 
-        $result = $cleanup->testWhenApplicantInvalid($lpa);
+        $result = $cleanup->testGetUpdatedApplicant($lpa);
 
-        $this->assertTrue($result);
+        $this->assertNotEquals($lpa->document->whoIsRegistering, $result);
+        $this->assertEquals([1, 2, 3], $result);
     }
 }

@@ -7,19 +7,20 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class TestableApplicantCleanup extends ApplicantCleanup
 {
+    public $updatedApplicantOverride = null;
     public $invalidOverride = null;
 
     /**
      * @param Lpa $lpa
-     * @return bool
+     * @return array|string
      */
-    public function testWhenApplicantInvalid(Lpa $lpa)
+    public function testGetUpdatedApplicant(Lpa $lpa)
     {
-        return parent::whenApplicantInvalid($lpa);
+        return parent::getUpdatedApplicant($lpa);
     }
 
-    protected function whenApplicantInvalid(Lpa $lpa)
+    protected function getUpdatedApplicant(Lpa $lpa)
     {
-        return $this->invalidOverride ?: parent::whenApplicantInvalid($lpa);
+        return $this->updatedApplicantOverride ?: parent::getUpdatedApplicant($lpa);
     }
 }

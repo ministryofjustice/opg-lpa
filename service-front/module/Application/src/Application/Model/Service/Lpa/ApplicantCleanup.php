@@ -15,52 +15,47 @@ class ApplicantCleanup
      */
     public function cleanUp(Lpa $lpa, $client)
     {
-        if ($this->whenApplicantInvalid($lpa)) {
-            $client->deleteWhoIsRegistering($lpa->id);
+        $updatedApplicant = $this->getUpdatedApplicant($lpa);
+        if ($updatedApplicant !== $lpa->document->whoIsRegistering) {
+            $client->setWhoIsRegistering($lpa->id, $updatedApplicant);
         }
     }
 
     /**
      * @param Lpa $lpa
-     * @return bool
+     * @return array|string
      */
-    protected function whenApplicantInvalid(Lpa $lpa)
+    protected function getUpdatedApplicant(Lpa $lpa)
     {
+        $updatedApplicant = $lpa->document->whoIsRegistering;
+
         //Applicant is only suspicious when it's an array as that means it's one or more of the primary attorneys
         if ($lpa->document !== null && is_array($lpa->document->whoIsRegistering)) {
             $primaryAttorneys = $lpa->document->primaryAttorneys;
             $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
             $whoIsRegistering = $lpa->document->whoIsRegistering;
 
-            $noPrimaryAttorneys = count($primaryAttorneys);
-            $noApplicants = count($whoIsRegistering);
-
-            //More applicants than attorneys is always invalid
-            if ($noApplicants > $noPrimaryAttorneys) {
-                return true;
-            }
-
             //If primary attorneys make decisions jointly, all must be applicants
-            if ($primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY && $noApplicants !== $noPrimaryAttorneys) {
-                return true;
+            if ($primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY) {
+                $updatedApplicant = [];
+                foreach ($primaryAttorneys as $primaryAttorney) {
+                    $updatedApplicant[] = $primaryAttorney->id;
+                }
+                return $updatedApplicant;
             }
 
             //Verify all applicant ids are valid
+            $updatedApplicant = [];
             foreach ($whoIsRegistering as $id) {
-                $applicantIdValid = false;
                 foreach ($primaryAttorneys as $primaryAttorney) {
                     if ($id == $primaryAttorney->id) {
-                        $applicantIdValid = true;
+                        $updatedApplicant[] = $primaryAttorney->id;
                         break;
                     }
-                }
-
-                if (!$applicantIdValid) {
-                    return true;
                 }
             }
         }
 
-        return false;
+        return $updatedApplicant;
     }
 }
