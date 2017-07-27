@@ -84,8 +84,8 @@ class CorrespondentController extends AbstractLpaActorController
                     ];
                 }
 
-                //  Populate the phone details - unless contact in Welsh has been selected
-                if ($correspondenceFormData['contactByPhone'] && !$correspondent->contactInWelsh) {
+                //  Populate the phone details
+                if ($correspondenceFormData['contactByPhone']) {
                     $correspondent->phone = [
                         'number' => $correspondenceFormData['phone-number']
                     ];
