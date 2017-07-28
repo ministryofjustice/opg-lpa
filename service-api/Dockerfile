@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get install -y pkg-config
 
-RUN pecl install mongodb && \
+RUN pecl install mongodb-1.2.9 && \
     echo "extension=mongodb.so" > /etc/php5/mods-available/mongodb.ini && \
     php5enmod mongodb
 
