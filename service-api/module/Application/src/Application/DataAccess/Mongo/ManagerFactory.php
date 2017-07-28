@@ -15,11 +15,16 @@ class ManagerFactory implements IManagerFactory
      * @var array
      */
     private $options;
+    /**
+     * @var array
+     */
+    private $driverOptions;
 
-    public function __construct($uri, $options = [])
+    public function __construct($uri, $options = [], $driverOptions = [])
     {
         $this->uri = $uri;
         $this->options = $options;
+        $this->driverOptions = $driverOptions;
     }
 
     /**
@@ -30,7 +35,7 @@ class ManagerFactory implements IManagerFactory
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $manager = new Manager($this->uri, $this->options);
+        $manager = new Manager($this->uri, $this->options, $this->driverOptions);
         return $manager;
     }
 }

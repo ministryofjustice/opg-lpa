@@ -177,7 +177,7 @@ class Module {
                     // Split the array out into comma separated values.
                     $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
 
-                    $factory = new ManagerFactory($uri, $config['options']);
+                    $factory = new ManagerFactory($uri, $config['options'], $config['driverOptions']);
 
                     return $factory->createService($services);
                 },

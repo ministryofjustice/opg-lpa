@@ -48,9 +48,12 @@ return array(
                     'connect' => false,
                     'connectTimeoutMS' => 1000,
                     'w' => 'majority',
-                    //'ssl' => true,
+                    'ssl' => true,
                     'password' => getenv('OPG_LPA_API_MONGODB_PASSWORD') ?: null,
                 ],
+                'driverOptions' => [
+                    'weak_cert_validation' => true //Allows usage of self signed certificates
+                ]
 
             ],
 
