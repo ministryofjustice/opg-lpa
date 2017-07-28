@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\System;
 
+use Application\DataAccess\Mongo\ICollectionFactory;
 use Application\Model\Service\System\Stats;
 use Mockery;
 use MongoCollection;
@@ -26,8 +27,8 @@ class StatsTest extends \PHPUnit_Framework_TestCase
         $statsLpasCollection->shouldReceive('batchInsert')->andReturn(['ok' => true])->once();
 
         $serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($lpaCollection);
-        $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-lpas')->andReturn($statsLpasCollection);
+        $serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-lpa')->andReturn($lpaCollection);
+        $serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-stats-lpas')->andReturn($statsLpasCollection);
 
         $stats = new Stats();
         $stats->setServiceLocator($serviceLocatorMock);

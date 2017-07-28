@@ -46,7 +46,7 @@ class ResourceTest extends AbstractResourceTest
 
         $expectedByMonth = array();
         for ($i = 1; $i <=4; $i++) {
-            $expectedByMonth[date('Y-m', $start)] = [
+            $expectedByMonth[date('Y-m', $start->getTimestamp())] = [
                 'started' => 1,
                 'created' => 1,
                 'completed' => 1
@@ -99,7 +99,7 @@ class ResourceTest extends AbstractResourceTest
 
         $expectedByMonth = array();
         for ($i = 1; $i <=4; $i++) {
-            $expectedByMonth[date('Y-m', $start)] = [
+            $expectedByMonth[date('Y-m', $start->getTimestamp())] = [
                 'professional' => [
                     'count' => 1,
                     'subquestions' => [

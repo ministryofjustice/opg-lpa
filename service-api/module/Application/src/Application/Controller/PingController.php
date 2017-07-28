@@ -1,6 +1,8 @@
 <?php
 namespace Application\Controller;
 
+use Application\DataAccess\Mongo\IDatabaseFactory;
+use Application\DataAccess\Mongo\IManagerFactory;
 use MongoDB\Database;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
@@ -132,11 +134,11 @@ class PingController extends AbstractActionController {
     private function canConnectToMongo(){
 
         /** @var Manager $manager */
-        $manager = $this->getServiceLocator()->get('Mongo-Default');
+        $manager = $this->getServiceLocator()->get(IManagerFactory::class);
         /** @var Database $database */
-        $database = $this->getServiceLocator()->get('MongoDB-Default');
+        $database = $this->getServiceLocator()->get(IDatabaseFactory::class);
 
-        $pingCommand = new Command([ping => 1]);
+        $pingCommand = new Command(['ping' => 1]);
         $manager->executeCommand($database->getDatabaseName(), $pingCommand);
 
         //---

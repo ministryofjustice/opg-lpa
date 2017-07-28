@@ -1,6 +1,12 @@
 <?php
 namespace Application;
 
+use Application\DataAccess\Mongo\CollectionFactory;
+use Application\DataAccess\Mongo\DatabaseFactory;
+use Application\DataAccess\Mongo\ICollectionFactory;
+use Application\DataAccess\Mongo\IDatabaseFactory;
+use Application\DataAccess\Mongo\IManagerFactory;
+use Application\DataAccess\Mongo\ManagerFactory;
 use RuntimeException;
 
 use Zend\Mvc\ModuleRouteListener;
@@ -165,30 +171,31 @@ class Module {
                 //---------------------
 
                 // Create an instance of the MongoClient...
-                'Mongo-Default' => function ($services) {
+                IManagerFactory::class => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default'];
-                    $factory = new MongoConnectionFactory(
-                        'mongodb://'.implode(',', $config['hosts']) . '/' . $config['options']['db'], // Split the array out into comma separated values.
-                        $config['options']
-                    );
+
+                    // Split the array out into comma separated values.
+                    $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
+
+                    $factory = new ManagerFactory($uri, $config['options']);
 
                     return $factory->createService($services);
                 },
 
                 // Connect the above MongoClient to a DB...
-                'MongoDB-Default' => function ($services) {
+                IDatabaseFactory::class => function ($services) {
                     $config = $services->get('config')['db']['mongo']['default']['options'];
 
-                    $factory = new MongoDbFactory( $config['db'], 'Mongo-Default' );
+                    $factory = new DatabaseFactory($config['db']);
 
                     return $factory->createService($services);
                 },
 
                 // Access collections within the above DB...
-                'MongoDB-Default-lpa' => new MongoCollectionFactory('lpa', 'MongoDB-Default'),
-                'MongoDB-Default-user' => new MongoCollectionFactory('user', 'MongoDB-Default'),
-                'MongoDB-Default-stats-who' => new MongoCollectionFactory('whoAreYou', 'MongoDB-Default'),
-                'MongoDB-Default-stats-lpas' => new MongoCollectionFactory('lpaStats', 'MongoDB-Default'),
+                ICollectionFactory::class . '-lpa' => new CollectionFactory('lpa'),
+                ICollectionFactory::class . '-user' => new CollectionFactory('user'),
+                ICollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
+                ICollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
                 
                 // Logger
                 'Logger' => function ( $sm ) {

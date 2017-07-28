@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model\Rest;
 
+use Application\DataAccess\Mongo\ICollectionFactory;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use MongoDB\Driver\Manager;
@@ -83,7 +84,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
      * @return Collection
      */
     public function getCollection( $collection ){
-        return $this->getServiceLocator()->get( "MongoDB-Default-{$collection}" );
+        return $this->getServiceLocator()->get( ICollectionFactory::class . "-{$collection}" );
     }
 
     //--------------------------

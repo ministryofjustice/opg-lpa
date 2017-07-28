@@ -2,6 +2,7 @@
 
 namespace ApplicationTest;
 
+use Application\DataAccess\Mongo\ICollectionFactory;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
@@ -144,8 +145,8 @@ abstract class AbstractResourceBuilder
 
         $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-who')->andReturn($this->statsWhoCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
         $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
         $this->serviceLocatorMock->shouldReceive('get')->with('resource-applications')->andReturn($this->applicationsResource);
 

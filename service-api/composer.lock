@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "16a49cf2febad332d803d1b61b3296fe",
+    "content-hash": "52300f1f903ad73434b8f60d61e688f0",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -944,79 +944,6 @@
                 "zf2"
             ],
             "time": "2016-04-12T13:21:43+00:00"
-        },
-        {
-            "name": "phly/phly-mongo",
-            "version": "2.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/iterative-it/PhlyMongo.git",
-                "reference": "e09ddfdcb0aa21781ea06c9fe665d733ab36c191"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/iterative-it/PhlyMongo/zipball/e09ddfdcb0aa21781ea06c9fe665d733ab36c191",
-                "reference": "e09ddfdcb0aa21781ea06c9fe665d733ab36c191",
-                "shasum": ""
-            },
-            "require": {
-                "mongodb/mongodb": "^1.1",
-                "php": ">=5.5",
-                "zendframework/zend-i18n": "~2.0",
-                "zendframework/zend-paginator": "~2.0",
-                "zendframework/zend-servicemanager": "~2.0",
-                "zendframework/zend-stdlib": "~2.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.7",
-                "squizlabs/php_codesniffer": "^2.3.1",
-                "zendframework/zend-form": "~2.0",
-                "zendframework/zend-log": "~2.0",
-                "zendframework/zend-modulemanager": "~2.0",
-                "zendframework/zend-mvc": "~2.0",
-                "zendframework/zend-serializer": "~2.0",
-                "zendframework/zend-view": "~2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev",
-                    "dev-develop": "1.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PhlyMongo\\": "src/"
-                },
-                "classmap": [
-                    "Module.php"
-                ]
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "PhlyMongoTest\\": "test/"
-                }
-            },
-            "authors": [
-                {
-                    "name": "Matthew Weier O'Phinney",
-                    "email": "matthew@weierophinney.net",
-                    "homepage": "http://mwop.net/"
-                }
-            ],
-            "description": "ZF2 Module providing services and paginators surrounding MongoDB",
-            "homepage": "https://github.com/weierophinney/PhlyMongo",
-            "keywords": [
-                "module",
-                "mongo",
-                "mongodb",
-                "zend",
-                "zf2"
-            ],
-            "support": {
-                "source": "https://github.com/iterative-it/PhlyMongo/tree/2.0.2"
-            },
-            "time": "2017-07-24T17:50:33+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

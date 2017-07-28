@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model\Service\System;
 
+use Application\DataAccess\Mongo\ICollectionFactory;
 use MongoDB\BSON\Javascript as MongoCode;
 
 use MongoDB\Collection;
@@ -23,7 +24,7 @@ class Stats implements ServiceLocatorAwareInterface {
     public function generate(){
 
         /** @var Collection $collection */
-        $collection = $this->getServiceLocator()->get('MongoDB-Default-lpa');
+        $collection = $this->getServiceLocator()->get(ICollectionFactory::class . '-lpa');
 
         //------------------------------------
 
@@ -101,7 +102,7 @@ class Stats implements ServiceLocatorAwareInterface {
         //---------------------------------------------------
         // Save the results
 
-        $collection = $this->getServiceLocator()->get('MongoDB-Default-stats-lpas');
+        $collection = $this->getServiceLocator()->get(ICollectionFactory::class . '-stats-lpas');
 
         // Empty the collection
         $collection->remove( [] );
