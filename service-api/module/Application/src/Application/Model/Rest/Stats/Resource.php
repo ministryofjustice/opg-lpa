@@ -331,12 +331,39 @@ class Resource extends AbstractResource {
         // Stats can (ideally) be processed on a secondary.
         $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
 
-        $welshLanguageStats = [
-            'completed' => $collection->count(['completedAt' => ['$ne' => null]]),
-            'correspondent' => $collection->count(['completedAt' => ['$ne' => null], 'document.correspondent' => ['$ne' => null]]),
-            'contactInEnglish' => $collection->count(['completedAt' => ['$ne' => null], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => false]),
-            'contactInWelsh' => $collection->count(['completedAt' => ['$ne' => null], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => true])
-        ];
+        $welshLanguageStats = array();
+
+        $start = new \DateTime('first day of this month');
+        $start->setTime(0, 0, 0);
+
+        $end = new \DateTime('last day of this month');
+        $end->setTime(23, 59, 59);
+
+        // Go back 4 months...
+        for( $i = 1; $i <=4; $i++ ){
+
+            $from = new MongoDate( $start->getTimestamp() );
+            $to =   new MongoDate( $end->getTimestamp() );
+
+            $month = array();
+
+            $month['completed'] = $collection->count([
+                'completedAt' => [ '$gte' => $from, '$lte' => $to ]
+            ]);
+
+            $month['contactInEnglish'] = $collection->count([
+                'completedAt' => [ '$gte' => $from, '$lte' => $to ], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => false
+            ]);
+
+            $month['contactInWelsh'] = $collection->count([
+                'completedAt' => [ '$gte' => $from, '$lte' => $to ], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => true
+            ]);
+
+            $welshLanguageStats[date('Y-m',$start->getTimestamp())] = $month;
+
+            $start->modify("first day of -1 month");
+            $end->modify("last day of -1 month");
+        }
 
         return $welshLanguageStats;
     }

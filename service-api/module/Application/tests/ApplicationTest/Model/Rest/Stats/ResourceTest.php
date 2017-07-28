@@ -218,12 +218,23 @@ class ResourceTest extends AbstractResourceTest
 
         $entity = $resource->fetch('welshlanguage');
 
-        $expectedStats = [
-            'completed' => 1,
-            'correspondent' => 1,
-            'contactInEnglish' => 1,
-            'contactInWelsh' => 1
-        ];
+        $start = new \DateTime('first day of this month');
+        $start->setTime(0, 0, 0);
+
+        $end = new \DateTime('last day of this month');
+        $end->setTime(23, 59, 59);
+
+        $expectedStats = array();
+        for ($i = 1; $i <=4; $i++) {
+            $expectedStats[date('Y-m', $start->getTimestamp())] = [
+                'completed' => 1,
+                'contactInEnglish' => 1,
+                'contactInWelsh' => 1
+            ];
+
+            $start->modify("first day of -1 month");
+            $end->modify("last day of -1 month");
+        }
 
         $this->assertEquals(new Entity($expectedStats), $entity);
 
