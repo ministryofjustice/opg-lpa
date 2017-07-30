@@ -13,8 +13,6 @@ use Opg\Lpa\Pdf\Service\PdftkInstance;
 
 class Lpa120 extends AbstractForm
 {
-    private $basePdfTemplate;
-
     public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
@@ -22,7 +20,7 @@ class Lpa120 extends AbstractForm
         //  Generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
 
-        $this->basePdfTemplate = $this->pdfTemplatePath . '/LPA120.pdf';
+        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath . '/LPA120.pdf');
     }
 
     /**
@@ -46,16 +44,14 @@ class Lpa120 extends AbstractForm
             throw new \RuntimeException("LPA120 is not available for this LPA.");
         }
 
-        $pdf = PdftkInstance::getInstance($this->basePdfTemplate);
-
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
 
         // populate forms
         $mappings = $this->dataMapping();
 
-        $pdf->fillForm($mappings)
-            ->flatten()
-            ->saveAs($this->generatedPdfFilePath);
+        $this->pdf->fillForm($mappings)
+                  ->flatten()
+                  ->saveAs($this->generatedPdfFilePath);
 
         $this->protectPdf();
 
