@@ -45,13 +45,20 @@ class Cs2Test extends AbstractFormTestClass
         Some long instructions here Some long instructions here Some long instructions here Some long instructions here
         Some long instructions here Some long instructions here Some long instructions here Some long instructions here
         Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
+        Some long instructions here Some long instructions here Some long instructions here Some long instructions here
         Some long instructions here Some long instructions here Some long instructions here Some long instructions here');
 
         $interFileStack = $cs2->generate();
 
         //  Assert the keys in the interFileStack
         $this->assertArrayHasKey('CS2', $interFileStack);
-        $this->assertCount(1, $interFileStack['CS2']);
+        $this->assertCount(2, $interFileStack['CS2']);
 
         $this->verifyFileNames($lpa, $interFileStack['CS2'], 'CS2');
     }

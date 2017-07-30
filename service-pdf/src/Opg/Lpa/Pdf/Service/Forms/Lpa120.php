@@ -103,7 +103,7 @@ class Lpa120 extends AbstractForm
                     break;
                 }
             } else {
-                throw new \Exception('When generating LAP120, applicant was found invalid');
+                throw new \Exception('When generating LPA120, applicant was found invalid');
             }
         }
 
