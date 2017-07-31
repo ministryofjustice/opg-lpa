@@ -50,6 +50,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                     }
 
                     $this->cleanUpReplacementAttorneyDecisions();
+                    $this->cleanUpApplicant();
                 }
 
                 return $this->moveToNextRoute();

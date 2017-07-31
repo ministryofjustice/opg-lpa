@@ -112,6 +112,17 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     }
 
     /**
+     * removes replacement attorney decisions that no longer apply to this LPA.
+     *
+     */
+    protected function cleanUpApplicant()
+    {
+        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
+        $applicantCleanupService = $this->getServiceLocator()->get('ApplicantCleanup');
+        $applicantCleanupService->cleanUp($lpa, $this->getLpaApplicationService());
+    }
+
+    /**
      * Return a flag indicating if this is a request from a popup (XmlHttpRequest)
      *
      * @return bool
