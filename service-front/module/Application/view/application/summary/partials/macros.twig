@@ -74,7 +74,7 @@
     {% endif %}
 
     {% if data.address is defined %}
-        <tr class="group-end">
+        <tr class="{{ (data.canSign is defined) ? 'group-element' : 'group-end' }}">
             <th class="table-summary-title" scope="row">Address</th>
             <td class="table-summary-content">
                 <div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
@@ -94,6 +94,14 @@
             </td>
             {{ not editLinkOutput ? _self.outputEditLink(editLink) : _self.outputEmptyAction() }}
             {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.canSign is defined %}
+        <tr class="group-end">
+            <th class="table-summary-title" scope="row">I can physically sign or make a mark on the LPA</th>
+            <td class="table-summary-content">{{ data.canSign ? 'Yes' : 'No' }}</td>
+            <td class="table-summary-action"></td>
         </tr>
     {% endif %}
 
