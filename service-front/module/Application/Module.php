@@ -162,6 +162,7 @@ class Module{
                 'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
                 'SiteStatus'                            => 'Application\Model\Service\System\Status',
                 'ReplacementAttorneyCleanup'            => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
+                'ApplicantCleanup'                      => 'Application\Model\Service\Lpa\ApplicantCleanup',
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',

@@ -89,6 +89,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 $this->resetApplicants();
 
                 $this->cleanUpReplacementAttorneyDecisions();
+                $this->cleanUpApplicant();
 
                 return $this->moveToNextRoute();
             }
@@ -283,6 +284,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             }
 
             $this->cleanUpReplacementAttorneyDecisions();
+            $this->cleanUpApplicant();
         } else {
             // if attorney idx does not exist in lpa, return 404.
             return $this->notFoundAction();
@@ -330,6 +332,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 $this->resetApplicants();
 
                 $this->cleanUpReplacementAttorneyDecisions();
+                $this->cleanUpApplicant();
 
                 return $this->moveToNextRoute();
             }
