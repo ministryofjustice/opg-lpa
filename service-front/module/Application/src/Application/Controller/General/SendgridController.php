@@ -22,10 +22,16 @@ class SendgridController extends AbstractBaseController
         $fromAddress = $this->request->getPost('from');
         $originalToAddress = $this->request->getPost('to');
 
+        //  Get the additional data from the sendgrid inbound parse post
+        $subject = $this->request->getPost('subject');
+        $spamScore = $this->request->getPost('spam_score');
+
         //  Form the basic logging data
         $loggingData = [
             'from-address' => $fromAddress,
             'to-address'   => $originalToAddress,
+            'subject'      => $subject,
+            'spam-score'   => $spamScore,
         ];
 
         //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
@@ -98,11 +104,17 @@ class SendgridController extends AbstractBaseController
         $messageService->setBody($mimeMessage);
 
         try {
-            $this->getServiceLocator()
-                 ->get('MailTransport')
-                 ->send($messageService);
+//            $this->getServiceLocator()
+//                 ->get('MailTransport')
+//                 ->send($messageService);
+//
+//            echo 'Email sent';
 
-            echo 'Email sent';
+            //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point
+            //  For now just log the data from the email
+            $this->log()->info('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData);
+
+            echo 'Email not sent - data gathering';
         } catch (Exception $e) {
             //  Add some info to the logging data
             $loggingData['token'] = $token;
