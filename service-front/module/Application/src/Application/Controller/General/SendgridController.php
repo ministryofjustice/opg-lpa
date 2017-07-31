@@ -22,12 +22,15 @@ class SendgridController extends AbstractBaseController
         $fromAddress = $this->request->getPost('from');
         $originalToAddress = $this->request->getPost('to');
 
+        //  Form the basic logging data
+        $loggingData = [
+            'from-address' => $fromAddress,
+            'to-address'   => $originalToAddress,
+        ];
+
         //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
         if (!is_string($fromAddress) || !is_string($originalToAddress) || strpos(strtolower($originalToAddress), $this->blackHoleAddress) !== false) {
-            $this->log()->err('Sender or recipient missing, or email sent to ' . $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', [
-                'from-address' => $fromAddress,
-                'to-address'   => $originalToAddress,
-            ]);
+            $this->log()->err('Sender or recipient missing, or email sent to ' . $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', $loggingData);
 
             return $this->getResponse();
         }
@@ -39,10 +42,7 @@ class SendgridController extends AbstractBaseController
         $blacklistEmailAddresses = $emailConfig['blacklist'];
 
         if (in_array($fromAddress, $blacklistEmailAddresses)) {
-            $this->log()->err('From email address is blacklisted - the unmonitored email will not be sent to this user', [
-                'from-address' => $fromAddress,
-                'to-address'   => $originalToAddress,
-            ]);
+            $this->log()->err('From email address is blacklisted - the unmonitored email will not be sent to this user', $loggingData);
 
             return $this->getResponse();
         }
@@ -50,11 +50,10 @@ class SendgridController extends AbstractBaseController
         $token = $this->params()->fromRoute('token');
 
         if (!$token || $token !== $emailConfig['sendgrid']['webhook']['token']) {
-            $this->log()->err('Missing or invalid bounce token used', [
-                'from-address' => $fromAddress,
-                'to-address'   => $originalToAddress,
-                'token'        => $token,
-            ]);
+            //  Add some info to the logging data
+            $loggingData['token'] = $token;
+
+            $this->log()->err('Missing or invalid bounce token used', $loggingData);
 
             $response = $this->getResponse();
             $response->setStatusCode(403);
@@ -105,7 +104,11 @@ class SendgridController extends AbstractBaseController
 
             echo 'Email sent';
         } catch (Exception $e) {
-            $this->log()->alert("Failed sending '" . $subject . "' email to " . $fromAddress . " due to:\n" . $e->getMessage());
+            //  Add some info to the logging data
+            $loggingData['token'] = $token;
+            $loggingData['subject'] = $subject;
+
+            $this->log()->alert("Failed sending email due to:\n" . $e->getMessage(), $loggingData);
 
             return "failed-sending-email";
         }
