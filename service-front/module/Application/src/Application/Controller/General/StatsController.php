@@ -29,10 +29,18 @@ class StatsController extends AbstractBaseController
 
         //---
 
+        $welshLanguageStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'welshlanguage' );
+
+        // Ensure the months are ordered correctly.
+        ksort($welshLanguageStats);
+
+        //---
+
         return new ViewModel([
             'lpas' => $generalLpaStats,
             'who' => $whoAreYouStats,
             'users' => $userStats,
+            'welshLanguage' => $welshLanguageStats,
         ]);
 
     } // function
