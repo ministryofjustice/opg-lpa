@@ -297,6 +297,8 @@ class CorrespondentController extends AbstractLpaActorController
 
         return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute('lpa/correspondent/edit'), [
             'lpa-id' => $lpaId,
+        ], [
+            'fragment' => 'current'
         ]);
     }
 }

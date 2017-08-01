@@ -75,7 +75,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $lpaId = $lpa->id;
 
         if (count($lpa->document->peopleToNotify) >= 5) {
-            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute('lpa/people-to-notify', ['lpa-id' => $lpaId], ['fragment' => 'current']);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
@@ -221,6 +221,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         return $this->redirect()->toRoute('lpa/people-to-notify', [
             'lpa-id' => $lpa->id
+        ], [
+            'fragment' => 'current'
         ]);
     }
 }

@@ -37,7 +37,7 @@ class TypeController extends AbstractAuthenticatedController
                 $formFlowChecker = new FormFlowChecker();
                 $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
-                return $this->redirect()->toRoute($formFlowChecker->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+                return $this->redirect()->toRoute($formFlowChecker->nextRoute($currentRouteName), ['lpa-id' => $lpa->id], ['fragment' => 'current']);
             }
         }
 

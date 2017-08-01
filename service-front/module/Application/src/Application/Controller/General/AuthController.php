@@ -90,7 +90,7 @@ class AuthController extends AbstractBaseController {
                             $lpaId = $pathArray[2];
                             $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
                             $destinationRoute = (new FormFlowChecker($lpa))->backToForm();
-                            return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id]);
+                            return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id], ['fragment' => 'current']);
                         }
 
                         //not an LPA url so redirect directly to it

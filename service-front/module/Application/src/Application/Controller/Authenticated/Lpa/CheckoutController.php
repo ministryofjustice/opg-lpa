@@ -64,7 +64,7 @@ class CheckoutController extends AbstractLpaController
 
     private function redirectToMoreInfoRequired()
     {
-        $this->redirect()->toRoute('lpa/more-info-required', ['lpa-id' => $this->getLpa()->id]);
+        $this->redirect()->toRoute('lpa/more-info-required', ['lpa-id' => $this->getLpa()->id], ['fragment' => 'current']);
 
         return $this->getResponse();
     }
@@ -128,6 +128,8 @@ class CheckoutController extends AbstractLpaController
         //  Don't use the next route function here - just go directly to the completed view
         return $this->redirect()->toRoute('lpa/complete', [
             'lpa-id' => $this->getLpa()->id
+        ], [
+            'fragment' => 'current'
         ]);
     }
 

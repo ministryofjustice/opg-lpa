@@ -48,7 +48,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
         //  If a certificate provider has already been provided then redirect to the main certificate provider screen
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
-            return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id' => $lpaId], ['fragment' => 'current']);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');

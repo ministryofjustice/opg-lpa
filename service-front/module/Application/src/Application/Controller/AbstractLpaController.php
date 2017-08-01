@@ -64,7 +64,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         // redirect to the calculated route if it is not equal to the current route
         if ($calculatedRoute != $currentRoute) {
-            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $lpa->id]);
+            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $lpa->id], ['fragment' => 'current']);
         }
 
         // inject lpa into view
@@ -98,6 +98,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         //  Get the current route and the LPA ID to move to the next route
         return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName()), [
             'lpa-id' => $this->getLpa()->id
+        ], [
+            'fragment' => 'current'
         ]);
     }
 
