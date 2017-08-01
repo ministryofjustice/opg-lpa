@@ -128,8 +128,6 @@ class CheckoutController extends AbstractLpaController
         //  Don't use the next route function here - just go directly to the completed view
         return $this->redirect()->toRoute('lpa/complete', [
             'lpa-id' => $this->getLpa()->id
-        ], [
-            'fragment' => 'current'
         ]);
     }
 
