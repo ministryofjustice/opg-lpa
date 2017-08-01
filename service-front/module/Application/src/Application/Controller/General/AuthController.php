@@ -89,8 +89,9 @@ class AuthController extends AbstractBaseController {
                         if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
                             $lpaId = $pathArray[2];
                             $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
-                            $destinationRoute = (new FormFlowChecker($lpa))->backToForm();
-                            return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id], ['fragment' => 'current']);
+                            $formFlowChecker = new FormFlowChecker($lpa);
+                            $destinationRoute = $formFlowChecker->backToForm();
+                            return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id], $formFlowChecker->getRouteOptions($destinationRoute));
                         }
 
                         //not an LPA url so redirect directly to it
