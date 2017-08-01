@@ -33,19 +33,16 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 
             $additionalApplicantSignaturePage = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
 
-            $formData = [];
-
             if($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
             }
             else {
-                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
             }
 
-            $additionalApplicantSignaturePage->fillForm($formData)
-                ->flatten()
-                ->saveAs($filePath);
-
+            $additionalApplicantSignaturePage->fillForm($this->pdfFormData)
+                                             ->flatten()
+                                             ->saveAs($filePath);
         } // endfor
 
         return $this->interFileStack;

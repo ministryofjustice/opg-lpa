@@ -170,7 +170,7 @@ class Lp1f extends Lp1
         $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1f']['registration'];
 
         return $this->pdfFormData;
-    } // function dataMapping();
+    }
 
     protected function generateAdditionalPages ()
     {

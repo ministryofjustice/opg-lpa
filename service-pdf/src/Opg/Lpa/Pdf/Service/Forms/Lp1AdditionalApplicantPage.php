@@ -34,22 +34,21 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
             $additionalApplicant = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicant.pdf":"/LP1H_AdditionalApplicant.pdf"));
 
-            $formData = array();
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
 
                 $attorneyId = $this->lpa->document->whoIsRegistering[(1+$i)*Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
 
                 if($attorney instanceof TrustCorporation) {
-                    $formData['applicant-'.$j.'-name-last']      = $attorney->name;
+                    $this->pdfFormData['applicant-'.$j.'-name-last']      = $attorney->name;
                 }
                 else {
-                    $formData['applicant-'.$j.'-name-title']     = $attorney->name->title;
-                    $formData['applicant-'.$j.'-name-first']     = $attorney->name->first;
-                    $formData['applicant-'.$j.'-name-last']      = $attorney->name->last;
-                    $formData['applicant-'.$j.'-dob-date-day']   = $attorney->dob->date->format('d');
-                    $formData['applicant-'.$j.'-dob-date-month'] = $attorney->dob->date->format('m');
-                    $formData['applicant-'.$j.'-dob-date-year']  = $attorney->dob->date->format('Y');
+                    $this->pdfFormData['applicant-'.$j.'-name-title']     = $attorney->name->title;
+                    $this->pdfFormData['applicant-'.$j.'-name-first']     = $attorney->name->first;
+                    $this->pdfFormData['applicant-'.$j.'-name-last']      = $attorney->name->last;
+                    $this->pdfFormData['applicant-'.$j.'-dob-date-day']   = $attorney->dob->date->format('d');
+                    $this->pdfFormData['applicant-'.$j.'-dob-date-month'] = $attorney->dob->date->format('m');
+                    $this->pdfFormData['applicant-'.$j.'-dob-date-year']  = $attorney->dob->date->format('Y');
                 }
 
                 if(++$totalMappedAdditionalApplicants >= $totalAdditionalApplicant) {
@@ -57,18 +56,18 @@ class Lp1AdditionalApplicantPage extends AbstractForm
                 }
             } // endfor
 
-            $formData['who-is-applicant'] = 'attorney';
+            $this->pdfFormData['who-is-applicant'] = 'attorney';
 
             if($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
             }
             else {
-                $formData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
             }
 
-            $additionalApplicant->fillForm($formData)
-                ->flatten()
-                ->saveAs($filePath);
+            $additionalApplicant->fillForm($this->pdfFormData)
+                                ->flatten()
+                                ->saveAs($filePath);
 
         } // endfor
 

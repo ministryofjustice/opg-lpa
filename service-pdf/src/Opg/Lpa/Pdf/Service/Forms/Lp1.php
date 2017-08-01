@@ -34,7 +34,7 @@ abstract class Lp1 extends AbstractForm
     /**
      * PDFTK pdf object
      *
-     * @var
+     * @var Pdf
      */
     protected $pdf;
 
@@ -81,11 +81,8 @@ abstract class Lp1 extends AbstractForm
         // register a random generated temp file path, and store it $interFileStack
         $filePath = $this->registerTempFile('LP1');
 
-        // data mapping
-        $mappings = $this->dataMapping();
-
         // populate form data and generate pdf
-        $this->pdf->fillForm($mappings)
+        $this->pdf->fillForm($this->dataMapping())
                   ->flatten()
                   ->saveAs($filePath);
 
