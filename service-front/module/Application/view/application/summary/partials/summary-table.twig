@@ -13,7 +13,7 @@
                 <td class="table-summary-content" itemprop="name">
                     {{ lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance' }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/form-type', {'lpa-id': lpa.id}) }}">View</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/form-type', {'lpa-id': lpa.id}) }}#current">View</a></td>
             </tr>
         {% endif %}
 
@@ -45,7 +45,7 @@
                 <td class="table-summary-content">
                     {{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'Option A - The attorneys can make decisions' : 'Option B - The attorneys cannot make decisions' }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -56,7 +56,7 @@
                 <td class="table-summary-content">
                     {{ lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (with my consent)' : 'Only if I don\'t have mental capacity' }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/when-lpa-starts', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/when-lpa-starts', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -102,7 +102,7 @@
                     'jointly' :
                     'jointly for some decisions, and jointly and severally for other decisions')) }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
 
 
@@ -143,7 +143,7 @@
             <tr class="group-single">
                 <td class="table-summary-title">Replacement attorney</td>
                 <td class="table-summary-content">No replacement attorneys</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/replacement-attorney', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/replacement-attorney', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -170,7 +170,7 @@
                                 'only when none of the original attorneys can act' :
                                 'as per instructions')) }}
                     </td>
-                    <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                    <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
                 </tr>
             {% endif %}
 
@@ -197,7 +197,7 @@
                         'jointly' :
                         'jointly for some decisions, and jointly and severally for other decisions')) }}
                     </td>
-                    <td class="table-summary-action"><a href="{{ url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                    <td class="table-summary-action"><a href="{{ url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
                 </tr>
             {% endif %}
 
@@ -254,7 +254,7 @@
             <tr class="group-single">
                 <td class="table-summary-title">Person to notify</td>
                 <td class="table-summary-content">No people to notify</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/people-to-notify', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/people-to-notify', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -263,14 +263,14 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Instructions</th>
                 <td class="table-summary-content">{{ lpa.document.instruction }}</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
 
         {% else %}
             <tr class="group-single">
                 <td class="table-summary-title">Instructions</td>
                 <td class="table-summary-content">No instructions</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -279,14 +279,14 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Preferences</th>
                 <td class="table-summary-content">{{ lpa.document.preference }}</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
 
         {% else %}
             <tr class="group-single">
                 <td class="table-summary-title">Preferences</td>
                 <td class="table-summary-content">No preferences</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -301,7 +301,7 @@
                         {{ applicantNames( lpa ) }}
                     {% endif %}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/applicant', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/applicant', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -326,7 +326,7 @@
                     {{ lpa.repeatCaseNumber is not empty ? 'This is a repeat application with case number ' ~ lpa.repeatCaseNumber
                     : "This is not a repeat application" }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/repeat-application', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/repeat-application', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -346,7 +346,7 @@
                         Application fee: £{{ fullFee }} as you aren’t claiming a reduction
                     {% endif %}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}#current">Edit</a></td>
             </tr>
         {% endif %}
 
