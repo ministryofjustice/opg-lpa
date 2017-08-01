@@ -3138,6 +3138,11 @@ input[type=number] {
     top: 0;
     right: 0; }
 
+.accordion-current {
+  display: block;
+  padding-top: 20px;
+  margin-top: -20px; }
+
 .person {
   position: relative;
   margin-bottom: 30px;
