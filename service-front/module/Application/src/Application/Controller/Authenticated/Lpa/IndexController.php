@@ -38,6 +38,8 @@ class IndexController extends AbstractLpaController
 
         return $this->redirect()->toRoute($destinationRoute, [
             'lpa-id' => $lpa->id
+        ], [
+            'fragment' => 'current'
         ]);
     }
 }

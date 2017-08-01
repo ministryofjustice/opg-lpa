@@ -255,6 +255,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         return $this->redirect()->toRoute('lpa/replacement-attorney', [
             'lpa-id' => $lpa->id
+        ], [
+            'fragment' => 'current'
         ]);
     }
 
@@ -272,7 +274,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         //  Redirect to human add attorney if trusts are not allowed
         if (!$this->allowTrust()) {
-            return $this->redirect()->toRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]);
+            return $this->redirect()->toRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId], ['fragment' => 'current']);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
