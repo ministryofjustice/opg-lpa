@@ -96,9 +96,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         }
 
         //  Get the current route and the LPA ID to move to the next route
-        $formFlowChecker = $this->getFlowChecker();
-        $nextRoute = $formFlowChecker->nextRoute($routeMatch->getMatchedRouteName());
-        $options = $formFlowChecker->getRouteOptions($nextRoute);
+        $nextRoute = $this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName());
+        $options = $this->getFlowChecker()->getRouteOptions($nextRoute);
         return $this->redirect()->toRoute($nextRoute, [
             'lpa-id' => $this->getLpa()->id
         ], $options);
