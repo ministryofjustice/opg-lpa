@@ -1,7 +1,7 @@
 {% macro accordionBar(data) %}
 
 <li class="section complete">
-    <div class="accordion-summary {% if data.cssClass is defined %}{{ data.cssClass }}{% endif %}">
+    <div id="{% if data.id is defined %}{{ data.id }}{% endif %}" class="accordion-summary {% if data.cssClass is defined %}{{ data.cssClass }}{% endif %}">
         <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %}">
             <p class="title flush--ends tablet-and-up">{{ data.desktop|raw }}</p>
         </div>
