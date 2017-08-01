@@ -74,15 +74,6 @@ abstract class AbstractForm
     protected $pdfTemplatePath;
 
     /**
-     * Store cross line strokes parameters.
-     * The array index is the page number of pdf document,
-     * and value is array of cross line param keys.
-     *
-     * @var array
-     */
-    protected $drawingTargets = array();
-
-    /**
      * bx - bottom x
      * by - bottom y
      * tx - top x

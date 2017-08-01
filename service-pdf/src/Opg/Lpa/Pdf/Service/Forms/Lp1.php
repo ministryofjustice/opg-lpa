@@ -39,6 +39,15 @@ abstract class Lp1 extends AbstractForm
     protected $pdf;
 
     /**
+     * Store cross line strokes parameters.
+     * The array index is the page number of pdf document,
+     * and value is array of cross line param keys.
+     *
+     * @var array
+     */
+    protected $drawingTargets = array();
+
+    /**
      * There or not the registration section of teh LPA is complete
      *
      * @var bool

@@ -16,7 +16,7 @@ abstract class AbstractFormTestClass extends \PHPUnit_Framework_TestCase
     {
         ConfigSetUp::init();
 
-        $formReflectionClass = new \ReflectionClass('Opg\Lpa\Pdf\Service\Forms\AbstractForm');
+        $formReflectionClass = new \ReflectionClass('Opg\Lpa\Pdf\Service\Forms\Lp1');
         $this->drawingTargetsReflectionProperty = $formReflectionClass->getProperty('drawingTargets');
         $this->drawingTargetsReflectionProperty->setAccessible(true);
     }
