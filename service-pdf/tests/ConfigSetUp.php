@@ -14,6 +14,8 @@ class ConfigSetUp
 
         $serviceConfig = $config['service'];
         $serviceConfig['disable_draw_cross_lines'] = true;
+        $serviceConfig['assets']['template_path_on_ram_disk'] = '/tmp/assets/v2';
+        $serviceConfig['assets']['intermediate_file_path'] = '/tmp';
 
         $config->offsetSet('service', $serviceConfig);
 

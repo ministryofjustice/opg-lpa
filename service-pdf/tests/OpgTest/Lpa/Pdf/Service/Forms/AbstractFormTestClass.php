@@ -39,7 +39,7 @@ abstract class AbstractFormTestClass extends \PHPUnit_Framework_TestCase
             substr($lpaId, 8, 4),
         ]);
 
-        $regex = '/tmp\/pdf_cache\/' . $fileNamePrefix . '-' . $lpaIdFormatted . '-\d{10}(-\d+)?.pdf/';
+        $regex = '/tmp\/' . $fileNamePrefix . '-' . $lpaIdFormatted . '-\d{10}(-\d+)?.pdf/';
 
         $this->assertRegExp($regex, $fileName);
     }
