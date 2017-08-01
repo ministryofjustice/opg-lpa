@@ -25,13 +25,22 @@ class SendgridController extends AbstractBaseController
         //  Get the additional data from the sendgrid inbound parse post
         $subject = $this->request->getPost('subject');
         $spamScore = $this->request->getPost('spam_score');
+        $emailText = $this->request->getPost('text');
+
+        //  Check the email text to see if the message contains the text "Sent from Mail for Windows 10"
+        $sentFromMailForWindows10 = null;   //  null means that we can't make a determination for this
+
+        if (is_string($emailText)) {
+            $sentFromMailForWindows10 = !(strpos($emailText, 'Sent from Mail for Windows 10') === false);
+        }
 
         //  Form the basic logging data
         $loggingData = [
-            'from-address' => $fromAddress,
-            'to-address'   => $originalToAddress,
-            'subject'      => $subject,
-            'spam-score'   => $spamScore,
+            'from-address'          => $fromAddress,
+            'to-address'            => $originalToAddress,
+            'subject'               => $subject,
+            'spam-score'            => $spamScore,
+            'sent-from-windows-10'  => $sentFromMailForWindows10,
         ];
 
         //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
