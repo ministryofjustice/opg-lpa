@@ -141,13 +141,13 @@ class DashboardController extends AbstractAuthenticatedController
             }
 
             // Redirect them to the first page...
-            return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id'=>$lpa->id ], ['fragment' => 'current']);
+            return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id'=>$lpa->id ]);
         }
 
         //---
 
         // Redirect them to the first page, no LPA created
-        return $this->redirect()->toRoute('lpa-type-no-id', [], ['fragment' => 'current']);
+        return $this->redirect()->toRoute('lpa-type-no-id');
     }
 
     public function deleteLpaAction()

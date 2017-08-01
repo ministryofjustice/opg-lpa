@@ -45,11 +45,7 @@
             </td>
             <td class="lpa-actions">
                 <div class="lpa-cta">
-                    {% if lpa.progress == 'Completed' %}
-                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}">View LPA</a>
-                    {% else %}
-                        <a class="button button-secondary" href="/lpa/{{ lpa.id }}#current">Continue</a>
-                    {% endif %}
+                    <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
                 </div>
                 <div class="lpa-manage">
                     {% if not shortList and lpa.progress != 'Started' %}
