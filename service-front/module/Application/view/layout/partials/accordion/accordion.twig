@@ -158,8 +158,7 @@
 					('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
         		'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
         		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'cssClass': lpa.document.peopleToNotify|length == 0 ?
-                    '' : 'wide-label'
+                'cssClass': lpa.document.peopleToNotify|length == 0 ? '' : 'wide-label'
         	})
         }}
     {% endif %}
@@ -179,8 +178,7 @@
 			'desktop' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}, {}) ~ '?return-route=' ~ routeName() ~ '">review your LPA</a>',
 			'mobile' : 'You can edit your LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '">review your LPA</a>',
             'titleBoxCssClass': 'title-box--full',
-            'cssClass': 'accordian-current',
-			'id': 'current'
+            'current': true
 		})
 		}}
 	{% endif %}
