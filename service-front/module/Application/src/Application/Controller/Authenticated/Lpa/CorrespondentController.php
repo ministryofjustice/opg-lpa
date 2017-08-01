@@ -295,10 +295,9 @@ class CorrespondentController extends AbstractLpaActorController
             return new JsonModel(['success' => true]);
         }
 
-        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute('lpa/correspondent/edit'), [
+        $route = 'lpa/correspondent/edit';
+        return $this->redirect()->toRoute($this->getFlowChecker()->nextRoute($route), [
             'lpa-id' => $lpaId,
-        ], [
-            'fragment' => 'current'
-        ]);
+        ], $this->getFlowChecker()->getRouteOptions($route));
     }
 }

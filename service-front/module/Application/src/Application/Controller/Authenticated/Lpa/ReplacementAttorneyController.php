@@ -253,11 +253,10 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->redirect()->toRoute('lpa/replacement-attorney', [
+        $route = 'lpa/replacement-attorney';
+        return $this->redirect()->toRoute($route, [
             'lpa-id' => $lpa->id
-        ], [
-            'fragment' => 'current'
-        ]);
+        ], $this->getFlowChecker()->getRouteOptions($route));
     }
 
     public function addTrustAction()
