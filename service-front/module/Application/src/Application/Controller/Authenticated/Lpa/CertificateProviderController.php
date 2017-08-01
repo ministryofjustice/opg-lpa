@@ -18,7 +18,8 @@ class CertificateProviderController extends AbstractLpaActorController
             $viewModel->editUrl = $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]);
 
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+            $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
+            $viewModel->nextUrl = $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
         }
 
         $viewModel->addUrl = $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]);
