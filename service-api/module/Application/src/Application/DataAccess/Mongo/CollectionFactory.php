@@ -4,9 +4,10 @@ namespace Application\DataAccess\Mongo;
 
 use MongoDB\Collection;
 use MongoDB\Database;
+use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class CollectionFactory implements ICollectionFactory
+class CollectionFactory implements FactoryInterface
 {
     /**
      * @var string
@@ -29,8 +30,8 @@ class CollectionFactory implements ICollectionFactory
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var Database $database */
-        $database = $serviceLocator->get(IDatabaseFactory::class);
-        $collection = $database->selectCollection($this->collectionName, $this->options);
-        return $collection;
+        $database = $serviceLocator->get(DatabaseFactory::class);
+
+        return $database->selectCollection($this->collectionName, $this->options);
     }
 }

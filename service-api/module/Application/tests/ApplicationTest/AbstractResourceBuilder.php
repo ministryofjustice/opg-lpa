@@ -2,14 +2,13 @@
 
 namespace ApplicationTest;
 
-use Application\DataAccess\Mongo\ICollectionFactory;
+use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
 use MongoDB\Collection as MongoCollection;
-use MongoDB\Driver\Manager;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Traversable;
@@ -145,8 +144,8 @@ abstract class AbstractResourceBuilder
 
         $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $this->serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
         $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
         $this->serviceLocatorMock->shouldReceive('get')->with('resource-applications')->andReturn($this->applicationsResource);
 

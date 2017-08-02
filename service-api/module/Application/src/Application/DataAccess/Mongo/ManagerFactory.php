@@ -3,30 +3,11 @@
 namespace Application\DataAccess\Mongo;
 
 use MongoDB\Driver\Manager;
+use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class ManagerFactory implements IManagerFactory
+class ManagerFactory implements FactoryInterface
 {
-    /**
-     * @var string
-     */
-    private $uri;
-    /**
-     * @var array
-     */
-    private $options;
-    /**
-     * @var array
-     */
-    private $driverOptions;
-
-    public function __construct($uri, $options = [], $driverOptions = [])
-    {
-        $this->uri = $uri;
-        $this->options = $options;
-        $this->driverOptions = $driverOptions;
-    }
-
     /**
      * Create MongoDB Manager
      *
@@ -35,7 +16,11 @@ class ManagerFactory implements IManagerFactory
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $manager = new Manager($this->uri, $this->options, $this->driverOptions);
-        return $manager;
+        $config = $serviceLocator->get('config')['db']['mongo']['default'];
+
+        // Split the array out into comma separated values.
+        $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
+
+        return new Manager($uri, $config['options'], $config['driverOptions']);
     }
 }

@@ -337,7 +337,7 @@ class Resource extends AbstractResource {
         $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
 
         $welshLanguageStats = array();
 
@@ -357,15 +357,15 @@ class Resource extends AbstractResource {
 
             $month['completed'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ]
-            ]);
+            ], $readPreference);
 
             $month['contactInEnglish'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => false
-            ]);
+            ], $readPreference);
 
             $month['contactInWelsh'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => true
-            ]);
+            ], $readPreference);
 
             $welshLanguageStats[date('Y-m',$start->getTimestamp())] = $month;
 

@@ -3,19 +3,13 @@ namespace Application;
 
 use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DatabaseFactory;
-use Application\DataAccess\Mongo\ICollectionFactory;
-use Application\DataAccess\Mongo\IDatabaseFactory;
-use Application\DataAccess\Mongo\IManagerFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
-use RuntimeException;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
 use Application\Controller\Version1\RestController;
 
-use Application\Library\Authentication\Adapter;
-use Application\Library\Authentication\Identity;
 use Application\Library\Authentication\AuthenticationListener;
 
 use Zend\Authentication\AuthenticationService;
@@ -28,9 +22,6 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use ZF\ApiProblem\ApiProblemResponse;
 
-use PhlyMongo\MongoCollectionFactory;
-use PhlyMongo\MongoConnectionFactory;
-use PhlyMongo\MongoDbFactory;
 use Application\Library\ApiProblem\ApiProblem;
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -171,31 +162,16 @@ class Module {
                 //---------------------
 
                 // Create an instance of the MongoClient...
-                IManagerFactory::class => function ($services) {
-                    $config = $services->get('config')['db']['mongo']['default'];
-
-                    // Split the array out into comma separated values.
-                    $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
-
-                    $factory = new ManagerFactory($uri, $config['options'], $config['driverOptions']);
-
-                    return $factory->createService($services);
-                },
+                ManagerFactory::class => ManagerFactory::class,
 
                 // Connect the above MongoClient to a DB...
-                IDatabaseFactory::class => function ($services) {
-                    $config = $services->get('config')['db']['mongo']['default']['options'];
-
-                    $factory = new DatabaseFactory($config['db']);
-
-                    return $factory->createService($services);
-                },
+                DatabaseFactory::class => DatabaseFactory::class,
 
                 // Access collections within the above DB...
-                ICollectionFactory::class . '-lpa' => new CollectionFactory('lpa'),
-                ICollectionFactory::class . '-user' => new CollectionFactory('user'),
-                ICollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
-                ICollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
+                CollectionFactory::class . '-lpa' => new CollectionFactory('lpa'),
+                CollectionFactory::class . '-user' => new CollectionFactory('user'),
+                CollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
+                CollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
                 
                 // Logger
                 'Logger' => function ( $sm ) {

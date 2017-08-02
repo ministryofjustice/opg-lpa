@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Rest\Users;
 
-use Application\DataAccess\Mongo\ICollectionFactory;
+use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Rest\Users\Resource as UsersResource;
 use ApplicationTest\AbstractResourceBuilder;
 
@@ -19,7 +19,7 @@ class ResourceBuilder extends AbstractResourceBuilder
         parent::buildMocks($resource);
 
         if ($this->userCollection !== null) {
-            $this->serviceLocatorMock->shouldReceive('get')->with(ICollectionFactory::class . '-user')->andReturn($this->userCollection);
+            $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-user')->andReturn($this->userCollection);
         }
 
         return $resource;
