@@ -220,7 +220,7 @@ class ResourceTest extends AbstractResourceTest
     {
         /** @var ApplicationsResource $resource */
         $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->patch( null,-1);
+        $resource->patch(null, -1);
     }
 
     public function testPatchValidationError()
@@ -551,6 +551,8 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->fetchAll();
 
         $this->assertEquals(0, $response->count());
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchAllOneRecord()
@@ -567,6 +569,8 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals(1, $lpaCollection['count']);
         $this->assertEquals(1, count($lpaCollection['items']));
         $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchAllSearchById()
@@ -583,6 +587,8 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals(1, $lpaCollection['count']);
         $this->assertEquals(1, count($lpaCollection['items']));
         $this->assertEquals($lpas[1], $lpaCollection['items'][0]->getLpa());
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchAllSearchByIdAndFilter()
@@ -596,6 +602,8 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->fetchAll(['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
 
         $this->assertEquals(0, $response->count());
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchAllSearchByReference()
@@ -612,6 +620,8 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals(1, $lpaCollection['count']);
         $this->assertEquals(1, count($lpaCollection['items']));
         $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
+
+        $resourceBuilder->verify();
     }
 
     public function testFetchAllSearchByName()
@@ -624,5 +634,7 @@ class ResourceTest extends AbstractResourceTest
         $response = $resource->fetchAll(['search' => $lpas[0]->document->donor->name]);
 
         $this->assertEquals(0, $response->count());
+
+        $resourceBuilder->verify();
     }
 }

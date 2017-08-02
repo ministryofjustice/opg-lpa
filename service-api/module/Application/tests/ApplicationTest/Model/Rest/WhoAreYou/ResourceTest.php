@@ -108,7 +108,7 @@ class ResourceTest extends AbstractResourceTest
         $lpa = FixturesData::getHwLpa();
         $lpa->whoAreYouAnswered = false;
         $statsWhoCollection = Mockery::mock(MongoCollectionFactory::class);
-        $statsWhoCollection->shouldReceive('insert')->once();
+        $statsWhoCollection->shouldReceive('insertOne')->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser(FixturesData::getUser())

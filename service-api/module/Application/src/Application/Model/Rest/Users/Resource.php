@@ -3,6 +3,7 @@ namespace Application\Model\Rest\Users;
 
 use Application\Model\Rest\AbstractResource;
 
+use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\User\User;
 
 use Application\Library\DateTime;
@@ -115,7 +116,7 @@ class Resource extends AbstractResource {
         $this->getServiceLocator()->get('resource-applications')->deleteAll();
 
         // Delete the user's About Me details.
-        $this->getCollection( 'user' )->remove( [ '_id' => $id ], [ 'justOne' => true ] );
+        $this->getCollection( 'user' )->deleteOne( [ '_id' => $id ] );
 
         return true;
 
@@ -189,26 +190,26 @@ class Resource extends AbstractResource {
 
         if ($new){
 
-            $collection->insert( $user->toMongoArray() );
+            $collection->insertOne( $user->toMongoArray() );
 
         } else {
 
-            $lastUpdated = new \MongoDate($user->updatedAt->getTimestamp(), (int)$user->updatedAt->format('u'));
+            $lastUpdated = new UTCDateTime($user->updatedAt);
 
             // Record the time we updated the user.
             $user->updatedAt = new DateTime();
 
             // updatedAt is included in the query so that data isn't overwritten
             // if the User has changed since this process loaded it.
-            $result = $collection->update(
+            $result = $collection->updateOne(
                 ['_id' => $user->id, 'updatedAt' => $lastUpdated],
-                $user->toMongoArray(),
+                ['$set' => $user->toMongoArray()],
                 ['upsert' => false, 'multiple' => false]
             );
 
             // Ensure that one (and only one) document was updated.
             // If not, something when wrong.
-            if ($result['nModified'] !== 0 && $result['nModified'] !== 1) {
+            if ($result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1) {
                 throw new \RuntimeException('Unable to update User. This might be because "updatedAt" has changed.');
             }
 

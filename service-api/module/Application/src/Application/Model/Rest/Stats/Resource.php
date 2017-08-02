@@ -1,7 +1,9 @@
 <?php
 namespace Application\Model\Rest\Stats;
 
-use MongoId, MongoDate, MongoCode;
+use MongoDB\BSON\ObjectID as MongoId;
+use MongoDB\BSON\UTCDateTime as MongoDate;
+use MongoDB\Driver\ReadPreference;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
@@ -54,8 +56,7 @@ class Resource extends AbstractResource {
         $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
-
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
 
         //-----------------------------
         // Broken down by month
@@ -74,25 +75,28 @@ class Resource extends AbstractResource {
         for( $i = 1; $i <=4; $i++ ){
 
             // Convert to MongoDate...
-            $from = new MongoDate( $start->getTimestamp() );
-            $to =   new MongoDate( $end->getTimestamp() );
+            $from = new MongoDate( $start );
+            $to =   new MongoDate( $end );
 
             $month = array();
 
             // Started if we have a startedAt, but no createdAt...
-            $month['started'] = $collection->find([
-                'startedAt' => [ '$gte' => $from, '$lte' => $to ],
-            ])->count();
+            $month['started'] = $collection->count(
+                ['startedAt' => [ '$gte' => $from, '$lte' => $to ]],
+                $readPreference
+            );
 
             // Created if we have a createdAt, but no completedAt...
-            $month['created'] = $collection->find([
-                'createdAt' => [ '$gte' => $from, '$lte' => $to ],
-            ])->count();
+            $month['created'] = $collection->count(
+                ['createdAt' => [ '$gte' => $from, '$lte' => $to ]],
+                $readPreference
+            );
 
             // Count all the LPAs that have a completedAt...
-            $month['completed'] = $collection->find([
-                'completedAt' => [ '$gte' => $from, '$lte' => $to ],
-            ])->count();
+            $month['completed'] = $collection->count(
+                ['completedAt' => [ '$gte' => $from, '$lte' => $to ]],
+                $readPreference
+            );
 
             //---
 
@@ -116,53 +120,55 @@ class Resource extends AbstractResource {
         $pf = array();
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] = $pf['started'] = $collection->find([
+        $summary['started'] = $pf['started'] = $collection->count([
             'startedAt' => [ '$ne' => null ],
             'createdAt' => null,
             'document.type' => Document::LPA_TYPE_PF
-        ])->count();
+        ], $readPreference);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] = $pf['created'] = $collection->find([
+        $summary['created'] = $pf['created'] = $collection->count([
             'createdAt' => [ '$ne' => null ],
             'completedAt' => null,
             'document.type' => Document::LPA_TYPE_PF
-        ])->count();
+        ], $readPreference);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] = $pf['completed'] = $collection->find([
+        $summary['completed'] = $pf['completed'] = $collection->count([
             'completedAt' => [ '$ne' => null ],
             'document.type' => Document::LPA_TYPE_PF
-        ])->count();
+        ], $readPreference);
 
         //---
 
         $hw = array();
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] += $hw['started'] = $collection->find([
+        $summary['started'] += $hw['started'] = $collection->count([
             'startedAt' => [ '$ne' => null ],
             'createdAt' => null,
             'document.type' => Document::LPA_TYPE_HW
-        ])->count();
+        ], $readPreference);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] += $hw['created'] = $collection->find([
+        $summary['created'] += $hw['created'] = $collection->count([
             'createdAt' => [ '$ne' => null ],
             'completedAt' => null,
             'document.type' => Document::LPA_TYPE_HW
-        ])->count();
+        ], $readPreference);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] += $hw['completed'] = $collection->find([
+        $summary['completed'] += $hw['completed'] = $collection->count([
             'completedAt' => [ '$ne' => null ],
             'document.type' => Document::LPA_TYPE_HW
-        ])->count();
+        ], $readPreference);
 
         //--------------------
 
         // Deleted LPAs have no 'document'...
-        $summary['deleted'] = $collection->find( [ 'document' => [ '$exists' => false ] ] )->count();
+        $summary['deleted'] = $collection->count(
+            [ 'document' => [ '$exists' => false ]],
+            $readPreference);
 
         //---
 
@@ -229,8 +235,7 @@ class Resource extends AbstractResource {
         $collection = $this->getCollection('stats-who');
 
         // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
-
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
 
         //---------------------------------------
         // Convert the timestamps to MongoIds
@@ -256,7 +261,10 @@ class Resource extends AbstractResource {
 
             // Get the count for all top level...
             $result[$topLevel] = array(
-                'count' => $collection->find( [ 'who'=>$topLevel, '_id' => $range ] )->count(),
+                'count' => $collection->count(
+                    [ 'who'=>$topLevel, '_id' => $range ],
+                    $readPreference
+                ),
             );
 
             //---
@@ -269,11 +277,11 @@ class Resource extends AbstractResource {
 
                 if( empty($subquestion) ){ continue; }
 
-                $result[$topLevel]['subquestions'][$subquestion] = $collection->find( [
+                $result[$topLevel]['subquestions'][$subquestion] = $collection->count( [
                     'who' => $topLevel,
                     'subquestion' => $subquestion,
                     '_id' => $range
-                ] )->count();
+                ], $readPreference);
 
             } // foreach
 
@@ -286,7 +294,7 @@ class Resource extends AbstractResource {
     } // function
 
     //-------------------------------------------------------------------------
-    
+
     /**
      * Returns a list of lpa counts and user counts, in order to
      * answer questions of the form how many users have five LPAs?
@@ -294,7 +302,7 @@ class Resource extends AbstractResource {
      * This data comes from a pre-generated cache.
      *
      * @return array
-     * 
+     *
      * The key of the return array is the number of LPAs
      * The value is the number of users with this many LPAs
      */
@@ -302,11 +310,11 @@ class Resource extends AbstractResource {
 
         $collection = $this->getCollection('stats-lpas');
 
-        // Stats can (ideally) be pulled from a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
+        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
 
-        // Return all the cached data.
-        $cachedStats = $collection->find();
+        // Stats can (ideally) be pulled from a secondary.
+        $cachedStats = $collection->find([], $readPreference);
 
         //---
 
@@ -329,7 +337,7 @@ class Resource extends AbstractResource {
         $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
-        $collection->setReadPreference( \MongoClient::RP_SECONDARY_PREFERRED );
+        $readPreference = ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)];
 
         $welshLanguageStats = array();
 
@@ -349,15 +357,15 @@ class Resource extends AbstractResource {
 
             $month['completed'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ]
-            ]);
+            ], $readPreference);
 
             $month['contactInEnglish'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => false
-            ]);
+            ], $readPreference);
 
             $month['contactInWelsh'] = $collection->count([
                 'completedAt' => [ '$gte' => $from, '$lte' => $to ], 'document.correspondent' => ['$ne' => null], 'document.correspondent.contactInWelsh' => true
-            ]);
+            ], $readPreference);
 
             $welshLanguageStats[date('Y-m',$start->getTimestamp())] = $month;
 

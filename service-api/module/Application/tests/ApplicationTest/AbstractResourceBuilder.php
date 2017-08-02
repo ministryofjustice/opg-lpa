@@ -2,21 +2,24 @@
 
 namespace ApplicationTest;
 
+use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
-use MongoCollection;
-use MongoCursor;
+use MongoDB\Collection as MongoCollection;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
+use Traversable;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\AuthorizationService;
 
 abstract class AbstractResourceBuilder
 {
+    const LPA_COLLECTION_NAMESPACE = 'opglpa-api.lpa';
+
     protected $lpa;
     protected $user;
     protected $authorizationService;
@@ -137,11 +140,12 @@ abstract class AbstractResourceBuilder
 
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
         $this->statsWhoCollection = $this->statsWhoCollection ?: Mockery::mock(MongoCollection::class);
+        $this->mongodbManager = Mockery::mock();
 
         $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-who')->andReturn($this->statsWhoCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
         $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
         $this->serviceLocatorMock->shouldReceive('get')->with('resource-applications')->andReturn($this->applicationsResource);
 
@@ -173,13 +177,13 @@ abstract class AbstractResourceBuilder
                     ->andReturn($this->lpa->toMongoArray());
 
                 if ($this->locked) {
-                    $this->lpaCollection->shouldReceive('find')
+                    $this->lpaCollection->shouldReceive('count')
                         ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
-                        ->andReturn($this->getSingleCursor());
+                        ->andReturn(1);
                 } else {
-                    $this->lpaCollection->shouldReceive('find')
+                    $this->lpaCollection->shouldReceive('count')
                         ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
-                        ->andReturn($this->getDefaultCursor());
+                        ->andReturn(0);
                 }
             }
         }
@@ -194,9 +198,11 @@ abstract class AbstractResourceBuilder
         }
 
         if ($this->updateNumberModified === null) {
-            $this->lpaCollection->shouldNotReceive('update');
+            $this->lpaCollection->shouldNotReceive('updateOne');
         } else {
-            $this->lpaCollection->shouldReceive('update')->once()->andReturn(['nModified' => $this->updateNumberModified]);
+            $updateResult = Mockery::mock(UpdateResult::class);
+            $updateResult->shouldReceive('getModifiedCount')->andReturn($this->updateNumberModified);
+            $this->lpaCollection->shouldReceive('updateOne')->once()->andReturn($updateResult);
         }
 
         return $resource;
@@ -207,9 +213,8 @@ abstract class AbstractResourceBuilder
      */
     protected function getDefaultCursor()
     {
-        $defaultCursor = Mockery::mock(MongoCursor::class);
-        $defaultCursor->shouldReceive('limit')->andReturn($defaultCursor);
-        $defaultCursor->shouldReceive('count')->andReturn(0);
+        $defaultCursor = Mockery::mock(Traversable::class);
+        $defaultCursor->shouldReceive('toArray')->andReturn([]);
         return $defaultCursor;
     }
 
@@ -218,9 +223,8 @@ abstract class AbstractResourceBuilder
      */
     protected function getSingleCursor()
     {
-        $singleCursor = Mockery::mock(MongoCursor::class);
-        $singleCursor->shouldReceive('limit')->andReturn($singleCursor);
-        $singleCursor->shouldReceive('count')->andReturn(1);
+        $singleCursor = Mockery::mock(Traversable::class);
+        $singleCursor->shouldReceive('toArray')->andReturn([0]);
         return $singleCursor;
     }
 }

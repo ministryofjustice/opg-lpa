@@ -1,6 +1,8 @@
 <?php
 namespace Application\Model\Rest\Applications;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\Driver\Query;
 use RuntimeException;
 
 use Application\Model\Rest\AbstractResource;
@@ -122,7 +124,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         }
 
-        $collection->insert( $lpa->toMongoArray() );
+        $collection->insertOne( $lpa->toMongoArray() );
 
         $entity = new Entity( $lpa );
 
@@ -211,11 +213,11 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         //------------------------
 
-        $query = [ 'user'=>$this->getRouteUser()->userId() ];
+        $filter = [ 'user'=>$this->getRouteUser()->userId() ];
 
         // Merge in any filter requirements...
         if( isset($params['filter']) && is_array($params['filter']) ){
-            $query = array_merge( $params, $query );
+            $filter = array_merge( $params, $filter );
         }
 
         //---
@@ -228,7 +230,7 @@ class Resource extends AbstractResource implements UserConsumerInterface {
             // If the string is numeric, assume it's an LPA id.
             if( is_numeric($search) ) {
 
-                $query['_id'] = (int)$search;
+                $filter['_id'] = (int)$search;
 
             } else {
 
@@ -236,12 +238,12 @@ class Resource extends AbstractResource implements UserConsumerInterface {
                 if( substr(strtoupper($search),0,1) == 'A' && is_numeric( $ident = preg_replace('/\s+/', '', substr($search, 1)) ) ) {
 
                     // Assume it's an LPA id.
-                    $query['_id'] = (int)$ident;
+                    $filter['_id'] = (int)$ident;
 
                 } else {
 
                     // Otherwise assume it's a name.
-                    $query[ '$text' ] = [ '$search' => '"'.trim($params['search']).'"' ];
+                    $filter[ '$text' ] = [ '$search' => '"'.trim($params['search']).'"' ];
 
                 } // if
 
@@ -252,9 +254,9 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         //---
 
         // Get the collection...
-        $cursor = $this->getCollection('lpa')->find( $query );
+        $collection = $this->getCollection('lpa');
 
-        $count = $cursor->count();
+        $count = $collection->count($filter);
 
         // If there are no records, just return an empty paginator...
         if( $count == 0 ){
@@ -265,18 +267,18 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
         $callback = new PaginatorCallback(
-            function($offset, $itemCountPerPage) use ($cursor){
+            function($offset, $itemCountPerPage) use ($collection, $filter){
                 // getItems callback
 
-                $cursor->sort( [ 'updatedAt' => -1 ] );
-                $cursor->skip( $offset );
-                $cursor->limit( $itemCountPerPage );
+                $options = ['sort' => ['updatedAt' => -1], 'skip' => $offset, 'limit' => $itemCountPerPage];
+                $cursor = $collection->find($filter, $options);
+                $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
                 $items = array_map( function($lpa){
                     $lpa = [ 'id' => $lpa['_id'] ] + $lpa;
                     return new Lpa( $lpa );
-                }, iterator_to_array( $cursor ) );
+                }, $lpas);
 
                 return $items;
             },
@@ -310,7 +312,8 @@ class Resource extends AbstractResource implements UserConsumerInterface {
 
         $collection = $this->getCollection('lpa');
 
-        $result = $collection->findOne( [ '_id'=>(int)$id, 'user'=>$this->getRouteUser()->userId() ], [ '_id'=>true ] );
+        $filter = ['_id' => (int)$id, 'user' => $this->getRouteUser()->userId()];
+        $result = $collection->findOne( $filter, ['projection' => ['_id'=>true]]);
 
         if( is_null($result) ){
             return new ApiProblem( 404, 'Document not found' );
@@ -323,9 +326,9 @@ class Resource extends AbstractResource implements UserConsumerInterface {
          * So we just strip the document down to '_id' and 'updatedAt'.
          */
 
-        $result['updatedAt'] = new \MongoDate();
+        $result['updatedAt'] = new UTCDateTime();
 
-        $collection->save( $result );
+        $collection->replaceOne($filter, $result);
 
         return true;
 

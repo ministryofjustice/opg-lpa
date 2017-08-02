@@ -2,30 +2,32 @@
 
 namespace ApplicationTest\Model\Service\System;
 
+use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Service\System\Stats;
 use Mockery;
 use MongoCollection;
-use MongoDB;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class StatsTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerate()
     {
-        $lpaDb = Mockery::mock(MongoDB::class);
-        $lpaDb->shouldReceive('setReadPreference')->once();
-        $lpaDb->shouldReceive('command')->andReturn(['results' => [['value' => 1], ['value' => 1]]])->once();
         $lpaCollection = Mockery::mock(MongoCollection::class);
-        $lpaCollection->db = $lpaDb;
-        $lpaCollection->shouldReceive('getName')->andReturn('test')->once();
+        $manager = Mockery::mock();
+        $cursor = Mockery::mock(\Traversable::class);
+        $cursor->shouldReceive('toArray')->andReturn(['results' => [['value' => 1], ['value' => 1]]]);
+        $manager->shouldReceive('executeCommand')->andReturn($cursor)->once();
+        $lpaCollection->shouldReceive('getManager')->andReturn($manager)->once();
+        $lpaCollection->shouldReceive('getDatabaseName')->andReturn('test')->once();
+        $lpaCollection->shouldReceive('getCollectionName')->andReturn('test')->once();
 
         $statsLpasCollection = Mockery::mock(MongoCollection::class);
         $statsLpasCollection->shouldReceive('remove')->once();
         $statsLpasCollection->shouldReceive('batchInsert')->andReturn(['ok' => true])->once();
 
         $serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($lpaCollection);
-        $serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-lpas')->andReturn($statsLpasCollection);
+        $serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($lpaCollection);
+        $serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-lpas')->andReturn($statsLpasCollection);
 
         $stats = new Stats();
         $stats->setServiceLocator($serviceLocatorMock);

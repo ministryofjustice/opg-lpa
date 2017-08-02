@@ -14,7 +14,7 @@ class DummyLpaMongoCursor implements Iterator
      * DummyMongoCursor constructor.
      * @param Lpa[] $lpas
      */
-    function __construct($lpas)
+    public function __construct($lpas)
     {
         $this->lpas = [];
         foreach ($lpas as $lpa) {
@@ -79,23 +79,8 @@ class DummyLpaMongoCursor implements Iterator
         $this->lpaIndex = 0;
     }
 
-    public function count()
+    public function toArray()
     {
-        return count($this->lpas);
-    }
-
-    public function sort()
-    {
-        return $this;
-    }
-
-    public function skip()
-    {
-        return $this;
-    }
-
-    public function limit()
-    {
-        return $this;
+        return $this->lpas;
     }
 }

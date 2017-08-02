@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Rest\Stats;
 
+use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Rest\Stats\Resource as StatsResource;
 use ApplicationTest\AbstractResourceBuilder;
 use Mockery;
@@ -22,11 +23,11 @@ class ResourceBuilder extends AbstractResourceBuilder
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
 
         $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-lpa')->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-who')->andReturn($this->statsWhoCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
+        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
 
         if ($this->statsLpasCollection !== null) {
-            $this->serviceLocatorMock->shouldReceive('get')->with('MongoDB-Default-stats-lpas')->andReturn($this->statsLpasCollection);
+            $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-lpas')->andReturn($this->statsLpasCollection);
         }
 
         $resource->setServiceLocator($this->serviceLocatorMock);
