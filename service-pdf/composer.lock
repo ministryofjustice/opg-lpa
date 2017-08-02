@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3287a44a2fdc5cdae2470c7e14c745b",
+    "content-hash": "5860711fbaf7436b2fef2e98e47a04bb",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -520,27 +520,27 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "3.0.3",
+            "version": "4.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "1c464c0c10ab4b1b6f6f3416b191d5e87c5562ff"
+                "reference": "0c0e41cc75a9573ff74f1913755ddc9756bae509"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/1c464c0c10ab4b1b6f6f3416b191d5e87c5562ff",
-                "reference": "1c464c0c10ab4b1b6f6f3416b191d5e87c5562ff",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/0c0e41cc75a9573ff74f1913755ddc9756bae509",
+                "reference": "0c0e41cc75a9573ff74f1913755ddc9756bae509",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "1.2.*",
-                "ext-mongo": ">=1.4.5",
+                "mongodb/mongodb": "^1.1",
                 "php": ">=5.5.9",
                 "symfony/intl": "2.6.*",
                 "symfony/validator": "2.6.*"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.3.*"
+                "phpunit/phpunit": "^4.0"
             },
             "type": "library",
             "autoload": {
@@ -553,10 +553,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/3.0.3",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/4.0.3",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-07-07T11:32:43+00:00"
+            "time": "2017-08-02T10:43:06+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -597,6 +597,64 @@
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
             "time": "2017-06-01T14:48:52+00:00"
+        },
+        {
+            "name": "mongodb/mongodb",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mongodb/mongo-php-library.git",
+                "reference": "a307dd60e71e1291c60927ea4f3a1905146063f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/a307dd60e71e1291c60927ea4f3a1905146063f5",
+                "reference": "a307dd60e71e1291c60927ea4f3a1905146063f5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mongodb": "^1.2.0",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MongoDB\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Mikola",
+                    "email": "jmikola@gmail.com"
+                },
+                {
+                    "name": "Hannes Magnusson",
+                    "email": "bjori@mongodb.com"
+                },
+                {
+                    "name": "Derick Rethans",
+                    "email": "github@derickrethans.nl"
+                }
+            ],
+            "description": "MongoDB driver library",
+            "homepage": "https://jira.mongodb.org/browse/PHPLIB",
+            "keywords": [
+                "database",
+                "driver",
+                "mongodb",
+                "persistence"
+            ],
+            "time": "2017-02-16T18:40:32+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2952,7 +3010,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.9",
         "ext-proctitle": "*"
     },
     "platform-dev": []

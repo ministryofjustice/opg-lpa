@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel;
 
+use MongoDB\BSON\UTCDateTime as MongoDate;
 use Opg\Lpa\DataModel\User\User;
 
 /**
@@ -47,7 +48,7 @@ class AbstractDataTest extends \PHPUnit_Framework_TestCase
     public function testSetMongoDate()
     {
         $user = new User();
-        $user->set('createdAt', new \MongoDate());
+        $user->set('createdAt', new MongoDate());
     }
 
     public function testValidationAllGroups()
