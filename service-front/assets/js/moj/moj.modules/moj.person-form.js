@@ -105,6 +105,7 @@
             $firstName = $('input[name="name-first"]', $form),
             $lastName = $('input[name="name-last"]', $form),
             duplicateName = null,
+            alertStart = 'The',
             loop,
             item;
 
@@ -121,20 +122,19 @@
               if ((typeof actorNames !== 'undefined') && actorNames.length) {
                 for (loop = 0; loop < actorNames.length; loop++) {
                   item = actorNames[loop];
+
                   if ($firstName.val().toLocaleLowerCase().trim() === item.firstname.toLocaleLowerCase()) {
                     if ($lastName.val().toLocaleLowerCase().trim() === item.lastname.toLocaleLowerCase()) {
+                      duplicateName = item;
 
-                      if ($form.attr('action').indexOf('replacement') > -1) {
-                        // if user is on the replacement attorney form, they can add one of
-                        // their primary attorneys, so don't flag this one up as a clash
-                        if (item['type'] != 'attorney') {
-                          duplicateName = item;
-                        }
-                      } else {
-                        duplicateName = item;
+                      //  Determine whether to change the alert start string
+                      if ($.inArray(duplicateName.type, ['replacement attorney', 'person to notify']) > -1) {
+                        alertStart = 'A';
+                      } else if (duplicateName.type == 'attorney') {
+                        alertStart = 'An';
                       }
-                      break;
 
+                      break;
                     }
                   }
                 }
@@ -145,13 +145,12 @@
 
               // Display alert if duplicate
               if (duplicateName !== null) {
-
                 $('label[for="name-last"]', $form)
                   .parents('.form-group')
                   .after($(tplAlert({
                     'elementJSref': 'js-duplication-alert',
                     'alertType': 'important-small',
-                    'alertMessage': '<p>The ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. By saving this section, you confirm that these are two different people with the same name.</p>'
+                    'alertMessage': '<p>' + alertStart + ' ' + duplicateName.type + '\'s name is also ' + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. By saving this section, you confirm that these are two different people with the same name.</p>'
                   })));
 
                 // Focus on alert panel for accessibility
