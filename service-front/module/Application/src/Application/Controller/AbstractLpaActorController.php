@@ -290,10 +290,9 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * If required filter by the calling action for the specific actor
      *
      * @param   integer $actorIndexToExclude
-     * @param   boolean $filterByActorAction
      * @return  array
      */
-    protected function getActorsList($actorIndexToExclude = null, $filterByActorAction = true)
+    protected function getActorsList($actorIndexToExclude = null)
     {
         $actorsList = [];
 
@@ -302,11 +301,11 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
         //  Determine which route we have come from so the results below can be filtered
         //  If the filter flag was passed into this function as false then set all flags below to false so no filtering takes place
-        $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
-        $isDonorRoute = ($filterByActorAction && $this instanceof Lpa\DonorController);
-        $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
-        $isPrimaryAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\PrimaryAttorneyController);
-        $isReplacementAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\ReplacementAttorneyController);
+        $isCertificateProviderRoute = ($this instanceof Lpa\CertificateProviderController);
+        $isDonorRoute = ($this instanceof Lpa\DonorController);
+        $isPeopleToModifyRoute = ($this instanceof Lpa\PeopleToNotifyController);
+        $isPrimaryAttorneyRoute = ($this instanceof Lpa\PrimaryAttorneyController);
+        $isReplacementAttorneyRoute = ($this instanceof Lpa\ReplacementAttorneyController);
 
         $lpaDocument = $this->getLpa()->document;
 
@@ -320,27 +319,31 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
         }
 
-        //  Include all of the primary attorney details unless we are editing that particular attorney
-        foreach ($lpaDocument->primaryAttorneys as $idx => $attorney) {
-            //  We are editing this attorney so do not add it to the actor list
-            if ($isPrimaryAttorneyRoute && $actorIndexToExclude === $idx) {
-                continue;
-            }
+        //  Include all of the primary attorney details unless we are adding/editing a replacement attorney or we are editing that particular primary attorney
+        if (!$isReplacementAttorneyRoute) {
+            foreach ($lpaDocument->primaryAttorneys as $idx => $attorney) {
+                //  We are editing this attorney so do not add it to the actor list
+                if ($isPrimaryAttorneyRoute && $actorIndexToExclude === $idx) {
+                    continue;
+                }
 
-            if ($attorney instanceof Attorneys\Human) {
-                $actorsList[] = $this->getActorDetails($attorney, 'attorney');
+                if ($attorney instanceof Attorneys\Human) {
+                    $actorsList[] = $this->getActorDetails($attorney, 'attorney');
+                }
             }
         }
 
-        //  Include all of the replacement attorney details unless we are editing that particular attorney
-        foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
-            //  We are editing this attorney so do not add it to the actor list
-            if ($isReplacementAttorneyRoute && $actorIndexToExclude === $idx) {
-                continue;
-            }
+        //  Include all of the replacement attorney details unless we are adding/editing a primary attorney or we are editing that particular replacement attorney
+        if (!$isPrimaryAttorneyRoute) {
+            foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
+                //  We are editing this attorney so do not add it to the actor list
+                if ($isReplacementAttorneyRoute && $actorIndexToExclude === $idx) {
+                    continue;
+                }
 
-            if ($attorney instanceof Attorneys\Human) {
-                $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
+                if ($attorney instanceof Attorneys\Human) {
+                    $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
+                }
             }
         }
 
@@ -352,7 +355,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                     continue;
                 }
 
-                $actorsList[] = $this->getActorDetails($notifiedPerson, 'people to notify');
+                $actorsList[] = $this->getActorDetails($notifiedPerson, 'person to notify');    //  Use "person" rather than "people" to ensure the JS warning is phrased correctly
             }
         }
 
