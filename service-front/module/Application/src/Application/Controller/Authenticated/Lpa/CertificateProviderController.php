@@ -16,6 +16,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
         if ($this->getLpa()->document->certificateProvider instanceof CertificateProvider) {
             $viewModel->editUrl = $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]);
+            $viewModel->confirmDeleteUrl = $this->url()->fromRoute('lpa/certificate-provider/confirm-delete', ['lpa-id' => $lpaId]);
 
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
             $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
@@ -127,5 +128,43 @@ class CertificateProviderController extends AbstractLpaActorController
         $this->addCancelUrlToView($viewModel, 'lpa/certificate-provider');
 
         return $viewModel;
+    }
+
+    public function confirmDeleteAction()
+    {
+        $lpa = $this->getLpa();
+        $lpaId = $lpa->id;
+
+        $certificateProvider = $lpa->document->certificateProvider;
+
+        $viewModel = new ViewModel([
+            'deleteRoute' => $this->url()->fromRoute('lpa/certificate-provider/delete', ['lpa-id' => $lpaId]),
+            'certificateProviderName' => $certificateProvider->name,
+            'certificateProviderAddress' => $certificateProvider->address
+        ]);
+
+        if ($this->isPopup()) {
+            $viewModel->setTerminal(true);
+            $viewModel->isPopup = true;
+        }
+
+        //  Add a cancel URL for this action
+        $this->addCancelUrlToView($viewModel, 'lpa/certificate-provider');
+
+        return $viewModel;
+    }
+
+    public function deleteAction()
+    {
+        $lpa = $this->getLpa();
+
+        // delete certificate provider
+        if (!$this->getLpaApplicationService()->deleteCertificateProvider($lpa->id)) {
+            throw new \RuntimeException('API client failed to delete certificate provider for id: ' . $lpa->id);
+        }
+
+        return $this->redirect()->toRoute('lpa/certificate-provider', [
+            'lpa-id' => $lpa->id
+        ]);
     }
 }
