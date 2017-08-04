@@ -47,7 +47,7 @@
     }) ? '' }}
 {% endif %}
 
-<li id="who-are-you-section" class="section current js-current">
+<li id="who-are-you-section" class="section current">
 
     <h2 class="heading-medium accordion-header flush--top">Who was using the LPA service?</h2>
 
@@ -62,7 +62,7 @@
     </div>
 
     <div class="form-group">
-        <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
+        <a href="{{ nextUrl }}#current" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
     </div>
 
     {% else %}

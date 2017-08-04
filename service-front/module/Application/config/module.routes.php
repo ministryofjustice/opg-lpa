@@ -15,6 +15,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'redirect',
+                        'action'     => 'redirect',
                     ],
                 ],
             ], // index-redirect
