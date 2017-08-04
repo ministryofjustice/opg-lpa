@@ -82,7 +82,7 @@ An LPA can't be used by your attorneys until it's been registered by the Office 
 * the LPA has no errors
 * people have had the opportunity to object if they have concerns
 
-OPG can ask the Court of Protection to remove invalid instructions and preferences so that an LPA can be registered.
+OPG can ask the Court of Protection to remove invalid preferences and instructions so that an LPA can be registered.
 
 OPG protects people who don't have the mental capacity to make decisions for themselves. If someone raises concerns about how an attorney is acting under an LPA, OPG will investigate or work with other organisations to address complaints.
 
