@@ -28,14 +28,6 @@
 
             {{ macros.outputActor( lpa.document.donor, url('lpa/donor', {'lpa-id': lpa.id}) ) }}
 
-            {% if lpa.document.donor.canSign is defined %}
-                <tr class="group-end">
-                    <th class="table-summary-title" scope="row">I can physically sign or make a mark on the LPA</th>
-                    <td class="table-summary-content">{{ lpa.document.donor.canSign ? 'Yes' : 'No' }}</td>
-                    <td class="table-summary-action"></td>
-                </tr>
-            {% endif %}
-
         {% endif %}
 
         {# Can Sustain Life #}
