@@ -250,22 +250,6 @@
             </tr>
         {% endif %}
 
-        {# ATTORNEY INSTRUCTIONS #}
-        {% if lpa.document.instruction is defined and lpa.document.instruction is not empty %}
-            <tr class="group-single">
-                <th class="table-summary-title" scope="row">Instructions</th>
-                <td class="table-summary-content">{{ lpa.document.instruction }}</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
-            </tr>
-
-        {% else %}
-            <tr class="group-single">
-                <td class="table-summary-title">Instructions</td>
-                <td class="table-summary-content">No instructions</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
-            </tr>
-        {% endif %}
-
         {# ATTORNEY PREFERENCES #}
         {% if lpa.document.preference is defined and lpa.document.preference is not empty %}
             <tr class="group-single">
@@ -278,6 +262,22 @@
             <tr class="group-single">
                 <td class="table-summary-title">Preferences</td>
                 <td class="table-summary-content">No preferences</td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+            </tr>
+        {% endif %}
+
+        {# ATTORNEY INSTRUCTIONS #}
+        {% if lpa.document.instruction is defined and lpa.document.instruction is not empty %}
+            <tr class="group-single">
+                <th class="table-summary-title" scope="row">Instructions</th>
+                <td class="table-summary-content">{{ lpa.document.instruction }}</td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+            </tr>
+
+        {% else %}
+            <tr class="group-single">
+                <td class="table-summary-title">Instructions</td>
+                <td class="table-summary-content">No instructions</td>
                 <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
             </tr>
         {% endif %}

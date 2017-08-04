@@ -22,7 +22,7 @@
 	* People_Certificate providers.md
 * People to notify
 	* People_People to be told.md
-* Instructions and preferences
+* Preferences and instructions
 	* Decisions_Restrictions and guidance.md
 * Signing the LPA
 	* Process_Signing the LPA.md
