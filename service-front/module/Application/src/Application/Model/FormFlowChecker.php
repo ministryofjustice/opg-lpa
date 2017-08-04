@@ -39,6 +39,8 @@ class FormFlowChecker extends StateChecker
         'lpa/certificate-provider'                      => 'isCertificateProviderAccessible',
         'lpa/certificate-provider/add'                  => 'isCertificateProviderAddAccessible',
         'lpa/certificate-provider/edit'                 => 'isCertificateProviderEditAccessible',
+        'lpa/certificate-provider/confirm-delete'       => 'isCertificateProviderDeleteAccessible',
+        'lpa/certificate-provider/delete'               => 'isCertificateProviderDeleteAccessible',
         'lpa/people-to-notify'                          => 'isPeopleToNotifyAccessible',
         'lpa/people-to-notify/add'                      => 'isPeopleToNotifyAddAccessible',
         'lpa/people-to-notify/edit'                     => 'isPeopleToNotifyEditAccessible',
@@ -111,6 +113,7 @@ class FormFlowChecker extends StateChecker
         'lpa/certificate-provider'                      => 'lpa/people-to-notify',
         'lpa/certificate-provider/add'                  => 'lpa/certificate-provider',
         'lpa/certificate-provider/edit'                 => 'lpa/certificate-provider',
+        'lpa/certificate-provider/delete'               => 'lpa/certificate-provider',
         'lpa/people-to-notify'                          => 'lpa/instructions',
         'lpa/people-to-notify/add'                      => 'lpa/people-to-notify',
         'lpa/people-to-notify/edit'                     => 'lpa/people-to-notify',
@@ -531,6 +534,15 @@ class FormFlowChecker extends StateChecker
     }
 
     private function isCertificateProviderEditAccessible()
+    {
+        if ($this->isCertificateProviderAccessible() === true && $this->lpaHasCertificateProvider()) {
+            return true;
+        }
+
+        return 'lpa/certificate-provider';
+    }
+
+    private function isCertificateProviderDeleteAccessible()
     {
         if ($this->isCertificateProviderAccessible() === true && $this->lpaHasCertificateProvider()) {
             return true;
