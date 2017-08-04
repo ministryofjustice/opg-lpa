@@ -43,7 +43,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->attorneys = $attorneysParams;
 
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
+            $viewModel->nextUrl = $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
         }
 
         return $viewModel;
@@ -290,9 +291,10 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        return $this->redirect()->toRoute('lpa/primary-attorney', [
+        $route = 'lpa/primary-attorney';
+        return $this->redirect()->toRoute($route, [
             'lpa-id' => $lpa->id
-        ]);
+        ], $this->getFlowChecker()->getRouteOptions($route));
     }
 
     public function addTrustAction()
@@ -309,7 +311,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         //  Redirect to human add attorney if trusts are not allowed
         if (!$this->allowTrust()) {
-            return $this->redirect()->toRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]);
+            $route = 'lpa/primary-attorney/add';
+            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');

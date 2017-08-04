@@ -19,7 +19,8 @@ class CertificateProviderController extends AbstractLpaActorController
             $viewModel->confirmDeleteUrl = $this->url()->fromRoute('lpa/certificate-provider/confirm-delete', ['lpa-id' => $lpaId]);
 
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $viewModel->nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpaId]);
+            $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
+            $viewModel->nextUrl = $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
         }
 
         $viewModel->addUrl = $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]);
@@ -49,7 +50,8 @@ class CertificateProviderController extends AbstractLpaActorController
 
         //  If a certificate provider has already been provided then redirect to the main certificate provider screen
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
-            return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id' => $lpaId]);
+            $route = 'lpa/certificate-provider';
+            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');

@@ -3854,6 +3854,11 @@ input[type=number] {
       .accordion-summary .label-and-edit-box {
         position: relative; } }
 
+.accordion-current {
+  display: block;
+  padding-top: 20px;
+  margin-top: -20px; }
+
 .person {
   position: relative;
   margin-bottom: 30px;
