@@ -532,6 +532,24 @@ return [
                                     ],
                                 ],
                             ],
+                            'confirm-delete' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/confirm-delete',
+                                    'defaults' => [
+                                        'action' => 'confirm-delete',
+                                    ],
+                                ],
+                            ],
+                            'delete' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/delete',
+                                    'defaults' => [
+                                        'action' => 'delete',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     'complete' => [

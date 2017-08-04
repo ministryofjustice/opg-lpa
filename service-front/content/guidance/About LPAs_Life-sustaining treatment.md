@@ -24,13 +24,13 @@ Life-sustaining treatment can include:
 
 Whether some treatments are life-sustaining depends on the situation. For example, if someone had pneumonia, a simple course of antibiotics could be life-sustaining.
 
-Decisions about life-sustaining treatment can be needed in unexpected circumstances. One example is a routine operation where things don't go as planned. 
+Decisions about life-sustaining treatment can be needed in unexpected circumstances. One example is a routine operation where things don't go as planned.
 
 ### Option A: attorneys
 
 Choose option A if you want your attorneys to decide about life-sustaining treatment if ever you need it and can't make the decisions yourself.
 
-At the end of the LPA service there is a section where you can add instructions and preferences for your attorneys. If you have specific wishes about life-sustaining treatment, make them clear in that section, so that any decisions your attorneys make are as close as possible to the decisions you would have made.
+At the end of the LPA service there is a section where you can add preferences and instructions for your attorneys. If you have specific wishes about life-sustaining treatment, make them clear in that section, so that any decisions your attorneys make are as close as possible to the decisions you would have made.
 
 You can specify medical or physical conditions where your attorneys must or must not consent to life-sustaining treatment on your behalf. For example, you can state that your attorneys must not agree to life-sustaining treatment if you are in a persistent vegetative state.
 
@@ -38,7 +38,7 @@ If you have already made an 'advance decision' to refuse a specific life-sustain
 
 An advance decision is a legally binding document in which you state which life-sustaining treatments you don't want, in case you cannot decide at some point.
 
-See [Instructions and preferences](/help/#topic-instructions-and-preferences) for more on giving guidance to your attorneys.
+See [Preferences and instructions](/help/#topic-preferences-and-instructions) for more on giving guidance to your attorneys.
 
 ### Option B: doctors
 
@@ -50,7 +50,7 @@ Choose option B if you want your doctors to decide about life-sustaining treatme
 
 ### Making your treatment preferences known
 
-If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'instructions and preferences' section of this LPA service.
+If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'preferences and instructions' section of this LPA service.
 
  <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" rel="external" target="_blank">NHS Choices has information about advance decisions.</a>
 
