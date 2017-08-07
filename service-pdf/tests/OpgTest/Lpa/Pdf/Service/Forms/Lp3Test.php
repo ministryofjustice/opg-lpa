@@ -19,9 +19,63 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "attorney",
+            'lpa-type' => "property-and-financial-affairs",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "jointly-attorney-severally",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
+            'lpa-document-primaryAttorneys-0-name-first' => "Amy",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-1-name-title' => "Mr",
+            'lpa-document-primaryAttorneys-1-name-first' => "David",
+            'lpa-document-primaryAttorneys-1-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-1-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-1-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-1-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-1-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-2-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-2-name-first' => "Wellington",
+            'lpa-document-primaryAttorneys-2-name-last' => "Gastri",
+            'lpa-document-primaryAttorneys-2-address-address1' => "Severington Lane",
+            'lpa-document-primaryAttorneys-2-address-address2' => "Kingston",
+            'lpa-document-primaryAttorneys-2-address-address3' => "Burlingtop, Hertfordshire",
+            'lpa-document-primaryAttorneys-2-address-postcode' => "PL1 9NE",
+            'lpa-document-primaryAttorneys-3-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-3-name-first' => "Henry",
+            'lpa-document-primaryAttorneys-3-name-last' => "Taylor",
+            'lpa-document-primaryAttorneys-3-address-address1' => "Lark Meadow Drive",
+            'lpa-document-primaryAttorneys-3-address-address2' => "Solihull",
+            'lpa-document-primaryAttorneys-3-address-address3' => "Birmingham",
+            'lpa-document-primaryAttorneys-3-address-postcode' => "B37 6NA",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFNoPeopleToNotifyException()
@@ -56,9 +110,42 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "attorney",
+            'lpa-type' => "property-and-financial-affairs",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "only-one-attorney-appointed",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
+            'lpa-document-primaryAttorneys-0-name-first' => "Amy",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFDonorRegistering()
@@ -77,9 +164,63 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "donor",
+            'lpa-type' => "property-and-financial-affairs",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "jointly-attorney-severally",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
+            'lpa-document-primaryAttorneys-0-name-first' => "Amy",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-1-name-title' => "Mr",
+            'lpa-document-primaryAttorneys-1-name-first' => "David",
+            'lpa-document-primaryAttorneys-1-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-1-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-1-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-1-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-1-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-2-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-2-name-first' => "Wellington",
+            'lpa-document-primaryAttorneys-2-name-last' => "Gastri",
+            'lpa-document-primaryAttorneys-2-address-address1' => "Severington Lane",
+            'lpa-document-primaryAttorneys-2-address-address2' => "Kingston",
+            'lpa-document-primaryAttorneys-2-address-address3' => "Burlingtop, Hertfordshire",
+            'lpa-document-primaryAttorneys-2-address-postcode' => "PL1 9NE",
+            'lpa-document-primaryAttorneys-3-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-3-name-first' => "Henry",
+            'lpa-document-primaryAttorneys-3-name-last' => "Taylor",
+            'lpa-document-primaryAttorneys-3-address-address1' => "Lark Meadow Drive",
+            'lpa-document-primaryAttorneys-3-address-address2' => "Solihull",
+            'lpa-document-primaryAttorneys-3-address-address3' => "Birmingham",
+            'lpa-document-primaryAttorneys-3-address-postcode' => "B37 6NA",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFTrustAttorneyOnly()
@@ -106,9 +247,40 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "attorney",
+            'lpa-type' => "property-and-financial-affairs",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "only-one-attorney-appointed",
+            'lpa-document-primaryAttorneys-0-name-last' => "Standard Trust",
+            'lpa-document-primaryAttorneys-0-address-address1' => "1 Laburnum Place",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Sketty",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Swansea, Abertawe",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "SA2 8HT",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGenerateHW()
@@ -122,9 +294,63 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "attorney",
+            'lpa-type' => "health-and-welfare",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "jointly-attorney-severally",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
+            'lpa-document-primaryAttorneys-0-name-first' => "Amy",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-1-name-title' => "Mr",
+            'lpa-document-primaryAttorneys-1-name-first' => "David",
+            'lpa-document-primaryAttorneys-1-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-1-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-1-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-1-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-1-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-2-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-2-name-first' => "Wellington",
+            'lpa-document-primaryAttorneys-2-name-last' => "Gastri",
+            'lpa-document-primaryAttorneys-2-address-address1' => "Severington Lane",
+            'lpa-document-primaryAttorneys-2-address-address2' => "Kingston",
+            'lpa-document-primaryAttorneys-2-address-address3' => "Burlingtop, Hertfordshire",
+            'lpa-document-primaryAttorneys-2-address-postcode' => "PL1 9NE",
+            'lpa-document-primaryAttorneys-3-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-3-name-first' => "Henry",
+            'lpa-document-primaryAttorneys-3-name-last' => "Taylor",
+            'lpa-document-primaryAttorneys-3-address-address1' => "Lark Meadow Drive",
+            'lpa-document-primaryAttorneys-3-address-address2' => "Solihull",
+            'lpa-document-primaryAttorneys-3-address-address3' => "Birmingham",
+            'lpa-document-primaryAttorneys-3-address-postcode' => "B37 6NA",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGenerateHWNoPeopleToNotifyException()
@@ -159,9 +385,42 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "attorney",
+            'lpa-type' => "health-and-welfare",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "only-one-attorney-appointed",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
+            'lpa-document-primaryAttorneys-0-name-first' => "Amy",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGenerateHWDonorRegistering()
@@ -180,8 +439,62 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'lpa-document-peopleToNotify-name-title' => "Mrs",
+            'lpa-document-peopleToNotify-name-first' => "Liyana",
+            'lpa-document-peopleToNotify-name-last' => "Gonzalez",
+            'lpa-document-peopleToNotify-address-address1' => "33 New Street",
+            'lpa-document-peopleToNotify-address-address2' => "Mossley",
+            'lpa-document-peopleToNotify-address-address3' => "Greater Manchester",
+            'lpa-document-peopleToNotify-address-postcode' => "MK47 9WD",
+            'footer-right-page-one' => "LP3 People to notify (07.15)",
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'who-is-applicant' => "donor",
+            'lpa-type' => "health-and-welfare",
+            'footer-right-page-two' => "LP3 People to notify (07.15)",
+            'how-attorneys-act' => "jointly-attorney-severally",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
+            'lpa-document-primaryAttorneys-0-name-first' => "Amy",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-1-name-title' => "Mr",
+            'lpa-document-primaryAttorneys-1-name-first' => "David",
+            'lpa-document-primaryAttorneys-1-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-1-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-1-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-1-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-1-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-2-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-2-name-first' => "Wellington",
+            'lpa-document-primaryAttorneys-2-name-last' => "Gastri",
+            'lpa-document-primaryAttorneys-2-address-address1' => "Severington Lane",
+            'lpa-document-primaryAttorneys-2-address-address2' => "Kingston",
+            'lpa-document-primaryAttorneys-2-address-address3' => "Burlingtop, Hertfordshire",
+            'lpa-document-primaryAttorneys-2-address-postcode' => "PL1 9NE",
+            'lpa-document-primaryAttorneys-3-name-title' => "Dr",
+            'lpa-document-primaryAttorneys-3-name-first' => "Henry",
+            'lpa-document-primaryAttorneys-3-name-last' => "Taylor",
+            'lpa-document-primaryAttorneys-3-address-address1' => "Lark Meadow Drive",
+            'lpa-document-primaryAttorneys-3-address-address2' => "Solihull",
+            'lpa-document-primaryAttorneys-3-address-address3' => "Birmingham",
+            'lpa-document-primaryAttorneys-3-address-postcode' => "B37 6NA",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
+            'footer-right-page-four' => "LP3 People to notify (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 }

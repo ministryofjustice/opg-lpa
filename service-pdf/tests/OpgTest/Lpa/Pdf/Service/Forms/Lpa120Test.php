@@ -3,7 +3,6 @@
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use mikehaertl\pdftk\Pdf;
 
@@ -20,9 +19,32 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "donor",
+            'applicant-type-other' => "",
+            'applicant-name-title' => "mrs",
+            'applicant-name-title-other' => "",
+            'applicant-name-first' => "Nancy",
+            'applicant-name-last' => "Garrison",
+            'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'applicant-phone-number' => "01234 123456",
+            'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'receive-benefits' => "",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGenerateNoRepeatCaseNumberException()
@@ -57,9 +79,32 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "attorney",
+            'applicant-type-other' => "",
+            'applicant-name-title' => "mrs",
+            'applicant-name-title-other' => "",
+            'applicant-name-first' => "Nancy",
+            'applicant-name-last' => "Garrison",
+            'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'applicant-phone-number' => "01234 123456",
+            'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'receive-benefits' => "",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFOtherCorrespondentEnteredManually()
@@ -78,9 +123,32 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "other",
+            'applicant-type-other' => "Correspondent",
+            'applicant-name-title' => "mrs",
+            'applicant-name-title-other' => "",
+            'applicant-name-first' => "Nancy",
+            'applicant-name-last' => "Garrison",
+            'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'applicant-phone-number' => "01234 123456",
+            'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'receive-benefits' => "",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFDonorCorrespondent()
@@ -100,9 +168,32 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "donor",
+            'applicant-type-other' => "",
+            'applicant-name-title' => "mrs",
+            'applicant-name-title-other' => "",
+            'applicant-name-first' => "Nancy",
+            'applicant-name-last' => "Garrison",
+            'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'applicant-phone-number' => "",
+            'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'receive-benefits' => "",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFAttorneyCorrespondent()
@@ -122,9 +213,32 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "attorney",
+            'applicant-type-other' => "",
+            'applicant-name-title' => "mrs",
+            'applicant-name-title-other' => "",
+            'applicant-name-first' => "Amy",
+            'applicant-name-last' => "Wheeler",
+            'applicant-address' => "\nBrickhill Cottage, Birch Cross, Marchington, Uttoxeter, Staffordshire, ST14 8NX",
+            'applicant-phone-number' => "",
+            'applicant-email-address' => "opglpademo+AmyWheeler@gmail.com",
+            'receive-benefits' => "",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFOtherCorrespondentThrowsException()
@@ -159,9 +273,32 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "donor",
+            'applicant-type-other' => "",
+            'applicant-name-title' => "other",
+            'applicant-name-title-other' => "Sir",
+            'applicant-name-first' => "Nancy",
+            'applicant-name-last' => "Garrison",
+            'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'applicant-phone-number' => "01234 123456",
+            'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'receive-benefits' => "",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGeneratePFBooleanAsNo()
@@ -180,8 +317,31 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
-        //  TODO - Verify the drawing targets
+        $pdf = $form->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
 
-        $this->assertInstanceOf(Pdf::class, $form->getPdfObject());
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'donor-full-name' => "Mrs Nancy Garrison",
+            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'lpa-type' => "property-and-financial-affairs",
+            'is-repeat-application' => "On",
+            'case-number' => "12345678",
+            'applicant-type' => "donor",
+            'applicant-type-other' => "",
+            'applicant-name-title' => "mrs",
+            'applicant-name-title-other' => "",
+            'applicant-name-first' => "Nancy",
+            'applicant-name-last' => "Garrison",
+            'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
+            'applicant-phone-number' => "01234 123456",
+            'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'receive-benefits' => "no",
+            'damage-awarded' => "",
+            'low-income' => "",
+            'receive-universal-credit' => "yes",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 }
