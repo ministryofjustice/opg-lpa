@@ -62,11 +62,11 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
 
             $this->pdfFormData['footer-right-page-three'] = Config::getInstance()['footer']['lp3'];
 
-            $additionalAttorneyPage = PdftkInstance::getInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
+            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
 
-            $additionalAttorneyPage->fillForm($this->pdfFormData)
-                                   ->flatten()
-                                   ->saveAs($filePath);
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
         } //endfor
 
         if($additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {

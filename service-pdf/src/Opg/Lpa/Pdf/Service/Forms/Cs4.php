@@ -25,11 +25,11 @@ class Cs4 extends AbstractForm
         $this->pdfFormData['cs4-trust-corporation-company-registration-number'] = $this->companyNumber;
         $this->pdfFormData['cs4-footer-right'] = Config::getInstance()['footer']['cs4'];
 
-        $cs2 = PdftkInstance::getInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
+        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LPC_Continuation_Sheet_4.pdf');
 
-        $cs2->fillForm($this->pdfFormData)
-            ->flatten()
-            ->saveAs($filePath);
+        $this->pdf->fillForm($this->pdfFormData)
+                  ->flatten()
+                  ->saveAs($filePath);
 
         return $this->interFileStack;
     }

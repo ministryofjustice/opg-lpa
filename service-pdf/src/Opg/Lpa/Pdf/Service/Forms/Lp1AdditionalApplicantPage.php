@@ -32,7 +32,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
             $filePath = $this->registerTempFile('AdditionalApplicant');
 
-            $additionalApplicant = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicant.pdf":"/LP1H_AdditionalApplicant.pdf"));
+            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicant.pdf":"/LP1H_AdditionalApplicant.pdf"));
 
             for($j=0; $j<Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
 
@@ -65,9 +65,9 @@ class Lp1AdditionalApplicantPage extends AbstractForm
                 $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
             }
 
-            $additionalApplicant->fillForm($this->pdfFormData)
-                                ->flatten()
-                                ->saveAs($filePath);
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
 
         } // endfor
 

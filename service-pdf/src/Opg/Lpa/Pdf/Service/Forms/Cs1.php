@@ -114,21 +114,21 @@ class Cs1 extends AbstractForm
 
             if($pIdx == 1) {
                 $filePath = $this->registerTempFile('CS1');
-                $cs1 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
 
-                $cs1->fillForm($this->pdfFormData)
-                    ->flatten()
-                    ->saveAs($filePath);
+                $this->pdf->fillForm($this->pdfFormData)
+                          ->flatten()
+                          ->saveAs($filePath);
             }
         }
 
         if($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            $cs1 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
 
-            $cs1->fillForm($this->pdfFormData)
-                ->flatten()
-                ->saveAs($filePath);
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
 
             // draw cross lines if there's any blank slot in the last CS1 pdf
             $this->drawCrossLines($filePath, array(array('cs1')));

@@ -18,10 +18,10 @@ class CoversheetInstrument extends AbstractForm
 
         $filePath = $this->registerTempFile('Coversheet');
 
-        $coversheetInstrument = PdftkInstance::getInstance($this->pdfTemplatePath . '//' . ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'LP1F_CoversheetInstrument.pdf' : 'LP1H_CoversheetInstrument.pdf'));
+        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath . '//' . ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'LP1F_CoversheetInstrument.pdf' : 'LP1H_CoversheetInstrument.pdf'));
 
-        $coversheetInstrument->flatten()
-                             ->saveAs($filePath);
+        $this->pdf->flatten()
+                  ->saveAs($filePath);
 
         return $this->interFileStack;
     } // function generate()

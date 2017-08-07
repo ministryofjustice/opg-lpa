@@ -44,11 +44,11 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             $this->pdfFormData['signature-attorney-name-last'] = $attorney->name->last;
             $this->pdfFormData['footer-instrument-right-additional'] = Config::getInstance()['footer'][$lpaType]['instrument'];
 
-            $attorneySignaturePage = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
+            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
 
-            $attorneySignaturePage->fillForm($this->pdfFormData)
-                                  ->flatten()
-                                  ->saveAs($filePath);
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
         } //endforeach
 
         return $this->interFileStack;

@@ -68,11 +68,11 @@ class Cs2 extends AbstractForm
             $this->pdfFormData['cs2-continued'] = $cs2Continued;
             $this->pdfFormData['cs2-footer-right'] = Config::getInstance()['footer']['cs2'];
 
-            $cs2 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
+            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
 
-            $cs2->fillForm($this->pdfFormData)
-                ->flatten()
-                ->saveAs($filePath);
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
         }
 
         return $this->interFileStack;
