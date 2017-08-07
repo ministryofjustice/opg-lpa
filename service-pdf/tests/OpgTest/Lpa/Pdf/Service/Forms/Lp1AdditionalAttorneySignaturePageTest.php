@@ -3,6 +3,7 @@
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\Pdf\Service\Forms\Lp1AdditionalAttorneySignaturePage;
+use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalAttorneySignaturePageTest extends AbstractFormTestClass
 {
@@ -18,6 +19,19 @@ class Lp1AdditionalAttorneySignaturePageTest extends AbstractFormTestClass
         $this->assertCount(4, $interFileStack['AdditionalAttorneySignature']);
 
         $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalAttorneySignature'], 'AdditionalAttorneySignature');
+
+        $pdf = $lp1AdditionalAttorneySignaturePage->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
+
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'signature-attorney-name-title' => "Ms",
+            'signature-attorney-name-first' => "Erica",
+            'signature-attorney-name-last' => "Schmidt",
+            'footer-instrument-right-additional' => "LP1F Property and financial affairs (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 
     public function testGenerateHW()
@@ -32,5 +46,18 @@ class Lp1AdditionalAttorneySignaturePageTest extends AbstractFormTestClass
         $this->assertCount(4, $interFileStack['AdditionalAttorneySignature']);
 
         $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalAttorneySignature'], 'AdditionalAttorneySignature');
+
+        $pdf = $lp1AdditionalAttorneySignaturePage->getPdfObject();
+        $this->assertInstanceOf(Pdf::class, $pdf);
+
+        //  Confirm that the form data is as expected
+        $expectedData = [
+            'signature-attorney-name-title' => "Ms",
+            'signature-attorney-name-first' => "Erica",
+            'signature-attorney-name-last' => "Schmidt",
+            'footer-instrument-right-additional' => "LP1H Health and welfare (07.15)",
+        ];
+
+        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
     }
 }
