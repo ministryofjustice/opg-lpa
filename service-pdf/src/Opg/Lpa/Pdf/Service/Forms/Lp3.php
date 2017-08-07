@@ -1,13 +1,14 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Lp3 extends AbstractForm
 {
@@ -20,7 +21,7 @@ class Lp3 extends AbstractForm
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
 
-        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP3.pdf');
+        $this->pdf = new Pdf($this->pdfTemplatePath.'/LP3.pdf');
     }
 
     /**
@@ -163,7 +164,7 @@ class Lp3 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        $pdf = PdftkInstance::getInstance();
+        $pdf = new Pdf();
 
         $noOfLp3 = count($this->interFileStack['LP3']);
         $fileTag = 'A';

@@ -4,7 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Cs2 extends AbstractForm
 {
@@ -68,7 +68,7 @@ class Cs2 extends AbstractForm
             $this->pdfFormData['cs2-continued'] = $cs2Continued;
             $this->pdfFormData['cs2-footer-right'] = Config::getInstance()['footer']['cs2'];
 
-            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
+            $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_2.pdf");
 
             $this->pdf->fillForm($this->pdfFormData)
                       ->flatten()

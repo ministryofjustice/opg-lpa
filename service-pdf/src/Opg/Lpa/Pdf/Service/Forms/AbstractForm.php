@@ -2,12 +2,11 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
 use ZendPdf\PdfDocument as ZendPdfDocument;
 use mikehaertl\pdftk\Pdf;
 
@@ -154,7 +153,7 @@ abstract class AbstractForm
 
     protected function protectPdf()
     {
-        $pdf = PdftkInstance::getInstance($this->generatedPdfFilePath);
+        $pdf = new Pdf($this->generatedPdfFilePath);
 
         $password = $this->config['pdf']['password'];
 

@@ -2,12 +2,12 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Cs1 extends AbstractForm
 {
@@ -114,7 +114,7 @@ class Cs1 extends AbstractForm
 
             if($pIdx == 1) {
                 $filePath = $this->registerTempFile('CS1');
-                $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
 
                 $this->pdf->fillForm($this->pdfFormData)
                           ->flatten()
@@ -124,7 +124,7 @@ class Cs1 extends AbstractForm
 
         if($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
 
             $this->pdf->fillForm($this->pdfFormData)
                       ->flatten()

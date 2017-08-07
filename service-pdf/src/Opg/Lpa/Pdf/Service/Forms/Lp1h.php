@@ -1,11 +1,12 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Lp1h extends Lp1
 {
@@ -17,7 +18,7 @@ class Lp1h extends Lp1
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1H');
 
-        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP1H.pdf');
+        $this->pdf = new Pdf($this->pdfTemplatePath.'/LP1H.pdf');
 
     }
 

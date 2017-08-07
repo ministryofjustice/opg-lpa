@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -17,14 +18,14 @@ trait AttorneysTrait
         if(count($this->lpa->document->$attorneyType) < 2) {
             return $this->lpa->document->$attorneyType;
         }
-    
+
         if($this->hasTrustCorporation($this->lpa->document->$attorneyType)) {
             $attorneys = $this->lpa->document->$attorneyType;
         }
         else {
             return $this->lpa->document->$attorneyType;
         }
-    
+
         $sortedAttorneys = [];
         foreach($attorneys as $idx=>$attorney) {
             if($attorney instanceof TrustCorporation) {
@@ -34,11 +35,11 @@ trait AttorneysTrait
                 $sortedAttorneys[] = $attorney;
             }
         }
-    
+
         array_unshift($sortedAttorneys, $trustCorp);
         return $sortedAttorneys;
     }
-    
+
     /**
      * check if there is a trust corp in the whole LPA or in primary attorneys or replacement attorneys.
      */
@@ -50,7 +51,7 @@ trait AttorneysTrait
                     return true;
                 }
             }
-    
+
             foreach($this->lpa->document->replacementAttorneys as $attorney) {
                 if($attorney instanceof TrustCorporation) {
                     return true;
@@ -64,7 +65,7 @@ trait AttorneysTrait
                 }
             }
         }
-    
+
         return false;
     } // function hasTrustCorporation()
 }

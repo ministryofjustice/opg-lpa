@@ -6,10 +6,10 @@ use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use mikehaertl\pdftk\Pdf;
 
 class Lpa120 extends AbstractForm
 {
@@ -20,7 +20,7 @@ class Lpa120 extends AbstractForm
         //  Generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
 
-        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath . '/LPA120.pdf');
+        $this->pdf = new Pdf($this->pdfTemplatePath . '/LPA120.pdf');
     }
 
     /**

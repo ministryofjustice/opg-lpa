@@ -1,11 +1,12 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
+use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
@@ -44,7 +45,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             $this->pdfFormData['signature-attorney-name-last'] = $attorney->name->last;
             $this->pdfFormData['footer-instrument-right-additional'] = Config::getInstance()['footer'][$lpaType]['instrument'];
 
-            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
+            $this->pdf = new Pdf($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
 
             $this->pdf->fillForm($this->pdfFormData)
                       ->flatten()

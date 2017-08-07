@@ -1,9 +1,10 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Lp3AdditionalAttorneyPage extends AbstractForm
 {
@@ -62,7 +63,7 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
 
             $this->pdfFormData['footer-right-page-three'] = Config::getInstance()['footer']['lp3'];
 
-            $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
+            $this->pdf = new Pdf($this->pdfTemplatePath."/LP3_AdditionalAttorney.pdf");
 
             $this->pdf->fillForm($this->pdfFormData)
                       ->flatten()
