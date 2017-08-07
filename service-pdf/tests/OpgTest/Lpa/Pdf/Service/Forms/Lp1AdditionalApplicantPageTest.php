@@ -17,7 +17,7 @@ class Lp1AdditionalApplicantPageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalApplicant', $interFileStack);
         $this->assertCount(1, $interFileStack['AdditionalApplicant']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalApplicant'], 'AdditionalApplicant');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalApplicant'], 'AdditionalApplicant');
     }
 
     public function testGenerateHW()
@@ -31,6 +31,6 @@ class Lp1AdditionalApplicantPageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalApplicant', $interFileStack);
         $this->assertCount(1, $interFileStack['AdditionalApplicant']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalApplicant'], 'AdditionalApplicant');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalApplicant'], 'AdditionalApplicant');
     }
 }

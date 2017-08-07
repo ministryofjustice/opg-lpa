@@ -17,7 +17,7 @@ class CoversheetRegistrationTest extends AbstractFormTestClass
         $this->assertArrayHasKey('Coversheet', $interFileStack);
         $this->assertCount(1, $interFileStack['Coversheet']);
 
-        $this->verifyFileNames($lpa, $interFileStack['Coversheet'], 'Coversheet');
+        $this->verifyTmpFileNames($lpa, $interFileStack['Coversheet'], 'Coversheet');
     }
 
     public function testGenerateHW()
@@ -31,6 +31,6 @@ class CoversheetRegistrationTest extends AbstractFormTestClass
         $this->assertArrayHasKey('Coversheet', $interFileStack);
         $this->assertCount(1, $interFileStack['Coversheet']);
 
-        $this->verifyFileNames($lpa, $interFileStack['Coversheet'], 'Coversheet');
+        $this->verifyTmpFileNames($lpa, $interFileStack['Coversheet'], 'Coversheet');
     }
 }

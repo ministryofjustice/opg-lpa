@@ -17,7 +17,7 @@ class Cs3Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS3', $interFileStack);
         $this->assertCount(1, $interFileStack['CS3']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS3'], 'CS3');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS3'], 'CS3');
     }
 
     public function testGenerateHW()
@@ -31,6 +31,6 @@ class Cs3Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS3', $interFileStack);
         $this->assertCount(1, $interFileStack['CS3']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS3'], 'CS3');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS3'], 'CS3');
     }
 }

@@ -17,7 +17,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -77,7 +77,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -121,7 +121,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -166,7 +166,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -211,7 +211,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -271,7 +271,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -315,7 +315,7 @@ class Lps120Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lpa120::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'LPA120');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'LPA120');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);

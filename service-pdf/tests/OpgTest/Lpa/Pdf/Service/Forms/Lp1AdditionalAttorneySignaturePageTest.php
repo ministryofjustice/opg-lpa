@@ -17,7 +17,7 @@ class Lp1AdditionalAttorneySignaturePageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalAttorneySignature', $interFileStack);
         $this->assertCount(4, $interFileStack['AdditionalAttorneySignature']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalAttorneySignature'], 'AdditionalAttorneySignature');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalAttorneySignature'], 'AdditionalAttorneySignature');
     }
 
     public function testGenerateHW()
@@ -31,6 +31,6 @@ class Lp1AdditionalAttorneySignaturePageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalAttorneySignature', $interFileStack);
         $this->assertCount(4, $interFileStack['AdditionalAttorneySignature']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalAttorneySignature'], 'AdditionalAttorneySignature');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalAttorneySignature'], 'AdditionalAttorneySignature');
     }
 }

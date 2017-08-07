@@ -17,7 +17,7 @@ class Lp1AdditionalApplicantSignaturePageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalApplicantSignature', $interFileStack);
         $this->assertCount(1, $interFileStack['AdditionalApplicantSignature']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalApplicantSignature'], 'AdditionalApplicantSignature');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalApplicantSignature'], 'AdditionalApplicantSignature');
     }
 
     public function testGenerateHW()
@@ -31,6 +31,6 @@ class Lp1AdditionalApplicantSignaturePageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalApplicantSignature', $interFileStack);
         $this->assertCount(1, $interFileStack['AdditionalApplicantSignature']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalApplicantSignature'], 'AdditionalApplicantSignature');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalApplicantSignature'], 'AdditionalApplicantSignature');
     }
 }

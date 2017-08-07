@@ -17,7 +17,7 @@ class Cs1Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS1', $interFileStack);
         $this->assertCount(2, $interFileStack['CS1']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS1'], 'CS1');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS1'], 'CS1');
     }
 
     public function testGenerateHW()
@@ -31,7 +31,7 @@ class Cs1Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS1', $interFileStack);
         $this->assertCount(2, $interFileStack['CS1']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS1'], 'CS1');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS1'], 'CS1');
     }
 
     private function getActorTypes()

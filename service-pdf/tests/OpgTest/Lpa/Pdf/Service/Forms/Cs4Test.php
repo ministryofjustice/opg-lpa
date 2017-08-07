@@ -17,7 +17,7 @@ class Cs4Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS4', $interFileStack);
         $this->assertCount(1, $interFileStack['CS4']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS4'], 'CS4');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS4'], 'CS4');
     }
 
     public function testGenerateHW()
@@ -31,6 +31,6 @@ class Cs4Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS4', $interFileStack);
         $this->assertCount(1, $interFileStack['CS4']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS4'], 'CS4');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS4'], 'CS4');
     }
 }

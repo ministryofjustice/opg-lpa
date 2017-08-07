@@ -28,14 +28,14 @@ abstract class AbstractFormTestClass extends \PHPUnit_Framework_TestCase
         return new Lpa(file_get_contents($lpaDataFileName));
     }
 
-    protected function verifyFileNames(Lpa $lpa, $fileNames, $fileNamePrefix)
+    protected function verifyTmpFileNames(Lpa $lpa, $fileNames, $fileNamePrefix)
     {
         foreach ($fileNames as $fileName) {
-            $this->verifyFileName($lpa, $fileName, $fileNamePrefix);
+            $this->verifyTmpFileName($lpa, $fileName, $fileNamePrefix);
         }
     }
 
-    protected function verifyFileName(Lpa $lpa, $fileName, $fileNamePrefix)
+    protected function verifyTmpFileName(Lpa $lpa, $fileName, $fileNamePrefix)
     {
         //  Construct the Regex for the expected filename for this file
 

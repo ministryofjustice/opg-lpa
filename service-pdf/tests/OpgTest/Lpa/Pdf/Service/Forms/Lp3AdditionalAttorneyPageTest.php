@@ -17,7 +17,7 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalAttorneys', $interFileStack);
         $this->assertCount(1, $interFileStack['AdditionalAttorneys']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalAttorneys'], 'AdditionalAttorneys');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalAttorneys'], 'AdditionalAttorneys');
     }
 
     public function testGeneratePFReturnBlankTooFewAttorneys()
@@ -45,7 +45,7 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
         $this->assertArrayHasKey('AdditionalAttorneys', $interFileStack);
         $this->assertCount(1, $interFileStack['AdditionalAttorneys']);
 
-        $this->verifyFileNames($lpa, $interFileStack['AdditionalAttorneys'], 'AdditionalAttorneys');
+        $this->verifyTmpFileNames($lpa, $interFileStack['AdditionalAttorneys'], 'AdditionalAttorneys');
     }
 
     public function testGenerateHWReturnBlankTooFewAttorneys()

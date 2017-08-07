@@ -18,7 +18,7 @@ class Cs2Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS2', $interFileStack);
         $this->assertCount(1, $interFileStack['CS2']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS2'], 'CS2');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS2'], 'CS2');
     }
 
     public function testGenerateHW()
@@ -32,7 +32,7 @@ class Cs2Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS2', $interFileStack);
         $this->assertCount(1, $interFileStack['CS2']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS2'], 'CS2');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS2'], 'CS2');
     }
 
     public function testGeneratePFLongInstructions()
@@ -60,6 +60,6 @@ class Cs2Test extends AbstractFormTestClass
         $this->assertArrayHasKey('CS2', $interFileStack);
         $this->assertCount(2, $interFileStack['CS2']);
 
-        $this->verifyFileNames($lpa, $interFileStack['CS2'], 'CS2');
+        $this->verifyTmpFileNames($lpa, $interFileStack['CS2'], 'CS2');
     }
 }

@@ -17,7 +17,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -108,7 +108,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -162,7 +162,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -245,7 +245,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -292,7 +292,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -383,7 +383,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
@@ -437,7 +437,7 @@ class Lp3Test extends AbstractFormTestClass
 
         $this->assertInstanceOf(Lp3::class, $form);
 
-        $this->verifyFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
+        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP3');
 
         $pdf = $form->getPdfObject();
         $this->assertInstanceOf(Pdf::class, $pdf);
