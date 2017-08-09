@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Lpa;
 
-use Opg\Lpa\Api\Client\Client;
+use Application\Model\Service\ApiClient\Client;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use InvalidArgumentException;
 

@@ -3,7 +3,7 @@
 namespace Application\Model\Service\User;
 
 use Application\Model\Service\Mail\Message as MailMessage;
-use Opg\Lpa\Api\Client\Exception\ResponseException;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;

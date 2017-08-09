@@ -1,8 +1,0 @@
-.buildpath
-.project
-.settings/
-vendor/
-bin/
-.idea
-composer.lock
-test.php
