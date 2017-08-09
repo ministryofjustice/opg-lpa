@@ -3,7 +3,6 @@
 namespace Application\Model\Service\ApiClient;
 
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Message\Response;
 use Exception;
 
 class ApplicationResourceService
@@ -78,9 +77,21 @@ class ApplicationResourceService
             }
 
             foreach ($json['_embedded'][$this->resourceType] as $singleResourceJson) {
-                $concreteClass = $this->getConcreteClassIfAbstract($entityClass, $singleResourceJson);
+                //  If this is an attorney then determine which type
+                if ($entityClass == '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney') {
+                    switch ($singleResourceJson['type']) {
+                        case 'human':
+                            $entityClass = '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human';
+                            break;
+                        case 'trust':
+                            $entityClass = '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation';
+                            break;
+                        default:
+                            throw new Exception('Invalid attorney type: ' . $singleResourceJson['type']);
+                    }
+                }
 
-                $resourceList[] = new $concreteClass($singleResourceJson);
+                $resourceList[] = new $entityClass($singleResourceJson);
             }
 
             if (isset($json['_links']['next']['href'])) {
@@ -91,65 +102,6 @@ class ApplicationResourceService
         } while (!is_null($path));
 
         return $resourceList;
-    }
-
-    /**
-     * Determine the concrete class for the abstract base
-     *
-     * @param string $entityClass
-     * @param string $json
-     * @return string
-     * @throws Exception
-     */
-    private function getConcreteClassIfAbstract($entityClass, $json)
-    {
-        if ($entityClass == '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney') {
-            switch ($json['type']) {
-                case 'human':
-                    return '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human';
-                case 'trust':
-                    return '\Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation';
-                default:
-                    throw new Exception('Invalid attorney type: ' . $json['type']);
-            }
-        }
-
-        return $entityClass;
-    }
-
-    /**
-     * Return the processed response for setting a single-valued entity
-     * (e.g., type or preferences, which are both simply strings rather than classes)
-     *
-     * @param $key The JSON key of the value being retrieved
-     * If property not yet set, return null
-     * If error, return false
-     * Else, return the value
-     * @return boolean|null|mixed
-     */
-    public function getSingleValueResource($key)
-    {
-        $response = $this->httpClient()->get($this->endpoint, [
-            'headers' => ['Content-Type' => 'application/json']
-        ]);
-
-        $code = $response->getStatusCode();
-
-        if ($code == 204) {
-            return null; // not yet set
-        }
-
-        if ($code != 200) {
-            return $this->log($response, false);
-        }
-
-        $json = $response->json();
-
-        if (!isset($json[$key])) {
-            return $this->log($response, false);
-        }
-
-        return $json[$key];
     }
 
     /**
@@ -175,45 +127,6 @@ class ApplicationResourceService
         }
 
         return $response->json();
-    }
-
-    /**
-     * Return the processed response for setting a data model entity
-     * (e.g., type or preferences, which are both simply strings rather than classes)
-     *
-     * @param string $entityClass The class of the data model entity to populate with the JSON from the API response
-     * @param $index number in series, if applicable
-     * If property not yet set, return null
-     * If error, return false
-     * Else, return the value
-     * @return boolean|null|mixed
-     */
-    public function getEntityResource($entityClass, $index = null)
-    {
-        $response = $this->httpClient()->get($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
-            'headers' => ['Content-Type' => 'application/json']
-        ]);
-
-        $code = $response->getStatusCode();
-
-        if ($code == 204) {
-            return null; // not yet set
-        }
-
-        if ($code != 200) {
-            return $this->log($response, false);
-        }
-
-        $json = $response->json();
-
-        $concreteClass = $this->getConcreteClassIfAbstract(
-            $entityClass,
-            $json
-        );
-
-        $entity = new $concreteClass($json);
-
-        return $entity;
     }
 
     /**
@@ -302,31 +215,6 @@ class ApplicationResourceService
         $this->isSuccess = true;
 
         return true;
-    }
-
-    /**
-     * Call the client's log method and set our success status
-     *
-     * @param Response $response
-     * @param boolean $isSuccess
-     * @return bool
-     */
-    public function log($response, $isSuccess = true)
-    {
-        $this->apiClient->log($response, $isSuccess);
-        $this->isSuccess = $isSuccess;
-
-        return $isSuccess;
-    }
-
-    /**
-     * Was the previous API call a success?
-     *
-     * @return boolean
-     */
-    public function isSuccess()
-    {
-        return $this->isSuccess;
     }
 
     /**
