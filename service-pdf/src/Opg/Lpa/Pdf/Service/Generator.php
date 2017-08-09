@@ -114,7 +114,6 @@ class Generator implements GeneratorInterface {
                 break;
             default:
                 throw new \UnexpectedValueException('Invalid form type: '.$this->formType);
-                return;
         }
 
         $pdf->generate();
