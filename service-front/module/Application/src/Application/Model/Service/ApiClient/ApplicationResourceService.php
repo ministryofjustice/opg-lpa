@@ -1,8 +1,7 @@
 <?php
 
-namespace Application\Model\Service\ApiClient\Service;
+namespace Application\Model\Service\ApiClient;
 
-use Application\Model\Service\ApiClient\Client;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Message\Response;
 use Exception;

@@ -3,7 +3,7 @@
 namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
-use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClientAuthAdapter;
+use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
@@ -133,7 +133,7 @@ class Module{
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
                 'AddressLookupMoj' => 'PostcodeInfo',
-                'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
+                'AuthenticationAdapter' => 'LpaAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'invokables' => [
@@ -168,8 +168,8 @@ class Module{
                 },
 
                 // Authentication Adapter. Access via 'AuthenticationAdapter'
-                'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
-                    return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
+                'LpaAuthAdapter' => function( ServiceLocatorInterface $sm ){
+                    return new LpaAuthAdapter( $sm->get('ApiClient') );
                 },
 
                 // Generate the session container for a user's personal details
