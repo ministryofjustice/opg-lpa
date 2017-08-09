@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\ApiClient;
 
-use Application\Model\Service\ApiClient\Common\Guzzle\Client as GuzzleClient;
 use Application\Model\Service\ApiClient\Service\ApplicationResourceService;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
@@ -14,6 +13,7 @@ use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Message\Response;
 
 trait ClientV1Trait
@@ -94,10 +94,12 @@ trait ClientV1Trait
     {
         if (!isset($this->guzzleClient)) {
             $this->guzzleClient = new GuzzleClient();
+            $this->guzzleClient->setDefaultOption('exceptions', false);
+            $this->guzzleClient->setDefaultOption('allow_redirects', false);
         }
 
         if ($this->getToken() != null) {
-            $this->guzzleClient->setToken($this->getToken());
+            $this->guzzleClient->setDefaultOption('headers/Token', $this->getToken());
         }
 
         return $this->guzzleClient;

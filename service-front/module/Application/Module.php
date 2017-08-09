@@ -156,7 +156,7 @@ class Module{
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
-                'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
+                'ApiClient'             => 'Application\Model\Service\ApiClient\ApiClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
 
                 // Access via 'MailTransport'
