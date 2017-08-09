@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
@@ -111,7 +112,7 @@ class Lpa120 extends AbstractForm
         $applicantFirstName = null;
         $applicantLastName = $applicant->name;  //  Default the applicant last name here in case the value is a string for a company
 
-        if ($applicant->name instanceof Name) {
+        if ($applicant->name instanceof Name || $applicant->name instanceof LongName) {
             $applicantTitle = strtolower($applicant->name->title);
 
             //  If the applicant title is an other type then swap the values around
