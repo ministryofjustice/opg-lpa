@@ -6,6 +6,7 @@ use Application\Controller\Authenticated\Lpa;
 use Application\Form\Lpa\AbstractActorForm;
 use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
@@ -374,7 +375,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     {
         $actorDetails = [];
 
-        if (isset($actorData->name) && $actorData->name instanceof Name) {
+        if (isset($actorData->name) && ($actorData->name instanceof Name || $actorData->name instanceof LongName)) {
             $actorDetails = [
                 'firstname' => $actorData->name->first,
                 'lastname'  => $actorData->name->last,
