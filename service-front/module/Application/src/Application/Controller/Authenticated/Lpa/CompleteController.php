@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\LongName;
 use Zend\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController
@@ -69,7 +69,7 @@ class CompleteController extends AbstractLpaController
             'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
             'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
             'dateCheckUrl'       => $this->url()->fromRoute('lpa/date-check/complete', ['lpa-id' => $lpa->id]),
-            'correspondentName'  => ($lpa->document->correspondent->name instanceof Name ? $lpa->document->correspondent->name : $lpa->document->correspondent->company),
+            'correspondentName'  => ($lpa->document->correspondent->name instanceof LongName ? $lpa->document->correspondent->name : $lpa->document->correspondent->company),
             'paymentAmount'      => $lpa->payment->amount,
             'paymentReferenceNo' => $lpa->payment->reference,
             'hasRemission'       => $this->getFlowChecker()->isEligibleForFeeReduction(),
