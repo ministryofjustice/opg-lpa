@@ -1,13 +1,13 @@
 <?php
+
 namespace Application\Model\Service\Lpa;
 
+use Opg\Lpa\Api\Client\Client as ApiClient;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-use Opg\Lpa\Api\Client\Client as ApiClient;
-
-class ApiClientFactory implements FactoryInterface {
-
+class ApiClientFactory implements FactoryInterface
+{
     /**
      * Create and instance of the API Client.
      *
@@ -16,30 +16,22 @@ class ApiClientFactory implements FactoryInterface {
      * @param ServiceLocatorInterface $serviceLocator
      * @return ApiClient
      */
-    public function createService(ServiceLocatorInterface $serviceLocator){
-        
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
         $client = new ApiClient();
-        
+
         $config = $serviceLocator->get('config')['api_client'];
         $client->setApiBaseUri($config['api_uri']);
         $client->setAuthBaseUri($config['auth_uri']);
 
-        //---
-
         $auth = $serviceLocator->get('AuthenticationService');
 
-        if ( $auth->hasIdentity() ) {
-
+        if ($auth->hasIdentity()) {
             $identity = $auth->getIdentity();
-            $client->setUserId( $identity->id() );
-            $client->setToken( $identity->token() );
-
+            $client->setUserId($identity->id());
+            $client->setToken($identity->token());
         }
 
-        //---
-        
         return $client;
-
-    } // function
-
-} // class
+    }
+}
