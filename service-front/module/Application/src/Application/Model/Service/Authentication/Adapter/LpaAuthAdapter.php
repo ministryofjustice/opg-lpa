@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
-use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\Authentication\Identity\User;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
 use Zend\Authentication\Result;
 use DateTime;
@@ -11,10 +11,9 @@ use DateTime;
 /**
  * Performs email address & password authentication with the LPA API Client.
  *
- * Class LpaApiClient
  * @package Application\Model\Service\Authentication\Adapter
  */
-class LpaApiClient implements AdapterInterface
+class LpaAuthAdapter implements AdapterInterface
 {
     private $client;
     private $email;

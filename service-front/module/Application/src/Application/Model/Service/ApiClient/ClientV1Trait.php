@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\ApiClient;
 
-use Application\Model\Service\ApiClient\Service\ApplicationResourceService;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
