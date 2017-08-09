@@ -1,29 +1,19 @@
 <?php
+
 namespace Application;
 
-use DateTime;
-
-use Zend\Stdlib\ArrayUtils;
-
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-
-use Zend\Session\Container;
-use Zend\ServiceManager\ServiceLocatorInterface;
-
+use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClientAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\Logger\Logger;
-use Zend\Cache\StorageFactory;
-
-use Zend\View\Model\ViewModel;
-
-use Alphagov\Pay\Client as GovPayClient;
-
-use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Model\Service\System\DynamoCronLock;
-
-use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientResponseException;
+use Alphagov\Pay\Client as GovPayClient;
+use Opg\Lpa\Logger\Logger;
+use Zend\Mvc\ModuleRouteListener;
+use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\Container;
+use Zend\Stdlib\ArrayUtils;
+use Zend\View\Model\ViewModel;
 
 class Module{
 

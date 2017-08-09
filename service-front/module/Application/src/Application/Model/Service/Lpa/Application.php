@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\Lpa;
 
 use Opg\Lpa\Api\Client\Client;

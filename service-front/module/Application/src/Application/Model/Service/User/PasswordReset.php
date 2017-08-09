@@ -1,78 +1,61 @@
 <?php
+
 namespace Application\Model\Service\User;
 
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-
+use Application\Model\Service\Mail\Message as MailMessage;
+use Opg\Lpa\Api\Client\Exception\ResponseException;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Exception;
 
-use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientError;
-
-use Application\Model\Service\Mail\Message as MailMessage;
-
-class PasswordReset implements ServiceLocatorAwareInterface {
-
+class PasswordReset implements ServiceLocatorAwareInterface
+{
     use ServiceLocatorAwareTrait;
 
-    //---
+    public function requestPasswordResetEmail($email, callable $fpRouteCallback, callable $activateRouteCallback)
+    {
+        $logger = $this->getServiceLocator()->get('Logger');
+        $logger->info('User requested password reset email');
 
-    public function requestPasswordResetEmail( $email, callable $fpRouteCallback, callable $activateRouteCallback ){
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'User requested password reset email'
-        );
-        
         $client = $this->getServiceLocator()->get('ApiClient');
+        $resetToken = $client->requestPasswordReset(strtolower($email));
 
-        $resetToken = $client->requestPasswordReset( strtolower( $email ) );
-
-        // A successful response is a string...
-        if( !is_string($resetToken) ){
-
-            if( $resetToken instanceof ApiClientError ){
-
-                if( $resetToken->getMessage() == 'account-not-activated' ){
-
+        //  A successful response is a string...
+        if (!is_string($resetToken)) {
+            if ($resetToken instanceof ResponseException) {
+                if ($resetToken->getMessage() == 'account-not-activated') {
                     $body = json_decode($resetToken->getResponse()->getBody(), true);
 
-                    if( isset($body['activation_token']) ){
-
+                    if (isset($body['activation_token'])) {
                         // If they have not yet activated their account, we re-send them the activation link.
-                        $this->sendActivateEmail( $email, $activateRouteCallback( $body['activation_token'] ) );
+                        $this->sendActivateEmail($email, $activateRouteCallback($body['activation_token']));
 
                         return 'account-not-activated';
-
-                    } // if
-
-                } // if
+                    }
+                }
 
                 // 404 response means user not found...
-                if( $resetToken->getCode() == 404 ){
+                if ($resetToken->getCode() == 404) {
                     return "user-not-found";
                 }
 
-                if( $resetToken->getDetail() != null ){
-                    return trim( $resetToken->getDetail() );
+                if ($resetToken->getDetail() != null) {
+                    return trim($resetToken->getDetail());
                 }
-
             }
 
             return "unknown-error";
+        }
 
-        } // if
-
-        //-------------------------------
         // Send the email
+        $this->sendResetEmail($email, $fpRouteCallback($resetToken));
 
-        $this->sendResetEmail( $email, $fpRouteCallback( $resetToken ) );
+        $logger->info('Password reset email sent to ' . $email);
 
-        $this->getServiceLocator()->get('Logger')->info('Password reset email sent to ' . $email);
-        
         return true;
-
-    } // function
-
+    }
 
     /**
      * Check if a given reset token is currently valid.
@@ -80,101 +63,71 @@ class PasswordReset implements ServiceLocatorAwareInterface {
      * @param $restToken
      * @return bool
      */
-    public function isResetTokenValid( $restToken ){
+    public function isResetTokenValid($restToken)
+    {
+        // If we can exchange it for a string auth token, then it's valid.
+        $authToken = $this->getServiceLocator()
+                          ->get('ApiClient')
+                          ->requestPasswordResetAuthToken($restToken);
 
-        // If we can exchange it for a auth token, then it's valid.
-        return is_string( $this->getAuthTokenFromRestToken( $restToken ) );
+        return is_string($authToken);
+    }
 
-    } // function
+    public function setNewPassword($restToken, $password)
+    {
+        $logger = $this->getServiceLocator()->get('Logger');
+        $logger->info('Setting new password following password reset');
 
-
-
-    public function setNewPassword( $restToken, $password ){
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Setting new password following password reset'
-        );
-        
         $client = $this->getServiceLocator()->get('ApiClient');
+        $result = $client->updateAuthPasswordWithToken($restToken, $password);
 
-        $result = $client->updateAuthPasswordWithToken( $restToken, $password );
-        
         if ($result !== true) {
-
-            if( $result instanceof ApiClientError ){
-
-                if( $result->getDetail() == 'Invalid token' ){
+            if ($result instanceof ResponseException) {
+                if ($result->getDetail() == 'Invalid token') {
                     return "invalid-token";
                 }
 
-                if( $result->getDetail() != null ){
-                    return trim( $result->getDetail() );
+                if ($result->getDetail() != null) {
+                    return trim($result->getDetail());
                 }
-
             }
 
             return "unknown-error";
-
         }
 
-        //---
-
         return true;
+    }
 
-    } // function
+    private function sendResetEmail($email, $callbackUrl)
+    {
+        $logger = $this->getServiceLocator()->get('Logger');
+        $logger->info('Sending password reset email');
 
-    //----------------------------------------------------
-
-    /**
-     * Exchange the reset token for an auth token.
-     *
-     * @param $restToken string The reset token.
-     * @return bool|string Returns false on an error or the auth token on success.
-     */
-    private function getAuthTokenFromRestToken( $restToken ){
-
-        return $this->getServiceLocator()->get('ApiClient')->requestPasswordResetAuthToken( $restToken );
-
-    }  // function
-
-    //----------------------------------------------------
-    // Send Emails
-
-    private function sendResetEmail( $email, $callbackUrl ){
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Sending password reset email'
-        );
-        
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
-        $message->addTo( $email );
-
-        //---
+        $message->addTo($email);
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-passwordreset');
         $message->addCategory('opg-lpa-passwordreset-normal');
 
-        //---
-
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset.twig')->render([
-            'callback' => $callbackUrl,
-        ]);
+        $content = $this->getServiceLocator()
+                        ->get('TwigEmailRenderer')
+                        ->loadTemplate('password-reset.twig')->render([
+                            'callback' => $callbackUrl,
+                        ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
-            $message->setSubject( 'Password reset request' );
+            $message->setSubject('Password reset request');
         }
-        
-        //---
 
-        $html = new MimePart( $content );
+        $html = new MimePart($content);
         $html->type = "text/html";
 
         $body = new MimeMessage();
@@ -182,57 +135,48 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message->setBody($body);
 
-        //--------------------
-
         try {
-
-            $this->getServiceLocator()->get('MailTransport')->send($message);
-
-        } catch ( \Exception $e ){
-
+            $this->getServiceLocator()
+                 ->get('MailTransport')
+                 ->send($message);
+        } catch (Exception $e) {
             return "failed-sending-email";
-
         }
 
         return true;
+    }
 
-    } // function
+    private function sendActivateEmail($email, $callbackUrl)
+    {
+        $logger = $this->getServiceLocator()->get('Logger');
+        $logger->info('Sending account activation email');
 
-    private function sendActivateEmail( $email, $callbackUrl ){
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Sending account activation email'
-        );
-        
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
-        $message->addTo( $email );
-
-        //---
+        $message->addTo($email);
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-passwordreset');
         $message->addCategory('opg-lpa-passwordreset-activate');
 
-        //---
+        $content = $this->getServiceLocator()
+                        ->get('TwigEmailRenderer')
+                        ->loadTemplate('password-reset-not-active.twig')
+                        ->render([
+                            'callback' => $callbackUrl,
+                        ]);
 
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-reset-not-active.twig')->render([
-            'callback' => $callbackUrl,
-        ]);
-        
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
-            $message->setSubject( 'Password reset request' );
+            $message->setSubject('Password reset request');
         }
-        
-        //---
 
-        $html = new MimePart( $content );
+        $html = new MimePart($content);
         $html->type = "text/html";
 
         $body = new MimeMessage();
@@ -240,20 +184,14 @@ class PasswordReset implements ServiceLocatorAwareInterface {
 
         $message->setBody($body);
 
-        //--------------------
-
         try {
-
-            $this->getServiceLocator()->get('MailTransport')->send($message);
-
-        } catch ( \Exception $e ){
-
+            $this->getServiceLocator()
+                 ->get('MailTransport')
+                 ->send($message);
+        } catch (Exception $e) {
             return "failed-sending-email";
-
         }
 
         return true;
-
-    } // function
-
-} // class
+    }
+}
