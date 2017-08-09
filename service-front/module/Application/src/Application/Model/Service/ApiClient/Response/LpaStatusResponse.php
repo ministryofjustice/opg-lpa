@@ -1,14 +1,13 @@
 <?php
-namespace Opg\Lpa\Api\Client\Response;
 
-use Opg\Lpa\Api\Client\Traits\JsonSerializer;
+namespace Application\Model\Service\ApiClient\Response;
+
+use Application\Model\Service\ApiClient\Traits\JsonSerializer;
 
 /**
- *
  * LpaStatusResponse
- * 
- * @author Chris Moreton
  *
+ * @author Chris Moreton
  */
 class LpaStatusResponse
 {
@@ -16,22 +15,19 @@ class LpaStatusResponse
 
     /**
      * Return an array representation of the object
-     * 
+     *
      * @return array
      */
     public function getArrayCopy()
     {
-        return [
-        ];
+        return [];
     }
-    
+
     /**
      * Populate the member variables from an array
-     * 
+     *
      * @param array $array
      */
     public function exchangeArray(array $array)
-    {
-    }
-
+    {}
 }

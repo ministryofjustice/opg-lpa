@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Authentication\Adapter;
 
 use Application\Model\Service\Authentication\Identity\User;
-use Opg\Lpa\Api\Client\Client as ApiClient;
+use Application\Model\Service\ApiClient\Client;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
 use Zend\Authentication\Result;
 use DateTime;
@@ -21,9 +21,9 @@ class LpaApiClient implements AdapterInterface
     private $password;
 
     /**
-     * @param ApiClient $client
+     * @param Client $client
      */
-    public function __construct(ApiClient $client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }

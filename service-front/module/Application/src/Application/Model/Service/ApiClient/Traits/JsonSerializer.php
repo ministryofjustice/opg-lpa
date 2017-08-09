@@ -1,12 +1,11 @@
 <?php
-namespace Opg\Lpa\Api\Client\Traits;
+
+namespace Application\Model\Service\ApiClient\Traits;
 
 /**
- * 
  * @author Chris Moreton
- * 
- * Wraps the information received from the auth server
  *
+ * Wraps the information received from the auth server
  */
 trait JsonSerializer
 {
@@ -14,15 +13,13 @@ trait JsonSerializer
      * Populate the member variables from a JSON structure
      * Convert underscore_field_names to be camelCase
      *
-     * @param string The JSON
+     * @param string $json
      */
     public function exchangeJson($json)
     {
-        $this->exchangeArray(
-            json_decode($json, true)
-        );
+        $this->exchangeArray(json_decode($json, true));
     }
-    
+
     /**
      * Return the object as JSON
      *
@@ -30,8 +27,6 @@ trait JsonSerializer
      */
     public function getJsonCopy()
     {
-        return json_encode(
-            $this->getArrayCopy()
-        );
+        return json_encode($this->getArrayCopy());
     }
 }

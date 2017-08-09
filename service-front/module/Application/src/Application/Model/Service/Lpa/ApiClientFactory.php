@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Lpa;
 
-use Opg\Lpa\Api\Client\Client as ApiClient;
+use Application\Model\Service\ApiClient\Client;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -14,11 +14,11 @@ class ApiClientFactory implements FactoryInterface
      * If the user identity exists, pre-set the userId and token in the client.
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return ApiClient
+     * @return Client
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $client = new ApiClient();
+        $client = new Client();
 
         $config = $serviceLocator->get('config')['api_client'];
         $client->setApiBaseUri($config['api_uri']);

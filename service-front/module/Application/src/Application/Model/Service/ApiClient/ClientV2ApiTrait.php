@@ -1,6 +1,6 @@
 <?php
 
-namespace Opg\Lpa\Api\Client;
+namespace Application\Model\Service\ApiClient;
 
 use GuzzleHttp\Psr7\Uri;
 use Opg\Lpa\DataModel\Lpa\Lpa;
