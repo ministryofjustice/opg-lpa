@@ -10,7 +10,6 @@ class ApplicationResourceService
     private $apiClient;
     private $endpoint;
     private $resourceType;
-    private $isSuccess = false;
 
     /**
      * @param $lpaId
@@ -43,10 +42,9 @@ class ApplicationResourceService
         }
 
         if ($code != 200) {
-            return $this->log($response, false);
+            $this->apiClient->log($response, false);
+            return false;
         }
-
-        $this->isSuccess = true;
 
         return $response;
     }
@@ -65,7 +63,8 @@ class ApplicationResourceService
             $json = $response->json();
 
             if (!isset($json['_links']) || !isset($json['count'])) {
-                return $this->log($response, false);
+                $this->apiClient->log($response, false);
+                return false;
             }
 
             if ($json['count'] == 0) {
@@ -73,7 +72,8 @@ class ApplicationResourceService
             }
 
             if (!isset($json['_embedded'][$this->resourceType])) {
-                return $this->log($response, false);
+                $this->apiClient->log($response, false);
+                return false;
             }
 
             foreach ($json['_embedded'][$this->resourceType] as $singleResourceJson) {
@@ -123,7 +123,8 @@ class ApplicationResourceService
         }
 
         if ($code != 200) {
-            return $this->log($response, false);
+            $this->apiClient->log($response, false);
+            return false;
         }
 
         return $response->json();
@@ -144,10 +145,9 @@ class ApplicationResourceService
         ]);
 
         if (($response->getStatusCode() != 200) && ($response->getStatusCode() != 204)) {
-            return $this->log($response, false);
+            $this->apiClient->log($response, false);
+            return false;
         }
-
-        $this->isSuccess = true;
 
         return true;
     }
@@ -167,10 +167,10 @@ class ApplicationResourceService
         ]);
 
         if ($response->getStatusCode() != 200) {
-            return $this->log($response, false);
+            $this->apiClient->log($response, false);
+            return false;
         }
 
-        $this->isSuccess = true;
         return true;
     }
 
@@ -188,10 +188,9 @@ class ApplicationResourceService
         ]);
 
         if ($response->getStatusCode() != 201) {
-            return $this->log($response, false);
+            $this->apiClient->log($response, false);
+            return false;
         }
-
-        $this->isSuccess = true;
 
         return true;
     }
@@ -209,10 +208,9 @@ class ApplicationResourceService
         ]);
 
         if ($response->getStatusCode() != 204) {
-            return $this->log($response, false);
+            $this->apiClient->log($response, false);
+            return false;
         }
-
-        $this->isSuccess = true;
 
         return true;
     }
