@@ -1,11 +1,12 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
+use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
@@ -38,16 +39,17 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
 
             $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF)?'lp1f':'lp1h';
-            $attorneySignaturePage = PdftkInstance::getInstance($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
-            $attorneySignaturePage->fillForm(array(
-                    'signature-attorney-name-title' => $attorney->name->title,
-                    'signature-attorney-name-first' => $attorney->name->first,
-                    'signature-attorney-name-last'  => $attorney->name->last,
-                    'footer-instrument-right-additional'    => Config::getInstance()['footer'][$lpaType]['instrument'],
-            ))
-            ->flatten()
-            ->saveAs($filePath);
 
+            $this->pdfFormData['signature-attorney-name-title'] = $attorney->name->title;
+            $this->pdfFormData['signature-attorney-name-first'] = $attorney->name->first;
+            $this->pdfFormData['signature-attorney-name-last'] = $attorney->name->last;
+            $this->pdfFormData['footer-instrument-right-additional'] = Config::getInstance()['footer'][$lpaType]['instrument'];
+
+            $this->pdf = new Pdf($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
+
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
         } //endforeach
 
         return $this->interFileStack;

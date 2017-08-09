@@ -5,8 +5,8 @@ use ArrayAccess;
 use Countable;
 
 class Config implements Countable, ArrayAccess {
-    
-    static $instance = null;
+
+    private static $instance = null;
 
     private $container = null;
 
@@ -21,13 +21,13 @@ class Config implements Countable, ArrayAccess {
 
         }
     }
-    
+
     static public function getInstance( )
     {
         if(self::$instance === null) {
             self::$instance = new self( );
         }
-        
+
         return self::$instance;
     }
 
@@ -85,6 +85,11 @@ class Config implements Countable, ArrayAccess {
             }
         }
         return $a;
+    }
+
+    public static function destroy()
+    {
+        self::$instance = null;
     }
 
 } // class

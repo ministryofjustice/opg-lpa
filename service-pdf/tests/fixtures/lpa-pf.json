@@ -1,0 +1,365 @@
+{
+    "id": 51072955715,
+    "startedAt": "2015-07-22T10:41:44.028000+0000",
+    "createdAt": "2015-07-22T10:51:39.310000+0000",
+    "updatedAt": "2015-07-28T11:41:05.596000+0000",
+    "completedAt": "2015-07-26T11:42:54.455000+0000",
+    "lockedAt": null,
+    "user": "aaaa0a92862d5287e801331f98774cf7",
+    "payment": {
+        "method": "card",
+        "phone": null,
+        "amount": 0,
+        "reference": "ABCD-1234",
+        "date": "2017-07-26T00:00:00.000000+0000",
+        "reducedFeeReceivesBenefits": null,
+        "reducedFeeAwardedDamages": null,
+        "reducedFeeLowIncome": null,
+        "reducedFeeUniversalCredit": true
+    },
+    "whoAreYouAnswered": true,
+    "locked": false,
+    "seed": null,
+    "repeatCaseNumber": 12345678,
+    "document": {
+        "type": "property-and-financial",
+        "donor": {
+            "name": {
+                "title": "Mrs",
+                "first": "Nancy",
+                "last": "Garrison"
+            },
+            "otherNames": "",
+            "address": {
+                "address1": "Bank End Farm House",
+                "address2": "Undercliff Drive",
+                "address3": "Ventnor, Isle of Wight",
+                "postcode": "PO38 1UL"
+            },
+            "dob": {
+                "date": "1948-01-11T00:00:00.000000+0000"
+            },
+            "email": {
+                "address": "opglpademo+LouiseJames@gmail.com"
+            },
+            "canSign": false
+        },
+        "whoIsRegistering": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ],
+        "primaryAttorneyDecisions": {
+            "canSustainLife": null,
+            "how": "jointly-attorney-severally",
+            "when": "no-capacity",
+            "howDetails": null
+        },
+        "replacementAttorneyDecisions": {
+            "whenDetails": null,
+            "how": "depends",
+            "when": "last",
+            "howDetails": "test test"
+        },
+        "correspondent": {
+            "who": "donor",
+            "name": {
+                "title": "Mrs",
+                "first": "Nancy",
+                "last": "Garrison"
+            },
+            "company": null,
+            "address": {
+                "address1": "Bank End Farm House",
+                "address2": "Undercliff Drive",
+                "address3": "Ventnor, Isle of Wight",
+                "postcode": "PO38 1UL"
+            },
+            "email": {
+                "address": "opglpademo+LouiseJames@gmail.com"
+            },
+            "phone": {
+                "number": "01234 123456"
+            },
+            "contactByPost": true,
+            "contactInWelsh": true,
+            "contactDetailsEnteredManually": true
+        },
+        "instruction": "Maecenas posuere augue sed purus malesuada dapibus.",
+        "preference": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "certificateProvider": {
+            "name": {
+                "title": "Mr",
+                "first": "Reece",
+                "last": "Richards"
+            },
+            "address": {
+                "address1": "11 Brookside",
+                "address2": "Cholsey",
+                "address3": "Wallingford, Oxfordshire",
+                "postcode": "OX10 9NN"
+            }
+        },
+        "primaryAttorneys": [
+            {
+                "name": {
+                    "title": "Mrs",
+                    "first": "Amy",
+                    "last": "Wheeler"
+                },
+                "dob": {
+                    "date": "1975-05-10T00:00:00.000000+0000"
+                },
+                "id": 1,
+                "address": {
+                    "address1": "Brickhill Cottage",
+                    "address2": "Birch Cross",
+                    "address3": "Marchington, Uttoxeter, Staffordshire",
+                    "postcode": "ST14 8NX"
+                },
+                "email": {
+                    "address": "opglpademo+AmyWheeler@gmail.com"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Mr",
+                    "first": "David",
+                    "last": "Wheeler"
+                },
+                "dob": {
+                    "date": "1972-03-12T00:00:00.000000+0000"
+                },
+                "id": 2,
+                "address": {
+                    "address1": "Brickhill Cottage",
+                    "address2": "Birch Cross",
+                    "address3": "Marchington, Uttoxeter, Staffordshire",
+                    "postcode": "ST14 8NX"
+                },
+                "email": {
+                    "address": "opglpademo+DavidWheeler@gmail.com"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Dr",
+                    "first": "Wellington",
+                    "last": "Gastri"
+                },
+                "dob": {
+                    "date": "1982-09-02T00:00:00.000000+0000"
+                },
+                "id": 3,
+                "address": {
+                    "address1": "Severington Lane",
+                    "address2": "Kingston",
+                    "address3": "Burlingtop, Hertfordshire",
+                    "postcode": "PL1 9NE"
+                },
+                "email": {
+                    "address": "opglpademo+WellingtonGastri@gmail.com"
+                },
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Dr",
+                    "first": "Henry",
+                    "last": "Taylor"
+                },
+                "dob": {
+                    "date": "1973-09-10T00:00:00.000000+0000"
+                },
+                "id": 4,
+                "address": {
+                    "address1": "Lark Meadow Drive",
+                    "address2": "Solihull",
+                    "address3": "Birmingham",
+                    "postcode": "B37 6NA"
+                },
+                "email": {
+                    "address": "opglpademo+HenryTalor@gmail.com"
+                },
+                "type": "human"
+            },
+            {
+                "name": "Standard Trust",
+                "number": "678437685",
+                "id": 5,
+                "address": {
+                    "address1": "1 Laburnum Place",
+                    "address2": "Sketty",
+                    "address3": "Swansea, Abertawe",
+                    "postcode": "SA2 8HT"
+                },
+                "email": {
+                    "address": "opglpademo+trustcorp@gmail.com"
+                },
+                "type": "trust"
+            },
+            {
+                "name": {
+                    "title": "Mr",
+                    "first": "Elliot",
+                    "last": "Sanders"
+                },
+                "dob": {
+                    "date": "1987-10-10T00:00:00.000000+0000"
+                },
+                "id": 6,
+                "address": {
+                    "address1": "12 Church Lane",
+                    "address2": "Brierfield",
+                    "address3": "Lancashire",
+                    "postcode": "L21 4WL"
+                },
+                "email": {
+                    "address": "opglpademo+ElliotSanders@gmail.com"
+                },
+                "type": "human"
+            }
+        ],
+        "replacementAttorneys": [
+            {
+                "name": {
+                    "title": "Ms",
+                    "first": "Isobel",
+                    "last": "Ward"
+                },
+                "dob": {
+                    "date": "1937-02-01T00:00:00.000000+0000"
+                },
+                "id": 1,
+                "address": {
+                    "address1": "2 Westview",
+                    "address2": "Staplehay",
+                    "address3": "Trull, Taunton, Somerset",
+                    "postcode": "TA3 7HF"
+                },
+                "email": null,
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Mr",
+                    "first": "Ewan",
+                    "last": "Adams"
+                },
+                "dob": {
+                    "date": "1972-03-12T00:00:00.000000+0000"
+                },
+                "id": 2,
+                "address": {
+                    "address1": "2 Westview",
+                    "address2": "Staplehay",
+                    "address3": "Trull, Taunton, Somerset",
+                    "postcode": "TA3 7HF"
+                },
+                "email": null,
+                "type": "human"
+            },
+            {
+                "name": {
+                    "title": "Ms",
+                    "first": "Erica",
+                    "last": "Schmidt"
+                },
+                "dob": {
+                    "date": "1972-04-11T00:00:00.000000+0000"
+                },
+                "id": 3,
+                "address": {
+                    "address1": "3 Westway",
+                    "address2": "Stapleton, Taunton",
+                    "address3": "",
+                    "postcode": "TA2 9HP"
+                },
+                "email": null,
+                "type": "human"
+            }
+        ],
+        "peopleToNotify": [
+            {
+                "id": 1,
+                "name": {
+                    "title": "Mr",
+                    "first": "Anthony",
+                    "last": "Webb"
+                },
+                "address": {
+                    "address1": "Brickhill Cottage",
+                    "address2": "Birch Cross",
+                    "address3": "Marchington, Uttoxeter, Staffordshire",
+                    "postcode": "BS18 6PL"
+                }
+            },
+            {
+                "id": 2,
+                "name": {
+                    "title": "Miss",
+                    "first": "Louie",
+                    "last": "Wade"
+                },
+                "address": {
+                    "address1": "33 Lincoln Green Lane",
+                    "address2": "",
+                    "address3": "Cholderton, Oxfordshire",
+                    "postcode": "SP4 4DY"
+                }
+            },
+            {
+                "id": 3,
+                "name": {
+                    "title": "Mr",
+                    "first": "Stern",
+                    "last": "Hamlet"
+                },
+                "address": {
+                    "address1": "33 Junction road",
+                    "address2": "Brighton",
+                    "address3": "Sussex",
+                    "postcode": "JL7 8AK"
+                }
+            },
+            {
+                "id": 4,
+                "name": {
+                    "title": "Mr",
+                    "first": "Jayden",
+                    "last": "Rodriguez"
+                },
+                "address": {
+                    "address1": "42 York Road",
+                    "address2": "Canterbury",
+                    "address3": "Kent",
+                    "postcode": "YL4 5DL"
+                }
+            },
+            {
+                "id": 5,
+                "name": {
+                    "title": "Mrs",
+                    "first": "Liyana",
+                    "last": "Gonzalez"
+                },
+                "address": {
+                    "address1": "33 New Street",
+                    "address2": "Mossley",
+                    "address3": "Greater Manchester",
+                    "postcode": "MK47 9WD"
+                }
+            }
+        ]
+    },
+    "metadata": {
+        "replacement-attorneys-confirmed": true,
+        "people-to-notify-confirmed": true,
+        "repeat-application-confirmed": true
+    }
+}

@@ -1,12 +1,13 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Lp1f extends Lp1
 {
@@ -19,7 +20,7 @@ class Lp1f extends Lp1
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1F');
 
-        $this->pdf = PdftkInstance::getInstance($this->pdfTemplatePath.'/LP1F.pdf');
+        $this->pdf = new Pdf($this->pdfTemplatePath.'/LP1F.pdf');
     }
 
     protected function dataMapping()
@@ -170,7 +171,7 @@ class Lp1f extends Lp1
         $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1f']['registration'];
 
         return $this->pdfFormData;
-    } // function dataMapping();
+    }
 
     protected function generateAdditionalPages ()
     {
@@ -204,29 +205,21 @@ class Lp1f extends Lp1
      * @param string $attorneys
      * @return \Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation|NULL
      */
-    protected function getTrustCorporation($attorneys=null)
+    protected function getTrustCorporation($attorneys = null)
     {
-        if(null == $attorneys) {
-            foreach($this->lpa->document->primaryAttorneys as $attorney) {
-                if($attorney instanceof TrustCorporation) {
-                    return $attorney;
-                }
-            }
+        $trustAttorney = null;
 
-            foreach($this->lpa->document->replacementAttorneys as $attorney) {
-                if($attorney instanceof TrustCorporation) {
-                    return $attorney;
-                }
-            }
+        if ($attorneys == null) {
+            $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
         }
-        else {
-            foreach($attorneys as $attorney) {
-                if($attorney instanceof TrustCorporation) {
-                    return $attorney;
-                }
+
+        //  Loop through the attorneys to try to find the trust attorney
+        foreach ($attorneys as $attorney) {
+            if ($attorney instanceof TrustCorporation) {
+                $trustAttorney = $attorney;
             }
         }
 
-        return null;
+        return $trustAttorney;
     }
 } // class

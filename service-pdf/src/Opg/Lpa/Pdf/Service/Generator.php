@@ -69,8 +69,6 @@ class Generator implements GeneratorInterface {
                 'lpaId' => $this->lpa->id
             ]);
 
-            var_dump($this->lpa->validate());
-
             throw new RuntimeException('LPA failed validation');
         }
 
@@ -116,19 +114,15 @@ class Generator implements GeneratorInterface {
                 break;
             default:
                 throw new \UnexpectedValueException('Invalid form type: '.$this->formType);
-                return;
         }
 
-        if($pdf->generate()) {
-            $filePath = $pdf->getPdfFilePath();
+        $pdf->generate();
 
-            $this->logger->info('PDF Filepath is ' . $filePath, [
-                'lpaId' => $this->lpa->id
-            ]);
-        }
-        else {
-            return false;
-        }
+        $filePath = $pdf->getPdfFilePath();
+
+        $this->logger->info('PDF Filepath is ' . $filePath, [
+            'lpaId' => $this->lpa->id
+        ]);
 
         //---
 

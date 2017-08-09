@@ -2,13 +2,13 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
 use ZendPdf\PdfDocument as ZendPdfDocument;
+use mikehaertl\pdftk\Pdf;
 
 abstract class AbstractForm
 {
@@ -29,10 +29,23 @@ abstract class AbstractForm
     protected $logger;
 
     /**
+     * Config utility
+     *
+     * @var Config
+     */
+    protected $config;
+
+    /**
      *
      * @var LPA model object
      */
     protected $lpa;
+
+    /**
+     *
+     * @var Pdf
+     */
+    protected $pdf;
 
     /**
      * Data to be populated into PDF form elements.
@@ -54,26 +67,10 @@ abstract class AbstractForm
     protected $interFileStack = array();
 
     /**
-     * It's a ram disk folder and is the base path for storing
-     * intermediate files temporarily. Defined in config file.
-     * @var string
-     */
-    protected $intermediateFileBasePath;
-
-    /**
      * The folder that stores template PDFs which all form elements values are empty.
      * @var string
      */
     protected $pdfTemplatePath;
-
-    /**
-     * Store cross line strokes parameters.
-     * The array index is the page number of pdf document,
-     * and value is array of cross line param keys.
-     *
-     * @var array
-     */
-    protected $drawingTargets = array();
 
     /**
      * bx - bottom x
@@ -131,11 +128,10 @@ abstract class AbstractForm
     public function __construct(Lpa $lpa)
     {
         $this->logger = Logger::getInstance();
+        $this->config = Config::getInstance();
 
         $this->lpa = $lpa;
-        $config = Config::getInstance();
-        $this->pdfTemplatePath = $config['service']['assets']['template_path_on_ram_disk'];
-        $this->intermediateFileBasePath = $config['service']['assets']['intermediate_file_path'];
+        $this->pdfTemplatePath = $this->config['service']['assets']['template_path_on_ram_disk'];
     }
 
     /**
@@ -155,17 +151,16 @@ abstract class AbstractForm
         ]);
     }
 
-    protected function protectPdf(){
+    protected function protectPdf()
+    {
+        $pdf = new Pdf($this->generatedPdfFilePath);
 
-        $pdf = PdftkInstance::getInstance( $this->generatedPdfFilePath );
-
-        $password = Config::getInstance()['pdf']['password'];
+        $password = $this->config['pdf']['password'];
 
         $pdf->allow('Printing CopyContents')
             ->flatten()
-            ->setPassword( $password )
+            ->setPassword($password)
             ->saveAs($this->generatedPdfFilePath);
-
     }
 
     /**
@@ -193,34 +188,16 @@ abstract class AbstractForm
     }
 
     /**
-     * Count no of generated intermediate files
-     * @return number
-     */
-    protected function countIntermediateFiles()
-    {
-        $count = 0;
-        foreach($this->interFileStack as $type=>$paths) {
-            if(is_array($paths)) {
-                $count += count($paths);
-            }
-            else {
-                $count++;
-            }
-        }
-
-        return $count;
-    } // function countIntermediateFiles()
-
-    /**
      *
      * @param string $fileType
      * @return string
      */
     protected function getTmpFilePath($fileType)
     {
-        $filePath = $this->intermediateFileBasePath.'/'.$fileType.'-'.str_replace(array(' ','.'), '-', Formatter::id($this->lpa->id).'-'.microtime(true)).'.pdf';
-        return $filePath;
-    } // function getTmpFilePath($fileType)
+        $intermediateFileBasePath = $this->config['service']['assets']['intermediate_file_path'];
+
+        return $intermediateFileBasePath . '/' . $fileType . '-' . str_replace(array(' ', '.'), '-', Formatter::id($this->lpa->id) . '-' . microtime(true)) . '.pdf';
+    }
 
     /**
      * Register a temp file in self::$interFileStack
@@ -244,24 +221,34 @@ abstract class AbstractForm
      * Draw cross lines
      * @param string $filePath
      * @param array $params[pageNo=>crossLineParamName]
+     * @codeCoverageIgnore
      */
     protected function drawCrossLines($filePath, $params)
     {
-        // draw cross lines
-        $pdf = ZendPdfDocument::load($filePath);
-        foreach($params as $pageNo => $blockNames) {
-            $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
-            foreach($blockNames as $blockName) {
-                $page->drawLine(
+        //  Check to see if drawing cross lines is disabled or not
+        $disableDrawCrossLines = false;
+
+        if (isset($this->config['service']['disable_draw_cross_lines'])) {
+            $disableDrawCrossLines = (bool)$this->config['service']['disable_draw_cross_lines'];
+        }
+
+        if (!$disableDrawCrossLines) {
+            // draw cross lines
+            $pdf = ZendPdfDocument::load($filePath);
+            foreach ($params as $pageNo => $blockNames) {
+                $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
+                foreach ($blockNames as $blockName) {
+                    $page->drawLine(
                         $this->crossLineParams[$blockName]['bx'],
                         $this->crossLineParams[$blockName]['by'],
                         $this->crossLineParams[$blockName]['tx'],
                         $this->crossLineParams[$blockName]['ty']
-                );
-            }
-        } // foreach
+                    );
+                }
+            } // foreach
 
-        $pdf->save($filePath);
+            $pdf->save($filePath);
+        }
 
     } // function drawCrossLines()
 
@@ -386,15 +373,15 @@ abstract class AbstractForm
     protected function nextTag($tag)
     {
         $cols = str_split(strrev($tag), 1);
-        for($i=0; $i<count($cols); $i++) {
-            if($cols[$i] == 'Z') {
+
+        for ($i = 0; $i < count($cols); $i++) {
+            if ($cols[$i] == 'Z') {
                 $cols[$i] = 'A';
 
-                if($i == count($cols) - 1) {
+                if ($i == count($cols) - 1) {
                     return 'A'.strrev(implode('', $cols));
                 }
-            }
-            else {
+            } else {
                 $cols[$i]++;
                 break;
             }

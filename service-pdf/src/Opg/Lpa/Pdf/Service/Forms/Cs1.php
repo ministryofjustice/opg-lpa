@@ -2,12 +2,12 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Cs1 extends AbstractForm
 {
@@ -32,7 +32,7 @@ class Cs1 extends AbstractForm
     /**
      *
      * @param Lpa $lpa
-     * @param string $actorTypes
+     * @param array $actorTypes
      */
     public function __construct(Lpa $lpa, $actorTypes)
     {
@@ -85,55 +85,50 @@ class Cs1 extends AbstractForm
             $pIdx = ($idx % self::$SETTINGS['max-slots-on-cs1-form']);
 
             if($pIdx == 0) {
-                $formData = [
-                    'cs1-donor-full-name' => $this->fullName($this->lpa->document->donor->name),
-                    'cs1-footer-right'    => Config::getInstance()['footer']['cs1'],
-                ];
+                $this->pdfFormData['cs1-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
+                $this->pdfFormData['cs1-footer-right'] = Config::getInstance()['footer']['cs1'];
             }
 
-            $formData['cs1-'.$pIdx.'-is'] = $actor['type'];
+            $this->pdfFormData['cs1-'.$pIdx.'-is'] = $actor['type'];
 
             if($actor['person']->name instanceof Name) {
-                $formData['cs1-'.$pIdx.'-name-title'] = $actor['person']->name->title;
-                $formData['cs1-'.$pIdx.'-name-first'] = $actor['person']->name->first;
-                $formData['cs1-'.$pIdx.'-name-last']  = $actor['person']->name->last;
-            }
-            else {
-                $formData['cs1-'.$pIdx.'-name-last'] = $actor['person']->name;
+                $this->pdfFormData['cs1-'.$pIdx.'-name-title'] = $actor['person']->name->title;
+                $this->pdfFormData['cs1-'.$pIdx.'-name-first'] = $actor['person']->name->first;
+                $this->pdfFormData['cs1-'.$pIdx.'-name-last']  = $actor['person']->name->last;
             }
 
-            $formData['cs1-'.$pIdx.'-address-address1'] = $actor['person']->address->address1;
-            $formData['cs1-'.$pIdx.'-address-address2'] = $actor['person']->address->address2;
-            $formData['cs1-'.$pIdx.'-address-address3'] = $actor['person']->address->address3;
-            $formData['cs1-'.$pIdx.'-address-postcode'] = $actor['person']->address->postcode;
+            $this->pdfFormData['cs1-'.$pIdx.'-address-address1'] = $actor['person']->address->address1;
+            $this->pdfFormData['cs1-'.$pIdx.'-address-address2'] = $actor['person']->address->address2;
+            $this->pdfFormData['cs1-'.$pIdx.'-address-address3'] = $actor['person']->address->address3;
+            $this->pdfFormData['cs1-'.$pIdx.'-address-postcode'] = $actor['person']->address->postcode;
 
             if(property_exists($actor['person'], 'dob')) {
-                $formData['cs1-'.$pIdx.'-dob-date-day']   = $actor['person']->dob->date->format('d');
-                $formData['cs1-'.$pIdx.'-dob-date-month'] = $actor['person']->dob->date->format('m');
-                $formData['cs1-'.$pIdx.'-dob-date-year']  = $actor['person']->dob->date->format('Y');
+                $this->pdfFormData['cs1-'.$pIdx.'-dob-date-day']   = $actor['person']->dob->date->format('d');
+                $this->pdfFormData['cs1-'.$pIdx.'-dob-date-month'] = $actor['person']->dob->date->format('m');
+                $this->pdfFormData['cs1-'.$pIdx.'-dob-date-year']  = $actor['person']->dob->date->format('Y');
             }
 
             if(property_exists($actor['person'], 'email') && ($actor['person']->email instanceof EmailAddress)) {
-                $formData['cs1-'.$pIdx.'-email-address'] = "\n".$actor['person']->email->address;
+                $this->pdfFormData['cs1-'.$pIdx.'-email-address'] = "\n".$actor['person']->email->address;
             }
 
             if($pIdx == 1) {
                 $filePath = $this->registerTempFile('CS1');
-                $cs1 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
 
-                $cs1->fillForm($formData)
-                    ->flatten()
-                    ->saveAs($filePath);
+                $this->pdf->fillForm($this->pdfFormData)
+                          ->flatten()
+                          ->saveAs($filePath);
             }
         }
 
         if($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            $cs1 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
 
-            $cs1->fillForm($formData)
-                ->flatten()
-                ->saveAs($filePath);
+            $this->pdf->fillForm($this->pdfFormData)
+                      ->flatten()
+                      ->saveAs($filePath);
 
             // draw cross lines if there's any blank slot in the last CS1 pdf
             $this->drawCrossLines($filePath, array(array('cs1')));

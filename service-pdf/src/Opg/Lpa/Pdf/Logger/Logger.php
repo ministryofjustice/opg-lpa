@@ -35,4 +35,9 @@ class Logger extends LpaLogger
 
         return self::$instance;
     }
+
+    public static function destroy()
+    {
+        self::$instance = null;
+    }
 }

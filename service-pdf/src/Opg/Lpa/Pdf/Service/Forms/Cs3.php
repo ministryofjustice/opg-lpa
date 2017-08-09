@@ -1,9 +1,10 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
+use mikehaertl\pdftk\Pdf;
 
 class Cs3 extends AbstractForm
 {
@@ -19,14 +20,14 @@ class Cs3 extends AbstractForm
 
         $filePath = $this->registerTempFile('CS3');
 
-        $cs3 = PdftkInstance::getInstance($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
+        $this->pdfFormData['cs3-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
+        $this->pdfFormData['cs3-footer-right'] = Config::getInstance()['footer']['cs3'];
 
-        $cs3->fillForm(array(
-                'cs3-donor-full-name' => $this->fullName($this->lpa->document->donor->name),
-                'cs3-footer-right'    => Config::getInstance()['footer']['cs3'],
-        ))
-        ->flatten()
-        ->saveAs($filePath);
+        $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
+
+        $this->pdf->fillForm($this->pdfFormData)
+                  ->flatten()
+                  ->saveAs($filePath);
 
         return $this->interFileStack;
     } // function generate()

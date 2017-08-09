@@ -2,21 +2,20 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\PdftkInstance;
-use mikehaertl\pdftk\Pdf;
 use Zend\Barcode\Barcode;
+use mikehaertl\pdftk\Pdf;
 
 abstract class Lp1 extends AbstractForm
 {
@@ -34,9 +33,18 @@ abstract class Lp1 extends AbstractForm
     /**
      * PDFTK pdf object
      *
-     * @var
+     * @var Pdf
      */
     protected $pdf;
+
+    /**
+     * Store cross line strokes parameters.
+     * The array index is the page number of pdf document,
+     * and value is array of cross line param keys.
+     *
+     * @var array
+     */
+    protected $drawingTargets = array();
 
     /**
      * There or not the registration section of teh LPA is complete
@@ -81,11 +89,8 @@ abstract class Lp1 extends AbstractForm
         // register a random generated temp file path, and store it $interFileStack
         $filePath = $this->registerTempFile('LP1');
 
-        // data mapping
-        $mappings = $this->dataMapping();
-
         // populate form data and generate pdf
-        $this->pdf->fillForm($mappings)
+        $this->pdf->fillForm($this->dataMapping())
                   ->flatten()
                   ->saveAs($filePath);
 
@@ -135,7 +140,7 @@ abstract class Lp1 extends AbstractForm
 
         // Merge the barcode into the page
         // Take a copy of the PDF to work with
-        $pdfWithBarcode = PdftkInstance::getInstance($filePath);
+        $pdfWithBarcode = new Pdf($filePath);
 
         // Pull out the page the barcode is appended to
         $pdfWithBarcode->cat(19);
@@ -644,8 +649,8 @@ abstract class Lp1 extends AbstractForm
      */
     protected function mergePdfs()
     {
-        $pdf = PdftkInstance::getInstance();
-        $registrationPdf = PdftkInstance::getInstance();
+        $pdf = new Pdf();
+        $registrationPdf = new Pdf();
 
         $fileTag = $lp1FileTag = 'B';
 
