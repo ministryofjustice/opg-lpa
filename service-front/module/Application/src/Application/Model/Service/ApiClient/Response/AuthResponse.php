@@ -3,7 +3,6 @@
 namespace Application\Model\Service\ApiClient\Response;
 
 use Application\Model\Service\ApiClient\Exception;
-use Application\Model\Service\ApiClient\Traits\JsonSerializer;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -15,8 +14,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class AuthResponse
 {
-    use JsonSerializer;
-
     private $response;
 
     //---------------------
@@ -247,5 +244,26 @@ class AuthResponse
         $this->username = isset($array['username']) ? $array['username'] : null;
         $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
         $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
+    }
+
+    /**
+     * Populate the member variables from a JSON structure
+     * Convert underscore_field_names to be camelCase
+     *
+     * @param string $json
+     */
+    public function exchangeJson($json)
+    {
+        $this->exchangeArray(json_decode($json, true));
+    }
+
+    /**
+     * Return the object as JSON
+     *
+     * @return string
+     */
+    public function getJsonCopy()
+    {
+        return json_encode($this->getArrayCopy());
     }
 }

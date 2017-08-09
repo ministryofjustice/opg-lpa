@@ -3,7 +3,7 @@
 namespace Application\Model\Service\ApiClient\Service;
 
 use Application\Model\Service\ApiClient\Client;
-use Application\Model\Service\ApiClient\Common\Guzzle\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Message\Response;
 use Exception;
 
@@ -341,10 +341,12 @@ class ApplicationResourceService
     {
         if (!isset($this->guzzleClient)) {
             $this->guzzleClient = new GuzzleClient();
+            $this->guzzleClient->setDefaultOption('exceptions', false);
+            $this->guzzleClient->setDefaultOption('allow_redirects', false);
         }
 
         if ($this->apiClient->getToken() != null) {
-            $this->guzzleClient->setToken($this->apiClient->getToken());
+            $this->guzzleClient->setDefaultOption('headers/Token', $this->apiClient->getToken());
         }
 
         return $this->guzzleClient;

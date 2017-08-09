@@ -1,8 +1,7 @@
 <?php
 
-namespace Application\Model\Service\Lpa;
+namespace Application\Model\Service\ApiClient;
 
-use Application\Model\Service\ApiClient\Client;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
