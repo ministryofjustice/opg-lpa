@@ -60,7 +60,7 @@ trait ClientV1Trait
      *
      * @return GuzzleClient
      */
-    private function client()
+    private function getClient()
     {
         if (!isset($this->guzzleClient)) {
             $this->guzzleClient = new GuzzleClient();
@@ -80,7 +80,7 @@ trait ClientV1Trait
      */
     public function deleteAllLpas()
     {
-        $response = $this->client()->delete($this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
+        $response = $this->getClient()->delete($this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Token' => $this->getToken(),
@@ -102,7 +102,7 @@ trait ClientV1Trait
      */
     public function setAboutMe(User $user)
     {
-        $response = $this->client()->put($this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
+        $response = $this->getClient()->put($this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'body' => $user->toJson(),
             'headers' => [
                 'Content-Type' => 'application/json'
@@ -123,7 +123,7 @@ trait ClientV1Trait
      */
     public function getAboutMe()
     {
-        $response = $this->client()->get($this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
+        $response = $this->getClient()->get($this->apiBaseUri . '/v1/users/' . $this->getUserId(), [
             'headers' => [
                 'Content-Type' => 'application/json'
             ]
@@ -146,7 +146,7 @@ trait ClientV1Trait
      */
     public function setRepeatCaseNumber($lpaId, $repeatCaseNumber)
     {
-        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
+        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this, $this->getClient());
 
         return $helper->setResource(json_encode(['repeatCaseNumber' => $repeatCaseNumber]));
     }
@@ -159,7 +159,7 @@ trait ClientV1Trait
      */
     public function deleteRepeatCaseNumber($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this);
+        $helper = new ApplicationResourceService($lpaId, 'repeat-case-number', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -173,7 +173,7 @@ trait ClientV1Trait
      */
     public function setType($lpaId, $lpaType)
     {
-        $helper = new ApplicationResourceService($lpaId, 'type', $this);
+        $helper = new ApplicationResourceService($lpaId, 'type', $this, $this->getClient());
 
         return $helper->setResource(json_encode(['type' => $lpaType]));
     }
@@ -186,7 +186,7 @@ trait ClientV1Trait
      */
     public function deleteType($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'type', $this);
+        $helper = new ApplicationResourceService($lpaId, 'type', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -200,7 +200,7 @@ trait ClientV1Trait
      */
     public function setInstructions($lpaId, $lpaInstructions)
     {
-        $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
+        $helper = new ApplicationResourceService($lpaId, 'instruction', $this, $this->getClient());
 
         return $helper->setResource(json_encode(['instruction' => $lpaInstructions]));
     }
@@ -213,7 +213,7 @@ trait ClientV1Trait
      */
     public function deleteInstructions($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'instruction', $this);
+        $helper = new ApplicationResourceService($lpaId, 'instruction', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -227,7 +227,7 @@ trait ClientV1Trait
      */
     public function setPreferences($lpaId, $preferences)
     {
-        $helper = new ApplicationResourceService($lpaId, 'preference', $this);
+        $helper = new ApplicationResourceService($lpaId, 'preference', $this, $this->getClient());
 
         return $helper->setResource(json_encode(['preference' => $preferences]));
     }
@@ -240,7 +240,7 @@ trait ClientV1Trait
      */
     public function deletePreferences($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'preference', $this);
+        $helper = new ApplicationResourceService($lpaId, 'preference', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -254,7 +254,7 @@ trait ClientV1Trait
      */
     public function setPrimaryAttorneyDecisions($lpaId, PrimaryAttorneyDecisions $primaryAttorneyDecisions)
     {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this, $this->getClient());
 
         return $helper->setResource($primaryAttorneyDecisions->toJson());
     }
@@ -267,7 +267,7 @@ trait ClientV1Trait
      */
     public function deletePrimaryAttorneyDecisions($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorney-decisions', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -281,7 +281,7 @@ trait ClientV1Trait
      */
     public function setReplacementAttorneyDecisions($lpaId, ReplacementAttorneyDecisions $replacementAttorneyDecisions)
     {
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this, $this->getClient());
 
         return $helper->setResource($replacementAttorneyDecisions->toJson());
     }
@@ -295,7 +295,7 @@ trait ClientV1Trait
      */
     public function updateReplacementAttorneyDecisions($lpaId, array $replacementAttorneyDecisions)
     {
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this, $this->getClient());
 
         return $helper->updateResource(json_encode($replacementAttorneyDecisions));
     }
@@ -308,7 +308,7 @@ trait ClientV1Trait
      */
     public function deleteReplacementAttorneyDecisions($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorney-decisions', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -322,7 +322,7 @@ trait ClientV1Trait
      */
     public function setDonor($lpaId, Donor $donor)
     {
-        $helper = new ApplicationResourceService($lpaId, 'donor', $this);
+        $helper = new ApplicationResourceService($lpaId, 'donor', $this, $this->getClient());
 
         return $helper->setResource($donor->toJson());
     }
@@ -335,7 +335,7 @@ trait ClientV1Trait
      */
     public function deleteDonor($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'donor', $this);
+        $helper = new ApplicationResourceService($lpaId, 'donor', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -350,7 +350,7 @@ trait ClientV1Trait
      */
     public function setCorrespondent($lpaId, Correspondence $correspondent)
     {
-        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
+        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this, $this->getClient());
 
         return $helper->setResource($correspondent->toJson());
     }
@@ -363,7 +363,7 @@ trait ClientV1Trait
      */
     public function deleteCorrespondent($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this);
+        $helper = new ApplicationResourceService($lpaId, 'correspondent', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -378,7 +378,7 @@ trait ClientV1Trait
      */
     public function setPayment($lpaId, Payment $payment)
     {
-        $helper = new ApplicationResourceService($lpaId, 'payment', $this);
+        $helper = new ApplicationResourceService($lpaId, 'payment', $this, $this->getClient());
 
         return $helper->setResource($payment->toJson());
     }
@@ -391,7 +391,7 @@ trait ClientV1Trait
      */
     public function deletePayment($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'payment', $this);
+        $helper = new ApplicationResourceService($lpaId, 'payment', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -406,7 +406,7 @@ trait ClientV1Trait
      */
     public function setWhoAreYou($lpaId, WhoAreYou $whoAreYou)
     {
-        $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this);
+        $helper = new ApplicationResourceService($lpaId, 'who-are-you', $this, $this->getClient());
 
         return $helper->addResource($whoAreYou->toJson());
     }
@@ -422,7 +422,7 @@ trait ClientV1Trait
     {
         $uri = $this->apiBaseUri . '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/lock';
 
-        $response = $this->client()->post($uri);
+        $response = $this->getClient()->post($uri);
 
         if ($response->getStatusCode() != 201) {
             return $this->log($response, false);
@@ -445,7 +445,7 @@ trait ClientV1Trait
      */
     public function getSeedDetails($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'seed', $this);
+        $helper = new ApplicationResourceService($lpaId, 'seed', $this, $this->getClient());
 
         return $helper->getRawJson();
     }
@@ -458,7 +458,7 @@ trait ClientV1Trait
      */
     public function setSeed($lpaId, $seedId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'seed', $this);
+        $helper = new ApplicationResourceService($lpaId, 'seed', $this, $this->getClient());
 
         return $helper->setResource(json_encode(['seed' => $seedId]));
     }
@@ -471,7 +471,7 @@ trait ClientV1Trait
      */
     public function deleteSeed($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'seed', $this);
+        $helper = new ApplicationResourceService($lpaId, 'seed', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -486,7 +486,7 @@ trait ClientV1Trait
      */
     public function addNotifiedPerson($lpaId, NotifiedPerson $notifiedPerson)
     {
-        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this, $this->getClient());
 
         return $helper->addResource($notifiedPerson->toJson());
     }
@@ -501,7 +501,7 @@ trait ClientV1Trait
      */
     public function setNotifiedPerson($lpaId, $notifiedPerson, $notifiedPersonId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this, $this->getClient());
 
         return $helper->setResource($notifiedPerson->toJson(), $notifiedPersonId);
     }
@@ -515,7 +515,7 @@ trait ClientV1Trait
      */
     public function deleteNotifiedPerson($lpaId, $notifiedPersonId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this);
+        $helper = new ApplicationResourceService($lpaId, 'notified-people', $this, $this->getClient());
 
         return $helper->deleteResource($notifiedPersonId);
     }
@@ -528,7 +528,7 @@ trait ClientV1Trait
      */
     public function getPrimaryAttorneys($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this, $this->getClient());
 
         return $helper->getResourceList('\Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney');
     }
@@ -542,7 +542,7 @@ trait ClientV1Trait
      */
     public function addPrimaryAttorney($lpaId, AbstractAttorney $primaryAttorney)
     {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this, $this->getClient());
 
         return $helper->addResource($primaryAttorney->toJson());
     }
@@ -558,7 +558,7 @@ trait ClientV1Trait
      */
     public function setPrimaryAttorney($lpaId, AbstractAttorney $primaryAttorney, $primaryAttorneyId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this, $this->getClient());
 
         return $helper->setResource($primaryAttorney->toJson(), $primaryAttorneyId);
     }
@@ -572,7 +572,7 @@ trait ClientV1Trait
      */
     public function deletePrimaryAttorney($lpaId, $primaryAttorneyId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'primary-attorneys', $this, $this->getClient());
 
         return $helper->deleteResource($primaryAttorneyId);
     }
@@ -586,7 +586,7 @@ trait ClientV1Trait
      */
     public function addReplacementAttorney($lpaId, AbstractAttorney $replacementAttorney)
     {
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this, $this->getClient());
 
         return $helper->addResource($replacementAttorney->toJson());
     }
@@ -601,7 +601,7 @@ trait ClientV1Trait
      */
     public function setReplacementAttorney($lpaId, AbstractAttorney $replacementAttorney, $replacementAttorneyId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this, $this->getClient());
 
         return $helper->setResource($replacementAttorney->toJson(), $replacementAttorneyId);
     }
@@ -615,7 +615,7 @@ trait ClientV1Trait
      */
     public function deleteReplacementAttorney($lpaId, $replacementAttorneyId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this);
+        $helper = new ApplicationResourceService($lpaId, 'replacement-attorneys', $this, $this->getClient());
 
         return $helper->deleteResource($replacementAttorneyId);
     }
@@ -629,7 +629,7 @@ trait ClientV1Trait
      */
     public function setCertificateProvider($lpaId, $certificateProvider)
     {
-        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
+        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this, $this->getClient());
 
         return $helper->setResource($certificateProvider->toJson());
     }
@@ -642,7 +642,7 @@ trait ClientV1Trait
      */
     public function deleteCertificateProvider($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this);
+        $helper = new ApplicationResourceService($lpaId, 'certificate-provider', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -657,7 +657,7 @@ trait ClientV1Trait
      */
     public function setWhoIsRegistering($lpaId, $who)
     {
-        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
+        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this, $this->getClient());
 
         return $helper->setResource(json_encode(['who' => $who]));
     }
@@ -670,7 +670,7 @@ trait ClientV1Trait
      */
     public function deleteWhoIsRegistering($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this);
+        $helper = new ApplicationResourceService($lpaId, 'who-is-registering', $this, $this->getClient());
 
         return $helper->deleteResource();
     }
@@ -684,7 +684,7 @@ trait ClientV1Trait
      */
     public function getPdfDetails($lpaId, $pdfName)
     {
-        $helper = new ApplicationResourceService($lpaId, 'pdfs/' . $pdfName, $this);
+        $helper = new ApplicationResourceService($lpaId, 'pdfs/' . $pdfName, $this, $this->getClient());
         $resource = $helper->getResource();
 
         $json = $resource->getBody();
@@ -704,7 +704,7 @@ trait ClientV1Trait
     {
         $path = '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/pdfs/' . $pdfName . '.pdf';
 
-        $response = $this->client()->get($this->apiBaseUri . $path);
+        $response = $this->getClient()->get($this->apiBaseUri . $path);
 
         $code = $response->getStatusCode();
 
@@ -729,7 +729,7 @@ trait ClientV1Trait
         $path = '/v1/users/' . $this->getUserId() . '/applications/' . $lpaId . '/pdfs';
 
         do {
-            $response = $this->client()->get($this->apiBaseUri . $path);
+            $response = $this->getClient()->get($this->apiBaseUri . $path);
 
             if ($response->getStatusCode() != 200) {
                 return $this->log($response, false);
@@ -769,7 +769,7 @@ trait ClientV1Trait
     {
         $path = '/v1/stats/' . $type;
 
-        $response = $this->client()->get($this->apiBaseUri . $path);
+        $response = $this->getClient()->get($this->apiBaseUri . $path);
 
         $code = $response->getStatusCode();
 
@@ -787,7 +787,7 @@ trait ClientV1Trait
      */
     public function getAuthStats()
     {
-        $response = $this->client()->get($this->authBaseUri . '/v1/stats');
+        $response = $this->getClient()->get($this->authBaseUri . '/v1/stats');
 
         $code = $response->getStatusCode();
 
@@ -854,7 +854,7 @@ trait ClientV1Trait
      */
     public function getMetaData($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'metadata', $this);
+        $helper = new ApplicationResourceService($lpaId, 'metadata', $this, $this->getClient());
 
         return $helper->getRawJson();
     }
@@ -867,7 +867,7 @@ trait ClientV1Trait
      */
     public function deleteMetaData($lpaId)
     {
-        $helper = new ApplicationResourceService($lpaId, 'metadata', $this);
+        $helper = new ApplicationResourceService($lpaId, 'metadata', $this, $this->getClient());
 
         return $helper->deleteResource();
     }

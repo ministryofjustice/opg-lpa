@@ -10,16 +10,20 @@ class ApplicationResourceService
     private $apiClient;
     private $endpoint;
     private $resourceType;
+    private $httpClient;
 
     /**
      * @param $lpaId
      * @param $resourceType
      * @param Client $apiClient
+     * @param GuzzleClient $httpClient
      */
-    public function __construct($lpaId, $resourceType, Client $apiClient)
+    public function __construct($lpaId, $resourceType, Client $apiClient, GuzzleClient $httpClient)
     {
-        $this->apiClient = $apiClient;
         $this->resourceType = $resourceType;
+        $this->apiClient = $apiClient;
+        $this->httpClient = $httpClient;
+
         $this->endpoint = $apiClient->getApiBaseUri() . '/v1/users/' . $this->apiClient->getUserId() . '/applications/' . $lpaId . '/' . $resourceType;
     }
 
@@ -31,7 +35,7 @@ class ApplicationResourceService
      */
     public function getResource()
     {
-        $response = $this->httpClient()->get($this->endpoint, [
+        $response = $this->httpClient->get($this->endpoint, [
             'headers' => ['Content-Type' => 'application/json']
         ]);
 
@@ -58,7 +62,7 @@ class ApplicationResourceService
         $resourceList = array();
 
         do {
-            $response = $this->httpClient()->get($this->endpoint);
+            $response = $this->httpClient->get($this->endpoint);
 
             $json = $response->json();
 
@@ -112,7 +116,7 @@ class ApplicationResourceService
      */
     public function getRawJson()
     {
-        $response = $this->httpClient()->get($this->endpoint, [
+        $response = $this->httpClient->get($this->endpoint, [
             'headers' => ['Content-Type' => 'application/json']
         ]);
 
@@ -139,7 +143,7 @@ class ApplicationResourceService
      */
     public function setResource($jsonBody, $index = null)
     {
-        $response = $this->httpClient()->put($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
+        $response = $this->httpClient->put($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
             'body' => $jsonBody,
             'headers' => ['Content-Type' => 'application/json']
         ]);
@@ -161,7 +165,7 @@ class ApplicationResourceService
      */
     public function updateResource($jsonBody, $index = null)
     {
-        $response = $this->httpClient()->patch($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
+        $response = $this->httpClient->patch($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
             'body' => $jsonBody,
             'headers' => ['Content-Type' => 'application/json']
         ]);
@@ -182,7 +186,7 @@ class ApplicationResourceService
      */
     public function addResource($jsonBody)
     {
-        $response = $this->httpClient()->post($this->endpoint, [
+        $response = $this->httpClient->post($this->endpoint, [
             'body' => $jsonBody,
             'headers' => ['Content-Type' => 'application/json']
         ]);
@@ -203,7 +207,7 @@ class ApplicationResourceService
      */
     public function deleteResource($index = null)
     {
-        $response = $this->httpClient()->delete($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
+        $response = $this->httpClient->delete($this->endpoint . (!is_null($index) ? '/' . $index : ''), [
             'headers' => ['Content-Type' => 'application/json']
         ]);
 
@@ -213,27 +217,5 @@ class ApplicationResourceService
         }
 
         return true;
-    }
-
-    /**
-     * Returns the GuzzleClient.
-     *
-     * If an authentication token is available it will be preset in the HTTP header.
-     *
-     * @return GuzzleClient
-     */
-    private function httpClient()
-    {
-        if (!isset($this->guzzleClient)) {
-            $this->guzzleClient = new GuzzleClient();
-            $this->guzzleClient->setDefaultOption('exceptions', false);
-            $this->guzzleClient->setDefaultOption('allow_redirects', false);
-        }
-
-        if ($this->apiClient->getToken() != null) {
-            $this->guzzleClient->setDefaultOption('headers/Token', $this->apiClient->getToken());
-        }
-
-        return $this->guzzleClient;
     }
 }
