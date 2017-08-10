@@ -58,4 +58,9 @@ class ControllerAbstractFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($controller);
         $this->assertInstanceOf(HomeController::class, $controller);
     }
+
+    public function tearDown()
+    {
+        Mockery::close();
+    }
 }
