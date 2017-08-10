@@ -17,12 +17,6 @@ class Client
     use ClientV2AuthTrait;
 
     /**
-     * @const string Current version of this client.
-     * This follows Semantic Versioning (http://semver.org/)
-     */
-    const VERSION = '4.0.0';
-
-    /**
      * The base URI for the API - from config
      */
     private $apiBaseUri;
@@ -75,7 +69,7 @@ class Client
         $headers = [
             'Accept'        => 'application/json',
             'Content-type'  => 'application/json',
-            'User-agent'    => 'LPA-API-PHP-CLIENT/'.self::VERSION
+            'User-agent'    => 'LPA-FRONT'
         ];
 
         if ($this->getToken() != null) {
