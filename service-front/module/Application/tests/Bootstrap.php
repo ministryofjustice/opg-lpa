@@ -119,3 +119,4 @@ Bootstrap::init();
 Bootstrap::chroot();
 
 require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';
+require __DIR__ . '/ApplicationTest/ControllerFactory/NonDispatchableController.php';
