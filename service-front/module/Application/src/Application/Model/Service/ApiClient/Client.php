@@ -23,14 +23,14 @@ class Client
     const VERSION = '4.0.0';
 
     /**
-     * The base URI for the API
+     * The base URI for the API - from config
      */
-    private $apiBaseUri = 'https://apiv2';
+    private $apiBaseUri;
 
     /**
-     * The base URI for the auth server
+     * The base URI for the auth server - from config
      */
-    private $authBaseUri = 'https://authv2';
+    private $authBaseUri;
 
     /**
      * @var HttpClientInterface PSR-7 compatible HTTP Client
@@ -50,6 +50,18 @@ class Client
      * @var string
      */
     private $token;
+
+    /**
+     * Client constructor
+     *
+     * @param $apiBaseUri
+     * @param $authBaseUri
+     */
+    public function __construct($apiBaseUri, $authBaseUri)
+    {
+        $this->apiBaseUri = $apiBaseUri;
+        $this->authBaseUri = $authBaseUri;
+    }
 
     // Internal API access methods
 

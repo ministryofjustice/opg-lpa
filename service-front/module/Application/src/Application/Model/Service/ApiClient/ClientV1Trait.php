@@ -54,35 +54,6 @@ trait ClientV1Trait
     private $isError;
 
     /**
-     * @param string $apiBaseUri
-     */
-    public function setApiBaseUri($apiBaseUri)
-    {
-        $this->apiBaseUri = $apiBaseUri;
-    }
-
-    /**
-     * @param string $authBaseUri
-     */
-    public function setAuthBaseUri($authBaseUri)
-    {
-        $this->authBaseUri = $authBaseUri;
-    }
-
-    /**
-     * Create an API client for the given uri endpoint.
-     *
-     * Optionally pass in a previously-obtained token. If no token is provided,
-     * you will need to call the authenticate(...) function
-     *
-     * @param string $token  The API auth token
-     */
-    public function __construct($token = null)
-    {
-        $this->setToken($token);
-    }
-
-    /**
      * Returns the GuzzleClient.
      *
      * If a authentication token is available it will be preset in the HTTP header.
@@ -873,30 +844,6 @@ trait ClientV1Trait
     private function setIsError($isError)
     {
         $this->isError = $isError;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
-    {
-        die('Deprecated in v4');
-
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        die('Deprecated in v4');
-
-        if (is_null($this->email) && !is_null($this->token)) {
-            $this->setEmailAndUserIdFromToken();
-        }
-
-        return $this->email;
     }
 
     /**
