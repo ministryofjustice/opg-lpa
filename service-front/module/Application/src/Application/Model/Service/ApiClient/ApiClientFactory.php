@@ -17,16 +17,15 @@ class ApiClientFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $client = new Client();
-
         $config = $serviceLocator->get('config')['api_client'];
-        $client->setApiBaseUri($config['api_uri']);
-        $client->setAuthBaseUri($config['auth_uri']);
+
+        $client = new Client($config['api_uri'], $config['auth_uri']);
 
         $auth = $serviceLocator->get('AuthenticationService');
 
         if ($auth->hasIdentity()) {
             $identity = $auth->getIdentity();
+
             $client->setUserId($identity->id());
             $client->setToken($identity->token());
         }
