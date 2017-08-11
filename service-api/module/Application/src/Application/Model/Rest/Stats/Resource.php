@@ -5,6 +5,7 @@ namespace Application\Model\Rest\Stats;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Rest\AbstractResource;
 use MongoDB\BSON\ObjectID as MongoId;
+use MongoDB\BSON\Regex;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Driver\ReadPreference;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
@@ -39,6 +40,8 @@ class Resource extends AbstractResource
                 return new Entity($this->getLpasPerUser());
             case 'welshlanguage':
                 return new Entity($this->getWelshLanguageStats());
+            case 'preferencesinstructions':
+                return new Entity($this->getPreferencesInstructionsStats());
             default:
                 return new ApiProblem(404, 'Stats type not found.');
         }
@@ -361,5 +364,59 @@ class Resource extends AbstractResource
         }
 
         return $welshLanguageStats;
+    }
+
+    private function getPreferencesInstructionsStats()
+    {
+        $collection = $this->getCollection('lpa');
+
+        // Stats can (ideally) be processed on a secondary.
+        $readPreference = [
+            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
+        ];
+
+        $preferencesInstructionsStats = [];
+
+        $start = new DateTime('first day of this month');
+        $start->setTime(0, 0, 0);
+
+        $end = new DateTime('last day of this month');
+        $end->setTime(23, 59, 59);
+
+        // Go back 4 months...
+        for ($i = 1; $i <= 4; $i++) {
+            $from = new MongoDate($start);
+            $to = new MongoDate($end);
+
+            $month = [];
+
+            $month['completed'] = $collection->count([
+                'completedAt' => [
+                    '$gte' => $from,
+                    '$lte' => $to
+                ]
+            ], $readPreference);
+
+            $month['preferencesStated'] = $collection->count([
+                'completedAt' => [
+                    '$gte' => $from,
+                    '$lte' => $to
+                ], 'document.preference' => new Regex('.+')
+            ], $readPreference);
+
+            $month['instructionsStated'] = $collection->count([
+                'completedAt' => [
+                    '$gte' => $from,
+                    '$lte' => $to
+                ], 'document.instruction' => new Regex('.+')
+            ], $readPreference);
+
+            $preferencesInstructionsStats[date('Y-m', $start->getTimestamp())] = $month;
+
+            $start->modify("first day of -1 month");
+            $end->modify("last day of -1 month");
+        }
+
+        return $preferencesInstructionsStats;
     }
 }
