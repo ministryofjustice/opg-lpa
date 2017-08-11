@@ -9,10 +9,6 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Aws\DynamoDb\SessionHandler as DynamoDbSessionHandler;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\Logger\Logger;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Session\SaveHandler\SaveHandlerInterface;
-
 
 class SessionsControllerTest extends AbstractControllerTest
 {
@@ -20,10 +16,6 @@ class SessionsControllerTest extends AbstractControllerTest
      * @var SessionsController
      */
     private $controller;
-    /**
-     * @var MockInterface
-     */
-    private $serviceLocator;
     /**
      * @var MockInterface
      */
@@ -36,28 +28,19 @@ class SessionsControllerTest extends AbstractControllerTest
      * @var MockInterface
      */
     private $saveHandler;
-    /**
-     * @var MockInterface
-     */
-    private $logger;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->controller = new SessionsController();
-        /** @var ServiceLocatorInterface $serviceLocator */
-        $serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocator = $serviceLocator;
-        $this->controller->setServiceLocator($serviceLocator);
+        $this->controller->setServiceLocator($this->serviceLocator);
+
         $this->dynamoCronLock = Mockery::mock(DynamoCronLock::class);
         $this->serviceLocator->shouldReceive('get')->with('DynamoCronLock')->andReturn($this->dynamoCronLock)->once();
         $this->sessionManager = Mockery::mock(SessionManager::class);
         $this->serviceLocator->shouldReceive('get')->with('SessionManager')->andReturn($this->sessionManager);
         $this->saveHandler = Mockery::mock(DynamoDbSessionHandler::class);
-        $this->logger = Mockery::mock(Logger::class);
-        $this->logger->shouldReceive('info');
-        $this->serviceLocator->shouldReceive('get')->with('Logger')->andReturn($this->logger);
     }
 
     public function testGcActionNoLock()
@@ -79,10 +62,5 @@ class SessionsControllerTest extends AbstractControllerTest
         $result = $this->controller->gcAction();
 
         $this->assertNull($result);
-    }
-
-    public function tearDown()
-    {
-        Mockery::close();
     }
 }
