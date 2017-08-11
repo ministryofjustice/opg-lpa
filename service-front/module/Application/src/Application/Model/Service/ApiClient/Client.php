@@ -89,8 +89,7 @@ class Client
 
         try {
             $response = $this->getHttpClient()->sendRequest($request);
-
-            $this->setLastStatusCode($response->getStatusCode());
+            $this->lastStatusCode = $response->getStatusCode();
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
@@ -109,8 +108,7 @@ class Client
 
         try {
             $response = $this->getHttpClient()->sendRequest($request);
-
-            $this->setLastStatusCode($response->getStatusCode());
+            $this->lastStatusCode = $response->getStatusCode();
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
@@ -128,8 +126,7 @@ class Client
 
         try {
             $response = $this->getHttpClient()->sendRequest($request);
-
-            $this->setLastStatusCode($response->getStatusCode());
+            $this->lastStatusCode = $response->getStatusCode();
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
@@ -147,8 +144,7 @@ class Client
 
         try {
             $response = $this->getHttpClient()->sendRequest($request);
-
-            $this->setLastStatusCode($response->getStatusCode());
+            $this->lastStatusCode = $response->getStatusCode();
         } catch (\RuntimeException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
@@ -214,22 +210,6 @@ class Client
         }
 
         return $this->userId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAuthBaseUri()
-    {
-        return $this->authBaseUri;
-    }
-
-    /**
-     * @return string
-     */
-    public function getApiBaseUri()
-    {
-        return $this->apiBaseUri;
     }
 
     /**

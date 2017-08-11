@@ -17,7 +17,7 @@ trait ClientV2AuthTrait
      */
     public function authenticate($email, $password)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/authenticate');
+        $url = new Uri($this->authBaseUri . '/v1/authenticate');
 
         try {
             $response = $this->httpPost($url, [
@@ -54,7 +54,7 @@ trait ClientV2AuthTrait
      */
     public function registerAccount($email, $password)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/users');
+        $url = new Uri($this->authBaseUri . '/v1/users');
 
         try {
             $response = $this->httpPost($url, [
@@ -84,7 +84,7 @@ trait ClientV2AuthTrait
      */
     public function activateAccount($activationToken)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/users/activate');
+        $url = new Uri($this->authBaseUri . '/v1/users/activate');
 
         try {
             $response = $this->httpPost($url, [
@@ -109,7 +109,7 @@ trait ClientV2AuthTrait
      */
     public function getTokenInfo($token)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/authenticate');
+        $url = new Uri($this->authBaseUri . '/v1/authenticate');
 
         try {
             $response = $this->httpPost($url, [
@@ -145,7 +145,7 @@ trait ClientV2AuthTrait
 
         $path = sprintf('/v1/users/%s', $this->getUserId());
 
-        $url = new Uri($this->getAuthBaseUri() . $path);
+        $url = new Uri($this->authBaseUri . $path);
 
         try {
             $response = $this->httpDelete($url);
@@ -168,7 +168,7 @@ trait ClientV2AuthTrait
      */
     public function requestPasswordReset($email)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/users/password-reset');
+        $url = new Uri($this->authBaseUri . '/v1/users/password-reset');
 
         try {
             $response = $this->httpPost($url, [
@@ -205,7 +205,7 @@ trait ClientV2AuthTrait
      */
     public function updateAuthPasswordWithToken($token, $newPassword)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/users/password-reset-update');
+        $url = new Uri($this->authBaseUri . '/v1/users/password-reset-update');
 
         try {
             $response = $this->httpPost($url, [
@@ -233,7 +233,7 @@ trait ClientV2AuthTrait
     {
         $path = sprintf('/v1/users/%s/email/%s', $this->getUserId(), $newEmailAddress);
 
-        $url = new Uri($this->getAuthBaseUri() . $path);
+        $url = new Uri($this->authBaseUri . $path);
 
         try {
             $response = $this->httpGet($url);
@@ -260,7 +260,7 @@ trait ClientV2AuthTrait
      */
     public function updateAuthEmail($emailUpdateToken)
     {
-        $url = new Uri($this->getAuthBaseUri() . '/v1/users/confirm-new-email');
+        $url = new Uri($this->authBaseUri . '/v1/users/confirm-new-email');
 
         try {
             $response = $this->httpPost($url, [
@@ -295,7 +295,7 @@ trait ClientV2AuthTrait
     {
         $path = sprintf('/v1/users/%s/password', $this->getUserId());
 
-        $url = new Uri($this->getAuthBaseUri() . $path);
+        $url = new Uri($this->authBaseUri . $path);
 
         try {
             $response = $this->httpPost($url, [
