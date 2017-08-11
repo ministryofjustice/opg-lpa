@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\RepeatCaseNumber\Entity;
 use Application\Model\Rest\RepeatCaseNumber\Resource as RepeatCaseNumberResource;
 use Application\Model\Rest\RepeatCaseNumber\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest

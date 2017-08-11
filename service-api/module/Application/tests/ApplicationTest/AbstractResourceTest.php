@@ -1,9 +1,8 @@
 <?php
 
-namespace ApplicationTest\Model;
+namespace ApplicationTest;
 
 use Application\Library\Authorization\UnauthorizedException;
-use ApplicationTest\AbstractResourceBuilder;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use ZfcRbac\Service\AuthorizationService;
@@ -17,11 +16,14 @@ abstract class AbstractResourceTest extends \PHPUnit_Framework_TestCase
     protected function setUpCheckAccessTest(AbstractResourceBuilder $resourceBuilder)
     {
         $authorizationService = Mockery::mock(AuthorizationService::class);
-        $authorizationService->shouldReceive('isGranted')->andReturn(false)->once();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withAuthorizationService($authorizationService)
-            ->build();
+
+        $authorizationService->shouldReceive('isGranted')
+                             ->andReturn(false)
+                             ->once();
+
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())
+                                    ->withAuthorizationService($authorizationService)
+                                    ->build();
 
         //Should not be authorised for any Resource method
         $this->setExpectedException(UnauthorizedException::class);

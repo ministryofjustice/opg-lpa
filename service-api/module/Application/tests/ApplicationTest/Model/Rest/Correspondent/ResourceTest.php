@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Correspondent\Entity;
 use Application\Model\Rest\Correspondent\Resource as CorrespondentResource;
 use Application\Model\Rest\Correspondent\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use OpgTest\Lpa\DataModel\FixturesData;
 

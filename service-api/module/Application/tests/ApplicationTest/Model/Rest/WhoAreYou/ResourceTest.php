@@ -8,7 +8,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\WhoAreYou\Entity;
 use Application\Model\Rest\WhoAreYou\Resource as WhoAreYouResource;
 use Application\Model\Rest\WhoAreYou\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Mockery;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use OpgTest\Lpa\DataModel\FixturesData;

@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Instruction\Entity;
 use Application\Model\Rest\Instruction\Resource as InstructionResource;
 use Application\Model\Rest\Instruction\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest

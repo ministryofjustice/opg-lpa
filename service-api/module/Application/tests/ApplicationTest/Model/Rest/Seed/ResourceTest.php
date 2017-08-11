@@ -7,9 +7,9 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Seed\Entity;
 use Application\Model\Rest\Seed\Resource as SeedResource;
 use Application\Model\Rest\Seed\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
-use OpgTest\Lpa\DataModel\FixturesData;
+use ApplicationTest\AbstractResourceTest;
 use ApplicationTest\Model\Rest\Applications\ResourceBuilder as ApplicationsResourceBuilder;
+use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {

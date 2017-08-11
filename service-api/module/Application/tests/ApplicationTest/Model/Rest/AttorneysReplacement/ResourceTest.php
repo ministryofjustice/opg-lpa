@@ -8,8 +8,8 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\AttorneysReplacement\Entity;
 use Application\Model\Rest\AttorneysReplacement\Resource;
 use Application\Model\Rest\AttorneysReplacement\Resource as AttorneysReplacementResource;
+use ApplicationTest\AbstractResourceTest;
 use ApplicationTest\DummyDocument;
-use ApplicationTest\Model\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use OpgTest\Lpa\DataModel\FixturesData;
 

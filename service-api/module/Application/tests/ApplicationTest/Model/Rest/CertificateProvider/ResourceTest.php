@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\CertificateProvider\Entity;
 use Application\Model\Rest\CertificateProvider\Resource as CertificateProviderResource;
 use Application\Model\Rest\CertificateProvider\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use OpgTest\Lpa\DataModel\FixturesData;
 

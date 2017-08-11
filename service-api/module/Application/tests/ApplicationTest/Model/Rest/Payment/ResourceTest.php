@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Payment\Entity;
 use Application\Model\Rest\Payment\Resource as PaymentResource;
 use Application\Model\Rest\Payment\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use OpgTest\Lpa\DataModel\FixturesData;
 

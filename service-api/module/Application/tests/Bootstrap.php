@@ -1,121 +1,34 @@
 <?php
 
-namespace ApplicationTest;
-
-use OpgTest\Lpa\DataModel\FixturesData;
-use Zend\Loader\AutoloaderFactory;
-use Zend\Mvc\Service\ServiceManagerConfig;
-use Zend\ServiceManager\ServiceManager;
-use RuntimeException;
-
-date_default_timezone_set('UTC');
-error_reporting(E_ALL | E_STRICT);
-chdir(__DIR__);
-
 /**
- * Test bootstrap, for setting up autoloading
+ * Simple autoloader function to dynamically load
+ * the required files as they are instantiated
  */
-class Bootstrap
-{
-    protected static $serviceManager;
+spl_autoload_register(function ($class) {
 
-    public static function init()
-    {
-        $zf2ModulePaths = array(dirname(dirname(__DIR__)));
-        if (($path = static::findParentPath('vendor'))) {
-            $zf2ModulePaths[] = $path;
+    //  Base directories where namespaced files reside
+    $baseDirs = [
+        __DIR__ . '/',
+        __DIR__ . '/../src/',
+    ];
+
+    //  Loop through the base directories to try to find the requested class
+    foreach ($baseDirs as $baseDir) {
+        //  Replace the separators with directory separators in the relative class name, append and with .php
+        $file = $baseDir . str_replace('\\', '/', $class) . '.php';
+
+        // if the file exists, require it
+        if (file_exists($file)) {
+            require_once $file;
         }
-        if (($path = static::findParentPath('module')) !== $zf2ModulePaths[0]) {
-            $zf2ModulePaths[] = $path;
-        }
-
-        static::initAutoloader();
-
-        // use ModuleManager to load this module and it's dependencies
-        $config = array(
-            'module_listener_options' => array(
-                'module_paths' => $zf2ModulePaths,
-            ),
-            'modules' => array(
-                'Application'
-            )
-        );
-
-        $serviceManager = new ServiceManager(new ServiceManagerConfig());
-        $serviceManager->setService('ApplicationConfig', $config);
-        $serviceManager->get('ModuleManager')->loadModules();
-
-        static::$serviceManager = $serviceManager;
     }
+});
 
-    public static function chroot()
-    {
-        $rootPath = dirname(static::findParentPath('module'));
-        chdir($rootPath);
-    }
+//  If it exists, hook into the composer autoload file too
+$composerAutoloadFile = __DIR__ . '/../../../vendor/autoload.php';
 
-    public static function getServiceManager()
-    {
-        return static::$serviceManager;
-    }
-
-    protected static function initAutoloader()
-    {
-        $vendorPath = static::findParentPath('vendor');
-
-        $zf2Path = getenv('ZF2_PATH');
-        if (!$zf2Path) {
-            if (defined('ZF2_PATH')) {
-                $zf2Path = ZF2_PATH;
-            } elseif (is_dir($vendorPath . '/ZF2/library')) {
-                $zf2Path = $vendorPath . '/ZF2/library';
-            } elseif (is_dir($vendorPath . '/zendframework/zendframework/bin')) {
-                $zf2Path = $vendorPath . '/zendframework/zendframework/bin';
-            }
-        }
-
-        if (!$zf2Path) {
-            throw new RuntimeException(
-                'Unable to load ZF2. Run `php composer.phar install` or'
-                . ' define a ZF2_PATH environment variable.'
-            );
-        }
-
-        if (file_exists($vendorPath . '/autoload.php')) {
-            include $vendorPath . '/autoload.php';
-        }
-
-        //include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
-        include $vendorPath . '/zendframework/zend-loader/src/AutoloaderFactory.php';
-
-        AutoloaderFactory::factory(array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'autoregister_zf' => true,
-                'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/' . __NAMESPACE__,
-                    'ApplicationTest' => __DIR__ . '/ApplicationTest',
-                ),
-            ),
-        ));
-    }
-
-    protected static function findParentPath($path)
-    {
-        $dir = __DIR__;
-        $previousDir = '.';
-        while (!is_dir($dir . '/' . $path)) {
-            $dir = dirname($dir);
-            if ($previousDir === $dir) {
-                return false;
-            }
-            $previousDir = $dir;
-        }
-        return $dir . '/' . $path;
-    }
+if (file_exists($composerAutoloadFile)) {
+    require_once $composerAutoloadFile;
 }
-
-
-Bootstrap::init();
-Bootstrap::chroot();
 
 require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';

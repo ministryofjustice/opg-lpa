@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Rest\Status;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Status\Entity;
 use Application\Model\Rest\Status\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest

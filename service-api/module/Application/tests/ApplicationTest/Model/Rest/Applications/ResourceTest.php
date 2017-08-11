@@ -12,7 +12,7 @@ use Application\Model\Rest\Applications\Entity;
 use Application\Model\Rest\Applications\Resource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use Application\Model\Rest\Lock\LockedException;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
@@ -78,7 +78,7 @@ class ResourceTest extends AbstractResourceTest
         $lpa = FixturesData::getHwLpa();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        
+
         $entity = $resource->fetch($lpa->id);
         $this->assertTrue($entity instanceof Entity);
         $this->assertEquals($lpa, $entity->getLpa());

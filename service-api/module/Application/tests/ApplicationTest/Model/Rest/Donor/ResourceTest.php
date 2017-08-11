@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Donor\Entity;
 use Application\Model\Rest\Donor\Resource as DonorResource;
 use Application\Model\Rest\Donor\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 

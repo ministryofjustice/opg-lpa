@@ -7,7 +7,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\AttorneyDecisionsPrimary\Entity;
 use Application\Model\Rest\AttorneyDecisionsPrimary\Resource;
 use Application\Model\Rest\AttorneyDecisionsPrimary\Resource as AttorneyDecisionsPrimaryResource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 
