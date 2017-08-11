@@ -1,26 +1,37 @@
 <?php
+
 namespace Application\Model\Rest\Donor;
-
-use RuntimeException;
-
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-
-use Application\Model\Rest\AbstractResource;
-
-use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\LpaConsumerInterface;
+use Application\Model\Rest\UserConsumerInterface;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
+use RuntimeException;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'donor';
 
-    public function getIdentifier(){ return 'lpaId'; }
-    public function getName(){ return 'donor'; }
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'lpaId';
 
-    public function getType(){
-        return self::TYPE_SINGULAR;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_SINGULAR;
 
     /**
      * Fetch a resource

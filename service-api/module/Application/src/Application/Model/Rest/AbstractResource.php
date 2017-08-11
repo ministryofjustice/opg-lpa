@@ -1,30 +1,25 @@
 <?php
+
 namespace Application\Model\Rest;
 
 use Application\DataAccess\Mongo\CollectionFactory;
+use Application\Library\Authorization\UnauthorizedException;
+use Application\Library\DateTime;
+use Application\Library\Lpa\StateChecker;
+use Application\Model\Rest\Lock\LockedException;
+use Application\Model\Rest\Users\Entity as RouteUser;
+use Application\Traits\LogTrait;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
-use MongoDB\Driver\Manager;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use ZfcRbac\Service\AuthorizationServiceAwareInterface;
+use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 use RuntimeException;
 
-use Application\Library\DateTime;
-
-use Application\Library\Lpa\StateChecker;
-
-use Application\Model\Rest\Lock\LockedException;
-
-use Application\Model\Rest\Users\Entity as RouteUser;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-
-use Application\Library\Authorization\UnauthorizedException;
-use ZfcRbac\Service\AuthorizationServiceAwareTrait;
-use Application\Traits\LogTrait;
-
-abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwareInterface {
-
+abstract class AbstractResource implements ServiceLocatorAwareInterface, AuthorizationServiceAwareInterface
+{
     use LogTrait;
 
     const TYPE_SINGULAR = 'singular';
@@ -33,51 +28,117 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
     //------------------------------------------
 
     use ServiceLocatorAwareTrait;
-
-    /**
-     * Identity and authorization for the authenticated user. This could be Identity\Guest.
-     */
     use AuthorizationServiceAwareTrait;
 
     //------------------------------------------
 
-    protected $lpa = null;
-
-    protected $routeUser = null;
-
-    //------------------------------------------
-
-    public function setRouteUser( RouteUser $user ){
-        $this->routeUser = $user;
-    }
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name;
 
     /**
-     * @return RouteUser
+     * Resource identifier
+     *
+     * @var string
      */
-    public function getRouteUser(){
-        if( !( $this->routeUser instanceof RouteUser ) ){
-            throw new RuntimeException('Route User not set');
-        }
-       return $this->routeUser;
+    protected $identifier;
+
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * LPA for this resource
+     *
+     * @var Lpa
+     */
+    protected $lpa = null;
+
+    /**
+     * User
+     *
+     * @var RouteUser
+     */
+    protected $routeUser = null;
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 
     //--------------------------
 
-    public function setLpa( Lpa $lpa ){
+    public function setLpa(Lpa $lpa)
+    {
         $this->lpa = $lpa;
     }
 
     /**
      * @return Lpa
      */
-    public function getLpa(){
-        if( !( $this->lpa instanceof Lpa ) ){
+    public function getLpa()
+    {
+        if (!$this->lpa instanceof Lpa) {
             throw new RuntimeException('LPA not set');
         }
+
         return $this->lpa;
     }
 
-    //--------------------------
+    public function setRouteUser(RouteUser $user)
+    {
+        $this->routeUser = $user;
+    }
+
+    /**
+     * @return RouteUser
+     */
+    public function getRouteUser()
+    {
+        if (!$this->routeUser instanceof RouteUser) {
+            throw new RuntimeException('Route User not set');
+        }
+
+        return $this->routeUser;
+    }
+
+    public function checkAccess($userId = null)
+    {
+        if (is_null($userId) && $this->getRouteUser() != null) {
+            $userId = $this->getRouteUser()->userId();
+
+            $this->info('Access allowed for user', ['userid' => $userId]);
+        }
+
+        if (!$this->getAuthorizationService()->isGranted('authenticated')) {
+            throw new UnauthorizedException('You need to be authenticated to access this resource');
+        }
+
+        if (!$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId)) {
+            throw new UnauthorizedException('You do not have permission to access this resource');
+        }
+    }
+
+    //------------------------------------------
 
     /**
      * @param $collection string Name of the requested collection.
@@ -86,26 +147,6 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
     public function getCollection( $collection ){
         return $this->getServiceLocator()->get( CollectionFactory::class . "-{$collection}" );
     }
-
-    //--------------------------
-
-    public function checkAccess( $userId = null ){
-
-        if( is_null($userId) && $this->getRouteUser() != null ){
-            $userId = $this->getRouteUser()->userId();
-            
-            $this->info('Access allowed for user', ['userid' => $userId]);
-        }
-
-        if (!$this->getAuthorizationService()->isGranted('authenticated')) {
-            throw new UnauthorizedException('You need to be authenticated to access this resource');
-        }
-
-        if ( !$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId) ) {
-            throw new UnauthorizedException('You do not have permission to access this resource');
-        }
-
-    } // function
 
     //------------------------------------------
 
@@ -117,7 +158,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
     protected function updateLpa( Lpa $lpa ){
 
         $this->info('Updating LPA', ['lpaid' => $lpa->id]);
-        
+
         // Should already have been checked, but no harm checking again.
         $this->checkAccess();
 
@@ -149,18 +190,18 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         if( $isCreated ){
 
             $this->info('LPA exists in database', ['lpaid' => $lpa->id]);
-            
+
             if( !($lpa->createdAt instanceof \DateTime) ){
-                
+
                 $this->info('Setting created time for existing LPA', ['lpaid' => $lpa->id]);
-                
+
                 $lpa->createdAt = new DateTime();
             }
 
         } else {
-            
+
             $this->info('LPA does not exist in database', ['lpaid' => $lpa->id]);
-            
+
             $lpa->createdAt = null;
         }
 
@@ -188,9 +229,9 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
             }
 
         } else {
-            
+
             $this->info('LPA is not complete', ['lpaid' => $lpa->id]);
-            
+
             $lpa->completedAt = null;
         }
 
@@ -200,9 +241,9 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         $searchField = null;
 
         if( $lpa->document->donor != null ){
-            
+
             $searchField = (string)$lpa->document->donor->name;
-            
+
             $this->info('Setting search field', [
                     'lpaid' => $lpa->id,
                     'searchField' => $searchField,
@@ -232,7 +273,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
                 ]
             );
         }
-        
+
         // updatedAt is included in the query so that data isn't overwritten
         // if the Document has changed since this process loaded it.
         $result = $collection->updateOne(
@@ -246,7 +287,7 @@ abstract class AbstractResource implements ResourceInterface, ServiceLocatorAwar
         if( $result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1 ){
             throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
         }
-        
+
         $this->info('LPA updated successfully', [
                'lpaid' => $lpa->id,
                'updatedAt' => $lpa->updatedAt,

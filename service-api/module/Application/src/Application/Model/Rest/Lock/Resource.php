@@ -1,27 +1,36 @@
 <?php
+
 namespace Application\Model\Rest\Lock;
 
-use RuntimeException;
-
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-
+use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
-
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
+use RuntimeException;
 
-use Application\Library\DateTime;
-use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ValidationApiProblem;
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'lock';
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'lpaId';
 
-    public function getIdentifier(){ return 'lpaId'; }
-        public function getName(){ return 'lock'; }
-
-    public function getType(){
-        return self::TYPE_SINGULAR;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_SINGULAR;
 
     /**
      * Fetch a resource

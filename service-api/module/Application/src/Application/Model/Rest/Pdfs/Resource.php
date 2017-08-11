@@ -1,32 +1,44 @@
 <?php
+
 namespace Application\Model\Rest\Pdfs;
-
-use Application\Library\Lpa\StateChecker;
-
-use Application\Model\Rest\AbstractResource;
-
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
-
-use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
-
-use Zend\Filter\Compress;
-
-use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
-
-use Application\Library\Http\Response\File as FileResponse;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-
+use Application\Library\Http\Response\File as FileResponse;
+use Application\Library\Lpa\StateChecker;
+use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\LpaConsumerInterface;
+use Application\Model\Rest\UserConsumerInterface;
 use Aws\S3\S3Client;
-use Aws\DynamoDb\DynamoDbClient;
-
-use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
+use Zend\Crypt\BlockCipher;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+use Zend\Filter\Compress;
+use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'pdfs';
+
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'resourceId';
+
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_COLLECTION;
 
     /**
      * The compression adapter to use (with ZF2 Filters)
@@ -49,13 +61,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
     private $dynamoQueue;
 
     //--------------------------
-
-    public function getIdentifier(){ return 'resourceId'; }
-    public function getName(){ return 'pdfs'; }
-
-    public function getType(){
-        return self::TYPE_COLLECTION;
-    }
 
     public function getPdfTypes(){
         return ['lpa120', 'lp3', 'lp1'];

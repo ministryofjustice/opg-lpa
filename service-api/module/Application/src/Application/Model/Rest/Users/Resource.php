@@ -1,23 +1,36 @@
 <?php
+
 namespace Application\Model\Rest\Users;
 
+use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
-
 use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\User\User;
 
-use Application\Library\DateTime;
-use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ValidationApiProblem;
+class Resource extends AbstractResource
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'users';
 
-class Resource extends AbstractResource {
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'userId';
 
-    public function getIdentifier(){ return 'userId'; }
-    public function getName(){ return 'users'; }
-
-    public function getType(){
-        return self::TYPE_COLLECTION;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_COLLECTION;
 
     /**
      * Fetch the user. If the user does not exist, create them.
@@ -54,7 +67,6 @@ class Resource extends AbstractResource {
         //------------------------
 
         $user = new Entity( $user );
-
 
         // Set the user in the AbstractResource so it can be used for route generation.
         $this->setRouteUser( $user );

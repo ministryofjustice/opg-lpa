@@ -1,23 +1,19 @@
 <?php
+
 namespace Application\Model\Rest\Applications;
 
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Driver\Query;
-use RuntimeException;
-
-use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\UserConsumerInterface;
-
-use Zend\Paginator\Adapter\NullFill as PaginatorNull;
-use Zend\Paginator\Adapter\Callback as PaginatorCallback;
-
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document;
-
-use Application\Library\DateTime;
-use Application\Library\Random\Csprng;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\DateTime;
+use Application\Library\Random\Csprng;
+use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\UserConsumerInterface;
+use MongoDB\BSON\UTCDateTime;
+use Opg\Lpa\DataModel\Lpa\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Paginator\Adapter\Callback as PaginatorCallback;
+use Zend\Paginator\Adapter\NullFill as PaginatorNull;
+use RuntimeException;
 
 /**
  * Application Resource
@@ -25,15 +21,28 @@ use Application\Library\ApiProblem\ValidationApiProblem;
  * Class Resource
  * @package Application\Model\Rest\Applications
  */
-class Resource extends AbstractResource implements UserConsumerInterface {
+class Resource extends AbstractResource implements UserConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'applications';
 
-    public function getName(){ return 'applications'; }
-    public function getIdentifier(){ return 'lpaId'; }
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'lpaId';
 
-    public function getType(){
-        return self::TYPE_COLLECTION;
-    }
-
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_COLLECTION;
 
     /**
      * Filters out all top level keys that the user cannot directly set.
@@ -183,9 +192,9 @@ class Resource extends AbstractResource implements UserConsumerInterface {
         $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=> $userId] );
 
         if( is_null($result) ){
-            return new ApiProblem( 
-                404, 
-                'Document ' . $id . ' not found for user ' . $this->getRouteUser()->userId() 
+            return new ApiProblem(
+                404,
+                'Document ' . $id . ' not found for user ' . $this->getRouteUser()->userId()
             );
         }
 

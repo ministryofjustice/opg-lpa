@@ -10,6 +10,18 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('resourceId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('status', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

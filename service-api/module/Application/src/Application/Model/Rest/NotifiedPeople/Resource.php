@@ -1,27 +1,38 @@
 <?php
+
 namespace Application\Model\Rest\NotifiedPeople;
-
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-
-use Application\Model\Rest\AbstractResource;
-
-use Zend\Paginator\Adapter\NullFill as PaginatorNull;
-use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
-
-use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\LpaConsumerInterface;
+use Application\Model\Rest\UserConsumerInterface;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
+use Zend\Paginator\Adapter\NullFill as PaginatorNull;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'notified-people';
 
-    public function getIdentifier(){ return 'resourceId'; }
-    public function getName(){ return 'notified-people'; }
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'resourceId';
 
-    public function getType(){
-        return self::TYPE_COLLECTION;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_COLLECTION;
 
     /**
      * Create a new Attorney.

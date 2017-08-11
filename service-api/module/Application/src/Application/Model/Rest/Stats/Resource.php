@@ -14,20 +14,26 @@ use DateTime;
 
 class Resource extends AbstractResource
 {
-    public function getIdentifier()
-    {
-        return 'type';
-    }
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'stats';
 
-    public function getName()
-    {
-        return 'stats';
-    }
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'type';
 
-    public function getType()
-    {
-        return self::TYPE_COLLECTION;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_COLLECTION;
 
     public function fetch($type)
     {

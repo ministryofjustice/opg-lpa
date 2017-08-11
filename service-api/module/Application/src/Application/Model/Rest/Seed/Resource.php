@@ -1,26 +1,36 @@
 <?php
+
 namespace Application\Model\Rest\Seed;
 
-use RuntimeException;
-
-use Application\Model\Rest\Applications\Entity as ApplicationEntity;
-
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Rest\AbstractResource;
-
+use Application\Model\Rest\Applications\Entity as ApplicationEntity;
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
+use RuntimeException;
 
-use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ValidationApiProblem;
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'seed';
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'lpaId';
 
-    public function getIdentifier(){ return 'lpaId'; }
-    public function getName(){ return 'seed'; }
-
-    public function getType(){
-        return self::TYPE_SINGULAR;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_SINGULAR;
 
     /**
      * Fetch a resource

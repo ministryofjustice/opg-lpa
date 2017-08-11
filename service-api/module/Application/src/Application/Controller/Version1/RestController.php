@@ -6,9 +6,9 @@ use RuntimeException;
 
 use Application\Library\Hal;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\EntityInterface;
 use Application\Model\Rest\Lock\LockedException;
-use Application\Model\Rest\ResourceInterface;
 use Application\Model\Rest\RouteProviderInterface;
 use Zend\Http\Response as HttpResponse;
 use Zend\Mvc\Controller\AbstractRestfulController;
@@ -20,27 +20,27 @@ use ZfcRbac\Exception\UnauthorizedException;
 class RestController extends AbstractRestfulController
 {
     /**
-     * @var ResourceInterface The resource model to use.
+     * @var AbstractResource The resource model to use.
      */
     private $resource;
 
     /**
      * Sets the Resource identified in the URL.
      *
-     * @param ResourceInterface $resource
+     * @param AbstractResource $resource
      */
-    public function setResource(ResourceInterface $resource)
+    public function setResource(AbstractResource $resource)
     {
         $this->resource = $resource;
         $this->identifierName = $resource->getIdentifier();
     }
 
     /**
-     * @return ResourceInterface The Resource current being used.
+     * @return AbstractResource The Resource current being used.
      */
     public function getResource()
     {
-        if (!isset($this->resource) || !($this->resource instanceof ResourceInterface)) {
+        if (!isset($this->resource) || !($this->resource instanceof AbstractResource)) {
             throw new RuntimeException('A resource has not been set');
         }
 

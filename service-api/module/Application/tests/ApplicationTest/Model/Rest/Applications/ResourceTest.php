@@ -23,6 +23,18 @@ use ZfcRbac\Service\AuthorizationService;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('applications', $resource->getName());
+    }
+
     public function testGetRouteUserException()
     {
         $this->setExpectedException(\RuntimeException::class, 'Route User not set');

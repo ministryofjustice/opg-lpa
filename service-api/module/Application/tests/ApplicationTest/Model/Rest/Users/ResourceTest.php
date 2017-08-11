@@ -17,6 +17,18 @@ use PhlyMongo\MongoCollectionFactory;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('userId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('users', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();
