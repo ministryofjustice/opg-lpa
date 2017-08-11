@@ -32,7 +32,7 @@ class TrustCorporation extends AbstractAttorney
             ]),
             new Assert\Length([
                 'min' => 1,
-                'max' => 75
+                'max' => 40
             ]),
         ]);
 
@@ -43,7 +43,7 @@ class TrustCorporation extends AbstractAttorney
             ]),
             new Assert\Length([
                 'min' => 1,
-                'max' => 75
+                'max' => 40
             ]),
         ]);
     }
