@@ -324,8 +324,8 @@ class Resource extends AbstractResource
 
         // Go back 4 months...
         for ($i = 1; $i <= 4; $i++) {
-            $from = new MongoDate($start->getTimestamp());
-            $to = new MongoDate($end->getTimestamp());
+            $from = new MongoDate($start);
+            $to = new MongoDate($end);
 
             $month = [];
 
