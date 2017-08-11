@@ -12,6 +12,18 @@ use MongoCollection;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('type', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('stats', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

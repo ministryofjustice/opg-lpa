@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('UTC');
+
 /**
  * Simple autoloader function to dynamically load
  * the required files as they are instantiated
