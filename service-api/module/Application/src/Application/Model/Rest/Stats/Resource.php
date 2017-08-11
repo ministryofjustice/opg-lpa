@@ -75,34 +75,27 @@ class Resource extends AbstractResource
 
         // Go back 4 months...
         for ($i = 1; $i <= 4; $i++) {
-            // Convert to MongoDate...
-            $from = new MongoDate($start);
-            $to = new MongoDate($end);
-
             $month = [];
+
+            // Create MongoDate date range
+            $dateRange = [
+                '$gte' => new MongoDate($start),
+                '$lte' => new MongoDate($end)
+            ];
 
             // Started if we have a startedAt, but no createdAt...
             $month['started'] = $collection->count([
-                'startedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ]
+                'startedAt' => $dateRange
             ], $readPreference);
 
             // Created if we have a createdAt, but no completedAt...
             $month['created'] = $collection->count([
-                'createdAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ]
+                'createdAt' => $dateRange
             ], $readPreference);
 
             // Count all the LPAs that have a completedAt...
             $month['completed'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ]
+                'completedAt' => $dateRange
             ], $readPreference);
 
             $byMonth[date('Y-m', $start->getTimestamp())] = $month;
@@ -327,32 +320,28 @@ class Resource extends AbstractResource
 
         // Go back 4 months...
         for ($i = 1; $i <= 4; $i++) {
-            $from = new MongoDate($start);
-            $to = new MongoDate($end);
-
             $month = [];
 
+            // Create MongoDate date range
+            $dateRange = [
+                '$gte' => new MongoDate($start),
+                '$lte' => new MongoDate($end)
+            ];
+
             $month['completed'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ]
+                'completedAt' => $dateRange
             ], $readPreference);
 
             $month['contactInEnglish'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ], 'document.correspondent' => [
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
                     '$ne' => null
                 ], 'document.correspondent.contactInWelsh' => false
             ], $readPreference);
 
             $month['contactInWelsh'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ], 'document.correspondent' => [
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
                     '$ne' => null
                 ], 'document.correspondent.contactInWelsh' => true
             ], $readPreference);
@@ -385,30 +374,26 @@ class Resource extends AbstractResource
 
         // Go back 4 months...
         for ($i = 1; $i <= 4; $i++) {
-            $from = new MongoDate($start);
-            $to = new MongoDate($end);
-
             $month = [];
 
+            // Create MongoDate date range
+            $dateRange = [
+                '$gte' => new MongoDate($start),
+                '$lte' => new MongoDate($end)
+            ];
+
             $month['completed'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ]
+                'completedAt' => $dateRange
             ], $readPreference);
 
             $month['preferencesStated'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ], 'document.preference' => new Regex('.+')
+                'completedAt' => $dateRange,
+                'document.preference' => new Regex('.+', '')
             ], $readPreference);
 
             $month['instructionsStated'] = $collection->count([
-                'completedAt' => [
-                    '$gte' => $from,
-                    '$lte' => $to
-                ], 'document.instruction' => new Regex('.+')
+                'completedAt' => $dateRange,
+                'document.instruction' => new Regex('.+', '')
             ], $readPreference);
 
             $preferencesInstructionsStats[date('Y-m', $start->getTimestamp())] = $month;
