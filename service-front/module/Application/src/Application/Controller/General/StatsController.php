@@ -26,11 +26,16 @@ class StatsController extends AbstractBaseController
         $welshLanguageStats = $applicationService->getApiStats('welshlanguage');
         ksort($welshLanguageStats);
 
+        //  Get the preferences and instructions stats - ensure the months are ordered correctly
+        $preferencesInstructionsStats = $applicationService->getApiStats('preferencesinstructions');
+        ksort($preferencesInstructionsStats);
+
         return new ViewModel([
             'lpas' => $generalLpaStats,
             'who' => $whoAreYouStats,
             'users' => $userStats,
             'welshLanguage' => $welshLanguageStats,
+            'preferencesInstructions' => $preferencesInstructionsStats,
         ]);
     }
 }
