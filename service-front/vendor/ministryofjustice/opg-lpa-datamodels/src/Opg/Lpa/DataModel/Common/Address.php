@@ -44,7 +44,7 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 50
+                'max' => 40
             ]),
         ]);
 
@@ -53,7 +53,7 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 50
+                'max' => 40
             ]),
         ]);
 
@@ -62,7 +62,7 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 50
+                'max' => 40
             ]),
         ]);
 

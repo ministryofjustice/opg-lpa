@@ -6,7 +6,7 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\Dob;
 use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Donor extends AbstractData
 {
     /**
-     * @var Name Their name.
+     * @var LongName Their name.
      */
     protected $name;
 
@@ -54,7 +54,7 @@ class Donor extends AbstractData
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank,
             new Assert\Type([
-                'type' => '\Opg\Lpa\DataModel\Common\Name'
+                'type' => '\Opg\Lpa\DataModel\Common\LongName'
             ]),
             new ValidConstraintSymfony,
         ]);
@@ -111,7 +111,7 @@ class Donor extends AbstractData
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Name ? $v : new Name($v));
+                return ($v instanceof LongName ? $v : new LongName($v));
             case 'address':
                 return ($v instanceof Address ? $v : new Address($v));
             case 'dob':
