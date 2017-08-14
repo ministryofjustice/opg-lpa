@@ -7,6 +7,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\Logger\Logger;
 use PHPUnit_Framework_Error_Deprecated;
+use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -33,6 +34,14 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|Redirect
      */
     protected $redirect;
+    /**
+     * @var MockInterface|Params
+     */
+    protected $params;
+    /**
+     * @var array
+     */
+    protected $config;
 
     public function setUp()
     {
@@ -56,6 +65,19 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->redirect = Mockery::mock(Redirect::class);
         $this->pluginManager->shouldReceive('get')->with('redirect', null)->andReturn($this->redirect);
+
+        $this->params = Mockery::mock(Params::class);
+        $this->params->shouldReceive('__invoke')->andReturn($this->params);
+        $this->pluginManager->shouldReceive('get')->with('params', null)->andReturn($this->params);
+
+        $this->config = [
+            'session' => [
+                'native_settings' => [
+                    'name' => 'lpa'
+                ]
+            ]
+        ];
+        $this->serviceLocator->shouldReceive('get')->with('Config')->andReturn($this->config);
     }
 
     public function tearDown()

@@ -44,4 +44,17 @@ class AuthControllerTest extends AbstractControllerTest
 
         $this->assertEquals($response, $result);
     }
+
+    public function testIndexActionCheckCookieFails()
+    {
+        $response = new Response();
+
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
+        $this->params->shouldReceive('fromQuery')->with('cookie')->andReturn(1)->once();
+        $this->redirect->shouldReceive('toRoute')->with('enable-cookie')->andReturn($response)->once();
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
+    }
 }
