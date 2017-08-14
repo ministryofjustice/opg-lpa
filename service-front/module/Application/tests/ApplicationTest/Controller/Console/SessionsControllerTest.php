@@ -3,7 +3,6 @@
 namespace ApplicationTest\Controller\Console;
 
 use Application\Controller\Console\SessionsController;
-use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\System\DynamoCronLock;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Aws\DynamoDb\SessionHandler as DynamoDbSessionHandler;
@@ -23,10 +22,6 @@ class SessionsControllerTest extends AbstractControllerTest
     /**
      * @var MockInterface
      */
-    private $sessionManager;
-    /**
-     * @var MockInterface
-     */
     private $saveHandler;
 
     public function setUp()
@@ -38,8 +33,6 @@ class SessionsControllerTest extends AbstractControllerTest
 
         $this->dynamoCronLock = Mockery::mock(DynamoCronLock::class);
         $this->serviceLocator->shouldReceive('get')->with('DynamoCronLock')->andReturn($this->dynamoCronLock)->once();
-        $this->sessionManager = Mockery::mock(SessionManager::class);
-        $this->serviceLocator->shouldReceive('get')->with('SessionManager')->andReturn($this->sessionManager);
         $this->saveHandler = Mockery::mock(DynamoDbSessionHandler::class);
     }
 
