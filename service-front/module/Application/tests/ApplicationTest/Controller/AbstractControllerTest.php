@@ -3,14 +3,21 @@
 namespace ApplicationTest\Controller;
 
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Session\SessionManager;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\Logger\Logger;
 use PHPUnit_Framework_Error_Deprecated;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\ResponseCollection;
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
+use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Mvc\Controller\PluginManager;
+use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\Storage\StorageInterface;
 
 abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,9 +46,37 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected $params;
     /**
+     * @var MockInterface|Url
+     */
+    protected $url;
+    /**
+     * @var MockInterface|EventManager
+     */
+    protected $eventManager;
+    /**
+     * @var MockInterface|ResponseCollection
+     */
+    protected $responseCollection;
+    /**
      * @var array
      */
     protected $config;
+    /**
+     * @var MockInterface|AbstractPluginManager
+     */
+    protected $formElementManager;
+    /**
+     * @var MockInterface|StorageInterface
+     */
+    protected $storage;
+    /**
+     * @var MockInterface|SessionManager
+     */
+    protected $sessionManager;
+    /**
+     * @var MockInterface|LpaApplicationService
+     */
+    protected $lpaApplicationService;
 
     public function setUp()
     {
@@ -70,14 +105,40 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->params->shouldReceive('__invoke')->andReturn($this->params);
         $this->pluginManager->shouldReceive('get')->with('params', null)->andReturn($this->params);
 
+        $this->url = Mockery::mock(Url::class);
+        $this->pluginManager->shouldReceive('get')->with('url', null)->andReturn($this->url);
+
+        $this->eventManager = Mockery::mock(EventManager::class);
+        $this->eventManager->shouldReceive('setIdentifiers');
+        $this->eventManager->shouldReceive('attach');
+
+        $this->responseCollection = Mockery::mock(ResponseCollection::class);
+        $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($this->responseCollection);
+
         $this->config = [
             'session' => [
                 'native_settings' => [
                     'name' => 'lpa'
                 ]
-            ]
+            ],
+            'redirects' => [
+                'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
+                'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+            ],
         ];
         $this->serviceLocator->shouldReceive('get')->with('Config')->andReturn($this->config);
+
+        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
+        $this->serviceLocator->shouldReceive('get')->with('FormElementManager')->andReturn($this->formElementManager);
+
+        $this->storage = Mockery::mock(StorageInterface::class);
+
+        $this->sessionManager = Mockery::mock(SessionManager::class);
+        $this->serviceLocator->shouldReceive('get')->with('SessionManager')->andReturn($this->sessionManager);
+        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
+
+        $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
+        $this->serviceLocator->shouldReceive('get')->with('LpaApplicationService')->andReturn($this->lpaApplicationService);
     }
 
     public function tearDown()
