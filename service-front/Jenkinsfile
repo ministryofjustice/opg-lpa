@@ -12,7 +12,7 @@ pipeline {
             }
             post {
                 always {
-                    checkstyle pattern: 'checkstyle.xml'
+                    checkstyle canRunOnFailed: true, pattern: 'checkstyle.xml'
                 }
             }
         }
