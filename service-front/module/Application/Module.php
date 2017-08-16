@@ -1,29 +1,19 @@
 <?php
+
 namespace Application;
 
-use DateTime;
-
-use Zend\Stdlib\ArrayUtils;
-
+use Application\Adapter\DynamoDbKeyValueStore;
+use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\System\DynamoCronLock;
+use Alphagov\Pay\Client as GovPayClient;
+use Opg\Lpa\Logger\Logger;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-
-use Zend\Session\Container;
 use Zend\ServiceManager\ServiceLocatorInterface;
-
-use Application\Model\Service\Authentication\Adapter\LpaApiClient as LpaApiClientAuthAdapter;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\Logger\Logger;
-use Zend\Cache\StorageFactory;
-
+use Zend\Session\Container;
+use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\ViewModel;
-
-use Alphagov\Pay\Client as GovPayClient;
-
-use Application\Adapter\DynamoDbKeyValueStore;
-use Application\Model\Service\System\DynamoCronLock;
-
-use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientResponseException;
 
 class Module{
 
@@ -143,7 +133,7 @@ class Module{
             'aliases' => [
                 'MailTransport' => 'SendGridTransport',
                 'AddressLookupMoj' => 'PostcodeInfo',
-                'AuthenticationAdapter' => 'LpaApiClientAuthAdapter',
+                'AuthenticationAdapter' => 'LpaAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'invokables' => [
@@ -166,7 +156,7 @@ class Module{
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
-                'ApiClient'             => 'Application\Model\Service\Lpa\ApiClientFactory',
+                'ApiClient'             => 'Application\Model\Service\ApiClient\ApiClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
 
                 // Access via 'MailTransport'
@@ -178,8 +168,8 @@ class Module{
                 },
 
                 // Authentication Adapter. Access via 'AuthenticationAdapter'
-                'LpaApiClientAuthAdapter' => function( ServiceLocatorInterface $sm ){
-                    return new LpaApiClientAuthAdapter( $sm->get('ApiClient') );
+                'LpaAuthAdapter' => function( ServiceLocatorInterface $sm ){
+                    return new LpaAuthAdapter( $sm->get('ApiClient') );
                 },
 
                 // Generate the session container for a user's personal details

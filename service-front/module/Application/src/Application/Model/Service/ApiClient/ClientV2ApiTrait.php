@@ -1,6 +1,6 @@
 <?php
 
-namespace Opg\Lpa\Api\Client;
+namespace Application\Model\Service\ApiClient;
 
 use GuzzleHttp\Psr7\Uri;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -19,7 +19,7 @@ trait ClientV2ApiTrait
 
         //  Construct the path to the API and create a URL
         $path = sprintf('/v2/users/%s/applications', $this->getUserId());
-        $url = new Uri($this->getApiBaseUri() . $path);
+        $url = new Uri($this->apiBaseUri . $path);
 
         $response = $this->httpGet($url, $query);
 
@@ -57,7 +57,7 @@ trait ClientV2ApiTrait
     {
         $path = sprintf('/v2/users/%s/applications', $this->getUserId());
 
-        $url = new Uri($this->getApiBaseUri() . $path);
+        $url = new Uri($this->apiBaseUri . $path);
 
         try {
             $response = $this->httpPost($url);
@@ -82,7 +82,7 @@ trait ClientV2ApiTrait
     {
         $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $url = new Uri($this->getApiBaseUri() . $path);
+        $url = new Uri($this->apiBaseUri . $path);
 
         $response = $this->httpGet($url);
 
@@ -100,7 +100,7 @@ trait ClientV2ApiTrait
     {
         $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $url = new Uri($this->getApiBaseUri() . $path);
+        $url = new Uri($this->apiBaseUri . $path);
 
         $response = $this->httpPatch($url, $data);
 
@@ -117,7 +117,7 @@ trait ClientV2ApiTrait
     {
         $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $url = new Uri($this->getApiBaseUri() . $path);
+        $url = new Uri($this->apiBaseUri . $path);
 
         $response = $this->httpDelete($url);
 

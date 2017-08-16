@@ -1,54 +1,50 @@
 <?php
-namespace Opg\Lpa\Api\Client\Response;
 
-use Opg\Lpa\Api\Client\Traits\JsonSerializer;
+namespace Application\Model\Service\ApiClient\Response;
 
+use Application\Model\Service\ApiClient\Exception;
 use Psr\Http\Message\ResponseInterface;
-use Opg\Lpa\Api\Client\Exception;
 
 /**
- * 
+ *
  * @author Chris Moreton
- * 
+ *
  * Wraps the information received from the auth server
  *
  */
 class AuthResponse
 {
-    use JsonSerializer;
-
     private $response;
 
     //---------------------
 
-    public static function buildFromResponse( ResponseInterface $response ){
-
+    public static function buildFromResponse(ResponseInterface $response)
+    {
         $body = json_decode($response->getBody(), true);
 
         // The expected response should always be JSON, thus now an array.
-        if( !is_array($body) ){
-            throw new Exception\ResponseException( 'Malformed JSON response from server', $response->getStatusCode(), $response );
+        if (!is_array($body)) {
+            throw new Exception\ResponseException('Malformed JSON response from server', $response->getStatusCode(), $response);
         }
 
         $authResponse = new static();
 
-        $authResponse->exchangeArray( $body );
+        $authResponse->exchangeArray($body);
 
-        $authResponse->setResponse( $response );
+        $authResponse->setResponse($response);
 
         return $authResponse;
-
     }
 
-    public function setResponse( ResponseInterface $response ){
+    public function setResponse(ResponseInterface $response)
+    {
         $this->response = $response;
     }
 
-    public function getResponse(){
+    public function getResponse()
+    {
         return $this->response;
     }
-
-    //---------------------
 
     /**
      * The ID of the currently authenticated user.
@@ -56,7 +52,7 @@ class AuthResponse
      * @var string
      */
     private $userId;
-    
+
     /**
      * The user identity
      *
@@ -66,35 +62,35 @@ class AuthResponse
 
     /**
      * The authentication token
-     * 
+     *
      * @var string
      */
     private $token;
-    
+
     /**
      * Minutes until expiry
-     * 
+     *
      * @var number
      */
     private $expiresIn;
-    
+
     /**
      * Date and time of expiry
      *
      * @var string
      */
     private $expiresAt;
-    
+
     /**
      * The last time this user logged in
-     * 
+     *
      * @var number Timestamp
      */
     private $lastLogin;
-    
+
     /**
      * The error description, if any
-     * 
+     *
      * @var string
      */
     private $errorDescription;
@@ -114,9 +110,9 @@ class AuthResponse
     {
         $this->userId = $userId;
     }
-    
+
     /**
-     * @return member variable $token
+     * @return string variable $token
      */
     public function getToken()
     {
@@ -132,7 +128,7 @@ class AuthResponse
     }
 
     /**
-     * @return member variable $expiresIn
+     * @return number variable $expiresIn
      */
     public function getExpiresIn()
     {
@@ -148,23 +144,23 @@ class AuthResponse
     }
 
     /**
-     * @return member variable $expiresAt
+     * @return string variable $expiresAt
      */
     public function getExpiresAt()
     {
         return $this->expiresAt;
     }
-    
+
     /**
      * @param string $expiresAt
      */
-    public function setExpiresAt($expiresIn)
+    public function setExpiresAt($expiresAt)
     {
-        $this->expiresAt = $expiresIn;
+        $this->expiresAt = $expiresAt;
     }
-    
+
     /**
-     * @return member variable $lastLogin
+     * @return string variable $lastLogin
      */
     public function getLastLogin()
     {
@@ -178,15 +174,15 @@ class AuthResponse
     {
         $this->lastLogin = $lastLogin;
     }
-    
+
     /**
-     * @return the $username
+     * @return string $username
      */
     public function getUsername()
     {
         return $this->username;
     }
-    
+
     /**
      * @param string $username
      */
@@ -194,24 +190,25 @@ class AuthResponse
     {
         $this->username = $username;
     }
-    
+
     /**
-     * @return the $errorDescription
+     * @return string $errorDescription
      */
     public function getErrorDescription()
     {
         return $this->errorDescription;
     }
-    
+
     /**
      * @param string $errorDescription
+     * @return $this
      */
     public function setErrorDescription($errorDescription)
     {
         $this->errorDescription = $errorDescription;
         return $this;
     }
-    
+
     public function isAuthenticated()
     {
         return !empty($this->userId) && !empty($this->token) && empty($this->errorDescription);
@@ -219,7 +216,7 @@ class AuthResponse
 
     /**
      * Return an array representation of the object
-     * 
+     *
      * @return array
      */
     public function getArrayCopy()
@@ -233,10 +230,10 @@ class AuthResponse
             'username' => $this->username,
         ];
     }
-    
+
     /**
      * Populate the member variables from an array
-     * 
+     *
      * @param array $array
      */
     public function exchangeArray(array $array)
@@ -249,4 +246,24 @@ class AuthResponse
         $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
     }
 
+    /**
+     * Populate the member variables from a JSON structure
+     * Convert underscore_field_names to be camelCase
+     *
+     * @param string $json
+     */
+    public function exchangeJson($json)
+    {
+        $this->exchangeArray(json_decode($json, true));
+    }
+
+    /**
+     * Return the object as JSON
+     *
+     * @return string
+     */
+    public function getJsonCopy()
+    {
+        return json_encode($this->getArrayCopy());
+    }
 }
