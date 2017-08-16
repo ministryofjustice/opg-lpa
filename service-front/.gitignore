@@ -14,3 +14,6 @@ assets/bower/*
 public/nocommit/*
 local.php.old
 module/Application/tests/coverage/
+checkstyle.xml
+unit_results.xml
+unit_coverage.xml

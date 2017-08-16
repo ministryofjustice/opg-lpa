@@ -14,6 +14,7 @@ pipeline {
                 always {
                     checkstyle 'checkstyle.xml'
                 }
+            }
         }
 
         stage('unit tests') {
