@@ -6,10 +6,14 @@ pipeline {
         stage('lint') {
             steps {
                 echo 'PHP_CodeSniffer PSR-2'
-                //sh '''
-                //    make cs
-                //'''
+                sh '''
+                    make cs
+                '''
             }
+            post {
+                always {
+                    checkstyle 'checkstyle.xml'
+                }
         }
 
         stage('unit tests') {
@@ -33,11 +37,11 @@ pipeline {
                     make testcoverage
                 '''
             }
-            //post {
-            //    always {
-            //        clover 'unit_coverage.xml'
-            //    }
-            //}
+            post {
+                always {
+                    clover 'unit_coverage.xml'
+                }
+            }
         }
 
         stage('build') {
