@@ -40,7 +40,7 @@ pipeline {
             }
             post {
                 always {
-                    clover 'unit_coverage.xml'
+                    CloverPublisher cloverReportFileName: 'unit_coverage.xml'
                 }
             }
         }
