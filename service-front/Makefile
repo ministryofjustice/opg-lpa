@@ -4,12 +4,12 @@ watch:
 
 .PHONY: cs
 cs:
-	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpcs --standard=PSR2 --report=checkstyle --report-file=checkstyle.xml module/Application/src/
+	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpcs --standard=PSR2 --runtime-set ignore_warnings_on_exit true --runtime-set ignore_errors_on_exit true module/Application/src/
 
 .PHONY: test
 test:
-	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --log-junit unit_results.xml
+	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php
 
 .PHONY: testcoverage
 testcoverage:
-	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --coverage-clover unit_coverage.xml
+	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php
