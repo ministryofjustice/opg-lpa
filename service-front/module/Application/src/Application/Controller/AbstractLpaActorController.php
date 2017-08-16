@@ -290,9 +290,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * If required filter by the calling action for the specific actor
      *
      * @param   integer $actorIndexToExclude
+     * @param   boolean $filterByActorAction
      * @return  array
      */
-    protected function getActorsList($actorIndexToExclude = null)
+    protected function getActorsList($actorIndexToExclude = null, $filterByActorAction = true)
     {
         $actorsList = [];
 
@@ -301,11 +302,11 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
         //  Determine which route we have come from so the results below can be filtered
         //  If the filter flag was passed into this function as false then set all flags below to false so no filtering takes place
-        $isCertificateProviderRoute = ($this instanceof Lpa\CertificateProviderController);
-        $isDonorRoute = ($this instanceof Lpa\DonorController);
-        $isPeopleToModifyRoute = ($this instanceof Lpa\PeopleToNotifyController);
-        $isPrimaryAttorneyRoute = ($this instanceof Lpa\PrimaryAttorneyController);
-        $isReplacementAttorneyRoute = ($this instanceof Lpa\ReplacementAttorneyController);
+        $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
+        $isDonorRoute = ($filterByActorAction && $this instanceof Lpa\DonorController);
+        $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
+        $isPrimaryAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\PrimaryAttorneyController);
+        $isReplacementAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\ReplacementAttorneyController);
 
         $lpaDocument = $this->getLpa()->document;
 
