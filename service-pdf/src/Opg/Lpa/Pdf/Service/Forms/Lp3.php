@@ -20,8 +20,6 @@ class Lp3 extends AbstractForm
 
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
-
-        $this->pdf = new Pdf($this->pdfTemplatePath.'/LP3.pdf');
     }
 
     /**
@@ -68,9 +66,10 @@ class Lp3 extends AbstractForm
         $filePath = $this->registerTempFile('LP3');
 
         // populate forms
+        $this->pdf = new Pdf($this->pdfTemplatePath.'/LP3.pdf');
         $this->pdf->fillForm($this->dataMapping($personToNotify))
-                  ->flatten()
-                  ->saveAs($filePath);
+             ->flatten()
+             ->saveAs($filePath);
 
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
         if ($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
@@ -168,12 +167,15 @@ class Lp3 extends AbstractForm
 
         $noOfLp3 = count($this->interFileStack['LP3']);
         $fileTag = 'A';
+
         for ($i = 0; $i < $noOfLp3; $i++) {
             $lp3Path = $this->interFileStack['LP3'][$i];
             $lp3FileTag = $fileTag;
             $pdf->addFile($lp3Path, $lp3FileTag);
+
             //Concatenating the pdf pages forces the toolkit to compress the file significantly reducing its file size
             $pdf->cat(1, 3, $lp3FileTag);
+
             if (array_key_exists('AdditionalAttorneys', $this->interFileStack)) {
                 foreach ($this->interFileStack['AdditionalAttorneys'] as $additionalPage) {
                     $fileTag = $this->nextTag($fileTag);
@@ -181,13 +183,15 @@ class Lp3 extends AbstractForm
                     $pdf->cat(1, null, $fileTag);
                 }
             }
+
             $pdf->cat(4, null, $lp3FileTag);
             $fileTag = $this->nextTag($fileTag);
 
             //If the number of attorney pages is an even number, we need to add a blank page
             //to ensure double sided printing works correctly
             $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
-            if ($i + 1 < $noOfLp3 && floor($numOfAttorneys/self::MAX_ATTORNEYS_ON_STANDARD_FORM)%2 == 1) {
+
+            if ($i + 1 < $noOfLp3 && floor($numOfAttorneys / self::MAX_ATTORNEYS_ON_STANDARD_FORM) % 2 == 1) {
                 $fileName = Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf';
                 $pdf->addFile($fileName, 'BLANK');
                 $pdf->cat(1, null, 'BLANK');
