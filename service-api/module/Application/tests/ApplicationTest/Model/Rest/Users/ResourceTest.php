@@ -8,7 +8,7 @@ use Application\Model\Rest\Users\Entity;
 use Application\Model\Rest\Users\Resource;
 use Application\Model\Rest\Users\Resource as UsersResource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Mockery;
 use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\User\User;
@@ -17,6 +17,18 @@ use PhlyMongo\MongoCollectionFactory;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('userId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('users', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

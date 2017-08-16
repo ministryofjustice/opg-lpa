@@ -1,32 +1,25 @@
 <?php
+
 namespace Application;
 
+use Application\Controller\Version1\RestController;
 use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DatabaseFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
-
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-
-use Application\Controller\Version1\RestController;
-
-use Application\Library\Authentication\AuthenticationListener;
-
-use Zend\Authentication\AuthenticationService;
-use Zend\Authentication\Storage\NonPersistent;
-
-use Application\Model\Rest\UserConsumerInterface;
-use Application\Model\Rest\LpaConsumerInterface;
-
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
-use ZF\ApiProblem\ApiProblemResponse;
-
-use Application\Library\ApiProblem\ApiProblem;
-
+use Application\Library\Authentication\AuthenticationListener;
+use Application\Model\Rest\LpaConsumerInterface;
+use Application\Model\Rest\UserConsumerInterface;
+use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
 use DynamoQueue\Queue\Client as DynamoQueue;
-use Application\Model\Service\System\DynamoCronLock;
+use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\Storage\NonPersistent;
+use Zend\Mvc\ModuleRouteListener;
+use Zend\Mvc\MvcEvent;
+use ZF\ApiProblem\ApiProblemResponse;
 
 class Module {
 
@@ -133,11 +126,11 @@ class Module {
                         $resource = $sm->get("resource-applications");
 
                         $lpa = $resource->fetch( $lpaId );
-                        
+
                         if ($lpa instanceof ApiProblem) {
                             throw new ApiProblemException('LPA Not Found', 404);
                         }
-                        
+
                         $object->setLpa( $lpa->getLpa() );
 
                     } // LpaConsumerInterface
@@ -150,11 +143,11 @@ class Module {
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService( new NonPersistent() );
                 },
-                
+
                                 'DynamoCronLock' => function ( $sm ) {
-                 
+
                                      $config = $sm->get('config')['cron']['lock']['dynamodb'];
-                 
+
                                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
                                                      return new DynamoCronLock($config);
                                                   },
@@ -172,15 +165,15 @@ class Module {
                 CollectionFactory::class . '-user' => new CollectionFactory('user'),
                 CollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
                 CollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
-                
+
                 // Logger
                 'Logger' => function ( $sm ) {
                     $logger = new \Opg\Lpa\Logger\Logger();
                     $logConfig = $sm->get('config')['log'];
-                    
+
                     $logger->setFileLogPath($logConfig['path']);
                     $logger->setSentryUri($logConfig['sentry-uri']);
-                    
+
                     return $logger;
                 },
 
@@ -212,7 +205,7 @@ class Module {
             ),
         );
     } // function
-    
+
     /**
      * Use our logger to send this exception to its various destinations
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
@@ -223,20 +216,20 @@ class Module {
     {
         // Marshall an ApiProblem and view model based on the exception
         $exception = $e->getParam('exception');
-    
+
         if ($exception instanceof ApiProblemExceptionInterface) {
-    
+
             $problem = new ApiProblem( $exception->getCode(), $exception->getMessage() );
-    
+
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
-            
+
             $logger = $e->getApplication()->getServiceManager()->get('Logger');
             $logger->err($exception->getMessage());
-            
+
             return $response;
-    
+
         }
     }
 

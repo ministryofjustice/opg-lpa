@@ -8,13 +8,25 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\AttorneysReplacement\Entity;
 use Application\Model\Rest\AttorneysReplacement\Resource;
 use Application\Model\Rest\AttorneysReplacement\Resource as AttorneysReplacementResource;
+use ApplicationTest\AbstractResourceTest;
 use ApplicationTest\DummyDocument;
-use ApplicationTest\Model\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('resourceId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('replacement-attorneys', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

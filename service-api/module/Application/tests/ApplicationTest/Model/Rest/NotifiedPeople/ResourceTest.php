@@ -8,14 +8,25 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\NotifiedPeople\Entity;
 use Application\Model\Rest\NotifiedPeople\Resource;
 use Application\Model\Rest\NotifiedPeople\Resource as NotifiedPeopleResource;
+use ApplicationTest\AbstractResourceTest;
 use ApplicationTest\DummyDocument;
-use ApplicationTest\Model\AbstractResourceTest;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('resourceId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('notified-people', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

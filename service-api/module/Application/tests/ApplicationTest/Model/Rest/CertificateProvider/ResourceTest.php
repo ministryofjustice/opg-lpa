@@ -7,12 +7,24 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\CertificateProvider\Entity;
 use Application\Model\Rest\CertificateProvider\Resource as CertificateProviderResource;
 use Application\Model\Rest\CertificateProvider\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('certificate-provider', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

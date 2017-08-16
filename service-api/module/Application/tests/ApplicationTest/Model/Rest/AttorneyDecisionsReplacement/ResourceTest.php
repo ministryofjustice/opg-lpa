@@ -7,12 +7,24 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\AttorneyDecisionsReplacement\Entity;
 use Application\Model\Rest\AttorneyDecisionsReplacement\Resource;
 use Application\Model\Rest\AttorneyDecisionsReplacement\Resource as AttorneyDecisionsReplacementResource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('replacement-attorney-decisions', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

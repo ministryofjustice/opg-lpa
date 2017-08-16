@@ -7,12 +7,24 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Correspondent\Entity;
 use Application\Model\Rest\Correspondent\Resource as CorrespondentResource;
 use Application\Model\Rest\Correspondent\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('correspondent', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

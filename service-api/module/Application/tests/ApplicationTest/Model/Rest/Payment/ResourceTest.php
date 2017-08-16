@@ -7,12 +7,24 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Payment\Entity;
 use Application\Model\Rest\Payment\Resource as PaymentResource;
 use Application\Model\Rest\Payment\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('payment', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

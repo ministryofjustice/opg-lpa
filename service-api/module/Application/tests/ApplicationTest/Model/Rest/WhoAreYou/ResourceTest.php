@@ -8,7 +8,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\WhoAreYou\Entity;
 use Application\Model\Rest\WhoAreYou\Resource as WhoAreYouResource;
 use Application\Model\Rest\WhoAreYou\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Mockery;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -16,6 +16,18 @@ use PhlyMongo\MongoCollectionFactory;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('who-are-you', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

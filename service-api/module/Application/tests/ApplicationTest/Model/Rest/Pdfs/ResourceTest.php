@@ -4,24 +4,24 @@ namespace ApplicationTest\Model\Rest\Pdfs;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Pdfs\Collection;
 use Application\Model\Rest\Pdfs\Entity;
 use Application\Model\Rest\Pdfs\Resource as PdfsResource;
 use Application\Model\Rest\Pdfs\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Aws\Command;
 use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
+use GuzzleHttp\Stream\StreamInterface as GuzzleStreamInterface;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
-use GuzzleHttp\Stream\StreamInterface as GuzzleStreamInterface;
-use Application\Library\Http\Response\File as FileResponse;
 
 class ResourceTest extends AbstractResourceTest
 {
@@ -57,6 +57,18 @@ class ResourceTest extends AbstractResourceTest
                 ]
             ]
         ];
+    }
+
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('resourceId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('pdfs', $resource->getName());
     }
 
     public function testGetType()

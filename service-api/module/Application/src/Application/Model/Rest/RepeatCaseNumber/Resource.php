@@ -1,24 +1,35 @@
 <?php
+
 namespace Application\Model\Rest\RepeatCaseNumber;
-
-use RuntimeException;
-
-use Application\Model\Rest\AbstractResource;
-
-use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\LpaConsumerInterface;
+use Application\Model\Rest\UserConsumerInterface;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'repeat-case-number';
 
-    public function getIdentifier(){ return 'lpaId'; }
-    public function getName(){ return 'repeat-case-number'; }
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'lpaId';
 
-    public function getType(){
-        return self::TYPE_SINGULAR;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_SINGULAR;
 
     /**
      * Fetch a resource

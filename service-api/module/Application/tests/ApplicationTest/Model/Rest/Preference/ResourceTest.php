@@ -7,11 +7,23 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Preference\Entity;
 use Application\Model\Rest\Preference\Resource as PreferenceResource;
 use Application\Model\Rest\Preference\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('preference', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

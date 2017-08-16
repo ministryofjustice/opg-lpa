@@ -1,12 +1,11 @@
 <?php
+
 namespace Application\Model\Rest\Status;
 
+use Application\Library\Lpa\StateChecker;
 use Application\Model\Rest\AbstractResource;
-
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
-
-use Application\Library\Lpa\StateChecker;
 
 /**
  * Status Resource
@@ -14,14 +13,28 @@ use Application\Library\Lpa\StateChecker;
  * Class Resource
  * @package Application\Model\Rest\Status
  */
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface {
+class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+{
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $name = 'status';
 
-    public function getIdentifier(){ return 'resourceId'; }
-    public function getName(){ return 'status'; }
+    /**
+     * Resource identifier
+     *
+     * @var string
+     */
+    protected $identifier = 'resourceId';
 
-    public function getType(){
-        return self::TYPE_SINGULAR;
-    }
+    /**
+     * Resource type
+     *
+     * @var string
+     */
+    protected $type = self::TYPE_SINGULAR;
 
     /**
      * Fetch a resource

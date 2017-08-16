@@ -7,11 +7,23 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Metadata\Entity;
 use Application\Model\Rest\Metadata\Resource as MetadataResource;
 use Application\Model\Rest\Metadata\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('lpaId', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('metadata', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();

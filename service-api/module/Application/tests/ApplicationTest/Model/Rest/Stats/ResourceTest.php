@@ -6,13 +6,24 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Stats\Entity;
 use Application\Model\Rest\Stats\Resource;
-use ApplicationTest\Model\AbstractResourceTest;
+use ApplicationTest\AbstractResourceTest;
 use Mockery;
 use MongoCollection;
-use MongoCursor;
 
 class ResourceTest extends AbstractResourceTest
 {
+    public function testGetIdentifier()
+    {
+        $resource = new Resource();
+        $this->assertEquals('type', $resource->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $resource = new Resource();
+        $this->assertEquals('stats', $resource->getName());
+    }
+
     public function testGetType()
     {
         $resource = new Resource();
@@ -220,6 +231,43 @@ class ResourceTest extends AbstractResourceTest
                 'completed' => 1,
                 'contactInEnglish' => 1,
                 'contactInWelsh' => 1
+            ];
+
+            $start->modify("first day of -1 month");
+            $end->modify("last day of -1 month");
+        }
+
+        $this->assertEquals(new Entity($expectedStats), $entity);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchPreferencesInstructionsStats()
+    {
+        $lpaCollection = Mockery::mock(MongoCollection::class);
+        $lpaCollection->shouldReceive('setReadPreference');
+        $lpaCollection->shouldReceive('count')
+                      ->andReturn(1);
+
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder->withLpaCollection($lpaCollection)
+                                    ->build();
+
+        $entity = $resource->fetch('preferencesinstructions');
+
+        $start = new \DateTime('first day of this month');
+        $start->setTime(0, 0, 0);
+
+        $end = new \DateTime('last day of this month');
+        $end->setTime(23, 59, 59);
+
+        $expectedStats = array();
+
+        for ($i = 1; $i <= 4; $i++) {
+            $expectedStats[date('Y-m', $start->getTimestamp())] = [
+                'completed' => 1,
+                'preferencesStated' => 1,
+                'instructionsStated' => 1
             ];
 
             $start->modify("first day of -1 month");
