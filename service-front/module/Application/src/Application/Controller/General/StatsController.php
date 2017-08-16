@@ -2,47 +2,40 @@
 
 namespace Application\Controller\General;
 
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
+use Zend\View\Model\ViewModel;
 
 class StatsController extends AbstractBaseController
 {
-
     public function indexAction()
     {
+        $applicationService = $this->getServiceLocator()->get('LpaApplicationService');
 
-        $generalLpaStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'lpas' );
-
-        // Ensure the months are ordered correctly.
+        //  Get the general stats and sort - ensure the months are ordered correctly
+        $generalLpaStats = $applicationService->getApiStats('lpas');
         ksort($generalLpaStats['by-month']);
 
-        //---
-
-        $whoAreYouStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'whoareyou' );
-
-        // Ensure the months are ordered correctly.
+        //  Get the "who are you" stats - ensure the months are ordered correctly
+        $whoAreYouStats = $applicationService->getApiStats('whoareyou');
         ksort($whoAreYouStats['by-month']);
 
-        //---
+        //  Get the user stats
+        $userStats = $applicationService->getAuthStats();
 
-        $userStats = $this->getServiceLocator()->get('LpaApplicationService')->getAuthStats();
-
-        //---
-
-        $welshLanguageStats = $this->getServiceLocator()->get('LpaApplicationService')->getApiStats( 'welshlanguage' );
-
-        // Ensure the months are ordered correctly.
+        //  Get the Welsh language stats - ensure the months are ordered correctly
+        $welshLanguageStats = $applicationService->getApiStats('welshlanguage');
         ksort($welshLanguageStats);
 
-        //---
+        //  Get the preferences and instructions stats - ensure the months are ordered correctly
+        $preferencesInstructionsStats = $applicationService->getApiStats('preferencesinstructions');
+        ksort($preferencesInstructionsStats);
 
         return new ViewModel([
             'lpas' => $generalLpaStats,
             'who' => $whoAreYouStats,
             'users' => $userStats,
             'welshLanguage' => $welshLanguageStats,
+            'preferencesInstructions' => $preferencesInstructionsStats,
         ]);
-
-    } // function
-
-} // class
+    }
+}
