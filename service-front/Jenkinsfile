@@ -7,7 +7,7 @@ pipeline {
             steps {
                 echo 'PHP_CodeSniffer PSR-2'
                 sh '''
-                    docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpcs --standard=PSR2 --report=checkstyle --report-file=checkstyle.xml --runtime-set ignore_warnings_on_exit true --runtime-set ignore_errors_on_exit true module/Application/src/
+                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpcs --standard=PSR2 --report=checkstyle --report-file=checkstyle.xml --runtime-set ignore_warnings_on_exit true --runtime-set ignore_errors_on_exit true module/Application/src/
                 '''
             }
             post {
@@ -21,7 +21,7 @@ pipeline {
             steps {
                 echo 'PHPUnit'
                 sh '''
-                    docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --log-junit unit_results.xml
+                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --log-junit unit_results.xml
                 '''
             }
             post {
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 echo 'PHPUnit with coverage'
                 sh '''
-                    docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --coverage-clover unit_coverage.xml
+                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --coverage-clover unit_coverage.xml
                 '''
             }
             post {
