@@ -6,9 +6,9 @@ pipeline {
         stage('lint') {
             steps {
                 echo 'PHP_CodeSniffer PSR-2'
-                sh '''
-                    make cs
-                '''
+                //sh '''
+                //    make cs
+                //'''
             }
         }
 
