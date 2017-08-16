@@ -19,6 +19,11 @@ pipeline {
                     make test
                 '''
             }
+            post {
+                always {
+                    junit 'unit_results.xml'
+                }
+            }
         }
 
         stage('unit tests coverage') {
@@ -28,6 +33,11 @@ pipeline {
                     make testcoverage
                 '''
             }
+            //post {
+            //    always {
+            //        clover 'unit_coverage.xml'
+            //    }
+            //}
         }
 
         stage('build') {
