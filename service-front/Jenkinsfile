@@ -12,7 +12,7 @@ pipeline {
             }
             post {
                 always {
-                    checkstyle 'checkstyle.xml'
+                    checkstyle pattern: 'checkstyle.xml'
                 }
             }
         }
