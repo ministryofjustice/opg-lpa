@@ -4,7 +4,7 @@ watch:
 
 .PHONY: cs
 cs:
-	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpcs --standard=PSR2 module/Application/src/
+	docker run -i --rm -v $$(pwd):/app registry.service.opg.digital/opguk/phpcs --standard=PSR2 --report=checkstyle --report-file=checkstyle.xml module/Application/src/
 
 .PHONY: test
 test:
