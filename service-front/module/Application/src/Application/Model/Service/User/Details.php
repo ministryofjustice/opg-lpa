@@ -4,11 +4,13 @@ namespace Application\Model\Service\User;
 
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Mail\Message as MailMessage;
-use Opg\Lpa\Api\Client\Exception\ResponseException as ApiClientError;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Exception;
+use RuntimeException;
 
 class Details implements ServiceLocatorAwareInterface
 {
@@ -29,64 +31,49 @@ class Details implements ServiceLocatorAwareInterface
      */
     public function updateAllDetails(AbstractCsrfForm $details)
     {
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Updating user details',
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
-        );
-
-        $client = $this->getServiceLocator()->get('ApiClient');
-
-        //---
-
-        $data = $details->getData();
+        $authenticationData = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
+        $this->getServiceLocator()->get('Logger')->info('Updating user details', $authenticationData);
 
         // Load the existing details...
+        $client = $this->getServiceLocator()->get('ApiClient');
         $userDetails = $client->getAboutMe();
 
         // Apply the new ones...
-        $userDetails->populateWithFlatArray( $data );
-
-        //---
+        $data = $details->getData();
+        $userDetails->populateWithFlatArray($data);
 
         // Check if the user has removed their address
-        if( array_key_exists( 'address', $data ) && $data['address'] == null ){
+        if (array_key_exists('address', $data) && $data['address'] == null) {
             $userDetails->address = null;
         }
 
         // Check if the user has removed their DOB
-        if( !isset( $data['dob-date'] ) ){
+        if (!isset($data['dob-date'])) {
             $userDetails->dob = null;
         }
 
-        //---
-
         $validator = $userDetails->validate();
 
-        if( $validator->hasErrors() ){
-            throw new \RuntimeException('Unable to save details');
+        if ($validator->hasErrors()) {
+            throw new RuntimeException('Unable to save details');
         }
 
-        //---
+        $result = $client->setAboutMe($userDetails);
 
-        $result = $client->setAboutMe( $userDetails );
-
-        if( $result !== true ){
-            throw new \RuntimeException('Unable to save details');
+        if ($result !== true) {
+            throw new RuntimeException('Unable to save details');
         }
 
         return $userDetails;
-
-    } // function
+    }
 
     /**
      * Update the user's email address.
      *
      * @param AbstractCsrfForm $details
-     * @param Callback function $activateEmailCallback
+     * @param Callback $activateEmailCallback
      * @param string $currentAddress
      * @param string $userId
-     *
      * @return bool|string
      */
     public function requestEmailUpdate(AbstractCsrfForm $details, $activateEmailCallback, $currentAddress, $userId)
@@ -95,67 +82,50 @@ class Details implements ServiceLocatorAwareInterface
 
         $data = $details->getData();
 
-        $this->getServiceLocator()->get('Logger')->info(
-            'Requesting email update to new email: ' . $data['email'],
-            $identityArray
-        );
+        $this->getServiceLocator()->get('Logger')->info('Requesting email update to new email: ' . $data['email'], $identityArray);
 
         $client = $this->getServiceLocator()->get('ApiClient');
+        $updateToken = $client->requestEmailUpdate(strtolower($data['email']));
 
-        $updateToken = $client->requestEmailUpdate( strtolower($data['email']) );
-
-        //---
-
-        if( !is_string($updateToken) ){
-
-
-            if( $updateToken instanceof ApiClientError ){
-
-                switch ( $updateToken->getDetail() ){
-                    case 'User already has this email' :
+        if (!is_string($updateToken)) {
+            if ($updateToken instanceof ResponseException) {
+                switch ($updateToken->getDetail()) {
+                    case 'User already has this email':
                         return 'user-already-has-email';
-
                     case 'Email already exists for another user':
                         return 'email-already-exists';
                 }
-
-            } // if
+            }
 
             return "unknown-error";
+        }
 
-        } // if
+        $this->sendNotifyNewEmailEmail($currentAddress, $data['email']);
 
-        $this->sendNotifyNewEmailEmail( $currentAddress, $data['email'] );
+        return $this->sendActivateNewEmailEmail($data['email'], $activateEmailCallback($userId, $updateToken ));
+    }
 
-        return $this->sendActivateNewEmailEmail( $data['email'], $activateEmailCallback( $userId, $updateToken ) );
-
-
-    } // function
-
-    function sendActivateNewEmailEmail( $newEmailAddress, $activateUrl ) {
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Sending new email verification email'
-        );
+    private function sendActivateNewEmailEmail($newEmailAddress, $activateUrl)
+    {
+        $this->getServiceLocator()->get('Logger')->info('Sending new email verification email');
 
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
-        $message->addTo( $newEmailAddress );
-
-        //---
+        $message->addTo($newEmailAddress);
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-newemail-verification');
 
-        //---
-
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-verify.twig')->render([
-            'activateUrl' => $activateUrl,
-        ]);
+        $content = $this->getServiceLocator()
+                        ->get('TwigEmailRenderer')
+                        ->loadTemplate('new-email-verify.twig')
+                        ->render([
+                            'activateUrl' => $activateUrl,
+                        ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
@@ -163,9 +133,7 @@ class Details implements ServiceLocatorAwareInterface
             $message->setSubject('Please verify your new email address');
         }
 
-        //---
-
-        $html = new MimePart( $content );
+        $html = new MimePart($content);
         $html->type = "text/html";
 
         $body = new MimeMessage();
@@ -173,56 +141,44 @@ class Details implements ServiceLocatorAwareInterface
 
         $message->setBody($body);
 
-        //--------------------
-
         try {
-
             $this->getServiceLocator()->get('MailTransport')->send($message);
-
-        } catch ( \Exception $e ){
-
+        } catch (Exception $e) {
             return "failed-sending-email";
-
         }
 
         return true;
-
     }
 
-    function sendNotifyNewEmailEmail( $oldEmailAddress, $newEmailAddress ) {
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Sending new email confirmation email'
-        );
+    private function sendNotifyNewEmailEmail($oldEmailAddress, $newEmailAddress)
+    {
+        $this->getServiceLocator()->get('Logger')->info('Sending new email confirmation email');
 
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
-        $message->addTo( $oldEmailAddress );
-
-        //---
+        $message->addTo($oldEmailAddress);
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-newemail-confirmation');
 
-        //---
-
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('new-email-notify.twig')->render([
-            'newEmailAddress' => $newEmailAddress,
-        ]);
+        $content = $this->getServiceLocator()
+                        ->get('TwigEmailRenderer')
+                        ->loadTemplate('new-email-notify.twig')
+                        ->render([
+                            'newEmailAddress' => $newEmailAddress,
+                        ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
-            $message->setSubject( 'You asked us to change your email address' );
+            $message->setSubject('You asked us to change your email address');
         }
 
-        //---
-
-        $html = new MimePart( $content );
+        $html = new MimePart($content);
         $html->type = "text/html";
 
         $body = new MimeMessage();
@@ -230,33 +186,24 @@ class Details implements ServiceLocatorAwareInterface
 
         $message->setBody($body);
 
-        //--------------------
-
         try {
-
             $this->getServiceLocator()->get('MailTransport')->send($message);
-
-        } catch ( \Exception $e ){
-
+        } catch (Exception $e) {
             return "failed-sending-email";
-
         }
 
         return true;
-
     }
 
-    function updateEmailUsingToken( $emailUpdateToken ) {
-
-        $this->getServiceLocator()->get('Logger')->info(
-            'Updating email using token'
-        );
+    public function updateEmailUsingToken($emailUpdateToken)
+    {
+        $this->getServiceLocator()->get('Logger')->info('Updating email using token');
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
-        $success = $client->updateAuthEmail( $emailUpdateToken );
+        $success = $client->updateAuthEmail($emailUpdateToken);
 
-        return $success === true;
+        return ($success === true);
     }
 
     /**
@@ -269,10 +216,7 @@ class Details implements ServiceLocatorAwareInterface
     {
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
 
-        $this->getServiceLocator()->get('Logger')->info(
-            'Updating password',
-            $identity->toArray()
-        );
+        $this->getServiceLocator()->get('Logger')->info('Updating password', $identity->toArray());
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
@@ -283,21 +227,13 @@ class Details implements ServiceLocatorAwareInterface
             $data['password']
         );
 
-        //---
-
-        if( !is_string($result) ){
-
+        if (!is_string($result)) {
             return 'unknown-error';
-
-        } // if
-
-        //---
+        }
 
         $userSession = $this->getServiceLocator()->get('UserDetailsSession');
         $email = $userSession->user->email->address;
-        $this->sendPasswordUpdatedEmail( $email );
-
-        //---
+        $this->sendPasswordUpdatedEmail($email);
 
         // Update the identity with the new token to avoid being
         // logged out after the redirect. We don't need to update the token
@@ -306,40 +242,36 @@ class Details implements ServiceLocatorAwareInterface
         $identity->setToken($result);
 
         return true;
+    }
 
-    } // function
-
-    public function sendPasswordUpdatedEmail( $email ){
-
+    public function sendPasswordUpdatedEmail($email)
+    {
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
-        $message->addTo( $email );
-
-        //---
+        $message->addTo($email);
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-password');
         $message->addCategory('opg-lpa-password-changed');
 
-        //---
-
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('password-changed.twig')->render([
-            'email' => $email
-        ]);
+        $content = $this->getServiceLocator()
+                        ->get('TwigEmailRenderer')
+                        ->loadTemplate('password-changed.twig')
+                        ->render([
+                            'email' => $email
+                        ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
-            $message->setSubject( 'You have changed your LPA account password' );
+            $message->setSubject('You have changed your LPA account password');
         }
 
-        //---
-
-        $html = new MimePart( $content );
+        $html = new MimePart($content);
         $html->type = "text/html";
 
         $body = new MimeMessage();
@@ -347,20 +279,12 @@ class Details implements ServiceLocatorAwareInterface
 
         $message->setBody($body);
 
-        //--------------------
-
         try {
-
             $this->getServiceLocator()->get('MailTransport')->send($message);
-
-        } catch ( \Exception $e ){
-
+        } catch (Exception $e) {
             return "failed-sending-email";
-
         }
 
         return true;
-
-    } // function
-
-} // class
+    }
+}
