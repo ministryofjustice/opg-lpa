@@ -3,8 +3,7 @@ version: '2'
 services:
   front:
     container_name: front
-    build: ../opg-lpa-front
-    # image: registry.service.opg.digital/opguk/lpa-front:latest
+    build: .
     ports:
       - 80:80
       - 443:443
