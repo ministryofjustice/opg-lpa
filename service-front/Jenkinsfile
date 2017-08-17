@@ -75,7 +75,16 @@ pipeline {
 
         stage('functional tests') {
             steps {
-                echo 'No functional tests'
+                sh '''
+                    docker-compose up -d
+                    docker run -it --net=host --rm --user `id -u` -v $(pwd)/module/Application/tests/functional:/mnt/test registry.service.opg.digital/opguk/casperjs /mnt/test/start.sh 'tests/'
+                    docker-compose down
+                '''
+            }
+            post {
+                always {
+                    xunit 'module/Application/tests/functional/functional_results.xml'
+                }
             }
         }
 

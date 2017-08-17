@@ -13,3 +13,7 @@ test:
 .PHONY: testcoverage
 testcoverage:
 	docker run -i --rm --user `id -u` -v $$(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests -c module/Application/tests/phpunit.xml --coverage-html module/Application/tests/coverage/
+
+.PHONY: functional
+functional:
+    docker run -it --net=host --rm -v $$(pwd)/module/Application/tests/functional:/mnt/test registry.service.opg.digital/opguk/casperjs /mnt/test/start.sh 'tests/'
