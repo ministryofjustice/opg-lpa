@@ -36,6 +36,8 @@ pipeline {
                 echo 'PHPUnit with coverage'
                 sh '''
                     docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests -c module/Application/tests/phpunit.xml --coverage-clover unit_coverage.xml
+                    echo 'Fixing coverage file paths due to running in container'
+                    sed -i 's#<file name="/app#<file name="#' unit_coverage.xml
                 '''
                 step([
                     $class: 'CloverPublisher',
