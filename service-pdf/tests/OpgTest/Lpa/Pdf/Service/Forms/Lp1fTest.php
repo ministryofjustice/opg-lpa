@@ -3429,7 +3429,7 @@ class Lp1fTest extends AbstractFormTestClass
 
         $lpa->document->correspondent = new Correspondence([
             'who'                           => Correspondence::WHO_ATTORNEY,
-            'name'                          => $firstAttorney->name,
+            'name'                          => $firstAttorney->name->toArray(),
             'address'                       => $firstAttorney->address,
             'contactDetailsEnteredManually' => false,
         ]);
@@ -3645,7 +3645,7 @@ class Lp1fTest extends AbstractFormTestClass
 
         $lpa->document->correspondent = new Correspondence([
             'who'                           => Correspondence::WHO_ATTORNEY,
-            'name'                          => $firstAttorney->name,
+            'name'                          => $firstAttorney->name->toArray(),
             'address'                       => $firstAttorney->address,
             'contactDetailsEnteredManually' => true,
         ]);
@@ -3861,7 +3861,7 @@ class Lp1fTest extends AbstractFormTestClass
 
         $lpa->document->correspondent = new Correspondence([
             'who'                           => Correspondence::WHO_CERTIFICATE_PROVIDER,
-            'name'                          => $certificateProvider->name,
+            'name'                          => $certificateProvider->name->toArray(),
             'address'                       => $certificateProvider->address,
             'contactDetailsEnteredManually' => true,
         ]);
