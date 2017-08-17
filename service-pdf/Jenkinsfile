@@ -77,7 +77,7 @@ pipeline {
             steps {
                 sh '''
                     rm -r -f test-data/output/
-                    docker-compose run --rm pdf bash -c "cd app;php tools/testAll.php"
+                    docker-compose run --rm --user `id -u` pdf bash -c "cd app;php tools/testAll.php"
                 '''
             }
             post {
