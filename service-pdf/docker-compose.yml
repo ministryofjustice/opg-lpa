@@ -6,3 +6,5 @@ services:
     build: .
     env_file:
       - ./env/front.env
+    volumes:
+      - .:/app:cached

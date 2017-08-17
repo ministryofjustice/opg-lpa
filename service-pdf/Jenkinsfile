@@ -75,7 +75,15 @@ pipeline {
 
         stage('functional tests') {
             steps {
-                docker-compose run --rm pdf bash -c "cd app;php tools/testAll.php"
+                sh '''
+                    rm -r -f test-data/output/
+                    docker-compose run --rm pdf bash -c "cd app;php tools/testAll.php"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'test-data/output/*.pdf'
+                }
             }
         }
 
