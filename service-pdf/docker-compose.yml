@@ -7,4 +7,4 @@ services:
     env_file:
       - ./env/front.env
     volumes:
-      - .:/app:cached
+      - .:/app
