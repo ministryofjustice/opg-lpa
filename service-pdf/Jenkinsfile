@@ -75,7 +75,7 @@ pipeline {
 
         stage('functional tests') {
             steps {
-                echo 'No functional tests'
+                docker-compose run --rm pdf bash -c "cd app;php tools/testAll.php"
             }
         }
 

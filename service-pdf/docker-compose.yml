@@ -1,11 +1,8 @@
 version: '2'
 
 services:
-  front:
-    container_name: front
+  pdf:
+    container_name: pdf
     build: .
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - .:/app:cached
+    env_file:
+      - ./env/front.env
