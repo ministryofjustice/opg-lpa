@@ -5,6 +5,6 @@ services:
     container_name: pdf
     build: .
     env_file:
-      - ./env/front.env
+      - env/pdf.env
     volumes:
       - .:/app
