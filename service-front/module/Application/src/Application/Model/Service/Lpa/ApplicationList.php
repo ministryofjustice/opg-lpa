@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\LongName;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use DateTime;
@@ -55,7 +55,7 @@ class ApplicationList implements ServiceLocatorAwareInterface
                 //  Get the Donor name
                 $donorName = '';
 
-                if ($application->document->donor instanceof Donor && $application->document->donor->name instanceof Name) {
+                if ($application->document->donor instanceof Donor && $application->document->donor->name instanceof LongName) {
                     $donorName = (string) $application->document->donor->name;
                 }
 
