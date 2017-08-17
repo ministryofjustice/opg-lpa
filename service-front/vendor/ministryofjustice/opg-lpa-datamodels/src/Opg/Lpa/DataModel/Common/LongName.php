@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * Class Name
  * @package Opg\Lpa\DataModel\Common
  */
-class Name extends AbstractData
+class LongName extends AbstractData
 {
     /**
      * @var string A person's title. E.g. Mr, Miss, Mrs, etc.
@@ -47,7 +47,7 @@ class Name extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 32
+                'max' => 53
             ]),
         ]);
 
@@ -57,7 +57,7 @@ class Name extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 40
+                'max' => 61
             ]),
         ]);
     }
