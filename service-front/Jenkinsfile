@@ -21,7 +21,6 @@ pipeline {
             steps {
                 echo 'PHPUnit'
                 sh '''
-                    docker image rm registry.service.opg.digital/opguk/phpunit
                     docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --log-junit unit_results.xml
                 '''
             }
@@ -39,8 +38,9 @@ pipeline {
                     docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --coverage-clover unit_coverage.xml
                 '''
                 step([
-                  $class: 'CloverPublisher',
-                  cloverReportFileName: 'unit_coverage.xml'
+                    $class: 'CloverPublisher',
+                    cloverReportDir: '',
+                    cloverReportFileName: 'unit_coverage.xml'
                 ])
             }
         }
