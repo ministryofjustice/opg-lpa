@@ -6,7 +6,6 @@ use Opg\Lpa\DataModel\AbstractData;
 use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Callback as CallbackConstraintSymfony;
@@ -163,9 +162,6 @@ class Correspondence extends AbstractData
     {
         switch ($property) {
             case 'name':
-                if ($v instanceof Name) {
-                    return new LongName($v->toArray());
-                }
                 return ($v instanceof LongName ? $v : new LongName($v));
             case 'address':
                 return ($v instanceof Address ? $v : new Address($v));
