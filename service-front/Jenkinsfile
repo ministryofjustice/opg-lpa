@@ -21,7 +21,7 @@ pipeline {
             steps {
                 echo 'PHPUnit'
                 sh '''
-                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --log-junit unit_results.xml
+                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests -c module/Application/tests/phpunit.xml --log-junit unit_results.xml
                 '''
             }
             post {
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 echo 'PHPUnit with coverage'
                 sh '''
-                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests --bootstrap module/Application/tests/Bootstrap.php --coverage-clover unit_coverage.xml
+                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests -c module/Application/tests/phpunit.xml --coverage-clover unit_coverage.xml
                 '''
                 step([
                     $class: 'CloverPublisher',
