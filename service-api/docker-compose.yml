@@ -5,4 +5,4 @@ services:
     container_name: apiv2
     build: .
     volumes:
-      - .:/app:cached
+      - .:/app
