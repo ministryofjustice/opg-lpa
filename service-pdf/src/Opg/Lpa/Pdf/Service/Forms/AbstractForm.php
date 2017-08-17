@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
@@ -179,10 +179,10 @@ abstract class AbstractForm
 
     /**
      * helper function - get fullname for a person
-     * @param Name $personName
+     * @param LongName $personName
      * @return string
      */
-    protected function fullName(Name $personName)
+    protected function fullName(LongName $personName)
     {
         return $personName->title . ' '. $personName->first . ' '. $personName->last;
     }

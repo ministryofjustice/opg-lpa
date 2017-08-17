@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
@@ -550,7 +550,7 @@ abstract class Lp1 extends AbstractForm
                     $isAddressCrossedOut = true;
 
                     $this->pdfFormData['who-is-correspondent'] = 'attorney';
-                    if ($this->lpa->document->correspondent->name instanceof Name) {
+                    if ($this->lpa->document->correspondent->name instanceof LongName) {
                         $this->pdfFormData['lpa-document-correspondent-name-title'] = $this->lpa->document->correspondent->name->title;
                         $this->pdfFormData['lpa-document-correspondent-name-first'] = $this->lpa->document->correspondent->name->first;
                         $this->pdfFormData['lpa-document-correspondent-name-last'] = $this->lpa->document->correspondent->name->last;
