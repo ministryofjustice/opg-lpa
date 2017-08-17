@@ -83,7 +83,7 @@ pipeline {
             }
             post {
                 always {
-                    xunit 'module/Application/tests/functional/functional_results.xml'
+                    junit 'module/Application/tests/functional/functional_results.xml'
                 }
             }
         }
