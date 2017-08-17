@@ -52,14 +52,14 @@ pipeline {
             steps {
                 echo 'PHPUnit with coverage'
                 sh '''
-                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests -c module/Application/tests/phpunit.xml --coverage-clover unit_coverage.xml
+                    docker run -i --rm -v $(pwd):/app registry.service.opg.digital/opguk/phpunit module/Application/tests -c module/Application/tests/phpunit.xml --coverage-clover module/Application/tests/coverage/clover.xml --coverage-html module/Application/tests/coverage/
                     echo 'Fixing coverage file paths due to running in container'
-                    sed -i "s#<file name=\\"/app#<file name=\\"$(pwd)#" unit_coverage.xml
+                    sed -i "s#<file name=\\"/app#<file name=\\"#" module/Application/tests/coverage/clover.xml
                 '''
                 step([
                     $class: 'CloverPublisher',
-                    cloverReportDir: '',
-                    cloverReportFileName: 'unit_coverage.xml'
+                    cloverReportDir: 'module/Application/tests/coverage',
+                    cloverReportFileName: 'clover.xml'
                 ])
             }
         }
