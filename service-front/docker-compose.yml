@@ -7,9 +7,5 @@ services:
     ports:
       - 80:80
       - 443:443
-    env_file:
-      - ../lpa-local-dev/develop/env/front.env
-      - ../lpa-local-dev/develop/env/base.env
     volumes:
-      - ../opg-lpa-front:/app:cached
-      - ../opg-lpa-api-client:/client:cached
+      - .:/app:cached
