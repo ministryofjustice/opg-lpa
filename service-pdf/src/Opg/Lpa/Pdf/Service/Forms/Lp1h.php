@@ -5,7 +5,6 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Lp1h extends Lp1
@@ -149,8 +148,8 @@ class Lp1h extends Lp1
             }
         }
 
-        $this->pdfFormData['footer-instrument-right'] = Config::getInstance()['footer']['lp1h']['instrument'];
-        $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1h']['registration'];
+        $this->pdfFormData['footer-instrument-right'] = $this->config['footer']['lp1h']['instrument'];
+        $this->pdfFormData['footer-registration-right'] = $this->config['footer']['lp1h']['registration'];
 
         return $this->pdfFormData;
     }

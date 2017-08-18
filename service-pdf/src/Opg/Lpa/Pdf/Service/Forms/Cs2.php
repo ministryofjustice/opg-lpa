@@ -3,7 +3,6 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Cs2 extends AbstractForm
@@ -15,7 +14,7 @@ class Cs2 extends AbstractForm
 
     /**
      * @param Lpa $lpa
-     * @param enum $contentType - CONTENT_TYPE_ATTORNEY_DECISIONS | CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN | CONTENT_TYPE_PREFERENCES | CONTENT_TYPE_INSTRUCTIONS
+     * @param string $contentType
      * @param string $content
      */
     public function __construct(Lpa $lpa, $contentType, $content)
@@ -63,7 +62,7 @@ class Cs2 extends AbstractForm
             $this->pdfFormData['cs2-content'] = $this->getContentForBox($pageNo, $this->content, $this->contentType);
             $this->pdfFormData['cs2-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
             $this->pdfFormData['cs2-continued'] = $cs2Continued;
-            $this->pdfFormData['cs2-footer-right'] = Config::getInstance()['footer']['cs2'];
+            $this->pdfFormData['cs2-footer-right'] = $this->config['footer']['cs2'];
 
             $this->pdf = new Pdf($this->pdfTemplatePath . "/LPC_Continuation_Sheet_2.pdf");
 

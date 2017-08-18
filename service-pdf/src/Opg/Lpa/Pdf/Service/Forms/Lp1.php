@@ -173,28 +173,12 @@ abstract class Lp1 extends AbstractForm
     {
         $this->logGenerationStatement('Additional Pages');
 
-        $cs1ActorTypes = [];
-
-        // CS1 is to be generated when number of attorneys that are larger than what is available on standard form
-        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
-        if ($noOfPrimaryAttorneys > 4) {
-            $cs1ActorTypes[] = 'primaryAttorney';
-        }
-
-        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        if ($noOfReplacementAttorneys > 2) {
-            $cs1ActorTypes[] = 'replacementAttorney';
-        }
-
-        // CS1 is to be generated when number of people to notify are larger than what is available on standard form
-        $noOfPeopleToNotify = count($this->lpa->document->peopleToNotify);
-        if ($noOfPeopleToNotify > 4) {
-            $cs1ActorTypes[] = 'peopleToNotify';
-        }
-
         // generate CS1
-        if (!empty($cs1ActorTypes)) {
-            $cs1 = new Cs1($this->lpa, $cs1ActorTypes);
+        if (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEYS_ON_STANDARD_FORM
+            || count($this->lpa->document->replacementAttorneys) > self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM
+            || count($this->lpa->document->peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+
+            $cs1 = new Cs1($this->lpa);
             $generatedCs1 = $cs1->generate();
             $this->mergerIntermediateFilePaths($generatedCs1);
         }

@@ -7,7 +7,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Lp3 extends AbstractForm
@@ -119,7 +118,7 @@ class Lp3 extends AbstractForm
     {
         //  If not already done, extract the data common to all copies of the LP3 document (donor and attorney details, etc)
         if (empty($this->pdfFormData)) {
-            $this->pdfFormData['footer-right-page-one'] = Config::getInstance()['footer']['lp3'];
+            $this->pdfFormData['footer-right-page-one'] = $this->config['footer']['lp3'];
 
             //  Page 2 data
             $this->pdfFormData['lpa-document-donor-name-title'] = $this->lpa->document->donor->name->title;
@@ -142,7 +141,7 @@ class Lp3 extends AbstractForm
                 $this->pdfFormData['lpa-type'] = 'health-and-welfare';
             }
 
-            $this->pdfFormData['footer-right-page-two'] = Config::getInstance()['footer']['lp3'];
+            $this->pdfFormData['footer-right-page-two'] = $this->config['footer']['lp3'];
 
             //  Page 3 data
             if (count($this->lpa->document->primaryAttorneys) == 1) {
@@ -171,10 +170,10 @@ class Lp3 extends AbstractForm
                 }
             }
 
-            $this->pdfFormData['footer-right-page-three'] = Config::getInstance()['footer']['lp3'];
+            $this->pdfFormData['footer-right-page-three'] = $this->config['footer']['lp3'];
 
             //  Page 4 data
-            $this->pdfFormData['footer-right-page-four'] = Config::getInstance()['footer']['lp3'];
+            $this->pdfFormData['footer-right-page-four'] = $this->config['footer']['lp3'];
 
             //  Create a space for the individual people to notify details
             $this->pdfFormData['ptn-data'] = [];

@@ -3,18 +3,12 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Cs1 extends AbstractForm
 {
-    private $actorTypes;
-
-    private $actors = [];
-
     private $settings = array(
         'max-slots-on-standard-form' => [
             'primaryAttorney' => Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM,
@@ -30,32 +24,6 @@ class Cs1 extends AbstractForm
     );
 
     /**
-     *
-     * @param Lpa $lpa
-     * @param array $actorTypes
-     */
-    public function __construct(Lpa $lpa, $actorTypes)
-    {
-        parent::__construct($lpa);
-
-        $this->actorTypes = $actorTypes;
-
-        //  One of LPA document actors property name
-        //  @var string - primaryAttorneys | replacementAttorneys | peopleToNotify
-        foreach ($actorTypes as $actorType) {
-            $actorGroup = $this->settings['actors'][$actorType];
-
-            if ($lpa->document->type == Document::LPA_TYPE_PF && $actorGroup != 'peopleToNotify') {
-                $actors = $this->sortAttorneys($actorGroup);
-            } else {
-                $actors = $this->lpa->document->$actorGroup;
-            }
-
-            $this->actors[$actorType] = $actors;
-        }
-    }
-
-    /**
      * Calculate how many CS1 pages need to be generated to fit all content in for a field.
      *
      * @return array - CS1 pdf paths
@@ -64,9 +32,41 @@ class Cs1 extends AbstractForm
     {
         $this->logGenerationStatement();
 
+        $actorTypes = [];
+
+        // CS1 is to be generated when number of attorneys that are larger than what is available on standard form
+        if (count($this->lpa->document->primaryAttorneys) > Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            $actorTypes[] = 'primaryAttorney';
+        }
+
+        if (count($this->lpa->document->replacementAttorneys) > Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) {
+            $actorTypes[] = 'replacementAttorney';
+        }
+
+        // CS1 is to be generated when number of people to notify are larger than what is available on standard form
+        if (count($this->lpa->document->peopleToNotify) > Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+            $actorTypes[] = 'peopleToNotify';
+        }
+
+        $actors = [];
+
+        //  One of LPA document actors property name
+        //  @var string - primaryAttorneys | replacementAttorneys | peopleToNotify
+        foreach ($actorTypes as $actorType) {
+            $actorGroup = $this->settings['actors'][$actorType];
+
+            if ($this->lpa->document->type == Document::LPA_TYPE_PF && $actorGroup != 'peopleToNotify') {
+                $actorsByType = $this->sortAttorneys($actorGroup);
+            } else {
+                $actorsByType = $this->lpa->document->$actorGroup;
+            }
+
+            $actors[$actorType] = $actorsByType;
+        }
+
         $additionalActors = [];
 
-        foreach ($this->actors as $actorType => $actorGroup) {
+        foreach ($actors as $actorType => $actorGroup) {
             $startingIndexForThisActorGroup = $this->settings['max-slots-on-standard-form'][$actorType];
             $totalActorsInGroup = count($actorGroup);
             for ($i = $startingIndexForThisActorGroup; $i < $totalActorsInGroup; $i++) {
@@ -86,7 +86,7 @@ class Cs1 extends AbstractForm
                 $this->pdfFormData = [];
 
                 $this->pdfFormData['cs1-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
-                $this->pdfFormData['cs1-footer-right'] = Config::getInstance()['footer']['cs1'];
+                $this->pdfFormData['cs1-footer-right'] = $this->config['footer']['cs1'];
             }
 
             $this->pdfFormData['cs1-' . $pIdx . '-is'] = $actor['type'];

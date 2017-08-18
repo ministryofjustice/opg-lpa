@@ -3,7 +3,6 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalApplicantSignaturePage extends AbstractForm
@@ -22,9 +21,9 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
             $this->pdf = new Pdf($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalApplicantSignature.pdf":"/LP1H_AdditionalApplicantSignature.pdf"));
 
             if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = $this->config['footer']['lp1f']['registration'];
             } else {
-                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = $this->config['footer']['lp1h']['registration'];
             }
 
             $this->pdf->fillForm($this->pdfFormData)

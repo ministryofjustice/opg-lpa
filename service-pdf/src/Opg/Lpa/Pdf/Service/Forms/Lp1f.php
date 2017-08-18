@@ -6,7 +6,6 @@ use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Lp1f extends Lp1
@@ -171,8 +170,8 @@ class Lp1f extends Lp1
             }
         }
 
-        $this->pdfFormData['footer-instrument-right'] = Config::getInstance()['footer']['lp1f']['instrument'];
-        $this->pdfFormData['footer-registration-right'] = Config::getInstance()['footer']['lp1f']['registration'];
+        $this->pdfFormData['footer-instrument-right'] = $this->config['footer']['lp1f']['instrument'];
+        $this->pdfFormData['footer-registration-right'] = $this->config['footer']['lp1f']['registration'];
 
         return $this->pdfFormData;
     }
@@ -183,7 +182,7 @@ class Lp1f extends Lp1
 
         // CS4
         if ($this->hasTrustCorporation()) {
-            $generatedCs4 = (new Cs4($this->lpa, $this->getTrustCorporation()->number))->generate();
+            $generatedCs4 = (new Cs4($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($generatedCs4);
         }
 

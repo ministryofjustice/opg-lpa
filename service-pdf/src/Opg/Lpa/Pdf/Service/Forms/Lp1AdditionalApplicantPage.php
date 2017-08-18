@@ -4,8 +4,6 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
@@ -48,9 +46,9 @@ class Lp1AdditionalApplicantPage extends AbstractForm
             $this->pdfFormData['who-is-applicant'] = 'attorney';
 
             if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1f']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = $this->config['footer']['lp1f']['registration'];
             } else {
-                $this->pdfFormData['footer-registration-right-additional'] = Config::getInstance()['footer']['lp1h']['registration'];
+                $this->pdfFormData['footer-registration-right-additional'] = $this->config['footer']['lp1h']['registration'];
             }
 
             $this->pdf->fillForm($this->pdfFormData)
