@@ -11,8 +11,6 @@ use mikehaertl\pdftk\Pdf;
 
 class Lp1f extends Lp1
 {
-    use AttorneysTrait;
-
     public function __construct (Lpa $lpa)
     {
         parent::__construct($lpa);

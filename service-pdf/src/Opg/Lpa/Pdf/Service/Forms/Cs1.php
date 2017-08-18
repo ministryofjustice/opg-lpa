@@ -11,8 +11,6 @@ use mikehaertl\pdftk\Pdf;
 
 class Cs1 extends AbstractForm
 {
-    use AttorneysTrait;
-
     private $actorTypes, $actors=[];
 
     static $SETTINGS = array(
