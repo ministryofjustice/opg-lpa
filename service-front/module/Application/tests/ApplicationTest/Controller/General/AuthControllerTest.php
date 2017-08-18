@@ -13,9 +13,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Authentication\Result;
 use Zend\Http\Request;
 use Zend\Http\Response;
-use Zend\Mvc\Router\RouteStackInterface;
 use Zend\Session\Container;
-use Zend\Session\Storage\StorageInterface;
 use Zend\Stdlib\ArrayObject;
 use Zend\View\Model\ViewModel;
 
@@ -36,7 +34,7 @@ class AuthControllerTest extends AbstractControllerTest
     /**
      * @var MockInterface|Login
      */
-    private $loginForm;
+    private $form;
     private $postData = [
         'email' => 'unit@test.com',
         'password' => 'unitTest'
@@ -49,8 +47,6 @@ class AuthControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
-
-        $this->router = Mockery::mock(RouteStackInterface::class);
 
         $this->controller = new AuthController();
         $this->controller->setServiceLocator($this->serviceLocator);
@@ -66,16 +62,15 @@ class AuthControllerTest extends AbstractControllerTest
         $this->responseCollection->shouldReceive('stopped')->andReturn(false);
         $this->controller->dispatch($this->request);
 
-        $this->loginForm = Mockery::mock(Login::class);
-        $this->loginForm->shouldReceive('setAttribute')->with('action', 'login');
+        $this->form = Mockery::mock(Login::class);
+        $this->form->shouldReceive('setAttribute')->with('action', 'login');
         $this->request->shouldReceive('getPost')->andReturn($this->postData);
-        $this->loginForm->shouldReceive('setData')->with($this->postData);
+        $this->form->shouldReceive('setData')->with($this->postData);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\Login')->andReturn($this->form);
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null);
 
         $this->url->shouldReceive('fromRoute')->with('login')->andReturn('login');
-
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\Login')->andReturn($this->loginForm);
 
         $this->storage->shouldReceive('clear');
 
@@ -87,13 +82,13 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function testIndexActionFormInvalid()
     {
-        $this->loginForm->shouldReceive('isValid')->andReturn(false)->once();
+        $this->form->shouldReceive('isValid')->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals($this->loginForm, $result->getVariable('form'));
+        $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('authError'));
         $this->assertEquals(false, $result->getVariable('isTimeout'));
     }
@@ -102,21 +97,21 @@ class AuthControllerTest extends AbstractControllerTest
     {
         $authenticationResult = new Result(0, null, ['Authentication Failed']);
 
-        $this->loginForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->loginForm->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->postData['email'])->andReturn($this->authenticationAdapter)->once();
         $this->authenticationAdapter->shouldReceive('setPassword')->with($this->postData['password'])->once();
 
         $this->authenticationService->shouldReceive('authenticate')->with($this->authenticationAdapter)->andReturn($authenticationResult)->once();
 
-        $this->loginForm->shouldReceive('setData')->with(['email' => $this->postData['email']])->once();
+        $this->form->shouldReceive('setData')->with(['email' => $this->postData['email']])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals($this->loginForm, $result->getVariable('form'));
+        $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals('Authentication Failed', $result->getVariable('authError'));
         $this->assertEquals(false, $result->getVariable('isTimeout'));
     }
@@ -126,8 +121,8 @@ class AuthControllerTest extends AbstractControllerTest
         $authenticationResult = new Result(1, null);
         $response = new Response();
 
-        $this->loginForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->loginForm->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->postData['email'])->andReturn($this->authenticationAdapter)->once();
         $this->authenticationAdapter->shouldReceive('setPassword')->with($this->postData['password'])->once();
@@ -151,8 +146,8 @@ class AuthControllerTest extends AbstractControllerTest
 
         $this->setPreAuthRequestUrl('https://localhost/user/about-you');
 
-        $this->loginForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->loginForm->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->postData['email'])->andReturn($this->authenticationAdapter)->once();
         $this->authenticationAdapter->shouldReceive('setPassword')->with($this->postData['password'])->once();
@@ -178,8 +173,8 @@ class AuthControllerTest extends AbstractControllerTest
 
         $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts#current');
 
-        $this->loginForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->loginForm->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->postData['email'])->andReturn($this->authenticationAdapter)->once();
         $this->authenticationAdapter->shouldReceive('setPassword')->with($this->postData['password'])->once();
