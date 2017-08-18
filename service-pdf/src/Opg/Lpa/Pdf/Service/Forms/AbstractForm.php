@@ -385,12 +385,4 @@ abstract class AbstractForm
         }
         return $string;
     }
-
-    /**
-     * clean up intermediate files.
-     */
-    public function __destruct()
-    {
-        $this->cleanup();
-    }
 } // class

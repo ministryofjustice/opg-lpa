@@ -48,8 +48,4 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 
         return $this->interFileStack;
     }
-
-    public function __destruct()
-    {
-    }
 }

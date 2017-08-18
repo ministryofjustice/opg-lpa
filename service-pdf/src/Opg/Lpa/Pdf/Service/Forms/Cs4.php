@@ -33,8 +33,4 @@ class Cs4 extends AbstractForm
 
         return $this->interFileStack;
     }
-
-    public function __destruct()
-    {
-    }
 }

@@ -25,9 +25,5 @@ class CoversheetInstrument extends AbstractForm
                   ->saveAs($filePath);
 
         return $this->interFileStack;
-    } // function generate()
-
-    public function __destruct()
-    {
     }
 }

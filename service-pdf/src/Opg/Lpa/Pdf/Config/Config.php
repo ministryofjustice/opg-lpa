@@ -92,4 +92,4 @@ class Config implements Countable, ArrayAccess {
         self::$instance = null;
     }
 
-} // class
+}

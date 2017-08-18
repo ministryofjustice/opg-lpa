@@ -54,8 +54,4 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 
         return $this->interFileStack;
     }
-
-    public function __destruct()
-    {
-    }
 }

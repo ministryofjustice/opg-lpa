@@ -80,8 +80,4 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
 
         return $this->interFileStack;
     }
-
-    public function __destruct()
-    {
-    }
 }

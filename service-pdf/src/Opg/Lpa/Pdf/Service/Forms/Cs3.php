@@ -30,9 +30,5 @@ class Cs3 extends AbstractForm
                   ->saveAs($filePath);
 
         return $this->interFileStack;
-    } // function generate()
-
-    public function __destruct()
-    {
     }
 }

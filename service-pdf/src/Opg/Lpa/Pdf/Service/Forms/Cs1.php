@@ -136,9 +136,5 @@ class Cs1 extends AbstractForm
         }
 
         return $this->interFileStack;
-    } // function generate()
-
-    public function __destruct()
-    {
     }
 }

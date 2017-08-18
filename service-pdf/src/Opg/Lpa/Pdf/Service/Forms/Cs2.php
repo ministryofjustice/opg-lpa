@@ -77,8 +77,4 @@ class Cs2 extends AbstractForm
 
         return $this->interFileStack;
     }
-
-    public function __destruct()
-    {
-    }
 }
