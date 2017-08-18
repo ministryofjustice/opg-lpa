@@ -10,16 +10,6 @@ use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
 {
-    /**
-     * Duplicate Section 12 page for additional applicants
-     *
-     * @param Lpa $lpa
-     */
-    public function __construct(Lpa $lpa)
-    {
-        parent::__construct($lpa);
-    }
-
     public function generate()
     {
         $this->logGenerationStatement();

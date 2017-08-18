@@ -10,16 +10,6 @@ use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
-    /**
-     * Duplicate Section 11 page for additional primary and replacement attorneys to sign
-     *
-     * @param Lpa $lpa
-     */
-    public function __construct(Lpa $lpa)
-    {
-        parent::__construct($lpa);
-    }
-
     public function generate()
     {
         $this->logGenerationStatement();

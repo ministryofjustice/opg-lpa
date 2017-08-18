@@ -8,14 +8,6 @@ use mikehaertl\pdftk\Pdf;
 
 class Lp3AdditionalAttorneyPage extends AbstractForm
 {
-    /**
-     * If there are more than 4 primary attorneys, duplicate page 3 - About the attorneys, to fit all attorneys in to the form.
-     */
-    public function __construct(Lpa $lpa)
-    {
-        parent::__construct($lpa);
-    }
-
     public function generate()
     {
         $this->logGenerationStatement();

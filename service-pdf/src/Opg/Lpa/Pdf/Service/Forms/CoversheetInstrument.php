@@ -8,11 +8,6 @@ use mikehaertl\pdftk\Pdf;
 
 class CoversheetInstrument extends AbstractForm
 {
-    public function __construct(Lpa $lpa)
-    {
-        parent::__construct($lpa);
-    }
-
     public function generate()
     {
         $this->logGenerationStatement();

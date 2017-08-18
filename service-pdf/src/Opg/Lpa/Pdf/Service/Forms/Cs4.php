@@ -13,6 +13,7 @@ class Cs4 extends AbstractForm
     public function __construct(Lpa $lpa, $companyNumber)
     {
         parent::__construct($lpa);
+
         $this->companyNumber = $companyNumber;
     }
 

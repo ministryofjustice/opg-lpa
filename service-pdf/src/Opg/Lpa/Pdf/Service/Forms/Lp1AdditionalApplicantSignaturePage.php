@@ -9,16 +9,6 @@ use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 {
-    /**
-     * Duplicate Section 15 for additional applicant signatures
-     *
-     * @param Lpa $lpa
-     */
-    public function __construct(Lpa $lpa)
-    {
-        parent::__construct($lpa);
-    }
-
     public function generate()
     {
         $this->logGenerationStatement();
