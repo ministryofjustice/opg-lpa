@@ -11,6 +11,8 @@ use Opg\Lpa\Logger\Logger;
 use PHPUnit_Framework_Error_Deprecated;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
+use Zend\Http\Request;
+use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Mvc\Controller\Plugin\Url;
@@ -77,8 +79,15 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|LpaApplicationService
      */
     protected $lpaApplicationService;
+    /**
+     * @var MockInterface|Request
+     */
+    protected $request;
 
-    public function setUp()
+    /**
+     * @param AbstractController $controller
+     */
+    public function controllerSetUp($controller)
     {
         //Required to suppress the deprecated error received when calling getServiceLocator()
         //Calling and using the service locator directly in code could be considered a IoC/DI anti pattern
@@ -139,6 +148,15 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
         $this->serviceLocator->shouldReceive('get')->with('LpaApplicationService')->andReturn($this->lpaApplicationService);
+
+        $controller->setServiceLocator($this->serviceLocator);
+        $controller->setPluginManager($this->pluginManager);
+        $controller->setEventManager($this->eventManager);
+
+        $this->request = Mockery::mock(Request::class);
+
+        $this->responseCollection->shouldReceive('stopped')->andReturn(false);
+        $controller->dispatch($this->request);
     }
 
     public function tearDown()

@@ -26,12 +26,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->controller = new AuthController();
-        $this->controller->setServiceLocator($this->serviceLocator);
-        $this->controller->setPluginManager($this->pluginManager);
-        $this->controller->setEventManager($this->eventManager);
+        parent::controllerSetUp($this->controller);
 
         $this->identity = Mockery::mock(User::class);
     }
@@ -53,6 +49,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $response = new Response();
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
+        $this->request->shouldReceive('getMethod')->andReturn('GET');
+        $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->with('cookie')->andReturn(1)->once();
         $this->redirect->shouldReceive('toRoute')->with('enable-cookie')->andReturn($response)->once();
 
@@ -66,6 +64,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $response = new Response();
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
+        $this->request->shouldReceive('getMethod')->andReturn('GET');
+        $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->with('cookie')->andReturn(null)->once();
         $this->redirect->shouldReceive('toRoute')->with('login', array(), ['query' => ['cookie' => '1']])->andReturn($response)->once();
 
@@ -76,21 +76,17 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookieExistsFalse()
     {
-        /** @var MockInterface|Request $request */
-        $request = Mockery::mock(Request::class);
         $cookie = Mockery::mock(Cookie::class);
         $response = new Response();
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->params->shouldReceive('fromQuery')->with('cookie')->andReturn(null)->once();
         $this->redirect->shouldReceive('toRoute')->with('login', array(), ['query' => ['cookie' => '1']])->andReturn($response)->once();
-        $this->responseCollection->shouldReceive('stopped')->andReturn(false)->once();
-        $this->controller->dispatch($request);
 
         $cookie->shouldReceive('offsetExists')->with('lpa')->andReturn(false)->once();
 
-        $request->shouldReceive('getMethod')->andReturn('GET')->once();
-        $request->shouldReceive('getCookie')->andReturn($cookie)->once();
+        $this->request->shouldReceive('getMethod')->andReturn('GET')->once();
+        $this->request->shouldReceive('getCookie')->andReturn($cookie)->once();
 
         $result = $this->controller->indexAction();
 
@@ -99,22 +95,18 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookieExists()
     {
-        /** @var MockInterface|Request $request */
-        $request = Mockery::mock(Request::class);
         $cookie = Mockery::mock(Cookie::class);
         $loginForm = new Login();
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->url->shouldReceive('fromRoute')->with('login')->andReturn('login')->once();
-        $this->responseCollection->shouldReceive('stopped')->andReturn(false)->once();
-        $this->controller->dispatch($request);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\User\Login')->andReturn($loginForm)->once();
 
         $cookie->shouldReceive('offsetExists')->with('lpa')->andReturn(true)->once();
 
-        $request->shouldReceive('getMethod')->andReturn('GET')->once();
-        $request->shouldReceive('getCookie')->andReturn($cookie)->once();
-        $request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->request->shouldReceive('getMethod')->andReturn('GET')->once();
+        $this->request->shouldReceive('getCookie')->andReturn($cookie)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -127,18 +119,14 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookiePost()
     {
-        /** @var MockInterface|Request $request */
-        $request = Mockery::mock(Request::class);
         $loginForm = new Login();
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->url->shouldReceive('fromRoute')->with('login')->andReturn('login')->once();
-        $this->responseCollection->shouldReceive('stopped')->andReturn(false)->once();
-        $this->controller->dispatch($request);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\User\Login')->andReturn($loginForm)->once();
 
-        $request->shouldReceive('getMethod')->andReturn('POST')->once();
-        $request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->request->shouldReceive('getMethod')->andReturn('POST')->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

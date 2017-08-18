@@ -20,10 +20,6 @@ class FeedbackControllerTest extends AbstractControllerTest
      */
     private $controller;
     /**
-     * @var MockInterface|Request
-     */
-    private $request;
-    /**
      * @var MockInterface|FeedbackForm
      */
     private $form;
@@ -40,17 +36,8 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->controller = new FeedbackController();
-        $this->controller->setServiceLocator($this->serviceLocator);
-        $this->controller->setPluginManager($this->pluginManager);
-        $this->controller->setEventManager($this->eventManager);
-
-        $this->request = Mockery::mock(Request::class);
-
-        $this->responseCollection->shouldReceive('stopped')->andReturn(false);
-        $this->controller->dispatch($this->request);
+        parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(Feedback::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\General\FeedbackForm')->andReturn($this->form);

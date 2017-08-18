@@ -26,10 +26,8 @@ class SessionsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->controller = new SessionsController();
-        $this->controller->setServiceLocator($this->serviceLocator);
+        parent::controllerSetUp($this->controller);
 
         $this->dynamoCronLock = Mockery::mock(DynamoCronLock::class);
         $this->serviceLocator->shouldReceive('get')->with('DynamoCronLock')->andReturn($this->dynamoCronLock)->once();

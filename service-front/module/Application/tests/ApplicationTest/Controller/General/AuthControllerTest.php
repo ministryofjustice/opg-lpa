@@ -28,10 +28,6 @@ class AuthControllerTest extends AbstractControllerTest
      */
     private $identity;
     /**
-     * @var MockInterface|Request
-     */
-    private $request;
-    /**
      * @var MockInterface|Login
      */
     private $form;
@@ -46,25 +42,17 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->controller = new AuthController();
-        $this->controller->setServiceLocator($this->serviceLocator);
-        $this->controller->setPluginManager($this->pluginManager);
-        $this->controller->setEventManager($this->eventManager);
+        parent::controllerSetUp($this->controller);
 
         $this->identity = Mockery::mock(User::class);
 
-        $this->request = Mockery::mock(Request::class);
         $this->request->shouldReceive('getMethod')->andReturn('POST');
         $this->request->shouldReceive('isPost')->andReturn(true);
-
-        $this->responseCollection->shouldReceive('stopped')->andReturn(false);
-        $this->controller->dispatch($this->request);
+        $this->request->shouldReceive('getPost')->andReturn($this->postData);
 
         $this->form = Mockery::mock(Login::class);
         $this->form->shouldReceive('setAttribute')->with('action', 'login');
-        $this->request->shouldReceive('getPost')->andReturn($this->postData);
         $this->form->shouldReceive('setData')->with($this->postData);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\User\Login')->andReturn($this->form);
 
