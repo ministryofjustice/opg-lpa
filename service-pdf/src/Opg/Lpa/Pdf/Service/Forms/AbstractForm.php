@@ -216,7 +216,7 @@ abstract class AbstractForm
         }
 
         return $path;
-    } // function registerTempFile()
+    }
 
     /**
      * Draw cross lines
