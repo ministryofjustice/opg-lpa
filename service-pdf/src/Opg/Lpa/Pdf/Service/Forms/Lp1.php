@@ -13,7 +13,6 @@ use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
-use Opg\Lpa\Pdf\Config\Config;
 use Zend\Barcode\Barcode;
 use mikehaertl\pdftk\Pdf;
 
@@ -211,7 +210,8 @@ abstract class Lp1 extends AbstractForm
         $content = "";
 
         if ((count($this->lpa->document->primaryAttorneys) == 1
-            || (count($this->lpa->document->primaryAttorneys) > 1 && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
+            || (count($this->lpa->document->primaryAttorneys) > 1
+                && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
             && count($this->lpa->document->replacementAttorneys) > 1) {
 
             switch ($this->lpa->document->replacementAttorneyDecisions->how) {
@@ -300,7 +300,7 @@ abstract class Lp1 extends AbstractForm
         // Section 15 - additional applicants signature
         if (is_array($this->lpa->document->whoIsRegistering) && $numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM) {
             $totalAdditionalApplicants = $numOfApplicants - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-            $totalAdditionalApplicantPages = ceil($totalAdditionalApplicants/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+            $totalAdditionalApplicantPages = ceil($totalAdditionalApplicants / self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
             if ($totalAdditionalApplicantPages > 0) {
                 $lp1AdditionalApplicantSignaturePage = new Lp1AdditionalApplicantSignaturePage($this->lpa);
                 $generatedAdditionalApplicantSignaturePages = $lp1AdditionalApplicantSignaturePage->generate();
@@ -340,14 +340,14 @@ abstract class Lp1 extends AbstractForm
         $this->pdfFormData['lpa-document-donor-name-first'] = $this->lpa->document->donor->name->first;
         $this->pdfFormData['lpa-document-donor-name-last'] = $this->lpa->document->donor->name->last;
         $this->pdfFormData['lpa-document-donor-otherNames'] = $this->lpa->document->donor->otherNames;
-        $this->pdfFormData['lpa-document-donor-dob-date-day'] =  $this->lpa->document->donor->dob->date->format('d');
+        $this->pdfFormData['lpa-document-donor-dob-date-day'] = $this->lpa->document->donor->dob->date->format('d');
         $this->pdfFormData['lpa-document-donor-dob-date-month'] = $this->lpa->document->donor->dob->date->format('m');
         $this->pdfFormData['lpa-document-donor-dob-date-year'] = $this->lpa->document->donor->dob->date->format('Y');
-        $this->pdfFormData['lpa-document-donor-address-address1']= $this->lpa->document->donor->address->address1;
-        $this->pdfFormData['lpa-document-donor-address-address2']= $this->lpa->document->donor->address->address2;
-        $this->pdfFormData['lpa-document-donor-address-address3']= $this->lpa->document->donor->address->address3;
-        $this->pdfFormData['lpa-document-donor-address-postcode']= $this->lpa->document->donor->address->postcode;
-        $this->pdfFormData['lpa-document-donor-email-address']= ($this->lpa->document->donor->email instanceof EmailAddress ? $this->lpa->document->donor->email->address : null);
+        $this->pdfFormData['lpa-document-donor-address-address1'] = $this->lpa->document->donor->address->address1;
+        $this->pdfFormData['lpa-document-donor-address-address2'] = $this->lpa->document->donor->address->address2;
+        $this->pdfFormData['lpa-document-donor-address-address3'] = $this->lpa->document->donor->address->address3;
+        $this->pdfFormData['lpa-document-donor-address-postcode'] = $this->lpa->document->donor->address->postcode;
+        $this->pdfFormData['lpa-document-donor-email-address'] = ($this->lpa->document->donor->email instanceof EmailAddress ? $this->lpa->document->donor->email->address : null);
 
         //  attorneys section (section 2)
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
@@ -659,7 +659,7 @@ abstract class Lp1 extends AbstractForm
             $pdf->addFile($this->interFileStack['LP1'], $lp1FileTag);
 
             //  Add the blank single page PDF incase we need to cat it around continuation sheets
-            $pdf->addFile(Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf', 'BLANK');
+            $pdf->addFile($this->pdfTemplatePath . '/blank.pdf', 'BLANK');
 
             $registrationPdf->addFile($this->interFileStack['Coversheet'], 'A');
             $registrationPdf->addFile($this->interFileStack['LP1'], $lp1FileTag);

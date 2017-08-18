@@ -37,8 +37,7 @@ class Lpa120 extends AbstractForm
         $lpaPayment = $lpa->payment;
 
         //  Check eligibility for exemption or remission.
-        if(!$lpa->repeatCaseNumber
-            && !$lpaPayment->reducedFeeLowIncome
+        if (!$lpa->repeatCaseNumber && !$lpaPayment->reducedFeeLowIncome
             && !($lpaPayment->reducedFeeReceivesBenefits && $lpaPayment->reducedFeeAwardedDamages)
             && !$lpaPayment->reducedFeeUniversalCredit) {
 
@@ -79,7 +78,7 @@ class Lpa120 extends AbstractForm
 
             if ($applicant->who == Correspondence::WHO_DONOR) {
                 $applicantType = 'donor';
-            } else if ($applicant->who == Correspondence::WHO_ATTORNEY) {
+            } elseif ($applicant->who == Correspondence::WHO_ATTORNEY) {
                 $applicantType = 'attorney';
             } else {
                 $applicantTypeOther = 'Correspondent';
@@ -116,7 +115,7 @@ class Lpa120 extends AbstractForm
             $applicantTitle = strtolower($applicant->name->title);
 
             //  If the applicant title is an other type then swap the values around
-            if (!in_array($applicantTitle, ['mr','mrs','miss','ms'])) {
+            if (!in_array($applicantTitle, ['mr', 'mrs', 'miss', 'ms'])) {
                 $applicantTitleOther = $applicant->name->title; //  Use the original value here and not the lowercase version
                 $applicantTitle = 'other';
             }
@@ -126,7 +125,7 @@ class Lpa120 extends AbstractForm
         }
 
         $this->pdfFormData['donor-full-name'] = $this->fullName($lpaDocument->donor->name);
-        $this->pdfFormData['donor-address'] = "\n" . (string) $lpaDocument->donor->address;
+        $this->pdfFormData['donor-address'] = "\n" . (string)$lpaDocument->donor->address;
         $this->pdfFormData['lpa-type'] = ($lpaDocument->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
         $this->pdfFormData['is-repeat-application'] = (is_null($lpa->repeatCaseNumber) ? null : self::CHECK_BOX_ON);
         $this->pdfFormData['case-number'] = $lpa->repeatCaseNumber;
@@ -136,9 +135,9 @@ class Lpa120 extends AbstractForm
         $this->pdfFormData['applicant-name-title-other'] = $applicantTitleOther;
         $this->pdfFormData['applicant-name-first'] = $applicantFirstName;
         $this->pdfFormData['applicant-name-last'] = $applicantLastName;
-        $this->pdfFormData['applicant-address'] = "\n" . ($applicant->address instanceof Address ? (string) $applicant->address : '');
+        $this->pdfFormData['applicant-address'] = "\n" . ($applicant->address instanceof Address ? (string)$applicant->address : '');
         $this->pdfFormData['applicant-phone-number'] = $applicantPhoneNumber;
-        $this->pdfFormData['applicant-email-address'] = ($applicant->email instanceof EmailAddress ? (string) $applicant->email : null);
+        $this->pdfFormData['applicant-email-address'] = ($applicant->email instanceof EmailAddress ? (string)$applicant->email : null);
         $this->pdfFormData['receive-benefits'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeReceivesBenefits);
         $this->pdfFormData['damage-awarded'] = (is_null($lpaPayment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$lpaPayment->reducedFeeAwardedDamages));
         $this->pdfFormData['low-income'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeLowIncome);
@@ -157,7 +156,7 @@ class Lpa120 extends AbstractForm
     {
         if ($valueIn === true) {
             return 'yes';
-        } elseif($valueIn === false) {
+        } elseif ($valueIn === false) {
             return 'no';
         }
 

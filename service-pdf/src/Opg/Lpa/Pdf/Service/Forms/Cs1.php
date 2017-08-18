@@ -11,19 +11,21 @@ use mikehaertl\pdftk\Pdf;
 
 class Cs1 extends AbstractForm
 {
-    private $actorTypes, $actors=[];
+    private $actorTypes;
 
-    static $SETTINGS = array(
+    private $actors = [];
+
+    private $settings = array(
         'max-slots-on-standard-form' => [
-            'primaryAttorney'       => Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM,
-            'replacementAttorney'   => Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM,
-            'peopleToNotify'        => Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM
+            'primaryAttorney' => Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM,
+            'replacementAttorney' => Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM,
+            'peopleToNotify' => Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM
         ],
-        'max-slots-on-cs1-form'     => 2,
-        'actors'                 => [
-            'primaryAttorney'       => 'primaryAttorneys',
-            'replacementAttorney'   => 'replacementAttorneys',
-            'peopleToNotify'        => 'peopleToNotify'
+        'max-slots-on-cs1-form' => 2,
+        'actors' => [
+            'primaryAttorney' => 'primaryAttorneys',
+            'replacementAttorney' => 'replacementAttorneys',
+            'peopleToNotify' => 'peopleToNotify'
         ]
     );
 
@@ -38,17 +40,14 @@ class Cs1 extends AbstractForm
 
         $this->actorTypes = $actorTypes;
 
-        /**
-         * One of LPA document actors property name
-         * @var string - primaryAttorneys | replacementAttorneys | peopleToNotify
-         */
-        foreach($actorTypes as $actorType) {
-            $actorGroup = self::$SETTINGS['actors'][$actorType];
+        //  One of LPA document actors property name
+        //  @var string - primaryAttorneys | replacementAttorneys | peopleToNotify
+        foreach ($actorTypes as $actorType) {
+            $actorGroup = $this->settings['actors'][$actorType];
 
-            if(($lpa->document->type == Document::LPA_TYPE_PF) && ($actorGroup != 'peopleToNotify')) {
+            if ($lpa->document->type == Document::LPA_TYPE_PF && $actorGroup != 'peopleToNotify') {
                 $actors = $this->sortAttorneys($actorGroup);
-            }
-            else {
+            } else {
                 $actors = $this->lpa->document->$actorGroup;
             }
 
@@ -67,18 +66,20 @@ class Cs1 extends AbstractForm
 
         $additionalActors = [];
 
-        foreach($this->actors as $actorType => $actorGroup) {
-            $startingIndexForThisActorGroup = self::$SETTINGS['max-slots-on-standard-form'][$actorType];
+        foreach ($this->actors as $actorType => $actorGroup) {
+            $startingIndexForThisActorGroup = $this->settings['max-slots-on-standard-form'][$actorType];
             $totalActorsInGroup = count($actorGroup);
-            for($i=$startingIndexForThisActorGroup; $i<$totalActorsInGroup; $i++) {
-                $additionalActors[] = ['person'=>$actorGroup[$i], 'type'=>$actorType];
+            for ($i = $startingIndexForThisActorGroup; $i < $totalActorsInGroup; $i++) {
+                $additionalActors[] = ['person' => $actorGroup[$i], 'type' => $actorType];
             }
         }
 
-        if(empty($additionalActors)) return;
+        if (empty($additionalActors)) {
+            return;
+        }
 
-        foreach($additionalActors as $idx=>$actor) {
-            $pIdx = ($idx % self::$SETTINGS['max-slots-on-cs1-form']);
+        foreach ($additionalActors as $idx => $actor) {
+            $pIdx = ($idx % $this->settings['max-slots-on-cs1-form']);
 
             if($pIdx == 0) {
                 //  Initialise the pdfFormData to empty it
@@ -88,32 +89,32 @@ class Cs1 extends AbstractForm
                 $this->pdfFormData['cs1-footer-right'] = Config::getInstance()['footer']['cs1'];
             }
 
-            $this->pdfFormData['cs1-'.$pIdx.'-is'] = $actor['type'];
+            $this->pdfFormData['cs1-' . $pIdx . '-is'] = $actor['type'];
 
-            if($actor['person']->name instanceof Name) {
-                $this->pdfFormData['cs1-'.$pIdx.'-name-title'] = $actor['person']->name->title;
-                $this->pdfFormData['cs1-'.$pIdx.'-name-first'] = $actor['person']->name->first;
-                $this->pdfFormData['cs1-'.$pIdx.'-name-last']  = $actor['person']->name->last;
+            if ($actor['person']->name instanceof Name) {
+                $this->pdfFormData['cs1-' . $pIdx . '-name-title'] = $actor['person']->name->title;
+                $this->pdfFormData['cs1-' . $pIdx . '-name-first'] = $actor['person']->name->first;
+                $this->pdfFormData['cs1-' . $pIdx . '-name-last'] = $actor['person']->name->last;
             }
 
-            $this->pdfFormData['cs1-'.$pIdx.'-address-address1'] = $actor['person']->address->address1;
-            $this->pdfFormData['cs1-'.$pIdx.'-address-address2'] = $actor['person']->address->address2;
-            $this->pdfFormData['cs1-'.$pIdx.'-address-address3'] = $actor['person']->address->address3;
-            $this->pdfFormData['cs1-'.$pIdx.'-address-postcode'] = $actor['person']->address->postcode;
+            $this->pdfFormData['cs1-' . $pIdx . '-address-address1'] = $actor['person']->address->address1;
+            $this->pdfFormData['cs1-' . $pIdx . '-address-address2'] = $actor['person']->address->address2;
+            $this->pdfFormData['cs1-' . $pIdx . '-address-address3'] = $actor['person']->address->address3;
+            $this->pdfFormData['cs1-' . $pIdx . '-address-postcode'] = $actor['person']->address->postcode;
 
-            if(property_exists($actor['person'], 'dob')) {
-                $this->pdfFormData['cs1-'.$pIdx.'-dob-date-day']   = $actor['person']->dob->date->format('d');
-                $this->pdfFormData['cs1-'.$pIdx.'-dob-date-month'] = $actor['person']->dob->date->format('m');
-                $this->pdfFormData['cs1-'.$pIdx.'-dob-date-year']  = $actor['person']->dob->date->format('Y');
+            if (property_exists($actor['person'], 'dob')) {
+                $this->pdfFormData['cs1-' . $pIdx . '-dob-date-day'] = $actor['person']->dob->date->format('d');
+                $this->pdfFormData['cs1-' . $pIdx . '-dob-date-month'] = $actor['person']->dob->date->format('m');
+                $this->pdfFormData['cs1-' . $pIdx . '-dob-date-year'] = $actor['person']->dob->date->format('Y');
             }
 
-            if(property_exists($actor['person'], 'email') && ($actor['person']->email instanceof EmailAddress)) {
-                $this->pdfFormData['cs1-'.$pIdx.'-email-address'] = "\n".$actor['person']->email->address;
+            if (property_exists($actor['person'], 'email') && ($actor['person']->email instanceof EmailAddress)) {
+                $this->pdfFormData['cs1-' . $pIdx . '-email-address'] = "\n" . $actor['person']->email->address;
             }
 
-            if($pIdx == 1) {
+            if ($pIdx == 1) {
                 $filePath = $this->registerTempFile('CS1');
-                $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+                $this->pdf = new Pdf($this->pdfTemplatePath . "/LPC_Continuation_Sheet_1.pdf");
 
                 $this->pdf->fillForm($this->pdfFormData)
                           ->flatten()
@@ -121,13 +122,13 @@ class Cs1 extends AbstractForm
             }
         }
 
-        if($pIdx == 0) {
+        if ($pIdx == 0) {
             $filePath = $this->registerTempFile('CS1');
-            $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_1.pdf");
+            $this->pdf = new Pdf($this->pdfTemplatePath . "/LPC_Continuation_Sheet_1.pdf");
 
             $this->pdf->fillForm($this->pdfFormData)
-                      ->flatten()
-                      ->saveAs($filePath);
+                 ->flatten()
+                 ->saveAs($filePath);
 
             // draw cross lines if there's any blank slot in the last CS1 pdf
             $this->drawCrossLines($filePath, array(array('cs1')));

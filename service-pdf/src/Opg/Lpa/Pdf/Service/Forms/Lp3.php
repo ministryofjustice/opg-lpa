@@ -122,13 +122,13 @@ class Lp3 extends AbstractForm
             $this->pdfFormData['footer-right-page-one'] = Config::getInstance()['footer']['lp3'];
 
             //  Page 2 data
-            $this->pdfFormData['lpa-document-donor-name-title']         = $this->lpa->document->donor->name->title;
-            $this->pdfFormData['lpa-document-donor-name-first']         = $this->lpa->document->donor->name->first;
-            $this->pdfFormData['lpa-document-donor-name-last']          = $this->lpa->document->donor->name->last;
-            $this->pdfFormData['lpa-document-donor-address-address1']   = $this->lpa->document->donor->address->address1;
-            $this->pdfFormData['lpa-document-donor-address-address2']   = $this->lpa->document->donor->address->address2;
-            $this->pdfFormData['lpa-document-donor-address-address3']   = $this->lpa->document->donor->address->address3;
-            $this->pdfFormData['lpa-document-donor-address-postcode']   = $this->lpa->document->donor->address->postcode;
+            $this->pdfFormData['lpa-document-donor-name-title'] = $this->lpa->document->donor->name->title;
+            $this->pdfFormData['lpa-document-donor-name-first'] = $this->lpa->document->donor->name->first;
+            $this->pdfFormData['lpa-document-donor-name-last'] = $this->lpa->document->donor->name->last;
+            $this->pdfFormData['lpa-document-donor-address-address1'] = $this->lpa->document->donor->address->address1;
+            $this->pdfFormData['lpa-document-donor-address-address2'] = $this->lpa->document->donor->address->address2;
+            $this->pdfFormData['lpa-document-donor-address-address3'] = $this->lpa->document->donor->address->address3;
+            $this->pdfFormData['lpa-document-donor-address-postcode'] = $this->lpa->document->donor->address->postcode;
 
             if ($this->lpa->document->whoIsRegistering == 'donor') {
                 $this->pdfFormData['who-is-applicant'] = 'donor';
@@ -151,20 +151,20 @@ class Lp3 extends AbstractForm
                 $this->pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
             }
 
-            $i=0;
+            $i = 0;
             foreach ($this->lpa->document->primaryAttorneys as $attorney) {
                 if ($attorney instanceof TrustCorporation) {
-                    $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name;
+                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $attorney->name;
                 } else {
-                    $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-title'] = $attorney->name->title;
-                    $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $attorney->name->first;
-                    $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $attorney->name->last;
+                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $attorney->name->title;
+                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $attorney->name->first;
+                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $attorney->name->last;
                 }
 
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address1'] = $attorney->address->address1;
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address2'] = $attorney->address->address2;
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-address3'] = $attorney->address->address3;
-                $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-address-postcode'] = $attorney->address->postcode;
+                $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $attorney->address->address1;
+                $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $attorney->address->address2;
+                $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $attorney->address->address3;
+                $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $attorney->address->postcode;
 
                 if (++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
                     break;
@@ -182,13 +182,13 @@ class Lp3 extends AbstractForm
 
         //  Extract the specific person to notify details - for page 1
         $this->pdfFormData['ptn-data'][] = [
-            'lpa-document-peopleToNotify-name-title'        => $personToNotify->name->title,
-            'lpa-document-peopleToNotify-name-first'        => $personToNotify->name->first,
-            'lpa-document-peopleToNotify-name-last'         => $personToNotify->name->last,
-            'lpa-document-peopleToNotify-address-address1'  => $personToNotify->address->address1,
-            'lpa-document-peopleToNotify-address-address2'  => $personToNotify->address->address2,
-            'lpa-document-peopleToNotify-address-address3'  => $personToNotify->address->address3,
-            'lpa-document-peopleToNotify-address-postcode'  => $personToNotify->address->postcode,
+            'lpa-document-peopleToNotify-name-title' => $personToNotify->name->title,
+            'lpa-document-peopleToNotify-name-first' => $personToNotify->name->first,
+            'lpa-document-peopleToNotify-name-last' => $personToNotify->name->last,
+            'lpa-document-peopleToNotify-address-address1' => $personToNotify->address->address1,
+            'lpa-document-peopleToNotify-address-address2' => $personToNotify->address->address2,
+            'lpa-document-peopleToNotify-address-address3' => $personToNotify->address->address3,
+            'lpa-document-peopleToNotify-address-postcode' => $personToNotify->address->postcode,
         ];
 
         return $this->pdfFormData;
@@ -228,12 +228,12 @@ class Lp3 extends AbstractForm
             $fileTag = $this->nextTag($fileTag);
 
             if ($blankPageRequired) {
-                $fileName = Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf';
+                $fileName = $this->pdfTemplatePath . '/blank.pdf';
                 $this->pdf->addFile($fileName, 'BLANK');
                 $this->pdf->cat(1, null, 'BLANK');
             }
         }
 
         $this->pdf->saveAs($this->generatedPdfFilePath);
-    } // function mergePdfs()
+    }
 }

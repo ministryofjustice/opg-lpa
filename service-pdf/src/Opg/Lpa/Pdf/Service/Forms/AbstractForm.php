@@ -450,4 +450,23 @@ abstract class AbstractForm
 
         return false;
     }
-} // class
+
+    /**
+     * Get the trust corporation from the LPA if one exists - return null if not
+     *
+     * @return TrustCorporation|null
+     */
+    protected function getTrustCorporation()
+    {
+        $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
+
+        //  Loop through the attorneys to try to find the trust attorney
+        foreach ($attorneys as $attorney) {
+            if ($attorney instanceof TrustCorporation) {
+                return $attorney;
+            }
+        }
+
+        return null;
+    }
+}

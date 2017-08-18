@@ -17,7 +17,7 @@ class CoversheetRegistration extends AbstractForm
         $this->pdf = new Pdf($this->pdfTemplatePath . '//' . ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'LP1F_CoversheetRegistration.pdf' : 'LP1H_CoversheetRegistration.pdf'));
 
         $this->pdf->flatten()
-            ->saveAs($filePath);
+                  ->saveAs($filePath);
 
         return $this->interFileStack;
     }

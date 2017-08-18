@@ -10,8 +10,7 @@ use mikehaertl\pdftk\Pdf;
 
 class Lp1h extends Lp1
 {
-
-    public function __construct (Lpa $lpa)
+    public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
 
@@ -19,7 +18,6 @@ class Lp1h extends Lp1
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1H');
 
         $this->pdf = new Pdf($this->pdfTemplatePath.'/LP1H.pdf');
-
     }
 
     protected function dataMapping()
@@ -28,7 +26,8 @@ class Lp1h extends Lp1
 
         // Section 2
         $i = 0;
-        foreach($this->lpa->document->primaryAttorneys as $primaryAttorney) {
+
+        foreach ($this->lpa->document->primaryAttorneys as $primaryAttorney) {
             $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-title'] = $primaryAttorney->name->title;
             $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-first'] = $primaryAttorney->name->first;
             $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-name-last'] = $primaryAttorney->name->last;
@@ -44,17 +43,21 @@ class Lp1h extends Lp1
 
             $this->pdfFormData['lpa-document-primaryAttorneys-'.$i.'-email-address'] = ($primaryAttorney->email instanceof EmailAddress)?"\n".$primaryAttorney->email->address:null;
 
-            if(++$i==4) break;
+            if (++$i == 4) {
+                break;
+            }
         }
 
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
-        if($noOfPrimaryAttorneys == 1) {
+
+        if ($noOfPrimaryAttorneys == 1) {
             $this->drawingTargets[1] = array('primaryAttorney-1-hw');
         }
 
         // Section 4
-        $i=0;
-        foreach($this->lpa->document->replacementAttorneys as $replacementAttorney) {
+        $i = 0;
+
+        foreach ($this->lpa->document->replacementAttorneys as $replacementAttorney) {
             $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-name-title'] = $replacementAttorney->name->title;
             $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-name-first'] = $replacementAttorney->name->first;
             $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-name-last'] = $replacementAttorney->name->last;
@@ -68,42 +71,47 @@ class Lp1h extends Lp1
             $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-address-address3'] = $replacementAttorney->address->address3;
             $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-address-postcode'] = $replacementAttorney->address->postcode;
 
-            $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-email-address'] = ($replacementAttorney->email instanceof EmailAddress)?"\n".$replacementAttorney->email->address:null;
+            $this->pdfFormData['lpa-document-replacementAttorneys-'.$i.'-email-address'] = ($replacementAttorney->email instanceof EmailAddress ? "\n" . $replacementAttorney->email->address : null);
 
-            if(++$i==2) break;
+            if (++$i==2) {
+                break;
+            }
         }
 
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
-        if($noOfReplacementAttorneys == 0) {
+
+        if ($noOfReplacementAttorneys == 0) {
             $this->drawingTargets[4] = array('replacementAttorney-0-hw', 'replacementAttorney-1-hw');
-        }
-        elseif($noOfReplacementAttorneys == 1) {
+        } elseif ($noOfReplacementAttorneys == 1) {
             $this->drawingTargets[4] = array('replacementAttorney-1-hw');
         }
 
         // Life Sustaining (Section 5)
-        if($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            if($this->lpa->document->primaryAttorneyDecisions->canSustainLife === true) {
+        if ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+            if ($this->lpa->document->primaryAttorneyDecisions->canSustainLife === true) {
                 $this->drawingTargets[5] = array('life-sustain-B');
-            }
-            else {
+            } else {
                 $this->drawingTargets[5] = array('life-sustain-A');
             }
         }
 
         // Attorney/Replacement signature (Section 11)
         $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
-        $attorneyIndex=0;
-        foreach($allAttorneys as $attorney) {
+        $attorneyIndex = 0;
+
+        foreach ($allAttorneys as $attorney) {
             $this->pdfFormData['signature-attorney-'.$attorneyIndex.'-name-title'] = $attorney->name->title;
             $this->pdfFormData['signature-attorney-'.$attorneyIndex.'-name-first'] = $attorney->name->first;
             $this->pdfFormData['signature-attorney-'.$attorneyIndex.'-name-last'] = $attorney->name->last;
 
-            if(++$attorneyIndex == self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) break;
+            if (++$attorneyIndex == self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) {
+                break;
+            }
         }
 
         $numberOfHumanAttorneys = $attorneyIndex;
-        switch($numberOfHumanAttorneys) {
+
+        switch ($numberOfHumanAttorneys) {
             case 3:
                 $this->drawingTargets[14] = array('attorney-signature-hw');
                 break;
@@ -125,11 +133,10 @@ class Lp1h extends Lp1
         }
 
         // Section 12
-        if($this->lpa->document->whoIsRegistering == 'donor') {
+        if ($this->lpa->document->whoIsRegistering == 'donor') {
             $this->drawingTargets[16] = array('applicant-0-hw','applicant-1-hw','applicant-2-hw','applicant-3-hw');
-        }
-        elseif(is_array($this->lpa->document->whoIsRegistering)) {
-            switch(count($this->lpa->document->whoIsRegistering)) {
+        } elseif (is_array($this->lpa->document->whoIsRegistering)) {
+            switch (count($this->lpa->document->whoIsRegistering)) {
                 case 3:
                     $this->drawingTargets[16] = array('applicant-3-hw');
                     break;
@@ -155,9 +162,10 @@ class Lp1h extends Lp1
         // if number of attorneys (including replacements) is greater than 4, duplicate Section 11 - Attorneys Signatures page
         // as many as needed to be able to fit all attorneys in the form.
         $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
-        if( $totalAttorneys > 4 ) {
+
+        if ($totalAttorneys > 4) {
             $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
             $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
         }
-    } // function generateAdditionalPages()
-} // class
+    }
+}

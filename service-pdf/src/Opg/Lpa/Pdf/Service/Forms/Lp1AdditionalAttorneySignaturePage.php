@@ -16,15 +16,19 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 
         $allAttorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
 
-        $skipped=0;
-        foreach($allAttorneys as $attorney) {
+        $skipped = 0;
 
+        foreach ($allAttorneys as $attorney) {
             // skip trust corp
-            if($attorney instanceof TrustCorporation) continue;
+            if ($attorney instanceof TrustCorporation) {
+                continue;
+            }
 
             // skip first 4 human attorneys
             $skipped++;
-            if($skipped <= Lp1::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) continue;
+            if ($skipped <= Lp1::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) {
+                continue;
+            }
 
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
 
@@ -40,7 +44,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
             $this->pdf->fillForm($this->pdfFormData)
                       ->flatten()
                       ->saveAs($filePath);
-        } //endforeach
+        }
 
         return $this->interFileStack;
     }
