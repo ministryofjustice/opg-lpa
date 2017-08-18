@@ -109,9 +109,4 @@ class ConfigTest extends TestCase
             6       => 'else',
         ]);
     }
-
-    public function tearDown()
-    {
-        Config::destroy();
-    }
 }

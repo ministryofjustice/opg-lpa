@@ -4,7 +4,7 @@ namespace OpgTest\Lpa\Pdf\Service;
 
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Service\Generator;
-use Opg\Lpa\Pdf\Service\ResponseInterface;
+use Opg\Lpa\Pdf\Worker\Response\AbstractResponse;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
 use ConfigSetUp;
@@ -141,7 +141,7 @@ class GeneratorTest extends TestCase
     private function getResponse()
     {
         //  Mock the response
-        $response = Mockery::mock(ResponseInterface::class);
+        $response = Mockery::mock(AbstractResponse::class);
         $response->shouldReceive('save')
                  ->andReturnNull();
 

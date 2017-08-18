@@ -22,7 +22,7 @@ class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface {
      * Return the RedisResponse for handling the response.
      *
      * @param $docId
-     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
+     * @return \Opg\Lpa\Pdf\Worker\Response\AbstractResponse
      */
     protected function getResponseObject( $docId ){
         return new Response\S3Response( $docId );

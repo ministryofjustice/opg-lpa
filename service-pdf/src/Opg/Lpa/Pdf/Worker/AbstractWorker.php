@@ -96,7 +96,7 @@ abstract class AbstractWorker
      * Return the object for handling the response.
      *
      * @param $docId
-     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
+     * @return \Opg\Lpa\Pdf\Worker\Response\AbstractResponse
      */
     abstract protected function getResponseObject($docId);
 }

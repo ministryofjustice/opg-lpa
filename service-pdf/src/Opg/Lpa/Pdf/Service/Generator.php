@@ -1,6 +1,7 @@
 <?php
 namespace Opg\Lpa\Pdf\Service;
 
+use Opg\Lpa\Pdf\Worker\Response\AbstractResponse;
 use RuntimeException;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -14,8 +15,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Logger\Logger;
 
-class Generator implements GeneratorInterface {
-
+class Generator
+{
     const TYPE_FORM_LP1    = 'LP1';
     const TYPE_FORM_LP3     = 'LP3';
     const TYPE_FORM_LPA120  = 'LPA120';
@@ -37,9 +38,9 @@ class Generator implements GeneratorInterface {
      *
      * @param $formType
      * @param Lpa $lpa
-     * @param ResponseInterface $response
+     * @param AbstractResponse $response
      */
-    public function __construct($formType, Lpa $lpa, ResponseInterface $response)
+    public function __construct($formType, Lpa $lpa, AbstractResponse $response)
     {
         $this->logger = Logger::getInstance();
 

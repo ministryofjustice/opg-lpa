@@ -86,10 +86,4 @@ class Config implements Countable, ArrayAccess {
         }
         return $a;
     }
-
-    public static function destroy()
-    {
-        self::$instance = null;
-    }
-
 }
