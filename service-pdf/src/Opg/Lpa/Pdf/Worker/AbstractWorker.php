@@ -5,6 +5,7 @@ namespace Opg\Lpa\Pdf\Worker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Generator;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Worker\Response\AbstractResponse;
 use Exception;
 
 abstract class AbstractWorker
@@ -93,10 +94,10 @@ abstract class AbstractWorker
     }
 
     /**
-     * Return the object for handling the response.
+     * Return the object for handling the response
      *
      * @param $docId
-     * @return \Opg\Lpa\Pdf\Worker\Response\AbstractResponse
+     * @return AbstractResponse
      */
     abstract protected function getResponseObject($docId);
 }
