@@ -370,26 +370,10 @@ abstract class AbstractForm
 
     }
 
-    protected function nextTag($tag)
+    protected function nextTag($tag = '')
     {
-        $cols = str_split(strrev($tag), 1);
-
-        for ($i = 0; $i < count($cols); $i++) {
-            if ($cols[$i] == 'Z') {
-                $cols[$i] = 'A';
-
-                if ($i == count($cols) - 1) {
-                    return 'A'.strrev(implode('', $cols));
-                }
-            } else {
-                $cols[$i]++;
-                break;
-            }
-        }
-
-        return strrev(implode('', $cols));
+        return ++$tag;
     }
-
 
     protected function linewrap($string, $width, $break="\r\n", $cut=false)
     {

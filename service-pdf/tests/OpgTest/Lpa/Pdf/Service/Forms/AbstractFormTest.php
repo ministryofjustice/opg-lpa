@@ -58,7 +58,21 @@ class AbstractFormTest extends AbstractFormTestClass
             ['Y', 'Z'],
             ['Z', 'AA'],
             ['AA', 'AB'],
-            ['', 1],
+            ['AB', 'AC'],
+            ['AC', 'AD'],
+            ['AD', 'AE'],
+            ['AE', 'AF'],
+            ['AF', 'AG'],
+            ['AG', 'AH'],
+            ['AH', 'AI'],
+            ['FR', 'FS'],
+            ['DH', 'DI'],
+            ['QI', 'QJ'],
+            ['KL', 'KM'],
+            ['YH', 'YI'],
+            ['ZZ', 'AAA'],
+            ['AAA', 'AAB'],
+            ['ZZY', 'ZZZ'],
         ];
     }
 
@@ -70,6 +84,6 @@ class AbstractFormTest extends AbstractFormTestClass
         $lpa = $this->getLpa();
         $testForm = new AbstractTesterForm($lpa);
 
-        $this->assertEquals($testForm->nextTagExt($input), $expected);
+        $this->assertEquals($expected, $testForm->nextTagExt($input));
     }
 }
