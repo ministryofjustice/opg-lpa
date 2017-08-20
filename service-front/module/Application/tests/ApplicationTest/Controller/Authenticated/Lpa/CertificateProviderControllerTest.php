@@ -7,6 +7,7 @@ use Application\Form\Lpa\CertificateProviderForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class CertificateProviderControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(CertificateProviderForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\CertificateProviderForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

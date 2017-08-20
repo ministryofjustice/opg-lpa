@@ -7,6 +7,7 @@ use Application\Form\Lpa\RepeatApplicationForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class RepeatApplicationControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(RepeatApplicationForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\RepeatApplicationForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

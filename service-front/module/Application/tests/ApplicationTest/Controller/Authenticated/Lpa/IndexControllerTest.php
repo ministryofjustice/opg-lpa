@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\IndexController;
 use ApplicationTest\Controller\AbstractControllerTest;
+use RuntimeException;
 
 class IndexControllerTest extends AbstractControllerTest
 {
@@ -16,5 +17,14 @@ class IndexControllerTest extends AbstractControllerTest
     {
         $this->controller = new IndexController();
         parent::controllerSetUp($this->controller);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

@@ -7,6 +7,7 @@ use Application\Form\Lpa\FeeReductionForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class FeeReductionControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(FeeReductionForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\FeeReductionForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

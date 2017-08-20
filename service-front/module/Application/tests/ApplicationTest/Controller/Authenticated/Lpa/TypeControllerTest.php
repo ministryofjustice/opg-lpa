@@ -7,6 +7,7 @@ use Application\Form\Lpa\TypeForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class TypeControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class TypeControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(TypeForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }
