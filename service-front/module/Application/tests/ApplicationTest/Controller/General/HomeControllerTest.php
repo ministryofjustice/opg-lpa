@@ -2,7 +2,19 @@
 
 namespace ApplicationTest\Controller\General;
 
-class HomeControllerTest
-{
+use Application\Controller\General\HomeController;
+use ApplicationTest\Controller\AbstractControllerTest;
 
+class HomeControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var HomeController
+     */
+    private $controller;
+
+    public function setUp()
+    {
+        $this->controller = new HomeController();
+        parent::controllerSetUp($this->controller);
+    }
 }

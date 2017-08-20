@@ -2,7 +2,19 @@
 
 namespace ApplicationTest\Controller\Authenticated;
 
-class PostcodeControllerTest
-{
+use Application\Controller\Authenticated\PostcodeController;
+use ApplicationTest\Controller\AbstractControllerTest;
 
+class PostcodeControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var PostcodeController
+     */
+    private $controller;
+
+    public function setUp()
+    {
+        $this->controller = new PostcodeController();
+        parent::controllerSetUp($this->controller);
+    }
 }

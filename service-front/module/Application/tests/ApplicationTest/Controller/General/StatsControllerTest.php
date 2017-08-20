@@ -2,7 +2,19 @@
 
 namespace ApplicationTest\Controller\General;
 
-class StatsControllerTest
-{
+use Application\Controller\General\StatsController;
+use ApplicationTest\Controller\AbstractControllerTest;
 
+class StatsControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var StatsController
+     */
+    private $controller;
+
+    public function setUp()
+    {
+        $this->controller = new StatsController();
+        parent::controllerSetUp($this->controller);
+    }
 }
