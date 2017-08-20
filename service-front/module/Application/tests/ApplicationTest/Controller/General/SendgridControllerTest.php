@@ -17,4 +17,9 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->controller = new SendgridController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

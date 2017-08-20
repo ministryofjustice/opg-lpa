@@ -17,4 +17,9 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->controller = new NotificationsController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

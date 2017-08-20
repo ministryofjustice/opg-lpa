@@ -17,4 +17,9 @@ class GuidanceControllerTest extends AbstractControllerTest
         $this->controller = new GuidanceController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

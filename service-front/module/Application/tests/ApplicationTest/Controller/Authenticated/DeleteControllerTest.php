@@ -17,4 +17,9 @@ class DeleteControllerTest extends AbstractControllerTest
         $this->controller = new DeleteController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

@@ -27,4 +27,9 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->form = Mockery::mock(AboutYou::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\AboutYou')->andReturn($this->form);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

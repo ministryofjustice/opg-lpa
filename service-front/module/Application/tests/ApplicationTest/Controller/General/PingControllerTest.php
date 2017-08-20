@@ -17,4 +17,9 @@ class PingControllerTest extends AbstractControllerTest
         $this->controller = new PingController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

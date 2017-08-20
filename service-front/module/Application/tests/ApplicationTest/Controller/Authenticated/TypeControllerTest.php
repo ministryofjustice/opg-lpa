@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller\Authenticated;
 use Application\Controller\Authenticated\TypeController;
 use Application\Form\Lpa\TypeForm;
 use ApplicationTest\Controller\AbstractControllerTest;
+use Mockery;
 use Mockery\MockInterface;
 
 class TypeControllerTest extends AbstractControllerTest
@@ -23,7 +24,12 @@ class TypeControllerTest extends AbstractControllerTest
         $this->controller = new TypeController();
         parent::controllerSetUp($this->controller);
 
-        $this->form = Mockery::mock(Type::class);
+        $this->form = Mockery::mock(TypeForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm')->andReturn($this->form);
+    }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
     }
 }

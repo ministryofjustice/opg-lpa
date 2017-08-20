@@ -17,4 +17,9 @@ class HomeControllerTest extends AbstractControllerTest
         $this->controller = new HomeController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

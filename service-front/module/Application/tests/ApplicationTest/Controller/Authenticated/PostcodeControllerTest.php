@@ -17,4 +17,9 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->controller = new PostcodeController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }
