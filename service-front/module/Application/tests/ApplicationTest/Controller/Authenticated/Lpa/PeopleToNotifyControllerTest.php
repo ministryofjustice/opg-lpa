@@ -7,6 +7,7 @@ use Application\Form\Lpa\PeopleToNotifyForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class PeopleToNotifyControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(PeopleToNotifyForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PeopleToNotifyForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

@@ -7,6 +7,7 @@ use Application\Form\Lpa\PaymentForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class CheckoutControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(PaymentForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

@@ -7,6 +7,7 @@ use Application\Form\Lpa\ReuseDetailsForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class ReuseDetailsControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(ReuseDetailsForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\ReuseDetailsForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }

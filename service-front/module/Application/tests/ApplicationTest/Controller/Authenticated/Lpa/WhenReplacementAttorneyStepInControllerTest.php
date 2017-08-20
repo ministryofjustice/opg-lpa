@@ -7,6 +7,7 @@ use Application\Form\Lpa\WhenReplacementAttorneyStepInForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 {
@@ -26,5 +27,14 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(WhenReplacementAttorneyStepInForm::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\WhenReplacementAttorneyStepInForm')->andReturn($this->form);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A LPA has not been set
+     */
+    public function testIndexActionNoLpa()
+    {
+        $this->controller->indexAction();
     }
 }
