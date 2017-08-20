@@ -2,7 +2,29 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
-class CertificateProviderControllerTest
-{
+use Application\Controller\Authenticated\Lpa\CertificateProviderController;
+use Application\Form\Lpa\CertificateProviderForm;
+use ApplicationTest\Controller\AbstractControllerTest;
+use Mockery;
+use Mockery\MockInterface;
 
+class CertificateProviderControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var CertificateProviderController
+     */
+    private $controller;
+    /**
+     * @var MockInterface|CertificateProviderForm
+     */
+    private $form;
+
+    public function setUp()
+    {
+        $this->controller = new CertificateProviderController();
+        parent::controllerSetUp($this->controller);
+
+        $this->form = Mockery::mock(CertificateProviderForm::class);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\CertificateProviderForm')->andReturn($this->form);
+    }
 }

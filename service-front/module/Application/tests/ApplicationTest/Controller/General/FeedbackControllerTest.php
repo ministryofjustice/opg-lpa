@@ -10,7 +10,6 @@ use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Zend\Http\Header\Referer;
-use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
 
 class FeedbackControllerTest extends AbstractControllerTest

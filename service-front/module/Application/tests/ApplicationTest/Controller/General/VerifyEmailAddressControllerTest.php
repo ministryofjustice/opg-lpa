@@ -2,7 +2,19 @@
 
 namespace ApplicationTest\Controller\General;
 
-class VerifyEmailAddressControllerTest
-{
+use Application\Controller\General\VerifyEmailAddressController;
+use ApplicationTest\Controller\AbstractControllerTest;
 
+class VerifyEmailAddressControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var VerifyEmailAddressController
+     */
+    private $controller;
+
+    public function setUp()
+    {
+        $this->controller = new VerifyEmailAddressController();
+        parent::controllerSetUp($this->controller);
+    }
 }

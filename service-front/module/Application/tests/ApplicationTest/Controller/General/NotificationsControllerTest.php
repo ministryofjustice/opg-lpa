@@ -2,7 +2,19 @@
 
 namespace ApplicationTest\Controller\General;
 
-class NotificationsControllerTest
-{
+use Application\Controller\General\NotificationsController;
+use ApplicationTest\Controller\AbstractControllerTest;
 
+class NotificationsControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var NotificationsController
+     */
+    private $controller;
+
+    public function setUp()
+    {
+        $this->controller = new NotificationsController();
+        parent::controllerSetUp($this->controller);
+    }
 }
