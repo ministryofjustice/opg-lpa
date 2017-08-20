@@ -17,4 +17,9 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
         $this->controller = new VerifyEmailAddressController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

@@ -27,4 +27,9 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->form = Mockery::mock(ChangeEmailAddress::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\ChangeEmailAddress')->andReturn($this->form);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

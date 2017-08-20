@@ -27,4 +27,9 @@ class ChangePasswordControllerTest extends AbstractControllerTest
         $this->form = Mockery::mock(ChangePassword::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\ChangePassword')->andReturn($this->form);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

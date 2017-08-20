@@ -17,4 +17,9 @@ class StatsControllerTest extends AbstractControllerTest
         $this->controller = new StatsController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

@@ -17,4 +17,9 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->controller = new DashboardController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }

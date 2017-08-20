@@ -17,4 +17,9 @@ class AdminControllerTest extends AbstractControllerTest
         $this->controller = new AdminController();
         parent::controllerSetUp($this->controller);
     }
+
+    public function testIndexAction()
+    {
+        $this->controller->indexAction();
+    }
 }
