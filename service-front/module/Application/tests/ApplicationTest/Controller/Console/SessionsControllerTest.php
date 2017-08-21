@@ -38,6 +38,7 @@ class SessionsControllerTest extends AbstractControllerTest
     {
         $this->dynamoCronLock->shouldReceive('getLock')->with('SessionGarbageCollection', ( 60 * 30 ))->andReturn(false)->once();
         $this->sessionManager->shouldReceive('getSaveHandler')->never();
+        $this->logger->shouldReceive('info')->with('This node did not get the cron lock for SessionGarbageCollection')->once();
 
         $result = $this->controller->gcAction();
 
@@ -49,6 +50,8 @@ class SessionsControllerTest extends AbstractControllerTest
         $this->dynamoCronLock->shouldReceive('getLock')->with('SessionGarbageCollection', ( 60 * 30 ))->andReturn(true)->once();
         $this->sessionManager->shouldReceive('getSaveHandler')->andReturn($this->saveHandler)->once();
         $this->saveHandler->shouldReceive('garbageCollect')->once();
+        $this->logger->shouldReceive('info')->with('This node got the cron lock for SessionGarbageCollection')->once();
+        $this->logger->shouldReceive('info')->with('Finished running Session Garbage Collection')->once();
 
         $result = $this->controller->gcAction();
 

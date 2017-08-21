@@ -123,7 +123,6 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
 
         $this->logger = Mockery::mock(Logger::class);
-        $this->logger->shouldReceive('info');
         $this->serviceLocator->shouldReceive('get')->with('Logger')->andReturn($this->logger);
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
