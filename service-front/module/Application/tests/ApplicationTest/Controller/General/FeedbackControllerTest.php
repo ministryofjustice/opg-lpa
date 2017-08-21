@@ -58,6 +58,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
@@ -93,6 +94,7 @@ class FeedbackControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/feedback/thankyou', $result->getTemplate());
+        $this->assertEquals(false, $result->getVariable('strictVars'));
     }
 
     public function testSendFeedbackFormGetReferer()
@@ -106,6 +108,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
@@ -118,6 +121,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 }

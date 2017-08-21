@@ -69,6 +69,7 @@ class AuthControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('authError'));
         $this->assertEquals(false, $result->getVariable('isTimeout'));
@@ -92,6 +93,7 @@ class AuthControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals('Authentication Failed', $result->getVariable('authError'));
         $this->assertEquals(false, $result->getVariable('isTimeout'));
@@ -199,6 +201,8 @@ class AuthControllerTest extends AbstractControllerTest
         $result = $this->controller->deletedAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals(false, $result->getVariable('strictVars'));
     }
 
     private function setPreAuthRequestUrl($url)
