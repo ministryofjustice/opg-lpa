@@ -16,7 +16,7 @@
 
 {{ canSustainLife.setValueOptions(
     {"1": "Option A – Choose this option if you <strong class='bold-small'>want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment on your behalf",
-        "0": "Option B – Choose this option if you <strong class='bold-small'>do not want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment"}
+        "0": "Option B – Choose this option if you <strong class='bold-small'>do not want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment on your behalf"}
 ) ? ''}}
 
 {# form fields config #}
@@ -32,7 +32,7 @@
 
 <li id="life-sustaining-section" class="section current">
 
-    <h2 class="heading-medium accordion-header flush--top">Who do you want to make decisions about life-sustaining treatment?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who do you (the donor) want to make decisions about life-sustaining treatment?</h2>
 
     <div class="accordion-info">
         <div class="text">
@@ -56,7 +56,7 @@
         <fieldset id="how">
             <legend class="visuallyhidden">Life-sustaining treatment decision</legend>
 
-            <h2 class="heading-medium flush--top text">Who do you want to make decisions about life-sustaining treatment?</h2>
+            <h2 class="heading-medium flush--top text">Who do you (the donor) want to make decisions about life-sustaining treatment?</h2>
 
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
@@ -85,7 +85,7 @@
             </div>
         </fieldset>
 
-        <p class="text">When you print your LPA document, you'll have to sign and date the option you've chosen. This must be witnessed. If any signatures, dates or witness details are missing from this page OPG may not be able to register the LPA and you may have to pay the application fee again.</p>
+        <p class="text">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address - if not, OPG cannot register the LPA, and you may have to pay the application fee again.</p>
 
         <div class="form-group">
             {{ formElement(form.get('save')) }}
