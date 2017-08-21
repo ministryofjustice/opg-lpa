@@ -7,6 +7,8 @@ use Application\Form\User\Registration;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use Zend\Http\Header\Referer;
+use Zend\Http\Response;
 
 class RegisterControllerTest extends AbstractControllerTest
 {
@@ -28,8 +30,17 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->formElementManager->shouldReceive('get')->with('Application\Form\General\Registration')->andReturn($this->form);
     }
 
-    public function testIndexAction()
+    public function testIndexActionRefererGovUk()
     {
-        $this->controller->indexAction();
+        $response = new Response();
+        $referer = new Referer();
+        $referer->setUri('http://www.gov.uk');
+
+        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
+        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
     }
 }
