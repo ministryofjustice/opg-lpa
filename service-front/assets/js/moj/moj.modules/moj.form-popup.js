@@ -89,6 +89,9 @@
     },
 
     checkReusedDetails: function () {
+      // Align to top after loading in the content to avoid having the form starting half
+      // way down (a scenario that happens when you've scrolled far down on Reuse details page)
+      moj.Helpers.scrollTo('#popup-content');
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
       $('#dob-date-day').trigger('change');
       $('input[name="name-first"]').trigger('change');

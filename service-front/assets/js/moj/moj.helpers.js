@@ -39,7 +39,7 @@
     $scrollEl
       .animate({
         scrollTop: topPos
-      }, 300)
+      },0)
       .promise()
       .done(function () {
         $target.closest('.group').find('input, select, textarea').first().focus();
@@ -50,7 +50,7 @@
   moj.Helpers.scrollPos = function (target) {
     /*jshint laxbreak: true */
     return moj.Helpers.isPopupOpen()
-              ? target.offset().top - $('#popup').offset().top + parseInt($('#popup').css('marginTop'), 10)
+              ? target.offset().top - $('#popup').offset().top
               : target.offset().top;
   };
 
