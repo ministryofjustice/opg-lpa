@@ -2,7 +2,6 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -13,14 +12,21 @@ use mikehaertl\pdftk\Pdf;
 
 abstract class AbstractForm
 {
-    const CHECK_BOX_ON = 'On';
-
-    const CROSS_LINE_WIDTH = 10;
-
     const CONTENT_TYPE_ATTORNEY_DECISIONS = 'decisions';
     const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'how-replacement-attorneys-step-in';
     const CONTENT_TYPE_PREFERENCES = 'preferences';
     const CONTENT_TYPE_INSTRUCTIONS = 'instructions';
+
+    const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
+    const MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM = 2;
+    const MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM = 4;
+    const MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM = 4;
+    const MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM = 4;
+    const MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM = 4;
+
+    const BOX_CHARS_PER_ROW = 84;
+    const BOX_NO_OF_ROWS = 6;
+    const BOX_NO_OF_ROWS_CS2 = 14;
 
     /**
      * Logger utility
@@ -151,18 +157,6 @@ abstract class AbstractForm
         ]);
     }
 
-    protected function protectPdf()
-    {
-        $pdf = new Pdf($this->generatedPdfFilePath);
-
-        $password = $this->config['pdf']['password'];
-
-        $pdf->allow('Printing CopyContents')
-            ->flatten()
-            ->setPassword($password)
-            ->saveAs($this->generatedPdfFilePath);
-    }
-
     /**
      * Get generated PDF file path
      * @return string
@@ -178,16 +172,6 @@ abstract class AbstractForm
     }
 
     /**
-     * helper function - get fullname for a person
-     * @param LongName $personName
-     * @return string
-     */
-    protected function fullName(LongName $personName)
-    {
-        return $personName->title . ' ' . $personName->first . ' ' . $personName->last;
-    }
-
-    /**
      * @param string $fileType
      * @return string
      */
@@ -199,19 +183,19 @@ abstract class AbstractForm
     }
 
     /**
-     * Register a temp file in self::$interFileStack
+     * Register a temp file in $interFileStack
      *
      * @param $fileType
      * @return string
      */
     public function registerTempFile($fileType)
     {
-        $path = $this->getTmpFilePath($fileType);
         if (!isset($this->interFileStack[$fileType])) {
-            $this->interFileStack[$fileType] = array($path);
-        } else {
-            $this->interFileStack[$fileType][] = $path;
+            $this->interFileStack[$fileType] = [];
         }
+
+        $path = $this->getTmpFilePath($fileType);
+        $this->interFileStack[$fileType][] = $path;
 
         return $path;
     }
@@ -235,7 +219,7 @@ abstract class AbstractForm
             // draw cross lines
             $pdf = ZendPdfDocument::load($filePath);
             foreach ($params as $pageNo => $blockNames) {
-                $page = $pdf->pages[$pageNo]->setLineWidth(self::CROSS_LINE_WIDTH);
+                $page = $pdf->pages[$pageNo]->setLineWidth(10);
                 foreach ($blockNames as $blockName) {
                     $page->drawLine(
                         $this->crossLineParams[$blockName]['bx'],
@@ -253,23 +237,29 @@ abstract class AbstractForm
     /**
      * Convert all new lines with spaces to fill out to the end of each line
      *
-     * @param string $content
+     * @param string $contentIn
      * @return string
      */
-    protected function flattenTextContent($content)
+    protected function flattenTextContent($contentIn)
     {
-        $content = $this->linewrap(trim($content), Lp1::BOX_CHARS_PER_ROW);
+        $content = '';
+
+        foreach (explode("\r\n", trim($contentIn)) as $contentLine) {
+            $content .= wordwrap($contentLine, self::BOX_CHARS_PER_ROW, "\r\n", false);
+            $content .= "\r\n";
+        }
 
         $paragraphs = explode("\r\n", $content);
-        $lines = count($paragraphs);
-        for ($i = 0; $i < $lines; $i++) {
+
+        for ($i = 0; $i < count($paragraphs); $i++) {
             $paragraphs[$i] = trim($paragraphs[$i]);
+
             if (strlen($paragraphs[$i]) == 0) {
                 unset($paragraphs[$i]);
             } else {
                 // calculate how many space chars to be appended to replace the new line in this paragraph.
-                if (strlen($paragraphs[$i]) % Lp1::BOX_CHARS_PER_ROW) {
-                    $noOfSpaces = Lp1::BOX_CHARS_PER_ROW - strlen($paragraphs[$i]) % Lp1::BOX_CHARS_PER_ROW;
+                if (strlen($paragraphs[$i]) % self::BOX_CHARS_PER_ROW) {
+                    $noOfSpaces = self::BOX_CHARS_PER_ROW - strlen($paragraphs[$i]) % self::BOX_CHARS_PER_ROW;
                     if ($noOfSpaces > 0) {
                         $paragraphs[$i] .= str_repeat(" ", $noOfSpaces);
                     }
@@ -280,28 +270,13 @@ abstract class AbstractForm
         return implode("\r\n", $paragraphs);
     }
 
-    protected function mergerIntermediateFilePaths($paths)
-    {
-        if (empty($paths)) {
-            return;
-        }
-
-        foreach ($paths as $type => $path) {
-            if (isset($this->interFileStack[$type])) {
-                $this->interFileStack[$type] = array_merge($this->interFileStack[$type], $path);
-            } else {
-                $this->interFileStack[$type] = $path;
-            }
-        }
-    }
-
     /**
      * Get content for a multiline text box.
      *
      * @param int $pageNo
      * @param string $content - user input content for preference/instruction/decisions/step-in
-     * @param enum $contentType - CONTENT_TYPE_ATTORNEY_DECISIONS | CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN | CONTENT_TYPE_PREFERENCES | CONTENT_TYPE_INSTRUCTIONS
-     * @return string|NULL
+     * @param $contentType
+     * @return string|null
      */
     protected function getContentForBox($pageNo, $content, $contentType)
     {
@@ -310,9 +285,9 @@ abstract class AbstractForm
         // return content for preference or instruction in section 7.
         if (($contentType == self::CONTENT_TYPE_INSTRUCTIONS) || ($contentType == self::CONTENT_TYPE_PREFERENCES)) {
             if ($pageNo == 0) {
-                return "\r\n" . substr($flattenContent, 0, (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS);
+                return "\r\n" . substr($flattenContent, 0, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS);
             } else {
-                $chunks = str_split(substr($flattenContent, (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS), (Lp1::BOX_CHARS_PER_ROW + 2) * Cs2::BOX_NO_OF_ROWS_CS2);
+                $chunks = str_split(substr($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS), (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
                 if (isset($chunks[$pageNo - 1])) {
                     return "\r\n" . $chunks[$pageNo - 1];
                 } else {
@@ -320,24 +295,13 @@ abstract class AbstractForm
                 }
             }
         } else {
-            $chunks = str_split($flattenContent, (Lp1::BOX_CHARS_PER_ROW + 2) * Cs2::BOX_NO_OF_ROWS_CS2);
+            $chunks = str_split($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
             if (isset($chunks[$pageNo])) {
                 return "\r\n" . $chunks[$pageNo];
             } else {
                 return null;
             }
         }
-    }
-
-    /**
-     * Check if the text content can fit into the text box in the Section 7 page in the base PDF form.
-     *
-     * @return boolean
-     */
-    protected function canFitIntoTextBox($content)
-    {
-        $flattenContent = $this->flattenTextContent($content);
-        return strlen($flattenContent) <= (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS;
     }
 
     public function cleanup()
@@ -360,22 +324,6 @@ abstract class AbstractForm
                 }
             }
         }
-    }
-
-    protected function nextTag($tag = '')
-    {
-        return ++$tag;
-    }
-
-    protected function linewrap($string, $width, $break = "\r\n", $cut = false)
-    {
-        $array = explode("\r\n", $string);
-        $string = "";
-        foreach ($array as $key => $val) {
-            $string .= wordwrap($val, $width, $break, $cut);
-            $string .= "\r\n";
-        }
-        return $string;
     }
 
     /**
@@ -419,37 +367,20 @@ abstract class AbstractForm
      */
     protected function hasTrustCorporation($attorneys = null)
     {
-        if (null == $attorneys) {
-            foreach ($this->lpa->document->primaryAttorneys as $attorney) {
-                if ($attorney instanceof TrustCorporation) {
-                    return true;
-                }
-            }
-
-            foreach ($this->lpa->document->replacementAttorneys as $attorney) {
-                if ($attorney instanceof TrustCorporation) {
-                    return true;
-                }
-            }
-        } else {
-            foreach ($attorneys as $attorney) {
-                if ($attorney instanceof TrustCorporation) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return ($this->getTrustCorporation($attorneys) instanceof TrustCorporation);
     }
 
     /**
-     * Get the trust corporation from the LPA if one exists - return null if not
+     * Get the trust corporation from the provided array of attorneys, or the LPA, if one exists - return null if not
      *
+     * @param  $attorneys
      * @return TrustCorporation|null
      */
-    protected function getTrustCorporation()
+    protected function getTrustCorporation($attorneys = null)
     {
-        $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
+        if (is_null($attorneys)) {
+            $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
+        }
 
         //  Loop through the attorneys to try to find the trust attorney
         foreach ($attorneys as $attorney) {

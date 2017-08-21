@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Service;
 
 use Opg\Lpa\Pdf\Worker\Response\AbstractResponse;
@@ -17,10 +18,6 @@ use Opg\Lpa\Pdf\Logger\Logger;
 
 class Generator
 {
-    const TYPE_FORM_LP1    = 'LP1';
-    const TYPE_FORM_LP3     = 'LP3';
-    const TYPE_FORM_LPA120  = 'LPA120';
-
     /**
      * Logger utility
      *
@@ -28,9 +25,10 @@ class Generator
      */
     protected $logger;
 
-    protected $config;
     protected $formType;
+
     protected $lpa;
+
     protected $response;
 
     /**
@@ -44,14 +42,11 @@ class Generator
     {
         $this->logger = Logger::getInstance();
 
-        # CHECK $TYPE IS VALID. THROW AN EXCEPTION IF NOT.
-
-        $this->config = Config::getInstance();
         $this->formType = $formType;
         $this->lpa = $lpa;
         $this->response = $response;
 
-        // copy pdf template files to ram if they haven't.
+        //  Copy pdf template files to ram if they haven't
         $this->copyPdfSourceToRam();
     }
 
@@ -61,11 +56,10 @@ class Generator
      *
      * @return bool|string
      */
-    public function generate(){
-
-        if( $this->lpa->validate()->hasErrors() ){
-            // The LPA is invalid.
-
+    public function generate()
+    {
+        if ($this->lpa->validate()->hasErrors()) {
+            //  The LPA is invalid
             $this->logger->info('LPA failed validation in PDF generator', [
                 'lpaId' => $this->lpa->id
             ]);
@@ -73,19 +67,16 @@ class Generator
             throw new RuntimeException('LPA failed validation');
         }
 
-        //---
-
-        $state = new StateChecker( $this->lpa );
+        $state = new StateChecker($this->lpa);
 
         # GENERATE THE PDF, STORING IN A LOCAL TMP FILE UNDER /tmp
-        switch($this->formType) {
-            case self::TYPE_FORM_LP1:
-
-                if( !$state->canGenerateLP1() ){
+        switch ($this->formType) {
+            case 'LP1':
+                if (!$state->canGenerateLP1()) {
                     throw new RuntimeException('LPA does not contain all the required data to generate a LP1');
                 }
 
-                switch($this->lpa->document->type) {
+                switch ($this->lpa->document->type) {
                     case Document::LPA_TYPE_PF:
                         $pdf = new Lp1f($this->lpa);
                         break;
@@ -95,18 +86,16 @@ class Generator
                 }
 
                 break;
-            case self::TYPE_FORM_LP3:
-
-                if( !$state->canGenerateLP3() ){
+            case 'LP3':
+                if (!$state->canGenerateLP3()) {
                     throw new RuntimeException('LPA does not contain all the required data to generate a LP3');
                 }
 
                 $pdf = new Lp3($this->lpa);
 
                 break;
-            case self::TYPE_FORM_LPA120:
-
-                if( !$state->canGenerateLPA120() ){
+            case 'LPA120':
+                if (!$state->canGenerateLPA120()) {
                     throw new RuntimeException('LPA does not contain all the required data to generate a LPA120');
                 }
 
@@ -114,7 +103,7 @@ class Generator
 
                 break;
             default:
-                throw new \UnexpectedValueException('Invalid form type: '.$this->formType);
+                throw new \UnexpectedValueException('Invalid form type: ' . $this->formType);
         }
 
         $pdf->generate();
@@ -125,51 +114,43 @@ class Generator
             'lpaId' => $this->lpa->id
         ]);
 
-        //---
+        //  Pass the generated file to the response and save
+        $this->response->save(new \SplFileInfo($filePath));
 
-        # PASS THE GENERATED FILE TO $this->response->save( new SplFileInfo( $filePath ) );
-
-        $this->response->save( new \SplFileInfo( $filePath ) );
-
-        //---
-
-        # DELETE THE LOCAL TEMP FILE
+        //  Delete the local temp file
         $pdf->cleanup();
 
-        //--- temp files deleted at the end of $pdf's life cycle - in it's destructor.
-
         return true;
-
-    } // function
+    }
 
     /**
      * Copy LPA PDF template files into ram disk if they are not found on the ram disk.
      */
     private function copyPdfSourceToRam()
     {
-        // check if
-        if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'])) {
+        $assetsConfig = Config::getInstance()['service']['assets'];
+        $templatePathOnDisk = $assetsConfig['template_path_on_ram_disk'];
 
+        if (!\file_exists($templatePathOnDisk)) {
             $this->logger->info('Making template path on RAM disk', [
                 'lpaId' => $this->lpa->id
             ]);
 
-            \mkdir($this->config['service']['assets']['template_path_on_ram_disk'], 0777, true);
+            \mkdir($templatePathOnDisk, 0777, true);
         }
 
-        foreach(glob($this->config['service']['assets']['source_template_path'].'/*.pdf') as $pdf_source) {
-            $pathInfo = pathinfo($pdf_source);
+        foreach (glob($assetsConfig['source_template_path'] . '/*.pdf') as $pdfSource) {
+            $pathInfo = pathinfo($pdfSource);
 
-            if(!\file_exists($this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'])) {
-
-                $dest = $this->config['service']['assets']['template_path_on_ram_disk'].'/'.$pathInfo['basename'];
+            if (!\file_exists($templatePathOnDisk . '/' . $pathInfo['basename'])) {
+                $dest = $templatePathOnDisk . '/' . $pathInfo['basename'];
 
                 $this->logger->info('Copying PDF source to RAM disk', [
-                    'lpaId' => $this->lpa->id,
+                    'lpaId'       => $this->lpa->id,
                     'destination' => $dest,
                 ]);
 
-                copy($pdf_source, $dest);
+                copy($pdfSource, $dest);
             }
         }
     }

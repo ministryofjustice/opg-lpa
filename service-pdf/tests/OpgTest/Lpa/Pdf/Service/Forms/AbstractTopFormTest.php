@@ -4,7 +4,7 @@ namespace OpgTest\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\Pdf\Service\Forms\AbstractForm;
 
-class AbstractFormTest extends AbstractFormTestClass
+class AbstractTopFormTest extends AbstractFormTestClass
 {
     public function testGetContentForBoxReturnsNull()
     {

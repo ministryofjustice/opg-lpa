@@ -10,8 +10,6 @@ class Cs2 extends AbstractForm
     private $contentType;
     private $content;
 
-    const BOX_NO_OF_ROWS_CS2 = 14;
-
     /**
      * @param Lpa $lpa
      * @param string $contentType
@@ -36,10 +34,10 @@ class Cs2 extends AbstractForm
         $cs2Continued = '';
         $formatedContentLength = strlen($this->flattenTextContent($this->content));
         if (($this->contentType == self::CONTENT_TYPE_ATTORNEY_DECISIONS) || ($this->contentType == self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN)) {
-            $totalAdditionalPages = ceil($formatedContentLength / ((Lp1::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2));
+            $totalAdditionalPages = ceil($formatedContentLength / ((self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2));
         } else {
-            $contentLengthOnStandardForm = (Lp1::BOX_CHARS_PER_ROW + 2) * Lp1::BOX_NO_OF_ROWS;
-            $totalAdditionalPages = ceil(($formatedContentLength - $contentLengthOnStandardForm) / ((Lp1::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2));
+            $contentLengthOnStandardForm = (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS;
+            $totalAdditionalPages = ceil(($formatedContentLength - $contentLengthOnStandardForm) / ((self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2));
         }
 
         for ($i = 0; $i < $totalAdditionalPages; $i++) {
@@ -60,7 +58,7 @@ class Cs2 extends AbstractForm
             //  Set the PDF form data
             $this->pdfFormData['cs2-is'] = $this->contentType;
             $this->pdfFormData['cs2-content'] = $this->getContentForBox($pageNo, $this->content, $this->contentType);
-            $this->pdfFormData['cs2-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
+            $this->pdfFormData['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
             $this->pdfFormData['cs2-continued'] = $cs2Continued;
             $this->pdfFormData['cs2-footer-right'] = $this->config['footer']['cs2'];
 

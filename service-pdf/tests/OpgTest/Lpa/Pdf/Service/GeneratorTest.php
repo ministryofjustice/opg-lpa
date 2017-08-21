@@ -22,7 +22,7 @@ class GeneratorTest extends TestCase
 
     public function testConstructorAndTempPathCreation()
     {
-        $generator = new Generator(Generator::TYPE_FORM_LP1, $this->getLpa(), $this->getResponse());
+        $generator = new Generator('LP1', $this->getLpa(), $this->getResponse());
 
         $this->assertInstanceOf(Generator::class, $generator);
 
@@ -32,14 +32,14 @@ class GeneratorTest extends TestCase
 
     public function testGenerateLp1fReturnsTrue()
     {
-        $generator = new Generator(Generator::TYPE_FORM_LP1, $this->getLpa(), $this->getResponse());
+        $generator = new Generator('LP1', $this->getLpa(), $this->getResponse());
 
         $this->assertTrue($generator->generate());
     }
 
     public function testGenerateLp1hReturnsTrue()
     {
-        $generator = new Generator(Generator::TYPE_FORM_LP1, $this->getLpa(false), $this->getResponse());
+        $generator = new Generator('LP1', $this->getLpa(false), $this->getResponse());
 
         $this->assertTrue($generator->generate());
     }
@@ -49,7 +49,7 @@ class GeneratorTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('LPA failed validation');
 
-        $generator = new Generator(Generator::TYPE_FORM_LP1, $this->getLpa(true, false), $this->getResponse());
+        $generator = new Generator('LP1', $this->getLpa(true, false), $this->getResponse());
 
         $generator->generate();
     }
@@ -61,7 +61,7 @@ class GeneratorTest extends TestCase
         $lpa->document->instruction = null;
         $lpa->document->preference = null;
 
-        $generator = new Generator(Generator::TYPE_FORM_LP1, $lpa, $this->getResponse());
+        $generator = new Generator('LP1', $lpa, $this->getResponse());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('LPA does not contain all the required data to generate a LP1');
@@ -71,7 +71,7 @@ class GeneratorTest extends TestCase
 
     public function testGenerateLp3ReturnsTrue()
     {
-        $generator = new Generator(Generator::TYPE_FORM_LP3, $this->getLpa(), $this->getResponse());
+        $generator = new Generator('LP3', $this->getLpa(), $this->getResponse());
 
         $this->assertTrue($generator->generate());
     }
@@ -82,7 +82,7 @@ class GeneratorTest extends TestCase
         $lpa = $this->getLpa();
         $lpa->document->peopleToNotify = [];
 
-        $generator = new Generator(Generator::TYPE_FORM_LP3, $lpa, $this->getResponse());
+        $generator = new Generator('LP3', $lpa, $this->getResponse());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('LPA does not contain all the required data to generate a LP3');
@@ -92,7 +92,7 @@ class GeneratorTest extends TestCase
 
     public function testGenerateLp120ReturnsTrue()
     {
-        $generator = new Generator(Generator::TYPE_FORM_LPA120, $this->getLpa(), $this->getResponse());
+        $generator = new Generator('LPA120', $this->getLpa(), $this->getResponse());
 
         $this->assertTrue($generator->generate());
     }
@@ -103,7 +103,7 @@ class GeneratorTest extends TestCase
         $lpa = $this->getLpa();
         $lpa->payment = null;
 
-        $generator = new Generator(Generator::TYPE_FORM_LPA120, $lpa, $this->getResponse());
+        $generator = new Generator('LPA120', $lpa, $this->getResponse());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('LPA does not contain all the required data to generate a LPA120');

@@ -12,7 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use mikehaertl\pdftk\Pdf;
 
-class Lpa120 extends AbstractForm
+class Lpa120 extends AbstractTopForm
 {
     public function __construct(Lpa $lpa)
     {
@@ -20,8 +20,6 @@ class Lpa120 extends AbstractForm
 
         //  Generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
-
-        $this->pdf = new Pdf($this->pdfTemplatePath . '/LPA120.pdf');
     }
 
     /**
@@ -47,6 +45,7 @@ class Lpa120 extends AbstractForm
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
 
         // populate forms
+        $this->pdf = new Pdf($this->pdfTemplatePath . '/LPA120.pdf');
         $this->pdf->fillForm($this->dataMapping())
                   ->flatten()
                   ->saveAs($this->generatedPdfFilePath);
@@ -124,7 +123,7 @@ class Lpa120 extends AbstractForm
             $applicantLastName = $applicant->name->last;
         }
 
-        $this->pdfFormData['donor-full-name'] = $this->fullName($lpaDocument->donor->name);
+        $this->pdfFormData['donor-full-name'] = $lpaDocument->donor->name->__toString();
         $this->pdfFormData['donor-address'] = "\n" . (string)$lpaDocument->donor->address;
         $this->pdfFormData['lpa-type'] = ($lpaDocument->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
         $this->pdfFormData['is-repeat-application'] = (is_null($lpa->repeatCaseNumber) ? null : self::CHECK_BOX_ON);

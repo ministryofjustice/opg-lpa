@@ -24,7 +24,7 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 
             // skip first 4 human attorneys
             $skipped++;
-            if ($skipped <= Lp1::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) {
+            if ($skipped <= self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) {
                 continue;
             }
 

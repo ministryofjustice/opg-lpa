@@ -8,7 +8,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use mikehaertl\pdftk\Pdf;
 
-class Lp1f extends Lp1
+class Lp1f extends AbstractLp1
 {
     public function __construct(Lpa $lpa)
     {
@@ -20,14 +20,38 @@ class Lp1f extends Lp1
         $this->pdf = new Pdf($this->pdfTemplatePath . '/LP1F.pdf');
     }
 
+    protected function generateAdditionalPages()
+    {
+        parent::generateAdditionalPages();
+
+        // CS4
+        if ($this->hasTrustCorporation()) {
+            $generatedCs4 = (new Cs4($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs4);
+        }
+
+        // if number of attorneys (including replacements) is greater than 4, duplicate Section 11 - Attorneys Signatures page
+        // as many as needed to be able to fit all attorneys in the form.
+        $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
+
+        if ($this->hasTrustCorporation()) {
+            $totalAttorneys--;
+        }
+
+        if ($totalAttorneys > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
+        }
+    }
+
     protected function dataMapping()
     {
         parent::dataMapping();
 
         // Section 2
         $i = 0;
-        $primaryAttorneys = $this->sortAttorneys('primaryAttorneys');
-        foreach ($primaryAttorneys as $primaryAttorney) {
+
+        foreach ($this->sortAttorneys('primaryAttorneys') as $primaryAttorney) {
             if ($primaryAttorney instanceof TrustCorporation) {
                 // $i should always be 0
                 $this->pdfFormData['attorney-' . $i . '-is-trust-corporation'] = self::CHECK_BOX_ON;
@@ -54,19 +78,14 @@ class Lp1f extends Lp1
             }
         }
 
-        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
-
-        if ($noOfPrimaryAttorneys == 1) {
-            //  pageNo = 1 is page 2
-            $pageNo = 1;
-            $this->drawingTargets[$pageNo] = array('primaryAttorney-1-pf');
+        if (count($this->lpa->document->primaryAttorneys) == 1) {
+            $this->drawingTargets[1] = array('primaryAttorney-1-pf');
         }
 
         // Section 4
         $i = 0;
-        $replacementAttorneys = $this->sortAttorneys('replacementAttorneys');
 
-        foreach ($replacementAttorneys as $replacementAttorney) {
+        foreach ($this->sortAttorneys('replacementAttorneys') as $replacementAttorney) {
             if ($replacementAttorney instanceof TrustCorporation) {
                 $this->pdfFormData['replacement-attorney-' . $i . '-is-trust-corporation'] = self::CHECK_BOX_ON;
                 $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-name-last'] = (string)$replacementAttorney->name;
@@ -94,13 +113,10 @@ class Lp1f extends Lp1
 
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
 
-        //pageNo = 4 is page 5
-        $pageNo = 4;
-
         if ($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[$pageNo] = array('replacementAttorney-0-pf', 'replacementAttorney-1-pf');
+            $this->drawingTargets[4] = array('replacementAttorney-0-pf', 'replacementAttorney-1-pf');
         } elseif ($noOfReplacementAttorneys == 1) {
-            $this->drawingTargets[$pageNo] = array('replacementAttorney-1-pf');
+            $this->drawingTargets[4] = array('replacementAttorney-1-pf');
         }
 
         //  When attroney can make decisions (Section 5)
@@ -174,31 +190,5 @@ class Lp1f extends Lp1
         $this->pdfFormData['footer-registration-right'] = $this->config['footer']['lp1f']['registration'];
 
         return $this->pdfFormData;
-    }
-
-    protected function generateAdditionalPages()
-    {
-        parent::generateAdditionalPages();
-
-        // CS4
-        if ($this->hasTrustCorporation()) {
-            $generatedCs4 = (new Cs4($this->lpa))->generate();
-            $this->mergerIntermediateFilePaths($generatedCs4);
-        }
-
-        // if number of attorneys (including replacements) is greater than 4, duplicate Section 11 - Attorneys Signatures page
-        // as many as needed to be able to fit all attorneys in the form.
-        $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
-
-        if ($this->hasTrustCorporation()) {
-            $totalHumanAttorneys = $totalAttorneys - 1;
-        } else {
-            $totalHumanAttorneys = $totalAttorneys;
-        }
-
-        if ($totalHumanAttorneys > 4) {
-            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
-            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
-        }
     }
 }

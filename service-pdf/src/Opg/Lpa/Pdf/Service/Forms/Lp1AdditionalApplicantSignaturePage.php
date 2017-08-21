@@ -12,8 +12,8 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
         $this->logGenerationStatement();
 
         $totalApplicantSignatures = count($this->lpa->document->whoIsRegistering);
-        $totalAdditionalApplicantSignatures = $totalApplicantSignatures - Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-        $totalAdditionalApplicantSignaturePages = ceil($totalAdditionalApplicantSignatures/Lp1::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+        $totalAdditionalApplicantSignatures = $totalApplicantSignatures - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+        $totalAdditionalApplicantSignaturePages = ceil($totalAdditionalApplicantSignatures/self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
 
         for ($i=0; $i<$totalAdditionalApplicantSignaturePages; $i++) {
             $filePath = $this->registerTempFile('AdditionalApplicantSignature');

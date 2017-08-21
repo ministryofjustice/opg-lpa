@@ -12,7 +12,7 @@ class Cs3 extends AbstractForm
 
         $filePath = $this->registerTempFile('CS3');
 
-        $this->pdfFormData['cs3-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
+        $this->pdfFormData['cs3-donor-full-name'] = $this->lpa->document->donor->name->__toString();
         $this->pdfFormData['cs3-footer-right'] = $this->config['footer']['cs3'];
 
         $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");

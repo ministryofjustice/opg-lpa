@@ -13,8 +13,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
         $this->logGenerationStatement();
 
         $totalApplicant = count($this->lpa->document->whoIsRegistering);
-        $totalAdditionalApplicant = $totalApplicant - Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;
-        $totalAdditionalPages = ceil($totalAdditionalApplicant / Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM);
+        $totalAdditionalApplicant = $totalApplicant - self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;
+        $totalAdditionalPages = ceil($totalAdditionalApplicant / self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM);
 
         $totalMappedAdditionalApplicants = 0;
 
@@ -23,8 +23,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
             $this->pdf = new Pdf($this->pdfTemplatePath . (($this->lpa->document->type == Document::LPA_TYPE_PF) ? "/LP1F_AdditionalApplicant.pdf" : "/LP1H_AdditionalApplicant.pdf"));
 
-            for ($j = 0; $j < Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
-                $attorneyId = $this->lpa->document->whoIsRegistering[(1 + $i) * Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
+            for ($j = 0; $j < self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
+                $attorneyId = $this->lpa->document->whoIsRegistering[(1 + $i) * self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
 
                 if ($attorney instanceof TrustCorporation) {
@@ -57,11 +57,11 @@ class Lp1AdditionalApplicantPage extends AbstractForm
         }
 
         // draw cross lines if there's any blank slot
-        if ($totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
+        if ($totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
             $crossLineParams = array(array());
 
-            for ($i = Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i >= 1; $i--) {
-                $crossLineParams[0][] = 'additional-applicant-' . (Lp1::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i) . '-' . (($this->lpa->document->type == Document::LPA_TYPE_PF) ? 'pf' : 'hw');
+            for ($i = self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i >= 1; $i--) {
+                $crossLineParams[0][] = 'additional-applicant-' . (self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i) . '-' . (($this->lpa->document->type == Document::LPA_TYPE_PF) ? 'pf' : 'hw');
             }
 
             $this->drawCrossLines($filePath, $crossLineParams);

@@ -11,9 +11,9 @@ class Cs1 extends AbstractForm
 {
     private $settings = array(
         'max-slots-on-standard-form' => [
-            'primaryAttorney' => Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM,
-            'replacementAttorney' => Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM,
-            'peopleToNotify' => Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM
+            'primaryAttorney' => self::MAX_ATTORNEYS_ON_STANDARD_FORM,
+            'replacementAttorney' => self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM,
+            'peopleToNotify' => self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM
         ],
         'max-slots-on-cs1-form' => 2,
         'actors' => [
@@ -35,16 +35,16 @@ class Cs1 extends AbstractForm
         $actorTypes = [];
 
         // CS1 is to be generated when number of attorneys that are larger than what is available on standard form
-        if (count($this->lpa->document->primaryAttorneys) > Lp1::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+        if (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             $actorTypes[] = 'primaryAttorney';
         }
 
-        if (count($this->lpa->document->replacementAttorneys) > Lp1::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) {
+        if (count($this->lpa->document->replacementAttorneys) > self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) {
             $actorTypes[] = 'replacementAttorney';
         }
 
         // CS1 is to be generated when number of people to notify are larger than what is available on standard form
-        if (count($this->lpa->document->peopleToNotify) > Lp1::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+        if (count($this->lpa->document->peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
             $actorTypes[] = 'peopleToNotify';
         }
 
@@ -81,11 +81,11 @@ class Cs1 extends AbstractForm
         foreach ($additionalActors as $idx => $actor) {
             $pIdx = ($idx % $this->settings['max-slots-on-cs1-form']);
 
-            if($pIdx == 0) {
+            if ($pIdx == 0) {
                 //  Initialise the pdfFormData to empty it
                 $this->pdfFormData = [];
 
-                $this->pdfFormData['cs1-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
+                $this->pdfFormData['cs1-donor-full-name'] = $this->lpa->document->donor->name->__toString();
                 $this->pdfFormData['cs1-footer-right'] = $this->config['footer']['cs1'];
             }
 

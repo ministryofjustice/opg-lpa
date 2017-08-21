@@ -9,10 +9,8 @@ use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use mikehaertl\pdftk\Pdf;
 
-class Lp3 extends AbstractForm
+class Lp3 extends AbstractTopForm
 {
-    const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
-
     /**
      * Variable to store LP3 PDF documents as they're generated
      *

@@ -2,10 +2,10 @@
 
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\Pdf\Service\Forms\AbstractForm;
+use Opg\Lpa\Pdf\Service\Forms\AbstractTopForm;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class AbstractTesterForm extends AbstractForm
+class AbstractTesterForm extends AbstractTopForm
 {
     public function __construct(Lpa $lpa)
     {
@@ -31,7 +31,6 @@ class AbstractTesterForm extends AbstractForm
     protected function generate()
     {
         //  Do nothing
-
         return $this;
     }
 

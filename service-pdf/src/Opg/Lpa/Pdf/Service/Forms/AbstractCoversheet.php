@@ -4,7 +4,7 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use mikehaertl\pdftk\Pdf;
 
-class AbstractCoversheet extends AbstractForm
+abstract class AbstractCoversheet extends AbstractForm
 {
     /**
      * @return array

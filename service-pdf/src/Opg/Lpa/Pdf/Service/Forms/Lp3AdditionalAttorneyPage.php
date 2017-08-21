@@ -12,12 +12,12 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
 
         $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
 
-        if ($noOfAttorneys <= Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+        if ($noOfAttorneys <= self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             return;
         }
 
-        $additionalAttorneys = $noOfAttorneys - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
-        $additionalPages = ceil($additionalAttorneys / Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM);
+        $additionalAttorneys = $noOfAttorneys - self::MAX_ATTORNEYS_ON_STANDARD_FORM;
+        $additionalPages = ceil($additionalAttorneys / self::MAX_ATTORNEYS_ON_STANDARD_FORM);
         $populatedAttorneys = 0;
 
         $attorneys = $this->lpa->document->primaryAttorneys;
@@ -29,14 +29,14 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                 $this->pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
             }
 
-            $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM;
+            $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEYS_ON_STANDARD_FORM;
 
-            for ($j = 0; $j < Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
+            for ($j = 0; $j < self::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
                 if ($populatedAttorneys >= $additionalAttorneys) {
                     break;
                 }
 
-                $attorneyIndex = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM * (1 + $i) + $j;
+                $attorneyIndex = self::MAX_ATTORNEYS_ON_STANDARD_FORM * (1 + $i) + $j;
 
                 if (is_string($attorneys[$attorneyIndex]->name)) {
                     $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-name-last'] = $attorneys[$attorneyIndex]->name;
@@ -65,12 +65,12 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                       ->saveAs($filePath);
         }
 
-        if ($additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+        if ($additionalAttorneys % self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             $crossLineParams = array(array());
 
-            for ($k = Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM - $additionalAttorneys % Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM; $k >= 1; $k--) {
+            for ($k = self::MAX_ATTORNEYS_ON_STANDARD_FORM - $additionalAttorneys % self::MAX_ATTORNEYS_ON_STANDARD_FORM; $k >= 1; $k--) {
                 // draw on page 0.
-                $crossLineParams[0][] = 'lp3-primaryAttorney-' . (Lp3::MAX_ATTORNEYS_ON_STANDARD_FORM - $k);
+                $crossLineParams[0][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $k);
             }
 
             $this->drawCrossLines($filePath, $crossLineParams);
