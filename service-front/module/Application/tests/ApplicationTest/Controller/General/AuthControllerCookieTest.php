@@ -112,6 +112,7 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($loginForm, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('authError'));
         $this->assertEquals(false, $result->getVariable('isTimeout'));
@@ -132,6 +133,7 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($loginForm, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('authError'));
         $this->assertEquals(false, $result->getVariable('isTimeout'));

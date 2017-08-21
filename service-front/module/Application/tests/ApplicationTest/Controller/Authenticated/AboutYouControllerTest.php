@@ -51,5 +51,8 @@ class AboutYouControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(null, $result->getVariable('error'));
     }
 }

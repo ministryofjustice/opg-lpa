@@ -51,6 +51,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($lpasSummary['applications'], $result->getVariable('lpas'));
         $this->assertEquals($lpasSummary['total'], $result->getVariable('lpaTotalCount'));
         $this->assertEquals([
