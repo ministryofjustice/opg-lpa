@@ -116,7 +116,6 @@ class AuthControllerTest extends AbstractControllerTest
 
         $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
 
-        /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertEquals($response, $result);

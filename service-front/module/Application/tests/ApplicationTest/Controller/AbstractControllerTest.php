@@ -16,6 +16,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractController;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Mvc\Controller\Plugin\Url;
@@ -55,6 +56,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|Url
      */
     protected $url;
+    /**
+     * @var MockInterface|FlashMessenger
+     */
+    protected $flashMessenger;
     /**
      * @var MockInterface|EventManager
      */
@@ -136,6 +141,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->url = Mockery::mock(Url::class);
         $this->pluginManager->shouldReceive('get')->with('url', null)->andReturn($this->url);
+
+        $this->flashMessenger = Mockery::mock(FlashMessenger::class);
+        $this->pluginManager->shouldReceive('get')->with('flashMessenger', null)->andReturn($this->flashMessenger);
 
         $this->eventManager = Mockery::mock(EventManager::class);
         $this->eventManager->shouldReceive('setIdentifiers');
