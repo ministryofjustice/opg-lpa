@@ -119,7 +119,10 @@ class NotificationsController extends AbstractBaseController {
 
         // If now is before the time above, defer delivery of the email until that time...
         if( $sendAt->getTimestamp() > time() ) {
+            //The call to time() above can't be mocked so ignoring this line until this code is refactored
+            // @codeCoverageIgnoreStart
             $email->setSendAt( $sendAt->getTimestamp() );
+            // @codeCoverageIgnoreEnd
         }
 
         //---

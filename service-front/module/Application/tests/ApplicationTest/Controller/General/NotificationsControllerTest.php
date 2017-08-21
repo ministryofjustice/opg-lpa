@@ -3,6 +3,7 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\NotificationsController;
+use Application\Model\Service\Mail\Message;
 use Application\Model\Service\Mail\Transport\SendGrid;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
@@ -155,5 +156,58 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(500, $result->getStatusCode());
         $this->assertEquals('Error receiving notification', $result->getContent());
+    }
+
+    public function testExpiryNoticeActionOneWeekNoticeSuccess()
+    {
+        $validPost = $this->validPost;
+        $validPost['Type'] = '1-week-notice';
+
+        $this->request->shouldReceive('getHeader')->with('Token')->andReturn($this->validToken)->once();
+        $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
+        $twigTemplate = Mockery::mock(Twig_Template::class);
+        $this->twigEmailRenderer->shouldReceive('loadTemplate')->with('account-deletion-notification.twig')->andReturn($twigTemplate)->once();
+        $twigTemplate->shouldReceive('render')->with(['deletionDate' => new DateTime($validPost['Date'])])->andReturn('')->once();
+        $this->mailTransport->shouldReceive('send')->with(Mockery::on(function ($email) {
+            /** @var Message $email */
+            if ($email->getSubject() === 'Final reminder: do you still need your online LPA account?') {
+                return true;
+            }
+            return false;
+        }))->once();
+
+        /** @var Response $result */
+        $result = $this->controller->expiryNoticeAction();
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(200, $result->getStatusCode());
+        $this->assertEquals('Notification received', $result->getContent());
+    }
+
+    public function testExpiryNoticeActionOneMonthNoticeSuccess()
+    {
+        $validPost = $this->validPost;
+        $validPost['Type'] = '1-month-notice';
+        $email = null;
+
+        $this->request->shouldReceive('getHeader')->with('Token')->andReturn($this->validToken)->once();
+        $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
+        $twigTemplate = Mockery::mock(Twig_Template::class);
+        $this->twigEmailRenderer->shouldReceive('loadTemplate')->with('account-deletion-notification.twig')->andReturn($twigTemplate)->once();
+        $twigTemplate->shouldReceive('render')->with(['deletionDate' => new DateTime($validPost['Date'])])->andReturn('')->once();
+        $this->mailTransport->shouldReceive('send')->with(Mockery::on(function ($email) {
+            /** @var Message $email */
+            if ($email->getSubject() === 'Do you still need your online lasting power of attorney account?') {
+                return true;
+            }
+            return false;
+        }))->once();
+
+        /** @var Response $result */
+        $result = $this->controller->expiryNoticeAction();
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(200, $result->getStatusCode());
+        $this->assertEquals('Notification received', $result->getContent());
     }
 }
