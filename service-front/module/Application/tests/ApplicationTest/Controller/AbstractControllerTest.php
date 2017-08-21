@@ -145,6 +145,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($this->responseCollection);
 
         $this->config = [
+            'version' => [
+                'tag' => '1.2.3.4-test',
+            ],
             'session' => [
                 'native_settings' => [
                     'name' => 'lpa'
