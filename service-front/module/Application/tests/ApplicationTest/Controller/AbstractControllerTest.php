@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller;
 
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Mockery;
@@ -94,6 +95,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var User
      */
     protected $user = null;
+    /**
+     * @var UserIdentity
+     */
+    protected $userIdentity = null;
     /**
      * @var MockInterface|Request
      */
