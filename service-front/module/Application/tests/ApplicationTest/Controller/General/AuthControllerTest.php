@@ -35,10 +35,6 @@ class AuthControllerTest extends AbstractControllerTest
         'email' => 'unit@test.com',
         'password' => 'unitTest'
     ];
-    /**
-     * @var MockInterface|LpaAuthAdapter
-     */
-    private $authenticationAdapter;
 
     public function setUp()
     {
@@ -63,9 +59,6 @@ class AuthControllerTest extends AbstractControllerTest
         $this->storage->shouldReceive('clear');
 
         $this->sessionManager->shouldReceive('initialise');
-
-        $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
-        $this->serviceLocator->shouldReceive('get')->with('AuthenticationAdapter')->andReturn($this->authenticationAdapter);
     }
 
     public function testIndexActionFormInvalid()

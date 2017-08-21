@@ -42,10 +42,10 @@ class AboutYouControllerTest extends AbstractControllerTest
     {
         $user = new User();
         $this->form->shouldReceive('setData')->with($user->flatten())->once();
-        $this->aboutYouDetails->shouldReceive('load')->andReturn($user);
+        $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->url->shouldReceive('fromRoute')->with('user/about-you')->andReturn('user/about-you')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/about-you');
+        $this->form->shouldReceive('setAttribute')->with('action', 'user/about-you')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
