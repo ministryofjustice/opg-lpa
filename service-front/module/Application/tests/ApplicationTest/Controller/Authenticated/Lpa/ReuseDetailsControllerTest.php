@@ -31,10 +31,13 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
+     * @expectedExceptionMessage Required data missing when attempting to load the reuse details screen
      */
-    public function testIndexActionNoLpa()
+    public function testIndexActionRequiredDataMissing()
     {
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromQuery')->once();
+
         $this->controller->indexAction();
     }
 }

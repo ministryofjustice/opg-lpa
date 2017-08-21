@@ -35,6 +35,8 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     public function testIndexActionNoLpa()
     {
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+
         $this->controller->indexAction();
     }
 }
