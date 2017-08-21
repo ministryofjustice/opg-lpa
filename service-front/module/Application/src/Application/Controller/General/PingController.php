@@ -32,10 +32,13 @@ class PingController extends AbstractBaseController {
 
         if( !is_link($path) | !is_readable($path) || !is_link($path) || empty(file_get_contents($path)) ){
 
+            //The calls above can't be mocked so ignoring these lines until this code is refactored
+            // @codeCoverageIgnoreStart
             $response->setStatusCode(500);
             $response->setContent('Sad face');
 
         } else {
+            // @codeCoverageIgnoreEnd
 
             $response->setContent('Happy face');
 
