@@ -2,11 +2,13 @@
 
 namespace ApplicationTest\Controller;
 
+use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Mockery;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
 use PHPUnit_Framework_Error_Deprecated;
 use Zend\EventManager\EventManager;
@@ -20,6 +22,7 @@ use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Storage\StorageInterface;
+use Zend\Stdlib\ArrayObject;
 
 abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -79,6 +82,18 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|LpaApplicationService
      */
     protected $lpaApplicationService;
+    /**
+     * @var MockInterface|LpaAuthAdapter
+     */
+    protected $authenticationAdapter;
+    /**
+     * @var ArrayObject
+     */
+    protected $userDetailsSession;
+    /**
+     * @var User
+     */
+    protected $user = null;
     /**
      * @var MockInterface|Request
      */
@@ -148,6 +163,13 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
         $this->serviceLocator->shouldReceive('get')->with('LpaApplicationService')->andReturn($this->lpaApplicationService);
+
+        $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
+        $this->serviceLocator->shouldReceive('get')->with('AuthenticationAdapter')->andReturn($this->authenticationAdapter);
+
+        $this->userDetailsSession = new ArrayObject();
+        $this->userDetailsSession->user = $this->user;
+        $this->serviceLocator->shouldReceive('get')->with('UserDetailsSession')->andReturn($this->userDetailsSession);
 
         $controller->setServiceLocator($this->serviceLocator);
         $controller->setPluginManager($this->pluginManager);
