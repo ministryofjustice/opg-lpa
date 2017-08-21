@@ -165,7 +165,21 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
                 'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
                 'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
             ],
+            'account-cleanup' => [
+                'notification' => [
+                    'token' => 'validAccountCleanupToken',
+                ],
+            ],
+            'email' => [
+                'sender' => [
+                    'default' => [
+                        'name' => 'Unit Tests',
+                        'address' => 'unit@test.com',
+                    ]
+                ]
+            ]
         ];
+        $this->serviceLocator->shouldReceive('get')->with('config')->andReturn($this->config);
         $this->serviceLocator->shouldReceive('get')->with('Config')->andReturn($this->config);
 
         $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
